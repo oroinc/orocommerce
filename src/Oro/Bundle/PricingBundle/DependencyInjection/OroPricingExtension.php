@@ -29,6 +29,7 @@ class OroPricingExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('notification_message.yml');
         $loader->load('commands.yml');
+        $loader->load('controllers.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
