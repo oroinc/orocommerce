@@ -69,6 +69,9 @@ oro_behat_extension:
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote")]/input'
             type: xpath
+          Do Not Ship Later Than:
+              type: 'css'
+              locator: 'input[name^="date_selector_oro_sale_quote_shipUntil"]'
 
     Quote Shipping Address State Selector:
       selector:

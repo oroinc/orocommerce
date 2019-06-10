@@ -54,14 +54,6 @@ services:
         arguments:
             - "@translator"
 
-    oro_sale.service.quote_to_order_converter:
-        class: 'Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter'
-        public: false
-        arguments:
-            - '@oro_order.handler.order_currency_handler'
-            - '@oro_order.handler.order_totals_handler'
-            - '@doctrine'
-
     oro_sale.service.quote_product_offer_matcher:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher'
 
