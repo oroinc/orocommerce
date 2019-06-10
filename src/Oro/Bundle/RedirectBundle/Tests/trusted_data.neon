@@ -4,3 +4,7 @@ trusted_data:
         Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor:
             getEntityIds:
                 identifierFieldName: true
+        Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields:
+            loadUrls:
+                ownerEntityClass: true
+                ownerEntityIdFieldName: true

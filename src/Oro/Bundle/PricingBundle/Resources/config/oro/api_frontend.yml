@@ -1,0 +1,8 @@
+api:
+    entities:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                prices:
+                    data_type: array
+                    property_path: _

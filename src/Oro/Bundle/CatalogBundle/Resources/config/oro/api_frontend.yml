@@ -1,0 +1,92 @@
+api:
+    entity_aliases:
+        Oro\Bundle\CatalogBundle\Entity\Category:
+            alias:        mastercatalogcategory
+            plural_alias: mastercatalogcategories
+
+    entities:
+        Oro\Bundle\CatalogBundle\Entity\Category:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/category.md'
+            fields:
+                denormalizedDefaultTitle:
+                    exclude: true
+                materializedPath:
+                    exclude: true
+                root:
+                    exclude: true
+                level:
+                    exclude: true
+                left:
+                    exclude: true
+                right:
+                    exclude: true
+                products:
+                    exclude: true
+                parentCategory:
+                    exclude: true
+                childCategories:
+                    exclude: true
+                name:
+                    data_type: localizedFallbackValue:titles
+                shortDescription:
+                    data_type: localizedFallbackValue:shortDescriptions
+                description:
+                    data_type: localizedFallbackValue:longDescriptions
+                url:
+                    data_type: string
+                    property_path: _
+                urls:
+                    data_type: array
+                    property_path: _
+                images:
+                    data_type: array
+                    property_path: _
+                    depends_on:
+                        - smallImage.id
+                        - smallImage.mimeType
+                        - smallImage.filename
+                        - largeImage.id
+                        - largeImage.mimeType
+                        - largeImage.filename
+                # declare excluded field for "smallImage" entity property
+                # to be able to use "smallImage" property in "depends_on" option
+                _smallImage:
+                    property_path: smallImage
+                    exclude: true
+                # declare excluded field for "largeImage" entity property
+                # to be able to use "largeImage" property in "depends_on" option
+                _largeImage:
+                    property_path: largeImage
+                    exclude: true
+                categoryPath:
+                    target_class: Oro\Bundle\CatalogBundle\Entity\Category
+                    target_type: to-many
+                    property_path: _
+                    depends_on: [ materializedPath ]
+                # declare excluded field for "materializedPath" entity property
+                # to be able to use "materializedPath" property in "depends_on" option
+                _materializedPath:
+                    property_path: materializedPath
+                    exclude: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            subresources:
+                categoryPath:
+                    filters:
+                        # disable all filters
+                        exclusion_policy: all
+                    actions:
+                        get_relationship:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+                        get_subresource:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                category: ~

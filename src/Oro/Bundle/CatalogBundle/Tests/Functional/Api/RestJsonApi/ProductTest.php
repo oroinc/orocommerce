@@ -36,13 +36,13 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type' => 'products',
-                    'id' => '<toString(@product-1->id)>',
+                    'type'          => 'products',
+                    'id'            => '<toString(@product-1->id)>',
                     'relationships' => [
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => '<toString(@category_1->id)>'
+                                'id'   => '<toString(@category_1->id)>'
                             ]
                         ]
                     ]
@@ -63,13 +63,13 @@ class ProductTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type' => 'products',
-                        'id' => '<toString(@product-1->id)>',
+                        'type'          => 'products',
+                        'id'            => '<toString(@product-1->id)>',
                         'relationships' => [
                             'category' => [
                                 'data' => [
                                     'type' => 'categories',
-                                    'id' => '<toString(@category_1->id)>'
+                                    'id'   => '<toString(@category_1->id)>'
                                 ]
                             ]
                         ]
@@ -80,48 +80,41 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testShouldChangeProductCategory()
+    public function testUpdateShouldChangeProductCategory()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        /**
-         * It's a workaround for doctrine2 bug
-         * @see https://github.com/doctrine/doctrine2/issues/6186
-         * remove this in https://magecore.atlassian.net/browse/BB-11411
-         */
-        $this->getEntityManager()->clear();
-
         $response = $this->patch(
             ['entity' => 'products', 'id' => (string)$product->getId()],
             [
                 'data' => [
-                    'type' => 'products',
-                    'id' => (string)$product->getId(),
+                    'type'          => 'products',
+                    'id'            => (string)$product->getId(),
                     'relationships' => [
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => (string)$category->getId(),
-                            ],
-                        ],
-                    ],
-                ],
+                                'id'   => (string)$category->getId()
+                            ]
+                        ]
+                    ]
+                ]
             ]
         );
 
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type' => 'products',
-                    'id' => '<toString(@product-1->id)>',
+                    'type'          => 'products',
+                    'id'            => '<toString(@product-1->id)>',
                     'relationships' => [
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => '<toString(@category_1_2->id)>'
+                                'id'   => '<toString(@category_1_2->id)>'
                             ]
                         ]
                     ]
@@ -130,14 +123,13 @@ class ProductTest extends RestJsonApiTestCase
             $response
         );
 
-        $this->getEntityManager()->clear();
         $updatedCategory = $this->getEntityManager()
             ->getRepository(Category::class)
             ->findOneByProductSku($product->getSku());
         self::assertEquals($category->getId(), $updatedCategory->getId());
     }
 
-    public function testShouldSetProductCategoryToNull()
+    public function testUpdateShouldSetProductCategoryToNull()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -146,22 +138,22 @@ class ProductTest extends RestJsonApiTestCase
             ['entity' => 'products', 'id' => (string)$product->getId()],
             [
                 'data' => [
-                    'type' => 'products',
-                    'id' => (string)$product->getId(),
+                    'type'          => 'products',
+                    'id'            => (string)$product->getId(),
                     'relationships' => [
                         'category' => [
                             'data' => null
-                        ],
-                    ],
-                ],
+                        ]
+                    ]
+                ]
             ]
         );
 
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type' => 'products',
-                    'id' => '<toString(@product-1->id)>',
+                    'type'          => 'products',
+                    'id'            => '<toString(@product-1->id)>',
                     'relationships' => [
                         'category' => [
                             'data' => null
@@ -172,13 +164,12 @@ class ProductTest extends RestJsonApiTestCase
             $response
         );
 
-        $this->getEntityManager()->clear();
         self::assertNull(
             $this->getEntityManager()->getRepository(Category::class)->findOneByProductSku($product->getSku())
         );
     }
 
-    public function testShouldSetCategoryForNewProduct()
+    public function testCreateShouldSetCategoryForNewProduct()
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -188,12 +179,12 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type' => 'products',
+                    'type'          => 'products',
                     'relationships' => [
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => '<toString(@category_1->id)>'
+                                'id'   => '<toString(@category_1->id)>'
                             ]
                         ]
                     ]
@@ -202,7 +193,6 @@ class ProductTest extends RestJsonApiTestCase
             $response
         );
 
-        $this->getEntityManager()->clear();
         $product = $this->getEntityManager()->getReference(Product::class, $this->getResourceId($response));
         $category = $this->getEntityManager()->getRepository(Category::class)->findOneByProduct($product);
         self::assertEquals(
@@ -222,7 +212,93 @@ class ProductTest extends RestJsonApiTestCase
 
         $this->delete(['entity' => 'products', 'id' => $product->getId()]);
 
-        $this->getEntityManager()->clear();
         $this->assertNull($categoryRepo->findOneByProductSku($product->getSku()));
+    }
+
+    public function testGetSubresourceForCategoryShouldReturnProductCategory()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $response = $this->getSubresource(
+            ['entity' => 'products', 'id' => $product->getId(), 'association' => 'category']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'categories',
+                    'id'            => '<toString(@category_1->id)>',
+                    'relationships' => [
+                        'products' => [
+                            'data' => [
+                                ['type' => 'products', 'id' => (string)$product->getId()]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForCategoryShouldReturnProductCategory()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'products', 'id' => $product->getId(), 'association' => 'category']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'categories',
+                    'id'   => '<toString(@category_1->id)>'
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateRelationshipForCategoryShouldChangeProductCategory()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+
+        $this->patchRelationship(
+            ['entity' => 'products', 'id' => (string)$product->getId(), 'association' => 'category'],
+            [
+                'data' => [
+                    'type' => 'categories',
+                    'id'   => '<toString(@category_1_2->id)>'
+                ]
+            ]
+        );
+
+        $updatedCategory = $this->getEntityManager()
+            ->getRepository(Category::class)
+            ->findOneByProductSku($product->getSku());
+        self::assertEquals($category->getId(), $updatedCategory->getId());
+    }
+
+    public function testUpdateRelationshipForCategoryShouldSetProductCategoryToNull()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $this->patchRelationship(
+            ['entity' => 'products', 'id' => (string)$product->getId(), 'association' => 'category'],
+            [
+                'data' => null
+            ]
+        );
+
+        self::assertNull(
+            $this->getEntityManager()->getRepository(Category::class)->findOneByProductSku($product->getSku())
+        );
     }
 }

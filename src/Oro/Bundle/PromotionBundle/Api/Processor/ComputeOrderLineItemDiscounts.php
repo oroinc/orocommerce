@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Api\Processor;
 
-use Brick\Math\BigDecimal;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Request\DataType;
+use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\PromotionBundle\Api\OrderLineItemDiscountProvider;
 use Oro\Bundle\TaxBundle\Api\OrderLineItemTaxesProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Oro\DBAL\Types\MoneyType;
 
 /**
  * Computes values for the following fields for OrderLineItem entity:
@@ -36,16 +36,22 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
     /** @var OrderLineItemTaxesProvider */
     private $lineItemTaxesProvider;
 
+    /** @var ValueTransformer */
+    private $valueTransformer;
+
     /**
      * @param OrderLineItemDiscountProvider $lineItemDiscountProvider
      * @param OrderLineItemTaxesProvider    $lineItemTaxesProvider
+     * @param ValueTransformer              $valueTransformer
      */
     public function __construct(
         OrderLineItemDiscountProvider $lineItemDiscountProvider,
-        OrderLineItemTaxesProvider $lineItemTaxesProvider
+        OrderLineItemTaxesProvider $lineItemTaxesProvider,
+        ValueTransformer $valueTransformer
     ) {
         $this->lineItemDiscountProvider = $lineItemDiscountProvider;
         $this->lineItemTaxesProvider = $lineItemTaxesProvider;
+        $this->valueTransformer = $valueTransformer;
     }
 
     /**
@@ -84,33 +90,44 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
     ): array {
         $lineItemIds = $context->getIdentifierValues($data, $lineItemIdFieldName);
         $appliedDiscounts = $this->lineItemDiscountProvider->getDiscounts($context, $lineItemIds);
+        $normalizationContext = $context->getNormalizationContext();
         foreach ($data as $key => $item) {
             $lineItemId = $item[$lineItemIdFieldName];
             $discountAmount = $this->getLineItemDiscount($appliedDiscounts, $lineItemId);
             if ($context->isFieldRequested(self::ROW_TOTAL_DISCOUNT_AMOUNT, $item)) {
-                $data[$key][self::ROW_TOTAL_DISCOUNT_AMOUNT] = $this->getMoneyValue($discountAmount);
+                $data[$key][self::ROW_TOTAL_DISCOUNT_AMOUNT] = $this->valueTransformer->transformValue(
+                    $discountAmount,
+                    DataType::MONEY,
+                    $normalizationContext
+                );
             }
             if ($context->isFieldRequested(self::ROW_TOTAL_AFTER_DISCOUNT, $item)) {
-                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT] = $this->getMoneyValue(
-                    $this->getRowTotalAfterDiscount($context, $item, $discountAmount)
+                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT] = $this->valueTransformer->transformValue(
+                    $this->getRowTotalAfterDiscount($context, $item, $discountAmount),
+                    DataType::MONEY,
+                    $normalizationContext
                 );
             }
             if ($context->isFieldRequested(self::ROW_TOTAL_AFTER_DISCOUNT_INCLUDING_TAX, $item)) {
-                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT_INCLUDING_TAX] = $this->getMoneyValue(
+                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT_INCLUDING_TAX] = $this->valueTransformer->transformValue(
                     $this->getRowTotalAfterDiscountWithTax(
                         OrderLineItemTaxesProvider::ROW_TOTAL_INCLUDING_TAX,
                         $discountAmount,
                         $this->getLineItemTaxes($context, $lineItemIds, $lineItemId)
-                    )
+                    ),
+                    DataType::MONEY,
+                    $normalizationContext
                 );
             }
             if ($context->isFieldRequested(self::ROW_TOTAL_AFTER_DISCOUNT_EXCLUDING_TAX, $item)) {
-                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT_EXCLUDING_TAX] = $this->getMoneyValue(
+                $data[$key][self::ROW_TOTAL_AFTER_DISCOUNT_EXCLUDING_TAX] = $this->valueTransformer->transformValue(
                     $this->getRowTotalAfterDiscountWithTax(
                         OrderLineItemTaxesProvider::ROW_TOTAL_EXCLUDING_TAX,
                         $discountAmount,
                         $this->getLineItemTaxes($context, $lineItemIds, $lineItemId)
-                    )
+                    ),
+                    DataType::MONEY,
+                    $normalizationContext
                 );
             }
         }
@@ -191,19 +208,5 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
         }
 
         return $allTaxes[$lineItemId];
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function getMoneyValue($value)
-    {
-        if (null !== $value) {
-            $value = (string)BigDecimal::of($value)->toScale(MoneyType::TYPE_SCALE);
-        }
-
-        return $value;
     }
 }

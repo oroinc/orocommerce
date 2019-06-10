@@ -1,0 +1,46 @@
+data:
+    type: products
+    id: '<toString(@configurable_product3->id)>'
+    attributes:
+        sku: CPSKU3
+        createdAt: '@configurable_product3->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@configurable_product3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: configurable
+        featured: false
+        newArrival: false
+        name: 'Configurable Product 3'
+        shortDescription: 'Configurable Product 3 Short Description'
+        description: 'Configurable Product 3 Description'
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+        productAttributes:
+            testAttrString: null
+            testAttrBoolean: false
+            testAttrFloat: null
+            testAttrMoney: null
+            testAttrDateTime: null
+            testAttrManyToOne: null
+            testToOneId: null
+            testAttrMultiEnum: {  }
+            testAttrManyToMany: {  }
+            testToManyId: {  }
+        unitPrecisions:
+            - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+        prices: []
+        lowInventory: false
+        upcoming: false
+        availabilityDate: null
+        variantAttributeNames:
+            - testAttrEnum
+            - testAttrBoolean
+    relationships:
+        productFamily:
+            data:
+                type: productfamilies
+                id: '<toString(@default_product_family->id)>'
+        variantProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product3_variant1->id)>' }
+                - { type: products, id: '<toString(@configurable_product3_variant2->id)>' }
+                - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }

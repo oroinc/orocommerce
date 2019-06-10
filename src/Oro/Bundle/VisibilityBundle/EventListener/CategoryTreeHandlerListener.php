@@ -4,34 +4,23 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
+use Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider;
 
+/**
+ * Removes hidden categories from a category tree.
+ */
 class CategoryTreeHandlerListener
 {
-    /**
-     * @var CategoryVisibilityResolverInterface
-     */
-    protected $categoryVisibilityResolver;
+    /** @var CategoryVisibilityProvider */
+    private $categoryVisibilityProvider;
 
     /**
-     * @var CustomerUserRelationsProvider
+     * @param CategoryVisibilityProvider $categoryVisibilityProvider
      */
-    protected $customerUserRelationsProvider;
-
-    /**
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param CustomerUserRelationsProvider $customerUserRelationsProvider
-     */
-    public function __construct(
-        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        CustomerUserRelationsProvider $customerUserRelationsProvider
-    ) {
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
+    public function __construct(CategoryVisibilityProvider $categoryVisibilityProvider)
+    {
+        $this->categoryVisibilityProvider = $categoryVisibilityProvider;
     }
 
     /**
@@ -44,37 +33,26 @@ class CategoryTreeHandlerListener
             return;
         }
 
-        $customer = $this->customerUserRelationsProvider->getCustomer($user);
-        $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup($user);
-        $categories = $this->filterCategories($event->getCategories(), $customer, $customerGroup);
-        $event->setCategories($categories);
+        $hiddenCategoryIds = $this->categoryVisibilityProvider->getHiddenCategoryIds($user);
+        if ($hiddenCategoryIds) {
+            $event->setCategories(
+                $this->filterCategories($event->getCategories(), $hiddenCategoryIds)
+            );
+        }
     }
 
     /**
      * @param Category[] $categories
-     * @param Customer|null $customer
-     * @param CustomerGroup|null $customerGroup
+     * @param int[]      $hiddenCategoryIds
+     *
      * @return array
      */
-    protected function filterCategories(
-        array $categories,
-        Customer $customer = null,
-        CustomerGroup $customerGroup = null
-    ) {
-        if ($customer) {
-            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomer($customer);
-        } elseif ($customerGroup) {
-            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomerGroup(
-                $customerGroup
-            );
-        } else {
-            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIds();
-        }
-
+    private function filterCategories(array $categories, array $hiddenCategoryIds)
+    {
         // copy categories array to another variable to prevent loop break on removed elements
         $filteredCategories = $categories;
         foreach ($categories as $category) {
-            if (in_array($category->getId(), $hiddenCategoryIds)) {
+            if (in_array($category->getId(), $hiddenCategoryIds, true)) {
                 $this->removeTreeNode($filteredCategories, $category);
             }
         }
@@ -84,9 +62,9 @@ class CategoryTreeHandlerListener
 
     /**
      * @param Category[] $filteredCategories
-     * @param Category $category
+     * @param Category   $category
      */
-    protected function removeTreeNode(array &$filteredCategories, Category $category)
+    private function removeTreeNode(array &$filteredCategories, Category $category)
     {
         foreach ($filteredCategories as $id => $item) {
             if ($item->getId() === $category->getId()) {
@@ -96,7 +74,6 @@ class CategoryTreeHandlerListener
         }
 
         $children = $category->getChildCategories();
-
         if (!$children->isEmpty()) {
             foreach ($children as $child) {
                 $this->removeTreeNode($filteredCategories, $child);

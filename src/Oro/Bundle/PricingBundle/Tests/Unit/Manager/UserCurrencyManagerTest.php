@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -40,6 +41,9 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     /** @var UserCurrencyManager */
     private $userCurrencyManager;
 
+    /** @var CurrentCurrencyProviderInterface */
+    private $currentCurrencyProvider;
+
     protected function setUp()
     {
         $this->session = $this->createMock(Session::class);
@@ -50,13 +54,15 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->currentCurrencyProvider = $this->createMock(CurrentCurrencyProviderInterface::class);
 
         $this->userCurrencyManager = new UserCurrencyManager(
             $this->session,
             $this->tokenStorage,
             $this->doctrine,
             $this->currencyProvider,
-            $this->websiteManager
+            $this->websiteManager,
+            $this->currentCurrencyProvider
         );
     }
 
@@ -276,6 +282,44 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get');
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
+    }
+
+    public function testGetUserCurrencyWhenCurrentCurrencyProviderReturnsCurrentCurrency()
+    {
+        $currency = 'EUR';
+        $this->currencyProvider->expects(static::any())
+            ->method('getCurrencyList')
+            ->willReturn(['EUR', 'USD']);
+        $this->currentCurrencyProvider->expects($this->any())
+            ->method('getCurrentCurrency')
+            ->willReturn($currency);
+
+        $this->currencyProvider->expects($this->never())
+            ->method('getDefaultCurrency');
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        $this->assertEquals($currency, $this->userCurrencyManager->getUserCurrency());
+    }
+
+    public function testGetUserCurrencyWhenCurrentCurrencyProviderReturnsCurrentCurrencyButItIsNotAvailableForWebsite()
+    {
+        $currency = 'UAH';
+        $defaultCurrency = 'EUR';
+        $this->currencyProvider->expects(static::any())
+            ->method('getCurrencyList')
+            ->willReturn(['EUR', 'USD']);
+        $this->currentCurrencyProvider->expects($this->any())
+            ->method('getCurrentCurrency')
+            ->willReturn($currency);
+
+        $this->currencyProvider->expects($this->once())
+            ->method('getDefaultCurrency')
+            ->willReturn($defaultCurrency);
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        $this->assertEquals($defaultCurrency, $this->userCurrencyManager->getUserCurrency());
     }
 
     public function testSaveSelectedCurrencyLoggedUser()

@@ -79,6 +79,13 @@ services:
             - '@doctrine'
             - '@oro_currency.config.currency'
             - '@oro_website.manager'
+            - '@oro_pricing.provider.current_currency'
+
+    oro_pricing.provider.current_currency:
+        class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
+        public: false
+        arguments:
+            - !tagged oro_pricing.current_currency_provider
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'

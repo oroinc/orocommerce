@@ -26,5 +26,6 @@ services:
         arguments:
             - '@oro_promotion.api.order_line_item_discount_provider'
             - '@oro_tax.api.order_line_item_taxes_provider'
+            - '@oro_api.value_transformer'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order_line_item.class%' }

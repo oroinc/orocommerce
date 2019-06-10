@@ -1,0 +1,17 @@
+services:
+    oro_inventory.api.compute_product_low_inventory:
+        class: Oro\Bundle\InventoryBundle\Api\Processor\ComputeProductLowInventory
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_inventory.inventory.low_inventory_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product }
+
+    oro_inventory.api.compute_product_availability:
+        class: Oro\Bundle\InventoryBundle\Api\Processor\ComputeProductAvailability
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_inventory.provider.upcoming_product_provider'
+            - '@oro_api.value_transformer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product }

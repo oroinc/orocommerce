@@ -1,0 +1,154 @@
+api:
+    entity_aliases:
+        Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+            alias:        productfamily
+            plural_alias: productfamilies
+
+    entities:
+        Oro\Bundle\ProductBundle\Entity\ProductImage:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_image.md'
+            fields:
+                mimeType:
+                    data_type: string
+                    property_path: image.mimeType
+                types:
+                    data_type: array
+                    property_path: _
+                    depends_on: [ types.type ]
+                # declare excluded field for "types" entity property
+                # to be able to use "types" property in "depends_on" option
+                _types:
+                    property_path: types
+                    exclude: true
+                    max_results: -1
+                files:
+                    data_type: array
+                    property_path: _
+                    depends_on: [ types.type, image.id, image.filename ]
+            filters:
+                fields:
+                    types:
+                        data_type: string
+                        allow_array: true
+                        property_path: types.type
+                        collection: true
+                        operators: [ '=', '!=', '*', '!*', '~', '!~' ]
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_family.md'
+            fields:
+                entityClass:
+                    exclude: true
+                isEnabled:
+                    exclude: true
+                code:
+                    exclude: true
+                name:
+                    data_type: localizedFallbackValue:labels
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductUnit:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_unit.md'
+            fields:
+                label:
+                    data_type: string
+                    property_path: _
+                shortLabel:
+                    data_type: string
+                    property_path: _
+                pluralLabel:
+                    data_type: string
+                    property_path: _
+                shortPluralLabel:
+                    data_type: string
+                    property_path: _
+            filters:
+                fields:
+                    code:
+                        allow_array: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                denormalizedDefaultName:
+                    exclude: true
+                denormalizedDefaultNameUppercase:
+                    exclude: true
+                skuUppercase:
+                    exclude: true
+                status:
+                    exclude: true
+                name:
+                    data_type: localizedFallbackValue:names
+                shortDescription:
+                    data_type: localizedFallbackValue:shortDescriptions
+                description:
+                    data_type: localizedFallbackValue:descriptions
+                productType:
+                    property_path: type
+                productFamily:
+                    property_path: attributeFamily
+                productAttributes:
+                    data_type: object
+                    property_path: _
+                    depends_on: [ type, attributeFamily.id ]
+                variantAttributeNames:
+                    property_path: variantFields
+                variantProducts:
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-many
+                    property_path: _
+                    max_results: -1
+                unitPrecisions:
+                    data_type: array
+                    property_path: _
+                    depends_on:
+                        - unitPrecisions.id
+                        - unitPrecisions.unit.code
+                        - unitPrecisions.precision
+                        - unitPrecisions.conversionRate
+                        - unitPrecisions.sell
+                        - primaryUnitPrecision.id
+                # declare excluded field for "unitPrecisions" entity property
+                # to be able to use "unitPrecisions" property in "depends_on" option
+                _unitPrecisions:
+                    property_path: unitPrecisions
+                    exclude: true
+                    max_results: -1
+                url:
+                    data_type: string
+                    property_path: _
+                urls:
+                    data_type: array
+                    property_path: _
+            filters:
+                fields:
+                    sku:
+                        allow_array: true
+            actions:
+                get_list: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            subresources:
+                variantProducts:
+                    actions:
+                        get_subresource:
+                            page_size: -1 # disable paging
+                        get_relationship:
+                            page_size: -1 # disable paging
