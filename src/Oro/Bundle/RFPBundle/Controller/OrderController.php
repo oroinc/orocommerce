@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -10,6 +9,9 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Controller actions to create Order entity using RFQ entity as source.
+ */
 class OrderController extends Controller
 {
     /**
@@ -60,8 +62,11 @@ class OrderController extends Controller
             $data['customer'] = $request->getCustomer()->getId();
         }
 
+        $data['shipUntil'] = $request->getShipUntil();
+        $data['poNumber'] = $request->getPoNumber();
+        $data['customerNotes'] = $request->getNote();
         $data['sourceEntityId'] = $request->getId();
-        $data['sourceEntityClass'] = ClassUtils::getClass($request);
+        $data['sourceEntityClass'] = get_class($request);
         $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
         return $data;

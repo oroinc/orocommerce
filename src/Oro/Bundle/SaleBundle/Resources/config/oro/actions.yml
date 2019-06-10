@@ -500,6 +500,14 @@ action_groups:
                 parameters: [$.checkoutData.shippingMethodType, $.data.quote.shippingMethodType]
             - '@assign_value':
                 conditions:
+                      '@not_empty': $.data.quote.shipUntil
+                parameters: [$.checkoutData.shipUntil, $.data.quote.shipUntil]
+            - '@assign_value':
+                conditions:
+                      '@not_empty': $.data.quote.poNumber
+                parameters: [$.checkoutData.poNumber, $.data.quote.poNumber]
+            - '@assign_value':
+                conditions:
                       '@empty': $.checkoutData
                 parameters: [$.checkoutData, []]
             - '@assign_value': [$.startTransition, 'start_from_quote_as_guest']
