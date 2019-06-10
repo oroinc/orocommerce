@@ -140,7 +140,7 @@ class PaymentMethodsConfigsRuleController extends Controller
     public function markMassAction($gridName, $actionName, Request $request)
     {
         /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $massActionDispatcher = $this->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 

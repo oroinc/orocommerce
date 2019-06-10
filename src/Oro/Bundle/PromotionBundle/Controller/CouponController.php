@@ -124,7 +124,7 @@ class CouponController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var MassActionDispatcher $massActionDispatcher */
-            $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+            $massActionDispatcher = $this->get(MassActionDispatcher::class);
             $response = $massActionDispatcher->dispatchByRequest(
                 $request->get('gridName'),
                 $request->get('actionName'),

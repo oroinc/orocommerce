@@ -223,6 +223,9 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
 
+    Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface:
+        alias: 'oro_sale.quote_demand.subtotals_calculator_main'
+
     oro_sale.storage.return_route_storage:
         class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'
         parent: oro_product.storage.session_data_storage
@@ -307,6 +310,9 @@ services:
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_website.manager'
+
+    Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface:
+        alias: 'oro_sale.provider.guest_quote_access'
 
     oro_sale.updater.customer_user_reassign.quote_updater:
         parent: oro_customer.updater.customer_user_reassign.abstract
