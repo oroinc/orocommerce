@@ -34,10 +34,10 @@ oro:
         has_variants.label: Has Variants
         inventory_status:
             label: Inventory Status
-            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
+            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
         type:
             label: Type
-            description: Defines the type of product, "simple" / "configurable"
+            description: Defines the type of product, "simple" / "configurable".
             simple: Simple
             configurable: Configurable
             please_select_option: Please select option
@@ -77,12 +77,12 @@ oro:
         new_arrivals.label: New Arrivals
         featured:
             label: Is Featured
-            description: Specifies if product is featured or not.
+            description: Specifies if the product is featured or not.
             yes: Yes
             no: No
         new_arrival:
             label: New Arrival
-            description: Specifies if product is a new arrival.
+            description: Specifies if the product is a new arrival.
             yes: Yes
             no: No
         time_period.label: Time Period

@@ -50,11 +50,11 @@ An array of category images.
 
 Each element of the array is an object with the following properties:
 
-**mimeType** is a string contains the media type and subtype of the image.
+**mimeType** is a string contains the media type of the image.
 
 **url** is a string contains URL of the image.
 
-**type** is a string contains type which this image belongs to. Possible values of type: `small` and `large`.
+**type** is a string contains the type of the image. Possible values of type: `small` and `large`.
 
 Example of data: **\[{"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
 

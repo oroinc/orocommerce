@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
-use Oro\Bundle\ApiBundle\Collection\Criteria;
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Provides methods to apply product visibility rules to a search query.
+ */
 class ProductVisibilitySearchQueryModifier
 {
     /**

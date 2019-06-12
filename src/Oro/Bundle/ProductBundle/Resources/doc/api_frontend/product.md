@@ -94,11 +94,11 @@ Retrieve the ID of the family that a specific product belongs to.
 
 #### get_subresource
 
-Retrieve records of products that are variants for a specific configurable product
+Retrieve records of products that are variants for a specific configurable product.
 
 #### get_relationship
 
-Retrieve the IDs of products that are variants for a specific configurable product
+Retrieve the IDs of products that are variants for a specific configurable product.
 
 ### images
 
