@@ -2,8 +2,20 @@ services:
     _defaults:
         public: true
 
+    Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
     Oro\Bundle\PricingBundle\Controller\AjaxPriceListController:
         calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Controller\PriceListController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }

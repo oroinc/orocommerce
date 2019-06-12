@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Is used to handle common logic for ProductPrice related actions
  * see method descriptions for more details
  */
-abstract class AbstractAjaxProductPriceController extends Controller
+abstract class AbstractAjaxProductPriceController extends AbstractController
 {
     /**
      * Get products prices by price list and product ids
@@ -22,18 +26,18 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByCustomer(Request $request)
     {
-        $scopeCriteria = $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')
+        $scopeCriteria = $this->get(ProductPriceScopeCriteriaRequestHandler::class)
             ->getPriceScopeCriteria();
 
         $currency = $request->get('currency');
         if (null === $currency) {
-            $currencies = $this->get('oro_currency.config.currency')->getCurrencyList();
+            $currencies = $this->get(CurrencyProviderInterface::class)->getCurrencyList();
         } else {
             $currencies = [$currency];
         }
 
         return new JsonResponse(
-            $this->get('oro_pricing.provider.product_price')
+            $this->get(ProductPriceProviderInterface::class)
                 ->getPricesByScopeCriteriaAndProducts(
                     $scopeCriteria,
                     $this->getRequestProducts($request),
@@ -49,12 +53,28 @@ abstract class AbstractAjaxProductPriceController extends Controller
     protected function getRequestProducts(Request $request): array
     {
         $productIds = $request->get('product_ids', []);
-        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->get(DoctrineHelper::class);
         return array_map(
             function ($productId) use ($doctrineHelper) {
                 return $doctrineHelper->getEntityReference(Product::class, $productId);
             },
             array_filter($productIds)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ProductPriceScopeCriteriaRequestHandler::class,
+                CurrencyProviderInterface::class,
+                ProductPriceProviderInterface::class,
+                DoctrineHelper::class,
+            ]
         );
     }
 }
