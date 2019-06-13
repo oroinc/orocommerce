@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-16018
+@ticket-BB-16930
 @fixture-OroWebCatalogBundle:web_catalog.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroProductBundle:ConfigurableProductFixtures.yml
@@ -184,6 +185,18 @@ Feature: Override product variations functionality
 
     When I proceed as the Buyer
     And I click "TEST"
+    Then I should not see "1GB81" product
+    And I should not see "1GB82" product
+    And I should see "1GB83" product
+
+  Scenario: Check that changes of grid view does not affect on results
+    When I filter SKU as contains "1GB"
+    And I click "NoImage View Button"
+    Then I should not see "1GB81" product
+    And I should not see "1GB82" product
+    And I should see "1GB83" product
+
+    When I click "List View Button"
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
