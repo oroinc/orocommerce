@@ -161,7 +161,8 @@ define(function(require) {
             var rows = this.getElement('rows');
             return _.find(rows, function(row) {
                 var $unit = $(row).find(this.elements.unit);
-                var unitValue = $unit.val().toLowerCase();
+                var unitValue = $unit.val();
+                unitValue = _.isString(unitValue) ? unitValue.toLowerCase() : '';
                 var unitLabel = $unit.find('option:selected').text().toLowerCase();
                 var rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
 
