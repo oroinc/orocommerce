@@ -87,6 +87,22 @@ oro_behat_extension:
           First Name Add: 'oro_customer_customer_user[addresses][0][firstName]'
           Last Name Add: 'oro_customer_customer_user[addresses][0][lastName]'
 
+    Direct URLs Form:
+      selector:
+        locator: '//span[text()="Direct URLs"]/../..'
+        type: xpath
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Direct URLs Use Default: 'routing[oro_redirect___enable_direct_url][use_parent_scope_value]'
+          Enable Direct URLs: 'routing[oro_redirect___enable_direct_url][value]'
+          Product URL Prefix Use Default: 'routing[oro_product___product_direct_url_prefix][use_parent_scope_value]'
+          Product URL Prefix: 'routing[oro_product___product_direct_url_prefix][value][prefix]'
+          Category URL Prefix Use Default: 'routing[oro_catalog___category_direct_url_prefix][use_parent_scope_value]'
+          Category URL Prefix: 'routing[oro_catalog___category_direct_url_prefix][value][prefix]'
+          Landing Page URL Prefix Use Default: 'routing[oro_cms___landing_page_direct_url_prefix][use_parent_scope_value]'
+          Landing Page URL Prefix: 'routing[oro_cms___landing_page_direct_url_prefix][value][prefix]'
+
     Attributes Group Form:
       selector: 'form[name="oro_attribute_family"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
