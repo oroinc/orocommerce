@@ -594,6 +594,50 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param Product $product
+     * @return array
+     */
+    public function getRequiredAttributesForSimpleProduct(Product $product)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('cp.id', 'cp.sku', 'cp.variantFields')
+            ->from(Product::class, 'cp')
+            ->innerJoin('cp.variantLinks', 'vl')
+            ->where($qb->expr()->eq('vl.product', ':simpleProduct'))
+            ->setParameter('simpleProduct', $product);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Product $product
+     * @return Product[]|array
+     */
+    public function getParentProductsForSimpleProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->innerJoin('p.variantLinks', 'vl')
+            ->where($qb->expr()->eq('vl.product', ':simpleProduct'))
+            ->setParameter('simpleProduct', $product);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @return Product[]|array
+     */
+    public function getSimpleProductsForConfigurableProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->innerJoin('p.parentVariantLinks', 'pvl')
+            ->where($qb->expr()->eq('pvl.parentProduct', ':configurableProduct'))
+            ->setParameter('configurableProduct', $product);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param QueryBuilder $queryBuilder
      */
     private function filterByImageType(QueryBuilder $queryBuilder)

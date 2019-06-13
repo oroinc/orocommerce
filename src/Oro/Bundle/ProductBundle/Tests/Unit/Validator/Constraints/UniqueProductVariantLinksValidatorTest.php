@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -26,6 +29,11 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     protected $service;
 
     /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $registry;
+
+    /**
      * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
@@ -36,8 +44,10 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->service = new UniqueProductVariantLinksValidator($propertyAccessor);
+        $this->service->setRegistry($this->registry);
         $this->service->initialize($this->context);
     }
 
@@ -74,6 +84,39 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
+    public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeStringExistingProduct()
+    {
+        /** @var AbstractLazyCollection|\PHPUnit\Framework\MockObject\MockObject $variantLinks */
+        $variantLinks = $this->createMock(AbstractLazyCollection::class);
+        $variantLinks->expects($this->any())
+            ->method('isInitialized')
+            ->willReturn(false);
+        $product = new Product();
+        $product->setId(1);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $product->setVariantFields([
+            self::VARIANT_FIELD_KEY_SIZE,
+            self::VARIANT_FIELD_KEY_COLOR,
+        ]);
+        $product->setVariantLinks($variantLinks);
+
+        $simpleProducts = $this->prepareSimpleProducts([
+            [
+                self::VARIANT_FIELD_KEY_SIZE => 'L',
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+            [
+                self::VARIANT_FIELD_KEY_SIZE => 'M',
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+        ]);
+
+        $this->assertRepositoryCalls($product, $simpleProducts);
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeString()
     {
         $product = $this->prepareProduct(
@@ -94,6 +137,41 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    public function testAddsViolationIfVariantFieldCombinationsAreNotUniqueTypeStringExistingProduct()
+    {
+        /** @var AbstractLazyCollection|\PHPUnit\Framework\MockObject\MockObject $variantLinks */
+        $variantLinks = $this->createMock(AbstractLazyCollection::class);
+        $variantLinks->expects($this->any())
+            ->method('isInitialized')
+            ->willReturn(false);
+        $product = new Product();
+        $product->setId(1);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $product->setVariantFields([
+            self::VARIANT_FIELD_KEY_SIZE,
+            self::VARIANT_FIELD_KEY_COLOR,
+        ]);
+        $product->setVariantLinks($variantLinks);
+
+        $simpleProducts = $this->prepareSimpleProducts([
+            [
+                self::VARIANT_FIELD_KEY_SIZE => 'L',
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+            [
+                self::VARIANT_FIELD_KEY_SIZE => 'L',
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+        ]);
+
+        $this->assertRepositoryCalls($product, $simpleProducts);
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
 
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
@@ -235,32 +313,68 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
      * @param array $variantLinkFields
      * @return Product
      */
-    private function prepareProduct(array $variantFields, array $variantLinkFields)
+    private function prepareProduct(array $variantFields, array $variantLinkFields): Product
     {
         $product = new Product();
         $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields($variantFields);
 
-        foreach ($variantLinkFields as $fields) {
-            $variantProduct = new Product();
-
-            if (array_key_exists(self::VARIANT_FIELD_KEY_SIZE, $fields)) {
-                $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
-            }
-
-            if (array_key_exists(self::VARIANT_FIELD_KEY_COLOR, $fields)) {
-                $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
-            }
-
-            if (array_key_exists(self::VARIANT_FIELD_KEY_SLIM_FIT, $fields)) {
-                $variantProduct->setSlimFit((bool)$fields[self::VARIANT_FIELD_KEY_SLIM_FIT]);
-            }
-
+        foreach ($this->prepareSimpleProducts($variantLinkFields) as $variantProduct) {
             $variantLink = new ProductVariantLink($product, $variantProduct);
             $product->addVariantLink($variantLink);
         }
 
         return $product;
+    }
+
+    /**
+     * @param array $variantLinkFields
+     * @return array
+     */
+    private function prepareSimpleProducts(array $variantLinkFields): array
+    {
+        $products = [];
+        foreach ($variantLinkFields as $fields) {
+            $simpleProduct = new Product();
+            $simpleProduct->setType(Product::TYPE_SIMPLE);
+
+            if (array_key_exists(self::VARIANT_FIELD_KEY_SIZE, $fields)) {
+                $simpleProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
+            }
+
+            if (array_key_exists(self::VARIANT_FIELD_KEY_COLOR, $fields)) {
+                $simpleProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
+            }
+
+            if (array_key_exists(self::VARIANT_FIELD_KEY_SLIM_FIT, $fields)) {
+                $simpleProduct->setSlimFit((bool)$fields[self::VARIANT_FIELD_KEY_SLIM_FIT]);
+            }
+            $products[] = $simpleProduct;
+        }
+
+        return $products;
+    }
+
+    /**
+     * @param \Oro\Bundle\ProductBundle\Entity\Product $product
+     * @param array $simpleProducts
+     */
+    private function assertRepositoryCalls(Product $product, array $simpleProducts): void
+    {
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getSimpleProductsForConfigurableProduct')
+            ->with($product)
+            ->willReturn($simpleProducts);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->willReturn($em);
     }
 
     public function testDoesNothingIfSimpleProduct()

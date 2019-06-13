@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validate that configurable product has selected configurable attributes and these attributes are filled in variants.
+ */
 class ProductVariantLinksValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_variant_links';
@@ -70,7 +74,12 @@ class ProductVariantLinksValidator extends ConstraintValidator
     private function validateLinksHaveFilledFields(Product $value, ProductVariantLinks $constraint)
     {
         $variantFields = $value->getVariantFields();
+
+        // Validate only loaded collection items
         $variantLinks = $value->getVariantLinks();
+        if ($variantLinks instanceof PersistentCollection) {
+            $variantLinks = $variantLinks->unwrap();
+        }
 
         $errorsData = [];
         foreach ($variantLinks as $variantLink) {
