@@ -10,12 +10,10 @@ data:
                 id: '<toString(@category1->id)>'
         variantProducts:
             data:
-                -
-                    type: products
-                    id: '<toString(@configurable_product1_variant1->id)>'
-                -
-                    type: products
-                    id: '<toString(@configurable_product1_variant2->id)>'
+                - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
+                - { type: products, id: '<toString(@configurable_product1_variant2->id)>' }
+        parentProducts:
+            data: []
 included:
     -
         type: mastercatalogcategories
@@ -42,3 +40,8 @@ included:
                 data:
                     type: mastercatalogcategories
                     id: '<toString(@category1->id)>'
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product1->id)>' }

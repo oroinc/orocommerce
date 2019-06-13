@@ -3,6 +3,9 @@ api:
         Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
             alias:        productfamily
             plural_alias: productfamilies
+        Extend\Entity\EV_Prod_Inventory_Status:
+            alias:        productinventorystatus
+            plural_alias: productinventorystatuses
 
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
@@ -81,6 +84,27 @@ api:
                 delete: false
                 delete_list: false
 
+        Extend\Entity\EV_Prod_Inventory_Status:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/inventory_status.md'
+            hints: [ HINT_TRANSLATABLE ]
+            fields:
+                priority:
+                    exclude: true
+                default:
+                    exclude: true
+            filters:
+                fields:
+                    id:
+                        allow_array: true
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product.md'
             fields:
@@ -113,6 +137,11 @@ api:
                     target_type: to-many
                     property_path: _
                     max_results: -1
+                parentProducts:
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-many
+                    property_path: _
+                    max_results: -1
                 unitPrecisions:
                     data_type: array
                     property_path: _
@@ -135,18 +164,31 @@ api:
                 urls:
                     data_type: array
                     property_path: _
+                inventoryStatus:
+                    property_path: inventory_status
             filters:
                 fields:
                     sku:
                         allow_array: true
+                    inventoryStatus:
+                        allow_array: true
+                    variants: # processed by Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
+                        data_type: boolean
+                        operators: [ '=' ]
+                        property_path: _
             actions:
-                get_list: false
                 create: false
                 update: false
                 delete: false
                 delete_list: false
             subresources:
                 variantProducts:
+                    actions:
+                        get_subresource:
+                            page_size: -1 # disable paging
+                        get_relationship:
+                            page_size: -1 # disable paging
+                parentProducts:
                     actions:
                         get_subresource:
                             page_size: -1 # disable paging

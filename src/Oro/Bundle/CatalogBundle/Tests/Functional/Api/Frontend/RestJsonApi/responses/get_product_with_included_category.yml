@@ -35,6 +35,8 @@ data:
                 id: '<toString(@category1->id)>'
         variantProducts:
             data: []
+        parentProducts:
+            data: []
 included:
     -
         type: mastercatalogcategories
@@ -45,7 +47,7 @@ included:
             name: 'Category 1'
             shortDescription: 'Category 1 Short Description'
             description: 'Category 1 Description'
-            url: /category1_slug_default
+            url: '/category1_slug_default'
             urls:
                 - { url: '/category1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }

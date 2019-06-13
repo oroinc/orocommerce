@@ -8,6 +8,12 @@ Retrieve a specific product record.
 
 {@inheritdoc}
 
+### get_list
+
+Retrieve a collection of product records.
+
+{@inheritdoc}
+
 ## FIELDS
 
 ### name
@@ -58,6 +64,10 @@ Example of data: **{"stringAttribute": "test", "toOneRelationshipAttribute": {"i
 
 The products that are variants for a configurable product.
 
+### parentProducts
+
+The configurable products that use this product as a variant.
+
 ### images
 
 The images of the product.
@@ -77,6 +87,12 @@ Each element of the array is an object with the following properties:
 **localizationId** is a string contains ID of the localization the url is intended for.
 
 Example of data: **\[{"url": "/en-url", "localizationId": "10"}, {"url": "/fr-url", "localizationId": "11"}\]**
+
+## FILTERS
+
+### variants
+
+The filter that allows to exclude simple products which are variants for configurable products. Use "no", "false" or "0" value to apply it.
 
 ## SUBRESOURCES
 
@@ -100,6 +116,16 @@ Retrieve records of products that are variants for a specific configurable produ
 
 Retrieve the IDs of products that are variants for a specific configurable product.
 
+### parentProducts
+
+#### get_subresource
+
+Retrieve records of configurable products for which a specific product is a variant.
+
+#### get_relationship
+
+Retrieve the IDs of configurable products for which a specific product is a variant.
+
 ### images
 
 #### get_subresource
@@ -109,3 +135,13 @@ Retrieve records of product images for a specific product.
 #### get_relationship
 
 Retrieve the IDs of product images for a specific product.
+
+### inventoryStatus
+
+#### get_subresource
+
+Retrieve a record of the inventory status for a specific product.
+
+#### get_relationship
+
+Retrieve the ID of the inventory status for a specific product.
