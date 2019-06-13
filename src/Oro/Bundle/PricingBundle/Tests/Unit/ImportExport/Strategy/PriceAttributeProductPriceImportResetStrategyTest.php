@@ -8,13 +8,13 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportResetStrategy;
-use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -79,7 +79,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
             $this->doctrineHelper,
-            $this->createMock(OwnerChecker::class)
+            $this->createMock(RelatedEntityStateHelper::class)
         );
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);

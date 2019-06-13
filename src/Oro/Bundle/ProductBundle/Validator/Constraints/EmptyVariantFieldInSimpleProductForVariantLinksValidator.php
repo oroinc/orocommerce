@@ -2,11 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validate that all required configurable fields are not empty.
+ */
 class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_empty_variant_field_in_simple_product_for_variant_links';
@@ -17,11 +23,17 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
     private $propertyAccessor;
 
     /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
+    /**
      * @param PropertyAccessor $propertyAccessor
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    public function __construct(PropertyAccessor $propertyAccessor, ManagerRegistry $registry)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->registry = $registry;
     }
 
     /**
@@ -40,7 +52,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
             );
         }
 
-        if ($value->isConfigurable() || $value->getParentVariantLinks()->count() === 0) {
+        if ($value->isConfigurable()) {
             return;
         }
 
@@ -54,17 +66,17 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
     private function validateEmptyVariantField(Product $product, Constraint $constraint)
     {
         $errorsData = [];
-        foreach ($product->getParentVariantLinks() as $parentVariantLink) {
-            $parentProduct = $parentVariantLink->getParentProduct();
-            $variantFields = $parentProduct->getVariantFields();
+        [$variantFields, $attributeToSkus] = $this->getPreparedVariantFields($product);
+        if (!$variantFields) {
+            return;
+        }
 
-            foreach ($variantFields as $variantField) {
-                if ($this->propertyAccessor->isReadable($product, $variantField)) {
-                    $productValue = $this->propertyAccessor->getValue($product, $variantField);
+        foreach ($variantFields as $variantField) {
+            if ($this->propertyAccessor->isReadable($product, $variantField)) {
+                $productValue = $this->propertyAccessor->getValue($product, $variantField);
 
-                    if ($productValue === null) {
-                        $errorsData[$variantField][] = $parentProduct->getSku();
-                    }
+                if ($productValue === null) {
+                    $errorsData[$variantField] = $attributeToSkus[$variantField];
                 }
             }
         }
@@ -80,5 +92,62 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
                 );
             }
         }
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function getRequiredAttributesInfo(Product $product): array
+    {
+        $parentVariantLinks = $product->getParentVariantLinks();
+        if ($product->getId()
+            && $parentVariantLinks instanceof AbstractLazyCollection
+            && !$parentVariantLinks->isInitialized()
+        ) {
+            /** @var ProductRepository $repo */
+            $repo = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+
+            return $repo->getRequiredAttributesForSimpleProduct($product);
+        }
+
+        $attributesInfo = [];
+        foreach ($parentVariantLinks as $parentVariantLink) {
+            $parentProduct = $parentVariantLink->getParentProduct();
+
+            $attributesInfo[] = [
+                'id' => $parentProduct->getId(),
+                'sku' => $parentProduct->getSku(),
+                'variantFields' => $parentProduct->getVariantFields()
+            ];
+        }
+
+        return $attributesInfo;
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function getPreparedVariantFields(Product $product): array
+    {
+        $requiredAttributesInfo = $this->getRequiredAttributesInfo($product);
+        $attributeToSkus = [];
+        $variantFields = [];
+        if (!$requiredAttributesInfo) {
+            return [$variantFields, $attributeToSkus];
+        }
+
+        foreach ($requiredAttributesInfo as $item) {
+            foreach ($item['variantFields'] as $variantField) {
+                $attributeToSkus[$variantField][] = $item['sku'];
+            }
+            $variantFields[] = $item['variantFields'];
+        }
+        if (count($variantFields)) {
+            $variantFields = array_unique(array_merge(...$variantFields));
+        }
+
+        return [$variantFields, $attributeToSkus];
     }
 }

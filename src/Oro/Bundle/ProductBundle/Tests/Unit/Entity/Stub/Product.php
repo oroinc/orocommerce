@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -126,6 +127,16 @@ class Product extends BaseProduct
     }
 
     /**
+     * @param int $id
+     * @return Product
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @return AbstractEnumValue
      */
     public function getInventoryStatus()
@@ -246,5 +257,21 @@ class Product extends BaseProduct
     public function setCategory(Category $category)
     {
         $this->category = $category;
+    }
+
+    /**
+     * @param Collection $collection
+     */
+    public function setParentVariantLinks(Collection $collection)
+    {
+        $this->parentVariantLinks = $collection;
+    }
+
+    /**
+     * @param Collection $collection
+     */
+    public function setVariantLinks(Collection $collection)
+    {
+        $this->variantLinks = $collection;
     }
 }
