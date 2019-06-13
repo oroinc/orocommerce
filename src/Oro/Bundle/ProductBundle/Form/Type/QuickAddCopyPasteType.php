@@ -7,6 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Regex;
 
+/**
+ * Form type for rendering textarea with Regex constrain
+ */
 class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'oro_product_quick_add_copy_paste';
@@ -16,8 +19,12 @@ class QuickAddCopyPasteType extends AbstractType
      * The regex for matching lines, separated by space, comma or semicolon
      * that contains: item sku, quantity, unit name
      */
-    const FORMAT_REGEX =
-        '/^(?:\n|[-_a-zA-Z0-9]{1,255}[\t\,\; ]\d{1,234}(?:\.?\d{1,20})?(?:[\t\,\; ][a-zA-Z]{1,255})?(\n|\b))+$/';
+    const VALIDATION_REGEX = '/^(([^\s,;]+[\t,; ]\d{1,32}([.,]\d{1,32})?([\t,; ][^\s,;]+)?)?(\n|$))+$/';
+
+    /**
+     * The regex for extract item sku, quantity, unit name from one line
+     */
+    const ITEM_PARSE_REGEX = '/^([^\s,;]+)(?:[\t,; ](\d{1,32}(?:[.,]\d{1,32})?)(?:[\t,; ]([^\s,;]+))?)?$/';
 
     /**
      * {@inheritdoc}
@@ -30,7 +37,7 @@ class QuickAddCopyPasteType extends AbstractType
             [
                 'constraints' => [
                     new Regex([
-                        'pattern' => self::FORMAT_REGEX,
+                        'pattern' => self::VALIDATION_REGEX,
                         'message' => 'oro.product.frontend.quick_add.invalid_format'
                     ]),
                 ],
@@ -38,6 +45,7 @@ class QuickAddCopyPasteType extends AbstractType
                 'attr' => [
                     'placeholder' => 'oro.product.frontend.quick_add.copy_paste.placeholder',
                     'spellcheck' => 'false',
+                    'data-item-parse-pattern' => self::ITEM_PARSE_REGEX,
                 ],
             ]
         );

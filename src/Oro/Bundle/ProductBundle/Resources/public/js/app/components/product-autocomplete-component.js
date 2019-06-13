@@ -65,6 +65,10 @@ define(function(require) {
         },
 
         onBlur: function(e) {
+            if (this.disposed) {
+                return;
+            }
+
             var val = ProductHelper.trimWhiteSpace(e.target.value);
             var hasChanged = val !== this.previousValue;
             var $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
@@ -87,8 +91,11 @@ define(function(require) {
         },
 
         validateProduct: function(val) {
+            var requestId = _.uniqueId('request');
             var self = this;
             val = val.split(' ')[0];
+
+            mediator.trigger('autocomplete:requestProductBySku', {item: {sku: val}, requestId: requestId});
 
             $.ajax({
                 url: routing.generate(this.options.productBySkuRoute),
@@ -98,7 +105,6 @@ define(function(require) {
                     per_page: 1,
                     query: val
                 },
-                type: 'post',
                 success: function(response) {
                     self.resetProduct();
 
@@ -113,18 +119,25 @@ define(function(require) {
 
                         mediator.trigger('autocomplete:productFound', {
                             item: item,
-                            $el: self.$el
+                            $el: self.$el,
+                            requestId: requestId
                         });
                         self.previousValue = self.product.displayName;
                     } else {
                         mediator.trigger('autocomplete:productNotFound', {
                             item: {sku: val},
-                            $el: self.$el
+                            $el: self.$el,
+                            requestId: requestId
                         });
                     }
                     self.updateProduct();
                 },
                 error: function() {
+                    mediator.trigger('autocomplete:productNotFound', {
+                        item: {sku: val},
+                        $el: self.$el,
+                        requestId: requestId
+                    });
                     self.resetProduct();
                 }
             });

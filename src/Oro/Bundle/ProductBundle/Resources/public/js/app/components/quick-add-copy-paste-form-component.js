@@ -3,15 +3,16 @@ define(function(require) {
 
     var QuickAddCopyPasteFormComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var ProductHelper = require('oroproduct/js/app/product-helper');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
 
+    require('jquery.validate');
+
     QuickAddCopyPasteFormComponent = BaseComponent.extend({
         /**
-         * {@inheritDoc}
+         * @property
          */
         field: 'textarea',
 
@@ -26,16 +27,34 @@ define(function(require) {
         fieldItemsLines: [],
 
         /**
-         * {@inheritDoc}
+         * @property {jQuery.validator}
          */
-        fieldEvent: 'change blur keyup',
-
         validator: null,
+
+        /**
+         * @property {Array.<string>} - contains IDs of request that were launched after form submit
+         */
+        requests: null,
+
+        /**
+         * @property {number} - number items that can't be added to order
+         */
+        errorCount: 0,
+
+        /**
+         * @property {boolean} - can block interface from user interaction during form submit processing
+         */
+        disabled: false,
 
         /**
          * @inheritDoc
          */
         constructor: function QuickAddCopyPasteFormComponent() {
+            this._onSubmit = this._onSubmit.bind(this);
+
+            // Use debounce to give time to apply jquery.validate changing
+            this.onFieldChange = _.debounce(this.onFieldChange.bind(this), 50);
+
             QuickAddCopyPasteFormComponent.__super__.constructor.apply(this, arguments);
         },
 
@@ -45,187 +64,304 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$form = this.options._sourceElement;
-            var $field = this.$form.find(this.field);
-
-            this.$form.on('submit', _.bind(this._onSubmit, this));
-            $field.on(this.fieldEvent, _.bind(this._handleFieldEvent, this));
-
+            this.$submitButton = this.$form.find('button:submit');
+            this.$field = this.$form.find(this.field);
             this.validator = this.$form.validate();
-            delete this.validator.settings.onkeyup; // validate only on change/blur/submit
 
-            mediator.on('quick-add-form-item:item-valid', this.onAutocompleteSuccess, this);
-            mediator.on('quick-add-form-item:unit-invalid', this.onUnitError, this);
+            // Run element validation to make it validated immediately on input (i.e. don't wait for form submit)
+            this.validator.element(this.$field[0]);
+
+            this.$form.on('submit', this._onSubmit);
+            // Listen the same events what used by jquery.validate
+            this.$field.on('keyup focusout', this.onFieldChange);
+
+            var regexParts = this.$field.data('item-parse-pattern').match(/^\/(.*?)\/(g?i?m?y?)$/);
+
+            if (regexParts === null || regexParts.length < 2) {
+                throw new Error('The field must must have a data attribute with valid RegExp string');
+            }
+
+            this.itemParseRegex = new RegExp(regexParts[1], regexParts[2]);
+        },
+
+        /**
+         * Binds listeners of events related to adding item to quick order form
+         */
+        bindRowEvents: function() {
+            mediator.on('autocomplete:requestProductBySku', function(data) {
+                this.registerRequest(data.requestId);
+            }, this);
+            mediator.on('autocomplete:productFound', this.onAutocompleteSuccess, this);
             mediator.on('autocomplete:productNotFound', this.onAutocompleteError, this);
+            mediator.on('quick-add-form-item:item-valid', this.onItemSuccess, this);
+            mediator.on('quick-add-form-item:unit-invalid', this.onUnitError, this);
             mediator.on('quick-add-copy-paste-form:update-product', this.onProductUpdate, this);
         },
 
-        _handleFieldEvent: function(e) {
-            if (e.type === 'keyup') {
-                this._toggleSubmitButton();
-            } else {
-                var val = $(e.target).val();
-                $(e.target).val(ProductHelper.trimAllWhiteSpace(val));
-            }
+        /**
+         * Unbinds listeners of events related to adding item to quick order form
+         */
+        unbindRowEvents: function() {
+            mediator.off('autocomplete:requestProductBySku', null, this);
+            mediator.off('autocomplete:productFound', this.onAutocompleteSuccess, this);
+            mediator.off('autocomplete:productNotFound', this.onAutocompleteError, this);
+            mediator.off('quick-add-form-item:item-valid', this.onItemSuccess, this);
+            mediator.off('quick-add-form-item:unit-invalid', this.onUnitError, this);
+            mediator.off('quick-add-copy-paste-form:update-product', this.onProductUpdate, this);
         },
 
-        _toggleSubmitButton: function() {
-            this.$form.validate();
-            var disabled = !this.$form.valid() || $(this.field, this.$form).val() === '';
-            $('button:submit', this.$form)
-                .toggleClass('btn--primary btn--disabled', disabled)
-                .toggleClass('btn--info', !disabled);
+        onFieldChange: function() {
+            this._toggleSubmitButton(this.disabled || this.$field.hasClass('error'));
+        },
+
+        /**
+         * @param {boolean} disable
+         * @private
+         */
+        _toggleSubmitButton: function(disable) {
+            var disabled = disable || this.isEmptyField();
+
+            this.$submitButton.attr('disabled', disabled);
         },
 
         _onSubmit: function(e) {
             e.preventDefault();
 
-            var form = $(e.target);
-
-            form.validate();
-
-            if (!form.valid()) {
+            if (!this.validator.form()) {
                 return false;
             }
 
-            this._prepareFieldItems(form);
-            mediator.trigger('quick-add-copy-paste-form:submit', this.parseInput($(this.field, form).val()));
-        },
+            this.disableForm();
+            this.requests = [];
+            this.errorCount = 0;
+            this._prepareFieldItems();
 
-        _prepareFieldItems: function(form) {
-            this.fieldItemsLines = _.map($(this.field, form).val().trim().split('\n'), function(itemLine) {
-                return {processed: false, line: itemLine};
-            });
-        },
-
-        parseInput: function(inputValue) {
-            this.parsedItems = [];
-
-            _.each(inputValue.split('\n'), function(valueRow, index) {
-                var values = valueRow.split(/[;, \t]+/);
-                var product = {
-                    sku: values[0] ? values[0].trim().toUpperCase() : undefined,
-                    quantity: values[1] ? parseFloat(values[1].trim()) : undefined,
-                    unit: values[2] ? values[2].trim() : undefined,
-                    index: index
-                };
-
-                var skuUnitMatcher = _.matcher({sku: product.sku, unit: product.unit});
-                var existingProductIndex = _.findIndex(this.parsedItems, skuUnitMatcher);
-
-                if (existingProductIndex === -1) {
-                    this.addParsedItem(product);
-                    return;
-                }
-
-                var existingProduct = _.find(this.parsedItems, skuUnitMatcher);
-                this.updateParsedItem(existingProduct, existingProductIndex, product);
-            }, this);
-
-            return this.parsedItems;
-        },
-
-        addParsedItem: function(data) {
-            this.parsedItems.push({
-                sku: data.sku,
-                quantity: data.quantity,
-                unit: data.unit,
-                index: [data.index]
-            });
-        },
-
-        updateParsedItem: function(existingProduct, existingProductIndex, data) {
-            existingProduct.index.push(data.index);
-
-            this.parsedItems[existingProductIndex] = {
-                sku: data.sku,
-                quantity: existingProduct.quantity + data.quantity,
-                unit: data.unit,
-                index: existingProduct.index
-            };
-        },
-
-        _rowMatcher: function(data) {
-            var dataItem = {
-                sku: data.item.sku || '',
-                unit: data.item.unit || '',
-                unit_deferred: data.item.unit_deferred || ''
-            };
-
-            return function(parsedItem) {
-                var parsedSku = parsedItem.sku.toUpperCase();
-                var parsedUnit = (parsedItem.unit || '').toLowerCase();
-
-                if (parsedUnit) {
-                    return parsedSku === dataItem.sku.toUpperCase() && (
-                        parsedUnit === dataItem.unit.toLowerCase() ||
-                        parsedUnit === dataItem.unit_deferred.toLowerCase()
-                    );
-                } else {
-                    return parsedSku === dataItem.sku.toUpperCase();
-                }
-            };
+            mediator.trigger('quick-add-copy-paste-form:submit', this.parsedItems);
         },
 
         /**
-         * @param {object} data
+         * Blocks form from user interaction
          */
-        onAutocompleteSuccess: function(data) {
-            this._updateField(data);
+        disableForm: function() {
+            this.disabled = true;
+            this.$field.attr('disabled', true);
+            this.bindRowEvents();
+            this._toggleSubmitButton(true);
+        },
+
+        /**
+         * Enable form to user interaction
+         */
+        enableForm: function() {
+            this.disabled = false;
+            this.$field.removeAttr('disabled');
+            this.unbindRowEvents();
+            this._toggleSubmitButton(false);
+        },
+
+        /**
+         * Parses text in field, creates an array of items, and merges items that have the same sku and unit
+         *
+         * @private
+         */
+        _prepareFieldItems: function() {
+            this.parsedItems = [];
+            this.fieldItemsLines = _.compact(this.$field.val().split('\n'));
+
+            _.each(this.fieldItemsLines, function(line) {
+                var parts = line.match(this.itemParseRegex);
+
+                if (!parts || parts.length < 3) {
+                    // row must match the pattern and contains SKU and quantity
+
+                    return;
+                }
+
+                var product = {
+                    raw: [parts[0]],
+                    sku: parts[1].toUpperCase(),
+                    quantity: parseFloat(parts[2]),
+                    unit: parts[3] ? parts[3].toLowerCase() : void 0
+                };
+
+                var existItem = _.findWhere(this.parsedItems, {sku: product.sku, unit: product.unit});
+
+                if (existItem) {
+                    existItem.raw.concat(product.raw);
+                    existItem.quantity += product.quantity;
+                } else {
+                    this.parsedItems.push(product);
+                }
+            }, this);
+        },
+
+        /**
+         * Generates function to compare item with predefined object
+         *
+         * @param {Object} productInfo - object that items will be compared with
+         * @return {function}
+         * @private
+         */
+        _rowMatcher: function(productInfo) {
+            var query = {
+                sku: productInfo.sku ? productInfo.sku.toUpperCase() : '',
+                units: [
+                    productInfo.unit ? productInfo.unit.toLowerCase() : '',
+                    productInfo.unit_deferred ? productInfo.unit_deferred.toLowerCase() : ''
+                ]
+            };
+
+            function matcher(query, parsedItem) {
+                if (parsedItem.sku !== query.sku) {
+                    return false;
+                } else if (parsedItem.unit === void 0) {
+                    return true;
+                } else {
+                    return query.units.indexOf(parsedItem.unit) !== -1;
+                }
+            }
+
+            return _.partial(matcher, query);
         },
 
         /**
          * @param {object} data
          */
         onProductUpdate: function(data) {
-            this._updateField(data);
+            this._updateField(data.item);
+
+            if (!this.hasUnresolvedItems()) {
+                this.enableForm();
+            }
         },
 
-        _updateField: function(data) {
-            var form = this.$form;
-            var newInputValueLines = [];
-            var itemIndex = _.findIndex(this.parsedItems, this._rowMatcher(data));
+        /**
+         * @param {object} item
+         */
+        _updateField: function(item) {
+            var index = _.findIndex(this.parsedItems, this._rowMatcher(item));
 
-            if (itemIndex === -1) {
+            if (index === -1) {
                 return;
             }
 
-            _.each(this.fieldItemsLines, function(itemLine, i) {
-                if (itemLine.processed === true) {
-                    return;
-                }
-
-                if (this.parsedItems[itemIndex].index.indexOf(i) !== -1) {
-                    this.fieldItemsLines[i].processed = true;
-                    return;
-                }
-
-                newInputValueLines.push(itemLine.line);
-            }, this);
-
-            this.parsedItems.splice(itemIndex, 1);
-            $(this.field, form).val(newInputValueLines.join('\n')).trigger('keyup');
+            this.fieldItemsLines = _.difference(this.fieldItemsLines, this.parsedItems[index].raw);
+            this.$field.val(this.fieldItemsLines.join('\n'));
+            this.parsedItems.splice(index, 1);
         },
 
         /**
          * @param {object} data
-         * @param {boolean} forceRemove
          */
-        onAutocompleteError: function(data) {
-            this._showErrorMessage();
+        onAutocompleteSuccess: function(data) {
+            if (!this.isOwnRequest(data.requestId)) {
+                return;
+            }
+
+            this.unregisterRequest(data.requestId);
+
+            if (!this.hasUnresolvedItems()) {
+                this.enableForm();
+            }
         },
 
+        /**
+         * @param {object} data
+         */
+        onAutocompleteError: function(data) {
+            if (!this.isOwnRequest(data.requestId)) {
+                return;
+            }
+
+            data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
+            $('.add-list-item').data('row-add-only-one', true).click();
+            this._showErrorMessage();
+
+            this.unregisterRequest(data.requestId);
+            this.errorCount++;
+
+            if (!this.hasUnresolvedItems()) {
+                this.enableForm();
+            }
+        },
+
+        /**
+         * @param {object} data
+         */
+        onItemSuccess: function(data) {
+            this._updateField(data.item);
+
+            if (!this.hasUnresolvedItems()) {
+                this.enableForm();
+            }
+        },
+
+        /**
+         * @param {object} data
+         */
         onUnitError: function(data) {
-            this.onAutocompleteError(data);
+            if (_.some(this.parsedItems, this._rowMatcher(data.item))) {
+                data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
+                $('.add-list-item').data('row-add-only-one', true).click();
+                this._showErrorMessage();
+                this.errorCount++;
+
+                if (!this.hasUnresolvedItems()) {
+                    this.enableForm();
+                }
+            }
         },
 
         _showErrorMessage: function() {
-            var _errorField = $(this.field, this.$form).attr('name');
-            var _customError = [];
-            _customError[_errorField] = __('oro.product.frontend.quick_add.copy_paste.error');
+            var _errorField = this.$field.attr('name');
+            var _customError = {};
 
-            if ($(this.field, this.$form).val().length > 0) {
-                this.validator.showErrors(_customError);
+            _customError[_errorField] = {errors: [__('oro.product.frontend.quick_add.copy_paste.error')]};
+
+            if (!this.isEmptyField()) {
+                this.validator.showBackendErrors(_customError);
             }
+        },
+
+        isEmptyField: function() {
+            return this.$field.val().length === 0;
+        },
+
+        /**
+         * Chacks if request ID present in internal list
+         *
+         * @param {string} requestId
+         * @return {boolean}
+         */
+        isOwnRequest: function(requestId) {
+            return this.requests.indexOf(requestId) !== -1;
+        },
+
+        /**
+         * Adds request ID to internal list to be aware in listeners on request complete if that is own one
+         *
+         * @param {string} requestId
+         */
+        registerRequest: function(requestId) {
+            this.requests.push(requestId);
+        },
+
+        /**
+         * Removes request ID from internal list
+         *
+         * @param {string} requestId
+         */
+        unregisterRequest: function(requestId) {
+            this.requests = _.without(this.requests, requestId);
+        },
+
+        /**
+         * Checks if component completely processed all items
+         *
+         * @return {boolean}
+         */
+        hasUnresolvedItems: function() {
+            return this.parsedItems.length > this.errorCount || !_.isEmpty(this.requests);
         },
 
         dispose: function() {
@@ -233,7 +369,15 @@ define(function(require) {
                 return;
             }
 
+            this.$form.off('submit', this._onSubmit);
+            this.$field.off('keyup focusout', this.onFieldChange);
+            this.unbindRowEvents();
+
             delete this.validator;
+            delete this.requests;
+            delete this.fieldItemsLines;
+            delete this.parsedItems;
+
             QuickAddCopyPasteFormComponent.__super__.dispose.call(this);
         }
     });
