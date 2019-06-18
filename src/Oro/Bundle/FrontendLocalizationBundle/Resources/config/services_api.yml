@@ -1,0 +1,15 @@
+services:
+    oro_frontend_localization.api.update_localization_query:
+        class: Oro\Bundle\FrontendLocalizationBundle\Api\Processor\UpdateLocalizationQuery
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro.api.processor, action: get, group: build_query, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization, priority: -150 }
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization, priority: -150 }
+
+    oro_frontend_localization.api.compute_localization_default_field:
+        class: Oro\Bundle\FrontendLocalizationBundle\Api\Processor\ComputeLocalizationDefaultField
+        arguments:
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization }

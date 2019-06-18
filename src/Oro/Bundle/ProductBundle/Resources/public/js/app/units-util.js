@@ -37,7 +37,7 @@ define(function(require) {
             $el.html(options.join(''));
 
             var value = model.get('unit_deferred') || oldValue;
-            if (!value || !$el.find('option[value="' + value + '"]').length) {
+            if (!value || !$el.find('option[value="' + _.escape(value) + '"]').length) {
                 value = $el.val();
             }
 
@@ -49,7 +49,7 @@ define(function(require) {
         },
 
         generateSelectOption: function(value, label) {
-            return '<option value="' + value + '">' + label + '</option>';
+            return '<option value="' + _.escape(value) + '">' + _.escape(label) + '</option>';
         }
     };
 

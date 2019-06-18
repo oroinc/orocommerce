@@ -722,7 +722,7 @@ the creation of a new entity of that type
           }
 
 **Important** when wanting to update the current entity by modifying a relation, which is actually
-a'to-many' relationship with another entity, you must specify all of the entities from that list.
+a `to-many` relationship with another entity, you must specify all of the entities from that list.
 If you don't do that, the system will set on that relation the input that has been received. So for
 example if I have the "names" relation which holds a collection of "localizedfallbackvalues" type,
 with 8 entities, and I specify only 2 of these entities in the input, then in the database I will

@@ -24,6 +24,7 @@ class OroSaleExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
+        $loader->load('controllers.yml');
 
         $this->registerShippingBundleDependencies($loader, $container);
 

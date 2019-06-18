@@ -70,7 +70,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-group-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.customer-group-category-visibility-grid, method: onDatagridBuildAfter }
 
-
     oro_visibility.filter.visibility_type_choice:
         class: 'Oro\Bundle\VisibilityBundle\Filter\VisibilityChoiceFilter'
         public: false
@@ -110,6 +109,13 @@ services:
             - "@translator"
             - "@doctrine"
 
+    oro_visibility.visibility.provider.category_visibility_provider:
+        class: 'Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider'
+        public: false
+        arguments:
+            - "@oro_visibility.visibility.resolver.category_visibility_resolver"
+            - "@oro_customer.provider.customer_user_relations_provider"
+
     oro_visibility.visibility.resolver.category_visibility_resolver:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver'
         arguments:
@@ -120,8 +126,7 @@ services:
     oro_visibility.event_listener.category_tree_handler_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener'
         arguments:
-            - "@oro_visibility.visibility.resolver.category_visibility_resolver"
-            - "@oro_customer.provider.customer_user_relations_provider"
+            - '@oro_visibility.visibility.provider.category_visibility_provider'
         tags:
             - {name: kernel.event_listener, event: oro_catalog.category.tree.create_after, method: onCreateAfter }
 

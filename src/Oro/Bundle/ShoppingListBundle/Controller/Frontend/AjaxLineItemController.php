@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -184,7 +185,7 @@ class AjaxLineItemController extends AbstractLineItemController
         $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
         $requestData = array_merge($request->query->all(), $request->request->all());
 
-        $response = $this->get('oro_datagrid.mass_action.dispatcher')->dispatch(
+        $response = $this->get(MassActionDispatcher::class)->dispatch(
             $gridName,
             $actionName,
             $parameters,
@@ -223,7 +224,7 @@ class AjaxLineItemController extends AbstractLineItemController
             $requestData = array_merge($request->query->all(), $request->request->all());
 
             /** @var MassActionResponseInterface $result */
-            $result = $this->get('oro_datagrid.mass_action.dispatcher')
+            $result = $this->get(MassActionDispatcher::class)
                 ->dispatch(
                     $gridName,
                     $actionName,

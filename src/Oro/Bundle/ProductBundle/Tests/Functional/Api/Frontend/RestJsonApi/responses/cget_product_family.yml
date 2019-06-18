@@ -1,0 +1,22 @@
+data:
+    -
+        type: productfamilies
+        id: '<toString(@default_product_family->id)>'
+        attributes:
+            createdAt: '@default_product_family->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@default_product_family->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            name: Default
+    -
+        type: productfamilies
+        id: '<toString(@family1->id)>'
+        attributes:
+            createdAt: '@family1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@family1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            name: 'Product Family 1'
+    -
+        type: productfamilies
+        id: '<toString(@family2->id)>'
+        attributes:
+            createdAt: '@family2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@family2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            name: 'Product Family 2'

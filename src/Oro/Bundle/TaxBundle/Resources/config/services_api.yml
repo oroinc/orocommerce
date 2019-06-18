@@ -17,6 +17,7 @@ services:
         class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderTaxes
         arguments:
             - '@oro_tax.api.order_taxes_provider'
+            - '@oro_api.value_transformer'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
 
@@ -24,5 +25,6 @@ services:
         class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderLineItemTaxes
         arguments:
             - '@oro_tax.api.order_line_item_taxes_provider'
+            - '@oro_api.value_transformer'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order_line_item.class%' }

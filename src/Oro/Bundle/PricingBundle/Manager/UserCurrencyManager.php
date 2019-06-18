@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
+use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -33,25 +34,31 @@ class UserCurrencyManager
     /** @var WebsiteManager */
     protected $websiteManager;
 
+    /** @var CurrentCurrencyProviderInterface */
+    protected $currentCurrencyProvider;
+
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
      * @param ManagerRegistry $doctrine
      * @param CurrencyProviderInterface $currencyProvider
      * @param WebsiteManager $websiteManager
+     * @param CurrentCurrencyProviderInterface $currentCurrencyProvider
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
         ManagerRegistry $doctrine,
         CurrencyProviderInterface $currencyProvider,
-        WebsiteManager $websiteManager
+        WebsiteManager $websiteManager,
+        CurrentCurrencyProviderInterface $currentCurrencyProvider
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
         $this->currencyProvider = $currencyProvider;
         $this->websiteManager = $websiteManager;
+        $this->currentCurrencyProvider = $currentCurrencyProvider;
     }
 
     /**
@@ -60,9 +67,12 @@ class UserCurrencyManager
      */
     public function getUserCurrency(Website $website = null)
     {
-        $currency = null;
-        $website = $this->getWebsite($website);
+        $currency = $this->currentCurrencyProvider->getCurrentCurrency();
+        if ($currency) {
+            return $this->sanitizeCurrency($currency);
+        }
 
+        $website = $this->getWebsite($website);
         if ($website) {
             $user = $this->getLoggedUser();
             if ($user instanceof CustomerUser) {
@@ -78,11 +88,7 @@ class UserCurrencyManager
             }
         }
 
-        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
-            $currency = $this->getDefaultCurrency();
-        }
-
-        return $currency;
+        return $this->sanitizeCurrency($currency);
     }
 
     /**
@@ -126,6 +132,20 @@ class UserCurrencyManager
     public function getDefaultCurrency()
     {
         return $this->currencyProvider->getDefaultCurrency();
+    }
+
+    /**
+     * @param string|null $currency
+     *
+     * @return string|null
+     */
+    protected function sanitizeCurrency($currency)
+    {
+        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
+            $currency = $this->getDefaultCurrency();
+        }
+
+        return $currency;
     }
 
     /**

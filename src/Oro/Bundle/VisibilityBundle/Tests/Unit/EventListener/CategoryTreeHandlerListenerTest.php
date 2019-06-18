@@ -4,14 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener;
-use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
+use Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -21,23 +18,14 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CategoryVisibilityResolverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryVisibilityResolver;
+    /** @var CategoryVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $categoryVisibilityProvider;
 
-    /**
-     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $customerUserRelationsProvider;
-
-    /**
-     * @var CategoryTreeHandlerListener
-     */
-    protected $listener;
+    /** @var CategoryTreeHandlerListener */
+    private $listener;
 
     /** @var array */
-    protected static $categories = [
+    private static $categories = [
         ['id' => 1, 'parent' => null],
         ['id' => 2, 'parent' => 1],
         ['id' => 3, 'parent' => 1],
@@ -57,22 +45,9 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->categoryVisibilityResolver = $this->createMock(CategoryVisibilityResolverInterface::class);
+        $this->categoryVisibilityProvider = $this->createMock(CategoryVisibilityProvider::class);
 
-        $this->customerUserRelationsProvider = $this
-            ->getMockBuilder(CustomerUserRelationsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->listener = new CategoryTreeHandlerListener(
-            $this->categoryVisibilityResolver,
-            $this->customerUserRelationsProvider
-        );
-    }
-
-    protected function tearDown()
-    {
-        unset($this->categoryVisibilityResolver, $this->listener);
+        $this->listener = new CategoryTreeHandlerListener($this->categoryVisibilityProvider);
     }
 
     /**
@@ -82,53 +57,25 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $expected
      * @param array $hiddenCategoryIds
      * @param UserInterface|null $user
-     * @param Customer $customer
-     * @param CustomerGroup|null $customerGroup
      */
     public function testOnCreateAfter(
         array $categories,
         array $expected,
         array $hiddenCategoryIds,
-        UserInterface $user = null,
-        Customer $customer = null,
-        CustomerGroup $customerGroup = null
+        UserInterface $user = null
     ) {
         $categories = $this->prepareCategories($categories);
         $expected = $this->prepareCategories($expected);
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
 
-        if (!$user) {
-            $this->customerUserRelationsProvider->expects($this->once())
-                ->method('getCustomerGroup')
-                ->with($user)
-                ->willReturn($customerGroup);
-        }
-
         if ($user instanceof User) {
-            $this->categoryVisibilityResolver->expects($this->never())
-                ->method('isCategoryVisibleForCustomer');
-            $this->categoryVisibilityResolver->expects($this->never())
-                ->method('isCategoryVisibleForCustomerGroup');
-            $this->categoryVisibilityResolver->expects($this->never())
+            $this->categoryVisibilityProvider->expects($this->never())
                 ->method('getHiddenCategoryIds');
-        } elseif ($user instanceof CustomerUser && $customer) {
-            $this->customerUserRelationsProvider->expects($this->once())
-                ->method('getCustomer')
-                ->with($user)
-                ->willReturn($customer);
-            $this->categoryVisibilityResolver->expects($this->once())
-                ->method('getHiddenCategoryIdsForCustomer')
-                ->with($customer)
-                ->willReturn($hiddenCategoryIds);
-        } elseif (!$user && $customerGroup) {
-            $this->categoryVisibilityResolver->expects($this->once())
-                ->method('getHiddenCategoryIdsForCustomerGroup')
-                ->with($customerGroup)
-                ->willReturn($hiddenCategoryIds);
         } else {
-            $this->categoryVisibilityResolver->expects($this->once())
+            $this->categoryVisibilityProvider->expects($this->once())
                 ->method('getHiddenCategoryIds')
+                ->with($this->identicalTo($user))
                 ->willReturn($hiddenCategoryIds);
         }
 
@@ -160,20 +107,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
                     ['id' => 2, 'parent' => 1],
                 ],
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
-                'user' => null,
-                'customer' => null,
-                'customerGroup' => new CustomerGroup()
-            ],
-            'tree without user and group' => [
-                'categories' => self::$categories,
-                'expected' => [
-                    ['id' => 1, 'parent' => null],
-                    ['id' => 2, 'parent' => 1],
-                ],
-                'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
-                'user' => null,
-                'customer' => null,
-                'customerGroup' => null
+                'user' => null
             ],
             'tree for customer user with invisible ids' => [
                 'categories' => self::$categories,
@@ -188,8 +122,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
                     ['id' => 9, 'parent' => 5],
                 ],
                 'hiddenCategoryIds' => [3],
-                'user' => new CustomerUser(),
-                'customer' => $this->getEntity(Customer::class, ['id' => 42])
+                'user' => new CustomerUser()
             ]
         ];
     }
@@ -198,7 +131,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $categories
      * @return Category[]
      */
-    protected function prepareCategories(array $categories)
+    private function prepareCategories(array $categories)
     {
         /** @var Category[] $categoriesCollection */
         $categoriesCollection = [];
@@ -225,7 +158,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
      * @param Category[] $categoriesCollection
      * @return null
      */
-    protected function getParent($id, $categoriesCollection)
+    private function getParent($id, $categoriesCollection)
     {
         $parent = null;
         foreach ($categoriesCollection as $category) {

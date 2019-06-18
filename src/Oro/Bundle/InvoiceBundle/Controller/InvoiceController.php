@@ -3,26 +3,31 @@
 namespace Oro\Bundle\InvoiceBundle\Controller;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Adds actions to list, view, create and edit invoices
  */
-class InvoiceController extends Controller
+class InvoiceController extends AbstractController
 {
     /**
      * @Route("/", name="oro_invoice_index")
@@ -34,7 +39,7 @@ class InvoiceController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_invoice.entity.invoice.class'),
+            'entity_class' => Invoice::class,
             'gridName' => 'invoices-grid'
         ];
     }
@@ -93,8 +98,8 @@ class InvoiceController extends Controller
     public function createAction()
     {
         $invoice = new Invoice();
-        $invoice->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
-        $invoice->setCurrency($this->get('oro_currency.config.currency')->getDefaultCurrency());
+        $invoice->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
+        $invoice->setCurrency($this->get(CurrencyProviderInterface::class)->getDefaultCurrency());
 
         return $this->update($invoice);
     }
@@ -127,7 +132,7 @@ class InvoiceController extends Controller
     {
         $form = $this->createForm(InvoiceType::class, $invoice);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $invoice,
             $form,
             function (Invoice $invoice) {
@@ -142,7 +147,7 @@ class InvoiceController extends Controller
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.invoice.controller.invoice.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.invoice.controller.invoice.saved.message'),
             null,
             function (Invoice $invoice, FormInterface $form, Request $request) {
                 return [
@@ -179,8 +184,7 @@ class InvoiceController extends Controller
             $scopeCriteria = $this->getPriceScopeCriteria();
             $scopeCriteria->setContext($invoice);
 
-            /** @var ProductPriceProviderInterface $priceProvider */
-            $priceProvider = $this->get('oro_pricing.provider.product_price');
+            $priceProvider = $this->get(ProductPriceProviderInterface::class);
             $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProducts(
                 $scopeCriteria,
                 $products->toArray(),
@@ -215,8 +219,7 @@ class InvoiceController extends Controller
         );
 
         if ($productsPriceCriteria) {
-            /** @var ProductPriceProviderInterface $priceProvider */
-            $priceProvider = $this->get('oro_pricing.provider.product_price');
+            $priceProvider = $this->get(ProductPriceProviderInterface::class);
             $matchedPrices = $priceProvider->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
                 $this->getPriceScopeCriteria()
@@ -241,7 +244,7 @@ class InvoiceController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return $this->get(TotalProcessorProvider::class);
     }
 
     /**
@@ -249,6 +252,25 @@ class InvoiceController extends Controller
      */
     protected function getPriceScopeCriteria(): ProductPriceScopeCriteriaInterface
     {
-        return  $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria();
+        return  $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandler::class,
+                CurrencyProviderInterface::class,
+                TotalProcessorProvider::class,
+                ProductPriceScopeCriteriaRequestHandler::class,
+                WebsiteManager::class,
+                ProductPriceProviderInterface::class
+            ]
+        );
     }
 }

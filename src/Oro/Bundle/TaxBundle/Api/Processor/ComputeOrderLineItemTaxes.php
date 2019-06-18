@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Api\Processor;
 
-use Brick\Math\BigDecimal;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Request\DataType;
+use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\TaxBundle\Api\OrderLineItemTaxesProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Oro\DBAL\Types\MoneyType;
 
 /**
  * Computes values for the following fields for OrderLineItem entity:
@@ -34,12 +34,19 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
     /** @var OrderLineItemTaxesProvider */
     private $lineItemTaxesProvider;
 
+    /** @var ValueTransformer */
+    private $valueTransformer;
+
     /**
      * @param OrderLineItemTaxesProvider $lineItemTaxesProvider
+     * @param ValueTransformer           $valueTransformer
      */
-    public function __construct(OrderLineItemTaxesProvider $lineItemTaxesProvider)
-    {
+    public function __construct(
+        OrderLineItemTaxesProvider $lineItemTaxesProvider,
+        ValueTransformer $valueTransformer
+    ) {
         $this->lineItemTaxesProvider = $lineItemTaxesProvider;
+        $this->valueTransformer = $valueTransformer;
     }
 
     /**
@@ -78,6 +85,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
     ): array {
         $lineItemIds = $context->getIdentifierValues($data, $lineItemIdFieldName);
         $allTaxes = $this->lineItemTaxesProvider->getTaxes($context, $lineItemIds);
+        $normalizationContext = $context->getNormalizationContext();
         foreach ($data as $key => $item) {
             $lineItemId = $item[$lineItemIdFieldName];
             $lineItemTaxes = [];
@@ -86,7 +94,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
             }
             foreach (self::FIELD_NAMES as $fieldName) {
                 if ($context->isFieldRequested($fieldName, $item)) {
-                    $data[$key][$fieldName] = $this->getFieldValue($lineItemTaxes, $fieldName);
+                    $data[$key][$fieldName] = $this->getFieldValue($lineItemTaxes, $fieldName, $normalizationContext);
                 }
             }
         }
@@ -97,30 +105,21 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
     /**
      * @param array  $lineItemTaxes
      * @param string $fieldName
+     * @param array  $normalizationContext
      *
      * @return mixed
      */
-    private function getFieldValue(array $lineItemTaxes, string $fieldName)
+    private function getFieldValue(array $lineItemTaxes, string $fieldName, array $normalizationContext)
     {
         $result = $lineItemTaxes[$fieldName] ?? null;
         if (OrderLineItemTaxesProvider::TAXES !== $fieldName) {
-            $result = $this->getMoneyValue($result);
+            $result = $this->valueTransformer->transformValue(
+                $result,
+                DataType::MONEY,
+                $normalizationContext
+            );
         }
 
         return $result;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function getMoneyValue($value)
-    {
-        if (null !== $value) {
-            $value = (string)BigDecimal::of($value)->toScale(MoneyType::TYPE_SCALE);
-        }
-
-        return $value;
     }
 }

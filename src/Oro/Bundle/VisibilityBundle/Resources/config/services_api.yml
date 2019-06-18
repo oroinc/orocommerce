@@ -1,0 +1,17 @@
+services:
+    oro_visibility.api.frontend.product_visibility_query_modifier:
+        class: Oro\Bundle\VisibilityBundle\Api\ProductVisibilityQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_visibility.api.frontend.category_visibility_query_modifier:
+        class: Oro\Bundle\VisibilityBundle\Api\CategoryVisibilityQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_visibility.visibility.provider.category_visibility_provider'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }

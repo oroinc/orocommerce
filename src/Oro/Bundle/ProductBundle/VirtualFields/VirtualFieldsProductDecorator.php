@@ -88,8 +88,10 @@ class VirtualFieldsProductDecorator
      */
     public function __get($name)
     {
+        $cacheKey = sprintf('%s_%s', $this->product->getId(), $name);
+
         //Check contains before fetch considering bool value can be returned
-        if (!$this->cacheProvider->contains($name)) {
+        if (!$this->cacheProvider->contains($cacheKey)) {
             if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
                 $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
             } else {
@@ -102,9 +104,9 @@ class VirtualFieldsProductDecorator
 
                 $propertyValue = $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
             }
-            $this->cacheProvider->save($name, $propertyValue);
+            $this->cacheProvider->save($cacheKey, $propertyValue);
         } else {
-            $propertyValue = $this->cacheProvider->fetch($name);
+            $propertyValue = $this->cacheProvider->fetch($cacheKey);
         }
 
         return $propertyValue;

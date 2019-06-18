@@ -1,0 +1,24 @@
+dependencies:
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    family1_name:
+        string: 'Product Family 1'
+    family2_name:
+        string: 'Product Family 2'
+    not_product_family_name:
+        string: 'Not Product Family'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    family1:
+        code: 'family1'
+        addLabel: ['@family1_name']
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+    family2:
+        code: 'family2'
+        addLabel: ['@family2_name']
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+    not_product_family:
+        code: 'not_product_family'
+        addLabel: ['@not_product_family_name']
+        entityClass: 'Another'

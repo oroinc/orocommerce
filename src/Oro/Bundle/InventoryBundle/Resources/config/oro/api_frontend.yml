@@ -1,0 +1,23 @@
+api:
+    entities:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroInventoryBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                lowInventory:
+                    data_type: boolean
+                    property_path: _
+                    #depends_on: [primaryUnitPrecision, primaryUnitPrecision.unit, highlightLowInventory, lowInventoryThreshold]
+                    # should be uncommented but now we cannot
+                    # do this because of a bug in EntitySerializer. Should be fixed in BAP-10066
+                upcoming:
+                    data_type: boolean
+                    property_path: _
+                    depends_on: [availability_date] #should be [isUpcoming, availability_date] but now we cannot
+                    # do this because of a bug in EntitySerializer. Should be fixed in BAP-10066
+                availabilityDate:
+                    data_type: datetime
+                    property_path: _
+                    depends_on: [availability_date] #should be [isUpcoming, availability_date] but now we cannot
+                    # do this because of a bug in EntitySerializer. Should be fixed in BAP-10066
+                availability_date:
+                    exclude: true

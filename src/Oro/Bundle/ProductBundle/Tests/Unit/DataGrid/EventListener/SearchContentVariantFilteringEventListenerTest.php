@@ -64,7 +64,8 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
                 SearchContentVariantFilteringEventListener::CONTENT_VARIANT_ID_CONFIG_PATH
             )
         );
-        $this->assertTrue(
+        $this->assertEquals(
+            1,
             $configuration->offsetGetByPath(
                 SearchContentVariantFilteringEventListener::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH
             )
@@ -91,7 +92,8 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
                 SearchContentVariantFilteringEventListener::CONTENT_VARIANT_ID_CONFIG_PATH
             )
         );
-        $this->assertTrue(
+        $this->assertEquals(
+            1,
             $configuration->offsetGetByPath(
                 SearchContentVariantFilteringEventListener::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH
             )

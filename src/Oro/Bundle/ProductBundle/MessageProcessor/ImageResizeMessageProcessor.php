@@ -3,9 +3,7 @@
 namespace Oro\Bundle\ProductBundle\MessageProcessor;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
-use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
+use Oro\Bundle\AttachmentBundle\Manager\ImageResizeManagerInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
@@ -31,39 +29,23 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     protected $imageDimensionsProvider;
 
     /**
-     * @var ImageResizer
+     * @var ImageResizeManagerInterface
      */
-    protected $imageResizer;
-
-    /**
-     * @var MediaCacheManager
-     */
-    private $mediaCacheManager;
-
-    /**
-     * @var AttachmentManager
-     */
-    private $attachmentManager;
+    private $imageResizeManager;
 
     /**
      * @param EntityRepository $imageRepository
      * @param ProductImagesDimensionsProvider $imageDimensionsProvider
-     * @param ImageResizer $imageResizer
-     * @param MediaCacheManager $mediaCacheManager
-     * @param AttachmentManager $attachmentManager
+     * @param ImageResizeManagerInterface $imageResizeManager
      */
     public function __construct(
         EntityRepository $imageRepository,
         ProductImagesDimensionsProvider $imageDimensionsProvider,
-        ImageResizer $imageResizer,
-        MediaCacheManager $mediaCacheManager,
-        AttachmentManager $attachmentManager
+        ImageResizeManagerInterface $imageResizeManager
     ) {
         $this->imageRepository = $imageRepository;
         $this->imageDimensionsProvider = $imageDimensionsProvider;
-        $this->imageResizer = $imageResizer;
-        $this->mediaCacheManager = $mediaCacheManager;
-        $this->attachmentManager = $attachmentManager;
+        $this->imageResizeManager = $imageResizeManager;
     }
 
     /**
@@ -90,17 +72,7 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
         }
 
         foreach ($this->imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
-            $image = $productImage->getImage();
-            $filterName = $dimension->getName();
-            $imagePath = $this->attachmentManager->getFilteredImageUrl($image, $filterName);
-
-            if (!$data['force'] && $this->mediaCacheManager->exists($imagePath)) {
-                continue;
-            }
-
-            if ($filteredImage = $this->imageResizer->resizeImage($image, $filterName)) {
-                $this->mediaCacheManager->store($filteredImage->getContent(), $imagePath);
-            }
+            $this->imageResizeManager->applyFilter($productImage->getImage(), $dimension->getName(), $data['force']);
         }
 
         return self::ACK;

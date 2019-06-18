@@ -18,7 +18,7 @@ oro:
             label: SKU
             placeholder: "Enter Product Name or Item Number"
             not_found: Item Number Cannot Be Found
-            description: The code of the product
+            description: The code of the product.
         back_order:
             label:        Backorder
             description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
@@ -26,7 +26,7 @@ oro:
         quantity.placeholder: "Qty #"
         variant_fields:
             label: Configurable Attributes
-            description: Configurable Attributes
+            description: The names of attributes that are used to choose variants of a configurable product.
             yes.label: Yes
             no.label: No
         unit.label: Unit
@@ -34,10 +34,10 @@ oro:
         has_variants.label: Has Variants
         inventory_status:
             label: Inventory Status
-            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
+            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
         type:
             label: Type
-            description: Defines the type of product, "simple" / "configurable"
+            description: Defines the type of product, "simple" / "configurable".
             simple: Simple
             configurable: Configurable
             please_select_option: Please select option
@@ -77,12 +77,12 @@ oro:
         new_arrivals.label: New Arrivals
         featured:
             label: Is Featured
-            description: Specifies if product is featured or not
+            description: Specifies if the product is featured or not.
             yes: Yes
             no: No
         new_arrival:
             label: New Arrival
-            description: Specifies if product is a new arrival
+            description: Specifies if the product is a new arrival.
             yes: Yes
             no: No
         time_period.label: Time Period
@@ -128,7 +128,7 @@ oro:
                     add_to_excluded: Manually remove products from All Added values
         attribute_family:
             label: Product Family
-            description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
+            description: The product attribute family, which defines attributes that can be used by products of a similar type.
             plural_label: Product Families
 
         product_attributes:

@@ -17,6 +17,7 @@ class OroFrontendLocalizationExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('block_types.yml');
         $loader->load('services.yml');
+        $loader->load('services_api.yml');
         $loader->load('layout.yml');
     }
 }

@@ -209,3 +209,17 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleField'
         tags:
             - { name: oro.api.processor, action: update, priority: 0, group: save_data, class: '%oro_pricing.entity.product_price.class%' }
+
+    oro_pricing.api.compute_product_prices:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductPrices
+        arguments:
+            - '@oro_pricing.storage.prices'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_pricing.user_currency_manager'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_product.entity.product.class%' }

@@ -32,22 +32,22 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
             - Choice: { callback: getTypes }
         names:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         shortDescriptions:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         descriptions:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         inventory_status:
             - NotBlank: ~
         variantLinks:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         images:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
         attributeFamily:
             - NotBlank: ~
         slugPrototypes:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         pageTemplate:
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate:
                 route: 'oro_product_frontend_product_view'

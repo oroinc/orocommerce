@@ -1,0 +1,39 @@
+api:
+    entities:
+        Oro\Bundle\LocaleBundle\Entity\Localization:
+            documentation_resource: '@OroFrontendLocalizationBundle/Resources/doc/api_frontend/localization.md'
+            disable_meta_properties: true
+            disable_fieldset: true
+            fields:
+                createdAt:
+                    exclude: true
+                updatedAt:
+                    exclude: true
+                parentLocalization:
+                    exclude: true
+                childLocalizations:
+                    exclude: true
+                language:
+                    exclude: true
+                name:
+                    exclude: true
+                title:
+                    data_type: localizedFallbackValue:titles
+                languageCode:
+                    data_type: string
+                    property_path: language.code
+                default:
+                    data_type: boolean
+                    property_path: _
+            filters:
+                fields:
+                    id:
+                        exclude: true
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false

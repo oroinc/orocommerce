@@ -79,6 +79,13 @@ services:
             - '@doctrine'
             - '@oro_currency.config.currency'
             - '@oro_website.manager'
+            - '@oro_pricing.provider.current_currency'
+
+    oro_pricing.provider.current_currency:
+        class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
+        public: false
+        arguments:
+            - !tagged oro_pricing.current_currency_provider
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
@@ -97,6 +104,9 @@ services:
         arguments:
             - '@oro_pricing.storage.prices'
             - '@oro_pricing.user_currency_manager'
+
+    Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
+        alias: 'oro_pricing.provider.product_price'
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
@@ -423,6 +433,9 @@ services:
             - '@security.authorization_checker'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
 
+    Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler:
+        alias: 'oro_pricing.model.product_price_scope_criteria_request_handler'
+
     oro_pricing.model.price_list_tree_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
         arguments:
@@ -717,6 +730,9 @@ services:
             - '@oro_entity.doctrine_helper'
             - '%oro_product.entity.product.class%'
             - '%oro_product.entity.product_unit.class%'
+
+    Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider:
+        alias: 'oro_pricing.provider.matching_price'
 
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
@@ -1117,6 +1133,9 @@ services:
             - [setConfigProvider, ['@oro_entity_config.provider.sharding']]
             - [setEnableSharding, ['%enable_price_sharding%']]
 
+    Oro\Bundle\PricingBundle\Sharding\ShardManager:
+        alias: 'oro_pricing.shard_manager'
+
     oro_pricing.entity_listener.price_list_sharding:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
         arguments:
@@ -1162,6 +1181,9 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postFlush }
 
+    Oro\Bundle\PricingBundle\Manager\PriceManager:
+        alias: 'oro_pricing.manager.price_manager'
+
     oro_pricing.filter.price_list_filter:
         class: Oro\Bundle\PricingBundle\Filter\PriceListFilter
         public: false
@@ -1181,6 +1203,9 @@ services:
         parent: oro_form.form.handler.default
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    Oro\Bundle\PricingBundle\Handler\ProductPriceHandler:
+        alias: 'oro_pricing.handler.product_price_handler'
 
     oro_pricing.providers.price_attribute_prices:
         class: Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider

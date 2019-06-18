@@ -2,18 +2,62 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Prepares and activates combined price list by schedule
  */
-class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements CronCommandInterface
+class CombinedPriceListScheduleCommand extends Command implements CronCommandInterface
 {
-    const NAME = 'oro:cron:price-lists:schedule';
+    /** @var string */
+    protected static $defaultName = 'oro:cron:price-lists:schedule';
+
+    /** @var ManagerRegistry */
+    private $registry;
+
+    /** @var ConfigManager */
+    private $configManager;
+
+    /** @var CombinedPriceListScheduleResolver */
+    private $priceListResolver;
+
+    /** @var CombinedPriceListTriggerHandler */
+    private $triggerHandler;
+
+    /** @var CombinedPriceListsBuilderFacade */
+    private $builder;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ConfigManager $configManager
+     * @param CombinedPriceListScheduleResolver $priceListResolver
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @param CombinedPriceListsBuilderFacade $builder
+     */
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigManager $configManager,
+        CombinedPriceListScheduleResolver $priceListResolver,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        CombinedPriceListsBuilderFacade $builder
+    ) {
+        $this->registry = $registry;
+        $this->configManager = $configManager;
+        $this->priceListResolver = $priceListResolver;
+        $this->triggerHandler = $triggerHandler;
+        $this->builder = $builder;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -21,17 +65,17 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     protected function configure()
     {
         $this
-            ->setName(self::NAME)
             ->setDescription('Prepare and activate combined price list by schedule');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isActive()
     {
-        $container = $this->getContainer();
-        $offsetHours = $container->get('oro_config.manager')
-            ->get('oro_pricing.offset_of_processing_cpl_prices');
+        $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
-        $count = $container->get('doctrine')
+        $count = $this->registry
             ->getManagerForClass(CombinedPriceList::class)
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffsetCount($offsetHours);
@@ -44,30 +88,24 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $container = $this->getContainer();
-        $triggerHandler = $container->get('oro_pricing.model.combined_price_list_trigger_handler');
-        $triggerHandler->startCollect();
-
-        $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+        $this->triggerHandler->startCollect();
+        $this->priceListResolver->updateRelations();
 
         $this->combinePricesForScheduledCPL();
-        $triggerHandler->commit();
+        $this->triggerHandler->commit();
     }
 
     protected function combinePricesForScheduledCPL()
     {
-        $container = $this->getContainer();
-        $offsetHours = $this->getContainer()->get('oro_config.manager')
-            ->get('oro_pricing.offset_of_processing_cpl_prices');
+        $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
-        $combinedPriceLists = $container->get('doctrine')
+        $combinedPriceLists = $this->registry
             ->getManagerForClass(CombinedPriceList::class)
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
-        $builder->rebuild($combinedPriceLists);
-        $builder->dispatchEvents();
+        $this->builder->rebuild($combinedPriceLists);
+        $this->builder->dispatchEvents();
     }
 
     /**

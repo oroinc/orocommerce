@@ -49,6 +49,7 @@ Feature: Enter coupon code on Front Store
     And I click "Apply"
     Then I should see "coupon-2 Second Promotion Name" in the "Coupons List" element
 
+  @skip
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
     Given I should see "Billing Information" in the "Checkout Step Title" element
     And I should see "Discount -$1.00" in the "Subtotals" element

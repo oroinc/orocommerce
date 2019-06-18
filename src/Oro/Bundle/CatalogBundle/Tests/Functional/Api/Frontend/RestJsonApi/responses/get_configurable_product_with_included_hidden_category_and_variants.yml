@@ -1,0 +1,41 @@
+data:
+    type: products
+    id: '<toString(@configurable_product2->id)>'
+    attributes:
+        name: 'Configurable Product 2'
+    relationships:
+        category:
+            data: null
+        variantProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product2_variant1->id)>' }
+                - { type: products, id: '<toString(@configurable_product2_variant2->id)>' }
+        parentProducts:
+            data: []
+included:
+    -
+        type: products
+        id: '<toString(@configurable_product2_variant1->id)>'
+        attributes:
+            name: 'Variant 1 for Configurable Product 2'
+        relationships:
+            category:
+                data: null
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product2->id)>' }
+    -
+        type: products
+        id: '<toString(@configurable_product2_variant2->id)>'
+        attributes:
+            name: 'Variant 2 for Configurable Product 2'
+        relationships:
+            category:
+                data: null
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product2->id)>' }

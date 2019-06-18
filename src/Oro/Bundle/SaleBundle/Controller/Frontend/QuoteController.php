@@ -3,24 +3,28 @@
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
+use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\UIBundle\Tools\FlashMessageHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Frontend controller for quote management.
  */
-class QuoteController extends Controller
+class QuoteController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_sale_quote_frontend_view", requirements={"id"="\d+"})
@@ -40,7 +44,10 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         if (!$quote->isAcceptable()) {
-            $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
+            $this->addFlash(
+                'notice',
+                $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
+            );
         }
 
         return [
@@ -71,13 +78,16 @@ class QuoteController extends Controller
      */
     public function guestAccessAction(Quote $quote): array
     {
-        $accessProvider = $this->get('oro_sale.provider.guest_quote_access');
+        $accessProvider = $this->get(GuestQuoteAccessProviderInterface::class);
         if (!$accessProvider->isGranted($quote)) {
             throw $this->createNotFoundException();
         }
 
         if (!$quote->isAcceptable()) {
-            $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
+            $this->addFlash(
+                'notice',
+                $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
+            );
         }
 
         return [
@@ -101,7 +111,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->getParameter('oro_sale.entity.quote.class')
+            'entity_class' => Quote::class
         ];
     }
 
@@ -125,7 +135,7 @@ class QuoteController extends Controller
         $quote = $quoteDemand->getQuote();
 
         if (!$quote->isAcceptable()) {
-            $this->get('oro_ui.flash_message_helper')
+            $this->get(FlashMessageHelper::class)
                 ->addFlashMessage(
                     'info',
                     'oro.frontend.sale.message.quote.not_available',
@@ -139,8 +149,7 @@ class QuoteController extends Controller
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $actionGroupRegistry = $this->get('oro_action.action_group_registry');
-                $actionGroup = $actionGroupRegistry
+                $actionGroup = $this->get(ActionGroupRegistry::class)
                     ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
                 if ($actionGroup) {
                     $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
@@ -151,9 +160,9 @@ class QuoteController extends Controller
                     if ($redirectUrl) {
                         if ($request->isXmlHttpRequest()) {
                             return new JsonResponse(['redirectUrl' => $redirectUrl]);
-                        } else {
-                            return $this->redirect($redirectUrl);
                         }
+
+                        return $this->redirect($redirectUrl);
                     }
                 }
             }
@@ -198,6 +207,23 @@ class QuoteController extends Controller
      */
     protected function getSubtotalsCalculator()
     {
-        return $this->get('oro_sale.quote_demand.subtotals_calculator_main');
+        return $this->get(QuoteDemandSubtotalsCalculatorInterface::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                ActionGroupRegistry::class,
+                GuestQuoteAccessProviderInterface::class,
+                FlashMessageHelper::class,
+                QuoteDemandSubtotalsCalculatorInterface::class
+            ]
+        );
     }
 }

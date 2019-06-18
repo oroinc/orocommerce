@@ -2,19 +2,25 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
+use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
+use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,9 +28,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Recalculate combined price list and combined product prices
  */
-class PriceListRecalculateCommand extends ContainerAwareCommand
+class PriceListRecalculateCommand extends Command
 {
-    const NAME = 'oro:price-lists:recalculate';
     const ALL = 'all';
     const ACCOUNT = 'customer';
     const ACCOUNT_GROUP = 'customer-group';
@@ -35,13 +40,77 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const USE_INSERT_SELECT = 'use-insert-select';
     const INCLUDE_DEPENDENT = 'include-dependent';
 
+    /** @var string */
+    protected static $defaultName = 'oro:price-lists:recalculate';
+
+    /** @var ManagerRegistry */
+    private $registry;
+
+    /** @var ProductPriceBuilder */
+    private $priceBuilder;
+
+    /** @var ShardQueryExecutorInterface */
+    private $queryExecutor;
+
+    /** @var DependentPriceListProvider */
+    private $dependentPriceListProvider;
+
+    /** @var CombinedPriceListTriggerHandler */
+    private $triggerHandler;
+
+    /** @var StrategyRegister */
+    private $strategyRegister;
+
+    /** @var CombinedPriceListsBuilderFacade */
+    private $builder;
+
+    /** @var EntityTriggerManager */
+    private $databaseTriggerManager;
+
+    /** @var PriceListProductAssignmentBuilder */
+    private $assignmentBuilder;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ProductPriceBuilder $priceBuilder
+     * @param ShardQueryExecutorInterface $queryExecutor
+     * @param DependentPriceListProvider $dependentPriceListProvider
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @param StrategyRegister $strategyRegister
+     * @param CombinedPriceListsBuilderFacade $builder
+     * @param EntityTriggerManager $databaseTriggerManager
+     * @param PriceListProductAssignmentBuilder $assignmentBuilder
+     */
+    public function __construct(
+        ManagerRegistry $registry,
+        ProductPriceBuilder $priceBuilder,
+        ShardQueryExecutorInterface $queryExecutor,
+        DependentPriceListProvider $dependentPriceListProvider,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        StrategyRegister $strategyRegister,
+        CombinedPriceListsBuilderFacade $builder,
+        EntityTriggerManager $databaseTriggerManager,
+        PriceListProductAssignmentBuilder $assignmentBuilder
+    ) {
+        $this->registry = $registry;
+        $this->priceBuilder = $priceBuilder;
+        $this->queryExecutor = $queryExecutor;
+        $this->dependentPriceListProvider = $dependentPriceListProvider;
+        $this->triggerHandler = $triggerHandler;
+        $this->strategyRegister = $strategyRegister;
+        $this->builder = $builder;
+        $this->databaseTriggerManager = $databaseTriggerManager;
+        $this->assignmentBuilder = $assignmentBuilder;
+
+        parent::__construct();
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         $this
-            ->setName(self::NAME)
             ->addOption(self::ALL)
             ->addOption(
                 self::ACCOUNT,
@@ -98,10 +167,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var CombinedPriceListTriggerHandler $triggerHandler */
-        $triggerHandler = $this->getContainer()->get('oro_pricing.model.combined_price_list_trigger_handler');
-        $triggerHandler->startCollect();
+        $this->triggerHandler->startCollect();
 
-        $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+        $this->strategyRegister
             ->getCurrentStrategy()
             ->setOutput($output);
 
@@ -130,7 +198,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             $this->enableAllTriggers($output);
         }
 
-        $triggerHandler->commit();
+        $this->triggerHandler->commit();
     }
 
     /**
@@ -142,9 +210,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $this->buildPriceRulesForAllPriceLists();
 
         $output->writeln('<info>Start combining all Price Lists</info>');
-        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
-        $builder->rebuildAll(time());
-        $builder->dispatchEvents();
+        $this->builder->rebuildAll(time());
+        $this->builder->dispatchEvents();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
@@ -181,26 +248,22 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $customerGroups = $this->getCustomerGroups($input);
         $customers = $this->getCustomers($input);
 
-        $container = $this->getContainer();
-        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
-        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
-
         $now = time();
         if (!$customerGroups && !$customers) {
-            $builder->rebuildForWebsites($websites, $now);
+            $this->builder->rebuildForWebsites($websites, $now);
         } else {
             foreach ($websites as $website) {
                 if ($customerGroups) {
-                    $builder->rebuildForCustomerGroups($customerGroups, $website, $now);
+                    $this->builder->rebuildForCustomerGroups($customerGroups, $website, $now);
                 }
                 if ($customers) {
-                    $builder->rebuildForCustomers($customers, $website, $now);
+                    $this->builder->rebuildForCustomers($customers, $website, $now);
                 }
             }
         }
-        $builder->dispatchEvents();
+        $this->builder->dispatchEvents();
         $output->writeln('<info>Enabling triggers for the CPL table</info>');
-        $databaseTriggerManager->enable();
+        $this->databaseTriggerManager->enable();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
@@ -211,9 +274,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function getPriceLists(InputInterface $input)
     {
         $priceListIds = $input->getOption(self::PRICE_LIST);
-        $registry = $this->getContainer()->get('doctrine');
         /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $registry
+        $priceListRepository = $this->registry
             ->getManagerForClass(PriceList::class)
             ->getRepository(PriceList::class);
 
@@ -224,8 +286,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             return $priceLists;
         }
 
-        $dependentPriceListProvider = $this->getContainer()->get('oro_pricing.provider.dependent_price_lists');
-        return $dependentPriceListProvider->appendDependent($priceLists);
+        return $this->dependentPriceListProvider->appendDependent($priceLists);
     }
 
     /**
@@ -233,15 +294,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function buildPriceRulesByPriceLists($priceLists)
     {
-        /** @var ProductPriceBuilder $priceBuilder */
-        $priceBuilder = $this->getContainer()->get('oro_pricing.builder.product_price_builder');
-        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
-        $assignmentBuilder = $this->getContainer()
-            ->get('oro_pricing.builder.price_list_product_assignment_builder');
-
         foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
-            $priceBuilder->buildByPriceListWithoutTriggers($priceList);
+            $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
     }
 
@@ -250,16 +305,14 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function buildCombinedPriceListsByPriceLists($priceLists)
     {
-        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
-        $builder->rebuildForPriceLists($priceLists, time());
-        $builder->dispatchEvents();
+        $this->builder->rebuildForPriceLists($priceLists, time());
+        $this->builder->dispatchEvents();
     }
 
     protected function buildPriceRulesForAllPriceLists()
     {
-        $registry = $this->getContainer()->get('doctrine');
         /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $registry
+        $priceListRepository = $this->registry
             ->getManagerForClass(PriceList::class)
             ->getRepository(PriceList::class);
         $priceLists = $priceListRepository->getPriceListsWithRules();
@@ -274,7 +327,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     {
         $websiteIds = $input->getOption(self::WEBSITE);
         /** @var WebsiteRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
+        $repository = $this->registry
             ->getManagerForClass(Website::class)
             ->getRepository(Website::class);
         if (count($websiteIds) === 0) {
@@ -294,7 +347,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     {
         $customerGroupIds = $input->getOption(self::ACCOUNT_GROUP);
         /** @var CustomerGroupRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
+        $repository = $this->registry
             ->getManagerForClass(CustomerGroup::class)
             ->getRepository(CustomerGroup::class);
         $customerGroups = [];
@@ -313,7 +366,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     {
         $customerIds = $input->getOption(self::ACCOUNT);
         /** @var CustomerRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
+        $repository = $this->registry
             ->getManagerForClass(Customer::class)
             ->getRepository(Customer::class);
         $customers = [];
@@ -330,10 +383,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function disableAllTriggers(OutputInterface $output)
     {
         $output->writeln('<info>Disabling ALL triggers for the CPL table</info>');
-
-        $container              = $this->getContainer();
-        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
-        $databaseTriggerManager->disable();
+        $this->databaseTriggerManager->disable();
     }
 
     /**
@@ -342,10 +392,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function enableAllTriggers(OutputInterface $output)
     {
         $output->writeln('<info>Enabling ALL triggers for the CPL table</info>');
-
-        $container              = $this->getContainer();
-        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
-        $databaseTriggerManager->enable();
+        $this->databaseTriggerManager->enable();
     }
 
     /**
@@ -353,13 +400,11 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     private function prepareBuilders(InputInterface $input)
     {
-        $container = $this->getContainer();
-        $currentStrategy = $container->get('oro_pricing.pricing_strategy.strategy_register')->getCurrentStrategy();
+        $currentStrategy = $this->strategyRegister->getCurrentStrategy();
         if ($input->getOption(self::USE_INSERT_SELECT)
             && $currentStrategy instanceof InsertFromSelectExecutorAwareInterface
         ) {
-            $queryExecutor = $container->get('oro_pricing.orm.insert_from_select_query_executor');
-            $currentStrategy->setInsertSelectExecutor($queryExecutor);
+            $currentStrategy->setInsertSelectExecutor($this->queryExecutor);
         }
     }
 }

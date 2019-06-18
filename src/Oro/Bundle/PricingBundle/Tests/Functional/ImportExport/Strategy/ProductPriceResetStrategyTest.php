@@ -62,7 +62,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $container->get('translator'),
             $container->get('oro_importexport.strategy.new_entities_helper'),
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('oro_security.owner.checker')
+            $container->get('oro_importexport.field.related_entity_state_helper')
         );
         
         $this->stepExecution = new StepExecution('step', new JobExecution());

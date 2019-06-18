@@ -32,7 +32,6 @@ services:
         calls:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setVariantLinkClass, ['%oro_product.entity.product_variant_link.class%']]
-            - [setProductClass, ['%oro_product.entity.product.class%']]
 
     oro_product.importexport.strategy.product_image:
         public: false
