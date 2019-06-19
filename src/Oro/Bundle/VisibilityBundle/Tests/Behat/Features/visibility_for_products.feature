@@ -32,6 +32,7 @@ Feature: Visibility for products
     And I submit form
     Then I should see "Product visibility has been saved" flash message
 
+  @skip
   Scenario: Check product hidden
     Given I continue as the Buyer
     When I click "All Products"
@@ -43,6 +44,7 @@ Feature: Visibility for products
     And I submit form
     Then I should see "Product visibility has been saved" flash message
 
+  @skip
   Scenario: Check product visibility
     Given I continue as the Buyer
     When I click "Lighting Products"
