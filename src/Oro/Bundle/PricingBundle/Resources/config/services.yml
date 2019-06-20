@@ -81,6 +81,9 @@ services:
             - '@oro_website.manager'
             - '@oro_pricing.provider.current_currency'
 
+    Oro\Bundle\PricingBundle\Manager\UserCurrencyManager:
+        alias: oro_pricing.user_currency_manager
+
     oro_pricing.provider.current_currency:
         class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
         public: false
@@ -418,6 +421,9 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine'
+
+    Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
+        alias: oro_pricing.model.price_list_request_handler
 
     oro_pricing.model.product_price_scope_criteria_factory:
         class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory'

@@ -382,6 +382,9 @@ services:
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.generator.slug_url_differ'
 
+    Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper:
+        alias: oro_redirect.helper.changed_slugs_helper
+
     oro_redirect.repository.redirect:
         class: Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository
         parent: oro_entity.abstract_repository

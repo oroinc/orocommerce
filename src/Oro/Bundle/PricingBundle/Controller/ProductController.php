@@ -3,11 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Controller for sidebar placeholder shown on product index page.
  */
-class ProductController extends Controller
+class ProductController extends AbstractController
 {
     /**
      * @Route("/sidebar", name="oro_pricing_price_product_sidebar")
@@ -73,7 +75,7 @@ class ProductController extends Controller
             $selectedCurrencies = $this->getPriceListHandler()->getPriceListSelectedCurrencies($priceList);
             $showForm = true;
         } else {
-            $availableCurrencies = $this->container->get('oro_pricing.user_currency_manager')->getAvailableCurrencies();
+            $availableCurrencies = $this->container->get(UserCurrencyManager::class)->getAvailableCurrencies();
             $selectedCurrencies = $request->get(PriceListRequestHandlerInterface::PRICE_LIST_CURRENCY_KEY);
             $showForm = count($availableCurrencies) > 1;
         }
@@ -119,7 +121,7 @@ class ProductController extends Controller
      */
     protected function getPriceListHandler()
     {
-        return $this->get('oro_pricing.model.price_list_request_handler');
+        return $this->get(PriceListRequestHandlerInterface::class);
     }
 
     /**
@@ -127,6 +129,21 @@ class ProductController extends Controller
      */
     protected function isPriceListsEnabled(): bool
     {
-        return $this->container->get('oro_featuretoggle.checker.feature_checker')->isFeatureEnabled('oro_price_lists');
+        return $this->container->get(FeatureChecker::class)->isFeatureEnabled('oro_price_lists');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                FeatureChecker::class,
+                PriceListRequestHandlerInterface::class,
+                UserCurrencyManager::class,
+            ]
+        );
     }
 }
