@@ -3,7 +3,6 @@ define(function(require) {
 
     var ConfigHideFieldsComponent;
     var _ = require('underscore');
-    var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     ConfigHideFieldsComponent = BaseComponent.extend({
@@ -54,7 +53,7 @@ define(function(require) {
             this.$dependedEl = this.$form.find('[data-depends-on-field="' + id + '"]');
 
             this.updateDependentFields();
-            this.$el.on('change', $.proxy(this.updateDependentFields, this));
+            this.$el.on('change.' + this.cid, this.updateDependentFields.bind(this));
         },
 
         /**
@@ -65,7 +64,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('change', $.proxy(this.updateDependentFields, this));
+            this.$el.off('.' + this.cid);
 
             ConfigHideFieldsComponent.__super__.dispose.call(this);
         },

@@ -41,11 +41,12 @@ define(function(require) {
             this.inProgress = false;
             this.$el = options._sourceElement;
             this.initializeTriggers();
+
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
-                this.$form.on('submit', $.proxy(this.onSubmit, this));
+                this.$form.on('submit.' + this.cid, this.onSubmit.bind(this));
             } else {
-                this.$el.on('click', $.proxy(this.transit, this));
+                this.$el.on('click.' + this.cid, this.transit.bind(this));
             }
 
             if (!this.options.transitionUrl) {
@@ -76,7 +77,7 @@ define(function(require) {
                 .find(this.options.selectors.transitionTrigger);
 
             this.$transitionTriggers.css('cursor', 'pointer');
-            this.$transitionTriggers.on('click', $.proxy(this.transit, this));
+            this.$transitionTriggers.on('click.' + this.cid, this.transit.bind(this));
         },
 
         onSubmit: function(e) {
@@ -106,8 +107,8 @@ define(function(require) {
             mediator.execute('showLoading');
 
             $.ajax(this.prepareAjaxData(data, this.options.transitionUrl))
-                .done(_.bind(this.onSuccess, this))
-                .fail(_.bind(this.onFail, this));
+                .done(this.onSuccess.bind(this))
+                .fail(this.onFail.bind(this));
         },
 
         /**
@@ -208,10 +209,10 @@ define(function(require) {
             this.disposeTooltip();
 
             if (this.$form) {
-                this.$form.off('submit', $.proxy(this.onSubmit, this));
+                this.$form.off('.' + this.cid);
             }
-            this.$el.off('click', $.proxy(this.transit, this));
-            this.$transitionTriggers.off('click', $.proxy(this.transit, this));
+            this.$el.off('.' + this.cid);
+            this.$transitionTriggers.off('.' + this.cid);
 
             mediator.off(null, null, this);
             TransitionButtonComponent.__super__.dispose.call(this);
