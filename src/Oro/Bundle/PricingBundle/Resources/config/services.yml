@@ -1238,3 +1238,12 @@ services:
         parent: oro_pricing.datagrid.extension.price
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_pricing.event_listener.import_export_result:
+        class: 'Oro\Bundle\PricingBundle\EventListener\ImportExportResultListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+            - '@oro_pricing.price_list_trigger_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro.import_export.post_http_import, method: postHttpImport }
