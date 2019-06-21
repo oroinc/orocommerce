@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD controller for the LoginPage entity.
+ */
 class LoginPageController extends Controller
 {
     /**
@@ -43,7 +46,8 @@ class LoginPageController extends Controller
     public function viewAction(LoginPage $loginPage)
     {
         return [
-            'entity' => $loginPage
+            'entity' => $loginPage,
+            'loginPageCssField' => $this->getParameter('oro_cms.direct_editing.login_page_css_field')
         ];
     }
 

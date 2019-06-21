@@ -147,6 +147,9 @@ services:
             - [setRouter, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
+    Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:
+        alias: oro_product.service.product_update_handler
+
     oro_product.storage.product_data_bag:
         class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         public: false
@@ -1060,6 +1063,9 @@ services:
         arguments:
             - '@oro_layout.theme_manager'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+
+    Oro\Bundle\ProductBundle\Provider\PageTemplateProvider:
+        alias: oro_product.provider.page_template_provider
 
     oro_product.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener

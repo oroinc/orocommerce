@@ -36,9 +36,10 @@ services:
         class: 'Oro\Bundle\SaleBundle\Twig\QuoteGuestAccessExtension'
         public: false
         arguments:
-            - '@service_container'
+            - '@Psr\Container\ContainerInterface'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber }
 
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
