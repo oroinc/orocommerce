@@ -171,7 +171,12 @@ define(function(require) {
                 });
             }
 
-            this.updateUI(true);
+            var triggerBlurEvent = true;
+            if (_.has(data, 'triggerBlurEvent')) {
+                triggerBlurEvent = data.triggerBlurEvent;
+            }
+
+            this.updateUI(triggerBlurEvent);
         },
 
         updateModel: function(data) {
