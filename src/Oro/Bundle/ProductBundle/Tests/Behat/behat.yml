@@ -1061,6 +1061,7 @@ oro_behat_extension:
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroEntityExtendBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
+        - OroWebsiteSearchBundle::SearchIndexContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'

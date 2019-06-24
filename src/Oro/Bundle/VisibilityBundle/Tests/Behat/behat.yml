@@ -13,6 +13,7 @@ oro_behat_extension:
         - OroUIBundle::TypeaheadContext
         - OroNavigationBundle::ScrollspyContext
         - OroNavigationBundle::TabContext
+        - OroWebsiteSearchBundle::SearchIndexContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
