@@ -249,6 +249,25 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
     }
 
+    public function testSearchByMultipleSkus()
+    {
+        $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
+        $this->getContainer()
+            ->get('request_stack')
+            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
+
+        $items = $this->getSearchHandler()->search('', 1, 5);
+
+        $this->assertCount(2, $items['results']);
+
+        $actualSkuList = array_map(function ($item) {
+            return $item['sku'];
+        }, $items['results']);
+        foreach ($actualSkuList as $sku) {
+            $this->assertContains($sku, $skuList);
+        }
+    }
+
     /**
      * @param Event $event
      */

@@ -78,6 +78,7 @@ class ProductRepository extends WebsiteSearchRepository
         $searchQuery
             ->addSelect('sku')
             ->addSelect('names_LOCALIZATION_ID as name')
+            ->addSelect('integer.product_id')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;

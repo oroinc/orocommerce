@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
@@ -114,6 +115,24 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
                     self::assertEquals($product->getName($localization), $item['defaultName.string']);
                 }
             }
+        }
+    }
+
+    public function testSearchByMultipleSkus()
+    {
+        $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
+        $this->getContainer()
+            ->get('request_stack')
+            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
+
+        $items = $this->searchHandler->search('', 1, 5);
+
+        $this->assertCount(2, $items['results']);
+        $actualSkuList = array_map(function ($item) {
+            return $item['sku'];
+        }, $items['results']);
+        foreach ($actualSkuList as $sku) {
+            $this->assertContains($sku, $skuList);
         }
     }
 

@@ -1042,6 +1042,8 @@ services:
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.provider.product_price'
+        calls:
+            - [ 'setRequestStack', [ '@request_stack' ] ]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
 
