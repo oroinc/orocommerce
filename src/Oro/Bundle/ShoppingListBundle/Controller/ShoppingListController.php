@@ -8,9 +8,12 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ShoppingListController extends Controller
+/**
+ * View shopping lists in back office
+ */
+class ShoppingListController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_shopping_list_view", requirements={"id"="\d+"})
@@ -30,7 +33,7 @@ class ShoppingListController extends Controller
     {
         return [
             'entity' => $shoppingList,
-            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+            'totals' => $this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($shoppingList)
         ];
     }
 
@@ -60,15 +63,17 @@ class ShoppingListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_shopping_list.entity.shopping_list.class')
+            'entity_class' => ShoppingList::class,
         ];
     }
 
     /**
-     * @return TotalProcessorProvider
+     * {@inheritdoc}
      */
-    protected function getTotalProcessor()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return array_merge(parent::getSubscribedServices(), [
+            TotalProcessorProvider::class,
+        ]);
     }
 }

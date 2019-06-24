@@ -2,20 +2,25 @@ services:
     _defaults:
         public: true
 
-    Oro\Bundle\ProductBundle\Controller\ProductController:
+    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\ProductBundle\Controller\Frontend\ProductController:
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: 'oro_product.layout.data_provider.product_view_form_availability_provider' }
 
-    Oro\Bundle\ProductBundle\Controller\BrandController:
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

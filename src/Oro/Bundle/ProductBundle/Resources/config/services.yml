@@ -600,6 +600,9 @@ services:
             - '@request_stack'
             - '@session'
 
+    Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper:
+        alias: 'oro_product.datagrid_theme_helper'
+
     oro_product.event_listener.frontend_product_search_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
@@ -925,6 +928,9 @@ services:
             - '@property_accessor'
             - '@event_dispatcher'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
+
+    Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider:
+        alias: 'oro_product.provider.product_variant_availability_provider'
 
     oro_product.product_variant.registry.product_variant_type_handler_factory:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry'

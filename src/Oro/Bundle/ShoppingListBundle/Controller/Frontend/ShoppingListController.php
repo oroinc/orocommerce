@@ -2,21 +2,25 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controller that manages shopping lists.
  */
-class ShoppingListController extends Controller
+class ShoppingListController extends AbstractController
 {
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
@@ -36,12 +40,13 @@ class ShoppingListController extends Controller
     public function viewAction(ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get('oro_shopping_list.manager.current_shopping_list')->getCurrent();
+            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
             $title = $shoppingList->getLabel();
-            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
+            $totalWithSubtotalsAsArray = $this->get(TotalProcessorProvider::class)
+                ->getTotalWithSubtotalsAsArray($shoppingList);
         } else {
             $title = null;
             $totalWithSubtotalsAsArray = [];
@@ -77,7 +82,7 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingList = $this->get('oro_shopping_list.manager.shopping_list')->create();
+        $shoppingList = $this->get(ShoppingListManager::class)->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -106,11 +111,11 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $request,
-            $this->get('oro_shopping_list.manager.current_shopping_list'),
+            $this->get(CurrentShoppingListManager::class),
             $this->getDoctrine()
         );
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $shoppingList,
             $this->createForm(ShoppingListType::class, $shoppingList),
             function (ShoppingList $shoppingList) {
@@ -125,16 +130,22 @@ class ShoppingListController extends Controller
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
     }
 
     /**
-     * @return TotalProcessorProvider
+     * {@inheritdoc}
      */
-    protected function getTotalProcessor()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return array_merge(parent::getSubscribedServices(), [
+            CurrentShoppingListManager::class,
+            ShoppingListManager::class,
+            TotalProcessorProvider::class,
+            UpdateHandler::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

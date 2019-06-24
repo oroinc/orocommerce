@@ -2,21 +2,24 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Form\Type\BrandType;
+use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * CRUD controller for Brand entity
  */
-class BrandController extends Controller
+class BrandController extends AbstractController
 {
     /**
      * @Route("/", name="oro_product_brand_index")
@@ -78,10 +81,10 @@ class BrandController extends Controller
      */
     protected function update(Brand $brand, Request $request)
     {
-        return $this->get('oro_form.update_handler')->update(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $brand,
             $this->createForm(BrandType::class, $brand),
-            $this->get('translator')->trans('oro.product.brand.form.update.messages.saved'),
+            $this->get(TranslatorInterface::class)->trans('oro.product.brand.form.update.messages.saved'),
             $request,
             null
         );
@@ -97,7 +100,19 @@ class BrandController extends Controller
      */
     public function getChangedSlugsAction(Brand $brand)
     {
-        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+        return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($brand, BrandType::class));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ChangedSlugsHelper::class,
+            UpdateHandlerFacade::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

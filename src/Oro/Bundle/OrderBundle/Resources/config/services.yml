@@ -71,6 +71,9 @@ services:
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'
 
+    Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:
+        alias: 'oro_order.order.provider.order_address_security'
+
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
         public: false
@@ -90,13 +93,8 @@ services:
             - '%oro_customer.entity.customer.class%'
             - '%oro_customer.entity.customer_user.class%'
 
-    oro_order.request_handler.frontend_order_data_handler:
-        class: 'Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
-        arguments:
-            - '@doctrine'
-            - '@request_stack'
-            - '@oro_security.token_accessor'
-            - '@oro_payment_term.provider.payment_term'
+    Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler:
+        alias: 'oro_order.request_handler.order_request_handler'
 
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
@@ -355,6 +353,9 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_currency.config.currency'
             - '@oro_currency.converter.rate'
+
+    Oro\Bundle\OrderBundle\Provider\TotalProvider:
+        alias: 'oro_order.provider.total_processor'
 
     oro_order.event_listener.unit_visibility.datagrid:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic

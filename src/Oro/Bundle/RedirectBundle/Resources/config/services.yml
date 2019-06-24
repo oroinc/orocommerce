@@ -130,6 +130,9 @@ services:
             - '@oro_locale.helper.localization'
             - '@translator'
 
+    Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer:
+        alias: 'oro_redirect.generator.slug_url_differ'
+
     oro_redirect.generator.unique_slug_resolver:
         class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
         public: false
