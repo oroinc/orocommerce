@@ -2,5 +2,7 @@ services:
     Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand:
         public: false
         class: Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand
+        arguments:
+            - '@oro_visibility.visibility.cache.cache_builder'
         tags:
             - { name: console.command }

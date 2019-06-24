@@ -47,7 +47,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         $this->assertEquals(0, $this->getCustomerProductVisibilityResolvedCount());
 
         // Run command and check result messages
-        $result = $this->runCommand(VisibilityCacheBuildCommand::NAME, $params);
+        $result = $this->runCommand(VisibilityCacheBuildCommand::getDefaultName(), $params);
         foreach ($expectedMessages as $message) {
             $this->assertContains($message, $result);
         }
