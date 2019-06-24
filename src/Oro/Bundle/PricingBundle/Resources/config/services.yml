@@ -81,6 +81,9 @@ services:
             - '@oro_website.manager'
             - '@oro_pricing.provider.current_currency'
 
+    Oro\Bundle\PricingBundle\Manager\UserCurrencyManager:
+        alias: oro_pricing.user_currency_manager
+
     oro_pricing.provider.current_currency:
         class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
         public: false
@@ -418,6 +421,9 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine'
+
+    Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
+        alias: oro_pricing.model.price_list_request_handler
 
     oro_pricing.model.product_price_scope_criteria_factory:
         class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory'
@@ -1274,3 +1280,13 @@ services:
         parent: oro_pricing.datagrid.extension.price
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_pricing.entity_listener.import_export_result:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+            - '@oro_pricing.price_list_trigger_handler'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_importexport.entity.import_export_result.class%', event: postPersist }

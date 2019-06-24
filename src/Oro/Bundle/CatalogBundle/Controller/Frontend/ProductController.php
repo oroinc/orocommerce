@@ -3,11 +3,16 @@
 namespace Oro\Bundle\CatalogBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ProductController extends Controller
+/**
+ * View all products on front store
+ */
+class ProductController extends AbstractController
 {
     /**
      * View List of ALL products
@@ -21,13 +26,22 @@ class ProductController extends Controller
     public function allProductsAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'entity_class' => Product::class,
             'grid_config' => [
                 'frontend-catalog-allproducts-grid'
             ],
-            'theme_name' => $this->container
-                ->get('oro_product.datagrid_theme_helper')
+            'theme_name' => $this->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-catalog-allproducts-grid')
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            DataGridThemeHelper::class,
+        ]);
     }
 }

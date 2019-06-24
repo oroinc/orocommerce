@@ -2,23 +2,37 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
+use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductController extends Controller
+/**
+ * CRUD controller for the Product entity.
+ */
+class ProductController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_product_view", requirements={"id"="\d+"})
@@ -35,16 +49,16 @@ class ProductController extends Controller
      */
     public function viewAction(Product $product)
     {
-        $pageTemplate = $this->get('oro_product.provider.page_template_provider')
+        $pageTemplate = $this->get(PageTemplateProvider::class)
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
         return [
             'entity' => $product,
-            'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
+            'imageTypes' => $this->get(ImageTypeProvider::class)->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'upsellProductsEnabled' => $this->get('oro_product.related_item.upsell_product.config_provider')
+            'upsellProductsEnabled' => $this->get(UpsellProductConfigProvider::class)
                 ->isEnabled(),
-            'relatedProductsEnabled' => $this->get('oro_product.related_item.related_product.config_provider')
+            'relatedProductsEnabled' => $this->get(RelatedProductsConfigProvider::class)
                 ->isEnabled(),
         ];
     }
@@ -61,7 +75,7 @@ class ProductController extends Controller
     {
         return [
             'product' => $product,
-            'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes()
+            'imageTypes' => $this->get(ImageTypeProvider::class)->getImageTypes()
         ];
     }
 
@@ -87,13 +101,13 @@ class ProductController extends Controller
         ];
 
         /** @var ProductGridWidgetRenderEvent $event */
-        $event = $this->get('event_dispatcher')->dispatch(
+        $event = $this->get(EventDispatcherInterface::class)->dispatch(
             ProductGridWidgetRenderEvent::NAME,
             new ProductGridWidgetRenderEvent($widgetRouteParameters)
         );
 
         return [
-            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'entity_class' => Product::class,
             'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }
@@ -169,7 +183,7 @@ class ProductController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        if (!$this->get('oro_product.related_item.helper.config_helper')->isAnyEnabled()) {
+        if (!$this->get(RelatedItemConfigHelper::class)->isAnyEnabled()) {
             throw $this->createNotFoundException();
         }
 
@@ -178,11 +192,12 @@ class ProductController extends Controller
 
     /**
      * @param Product $product
+     * @param string $routeName
      * @return array|RedirectResponse
      */
     protected function update(Product $product, $routeName = 'oro_product_update')
     {
-        return $this->get('oro_product.service.product_update_handler')->handleUpdate(
+        return $this->get(ProductUpdateHandler::class)->handleUpdate(
             $product,
             $this->createForm(ProductType::class, $product),
             function (Product $product) use ($routeName) {
@@ -197,7 +212,7 @@ class ProductController extends Controller
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.product.controller.product.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.product.controller.product.saved.message')
         );
     }
 
@@ -263,7 +278,7 @@ class ProductController extends Controller
      */
     public function getChangedSlugsAction(Product $product)
     {
-        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+        return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($product, ProductType::class));
     }
 
@@ -280,14 +295,14 @@ class ProductController extends Controller
     {
         $newName = $request->get('productName');
 
-        $configManager = $this->get('oro_config.manager');
+        $configManager = $this->get(ConfigManager::class);
         $showRedirectConfirmation =
             $configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
 
         $slugsData = [];
         if ($newName !== null) {
-            $newSlug = $this->get('oro_entity_config.slug.generator')->slugify($newName);
-            $slugsData = $this->get('oro_redirect.helper.changed_slugs_helper')
+            $newSlug = $this->get(SlugGenerator::class)->slugify($newName);
+            $slugsData = $this->get(ChangedSlugsHelper::class)
                 ->getChangedDefaultSlugData($product, $newSlug);
         }
 
@@ -333,6 +348,10 @@ class ProductController extends Controller
      * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template
+     *
+     * @param Request $request
+     * @param string $gridName
+     * @return array
      */
     public function addProductsWidgetAction(Request $request, $gridName)
     {
@@ -353,5 +372,28 @@ class ProductController extends Controller
     {
         return $this->isGranted('oro_related_products_edit')
             || $this->isGranted('oro_upsell_products_edit');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                PageTemplateProvider::class,
+                ImageTypeProvider::class,
+                UpsellProductConfigProvider::class,
+                RelatedProductsConfigProvider::class,
+                RelatedItemConfigHelper::class,
+                ProductUpdateHandler::class,
+                TranslatorInterface::class,
+                EventDispatcherInterface::class,
+                ChangedSlugsHelper::class,
+                ConfigManager::class,
+                SlugGenerator::class,
+            ]
+        );
     }
 }

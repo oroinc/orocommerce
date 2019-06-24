@@ -55,6 +55,9 @@ services:
             - "@oro_security.token_accessor"
             - "@oro_website.manager"
 
+    Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager:
+        alias: 'oro_shopping_list.manager.current_shopping_list'
+
     oro_shopping_list.manager.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
         arguments:
@@ -67,6 +70,9 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
             - "@oro_product.provider.product_matrix_availability_provider"
             - "@oro_config.manager"
+
+    Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:
+        alias: 'oro_shopping_list.manager.shopping_list'
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
@@ -95,6 +101,9 @@ services:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+
+    Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler:
+        alias: 'oro_shopping_list.handler.shopping_list_line_item'
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
@@ -164,6 +173,9 @@ services:
                 - [setTwigRenderer, ['@twig.form.renderer']]
             tags:
                 - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
+
+    Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider:
+        alias: 'oro_shopping_list.layout.data_provider.matrix_order_form'
 
     oro_shopping_list.layout.data_provider.product_unit_code_visibility:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider'
@@ -261,6 +273,9 @@ services:
             - '@oro_shopping_list.repository.line_item'
             - '@oro_security.acl_helper'
 
+    Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider:
+        alias: 'oro_shopping_list.data_provider.product_shopping_lists'
+
     oro_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider'
         arguments:
@@ -311,6 +326,9 @@ services:
             - '@property_accessor'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_shopping_list.manager.empty_matrix_grid'
+
+    Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager:
+        alias: 'oro_shopping_list.provider.matrix_grid_order_manager'
 
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
@@ -408,6 +426,9 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
             - '@oro_website.manager'
+
+    Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager:
+        alias: 'oro_shopping_list.manager.shopping_list_limit'
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'

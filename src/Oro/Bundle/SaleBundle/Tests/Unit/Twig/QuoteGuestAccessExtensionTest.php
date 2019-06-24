@@ -31,8 +31,8 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_featuretoggle.checker.feature_checker', $this->featureChecker)
-            ->add('oro_website.resolver.website_url_resolver', $this->websiteUrlResolver)
+            ->add(FeatureChecker::class, $this->featureChecker)
+            ->add(WebsiteUrlResolver::class, $this->websiteUrlResolver)
             ->getContainer($this);
 
         $this->extension = new QuoteGuestAccessExtension($container);
