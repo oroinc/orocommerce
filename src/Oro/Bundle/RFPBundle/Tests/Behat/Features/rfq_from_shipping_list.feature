@@ -2,6 +2,7 @@
 @ticket-BB-9841
 @ticket-BB-12064
 @ticket-BB-14232
+@ticket-BB-16921
 Feature: RFQ from Shipping List
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create different window session
@@ -24,7 +25,7 @@ Feature: RFQ from Shipping List
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."
     And I should see "Note: This item was missed in the previous request"
-    And I fill form with:
+    And I fill "Frontend Request Form" with:
       | First Name             | Marlene                                                               |
       | Last Name              | Bradley                                                               |
       | Email Address          | MarleneSBradley@example.com                                           |
@@ -33,6 +34,7 @@ Feature: RFQ from Shipping List
       | Role                   | Sauce cook                                                            |
       | PO Number              | PO Test 01                                                            |
       | Assigned To            | Marlene Bradley                                                       |
+      | Do Not Ship Later Than | 7/1/18                                                                |
 
     When I click "Submit Request"
     Then I should see RFQ with data:
@@ -45,6 +47,7 @@ Feature: RFQ from Shipping List
       | Notes                  | Parish so enable innate in formed missed. Hand two was eat busy fail. |
       | PO Number              | PO Test 01                                                            |
       | Assigned To            | Marlene Bradley                                                       |
+      | Do Not Ship Later Than | 7/1/18                                                                |
 
     And I should see "Notes: This item was missed in the previous request"
 
@@ -70,3 +73,18 @@ Feature: RFQ from Shipping List
     And I proceed as the Admin
     And I reload the page
     Then I should see "alert(1)"
+
+  Scenario: Create Quote from RFQ with note and line item note
+    When I click "Create Quote"
+    Then "Quote Form" must contains values:
+      | PO Number              | PO Test 01  |
+      | Do Not Ship Later Than | Jul 1, 2018 |
+
+  Scenario: Create Order from RFQ with note, PO Number and ship until
+    When I go to Sales/ Requests For Quote
+    And I click view "PO Test 01" in grid
+    And I click on "RFQ Create Order"
+    Then "Order Form" must contains values:
+      | PO Number              | PO Test 01                                                            |
+      | Do Not Ship Later Than | Jul 1, 2018                                                           |
+      | Customer Notes         | Parish so enable innate in formed missed. Hand two was eat busy fail. |

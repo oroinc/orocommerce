@@ -129,6 +129,9 @@ oro_behat_extension:
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
+          Do Not Ship Later Than:
+            type: 'css'
+            locator: 'input[name^="date_selector_oro_order_type_shipUntil"]'
 
     First Product Quantity Field In Order:
       selector:
@@ -214,13 +217,15 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
         - OroConfigBundle::FeatureContext
+        - OroCustomerBundle::ACLContext
         - OroActionBundle::OroActionContext
         - OroOrderBundle::OrderContext
         - OroReportBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
+        - OroNavigationBundle::TabContext
+        - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroProductBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
         - OroShoppingListBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroTaxBundle::TaxContext

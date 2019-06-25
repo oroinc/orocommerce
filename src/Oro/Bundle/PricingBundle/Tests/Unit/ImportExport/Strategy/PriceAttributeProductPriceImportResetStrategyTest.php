@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
@@ -80,6 +81,9 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             $this->createMock(NewEntitiesHelper::class),
             $this->doctrineHelper,
             $this->createMock(OwnerChecker::class)
+        );
+        $this->strategy->setRelatedEntityStateHelper(
+            $this->createMock(RelatedEntityStateHelper::class)
         );
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);

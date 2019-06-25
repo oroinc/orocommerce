@@ -179,7 +179,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ->method('offsetSetByPath')
             ->with(
                 SearchCategoryFilteringEventListener::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
-                $overrideVariantConfiguration
+                (int) $overrideVariantConfiguration
             );
 
         $this->config->expects($this->at(4))

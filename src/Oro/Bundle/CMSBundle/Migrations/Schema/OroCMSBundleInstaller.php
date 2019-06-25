@@ -42,7 +42,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_5_1';
     }
 
     /**
@@ -145,11 +145,13 @@ class OroCMSBundleInstaller implements
      */
     protected function addOroCmsLoginPageImageAssociations(Schema $schema)
     {
+        $options['attachment']['acl_protected'] = false;
+
         $this->attachmentExtension->addImageRelation(
             $schema,
             self::CMS_LOGIN_PAGE_TABLE,
             'logoImage',
-            [],
+            $options,
             self::MAX_LOGO_IMAGE_SIZE_IN_MB
         );
 
@@ -157,7 +159,7 @@ class OroCMSBundleInstaller implements
             $schema,
             self::CMS_LOGIN_PAGE_TABLE,
             'backgroundImage',
-            [],
+            $options,
             self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
         );
     }

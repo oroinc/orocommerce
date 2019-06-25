@@ -1,9 +1,15 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator;
@@ -20,6 +26,9 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
     /** @var UniqueVariantLinksSimpleProductValidator */
     private $uniqueVariantLinksSimpleProductValidator;
 
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
+
     /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
@@ -34,6 +43,8 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
         );
 
         $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->uniqueVariantLinksSimpleProductValidator->setRegistry($this->registry);
         $this->uniqueVariantLinksSimpleProductValidator->initialize($this->context);
     }
 
@@ -87,6 +98,23 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
             ->method('validate')
             ->with($parentProduct, new UniqueProductVariantLinks())
             ->willReturn(new ConstraintViolationList());
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->uniqueVariantLinksSimpleProductValidator->validate($product, new UniqueVariantLinksSimpleProduct());
+    }
+
+    public function testValidateWithoutErrorsExistingEntity()
+    {
+        $parentProduct = (new Product())->setType(Product::TYPE_CONFIGURABLE);
+        $product = $this->prepareProduct([], 1);
+
+        $this->uniqueVariantLinksProductValidatorMock->expects($this->once())
+            ->method('validate')
+            ->with($parentProduct, new UniqueProductVariantLinks())
+            ->willReturn(new ConstraintViolationList());
+
+        $this->assertRepositoryCalls($product, [$parentProduct]);
 
         $this->context->expects($this->never())->method('addViolation');
 
@@ -150,19 +178,87 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
         $this->uniqueVariantLinksSimpleProductValidator->validate($product, new UniqueVariantLinksSimpleProduct());
     }
 
+    public function testValidateWitErrorsOnlyForOneProductExistingEntity()
+    {
+        $parentProduct = (new Product())->setSku('sku1')->setType(Product::TYPE_CONFIGURABLE);
+        $parentProduct2 = (new Product())->setSku('sku2')->setType(Product::TYPE_CONFIGURABLE);
+
+        $product = $this->prepareProduct([], 1);
+
+        $this->uniqueVariantLinksProductValidatorMock->expects($this->exactly(2))
+            ->method('validate')
+            ->withConsecutive(
+                [$parentProduct, new UniqueProductVariantLinks()],
+                [$parentProduct2, new UniqueProductVariantLinks()]
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ConstraintViolationList([new ConstraintViolation('message', '', [], '', '', '')]),
+                new ConstraintViolationList()
+            );
+
+        $this->assertRepositoryCalls($product, [$parentProduct, $parentProduct2]);
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with(
+                'oro.product.product_variant_field.unique_variants_combination_simple_product.message',
+                [
+                    '%products%' => 'sku1'
+                ]
+            );
+
+        $this->uniqueVariantLinksSimpleProductValidator->validate($product, new UniqueVariantLinksSimpleProduct());
+    }
+
     /**
      * @param array $parentProducts
+     * @param null|int $id
      * @return Product
      */
-    private function prepareProduct(array $parentProducts = [])
+    private function prepareProduct(array $parentProducts = [], $id = null)
     {
-        $product = (new Product())
-            ->setType(Product::TYPE_SIMPLE);
+        $product = (new StubProduct())
+            ->setType(Product::TYPE_SIMPLE)
+            ->setId($id);
 
-        foreach ($parentProducts as $parentProduct) {
-            $product->addParentVariantLink(new ProductVariantLink($parentProduct, $product));
+        /** @var AbstractLazyCollection|\PHPUnit\Framework\MockObject\MockObject $parentVariantLinks */
+        $parentVariantLinks = $this->createMock(AbstractLazyCollection::class);
+        $parentVariantLinks->expects($this->any())
+            ->method('isInitialized')
+            ->willReturn(!empty($parentProducts));
+        if ($parentProducts) {
+            $collection = new ArrayCollection();
+            foreach ($parentProducts as $parentProduct) {
+                $variantLink = new ProductVariantLink($parentProduct, $product);
+                $collection->add($variantLink);
+            }
+            $parentVariantLinks->expects($this->any())
+                ->method('getIterator')
+                ->willReturn($collection);
         }
+        $product->setParentVariantLinks($parentVariantLinks);
 
         return $product;
+    }
+
+    /**
+     * @param Product $product
+     * @param array $configurableProducts
+     */
+    private function assertRepositoryCalls(Product $product, array $configurableProducts)
+    {
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getParentProductsForSimpleProduct')
+            ->with($product)
+            ->willReturn($configurableProducts);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($em);
     }
 }

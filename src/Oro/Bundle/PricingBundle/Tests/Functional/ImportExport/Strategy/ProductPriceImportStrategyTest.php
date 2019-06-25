@@ -53,6 +53,9 @@ class ProductPriceImportStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_security.owner.checker')
         );
+        $this->strategy->setRelatedEntityStateHelper(
+            $container->get('oro_importexport.field.related_entity_state_helper')
+        );
 
         $this->stepExecution = new StepExecution('step', new JobExecution());
         $this->context = new StepExecutionProxyContext($this->stepExecution);

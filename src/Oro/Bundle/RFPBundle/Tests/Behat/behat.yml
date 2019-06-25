@@ -53,6 +53,9 @@ oro_behat_extension:
         Request Notes:
             selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
 
+        RFQ Create Order:
+            selector: '.navigation a:contains("Create Order")'
+
         Request Form:
             selector: 'form[name^="oro_rfp_request"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -62,6 +65,18 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'input[name="oro_rfp_request[requestProducts][0][product]"]'
                         element: Select2Entity
+                    Do Not Ship Later Than:
+                        type: 'css'
+                        locator: 'input[name^="date_selector_oro_sale_quote_shipUntil"]'
+
+        Frontend Request Form:
+            selector: 'form[name^="oro_rfp_frontend_request"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Do Not Ship Later Than:
+                        type: 'css'
+                        locator: 'input[name^="date_selector_oro_rfp_frontend_request_shipUntil"]'
 
     pages:
         RequestViewBackendPage:

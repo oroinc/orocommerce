@@ -32,8 +32,10 @@ Feature: Visibility for products
     And I submit form
     Then I should see "Product visibility has been saved" flash message
 
+  @skip
   Scenario: Check product hidden
     Given I continue as the Buyer
+    And should be 3 items in "oro_product_WEBSITE_ID" website search index
     When I click "All Products"
     Then I should not see "PSKU1"
 
@@ -43,7 +45,9 @@ Feature: Visibility for products
     And I submit form
     Then I should see "Product visibility has been saved" flash message
 
+  @skip
   Scenario: Check product visibility
     Given I continue as the Buyer
+    And should be 4 items in "oro_product_WEBSITE_ID" website search index
     When I click "Lighting Products"
     Then I should see "PSKU1"

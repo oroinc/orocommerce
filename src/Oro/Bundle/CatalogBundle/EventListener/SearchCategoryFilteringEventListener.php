@@ -79,7 +79,10 @@ class SearchCategoryFilteringEventListener
         $config = $event->getConfig();
         $config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
         $config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
-        $config->offsetSetByPath(self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH, $overrideVariantConfiguration);
+        $config->offsetSetByPath(
+            self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
+            (int) $overrideVariantConfiguration
+        );
 
         $this->addSubcategoryFilter($config, $categoryId, $isIncludeSubcategories);
     }
