@@ -3,7 +3,6 @@ define(function(require) {
 
     var DependentFieldComponent;
     var _ = require('underscore');
-    var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
@@ -76,8 +75,9 @@ define(function(require) {
             this.$form = this.$el.closest('form');
             this.$dependee = this.$form.find('[data-dependee-id="' + this.$el.data('dependOn') + '"]');
 
+            this.updateDependentFields = this.updateDependentFields.bind(this);
             this.updateDependentFields();
-            this.$dependee.on('change', $.proxy(this.updateDependentFields, this));
+            this.$dependee.on('change', this.updateDependentFields);
 
             this.$el.inputWidget('create');
         },
@@ -90,7 +90,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('change', $.proxy(this.updateDependentFields, this));
+            this.$el.off('change', this.updateDependentFields);
 
             DependentFieldComponent.__super__.dispose.call(this);
         },

@@ -81,15 +81,13 @@ define(function(require) {
             this.$form = this.$el.find(this.options.selectors.form);
 
             this.$el
-                .on('change', this.options.selectors.month, $.proxy(this.collectMonthDate, this))
-                .on('change', this.options.selectors.year, $.proxy(this.collectYearDate, this))
-                .on(
-                    'focusout',
-                    this.options.selectors.cardNumber,
-                    $.proxy(this.validate, this, this.options.selectors.cardNumber)
-                )
-                .on('focusout', this.options.selectors.cvv, $.proxy(this.validate, this, this.options.selectors.cvv))
-                .on('change', this.options.selectors.saveForLater, $.proxy(this.onSaveForLaterChange, this));
+                .on('change.' + this.cid, this.options.selectors.month, this.collectMonthDate.bind(this))
+                .on('change.' + this.cid, this.options.selectors.year, this.collectYearDate.bind(this))
+                .on('focusout.' + this.cid, this.options.selectors.cardNumber, this.validate.bind(this,
+                    this.options.selectors.cardNumber))
+                .on('focusout.' + this.cid, this.options.selectors.cvv, this.validate.bind(this,
+                    this.options.selectors.cvv))
+                .on('change.' + this.cid, this.options.selectors.saveForLater, this.onSaveForLaterChange.bind(this));
 
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
             mediator.on('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
@@ -194,7 +192,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off();
+            this.$el.off('.' + this.cid);
 
             mediator.off('checkout-content:initialized', this.refreshPaymentMethod, this);
             mediator.off('checkout:place-order:response', this.handleSubmit, this);

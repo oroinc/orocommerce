@@ -48,7 +48,10 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$el.on('click', '.removeLineItem', $.proxy(this._removeRow, this));
+            this._removeRow = this._removeRow.bind(this);
+            this._setTotalPrice = this._setTotalPrice.bind(this);
+
+            this.$el.on('click', '.removeLineItem', this._removeRow);
             mediator.on('update:currency', this._updateCurrency, this);
 
             LineItemView.__super__.initialize.apply(this, arguments);
@@ -151,7 +154,7 @@ define(function(require) {
                 .add(this.fieldsByName.productUnit)
                 .add(this.fieldsByName.quantity)
                 .add(this.fieldsByName.priceCurrency)
-                .on('change', $.proxy(this._setTotalPrice, this));
+                .on('change', this._setTotalPrice);
         },
 
         /**
@@ -217,8 +220,8 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('click', '.removeLineItem', $.proxy(this._removeRow, this));
-            this.fieldsByName.priceValue.off('change', $.proxy(this._setTotalPrice, this));
+            this.$el.off('click', '.removeLineItem', this._removeRow);
+            this.fieldsByName.priceValue.off('change', this._setTotalPrice);
             mediator.off(null, null, this);
 
             LineItemView.__super__.dispose.call(this);

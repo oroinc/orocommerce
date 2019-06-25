@@ -45,7 +45,7 @@ define(function(require) {
             this.getContent().on(
                 'change',
                 this.options.selectors.shippingMethodTypeSelectorAbsolute,
-                $.proxy(this.onShippingMethodTypeChange, this)
+                this.onShippingMethodTypeChange.bind(this)
             );
 
             this.initShippingMethod();

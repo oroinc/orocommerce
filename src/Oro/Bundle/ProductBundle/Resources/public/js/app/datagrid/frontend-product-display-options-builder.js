@@ -1,11 +1,15 @@
-define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, UrlHelper) {
+define(function(require) {
     'use strict';
 
-    var DisplayOptions = function() {
-        this.initialize.apply(this, arguments);
-    };
+    var DisplayOptions;
+    var $ = require('jquery');
+    var UrlHelper = require('orodatagrid/js/url-helper');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
-    _.extend(DisplayOptions.prototype, {
+    DisplayOptions = BaseComponent.extend({
+        constructor: function DisplayOptions() {
+            DisplayOptions.__super__.constructor.apply(this, arguments);
+        },
         /**
          * @property {Grid}
          */
@@ -24,8 +28,10 @@ define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, Url
             this.datagrid = options.grid;
             this.displaySelector = options.options.metadata.options.displayOptions.selector;
 
-            this.datagrid.collection.on('reset', _.bind(this._addDatagridStateTo, this));
+            this.listenTo(this.datagrid.collection, 'reset', this._addDatagridStateTo);
             this._addDatagridStateTo();
+
+            DisplayOptions.__super__.initialize.apply(this, arguments);
         },
 
         _addDatagridStateTo: function() {
