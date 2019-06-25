@@ -29,9 +29,6 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm1:
         label: net 10
-Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
-    paymentTerm1:
-        label: net 20
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
     paymentMethodsConfigsRuleDestination1:

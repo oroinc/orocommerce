@@ -299,11 +299,6 @@ oro_behat_extension:
         locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping List"]'
         type: xpath
 
-    Add to Shopping List button:
-      selector:
-        locator: '//a[@title="Add to Shopping List"]'
-        type: xpath
-
     Create New Shopping List popup:
       selector:
         locator: '//div[@class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front shopping-list-dialog ui-draggable ui-dialog-normal ui-dialog-buttons"]'

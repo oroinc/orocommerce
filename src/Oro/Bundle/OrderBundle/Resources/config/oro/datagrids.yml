@@ -571,7 +571,7 @@ datagrids:
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         -
-                            join: %oro_shopping_list.entity.shopping_list.class%
+                            join: '%oro_shopping_list.entity.shopping_list.class%'
                             alias: shopping_list
                             conditionType: WITH
                             condition: "order1.sourceEntityClass = '%oro_shopping_list.entity.shopping_list.class%' AND order1.sourceEntityId = shopping_list.id AND shopping_list.id = :shopping_list_id"
