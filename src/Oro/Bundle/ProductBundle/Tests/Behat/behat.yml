@@ -210,8 +210,6 @@ oro_behat_extension:
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
-          Additional Unit 2: 'oro_product[additionalUnitPrecisions][1][unit]'
-          Additional Precision 2: 'oro_product[additionalUnitPrecisions][1][precision]'
           Page Template: 'oro_product[pageTemplate][scalarValue]'
           Page Template Use Fallback: 'oro_product[pageTemplate][useFallback]'
           Managed Inventory Use Fallback: 'oro_product[manageInventory][useFallback]'
@@ -936,7 +934,7 @@ oro_behat_extension:
         locator: '//select[@name="oro_product[primaryUnitPrecision][unit]"]'
 
     Price Unit:
-      selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
+      selector: 'div[id*="uniform-oro_product_prices_0_unit-"]'
 
     Add Product Price:
       selector:

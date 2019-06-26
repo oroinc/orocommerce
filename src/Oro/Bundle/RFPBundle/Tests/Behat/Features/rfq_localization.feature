@@ -24,4 +24,3 @@ Feature: RFQ Localization
   Scenario: Create RFQ and ensure product name is displayed properly
     When I click "Submit Request"
     Then I should see "Product1`\"'&йёщ>"
-    And I wait for action
