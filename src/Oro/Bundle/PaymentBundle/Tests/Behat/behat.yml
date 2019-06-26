@@ -31,5 +31,5 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
             element: Payment Method Config Type Field
           Destination1PostalCodes: 'oro_payment_methods_configs_rule[destinations][0][postalCodes]'
-          Country1: 'oro_payment_methods_configs_rule[destinations][1][country]'
-          Country2: 'oro_payment_methods_configs_rule[destinations][2][country]'
+          Country: 'oro_payment_methods_configs_rule[destinations][0][country]'
+          Country2: 'oro_payment_methods_configs_rule[destinations][1][country]'

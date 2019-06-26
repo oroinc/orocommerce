@@ -55,11 +55,9 @@ oro_behat_extension:
             locator: 'select[name="oro_shipping_methods_configs_rule[method]"]'
             element: Shipping Method Config Type Field
           Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
-          Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
-          Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
+          Country2: 'oro_shipping_methods_configs_rule[destinations][1][country]'
           ZIP: 'oro_shipping_methods_configs_rule[destinations][0][postalCodes]'
-          ZIP1: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
-          ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
+          ZIP2: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
           Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
 
     Shipping Origin System Config Form:

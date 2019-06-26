@@ -786,7 +786,7 @@ Feature: Commerce smoke e2e
     And click "Delete Line Item"
     And should not see "Xiaomi Redmi 3S QTY: 20 item Target Price $110.00 Listed Price: $120.00"
     And click "Add Another Product"
-    And fill "Frontstore RFQ Line Item Form2" with:
+    And fill "Frontstore RFQ Line Item Form1" with:
       |SKU         |Xiaomi_Redmi_3S_sku Xiaomi Redmi 3S|
       |Quantity    |30             |
       |Target Price|110            |
