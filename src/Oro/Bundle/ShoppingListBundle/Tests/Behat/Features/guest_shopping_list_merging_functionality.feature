@@ -1,4 +1,5 @@
 @ticket-BB-10050-merge
+@ticket-BB-17042
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Guest shopping list merging functionality
   As a guest I have a possibility to fill one shopping list and it should be added (or merged depending on limit)
@@ -59,11 +60,19 @@ Feature: Guest shopping list merging functionality
     And I should see "Control Product"
     When I click "Add to Shopping List" for "CONTROL1" product
     Then I should see "Product has been added to" flash message
+    And type "PSKU1" in "search"
+    And I click "Search Button"
+    And I should see "Product1"
+    And I should see "Add to Shopping List"
+    And I click "Add to Shopping List"
+    And I should see "Product has been added to" flash message
 
   Scenario: Check guest shopping list was merged to existing customer shopping list
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
     And I click "Shopping List" on shopping list widget
-    And I should see "PSKU1"
-    Then I should see "CONTROL1"
+    And I should see following line items in "Shopping List Line Items Table":
+      | SKU      | Quantity | Unit |
+      | PSKU1    | 2        | each |
+      | CONTROL1 | 1        | each |

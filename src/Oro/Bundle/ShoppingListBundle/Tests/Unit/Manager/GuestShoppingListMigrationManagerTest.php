@@ -14,6 +14,9 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
 
+/**
+ * unit test for guest shopping list migration manager
+ */
 class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -101,11 +104,13 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('isCreateEnabled')
             ->willReturn(false);
         $shoppingList = new ShoppingList();
+        $shoppingListItem = new LineItem();
+        $shoppingList->addLineItem($shoppingListItem);
         $shoppingListEntityManager = $this->createMock(EntityManager::class);
         $shoppingListEntityManager->expects($this->once())
             ->method('remove')
             ->with($shoppingList);
-        $shoppingListEntityManager->expects($this->once())
+        $shoppingListEntityManager->expects($this->never())
             ->method('flush');
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
@@ -117,7 +122,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($customerUserShoppingList);
         $this->shoppingListManager->expects($this->once())
             ->method('bulkAddLineItems')
-            ->with([], $customerUserShoppingList, GuestShoppingListMigrationManager::FLUSH_BATCH_SIZE);
+            ->with([$shoppingListItem], $customerUserShoppingList, GuestShoppingListMigrationManager::FLUSH_BATCH_SIZE);
 
         $this->migrationManager->migrateGuestShoppingList(new CustomerVisitor(), new CustomerUser(), $shoppingList);
     }
