@@ -13,6 +13,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ *  Unit test for calculate totals in shopping lists
+ */
 class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -115,19 +118,12 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList = new ShoppingList();
         $totalUSD = new ShoppingListTotal($shoppingList, self::USD);
         $totalEUR = new ShoppingListTotal($shoppingList, self::EUR);
+        $shoppingList->addTotal($totalUSD);
+        $shoppingList->addTotal($totalEUR);
         $this->currencyManager->expects($this->any())
             ->method('getAvailableCurrencies')
             ->willReturn([self::EUR, self::USD, self::CAD]);
-
-        $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->once())
-            ->method('findBy')
-            ->willReturn([$totalUSD, $totalEUR]);
-
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->once())->method('getRepository')
-            ->with(ShoppingListTotal::class)
-            ->willReturn($repository);
         $em->expects($this->once())->method('persist');
         $em->expects($this->once())->method('flush');
         $this->registry->expects($this->once())->method('getManagerForClass')

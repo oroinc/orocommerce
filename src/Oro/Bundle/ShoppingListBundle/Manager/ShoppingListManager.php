@@ -253,9 +253,9 @@ class ShoppingListManager
     public function bulkAddLineItems(array $lineItems, ShoppingList $shoppingList, $batchSize)
     {
         $lineItemsCount = count($lineItems);
-        foreach ($lineItems as $iteration => $lineItem) {
-            $flush = $iteration % $batchSize === 0 || $lineItemsCount === $iteration + 1;
-            $this->addLineItem($lineItem, $shoppingList, $flush);
+        for ($iteration = 1; $iteration <= $lineItemsCount; $iteration++) {
+            $flush = $iteration % $batchSize === 0 || $lineItemsCount === $iteration;
+            $this->addLineItem($lineItems[$iteration - 1], $shoppingList, $flush);
         }
 
         return $lineItemsCount;

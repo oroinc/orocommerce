@@ -101,7 +101,11 @@ class GuestShoppingListMigrationManager
 
         $em = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
         $em->remove($shoppingList);
-        $em->flush();
+        if (count($lineItems) === 0) {
+            $em->flush();
+
+            return;
+        }
 
         $this->shoppingListManager->bulkAddLineItems(
             $lineItems->toArray(),
