@@ -2,81 +2,62 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Acl\AccessRule;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Acl\AccessRule\FrontendQuoteDemandAccessRule;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SecurityBundle\AccessRule\Criteria;
 use Oro\Bundle\SecurityBundle\AccessRule\Expr\Comparison;
 use Oro\Bundle\SecurityBundle\AccessRule\Expr\Path;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendQuoteDemandAccessRuleTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var MockObject */
-    private $frontendHelper;
-
-    /** @var MockObject */
-    private $tokenAccessor;
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenStorage;
 
     /** @var FrontendQuoteDemandAccessRule */
     private $accessRule;
 
     protected function setUp()
     {
-        $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->tokenAccessor = $this->createMock(TokenAccessor::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
-        $this->accessRule = new FrontendQuoteDemandAccessRule($this->frontendHelper, $this->tokenAccessor);
-    }
-
-    public function testIsApplicableOnNonSuppotredEntity()
-    {
-        $criteria = new Criteria('ORM', \stdClass::class, 'test');
-
-        $this->assertFalse($this->accessRule->isApplicable($criteria));
-    }
-
-    public function testIsApplicableOnNonFrontendRequest()
-    {
-        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
-
-        $this->frontendHelper->expects($this->once())
-            ->method('isFrontendRequest')
-            ->willReturn(false);
-
-        $this->assertFalse($this->accessRule->isApplicable($criteria));
+        $this->accessRule = new FrontendQuoteDemandAccessRule($this->tokenStorage);
     }
 
     public function testIsApplicable()
     {
-        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
-
-        $this->frontendHelper->expects($this->once())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-
-        $this->assertTrue($this->accessRule->isApplicable($criteria));
+        $this->assertTrue($this->accessRule->isApplicable($this->createMock(Criteria::class)));
     }
 
-    public function testProcessWithVisitor()
+    public function testProcessWhenNoSecurityToken()
     {
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn(null);
+
         $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
+        $this->accessRule->process($criteria);
 
+        $this->assertNull($criteria->getExpression());
+    }
+
+    public function testProcessForVisitor()
+    {
         $visitor = $this->getEntity(CustomerVisitor::class, ['id' => 2]);
-
         $token = new AnonymousCustomerUserToken('', [], $visitor);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
+        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
         $this->accessRule->process($criteria);
 
         $this->assertEquals(
@@ -85,21 +66,41 @@ class FrontendQuoteDemandAccessRuleTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcessWithCustomerUser()
+    public function testProcessForCustomerUser()
     {
-        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
+        $user = $this->getEntity(CustomerUser::class, ['id' => 30]);
+        $token = $this->createMock(TokenInterface::class);
 
-        $user = $this->getEntity(User::class, ['id' => 30]);
-
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+        $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
 
+        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
         $this->accessRule->process($criteria);
 
         $this->assertEquals(
             new Comparison(new Path('customerUser'), Comparison::EQ, 30),
             $criteria->getExpression()
         );
+    }
+
+    public function testProcessWhenNoUser()
+    {
+        $token = $this->createMock(TokenInterface::class);
+
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+
+        $criteria = new Criteria('ORM', QuoteDemand::class, 'test');
+        $this->accessRule->process($criteria);
+
+        $this->assertNull($criteria->getExpression());
     }
 }

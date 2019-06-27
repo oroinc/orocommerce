@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BreadcrumbsNavigationBlock;
-    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var $ = require('jquery');
     var __ = require('orotranslation/js/translator');
@@ -20,28 +19,23 @@ define(function(require) {
             BreadcrumbsNavigationBlock.__super__.constructor.apply(this, arguments);
         },
 
+        listen: {
+            'datagrid_filters:update mediator': 'onFiltersUpdate'
+        },
+
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.$element = options._sourceElement;
 
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updateFiltersInfo'));
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updateSortingInfo'));
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updatePaginationInfo'));
-
             BreadcrumbsNavigationBlock.__super__.initialize.apply(this, arguments);
         },
 
-        /**
-         * {@inheritDoc}
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            BreadcrumbsNavigationBlock.__super__.dispose.call(this);
+        onFiltersUpdate: function(datagrid) {
+            this.updateFiltersInfo(datagrid);
+            this.updateSortingInfo(datagrid);
+            this.updatePaginationInfo(datagrid);
         },
 
         /**

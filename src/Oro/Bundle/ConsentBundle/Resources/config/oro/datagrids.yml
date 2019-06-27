@@ -14,7 +14,7 @@ datagrids:
                     - consent.declinedNotification
                     - GROUP_CONCAT(page.id) as page_ids
                 from:
-                    - { table: %oro_consent.entity.consent.class%, alias: consent }
+                    - { table: '%oro_consent.entity.consent.class%', alias: consent }
                 join:
                     left:
                         - { join: consent.contentNode, alias: cn }
@@ -76,7 +76,7 @@ datagrids:
                 updatedAt:
                     data_name: consent.updatedAt
             default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                id: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 id:

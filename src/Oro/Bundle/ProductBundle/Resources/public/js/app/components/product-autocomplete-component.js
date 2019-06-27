@@ -58,6 +58,8 @@ define(function(require) {
             this.updateProduct();
 
             this.$el.on('blur' + this.eventNamespace(), _.debounce(_.bind(this.onBlur, this), 150));
+
+            mediator.on('autocomplete:validate-response', this.validateResponse, this);
         },
 
         eventNamespace: function() {
@@ -70,77 +72,85 @@ define(function(require) {
             }
 
             var val = ProductHelper.trimWhiteSpace(e.target.value);
-            var hasChanged = val !== this.previousValue;
+            var hasChanged = this.hasChanged(val);
             var $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
 
             if (hasChanged && !$autoComplete.length) {
-                this.previousValue = val;
                 this.resetProduct();
                 this.validateProduct(val);
             }
+        },
+
+        hasChanged: function(value) {
+            return value !== this.previousValue;
         },
 
         updater: function(item) {
             var resultMapping = this.resultsMapping[item];
 
             this.resetProduct();
-            this.previousValue = item;
             this.validateProduct(resultMapping.sku);
 
             return [resultMapping.sku, resultMapping['defaultName.string']].join(' - ');
         },
 
         validateProduct: function(val) {
-            var requestId = _.uniqueId('request');
             var self = this;
             val = val.split(' ')[0];
 
-            mediator.trigger('autocomplete:requestProductBySku', {item: {sku: val}, requestId: requestId});
-
             $.ajax({
                 url: routing.generate(this.options.productBySkuRoute),
-                method: 'get',
+                method: 'post',
                 data: {
                     name: 'oro_product_visibility_limited_with_prices',
                     per_page: 1,
                     query: val
                 },
                 success: function(response) {
-                    self.resetProduct();
-
-                    var needleSku = val.toUpperCase();
-                    var item = _.find(response.results, function(resultItem) {
-                        return resultItem.sku.toUpperCase() === needleSku;
-                    });
-                    if (item) {
-                        self.product.sku = item.sku;
-                        self.product.name = item['defaultName.string'];
-                        self.product.displayName = [self.product.sku, self.product.name].join(' - ');
-
-                        mediator.trigger('autocomplete:productFound', {
-                            item: item,
-                            $el: self.$el,
-                            requestId: requestId
-                        });
-                        self.previousValue = self.product.displayName;
-                    } else {
-                        mediator.trigger('autocomplete:productNotFound', {
-                            item: {sku: val},
-                            $el: self.$el,
-                            requestId: requestId
-                        });
-                    }
-                    self.updateProduct();
+                    self.validateResponse(response);
                 },
                 error: function() {
                     mediator.trigger('autocomplete:productNotFound', {
                         item: {sku: val},
-                        $el: self.$el,
-                        requestId: requestId
+                        $el: self.$el
                     });
                     self.resetProduct();
                 }
             });
+        },
+
+        validateResponse: function(response, requestId) {
+            var val = this.$el.val();
+
+            // proceed check only for non-empty value that was changed
+            if (!!val && this.hasChanged(val)) {
+                this.previousValue = val;
+                this.resetProduct();
+
+                var needleSku = val.split(' ')[0].toUpperCase();
+                var item = _.find(response.results, function(resultItem) {
+                    return resultItem.sku.toUpperCase() === needleSku;
+                });
+                if (item) {
+                    this.product.sku = item.sku;
+                    this.product.name = item['defaultName.string'];
+                    this.product.displayName = [this.product.sku, this.product.name].join(' - ');
+
+                    mediator.trigger('autocomplete:productFound', {
+                        item: item,
+                        $el: this.$el,
+                        requestId: requestId
+                    });
+                    this.previousValue = this.product.displayName;
+                } else {
+                    mediator.trigger('autocomplete:productNotFound', {
+                        item: {sku: val},
+                        $el: this.$el,
+                        requestId: requestId
+                    });
+                }
+                this.updateProduct();
+            }
         },
 
         resetProduct: function() {
@@ -172,6 +182,7 @@ define(function(require) {
             delete this.previousValue;
 
             this.$el.off(this.eventNamespace());
+            mediator.off('autocomplete:validate-response', this.validateResponse, this);
 
             ProductAutocompleteComponent.__super__.dispose.call(this);
         }

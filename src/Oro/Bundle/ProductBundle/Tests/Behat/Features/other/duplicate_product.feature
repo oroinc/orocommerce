@@ -146,8 +146,8 @@ Feature: Duplicate product
     And I click "Yes, Delete" in confirmation dialogue
     And I click on "Add More Rows"
     And fill "ProductForm" with:
-      | Additional Unit 2      | piece |
-      | Additional Precision 2 | 10    |
+      | AdditionalUnit      | piece |
+      | AdditionalPrecision | 10    |
     When I save and close form
     Then I should see "Product has been saved" flash message
     And I should see following product additional units:

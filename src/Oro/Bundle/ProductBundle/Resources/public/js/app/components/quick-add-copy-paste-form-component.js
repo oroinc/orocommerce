@@ -32,9 +32,9 @@ define(function(require) {
         validator: null,
 
         /**
-         * @property {Array.<string>} - contains IDs of request that were launched after form submit
+         * @property {number} - contains ID of request that was launched after form submit
          */
-        requests: null,
+        requestId: null,
 
         /**
          * @property {number} - number items that can't be added to order
@@ -88,8 +88,28 @@ define(function(require) {
          * Binds listeners of events related to adding item to quick order form
          */
         bindRowEvents: function() {
-            mediator.on('autocomplete:requestProductBySku', function(data) {
-                this.registerRequest(data.requestId);
+            mediator.on('quick-add-form:requestProductsBySku', function(data) {
+                this.requestId = data.requestId;
+            }, this);
+            mediator.on('quick-add-form:successProductsBySku', function(data) {
+                if (data.requestId !== this.requestId) {
+                    return;
+                }
+
+                this.requestId = null;
+
+                if (!this.hasUnresolvedItems()) {
+                    this.onSubmitComplete();
+                }
+            }, this);
+            mediator.on('quick-add-form:failProductsBySku', function(data) {
+                if (data.requestId !== this.requestId) {
+                    return;
+                }
+
+                this.requestId = null;
+                this.onSubmitComplete();
+                mediator.execute('showFlashMessage', 'error', __('oro.ui.unexpected_error'));
             }, this);
             mediator.on('autocomplete:productFound', this.onAutocompleteSuccess, this);
             mediator.on('autocomplete:productNotFound', this.onAutocompleteError, this);
@@ -102,7 +122,9 @@ define(function(require) {
          * Unbinds listeners of events related to adding item to quick order form
          */
         unbindRowEvents: function() {
-            mediator.off('autocomplete:requestProductBySku', null, this);
+            mediator.off('quick-add-form:requestProductsBySku', null, this);
+            mediator.off('quick-add-form:successProductsBySku', null, this);
+            mediator.off('quick-add-form:failProductsBySku', null, this);
             mediator.off('autocomplete:productFound', this.onAutocompleteSuccess, this);
             mediator.off('autocomplete:productNotFound', this.onAutocompleteError, this);
             mediator.off('quick-add-form-item:item-valid', this.onItemSuccess, this);
@@ -127,16 +149,27 @@ define(function(require) {
         _onSubmit: function(e) {
             e.preventDefault();
 
-            if (!this.validator.form()) {
+            if (!this.validator.element(this.$field[0])) {
                 return false;
             }
 
             this.disableForm();
-            this.requests = [];
+            this.bindRowEvents();
+            this.requestId = null;
             this.errorCount = 0;
             this._prepareFieldItems();
 
-            mediator.trigger('quick-add-copy-paste-form:submit', this.parsedItems);
+            // Since trigger of the following event leads to high loading of the page
+            // lets give some time for disabled elements to update them appearance
+            _.delay(function() {
+                mediator.trigger('quick-add-copy-paste-form:submit', this.parsedItems);
+            }.bind(this), 50);
+        },
+
+        onSubmitComplete: function() {
+            this.unbindRowEvents();
+            this.updateFieldValue();
+            this.enableForm();
         },
 
         /**
@@ -145,7 +178,6 @@ define(function(require) {
         disableForm: function() {
             this.disabled = true;
             this.$field.attr('disabled', true);
-            this.bindRowEvents();
             this._toggleSubmitButton(true);
         },
 
@@ -155,7 +187,6 @@ define(function(require) {
         enableForm: function() {
             this.disabled = false;
             this.$field.removeAttr('disabled');
-            this.unbindRowEvents();
             this._toggleSubmitButton(false);
         },
 
@@ -187,7 +218,7 @@ define(function(require) {
                 var existItem = _.findWhere(this.parsedItems, {sku: product.sku, unit: product.unit});
 
                 if (existItem) {
-                    existItem.raw.concat(product.raw);
+                    existItem.raw = existItem.raw.concat(product.raw);
                     existItem.quantity += product.quantity;
                 } else {
                     this.parsedItems.push(product);
@@ -211,34 +242,24 @@ define(function(require) {
                 ]
             };
 
-            function matcher(query, parsedItem) {
-                if (parsedItem.sku !== query.sku) {
-                    return false;
-                } else if (parsedItem.unit === void 0) {
-                    return true;
-                } else {
-                    return query.units.indexOf(parsedItem.unit) !== -1;
-                }
-            }
-
-            return _.partial(matcher, query);
+            return _.partial(QuickAddCopyPasteFormComponent.matcher, query);
         },
 
         /**
          * @param {object} data
          */
         onProductUpdate: function(data) {
-            this._updateField(data.item);
+            this.updateParsedItems(data.item);
 
             if (!this.hasUnresolvedItems()) {
-                this.enableForm();
+                this.onSubmitComplete();
             }
         },
 
         /**
          * @param {object} item
          */
-        _updateField: function(item) {
+        updateParsedItems: function(item) {
             var index = _.findIndex(this.parsedItems, this._rowMatcher(item));
 
             if (index === -1) {
@@ -246,22 +267,26 @@ define(function(require) {
             }
 
             this.fieldItemsLines = _.difference(this.fieldItemsLines, this.parsedItems[index].raw);
-            this.$field.val(this.fieldItemsLines.join('\n'));
             this.parsedItems.splice(index, 1);
+        },
+
+        /**
+         * Sets actual value to field
+         */
+        updateFieldValue: function() {
+            this.$field.val(this.fieldItemsLines.join('\n'));
         },
 
         /**
          * @param {object} data
          */
         onAutocompleteSuccess: function(data) {
-            if (!this.isOwnRequest(data.requestId)) {
+            if (data.requestId !== this.requestId) {
                 return;
             }
 
-            this.unregisterRequest(data.requestId);
-
             if (!this.hasUnresolvedItems()) {
-                this.enableForm();
+                this.onSubmitComplete();
             }
         },
 
@@ -269,7 +294,7 @@ define(function(require) {
          * @param {object} data
          */
         onAutocompleteError: function(data) {
-            if (!this.isOwnRequest(data.requestId)) {
+            if (data.requestId !== this.requestId) {
                 return;
             }
 
@@ -277,11 +302,10 @@ define(function(require) {
             $('.add-list-item').data('row-add-only-one', true).click();
             this._showErrorMessage();
 
-            this.unregisterRequest(data.requestId);
             this.errorCount++;
 
             if (!this.hasUnresolvedItems()) {
-                this.enableForm();
+                this.onSubmitComplete();
             }
         },
 
@@ -289,10 +313,10 @@ define(function(require) {
          * @param {object} data
          */
         onItemSuccess: function(data) {
-            this._updateField(data.item);
+            this.updateParsedItems(data.item);
 
             if (!this.hasUnresolvedItems()) {
-                this.enableForm();
+                this.onSubmitComplete();
             }
         },
 
@@ -307,7 +331,7 @@ define(function(require) {
                 this.errorCount++;
 
                 if (!this.hasUnresolvedItems()) {
-                    this.enableForm();
+                    this.onSubmitComplete();
                 }
             }
         },
@@ -328,40 +352,12 @@ define(function(require) {
         },
 
         /**
-         * Chacks if request ID present in internal list
-         *
-         * @param {string} requestId
-         * @return {boolean}
-         */
-        isOwnRequest: function(requestId) {
-            return this.requests.indexOf(requestId) !== -1;
-        },
-
-        /**
-         * Adds request ID to internal list to be aware in listeners on request complete if that is own one
-         *
-         * @param {string} requestId
-         */
-        registerRequest: function(requestId) {
-            this.requests.push(requestId);
-        },
-
-        /**
-         * Removes request ID from internal list
-         *
-         * @param {string} requestId
-         */
-        unregisterRequest: function(requestId) {
-            this.requests = _.without(this.requests, requestId);
-        },
-
-        /**
          * Checks if component completely processed all items
          *
          * @return {boolean}
          */
         hasUnresolvedItems: function() {
-            return this.parsedItems.length > this.errorCount || !_.isEmpty(this.requests);
+            return this.parsedItems.length > this.errorCount || this.requestId !== null;
         },
 
         dispose: function() {
@@ -374,11 +370,20 @@ define(function(require) {
             this.unbindRowEvents();
 
             delete this.validator;
-            delete this.requests;
             delete this.fieldItemsLines;
             delete this.parsedItems;
 
             QuickAddCopyPasteFormComponent.__super__.dispose.call(this);
+        }
+    }, {
+        matcher: function(query, parsedItem) {
+            if (parsedItem.sku !== query.sku) {
+                return false;
+            } else if (parsedItem.unit === void 0) {
+                return true;
+            } else {
+                return query.units.indexOf(parsedItem.unit) !== -1;
+            }
         }
     });
 

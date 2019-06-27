@@ -45,9 +45,12 @@ define(function(require) {
                 tierPricesRoute: this.options.tierPricesRoute
             }));
 
-            this.$el.on('content:changed', $.proxy(this._reindexLineItems, this));
-            this.$el.on('content:remove', $.proxy(this._reindexLineItems, this));
-            this.$el.on('content:remove', $.proxy(this._handleRemoveItem, this));
+            this._reindexLineItems = this._reindexLineItems.bind(this);
+            this._handleRemoveItem = this._handleRemoveItem.bind(this);
+
+            this.$el.on('content:changed', this._reindexLineItems);
+            this.$el.on('content:remove', this._reindexLineItems);
+            this.$el.on('content:remove', this._handleRemoveItem);
 
             mediator.on('invoice-line-item:created', this._setNextSortOrder, this);
             mediator.on('update:currency', this._setPrototypeCurrency, this);
@@ -108,9 +111,9 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('content:changed', $.proxy(this._reindexLineItems, this));
-            this.$el.off('content:remove', $.proxy(this._reindexLineItems, this));
-            this.$el.off('content:remove', $.proxy(this._handleRemoveItem, this));
+            this.$el.off('content:changed', this._reindexLineItems);
+            this.$el.off('content:remove', this._reindexLineItems);
+            this.$el.off('content:remove', this._handleRemoveItem);
 
             mediator.off('invoice-line-item:created', this._setNextSortOrder, this);
             mediator.off('update:currency', this._setPrototypeCurrency, this);

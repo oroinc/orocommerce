@@ -5,6 +5,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -33,7 +34,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            rowsCountThreshold: 20
+            rowsCountThreshold: 20,
+            productBySkuRoute: 'oro_frontend_autocomplete_search'
         },
 
         listen: {
@@ -44,6 +46,7 @@ define(function(require) {
 
         newRows: [],
         existingRows: [],
+        rowsPromise: null,
 
         /**
          * @inheritDoc
@@ -68,6 +71,9 @@ define(function(require) {
             this.checkRowsCount();
             this.fillNewRowsWithData();
             this.updateRowsWithData();
+            if (this.rowsPromise) {
+                this.rowsPromise.resolve();
+            }
         },
 
         checkRowsCount: function() {
@@ -105,6 +111,7 @@ define(function(require) {
         },
 
         addQuickAddRows: function(data) {
+            this.rowsPromise = $.Deferred();
             _.each(data, function(rowData) {
                 if (this.findRow(rowData)) {
                     this.existingRows.push(rowData);
@@ -116,11 +123,48 @@ define(function(require) {
             if (this.getEmptyRows().length >= this.newRows.length) {
                 this.fillNewRowsWithData();
                 this.updateRowsWithData();
+                this.rowsPromise.resolve();
             }
 
             while (this.getEmptyRows().length < this.newRows.length) {
                 $('.add-list-item').click();
             }
+
+            this.validateData(data);
+        },
+
+        validateData: function(data) {
+            var val = _.pluck(data, 'sku');
+            var routeParams = {
+                name: 'oro_product_visibility_limited_with_prices',
+                per_page: val.length,
+                query: ''
+            };
+
+            var ajaxPromise = $.ajax({
+                url: routing.generate(this.options.productBySkuRoute, routeParams),
+                method: 'post',
+                data: {
+                    sku: val
+                }
+            });
+
+            var requestId = _.uniqueId('request');
+            mediator.trigger('quick-add-form:requestProductsBySku', {requestId: requestId});
+            var self = this;
+            $.when(ajaxPromise, this.rowsPromise)
+                .done(function(ajaxPromiseArguments) {
+                    if (ajaxPromiseArguments[1] === 'success') {
+                        mediator.trigger('autocomplete:validate-response', ajaxPromiseArguments[0], requestId);
+                        self.rowsPromise = null;
+                        mediator.trigger('quick-add-form:successProductsBySku', {requestId: requestId});
+                    } else {
+                        mediator.trigger('quick-add-form:failProductsBySku', {requestId: requestId});
+                    }
+                })
+                .fail(function() {
+                    mediator.trigger('quick-add-form:failProductsBySku', {requestId: requestId});
+                });
         },
 
         fillNewRowsWithData: function() {
@@ -130,7 +174,7 @@ define(function(require) {
 
             var $rows = this.getEmptyRows();
             _.each(this.newRows, function(item, i) {
-                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $rows.eq(i)});
+                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $rows.eq(i), triggerBlurEvent: false});
             });
 
             this.newRows = [];
@@ -143,7 +187,7 @@ define(function(require) {
 
             _.each(this.existingRows, function(item) {
                 var $row = $(this.findRow(item));
-                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $row});
+                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $row, triggerBlurEvent: false});
             }, this);
 
             this.existingRows = [];

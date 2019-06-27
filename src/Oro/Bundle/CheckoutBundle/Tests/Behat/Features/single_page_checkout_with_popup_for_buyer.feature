@@ -32,14 +32,14 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click Edit "Default" in grid
     And I click "Add"
     And fill "Shipping Rule" with:
-      | Country1 | Germany |
+      | Country | Germany |
     When I save and close form
     Then I should see "Shipping rule has been saved" flash message
     When I go to System/Shipping Rules
     And I click Edit "Flat Rate 2$" in grid
     And I click "Add"
     And fill "Shipping Rule" with:
-      | Country1 | Albania |
+      | Country | Albania |
     And I click "Add"
     And fill "Shipping Rule" with:
       | Country2 | Georgia |
@@ -51,7 +51,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click Edit "Default" in grid
     And I click "Add"
     And fill "Payment Rule Form" with:
-      | Country1 | Albania |
+      | Country | Albania |
     When I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -72,7 +72,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click Edit "Default" in grid
     And I click "Add"
     And fill "Payment Rule Form" with:
-      | Country1 | Germany |
+      | Country | Germany |
     When I save and close form
     Then I should see "Payment rule has been saved" flash message
 

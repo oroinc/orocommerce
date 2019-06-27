@@ -28,6 +28,7 @@ class OroInventoryExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
         $loader->load('event_listeners.yml');
+        $loader->load('controllers.yml');
 
         $container->setParameter(
             self::VALIDATION_CONFIG,
