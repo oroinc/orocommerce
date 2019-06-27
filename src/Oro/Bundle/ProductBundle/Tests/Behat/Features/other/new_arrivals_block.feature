@@ -175,6 +175,7 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Set default" on row "NewSite" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
     |URL Use System       |false                            |
     |URL                  |http://non-existing-url.local    |
@@ -238,6 +239,7 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Set default" on row "Default" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
       |URL Use System       |true|
       |Secure URL Use System|true|
@@ -245,6 +247,7 @@ Feature: New Arrivals Block
     And I should see "Configuration saved" flash message
     And go to System/ Websites
     And click "Configuration" on row "NewSite" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
       |URL Use System       |false                            |
       |URL                  |http://non-existing-url.local    |

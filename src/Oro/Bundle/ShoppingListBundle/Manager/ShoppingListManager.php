@@ -226,10 +226,10 @@ class ShoppingListManager
             || !$parentProduct
             || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
         ) {
-            $em = $this->getEntityManager();
-            $em->remove($lineItem);
             $shoppingList = $lineItem->getShoppingList();
             $shoppingList->removeLineItem($lineItem);
+            $em = $this->getEntityManager();
+            $em->remove($lineItem);
             $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
             $em->flush();
 

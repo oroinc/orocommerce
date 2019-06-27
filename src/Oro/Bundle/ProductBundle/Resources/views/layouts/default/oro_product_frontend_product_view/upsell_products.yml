@@ -47,6 +47,10 @@ layout:
             id: product_view_upsell_products_container
             optionName: visible
             optionValue: '=data["oro_product_upsell_products"].getRelatedItems(data["product"])'
+        - '@setOption':
+            id: upsell_products
+            optionName: attr.data-page-component-name
+            optionValue: 'upsell-products-list'
         - '@add':
             id: product_view_upsell_products_container
             parentId: product_view_container
