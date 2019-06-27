@@ -5,7 +5,10 @@ namespace Oro\Bundle\ProductBundle\Twig;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy as RelatedProductFinderDatabaseStrategy;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy as UpsellProductFinderDatabaseStrategy;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\Form\FormView;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -19,7 +22,7 @@ use Twig\TwigFunction;
  *   - get_related_products_ids
  *   - set_unique_line_item_form_id
  */
-class ProductExtension extends AbstractExtension
+class ProductExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_product';
 
@@ -157,5 +160,17 @@ class ProductExtension extends AbstractExtension
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
         return $finderStrategy->findIds($product, false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.autocomplete_fields_provider' => AutocompleteFieldsProvider::class,
+            'oro_product.related_item.related_product.finder_strategy' => RelatedProductFinderDatabaseStrategy::class,
+            'oro_product.related_item.upsell_product.finder_strategy' => UpsellProductFinderDatabaseStrategy::class,
+        ];
     }
 }

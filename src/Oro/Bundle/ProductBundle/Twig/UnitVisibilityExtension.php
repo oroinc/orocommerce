@@ -3,7 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,7 +12,7 @@ use Twig\TwigFunction;
  * Provides a Twig function to get check oro_product.visibility.unit container parameter value:
  *   - oro_is_unit_code_visible
  */
-class UnitVisibilityExtension extends AbstractExtension
+class UnitVisibilityExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -53,5 +54,15 @@ class UnitVisibilityExtension extends AbstractExtension
     public function isUnitCodeVisible($code)
     {
         return $this->getUnitVisibility()->isUnitCodeVisible($code);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.visibility.unit' => UnitVisibilityInterface::class,
+        ];
     }
 }

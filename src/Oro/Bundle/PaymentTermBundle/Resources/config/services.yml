@@ -29,7 +29,7 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -130,6 +130,6 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\PaymentTermExtension'
         public: false
         arguments:
-            - "@oro_payment_term.provider.payment_term"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }

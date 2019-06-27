@@ -3,8 +3,9 @@
 namespace Oro\Bundle\PaymentBundle\Twig;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -13,7 +14,7 @@ use Twig\TwigFunction;
  *   - get_payment_status_label
  *   - getPaymentStatus
  */
-class PaymentStatusExtension extends AbstractExtension
+class PaymentStatusExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const PAYMENT_STATUS_EXTENSION_NAME = 'oro_payment_status';
 
@@ -37,7 +38,7 @@ class PaymentStatusExtension extends AbstractExtension
     }
 
     /**
-     * @return PaymentStatusProvider
+     * @return PaymentStatusProviderInterface
      */
     protected function getPaymentStatusProvider()
     {
@@ -87,5 +88,16 @@ class PaymentStatusExtension extends AbstractExtension
     public function getPaymentStatus($entity)
     {
         return $this->getPaymentStatusProvider()->getPaymentStatus($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_payment.formatter.payment_status_label' => PaymentStatusLabelFormatter::class,
+            'oro_payment.provider.payment_status' => PaymentStatusProviderInterface::class,
+        ];
     }
 }

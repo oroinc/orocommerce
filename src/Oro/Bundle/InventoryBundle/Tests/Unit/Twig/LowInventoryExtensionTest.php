@@ -22,11 +22,11 @@ class LowInventoryExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $lowInventoryProvider = new LowInventoryProviderStub();
+        $container = self::getContainerBuilder()
+            ->add('oro_inventory.inventory.low_inventory_provider', new LowInventoryProviderStub())
+            ->getContainer($this);
 
-        $this->lowInventoryExtension = new LowInventoryExtension(
-            $lowInventoryProvider
-        );
+        $this->lowInventoryExtension = new LowInventoryExtension($container);
     }
 
     public function testIsLowInventoryTrue()

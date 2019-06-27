@@ -434,7 +434,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
         public: false
         arguments:
-            - "@oro_shopping_list.manager.shopping_list_limit"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 

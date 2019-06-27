@@ -221,7 +221,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -229,7 +229,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 

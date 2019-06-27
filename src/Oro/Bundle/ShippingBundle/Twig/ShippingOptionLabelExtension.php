@@ -3,7 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -13,7 +14,7 @@ use Twig\TwigFilter;
  *   - oro_weight_unit_format_label
  *   - oro_freight_class_format_label
  */
-class ShippingOptionLabelExtension extends AbstractExtension
+class ShippingOptionLabelExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_shipping_option_label';
 
@@ -115,5 +116,17 @@ class ShippingOptionLabelExtension extends AbstractExtension
     public function formatFreightClass($code, $isShort = false, $isPlural = false)
     {
         return $this->getFreightClassLabelFormatter()->format($code, $isShort, $isPlural);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_shipping.formatter.length_unit_label' => UnitLabelFormatterInterface::class,
+            'oro_shipping.formatter.weight_unit_label' => UnitLabelFormatterInterface::class,
+            'oro_shipping.formatter.freight_class_label' => UnitLabelFormatterInterface::class,
+        ];
     }
 }

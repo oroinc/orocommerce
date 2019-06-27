@@ -191,8 +191,6 @@ services:
     oro_rfp.twig.request_products:
         class: 'Oro\Bundle\RFPBundle\Twig\RequestProductsExtension'
         public: false
-        arguments:
-            - '@service_container'
         tags:
             - { name: twig.extension }
 

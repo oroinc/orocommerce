@@ -19,7 +19,12 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->twig = $this->createMock(Environment::class);
-        $this->extension = new TwigInVariablesExtension($this->twig);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_cms.twig.renderer', $this->twig)
+            ->getContainer($this);
+
+        $this->extension = new TwigInVariablesExtension($container);
     }
 
     public function testRenderContent()

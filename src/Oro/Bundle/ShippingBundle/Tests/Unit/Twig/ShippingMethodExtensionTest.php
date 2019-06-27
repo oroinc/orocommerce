@@ -6,11 +6,14 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerIn
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\TwigFunction;
 
 class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
 {
+    use TwigExtensionTestCaseTrait;
+
     /**
      * @var ShippingMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -34,16 +37,16 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
-
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-
         $this->checker = $this->createMock(ShippingMethodEnabledByIdentifierCheckerInterface::class);
 
-        $this->extension = new ShippingMethodExtension(
-            $this->shippingMethodLabelFormatter,
-            $this->dispatcher,
-            $this->checker
-        );
+        $container = self::getContainerBuilder()
+            ->add('oro_shipping.formatter.shipping_method_label', $this->shippingMethodLabelFormatter)
+            ->add('event_dispatcher', $this->dispatcher)
+            ->add('oro_shipping.checker.shipping_method_enabled', $this->checker)
+            ->getContainer($this);
+
+        $this->extension = new ShippingMethodExtension($container);
     }
 
     public function testGetFunctions()

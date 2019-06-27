@@ -4,6 +4,8 @@ namespace Oro\Bundle\InventoryBundle\Twig;
 
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,19 +13,17 @@ use Twig\TwigFunction;
  * Provides a Twig function to check if the product is a "low inventory" item:
  *   - oro_is_low_inventory_product
  */
-class LowInventoryExtension extends AbstractExtension
+class LowInventoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /**
-     * @var LowInventoryProvider
-     */
-    protected $lowInventoryProvider;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param LowInventoryProvider $lowInventoryProvider
+     * @param ContainerInterface $container
      */
-    public function __construct(LowInventoryProvider $lowInventoryProvider)
+    public function __construct(ContainerInterface $container)
     {
-        $this->lowInventoryProvider = $lowInventoryProvider;
+        $this->container = $container;
     }
 
     /**
@@ -46,6 +46,17 @@ class LowInventoryExtension extends AbstractExtension
      */
     public function isLowInventory(Product $product)
     {
-        return $this->lowInventoryProvider->isLowInventoryProduct($product);
+        return $this->container->get('oro_inventory.inventory.low_inventory_provider')
+            ->isLowInventoryProduct($product);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_inventory.inventory.low_inventory_provider' => LowInventoryProvider::class,
+        ];
     }
 }

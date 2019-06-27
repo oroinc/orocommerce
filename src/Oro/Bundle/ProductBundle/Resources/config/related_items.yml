@@ -17,7 +17,8 @@ services:
     oro_product.twig.related_item_extension:
         class: Oro\Bundle\ProductBundle\Twig\RelatedItemExtension
         public: false
-        arguments: ['@oro_product.related_item.helper.config_helper']
+        arguments:
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 

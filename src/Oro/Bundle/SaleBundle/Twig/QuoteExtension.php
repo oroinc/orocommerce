@@ -7,7 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -21,7 +22,7 @@ use Twig\TwigFunction;
  *   - oro_format_sale_quote_product_type
  *   - oro_format_sale_quote_product_request
  */
-class QuoteExtension extends AbstractExtension
+class QuoteExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_sale_quote';
     const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
@@ -129,5 +130,16 @@ class QuoteExtension extends AbstractExtension
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_sale.formatter.quote_product' => QuoteProductFormatter::class,
+            'oro_config.manager' => ConfigManager::class,
+        ];
     }
 }

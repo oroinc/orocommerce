@@ -4,6 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,17 +13,17 @@ use Twig\TwigFunction;
  * Provides a Twig functios to retrieve line item discounts information:
  *   - line_items_discounts
  */
-class DiscountsInformationExtension extends AbstractExtension
+class DiscountsInformationExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var DiscountsInformationDataProvider */
-    protected $dataProvider;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param DiscountsInformationDataProvider $dataProvider
+     * @param ContainerInterface $container
      */
-    public function __construct(DiscountsInformationDataProvider $dataProvider)
+    public function __construct(ContainerInterface $container)
     {
-        $this->dataProvider = $dataProvider;
+        $this->container = $container;
     }
 
     /**
@@ -39,7 +41,9 @@ class DiscountsInformationExtension extends AbstractExtension
      */
     public function getLineItemsDiscounts($sourceEntity)
     {
-        $lineItemsDiscounts = $this->dataProvider->getDiscountLineItemDiscounts($sourceEntity);
+        $lineItemsDiscounts = $this->container->get('oro_promotion.layout.discount_information_data_provider')
+            ->getDiscountLineItemDiscounts($sourceEntity);
+
         $discounts = [];
         foreach ($sourceEntity->getLineItems() as $lineItem) {
             $discounts[$lineItem->getId()] = null;
@@ -55,5 +59,15 @@ class DiscountsInformationExtension extends AbstractExtension
         }
 
         return $discounts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_promotion.layout.discount_information_data_provider' => DiscountsInformationDataProvider::class,
+        ];
     }
 }

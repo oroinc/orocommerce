@@ -4,7 +4,8 @@ namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
  *   - oro_is_product_primary_unit_visible
  *   - oro_is_adding_additional_units_to_product_available
  */
-class ProductUnitFieldsSettingsExtension extends AbstractExtension
+class ProductUnitFieldsSettingsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -84,5 +85,15 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension
     public function isAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {
         return $this->getProductUnitFieldsSettings()->isAddingAdditionalUnitsToProductAvailable($product);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.visibility.product_unit_fields_settings' => ProductUnitFieldsSettingsInterface::class,
+        ];
     }
 }

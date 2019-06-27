@@ -3,7 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,7 +12,7 @@ use Twig\TwigFunction;
  * Provides a Twig function to get an image placeholder for a category:
  *   - category_image_placeholder
  */
-class CategoryImageExtension extends AbstractExtension
+class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     private $container;
@@ -56,5 +57,15 @@ class CategoryImageExtension extends AbstractExtension
     public function getName()
     {
         return 'oro_catalog_category_image_extension';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_catalog.provider.category_image_placeholder' => ImagePlaceholderProviderInterface::class,
+        ];
     }
 }

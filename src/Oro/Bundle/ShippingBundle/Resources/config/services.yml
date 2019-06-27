@@ -86,7 +86,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -94,7 +94,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -102,7 +102,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 

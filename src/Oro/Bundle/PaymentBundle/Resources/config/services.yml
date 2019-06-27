@@ -34,7 +34,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -197,7 +197,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 

@@ -78,10 +78,9 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
         public: false
         arguments:
-            - '@Psr\Container\ContainerInterface'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
-            - { name: container.service_subscriber }
 
     oro_web_catalog.event_listener.orm.content_node_entity_listener:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener'

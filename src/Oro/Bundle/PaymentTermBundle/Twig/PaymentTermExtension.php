@@ -4,6 +4,8 @@ namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,17 +13,17 @@ use Twig\TwigFunction;
  * Provides a Twig function to get payment term from an entity:
  *   - get_payment_term
  */
-class PaymentTermExtension extends AbstractExtension
+class PaymentTermExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var PaymentTermProviderInterface */
-    protected $dataProvider;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param PaymentTermProviderInterface $dataProvider
+     * @param ContainerInterface $container
      */
-    public function __construct(PaymentTermProviderInterface $dataProvider)
+    public function __construct(ContainerInterface $container)
     {
-        $this->dataProvider = $dataProvider;
+        $this->container = $container;
     }
 
     /**
@@ -39,6 +41,17 @@ class PaymentTermExtension extends AbstractExtension
      */
     public function getPaymentTerm($object)
     {
-        return $this->dataProvider->getObjectPaymentTerm($object);
+        return $this->container->get('oro_payment_term.provider.payment_term')
+            ->getObjectPaymentTerm($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class,
+        ];
     }
 }

@@ -4,15 +4,14 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Twig\CategoryExtension'
         public: false
         arguments:
-            - '@Psr\Container\ContainerInterface'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
-            - { name: container.service_subscriber }
 
     oro_catalog.twig.category_image_extension:
         class: 'Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension'
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }

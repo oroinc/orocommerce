@@ -575,7 +575,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -583,7 +583,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension'
         public: false
         arguments:
-            - "@doctrine"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -745,6 +745,6 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\DiscountsInformationExtension'
         public: false
         arguments:
-            - '@oro_promotion.layout.discount_information_data_provider'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
