@@ -18,6 +18,8 @@ services:
 
     oro_fedex_shipping.integration.identifier_generator:
         parent: oro_integration.generator.prefixed_identifier_generator
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '%oro_fedex_shipping.integration.channel.type%'
 
@@ -45,6 +47,8 @@ services:
 
     oro_fedex_shipping.client.rate_service:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_soap.client'
             - '@oro_fedex_shipping.client.rate_service.response.factory'

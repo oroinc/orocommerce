@@ -166,6 +166,8 @@ services:
 
     oro_checkout.repository.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_checkout.entity.checkout.class%'
@@ -366,6 +368,8 @@ services:
 
     oro_checkout.provider.checkout_totals:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_checkout.data_provider.converter.checkout_to_order'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -373,6 +377,8 @@ services:
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
 
@@ -394,6 +400,8 @@ services:
 
     oro_checkout.factory.payment_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.provider.checkout_subtotal'
@@ -563,6 +571,8 @@ services:
 
     oro_checkout.condition.is_workflow_start_from_shopping_list_allowed:
         class: Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
            - '@oro_featuretoggle.checker.feature_checker'
            - '@security.token_storage'
@@ -576,6 +586,8 @@ services:
 
     oro_checkout.line_items.factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_checkout.line_item.converter_registry'
 
@@ -621,6 +633,8 @@ services:
 
     oro_checkout.model.checkout_subtotal_updater:
         class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_checkout.provider.checkout_subtotal'
@@ -636,6 +650,8 @@ services:
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
 
     oro_checkout.event_listener.login_on_checkout:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'
@@ -685,6 +701,8 @@ services:
 
     oro_checkout.helper.checkout_workflow_helper:
         class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_workflow.manager'
             - '@oro_action.action_group_registry'

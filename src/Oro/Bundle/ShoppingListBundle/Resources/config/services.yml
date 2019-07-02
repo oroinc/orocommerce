@@ -21,6 +21,8 @@ services:
 
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_shopping_list.entity.line_item.class%'
@@ -28,6 +30,8 @@ services:
 
     oro_shopping_list.shopping_list.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_shopping_list.entity.shopping_list.class%'
@@ -46,6 +50,8 @@ services:
 
     oro_shopping_list.manager.current_shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_shopping_list.manager.shopping_list"
             - "@oro_shopping_list.manager.guest_shopping_list"
@@ -60,6 +66,8 @@ services:
 
     oro_shopping_list.manager.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@doctrine"
             - "@oro_security.token_accessor"
@@ -76,6 +84,8 @@ services:
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_security.acl_helper"
             - "@doctrine"
@@ -89,6 +99,8 @@ services:
 
     oro_shopping_list.handler.shopping_list_line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@doctrine"
             - "@oro_shopping_list.manager.shopping_list"
@@ -107,6 +119,8 @@ services:
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@translator"
             - "@router"
@@ -123,12 +137,16 @@ services:
 
     oro_shopping_list.processor.quick_add:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_shopping_list.processor.abstract_quick_add
         tags:
             - { name: oro_product.quick_add_processor }
 
     oro_shopping_list.processor.quick_add_to_checkout:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_shopping_list.processor.abstract_quick_add
         calls:
             - [setShoppingListManager, ['@oro_shopping_list.manager.shopping_list']]
@@ -143,6 +161,8 @@ services:
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_product.storage.product_data_storage"
 
@@ -238,6 +258,8 @@ services:
 
     oro_shopping_list.action.datagrid.mass_action_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_shopping_list.manager.current_shopping_list"
             - "@translator"
@@ -303,6 +325,8 @@ services:
 
     oro_shopping_list.manager.shopping_list_total:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
@@ -421,6 +445,8 @@ services:
 
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_config.manager'
             - '@oro_security.token_accessor'
@@ -484,6 +510,8 @@ services:
 
     oro_shopping_list.manager.empty_matrix_grid:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.line_item.factory.configurable_product'

@@ -14,6 +14,8 @@ parameters:
 services:
     oro_shipping.shipping_rule.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_shipping.entity.shipping_methods_configs_rule.class%'
@@ -67,6 +69,8 @@ services:
 
     oro_shipping.formatter.freight_class_label:
         parent: oro_product.formatter.unit_label
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         calls:
             - [setTranslationPrefix, ['oro.freight_class']]
 
@@ -157,6 +161,8 @@ services:
 
     oro_shipping.provider.measure_units.freight:
         class: 'Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_shipping.repository.freight_class'
             - '@oro_config.manager'
@@ -255,12 +261,16 @@ services:
 
     oro_shipping.form.handler.shipping_methods_configs_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_shipping.shipping_origin.provider:
         class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_config.global'
             - '@oro_shipping.factory.shipping_origin_model_factory'
@@ -383,6 +393,8 @@ services:
 
     oro_shipping.helper.filtered_datagrid_route:
         class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
                 - '%oro_shipping.rule_grid_route_name%'
                 - '%oro_shipping.rule_grid_name%'

@@ -76,7 +76,8 @@ services:
 
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
-        public: false
+        # This service marked as public (origin private) for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_order.order.provider.order_address'
             - '@doctrine'
@@ -103,6 +104,8 @@ services:
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -111,6 +114,8 @@ services:
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@doctrine"
 
@@ -262,7 +267,8 @@ services:
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
-        public: false
+        # This service marked as public (origin private) for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -391,6 +397,8 @@ services:
 
     oro_order.provider.configuration:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_config.manager'
 

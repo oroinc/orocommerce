@@ -14,6 +14,8 @@ services:
 
     oro_payment_term.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@router"
             - "@twig"
@@ -51,6 +53,8 @@ services:
 
     oro_payment_term.provider.payment_term:
         class: 'Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@security.token_storage'
             - '@event_dispatcher'

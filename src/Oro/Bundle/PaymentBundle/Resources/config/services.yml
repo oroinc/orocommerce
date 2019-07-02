@@ -5,6 +5,8 @@ parameters:
 services:
     oro_payment.payment_methods_configs_rule.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_payment.entity.payment_methods_configs_rule.class%'
@@ -12,6 +14,8 @@ services:
 
     oro_payment.form.handler.payment_methods_configs_rule:
         class: 'Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@request_stack'
             - '@doctrine.orm.entity_manager'
@@ -81,6 +85,8 @@ services:
 
     oro_payment.event.callback_handler:
         class: 'Oro\Bundle\PaymentBundle\Event\CallbackHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         lazy: true
         arguments:
             - '@event_dispatcher'
@@ -88,6 +94,8 @@ services:
 
     oro_payment.provider.payment_transaction:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_api.doctrine_helper'
             - '@oro_customer.security.customer_user_provider'
@@ -211,6 +219,8 @@ services:
 
     oro_payment.payment_method.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
