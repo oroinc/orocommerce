@@ -1,0 +1,11 @@
+services:
+    oro_website_search.api.filter_factory.website_search_query:
+        class: Oro\Bundle\ApiBundle\Filter\SearchQueryFilterFactory
+        public: false
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
+            - '@oro_website_search.api.search_query_criteria_visitor'
+
+    oro_website_search.api.search_query_criteria_visitor:
+        class: Oro\Bundle\WebsiteSearchBundle\Api\SearchQueryCriteriaVisitor
+        public: false

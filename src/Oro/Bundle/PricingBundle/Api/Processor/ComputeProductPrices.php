@@ -145,18 +145,18 @@ class ComputeProductPrices implements ProcessorInterface
         foreach ($prices as $price) {
             $productId = $price->getProduct()->getId();
             $result[$productId][] = [
-                'price'    => $this->valueTransformer->transformValue(
+                'price'      => $this->valueTransformer->transformValue(
                     $price->getPrice()->getValue(),
                     DataType::MONEY,
                     $normalizationContext
                 ),
                 'currencyId' => $price->getPrice()->getCurrency(),
-                'quantity' => $this->valueTransformer->transformValue(
+                'quantity'   => $this->valueTransformer->transformValue(
                     $price->getQuantity(),
                     DataType::DECIMAL,
                     $normalizationContext
                 ),
-                'unit'     => $price->getUnit()->getCode()
+                'unit'       => $price->getUnit()->getCode()
             ];
         }
 

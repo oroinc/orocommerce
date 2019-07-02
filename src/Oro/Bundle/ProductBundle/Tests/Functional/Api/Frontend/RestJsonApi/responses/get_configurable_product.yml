@@ -17,10 +17,12 @@ data:
         productAttributes:
             testAttrString: null
             testAttrBoolean: false
-            testAttrFloat: null
+            testAttrFloat: 1.5
             testAttrMoney: null
             testAttrDateTime: null
-            testAttrManyToOne: null
+            testAttrManyToOne:
+                id: '<toString(@customer4->id)>'
+                targetValue: 'Company 4'
             testToOneId: null
             testAttrMultiEnum: {  }
             testAttrManyToMany: {  }

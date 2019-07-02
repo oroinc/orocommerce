@@ -86,10 +86,11 @@ data:
             metaKeywords: 'Product 3 Meta Keywords'
             productAttributes:
                 testAttrString: null
-                testAttrFloat: null
+                testAttrFloat: 1.2
                 testAttrMoney: null
                 testAttrDateTime: null
-                testAttrManyToOne: null
+                testAttrManyToOne:
+                    id: '<toString(@customer2->id)>'
                 testToOneId: null
                 testAttrMultiEnum: []
                 testAttrManyToMany: []

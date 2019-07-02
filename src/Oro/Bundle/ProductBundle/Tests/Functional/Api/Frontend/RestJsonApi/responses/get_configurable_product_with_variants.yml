@@ -20,7 +20,9 @@ data:
             testAttrFloat: null
             testAttrMoney: null
             testAttrDateTime: null
-            testAttrManyToOne: null
+            testAttrManyToOne:
+                id: '<toString(@customer5->id)>'
+                targetValue: 'Company 5'
             testToOneId: null
             testAttrMultiEnum: []
             testAttrManyToMany: []

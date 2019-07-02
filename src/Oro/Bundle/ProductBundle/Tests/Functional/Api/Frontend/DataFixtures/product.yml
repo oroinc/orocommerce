@@ -191,6 +191,12 @@ Extend\Entity\EV_Test_Prod_Attr_Enum:
         __construct: ['option1', 'Option 1', 1, false]
     productAttrEnum_option2:
         __construct: ['option2', 'Option 2', 2, true]
+    productAttrEnum_option3:
+        __construct: ['option3', 'Option 3', 3, true]
+    productAttrEnum_option4:
+        __construct: ['option4', 'Option 4', 4, true]
+    productAttrEnum_option5:
+        __construct: ['option5', 'Option 5', 5, true]
 
 Extend\Entity\EV_Test_Prod_Attr_M_Enum:
     productAttrMultiEnum_option1:
@@ -208,6 +214,21 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@user'
     customer2:
         name: 'Company 2'
+        parent: '@customer'
+        organization: '@organization'
+        owner: '@user'
+    customer3:
+        name: 'Company 3'
+        parent: '@customer'
+        organization: '@organization'
+        owner: '@user'
+    customer4:
+        name: 'Company 4'
+        parent: '@customer'
+        organization: '@organization'
+        owner: '@user'
+    customer5:
+        name: 'Company 5'
         parent: '@customer'
         organization: '@organization'
         owner: '@user'
@@ -345,6 +366,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         slugs: ['@product3_slug_default']
+        testAttrManyToOne: '@customer2'
+        testAttrInteger: 12
+        testAttrFloat: 1.2
+        testAttrEnum: '@productAttrEnum_option2'
     product4:
         sku: 'PSKU4'
         primaryUnitPrecision: '@product4_precision'
@@ -375,7 +400,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         type: 'configurable'
         testAttrBoolean: false
+        testAttrInteger: 1
         variantFields: ['testAttrEnum']
+        testAttrEnum: '@productAttrEnum_option4'
+        testAttrManyToOne: '@customer5'
         variantLinks:
             - '@configurable_product1_variant1_link'
             - '@configurable_product1_variant2_link'
@@ -394,8 +422,12 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         type: 'configurable'
+        testAttrInteger: 120
         testAttrBoolean: false
+        testAttrFloat: 1.1
         variantFields: ['testAttrBoolean']
+        testAttrEnum: '@productAttrEnum_option3'
+        testAttrManyToOne: '@customer3'
         variantLinks:
             - '@configurable_product2_variant1_link'
             - '@configurable_product2_variant2_link'
@@ -415,6 +447,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         type: 'configurable'
         testAttrBoolean: false
+        testAttrFloat: 1.5
+        testAttrEnum: '@productAttrEnum_option5'
+        testAttrManyToOne: '@customer4'
         variantFields: ['testAttrEnum', 'testAttrBoolean']
         variantLinks:
             - '@configurable_product3_variant1_link'
@@ -595,7 +630,6 @@ Oro\Bundle\ProductBundle\Entity\ProductImage:
         types:
             - '@product1_image1_type_main'
             - '@product1_image1_type_additional'
-            - '@product1_image1_type_listing'
     product1_image2:
         image: '@file_product1_image2'
         product: '@product1'
@@ -626,9 +660,6 @@ Oro\Bundle\ProductBundle\Entity\ProductImage:
 Oro\Bundle\ProductBundle\Entity\ProductImageType:
     product1_image1_type_main:
         __construct: ['main']
-        productImage: '@product1_image1'
-    product1_image1_type_listing:
-        __construct: ['listing']
         productImage: '@product1_image1'
     product1_image1_type_additional:
         __construct: ['additional']

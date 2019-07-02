@@ -1,10 +1,10 @@
-# Oro\Bundle\ProductBundle\Entity\Product
+# Oro\Bundle\ProductBundle\Api\Model\ProductSearch
 
 ## FIELDS
 
-### prices
+### minimalPrices
 
-An array of product prices.
+An array of minimal product prices.
 
 Each element of the array is an object with the following properties:
 
@@ -12,8 +12,6 @@ Each element of the array is an object with the following properties:
 
 **currencyId** is a string that contains the currency of the price value.
 
-**quantity** is a number that contains the product quantity the price is applicable to.
-
 **unit** is a string that contains the ID of the product unit.
 
-Example of data: **\[{"price": "1.23", "currencyId": "USD", "quantity": 1, "unit": "set"}\]**
+Example of data: **\[{"price": "1.23", "currencyId": "USD", "unit": "set"}\]**

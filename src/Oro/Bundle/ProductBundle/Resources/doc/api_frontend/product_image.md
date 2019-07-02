@@ -26,13 +26,13 @@ An array contains information about resized versions of the image.
 
 Each element of the array is an object with the following properties:
 
-**url** is a string contains URL of the image.
+**url** is a string that contains URL of the image.
 
 **maxWidth** is a image maximum width. Can be an integer value, a string "auto" or `null`.
 
 **maxHeight** is an image maximum height. Can be an integer value, a string "auto" or `null`.
 
-**dimension** is a string contains the name of a filter applied to the image.
+**dimension** is a string that contains the name of a filter applied to the image.
 
 **types** is an array of types to which the image belongs to.
 

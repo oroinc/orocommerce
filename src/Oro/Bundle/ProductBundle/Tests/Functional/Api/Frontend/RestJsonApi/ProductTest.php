@@ -59,7 +59,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product.yml', $response);
     }
 
-    public function testGetListFilterBySeveralSku()
+    public function testGetListFilterBySeveralSkus()
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -409,11 +409,13 @@ class ProductTest extends FrontendRestJsonApiTestCase
                         'productAttributes' => [
                             'testAttrString'     => null,
                             'testAttrBoolean'    => $emptyBooleanValue,
-                            'testAttrFloat'      => null,
                             'testAttrMoney'      => null,
                             'testAttrDateTime'   => null,
                             'testAttrMultiEnum'  => [],
-                            'testAttrManyToOne'  => null,
+                            'testAttrManyToOne'  => [
+                                'id'          => '<toString(@customer2->id)>',
+                                'targetValue' => 'Company 2'
+                            ],
                             'testToOneId'        => null,
                             'testAttrManyToMany' => [],
                             'testToManyId'       => []

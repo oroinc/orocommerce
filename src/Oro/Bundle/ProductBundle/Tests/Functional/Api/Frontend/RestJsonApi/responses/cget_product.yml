@@ -86,10 +86,11 @@ data:
             metaKeywords: 'Product 3 Meta Keywords'
             productAttributes:
                 testAttrString: null
-                testAttrFloat: null
+                testAttrFloat: 1.2
                 testAttrMoney: null
                 testAttrDateTime: null
-                testAttrManyToOne: null
+                testAttrManyToOne:
+                    id: '<toString(@customer2->id)>'
                 testToOneId: null
                 testAttrMultiEnum: []
                 testAttrManyToMany: []
@@ -147,9 +148,13 @@ data:
                 testAttrFloat: null
                 testAttrMoney: null
                 testAttrDateTime: null
-                testAttrManyToOne: null
+                testAttrManyToOne:
+                    id: '<toString(@customer5->id)>'
+                    targetValue: 'Company 5'
                 testToOneId: null
-                testAttrEnum: null
+                testAttrEnum:
+                    id: '@productAttrEnum_option4->id'
+                    targetValue: '@productAttrEnum_option4->name'
                 testAttrMultiEnum: []
                 testAttrManyToMany: []
                 testToManyId: []
@@ -199,12 +204,16 @@ data:
             productAttributes:
                 testAttrString: null
                 testAttrBoolean: false
-                testAttrFloat: null
+                testAttrFloat: 1.1
                 testAttrMoney: null
                 testAttrDateTime: null
-                testAttrManyToOne: null
+                testAttrManyToOne:
+                    id: '<toString(@customer3->id)>'
+                    targetValue: 'Company 3'
                 testToOneId: null
-                testAttrEnum: null
+                testAttrEnum:
+                    id: '@productAttrEnum_option3->id'
+                    targetValue: '@productAttrEnum_option3->name'
                 testAttrMultiEnum: []
                 testAttrManyToMany: []
                 testToManyId: []
@@ -254,12 +263,16 @@ data:
             productAttributes:
                 testAttrString: null
                 testAttrBoolean: false
-                testAttrFloat: null
+                testAttrFloat: 1.5
                 testAttrMoney: null
                 testAttrDateTime: null
-                testAttrManyToOne: null
+                testAttrManyToOne:
+                    id: '<toString(@customer4->id)>'
+                    targetValue: 'Company 4'
                 testToOneId: null
-                testAttrEnum: null
+                testAttrEnum:
+                    id: '@productAttrEnum_option5->id'
+                    targetValue: '@productAttrEnum_option5->name'
                 testAttrMultiEnum: []
                 testAttrManyToMany: []
                 testToManyId: []

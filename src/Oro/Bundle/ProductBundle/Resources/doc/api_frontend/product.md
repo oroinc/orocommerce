@@ -34,14 +34,14 @@ An array of precisions for each product unit selected for the product.
 
 Each element of the array is an object with the following properties:
 
-**unit** is a string contains the ID of the product unit.
+**unit** is a string that contains the ID of the product unit.
 
 **precision** is a number of digits after the decimal point for the number of products that a customer
 can order or add to the shopping list.
 
-**conversionRate** is a number contains a conversion rate to convert from this unit to the default unit.
+**conversionRate** is a number that contains a conversion rate to convert from this unit to the default unit.
 
-**default** is a boolean indicates whether this unit is default or not for the product.
+**default** is a boolean that indicates whether this unit is default or not for the product.
 
 Example of data: **\[{"unit": "item", "precision": 0, "conversionRate": 1, "default": true}\]**
 
@@ -52,7 +52,7 @@ for configurable products, even if such attributes are invisible.
 
 In case an attribute is a to-one relationship the value is an object with two properties:
 
-**id** is a string contains ID of the related entity.
+**id** is a string that contains ID of the related entity.
 
 **targetValue** is a string representation of the related entity.
 
@@ -82,9 +82,9 @@ An array of product urls for all localizations except the current localization.
 
 Each element of the array is an object with the following properties:
 
-**url** is a string contains the relative URL of the product.
+**url** is a string that contains the relative URL of the product.
 
-**localizationId** is a string contains ID of the localization the url is intended for.
+**localizationId** is a string that contains ID of the localization the url is intended for.
 
 Example of data: **\[{"url": "/en-url", "localizationId": "10"}, {"url": "/fr-url", "localizationId": "11"}\]**
 

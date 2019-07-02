@@ -90,3 +90,12 @@ api:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product.md'
             fields:
                 category: ~
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product_search.md'
+            fields:
+                category:
+                    data_type: integer
+                    property_path: integer.category_id
+                    target_class: Oro\Bundle\CatalogBundle\Entity\Category
+                    target_type: to-one

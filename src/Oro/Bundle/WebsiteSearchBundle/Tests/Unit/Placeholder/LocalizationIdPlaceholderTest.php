@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
@@ -11,21 +11,21 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationIdPlaceholder */
     private $placeholder;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationManager;
+    /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
     protected function setUp()
     {
-        $this->localizationManager = $this->getMockBuilder(UserLocalizationManager::class)
+        $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->placeholder = new LocalizationIdPlaceholder($this->localizationManager);
+        $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider);
     }
 
     protected function tearDown()
     {
-        unset($this->placeholder, $this->localizationManager);
+        unset($this->placeholder, $this->localizationProvider);
     }
 
     public function testGetPlaceholder()
@@ -38,7 +38,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     {
         $localization = $this->getMockBuilder(Localization::class)->getMock();
 
-        $this->localizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
@@ -58,7 +58,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetValueWithUnknownLocalization()
     {
-        $this->localizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn(null);
 
@@ -70,7 +70,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplace()
     {
-        $this->localizationManager->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())->method($this->anything());
 
         $this->assertEquals(
             'string_1',
@@ -80,7 +80,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceWithoutValue()
     {
-        $this->localizationManager->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())->method($this->anything());
 
         $this->assertEquals(
             'string_LOCALIZATION_ID',

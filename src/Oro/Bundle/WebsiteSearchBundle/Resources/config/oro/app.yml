@@ -4,3 +4,9 @@ doctrine:
             search:
                 mappings:
                     OroWebsiteSearchBundle: ~
+
+oro_api:
+    filters:
+        websiteSearchQuery:
+            factory: ['@oro_website_search.api.filter_factory.website_search_query', 'createFilter']
+            supported_operators: ['=']
