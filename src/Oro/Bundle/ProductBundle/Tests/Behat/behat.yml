@@ -269,6 +269,10 @@ oro_behat_extension:
             locator: 'div[data-ftid="oro_product_MultiColor"]'
             element: GroupChoiceField
           BooleanAttr: 'oro_product[BooleanAttr]'
+          Owner:
+            locator: '//*[@name="oro_product[owner]"]'
+            type: xpath
+            element: Select2Entity
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -482,6 +486,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
+
+    Owner:
+      selector:
+        type: xpath
+        locator: '//*[starts-with(@id, "s2id_oro_product_owner")]/a/span[1]'
 
     Inventory Status:
       selector:
