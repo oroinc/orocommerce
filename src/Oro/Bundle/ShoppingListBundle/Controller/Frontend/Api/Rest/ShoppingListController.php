@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -38,9 +37,9 @@ class ShoppingListController extends RestController implements ClassResourceInte
     {
         $isGranted = $this->isGranted('EDIT', $shoppingList);
         $isProcessed = false;
-        $view = $this->view([], Codes::HTTP_NO_CONTENT);
+        $view = $this->view([], Response::HTTP_NO_CONTENT);
         if (!$isGranted) {
-            $view = $this->view(['reason' => 'Access denied'], Codes::HTTP_FORBIDDEN);
+            $view = $this->view(['reason' => 'Access denied'], Response::HTTP_FORBIDDEN);
             $isProcessed = true;
         }
         $this->get('oro_shopping_list.manager.current_shopping_list')

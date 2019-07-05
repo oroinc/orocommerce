@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -40,11 +39,11 @@ class LineItemController extends RestController implements ClassResourceInterfac
             ->getRepository('OroShoppingListBundle:LineItem')
             ->find($id);
 
-        $view = $this->view(null, Codes::HTTP_NO_CONTENT);
+        $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
         if ($lineItem) {
             if (!$this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $view = $this->view(null, Codes::HTTP_FORBIDDEN);
+                $view = $this->view(null, Response::HTTP_FORBIDDEN);
             } else {
                 $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
                 $success = true;
@@ -86,17 +85,17 @@ class LineItemController extends RestController implements ClassResourceInterfac
             if ($isFormHandled) {
                 $view = $this->view(
                     ['unit' => $entity->getUnit()->getCode(), 'quantity' => $entity->getQuantity()],
-                    Codes::HTTP_OK
+                    Response::HTTP_OK
                 );
             } else {
-                $view = $this->view($form, Codes::HTTP_BAD_REQUEST);
+                $view = $this->view($form, Response::HTTP_BAD_REQUEST);
             }
 
             if (!$this->isGranted('EDIT', $entity->getShoppingList())) {
-                $view = $this->view(null, Codes::HTTP_FORBIDDEN);
+                $view = $this->view(null, Response::HTTP_FORBIDDEN);
             }
         } else {
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
