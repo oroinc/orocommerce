@@ -8,12 +8,10 @@ data:
             data: null
         variantProducts:
             data:
-                -
-                    type: products
-                    id: '<toString(@configurable_product2_variant1->id)>'
-                -
-                    type: products
-                    id: '<toString(@configurable_product2_variant2->id)>'
+                - { type: products, id: '<toString(@configurable_product2_variant1->id)>' }
+                - { type: products, id: '<toString(@configurable_product2_variant2->id)>' }
+        parentProducts:
+            data: []
 included:
     -
         type: products
@@ -23,6 +21,11 @@ included:
         relationships:
             category:
                 data: null
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product2->id)>' }
     -
         type: products
         id: '<toString(@configurable_product2_variant2->id)>'
@@ -31,3 +34,8 @@ included:
         relationships:
             category:
                 data: null
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product2->id)>' }

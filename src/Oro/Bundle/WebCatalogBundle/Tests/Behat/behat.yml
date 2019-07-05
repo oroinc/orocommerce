@@ -44,7 +44,7 @@ oro_behat_extension:
                         element: Select2Entity
                     Restriction2 Customer:
                         type: 'css'
-                        locator: 'div[id^="oro_web_catalog_content_node_scopes_2_customer-"]'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_customer-"]'
                         element: Select2Entity
                     Restriction1 CustomerGroup:
                         type: 'css'

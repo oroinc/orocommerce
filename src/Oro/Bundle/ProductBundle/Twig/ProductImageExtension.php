@@ -5,7 +5,8 @@ namespace Oro\Bundle\ProductBundle\Twig;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
  *   - collect_product_images_by_types
  *   - product_image_placeholder
  */
-class ProductImageExtension extends AbstractExtension
+class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_product_image';
 
@@ -86,5 +87,15 @@ class ProductImageExtension extends AbstractExtension
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.provider.product_image_placeholder' => ImagePlaceholderProviderInterface::class,
+        ];
     }
 }

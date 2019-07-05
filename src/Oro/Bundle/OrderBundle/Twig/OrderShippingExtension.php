@@ -3,7 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Twig;
 
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,7 +13,7 @@ use Twig\TwigFunction;
  * Provides a Twig function to display the name of a shipping method:
  *   - oro_order_shipping_method_label
  */
-class OrderShippingExtension extends AbstractExtension
+class OrderShippingExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -29,10 +31,11 @@ class OrderShippingExtension extends AbstractExtension
      */
     protected function getLabelTranslator()
     {
-        return $this->container->get(
-            'oro_shipping.translator.shipping_method_label',
-            ContainerInterface::NULL_ON_INVALID_REFERENCE
-        );
+        try {
+            return $this->container->get('oro_shipping.translator.shipping_method_label');
+        } catch (ServiceNotFoundException $e) {
+            return null;
+        }
     }
 
     /**
@@ -65,5 +68,15 @@ class OrderShippingExtension extends AbstractExtension
             $shippingMethodName,
             $shippingTypeName
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_shipping.translator.shipping_method_label' => ShippingMethodLabelTranslator::class,
+        ];
     }
 }

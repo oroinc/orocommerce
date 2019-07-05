@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var AuthorizedCreditCardComponent;
-    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var CreditCardComponent = require('oropaypal/js/app/components/credit-card-component');
 
@@ -49,9 +48,12 @@ define(function(require) {
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
             this.$differentCard = this.$el.find(this.authorizedOptions.differentCard);
 
+            this.showAuthorizedCard = this.showAuthorizedCard.bind(this);
+            this.showDifferentCard = this.showDifferentCard.bind(this);
+
             this.$el
-                .on('click', this.authorizedOptions.authorizedCardHandle, $.proxy(this.showAuthorizedCard, this))
-                .on('click', this.authorizedOptions.differentCardHandle, $.proxy(this.showDifferentCard, this));
+                .on('click', this.authorizedOptions.authorizedCardHandle, this.showAuthorizedCard)
+                .on('click', this.authorizedOptions.differentCardHandle, this.showDifferentCard);
         },
 
         /**
@@ -134,8 +136,8 @@ define(function(require) {
             }
 
             this.$el
-                .off('click', this.authorizedOptions.authorizedCardHandle, $.proxy(this.showAuthorizedCard, this))
-                .off('click', this.authorizedOptions.differentCardHandle, $.proxy(this.showDifferentCard, this));
+                .off('click', this.authorizedOptions.authorizedCardHandle, this.showAuthorizedCard)
+                .off('click', this.authorizedOptions.differentCardHandle, this.showDifferentCard);
 
             AuthorizedCreditCardComponent.__super__.dispose.call(this);
         }

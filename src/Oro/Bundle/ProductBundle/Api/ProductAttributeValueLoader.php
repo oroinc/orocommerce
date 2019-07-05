@@ -7,6 +7,7 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
+use Oro\Bundle\ApiBundle\Processor\ApiContext;
 use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
 use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
 use Oro\Bundle\ApiBundle\Request\ApiActions;
@@ -77,11 +78,15 @@ class ProductAttributeValueLoader
     ): array {
         $attributes = [];
         $idTransformer = $this->entityIdTransformerRegistry->getEntityIdTransformer($requestType);
+        $normalizationContext = [
+            ApiContext::VERSION      => $version,
+            ApiContext::REQUEST_TYPE => $requestType
+        ];
         foreach ($attributesPerFamily as $familyId => $fields) {
             $productIds = $productIdsPerFamily[$familyId];
             if (!empty($productIds)) {
                 $attributesConfig = $this->getLoadAttributesConfig($familyId, $fields, $version, $requestType);
-                $attributesData = $this->loadAttributesData($productIds, $attributesConfig);
+                $attributesData = $this->loadAttributesData($productIds, $attributesConfig, $normalizationContext);
                 foreach ($attributesData as $items) {
                     $attributes[$items['id']] = $this->getAttributes(
                         $items,
@@ -151,17 +156,21 @@ class ProductAttributeValueLoader
     /**
      * @param int[]                  $productIds
      * @param EntityDefinitionConfig $config
+     * @param array                  $normalizationContext
      *
      * @return array
      */
-    private function loadAttributesData(array $productIds, EntityDefinitionConfig $config): array
-    {
+    private function loadAttributesData(
+        array $productIds,
+        EntityDefinitionConfig $config,
+        array $normalizationContext
+    ): array {
         $qb = $this->doctrineHelper
             ->createQueryBuilder(Product::class, 'p')
             ->where('p.id IN (:ids)')
             ->setParameter('ids', $productIds);
 
-        return $this->entitySerializer->serialize($qb, $config);
+        return $this->entitySerializer->serialize($qb, $config, $normalizationContext);
     }
 
     /**

@@ -433,6 +433,8 @@ services:
 
     oro_promotion.repository.promotion:
         class: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_promotion.entity.promotion.class%'
@@ -461,6 +463,8 @@ services:
 
     oro_promotion.applied_promotion_manager:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_promotion.promotion_executor.link'
             - '@oro_entity.doctrine_helper'
@@ -551,11 +555,15 @@ services:
 
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_promotion.coupon_generation.coupon'
 
     oro_promotion.coupon_generation.code_generator:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
 
     oro_promotion.coupon_generation.coupon:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGenerator
@@ -575,7 +583,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -583,7 +591,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension'
         public: false
         arguments:
-            - "@doctrine"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -666,12 +674,16 @@ services:
 
     oro_promotion.handler.coupon_validation_handler:
         class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_promotion.handler.abstract_coupon_handler
         calls:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
 
     oro_promotion.handler.frontend_coupon_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_promotion.handler.abstract_coupon_handler
         calls:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
@@ -680,6 +692,8 @@ services:
 
     oro_promotion.handler.frontend_coupon_remove_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@security.authorization_checker'
             - '@doctrine'
@@ -745,6 +759,6 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Twig\DiscountsInformationExtension'
         public: false
         arguments:
-            - '@oro_promotion.layout.discount_information_data_provider'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }

@@ -43,6 +43,9 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: true
 
+    Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
+        alias: 'oro_web_catalog.content_variant_type.registry'
+
     oro_web_catalog.content_variant_type.system_page:
         class: Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType
         public: false
@@ -68,11 +71,14 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
 
+    Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler:
+        alias: 'oro_web_catalog.content_node_tree_handler'
+
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -183,6 +189,9 @@ services:
             - '@oro_redirect.generator.redirect'
             - '@oro_locale.helper.localization'
             - '@oro_redirect.generator.slug_url_differ'
+
+    Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator:
+        alias: 'oro_web_catalog.generator.slug_generator'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:

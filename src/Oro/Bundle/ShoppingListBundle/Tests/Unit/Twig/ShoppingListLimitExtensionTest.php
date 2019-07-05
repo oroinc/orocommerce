@@ -18,11 +18,13 @@ class ShoppingListLimitExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->shoppingListLimitManager = $this->getMockBuilder(ShoppingListLimitManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
 
-        $this->extension = new ShoppingListLimitExtension($this->shoppingListLimitManager);
+        $container = self::getContainerBuilder()
+            ->add('oro_shopping_list.manager.shopping_list_limit', $this->shoppingListLimitManager)
+            ->getContainer($this);
+
+        $this->extension = new ShoppingListLimitExtension($container);
     }
 
     public function testGetName()

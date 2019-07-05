@@ -10,6 +10,12 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Product import strategy.
+ * In addition to Configurable strategy logic handles import of product unit precisions and variants.
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements ClosableInterface
 {
     /**
@@ -26,11 +32,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      * @var string
      */
     protected $variantLinkClass;
-
-    /**
-     * @var string
-     */
-    protected $productClass;
 
     /**
      * @var array|Product[]
@@ -62,19 +63,19 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
      * @param Product $entity
-     * @return Product
+     * {@inheritdoc}
      */
     protected function beforeProcessEntity($entity)
     {
+        // Postpone configurable products processing after simple ones
+        // incremented_read option is set during postponed rows processing
+        if (!$this->context->hasOption('incremented_read') && $entity->getType() === Product::TYPE_CONFIGURABLE) {
+            $this->context->addPostponedRow($this->context->getValue('rawItemData'));
+
+            return null;
+        }
+
         $data = $this->context->getValue('itemData');
 
         if (array_key_exists('additionalUnitPrecisions', $data)) {
@@ -91,7 +92,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
     /**
      * @param Product $entity
-     * @return Product
+     * {@inheritdoc}
      */
     protected function afterProcessEntity($entity)
     {
@@ -149,6 +150,10 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         if (is_a($entityName, $this->variantLinkClass, true)) {
             $newIdentityValues = [];
             foreach ($identityValues as $entityFieldName => $entity) {
+                if (null === $entity || '' === $entity) {
+                    continue;
+                }
+
                 if ($this->databaseHelper->getIdentifier($entity)) {
                     $newIdentityValues[$entityFieldName] = $entity;
                 } else {
@@ -162,6 +167,9 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
                 }
             }
             $identityValues = $newIdentityValues;
+            if (empty($identityValues['parentProduct']) || empty($identityValues['product'])) {
+                return null;
+            }
         }
 
         return parent::findEntityByIdentityValues($entityName, $identityValues);
@@ -240,12 +248,19 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
+     * @param Product $entity
+     * @param Product $existingEntity
      * {@inheritdoc}
      */
     protected function importExistingEntity($entity, $existingEntity, $itemData = null, array $excludedFields = [])
     {
-        if (is_a($entity, $this->productClass)) {
+        if ($entity instanceof Product) {
             $excludedFields[] = 'type';
+            if ($entity->getType() === Product::TYPE_SIMPLE) {
+                $excludedFields[] = 'variantLinks';
+            } else {
+                $excludedFields[] = 'parentVariantLinks';
+            }
 
             // Add primary unit precision to unit precisions list if it was unintentionally removed
             $primaryUnitPrecision = $existingEntity->getPrimaryUnitPrecision();
@@ -288,10 +303,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
             if (in_array($code, $usedCodes, true)) {
                 $error = $this->translator->trans('oro.product.productunitprecision.duplicate_units_import_error');
-                $this->context->incrementErrorEntriesCount();
-                $this->strategyHelper->addValidationErrors([$error], $this->context);
-
-                $this->doctrineHelper->getEntityManager($entity)->detach($entity);
+                $this->processValidationErrors($entity, [$error]);
 
                 return null;
             }

@@ -10,7 +10,13 @@ services:
             - '@oro_pricing.notification_message.transport.database'
             - '@event_dispatcher'
 
+    Oro\Bundle\PricingBundle\NotificationMessage\Messenger:
+        alias: 'oro_pricing.notification_message.messenger'
+
     oro_pricing.notification_message.renderer.flash_message:
         class: Oro\Bundle\PricingBundle\NotificationMessage\Renderer\FlashMessageRenderer
         arguments:
             - '@session.flash_bag'
+
+    Oro\Bundle\PricingBundle\NotificationMessage\Renderer\RendererInterface:
+        alias: 'oro_pricing.notification_message.renderer.flash_message'

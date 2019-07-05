@@ -2,11 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validate configurable attribute combinations is unique.
+ */
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_unique_variant_links';
@@ -17,11 +23,17 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     private $propertyAccessor;
 
     /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
+    /**
      * @param PropertyAccessor $propertyAccessor
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    public function __construct(PropertyAccessor $propertyAccessor, ManagerRegistry $registry)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->registry = $registry;
     }
 
     /**
@@ -44,7 +56,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             return;
         }
 
-        if (!$value->getVariantFields()) {
+        if (count($value->getVariantFields()) === 0) {
             return;
         }
 
@@ -59,12 +71,9 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     {
         $variantHashes = [];
         $variantFields = $value->getVariantFields();
-        foreach ($value->getVariantLinks() as $variantLink) {
-            $product = $variantLink->getProduct();
-            if (!$product) {
-                continue;
-            }
+        $simpleProducts = $this->getSimpleProducts($value);
 
+        foreach ($simpleProducts as $product) {
             $variantHashes[] = $this->getVariantFieldsHash($variantFields, $product);
         }
 
@@ -87,11 +96,38 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
                 $fields[$fieldName] = $fieldValue;
 
                 if (is_object($fieldValue) && method_exists($fieldValue, '__toString')) {
-                    $fields[$fieldName] = (string) $fieldValue;
+                    $fields[$fieldName] = (string)$fieldValue;
                 }
             }
         }
 
         return md5(json_encode($fields));
+    }
+
+    /**
+     * @param Product $value
+     * @return array|Product[]
+     */
+    private function getSimpleProducts(Product $value)
+    {
+        $variantLinks = $value->getVariantLinks();
+        if ($value->getId()
+            && $variantLinks instanceof AbstractLazyCollection
+            && !$variantLinks->isInitialized()
+        ) {
+            /** @var ProductRepository $repo */
+            $repo = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+
+            return $repo->getSimpleProductsForConfigurableProduct($value);
+        }
+
+        $simpleProducts = [];
+        foreach ($value->getVariantLinks() as $variantLink) {
+            if ($variantLink->getProduct()) {
+                $simpleProducts[] = $variantLink->getProduct();
+            }
+        }
+
+        return $simpleProducts;
     }
 }

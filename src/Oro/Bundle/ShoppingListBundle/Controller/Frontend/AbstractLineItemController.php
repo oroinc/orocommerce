@@ -3,29 +3,43 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractLineItemController extends Controller
+/**
+ * Base methods for line item controllers
+ */
+abstract class AbstractLineItemController extends AbstractController
 {
     /**
      * @param ShoppingList $shoppingList
      * @param string $translationKey
      * @return string
      */
-    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
+    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey): string
     {
-        if ($this->get('oro_shopping_list.manager.shopping_list_limit')->isOnlyOneEnabled()) {
-            $link = $this->get('router')->generate('oro_shopping_list_frontend_view');
-        } else {
-            $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
-        }
+        $link = $this->get(RouterInterface::class)->generate('oro_shopping_list_frontend_view', [
+            'id' => $this->get(ShoppingListLimitManager::class)->isOnlyOneEnabled()
+                ? null
+                : $shoppingList->getId(),
+        ]);
 
-        $translator = $this->get('translator');
         $label = htmlspecialchars($shoppingList->getLabel());
 
-        return $translator->trans(
+        return $this->get(TranslatorInterface::class)->trans(
             $translationKey,
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );
+    }
+
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ShoppingListLimitManager::class,
+            RouterInterface::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

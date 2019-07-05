@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\Null\NullSession;
@@ -136,9 +137,20 @@ class ImageResizeMessageProcessorTest extends WebTestCase
      */
     private function getFilteredImagePath(ProductImage $productImage, $filterName)
     {
+        /** @var Website $defaultWebsite */
+        $defaultWebsite = self::getContainer()
+            ->get('doctrine')->getRepository(Website::class)
+            ->findOneBy(['default' => true]);
+        $websiteManager = self::getContainer()
+            ->get('oro_website.manager');
+
+        $websiteManager->setCurrentWebsite($defaultWebsite);
+
         $filteredUrl = self::getContainer()
             ->get('oro_attachment.manager')
             ->getFilteredImageUrl($productImage->getImage(), $filterName);
+
+        $websiteManager->onClear();
 
         $filteredPath = self::getContainer()->getParameter('kernel.project_dir') . '/public' . $filteredUrl;
 

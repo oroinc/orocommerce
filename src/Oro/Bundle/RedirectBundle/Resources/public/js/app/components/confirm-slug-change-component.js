@@ -80,6 +80,8 @@ define(function(require) {
 
         initializeElements: function() {
             this.disabled = this.options.disabled;
+            this.onSubmit = this.onSubmit.bind(this);
+
             if (!this.disabled) {
                 this.$form = this.options._sourceElement.closest('form');
                 this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
@@ -87,7 +89,7 @@ define(function(require) {
                 this._saveSlugFieldsInitialState();
                 this.$form
                     .off(this.eventNamespace())
-                    .on('submit' + this.eventNamespace(), this.onSubmit.bind(this));
+                    .on('submit' + this.eventNamespace(), this.onSubmit);
             }
         },
 
@@ -183,7 +185,7 @@ define(function(require) {
             this._removeConfirmModal();
 
             if (this.$form) {
-                this.$form.off('submit', $.proxy(this.onSubmit, this));
+                this.$form.off('submit', this.onSubmit);
             }
             mediator.off(null, null, this);
 

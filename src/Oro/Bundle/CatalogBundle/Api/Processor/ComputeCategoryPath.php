@@ -60,7 +60,8 @@ class ComputeCategoryPath implements ProcessorInterface
 
         $categories = $this->loadCategoriesData(
             array_unique(array_merge(...array_values($categoryParents))),
-            $context->getConfig()->getField(self::CATEGORY_PATH_FIELD)->getTargetEntity()
+            $context->getConfig()->getField(self::CATEGORY_PATH_FIELD)->getTargetEntity(),
+            $context->getNormalizationContext()
         );
 
         foreach ($data as $key => $item) {
@@ -81,17 +82,21 @@ class ComputeCategoryPath implements ProcessorInterface
     /**
      * @param int[]                  $categoriesIds
      * @param EntityDefinitionConfig $config
+     * @param array                  $normalizationContext
      *
      * @return array [categoryId => [category_data], ...]
      */
-    private function loadCategoriesData(array $categoriesIds, EntityDefinitionConfig $config): array
-    {
+    private function loadCategoriesData(
+        array $categoriesIds,
+        EntityDefinitionConfig $config,
+        array $normalizationContext
+    ): array {
         $qb = $this->doctrineHelper
             ->createQueryBuilder(Category::class, 'c')
             ->where('c.id IN (:ids)')
             ->setParameter('ids', $categoriesIds);
 
-        $categories = $this->entitySerializer->serialize($qb, $config);
+        $categories = $this->entitySerializer->serialize($qb, $config, $normalizationContext);
 
         $result = [];
         foreach ($categories as $category) {

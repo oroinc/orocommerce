@@ -1,0 +1,21 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\OrderBundle\Controller\OrderController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\Frontend\OrderController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\Frontend\ProductsController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

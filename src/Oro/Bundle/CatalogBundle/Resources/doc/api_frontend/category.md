@@ -38,9 +38,9 @@ An array of category urls for all localizations except the current localization.
 
 Each element of the array is an object with the following properties:
 
-**url** is a string contains the relative URL of the category.
+**url** is a string that contains the relative URL of the category.
 
-**localizationId** is a string contains ID of the localization the url is intended for.
+**localizationId** is a string that contains ID of the localization the url is intended for.
 
 Example of data: **\[{"url": "/en-url", "localizationId": "10"}, {"url": "/fr-url", "localizationId": "11"}\]**
 
@@ -50,11 +50,11 @@ An array of category images.
 
 Each element of the array is an object with the following properties:
 
-**mimeType** is a string contains the media type and subtype of the image.
+**mimeType** is a string that contains the media type of the image.
 
-**url** is a string contains URL of the image.
+**url** is a string that contains URL of the image.
 
-**type** is a string contains type which this image belongs to. Possible values of type: `small` and `large`.
+**type** is a string that contains the type of the image. Possible values of the image types are `small` and `large`.
 
 Example of data: **\[{"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
 

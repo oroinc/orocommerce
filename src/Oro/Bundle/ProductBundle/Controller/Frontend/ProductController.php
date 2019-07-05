@@ -2,19 +2,24 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
+use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The controller for the product view and search functionality.
  */
-class ProductController extends Controller
+class ProductController extends AbstractController
 {
     const GRID_NAME = 'frontend-product-search-grid';
 
@@ -30,8 +35,8 @@ class ProductController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
-            'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
+            'entity_class' => Product::class,
+            'theme_name' => $this->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
@@ -51,8 +56,8 @@ class ProductController extends Controller
     public function searchAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
-            'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
+            'entity_class' => Product::class,
+            'theme_name' => $this->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
@@ -91,7 +96,7 @@ class ProductController extends Controller
             ->isSimpleFormAvailable($product);
 
         if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
-            $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+            $productAvailabilityProvider = $this->get(ProductVariantAvailabilityProvider::class);
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
             if ($simpleProduct) {
                 $data['productVariant'] = $simpleProduct;
@@ -110,10 +115,10 @@ class ProductController extends Controller
         }
 
         $templateProduct = $parentProduct ? $parentProduct : $product;
-        $pageTemplate = $this->get('oro_product.provider.page_template_provider')
+        $pageTemplate = $this->get(PageTemplateProvider::class)
             ->getPageTemplate($templateProduct, 'oro_product_frontend_product_view');
 
-        $this->get('oro_entity_config.attribute_render_registry')->setAttributeRendered(
+        $this->get(AttributeRenderRegistry::class)->setAttributeRendered(
             $product->getAttributeFamily(),
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
         );
@@ -124,5 +129,20 @@ class ProductController extends Controller
             'attribute_family' => $product->getAttributeFamily(),
             'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            DataGridThemeHelper::class,
+            ProductVariantAvailabilityProvider::class,
+            PageTemplateProvider::class,
+            AttributeRenderRegistry::class,
+            'oro_product.layout.data_provider.product_view_form_availability_provider'
+                => ProductFormAvailabilityProvider::class,
+        ]);
     }
 }

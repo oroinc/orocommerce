@@ -23,7 +23,11 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
-        $this->extension = new ProductUnitLabelExtension($this->formatter);
+        $container = self::getContainerBuilder()
+            ->add('oro_product.formatter.product_unit_label', $this->formatter)
+            ->getContainer($this);
+
+        $this->extension = new ProductUnitLabelExtension($container);
     }
 
     /**

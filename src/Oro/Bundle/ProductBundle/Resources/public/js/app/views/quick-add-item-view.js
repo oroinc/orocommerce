@@ -171,7 +171,12 @@ define(function(require) {
                 });
             }
 
-            this.updateUI(true);
+            var triggerBlurEvent = true;
+            if (_.has(data, 'triggerBlurEvent')) {
+                triggerBlurEvent = data.triggerBlurEvent;
+            }
+
+            this.updateUI(triggerBlurEvent);
         },
 
         updateModel: function(data) {
@@ -303,9 +308,11 @@ define(function(require) {
         },
 
         getUnitError: function() {
-            var error = [];
-            error[this.getElement('unit').attr('name')] =
-                __(this.options.unitErrorText, {unit: this.model.get('unit') || this.model.get('unit_deferred')});
+            var unitName = _.escape(this.model.get('unit') || this.model.get('unit_deferred'));
+            var error = {};
+
+            error[this.getElement('unit').attr('name')] = __(this.options.unitErrorText, {unit: unitName});
+
             return error;
         },
 
@@ -327,7 +334,6 @@ define(function(require) {
                 this.showUnitError();
                 _.defer(_.bind(function() {
                     mediator.trigger('quick-add-form-item:unit-invalid', eventData);
-                    this.getElement('remove').click();
                 }, this));
             } else if (this.model.get('sku') && this.model.get('units_loaded')) {
                 mediator.trigger('quick-add-form-item:item-valid', eventData);

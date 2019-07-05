@@ -5,6 +5,8 @@ namespace Oro\Bundle\ShippingBundle\Twig;
 use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -17,45 +19,24 @@ use Twig\TwigFunction;
  *   - oro_shipping_method_config_template
  *   - oro_shipping_method_enabled
  */
-class ShippingMethodExtension extends AbstractExtension
+class ShippingMethodExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
     const DEFAULT_METHOD_CONFIG_TEMPLATE
         = 'OroShippingBundle:ShippingMethodsConfigsRule:shippingMethodWithOptions.html.twig';
 
-    /**
-     * @var ShippingMethodLabelFormatter
-     */
-    protected $shippingMethodLabelFormatter;
+    /** @var ContainerInterface */
+    private $container;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    /**
-     * @var ShippingMethodEnabledByIdentifierCheckerInterface
-     */
-    protected $checker;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $configCache = [];
 
     /**
-     * @param ShippingMethodLabelFormatter                      $shippingMethodLabelFormatter
-     * @param EventDispatcherInterface                          $dispatcher
-     * @param ShippingMethodEnabledByIdentifierCheckerInterface $checker
+     * @param ContainerInterface $container
      */
-    public function __construct(
-        ShippingMethodLabelFormatter $shippingMethodLabelFormatter,
-        EventDispatcherInterface $dispatcher,
-        ShippingMethodEnabledByIdentifierCheckerInterface $checker
-    ) {
-        $this->shippingMethodLabelFormatter = $shippingMethodLabelFormatter;
-        $this->dispatcher = $dispatcher;
-        $this->checker = $checker;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 
     /**
@@ -75,7 +56,7 @@ class ShippingMethodExtension extends AbstractExtension
     {
         $event = new ShippingMethodConfigDataEvent($shippingMethodName);
         if (!array_key_exists($shippingMethodName, $this->configCache)) {
-            $this->dispatcher->dispatch(ShippingMethodConfigDataEvent::NAME, $event);
+            $this->container->get('event_dispatcher')->dispatch(ShippingMethodConfigDataEvent::NAME, $event);
             $template = $event->getTemplate();
             if (!$template) {
                 $template = static::DEFAULT_METHOD_CONFIG_TEMPLATE;
@@ -93,7 +74,7 @@ class ShippingMethodExtension extends AbstractExtension
      */
     public function isShippingMethodEnabled($methodIdentifier)
     {
-        return $this->checker->isEnabled($methodIdentifier);
+        return $this->container->get('oro_shipping.checker.shipping_method_enabled')->isEnabled($methodIdentifier);
     }
 
     /**
@@ -101,18 +82,20 @@ class ShippingMethodExtension extends AbstractExtension
      */
     public function getFunctions()
     {
+        $shippingMethodLabelFormatter = $this->container->get('oro_shipping.formatter.shipping_method_label');
+
         return [
             new TwigFunction(
                 'get_shipping_method_label',
-                [$this->shippingMethodLabelFormatter, 'formatShippingMethodLabel']
+                [$shippingMethodLabelFormatter, 'formatShippingMethodLabel']
             ),
             new TwigFunction(
                 'get_shipping_method_type_label',
-                [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
+                [$shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
             ),
             new TwigFunction(
                 'oro_shipping_method_with_type_label',
-                [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
+                [$shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
             ),
             new TwigFunction(
                 'oro_shipping_method_config_template',
@@ -122,6 +105,18 @@ class ShippingMethodExtension extends AbstractExtension
                 'oro_shipping_method_enabled',
                 [$this, 'isShippingMethodEnabled']
             )
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_shipping.formatter.shipping_method_label' => ShippingMethodLabelFormatter::class,
+            'event_dispatcher' => EventDispatcherInterface::class,
+            'oro_shipping.checker.shipping_method_enabled' => ShippingMethodEnabledByIdentifierCheckerInterface::class,
         ];
     }
 }

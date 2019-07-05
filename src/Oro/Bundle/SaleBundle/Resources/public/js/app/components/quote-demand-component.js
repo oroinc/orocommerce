@@ -57,7 +57,9 @@ define(function(require) {
             }
             this.initFormValidation();
 
-            $(this.options.lineItemsSelector).on('quote-items-changed', $.proxy(this.loadSubtotals, this));
+            this.loadSubtotals = this.loadSubtotals.bind(this);
+
+            $(this.options.lineItemsSelector).on('quote-items-changed', this.loadSubtotals);
         },
 
         initFormValidation: function() {
@@ -86,7 +88,7 @@ define(function(require) {
                 return;
             }
 
-            $(this.options.lineItemsSelector).off('quote-items-changed', $.proxy(this.loadSubtotals, this));
+            $(this.options.lineItemsSelector).off('quote-items-changed', this.loadSubtotals);
 
             QuoteDemandComponent.__super__.dispose.call(this);
         },
@@ -103,7 +105,7 @@ define(function(require) {
                     data: {
                         _widgetContainer: 'ajax'
                     },
-                    success: _.bind(this.onSubtotalSuccess, this)
+                    success: this.onSubtotalSuccess.bind(this)
                 });
             }
         },

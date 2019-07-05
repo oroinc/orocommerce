@@ -2,23 +2,26 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 
+/**
+ * The placeholder for the current localization ID.
+ */
 class LocalizationIdPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'LOCALIZATION_ID';
 
     /**
-     * @var UserLocalizationManager
+     * @var CurrentLocalizationProvider
      */
-    private $localizationManager;
+    private $localizationProvider;
 
     /**
-     * @param UserLocalizationManager $localizationManager
+     * @param CurrentLocalizationProvider $localizationProvider
      */
-    public function __construct(UserLocalizationManager $localizationManager)
+    public function __construct(CurrentLocalizationProvider $localizationProvider)
     {
-        $this->localizationManager = $localizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -34,7 +37,7 @@ class LocalizationIdPlaceholder extends AbstractPlaceholder
      */
     public function getDefaultValue()
     {
-        $localization = $this->localizationManager->getCurrentLocalization();
+        $localization = $this->localizationProvider->getCurrentLocalization();
 
         if (!$localization) {
             throw new \RuntimeException('Can\'t get current localization');

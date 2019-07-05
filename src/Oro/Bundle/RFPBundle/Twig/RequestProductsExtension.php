@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Twig;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,17 +13,6 @@ use Twig\TwigFunction;
 class RequestProductsExtension extends AbstractExtension
 {
     const NAME = 'oro_rfp_request_products';
-
-    /** @var ContainerInterface */
-    protected $container;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}

@@ -42,7 +42,7 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
         public: false
         arguments:
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
         tags:
             - { name: website_search.placeholder }
 

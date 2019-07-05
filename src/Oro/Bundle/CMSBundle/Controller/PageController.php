@@ -4,15 +4,21 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class PageController extends Controller
+/**
+ * CRUD actions for Page entity
+ */
+class PageController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_cms_page_view", requirements={"id"="\d+"})
@@ -105,7 +111,7 @@ class PageController extends Controller
      */
     protected function update(Page $page)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $page,
             $this->createForm(PageType::class, $page),
             function (Page $page) {
@@ -120,7 +126,7 @@ class PageController extends Controller
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.cms.controller.page.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
         );
     }
 
@@ -134,7 +140,19 @@ class PageController extends Controller
      */
     public function getChangedSlugsAction(Page $page)
     {
-        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+        return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($page, PageType::class));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            UpdateHandler::class,
+            ChangedSlugsHelper::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

@@ -11,6 +11,8 @@ services:
 
     oro_ups.connection.validator:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_ups.connection.validator.request.factory.rate_request'
             - '@oro_ups.client.factory_basic'

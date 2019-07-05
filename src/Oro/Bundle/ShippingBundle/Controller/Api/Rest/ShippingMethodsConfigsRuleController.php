@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -56,11 +55,11 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->handleView(
@@ -105,11 +104,11 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->handleView(
@@ -155,7 +154,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $errors->get(0)->getMessage(),
                     'successful' => false,
                 ],
-                Codes::HTTP_BAD_REQUEST
+                Response::HTTP_BAD_REQUEST
             );
 
             return $this->handleView(

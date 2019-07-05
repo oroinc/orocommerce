@@ -12,11 +12,13 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Twig\TwigFunction;
 
 class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use TwigExtensionTestCaseTrait;
 
     const CURRENCY_CODE = 'USD';
     const DISCOUNT_TYPE = 'line_item';
@@ -42,7 +44,11 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 
-        $this->appliedDiscountsExtension = new AppliedPromotionsExtension($this->registry);
+        $container = self::getContainerBuilder()
+            ->add('doctrine', $this->registry)
+            ->getContainer($this);
+
+        $this->appliedDiscountsExtension = new AppliedPromotionsExtension($container);
     }
 
     public function testGetFunctions()

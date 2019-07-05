@@ -21,7 +21,11 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->dataProvider = $this->createMock(PaymentTermProvider::class);
 
-        $this->extension = new PaymentTermExtension($this->dataProvider);
+        $container = self::getContainerBuilder()
+            ->add('oro_payment_term.provider.payment_term', $this->dataProvider)
+            ->getContainer($this);
+
+        $this->extension = new PaymentTermExtension($container);
     }
 
     public function testGetPaymentTerm()

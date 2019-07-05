@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class helps to prepare products search result for quick order form
@@ -53,6 +54,10 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      * @var ProductPriceProviderInterface
      */
     private $productPriceProvider;
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
 
     /**
      * @param string $className
@@ -62,6 +67,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      * @param ProductPriceFormatter $productPriceFormatter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceProviderInterface $productPriceProvider
+     * @param RequestStack $requestStack
      */
     public function __construct(
         $className,
@@ -70,7 +76,8 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         ManagerRegistry $registry,
         ProductPriceFormatter $productPriceFormatter,
         UserCurrencyManager $userCurrencyManager,
-        ProductPriceProviderInterface $productPriceProvider
+        ProductPriceProviderInterface $productPriceProvider,
+        RequestStack $requestStack
     ) {
         $this->className = $className;
         $this->productSearchRepository = $productSearchRepository;
@@ -79,6 +86,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $this->productPriceFormatter = $productPriceFormatter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceProvider = $productPriceProvider;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -201,10 +209,16 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      */
     private function getSearchResultsData($search, $firstResult, $maxResults) : array
     {
-        $foundItems = $this->productSearchRepository
-            ->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults)
-            ->getResult()
-            ->getElements();
+        $request = $this->requestStack->getCurrentRequest();
+        $skuList = $request->request->get('sku');
+        if ($skuList) {
+            $foundItems = $this->productSearchRepository->searchFilteredBySkus($skuList);
+        } else {
+            $foundItems = $this->productSearchRepository
+                ->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults)
+                ->getResult()
+                ->getElements();
+        }
 
         return array_combine(
             array_map(function (Item $foundItem) {

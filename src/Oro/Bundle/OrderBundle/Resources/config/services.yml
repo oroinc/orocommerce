@@ -71,9 +71,13 @@ services:
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'
 
+    Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:
+        alias: 'oro_order.order.provider.order_address_security'
+
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
-        public: false
+        # This service marked as public (origin private) for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_order.order.provider.order_address'
             - '@doctrine'
@@ -90,13 +94,8 @@ services:
             - '%oro_customer.entity.customer.class%'
             - '%oro_customer.entity.customer_user.class%'
 
-    oro_order.request_handler.frontend_order_data_handler:
-        class: 'Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
-        arguments:
-            - '@doctrine'
-            - '@request_stack'
-            - '@oro_security.token_accessor'
-            - '@oro_payment_term.provider.payment_term'
+    Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler:
+        alias: 'oro_order.request_handler.order_request_handler'
 
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
@@ -105,6 +104,8 @@ services:
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -113,6 +114,8 @@ services:
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@doctrine"
 
@@ -223,7 +226,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -231,7 +234,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -264,7 +267,8 @@ services:
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
-        public: false
+        # This service marked as public (origin private) for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -356,6 +360,9 @@ services:
             - '@oro_currency.config.currency'
             - '@oro_currency.converter.rate'
 
+    Oro\Bundle\OrderBundle\Provider\TotalProvider:
+        alias: 'oro_order.provider.total_processor'
+
     oro_order.event_listener.unit_visibility.datagrid:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic
         arguments:
@@ -390,6 +397,8 @@ services:
 
     oro_order.provider.configuration:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_config.manager'
 

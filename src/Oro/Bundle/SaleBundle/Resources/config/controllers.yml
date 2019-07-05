@@ -2,12 +2,8 @@ services:
     _defaults:
         public: true
 
-    oro_sale.controller.quote:
-        class: 'Oro\Bundle\SaleBundle\Controller\Frontend\QuoteController'
+    Oro\Bundle\SaleBundle\Controller\Frontend\QuoteController:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: 'container.service_subscriber' }
-
-    Oro\Bundle\SaleBundle\Controller\Frontend\QuoteController:
-        alias: 'oro_sale.controller.quote'

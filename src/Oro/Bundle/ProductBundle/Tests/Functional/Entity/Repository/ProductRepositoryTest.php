@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeData;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
@@ -14,6 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolationPerTest
  */
@@ -609,6 +611,59 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals(
             $expected,
             $this->getRepository()->getVariantsMapping([$product8, $product9])
+        );
+    }
+
+    public function testGetParentProductsForSimpleProduct()
+    {
+        $this->prepareConfigurableVariants();
+
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $parentProducts = $this->getRepository()->getParentProductsForSimpleProduct($product1);
+        $this->assertNotEmpty($parentProducts);
+        $this->assertCount(1, $parentProducts);
+        $this->assertEquals($product8->getId(), $parentProducts[0]->getId());
+    }
+
+    public function testGetSimpleProductsForConfigurableProduct()
+    {
+        $this->prepareConfigurableVariants();
+
+        /** @var Product $product9 */
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $simpleProducts = $this->getRepository()->getSimpleProductsForConfigurableProduct($product9);
+        $this->assertNotEmpty($simpleProducts);
+        $this->assertCount(1, $simpleProducts);
+        $this->assertEquals($product3->getId(), $simpleProducts[0]->getId());
+    }
+
+    public function testGetRequiredAttributesForSimpleProduct()
+    {
+        $this->prepareConfigurableVariants();
+
+        /** @var Product $product9 */
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Product::class);
+        $variantFields = ['field1', 'field2'];
+        $product9->setVariantFields($variantFields);
+        $em->flush();
+
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $attributes = $this->getRepository()->getRequiredAttributesForSimpleProduct($product3);
+        $this->assertEquals(
+            [['id' => $product9->getId(), 'sku' => $product9->getSku(), 'variantFields' => $variantFields]],
+            $attributes
         );
     }
 

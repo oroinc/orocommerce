@@ -5,7 +5,8 @@ namespace Oro\Bundle\SaleBundle\Twig;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -13,7 +14,7 @@ use Twig\TwigFunction;
  * Provides a Twig function to create a storefront link for accessing a quote by using its guest access identifier:
  *   - quote_guest_access_link
  */
-class QuoteGuestAccessExtension extends AbstractExtension
+class QuoteGuestAccessExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_sale_quote_guest_access';
 
@@ -69,7 +70,7 @@ class QuoteGuestAccessExtension extends AbstractExtension
      */
     private function getFeatureChecker(): FeatureChecker
     {
-        return $this->container->get('oro_featuretoggle.checker.feature_checker');
+        return $this->container->get(FeatureChecker::class);
     }
 
     /**
@@ -77,6 +78,17 @@ class QuoteGuestAccessExtension extends AbstractExtension
      */
     private function getWebsiteUrlResolver(): WebsiteUrlResolver
     {
-        return $this->container->get('oro_website.resolver.website_url_resolver');
+        return $this->container->get(WebsiteUrlResolver::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            FeatureChecker::class,
+            WebsiteUrlResolver::class,
+        ];
     }
 }

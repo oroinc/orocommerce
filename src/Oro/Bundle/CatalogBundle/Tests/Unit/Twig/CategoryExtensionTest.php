@@ -25,7 +25,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $container = self::getContainerBuilder()
-            ->add('oro_catalog.category_tree_handler', $this->categoryTreeHandler)
+            ->add(CategoryTreeHandler::class, $this->categoryTreeHandler)
             ->getContainer($this);
 
         $this->extension = new CategoryExtension($container);

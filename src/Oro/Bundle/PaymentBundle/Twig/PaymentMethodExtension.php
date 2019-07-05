@@ -7,7 +7,8 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -19,7 +20,7 @@ use Twig\TwigFunction;
  *   - get_payment_method_admin_label
  *   - oro_payment_method_config_template
  */
-class PaymentMethodExtension extends AbstractExtension
+class PaymentMethodExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
         'OroPaymentBundle:PaymentMethodsConfigsRule:paymentMethodWithOptions.html.twig';
@@ -146,5 +147,18 @@ class PaymentMethodExtension extends AbstractExtension
         }
 
         return $this->configCache[$paymentMethodName];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_payment.provider.payment_transaction' => PaymentTransactionProvider::class,
+            'oro_payment.formatter.payment_method_label' => PaymentMethodLabelFormatter::class,
+            'oro_payment.formatter.payment_method_options' => PaymentMethodOptionsFormatter::class,
+            'event_dispatcher' => EventDispatcherInterface::class,
+        ];
     }
 }

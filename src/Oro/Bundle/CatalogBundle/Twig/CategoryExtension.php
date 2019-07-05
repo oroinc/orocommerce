@@ -4,7 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
  *   - oro_product_category_full_path
  *   - oro_product_category_title
  */
-class CategoryExtension extends AbstractExtension
+class CategoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_catalog_category_extension';
 
@@ -27,14 +28,6 @@ class CategoryExtension extends AbstractExtension
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * @return CategoryTreeHandler
-     */
-    protected function getCategoryTreeHandler()
-    {
-        return $this->container->get('oro_catalog.category_tree_handler');
     }
 
     /**
@@ -65,7 +58,7 @@ class CategoryExtension extends AbstractExtension
      */
     public function getCategoryList($rootLabel = null, $root = null)
     {
-        $tree = $this->getCategoryTreeHandler()->createTree($root);
+        $tree = $this->container->get(CategoryTreeHandler::class)->createTree($root);
         if ($rootLabel && array_key_exists(0, $tree)) {
             $tree[0]['text'] = $rootLabel;
         }
@@ -115,5 +108,15 @@ class CategoryExtension extends AbstractExtension
         }
 
         return array_reverse($categoriesTitles);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            CategoryTreeHandler::class,
+        ];
     }
 }

@@ -3,21 +3,29 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionParametersParser;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Controller that manages products and line items for a shopping list via AJAX requests.
@@ -44,11 +52,10 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $validator = $this->get('validator');
-        $currentShoppingListManager = $this->get('oro_shopping_list.manager.current_shopping_list');
+        $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
         $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
-        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
+        if (!$this->get(AuthorizationCheckerInterface::class)->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -70,9 +77,9 @@ class AjaxLineItemController extends AbstractLineItemController
             $form,
             $request,
             $this->getDoctrine(),
-            $this->get('oro_shopping_list.manager.shopping_list'),
+            $this->get(ShoppingListManager::class),
             $currentShoppingListManager,
-            $validator
+            $this->get(ValidatorInterface::class)
         );
         $isFormHandled = $handler->process($lineItem);
 
@@ -103,7 +110,7 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeLineItemAction(LineItem $lineItem)
     {
-        $shoppingListManager = $this->get('oro_shopping_list.manager.shopping_list');
+        $shoppingListManager = $this->get(ShoppingListManager::class);
         $isRemoved = $shoppingListManager->removeLineItem($lineItem);
         if ($isRemoved > 0) {
             $result = $this->getSuccessResponse(
@@ -114,7 +121,7 @@ class AjaxLineItemController extends AbstractLineItemController
         } else {
             $result = [
                 'successful' => false,
-                'message' => $this->get('translator')
+                'message' => $this->get(TranslatorInterface::class)
                     ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
             ];
         }
@@ -141,14 +148,14 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('oro_shopping_list.manager.shopping_list');
+        $shoppingListManager = $this->get(ShoppingListManager::class);
 
-        $shoppingList = $this->get('oro_shopping_list.manager.current_shopping_list')
+        $shoppingList = $this->get(CurrentShoppingListManager::class)
             ->getForCurrentUser($request->get('shoppingListId'));
 
         $result = [
             'successful' => false,
-            'message' => $this->get('translator')
+            'message' => $this->get(TranslatorInterface::class)
                 ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
         ];
 
@@ -179,10 +186,10 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsMassAction(Request $request, $gridName, $actionName)
     {
-        $shoppingList = $this->get('oro_shopping_list.handler.shopping_list_line_item')
+        $shoppingList = $this->get(ShoppingListLineItemHandler::class)
             ->getShoppingList($request->query->get('shoppingList'));
 
-        $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+        $parameters = $this->get(MassActionParametersParser::class)->parse($request);
         $requestData = array_merge($request->query->all(), $request->request->all());
 
         $response = $this->get(MassActionDispatcher::class)->dispatch(
@@ -213,14 +220,14 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
-        $shoppingList = $this->get('oro_shopping_list.manager.shopping_list')->create();
+        $shoppingList = $this->get(ShoppingListManager::class)->create();
 
         $form = $this->createForm(ShoppingListType::class, $shoppingList);
         $form->handleRequest($request);
 
         $response = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+            $parameters = $this->get(MassActionParametersParser::class)->parse($request);
             $requestData = array_merge($request->query->all(), $request->request->all());
 
             /** @var MassActionResponseInterface $result */
@@ -232,7 +239,7 @@ class AjaxLineItemController extends AbstractLineItemController
                     array_merge($requestData, ['shoppingList' => $shoppingList])
                 );
 
-            $this->get('oro_shopping_list.manager.current_shopping_list')
+            $this->get(CurrentShoppingListManager::class)
                 ->setCurrent($this->getUser(), $shoppingList);
 
             $response['messages']['data'][] = $result->getMessage();
@@ -264,7 +271,7 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
+        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product);
 
         return [
@@ -285,14 +292,32 @@ class AjaxLineItemController extends AbstractLineItemController
      * @param Request $request
      * @return null|Product
      */
-    protected function getParentProduct(Request $request)
+    protected function getParentProduct(Request $request): ?Product
     {
-        if ($parentProductId = $request->get('parentProductId')) {
-            $doctrineHelper = $this->get('oro_entity.doctrine_helper');
-            $productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
-            return $productRepository->find($parentProductId);
-        }
+        $parentProductId = $request->get('parentProductId');
 
-        return null;
+        return $parentProductId
+            ? $this->getDoctrine()->getRepository(Product::class)->find($parentProductId)
+            : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                MassActionDispatcher::class,
+                ProductShoppingListsDataProvider::class,
+                CurrentShoppingListManager::class,
+                ShoppingListManager::class,
+                ShoppingListLineItemHandler::class,
+                MassActionParametersParser::class,
+                ValidatorInterface::class,
+                AuthorizationCheckerInterface::class,
+            ]
+        );
     }
 }

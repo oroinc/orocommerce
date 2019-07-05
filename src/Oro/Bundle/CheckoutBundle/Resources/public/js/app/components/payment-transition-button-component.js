@@ -42,7 +42,7 @@ define(function(require) {
             this.getContent().on(
                 'change',
                 this.options.selectors.paymentMethodSelectorAbsolute,
-                $.proxy(this.onPaymentMethodChange, this)
+                this.onPaymentMethodChange.bind(this)
             );
             this.initPaymentMethod();
         },
@@ -83,7 +83,7 @@ define(function(require) {
             var paymentMethod = this.getPaymentMethodElement().val();
             var eventData = {
                 stopped: false,
-                resume: $.proxy(this.continueTransit, this, e, data),
+                resume: this.continueTransit.bind(this, e, data),
                 data: {paymentMethod: paymentMethod}
             };
 

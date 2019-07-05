@@ -20,7 +20,9 @@ data:
             testAttrFloat: null
             testAttrMoney: null
             testAttrDateTime: null
-            testAttrManyToOne: null
+            testAttrManyToOne:
+                id: '<toString(@customer5->id)>'
+                targetValue: 'Company 5'
             testToOneId: null
             testAttrMultiEnum: []
             testAttrManyToMany: []
@@ -34,6 +36,10 @@ data:
         variantAttributeNames:
             - testAttrEnum
     relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
         productFamily:
             data:
                 type: productfamilies
@@ -42,6 +48,10 @@ data:
             data:
                 - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
                 - { type: products, id: '<toString(@configurable_product1_variant2->id)>' }
+        parentProducts:
+            data: []
+        images:
+            data: []
 included:
     -
         type: products
@@ -83,11 +93,21 @@ included:
             availabilityDate: '2119-10-20T10:20:30Z'
             variantAttributeNames: []
         relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
             productFamily:
                 data:
                     type: productfamilies
                     id: '<toString(@default_product_family->id)>'
             variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product1->id)>' }
+                    - { type: products, id: '<toString(@configurable_product3->id)>' }
+            images:
                 data: []
     -
         type: products
@@ -128,9 +148,18 @@ included:
             availabilityDate: null
             variantAttributeNames: []
         relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
             productFamily:
                 data:
                     type: productfamilies
                     id: '<toString(@default_product_family->id)>'
             variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product1->id)>' }
+            images:
                 data: []

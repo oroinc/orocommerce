@@ -33,9 +33,18 @@ data:
         availabilityDate: null
         variantAttributeNames: []
     relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
         productFamily:
             data:
                 type: productfamilies
                 id: '<toString(@default_product_family->id)>'
         variantProducts:
+            data: []
+        parentProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product2->id)>' }
+        images:
             data: []

@@ -80,13 +80,17 @@ class ProductTest extends FrontendRestJsonApiTestCase
     public function testGetIncludeCategoryAndVariantsForConfigurableProduct()
     {
         $response = $this->get(
-            ['entity' => 'products',
-                'id' => '<toString(@configurable_product1->id)>',
+            [
+                'entity'  => 'products',
+                'id'      => '<toString(@configurable_product1->id)>',
                 'include' => 'category,variantProducts'
             ]
         );
 
-        $this->assertResponseContains('get_configurable_product_with_included_category_and_variants.yml', $response);
+        $this->assertResponseContains(
+            'get_configurable_product_with_included_category_and_variants.yml',
+            $response
+        );
     }
 
     public function testGetIncludeInvisibleCategory()
@@ -118,9 +122,10 @@ class ProductTest extends FrontendRestJsonApiTestCase
     public function testGetIncludeVariantsAndInvisibleCategoryForConfigurableProduct()
     {
         $response = $this->get(
-            ['entity' => 'products',
-             'id' => '<toString(@configurable_product2->id)>',
-             'include' => 'category,variantProducts'
+            [
+                'entity'  => 'products',
+                'id'      => '<toString(@configurable_product2->id)>',
+                'include' => 'category,variantProducts'
             ]
         );
 

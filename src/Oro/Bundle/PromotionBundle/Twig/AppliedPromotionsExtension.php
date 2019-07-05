@@ -7,6 +7,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -15,19 +17,17 @@ use Twig\TwigFunction;
  *   - oro_promotion_prepare_applied_promotions_info
  *   - oro_promotion_get_applied_promotions_info
  */
-class AppliedPromotionsExtension extends AbstractExtension
+class AppliedPromotionsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ContainerInterface $container
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     /**
@@ -104,10 +104,20 @@ class AppliedPromotionsExtension extends AbstractExtension
     public function getAppliedPromotionsInfo(Order $order): array
     {
         /** @var AppliedPromotionRepository $repository */
-        $repository = $this->registry
+        $repository = $this->container->get('doctrine')
             ->getManagerForClass(AppliedPromotion::class)
             ->getRepository(AppliedPromotion::class);
 
         return $repository->getAppliedPromotionsInfo($order);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'doctrine' => ManagerRegistry::class,
+        ];
     }
 }

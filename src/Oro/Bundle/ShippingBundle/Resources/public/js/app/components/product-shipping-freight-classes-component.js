@@ -132,11 +132,11 @@ define(function(require) {
                 url: routing.generate(this.options.routeFreightClassUpdate),
                 type: 'post',
                 data: formData,
-                beforeSend: $.proxy(this._beforeSend, this),
-                success: $.proxy(this._success, this),
-                complete: $.proxy(this._complete, this),
+                beforeSend: this._beforeSend.bind(this),
+                success: this._success.bind(this),
+                complete: this._complete.bind(this),
                 errorHandlerMessage: __(this.options.errorMessage),
-                error: $.proxy(this._dropValues, this)
+                error: this._dropValues.bind(this)
             });
         },
 

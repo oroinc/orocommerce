@@ -30,6 +30,7 @@ class OroProductExtension extends Extension
         $loader->load('related_items.yml');
         $loader->load('commands.yml');
         $loader->load('image_placeholder.yml');
+        $loader->load('controllers.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');
