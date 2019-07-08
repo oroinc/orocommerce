@@ -11,12 +11,10 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Saves priceListId from filter to context for later use
+ * Gets a value of the "priceList" filter and saves the price list ID to context.
  */
-class StorePriceListInContextByFilter implements ProcessorInterface
+class HandlePriceListFilter implements ProcessorInterface
 {
-    private const FILTER_PARAM_PRICE_LIST = 'filter[priceList]';
-
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
@@ -35,25 +33,21 @@ class StorePriceListInContextByFilter implements ProcessorInterface
     {
         /** @var Context $context */
 
-        $filterValues = $context->getFilterValues();
-
-        if (!$filterValues->has(self::FILTER_PARAM_PRICE_LIST)) {
+        $priceListFilterValue = $context->getFilterValues()->get('priceList');
+        if (null !== $priceListFilterValue) {
+            $priceListId = $priceListFilterValue->getValue();
+            if ($this->isValidPriceListId($priceListId)) {
+                PriceListIdContextUtil::storePriceListId($context, $priceListId);
+            } else {
+                $context->addError(
+                    Error::createValidationError(Constraint::FILTER, 'The specified price list does not exist.')
+                );
+            }
+        } else {
             $context->addError(
-                Error::createValidationError(Constraint::FILTER, 'priceList filter is required')
-            );
-
-            return;
-        }
-
-        $priceListId = $filterValues->get(self::FILTER_PARAM_PRICE_LIST)->getValue();
-
-        if (!$this->isValidPriceListId($priceListId)) {
-            $context->addError(
-                Error::createValidationError(Constraint::FILTER, 'specified priceList does not exist')
+                Error::createValidationError(Constraint::FILTER, 'The "priceList" filter is required.')
             );
         }
-
-        PriceListIdContextUtil::storePriceListId($context, $priceListId);
     }
 
     /**

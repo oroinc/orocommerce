@@ -76,7 +76,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'filter constraint',
-                'detail' => 'priceList filter is required'
+                'detail' => 'The "priceList" filter is required.'
             ],
             $response
         );

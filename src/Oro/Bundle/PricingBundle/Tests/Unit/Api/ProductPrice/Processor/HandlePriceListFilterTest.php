@@ -9,17 +9,17 @@ use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Tests\Unit\Filter\TestFilterValueAccessor;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetList\GetListProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByFilter;
+use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\HandlePriceListFilter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
-class StorePriceListInContextByFilterTest extends GetListProcessorTestCase
+class HandlePriceListFilterTest extends GetListProcessorTestCase
 {
     private const PRICE_LIST_ID = 21;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var StorePriceListInContextByFilter */
+    /** @var HandlePriceListFilter */
     private $processor;
 
     protected function setUp()
@@ -28,7 +28,7 @@ class StorePriceListInContextByFilterTest extends GetListProcessorTestCase
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $this->processor = new StorePriceListInContextByFilter($this->doctrineHelper);
+        $this->processor = new HandlePriceListFilter($this->doctrineHelper);
     }
 
     public function testProcessNoPriceList()
@@ -36,7 +36,7 @@ class StorePriceListInContextByFilterTest extends GetListProcessorTestCase
         $this->context->setFilterValues(new TestFilterValueAccessor());
         $this->processor->process($this->context);
         self::assertEquals(
-            [Error::createValidationError(Constraint::FILTER, 'priceList filter is required')],
+            [Error::createValidationError(Constraint::FILTER, 'The "priceList" filter is required.')],
             $this->context->getErrors()
         );
     }
@@ -48,11 +48,11 @@ class StorePriceListInContextByFilterTest extends GetListProcessorTestCase
             ->willReturn($this->createMock(EntityRepository::class));
 
         $filterValues = new TestFilterValueAccessor();
-        $filterValues->set('filter[priceList]', new FilterValue('priceList', self::PRICE_LIST_ID));
+        $filterValues->set('priceList', new FilterValue('priceList', self::PRICE_LIST_ID));
         $this->context->setFilterValues($filterValues);
         $this->processor->process($this->context);
         self::assertEquals(
-            [Error::createValidationError(Constraint::FILTER, 'specified priceList does not exist')],
+            [Error::createValidationError(Constraint::FILTER, 'The specified price list does not exist.')],
             $this->context->getErrors()
         );
     }
@@ -69,7 +69,7 @@ class StorePriceListInContextByFilterTest extends GetListProcessorTestCase
             ->willReturn($repository);
 
         $filterValues = new TestFilterValueAccessor();
-        $filterValues->set('filter[priceList]', new FilterValue('priceList', self::PRICE_LIST_ID));
+        $filterValues->set('priceList', new FilterValue('priceList', self::PRICE_LIST_ID));
         $this->context->setFilterValues($filterValues);
         $this->processor->process($this->context);
         self::assertFalse($this->context->hasErrors());
