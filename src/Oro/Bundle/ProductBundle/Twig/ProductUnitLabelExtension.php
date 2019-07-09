@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -11,19 +13,19 @@ use Twig\TwigFilter;
  *   - oro_format_product_unit_label
  *   - oro_format_short_product_unit_label
  */
-class ProductUnitLabelExtension extends AbstractExtension
+class ProductUnitLabelExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_product_unit_label';
 
-    /** @var UnitLabelFormatterInterface */
-    protected $unitLabelFormatter;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param UnitLabelFormatterInterface $unitLabelFormatter
+     * @param ContainerInterface $container
      */
-    public function __construct(UnitLabelFormatterInterface $unitLabelFormatter)
+    public function __construct(ContainerInterface $container)
     {
-        $this->unitLabelFormatter = $unitLabelFormatter;
+        $this->container = $container;
     }
 
     /**
@@ -51,7 +53,8 @@ class ProductUnitLabelExtension extends AbstractExtension
      */
     public function format($unitCode, $isShort = false, $isPlural = false)
     {
-        return $this->unitLabelFormatter->format($unitCode, $isShort, $isPlural);
+        return $this->container->get('oro_product.formatter.product_unit_label')
+            ->format($unitCode, $isShort, $isPlural);
     }
 
     /**
@@ -70,5 +73,15 @@ class ProductUnitLabelExtension extends AbstractExtension
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.formatter.product_unit_label' => UnitLabelFormatterInterface::class,
+        ];
     }
 }

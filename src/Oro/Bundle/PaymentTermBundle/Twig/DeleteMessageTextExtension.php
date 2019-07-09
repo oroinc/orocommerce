@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -13,7 +14,7 @@ use Twig\TwigFunction;
  *   - get_payment_term_delete_message
  *   - get_payment_term_delete_message_datagrid
  */
-class DeleteMessageTextExtension extends AbstractExtension
+class DeleteMessageTextExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'oro_payment_term_delete_message';
 
@@ -71,5 +72,15 @@ class DeleteMessageTextExtension extends AbstractExtension
     public function getDeleteMessageDatagrid($paymentTermId)
     {
         return $this->getDeleteMessageGenerator()->getDeleteMessageTextForDataGrid($paymentTermId);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_payment_term.payment_term.delete_message_generator' => DeleteMessageTextGenerator::class,
+        ];
     }
 }

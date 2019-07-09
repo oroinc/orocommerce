@@ -118,10 +118,10 @@ services:
             - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.twig.array_loader:
-        class: 'Twig_Loader_Array'
+        class: 'Twig\Loader\ArrayLoader'
 
     oro_cms.twig.renderer:
-        class: 'Twig_Environment'
+        class: 'Twig\Environment'
         arguments:
             - '@oro_cms.twig.array_loader'
         calls:
@@ -131,12 +131,14 @@ services:
     oro_crm.twig.twig_in_variables_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension'
         arguments:
-            - '@oro_cms.twig.renderer'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
     oro_cms.migration.home_page_slider_images_source_fixer:
         class: 'Oro\Bundle\CMSBundle\Migration\HomePageSliderImagesSourceFixer'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_config.global'
             - '@doctrine.dbal.default_connection'

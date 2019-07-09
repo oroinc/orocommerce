@@ -4,12 +4,14 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
@@ -24,14 +26,16 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                LoadFrontendProductData::class
-            ]
+        $this->loadFixtures([LoadLocalizationData::class]);
+        $localization = $this->getFirstLocalization();
+        $this->ajaxRequest(
+            Request::METHOD_POST,
+            $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
+            ['localization' => $localization->getId()]
         );
 
+        $this->loadFixtures([LoadFrontendProductData::class]);
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-
         $this->searchHandler = $this->getContainer()
             ->get('oro_pricing.form.autocomplete.product_with_prices.search_handler');
     }
@@ -88,14 +92,8 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
 
     public function testReturnsLocalizedProductsNames()
     {
-        $localizationCode = LoadLocalizationData::getLocalizations()[0]['language'];
-        $localization = $this->getReference($localizationCode);
+        $localization = $this->getFirstLocalization();
 
-        $this->ajaxRequest(
-            Request::METHOD_POST,
-            $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
-            ['localization' => $localization->getId()]
-        );
         $result = $this->client->getResponse();
 
         self::assertJsonResponseStatusCodeEquals($result, 200);
@@ -117,11 +115,39 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
         }
     }
 
+    public function testSearchByMultipleSkus()
+    {
+        $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
+        $this->getContainer()
+            ->get('request_stack')
+            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
+
+        $items = $this->searchHandler->search('', 1, 5);
+
+        $this->assertCount(2, $items['results']);
+        $actualSkuList = array_map(function ($item) {
+            return $item['sku'];
+        }, $items['results']);
+        foreach ($actualSkuList as $sku) {
+            $this->assertContains($sku, $skuList);
+        }
+    }
+
+    /**
+     * @return Localization
+     */
+    private function getFirstLocalization()
+    {
+        $localizations = LoadLocalizationData::getLocalizations();
+        $localizationCode = $localizations[0]['language'];
+
+        return $this->getReference($localizationCode);
+    }
     /**
      * @param array $currentPricesToFind
      * @param array $item
      */
-    protected function findPriceInItem(array $currentPricesToFind, array $item)
+    private function findPriceInItem(array $currentPricesToFind, array $item)
     {
         foreach ($currentPricesToFind as $priceToFind) {
             $found = false;

@@ -174,7 +174,13 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      */
     protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
-        $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
+        $request = $this->requestStack->getCurrentRequest();
+        $skuList = $request->request->get('sku');
+        if ($skuList) {
+            $searchQuery = $this->searchRepository->getFilterSkuQuery($skuList);
+        } else {
+            $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
+        }
 
         if (!$this->allowConfigurableProducts) {
             $searchQuery->addWhere(

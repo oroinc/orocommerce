@@ -5,21 +5,27 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * CRUD controller for Category entity
  */
-class CategoryController extends Controller
+class CategoryController extends AbstractController
 {
     /**
      * @Route("/create/{id}", name="oro_catalog_category_create", requirements={"id"="\d+"})
@@ -75,7 +81,7 @@ class CategoryController extends Controller
     public function indexAction()
     {
         return [
-            'rootCategory' => $this->get('oro_catalog.provider.master_catalog_root')
+            'rootCategory' => $this->get(MasterCatalogRootProvider::class)
                 ->getMasterCatalogRootForCurrentOrganization()
         ];
     }
@@ -96,9 +102,9 @@ class CategoryController extends Controller
      */
     public function moveAction(Request $request)
     {
-        $handler = $this->get('oro_catalog.category_tree_handler');
+        $handler = $this->get(CategoryTreeHandler::class);
 
-        $root = $this->get('oro_catalog.provider.master_catalog_root')->getMasterCatalogRootForCurrentOrganization();
+        $root = $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRootForCurrentOrganization();
         $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
@@ -164,10 +170,10 @@ class CategoryController extends Controller
             $form,
             $request,
             $this->getDoctrine()->getManagerForClass('OroCatalogBundle:Category'),
-            $this->get('event_dispatcher')
+            $this->get(EventDispatcherInterface::class)
         );
 
-        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
+        $result = $this->get(UpdateHandler::class)->handleUpdate(
             $category,
             $form,
             function (Category $category) {
@@ -181,12 +187,12 @@ class CategoryController extends Controller
                     'route' => 'oro_catalog_category_index',
                 ];
             },
-            $this->get('translator')->trans('oro.catalog.controller.category.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.catalog.controller.category.saved.message'),
             $handler
         );
 
         if (is_array($result)) {
-            $result['rootCategory'] = $this->get('oro_catalog.provider.master_catalog_root')
+            $result['rootCategory'] = $this->get(MasterCatalogRootProvider::class)
                 ->getMasterCatalogRootForCurrentOrganization();
         }
 
@@ -203,7 +209,22 @@ class CategoryController extends Controller
      */
     public function getChangedSlugsAction(Category $category)
     {
-        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+        return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($category, CategoryType::class));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            CategoryTreeHandler::class,
+            UpdateHandler::class,
+            MasterCatalogRootProvider::class,
+            ChangedSlugsHelper::class,
+            EventDispatcherInterface::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

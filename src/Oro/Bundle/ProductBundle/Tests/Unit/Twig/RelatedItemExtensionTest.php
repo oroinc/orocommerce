@@ -19,7 +19,12 @@ class RelatedItemExtensionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->helper = $this->createMock(RelatedItemConfigHelper::class);
-        $this->extension = new RelatedItemExtension($this->helper);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_product.related_item.helper.config_helper', $this->helper)
+            ->getContainer($this);
+
+        $this->extension = new RelatedItemExtension($container);
     }
 
     public function testGetRelatedItemsTranslationKeyReturnsTranslationKey()

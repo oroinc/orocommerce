@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
@@ -43,6 +42,6 @@ class ProductTaxCodeController extends FOSRestController
         $product->setTaxCode($newTaxCode);
         $manager->flush($product);
 
-        return parent::handleView($this->view([], Codes::HTTP_OK));
+        return parent::handleView($this->view([], Response::HTTP_OK));
     }
 }

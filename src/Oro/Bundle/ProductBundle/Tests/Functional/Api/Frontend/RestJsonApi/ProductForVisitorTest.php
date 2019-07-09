@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
-use Symfony\Component\HttpFoundation\Response;
 
 class ProductForVisitorTest extends FrontendRestJsonApiTestCase
 {
@@ -19,40 +18,31 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    public function testTryToGetList()
+    public function testGetList()
     {
         $response = $this->cget(
             ['entity' => 'products'],
-            [],
-            [],
-            false
+            ['page[size]' => 100]
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
-    }
-
-    public function testTryToGetListFilterBySeveralSku()
-    {
-        $response = $this->cget(
-            ['entity' => 'products'],
-            ['filter' => ['sku' => 'PSKU1,PSKU2,PSKU3']],
-            [],
-            false
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>']
+                ]
+            ],
+            $response
         );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
-    }
-
-    public function testTryToOptionsForList()
-    {
-        $response = $this->options(
-            $this->getListRouteName(),
-            ['entity' => 'products'],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testGet()
@@ -123,7 +113,7 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
     public function testTryToDelete()
@@ -147,6 +137,6 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }

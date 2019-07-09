@@ -8,7 +8,6 @@ data:
             types:
                 - main
                 - additional
-                - listing
             files:
                 -
                     maxWidth: null
@@ -35,7 +34,6 @@ data:
                     dimension: product_large
                     types:
                         - main
-                        - listing
                 -
                     maxWidth: 378
                     maxHeight: 378
@@ -43,7 +41,6 @@ data:
                     types:
                         - main
                         - additional
-                        - listing
                 -
                     maxWidth: 262
                     maxHeight: auto
@@ -57,7 +54,6 @@ data:
                     types:
                         - main
                         - additional
-                        - listing
         relationships:
             product:
                 data:

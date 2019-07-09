@@ -2,12 +2,20 @@ parameters:
     oro_product.entity.related_product.class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct
 
 services:
+    oro_product.api.rest.remove_product_search_single_item_routes:
+        parent: oro_frontend.api.rest.routing_options_resolver.remove_single_item_routes
+        arguments:
+            index_0: 'frontend_rest_api'
+            index_1: Oro\Bundle\ProductBundle\Api\Model\ProductSearch
+        tags:
+            - { name: oro.api.routing_options_resolver, view: frontend_rest_json_api, priority: -10 }
+
     oro_product.api.compute_product_unit_label:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductUnitLabel
         arguments:
             - '@oro_product.formatter.product_unit_label'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: '%oro_product.entity.product_unit.class%' }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\ProductUnit }
 
     oro_product.api.compute_product_image:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductImageFields
@@ -16,7 +24,14 @@ services:
             - '@oro_layout.provider.image_type'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\ProductImage }
-            
+
+    oro_product.api.handle_variants_filter:
+        class: Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
+        arguments:
+            - '@oro_product.model.restrict_display_product_variants_query_builder_modifier'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -120 }
+
     oro_product.api.compute_product_unit_prcisions:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductUnitPrecisions
         tags:
@@ -38,6 +53,15 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
+    oro_product.api.frontend.product_inventory_status_query_modifier:
+        class: Oro\Bundle\ProductBundle\Api\ProductInventoryStatusQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_product.model.product_visibility_query_builder_modifier'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
     oro_product.api.frontend.product_status_mandatory_field_provider:
         class: Oro\Bundle\ProductBundle\Api\ProductStatusMandatoryFieldProvider
         tags:
@@ -50,6 +74,13 @@ services:
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&definition', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
 
+    oro_product.api.set_parent_products_association_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SetParentProductsAssociationQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&definition', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
+
     oro_product.api.build_variant_products_subresource_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\BuildVariantProductsSubresourceQuery
         arguments:
@@ -57,6 +88,14 @@ services:
         tags:
             - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, association: variantProducts, priority: -90 }
             - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, association: variantProducts, priority: -90 }
+
+    oro_product.api.build_parent_products_subresource_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\BuildParentProductsSubresourceQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, association: parentProducts, priority: -90 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, association: parentProducts, priority: -90 }
 
     oro_product.api.compute_product_attributes:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductAttributes
@@ -91,6 +130,56 @@ services:
         tags:
             - { name: oro.api.processor, action: get, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\ProductImage, priority: -150 }
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\ProductImage, priority: -150 }
+
+    oro_product.api.product_search.set_default_sorting:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SetDefaultProductSearchSorting
+        arguments:
+            - '@oro_api.filter_names_registry'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: initialize, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -94 }
+
+    oro_product.api.product_search.configure_attributes:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ConfigureProductSearchAttributes
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.registry.attribute_type'
+            - '@oro_entity_config.provider.attribute_configuration'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_input, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
+
+    oro_product.api.product_search.build_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery
+        arguments:
+            - '@oro_website_search.engine'
+            - '@oro_website_search.provider.search_mapping'
+            - '@oro_product.product.manager'
+            - '@oro_api.filter_names_registry'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -90 }
+
+    oro_product.api.product_search.load_data:
+        class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchData
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
+
+    oro_product.api.product_search.load_expanded_entities:
+        class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchExpandedEntities
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -20 }
+
+    oro_product.api.product_search.compute_images:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductSearchImages
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
+
+    oro_product.api.product_search.compute_unit_precisions:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductSearchUnitPrecisions
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
 
     oro_product.api.add_validate_unit_precisions_duplicate_form_listener:
         class: Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener

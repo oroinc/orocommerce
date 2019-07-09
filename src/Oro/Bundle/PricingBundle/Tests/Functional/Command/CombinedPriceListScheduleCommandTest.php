@@ -52,7 +52,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
         $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1t_3t_2t');
 
-        $this->runCommand(CombinedPriceListScheduleCommand::NAME);
+        $this->runCommand(CombinedPriceListScheduleCommand::getDefaultName());
 
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);

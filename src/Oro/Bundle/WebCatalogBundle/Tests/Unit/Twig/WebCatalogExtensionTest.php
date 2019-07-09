@@ -33,8 +33,8 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $container = self::getContainerBuilder()
-            ->add('oro_web_catalog.content_node_tree_handler', $this->treeHandler)
-            ->add('oro_web_catalog.content_variant_type.registry', $this->contentVariantTypeRegistry)
+            ->add(ContentNodeTreeHandler::class, $this->treeHandler)
+            ->add(ContentVariantTypeRegistry::class, $this->contentVariantTypeRegistry)
             ->getContainer($this);
 
         $this->extension = new WebCatalogExtension($container);

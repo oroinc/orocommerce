@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Oro\Bundle\ApiBundle\Collection\Criteria;
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -12,6 +12,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Implements the following AJAX actions:
+ * * get product names by SKUs
+ * * get product images by product ID
+ */
 class AjaxProductController extends Controller
 {
     /**
@@ -37,7 +42,6 @@ class AjaxProductController extends Controller
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products
-        // @TODO remove after configurable products require additional option selection implementation
         $searchQuery->addWhere(
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );

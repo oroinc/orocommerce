@@ -4,7 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -14,7 +15,7 @@ use Twig\TwigFilter;
  *   - oro_weight_unit_format_value_short
  *   - oro_weight_unit_format_code
  */
-class WeightUnitValueExtension extends AbstractExtension
+class WeightUnitValueExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_weight_unit_value';
 
@@ -98,5 +99,15 @@ class WeightUnitValueExtension extends AbstractExtension
     public function formatCode($value, $unitCode, $isShort = false)
     {
         return $this->getFormatter()->formatCode($value, $unitCode, $isShort);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_shipping.formatter.weight_unit_value' => UnitValueFormatterInterface::class,
+        ];
     }
 }

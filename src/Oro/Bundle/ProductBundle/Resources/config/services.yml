@@ -20,6 +20,8 @@ services:
 
     oro_product.brand.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_product.entity.brand.class%'
@@ -29,6 +31,9 @@ services:
         class: 'Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService'
         public: false
         parent: oro_currency.service.abstract_rounding
+
+    Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService:
+        alias: 'oro_product.service.quantity_rounding'
 
     oro_product.formatter.unit_value:
         abstract: true
@@ -58,7 +63,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -66,7 +71,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -74,7 +79,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -82,7 +87,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
-            - '@oro_product.formatter.product_unit_label'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -90,7 +95,7 @@ services:
         class: Oro\Bundle\ProductBundle\Twig\ProductExtension
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -122,6 +127,8 @@ services:
 
     oro_product.service.duplicator:
         class: 'Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@event_dispatcher"
@@ -147,6 +154,9 @@ services:
             - [setRouter, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
+    Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:
+        alias: oro_product.service.product_update_handler
+
     oro_product.storage.product_data_bag:
         class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         public: false
@@ -163,6 +173,8 @@ services:
 
     oro_product.storage.product_data_storage:
         class: 'Oro\Bundle\ProductBundle\Storage\ProductDataStorage'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_product.storage.session_data_storage
 
     oro_product.validator.product_by_sku:
@@ -236,6 +248,8 @@ services:
 
     oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
@@ -259,6 +273,8 @@ services:
 
     oro_product.form_handler.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - "@oro_product.layout.data_provider.product_form"
             - "@oro_product.model.builder.quick_add_row_collection"
@@ -392,6 +408,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         arguments:
             - '@property_accessor'
+            - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
 
@@ -406,6 +423,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator'
         arguments:
             - '@validator'
+            - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links_simple_product }
 
@@ -413,6 +431,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator'
         arguments:
             - '@property_accessor'
+            - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_empty_variant_field_in_simple_product_for_variant_links }
 
@@ -593,6 +612,9 @@ services:
         arguments:
             - '@request_stack'
             - '@session'
+
+    Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper:
+        alias: 'oro_product.datagrid_theme_helper'
 
     oro_product.event_listener.frontend_product_search_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
@@ -820,7 +842,7 @@ services:
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
-            - '%oro_attachment.attachments_dir%'
+            - '%oro_attachment.filesystem_name.attachments%'
         tags:
             - { name: layout.image_filter.provider }
 
@@ -829,9 +851,7 @@ services:
         arguments:
             - '@oro_product.repository.product_image'
             - '@oro_product.provider.product_images_dimensions'
-            - '@oro_attachment.image_resizer'
-            - '@oro_attachment.media_cache_manager'
-            - '@oro_attachment.manager'
+            - '@oro_attachment.manager.image_resize'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -883,6 +903,8 @@ services:
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_product.form_handler.quick_add'
             - '@request_stack'
@@ -921,6 +943,9 @@ services:
             - '@property_accessor'
             - '@event_dispatcher'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
+
+    Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider:
+        alias: 'oro_product.provider.product_variant_availability_provider'
 
     oro_product.product_variant.registry.product_variant_type_handler_factory:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry'
@@ -1060,6 +1085,9 @@ services:
             - '@oro_layout.theme_manager'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
 
+    Oro\Bundle\ProductBundle\Provider\PageTemplateProvider:
+        alias: oro_product.provider.page_template_provider
+
     oro_product.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
@@ -1076,7 +1104,7 @@ services:
         class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -1112,6 +1140,8 @@ services:
 
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
 
@@ -1240,6 +1270,8 @@ services:
 
     oro_product.provider.grid_count_provider:
         class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_datagrid.datagrid.manager'
             - '@security.authorization_checker'
@@ -1250,6 +1282,8 @@ services:
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_query_designer.query_designer.segment_filters_purifier'
 
@@ -1331,6 +1365,8 @@ services:
 
     oro_product.provider.product_images_urls:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_attachment.manager'

@@ -226,13 +226,15 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
         - OroConfigBundle::FeatureContext
+        - OroCustomerBundle::ACLContext
         - OroActionBundle::OroActionContext
         - OroOrderBundle::OrderContext
         - OroReportBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
+        - OroNavigationBundle::TabContext
+        - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroProductBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
         - OroShoppingListBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroTaxBundle::TaxContext

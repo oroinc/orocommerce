@@ -25,7 +25,11 @@ class DiscountsInformationExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->dataProvider = $this->createMock(DiscountsInformationDataProvider::class);
 
-        $this->extension = new DiscountsInformationExtension($this->dataProvider);
+        $container = self::getContainerBuilder()
+            ->add('oro_promotion.layout.discount_information_data_provider', $this->dataProvider)
+            ->getContainer($this);
+
+        $this->extension = new DiscountsInformationExtension($container);
     }
 
     public function testGetEmptyLineItemsDiscounts()

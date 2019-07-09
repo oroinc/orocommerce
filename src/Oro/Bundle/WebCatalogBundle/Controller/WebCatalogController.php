@@ -2,19 +2,26 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
+use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class WebCatalogController extends Controller
+/**
+ * Web сatalog сontroller
+ */
+class WebCatalogController extends AbstractController
 {
     /**
      * @Route("/", name="oro_web_catalog_index")
@@ -103,8 +110,7 @@ class WebCatalogController extends Controller
      */
     public function moveAction(Request $request, WebCatalog $webCatalog)
     {
-        $handler = $this->get('oro_web_catalog.content_node_tree_handler');
-        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $handler = $this->get(ContentNodeTreeHandler::class);
         $contentNodeRepository = $this->getDoctrine()->getRepository("OroWebCatalogBundle:ContentNode");
 
         $root = $handler->getTreeRootByWebCatalog($webCatalog);
@@ -135,7 +141,8 @@ class WebCatalogController extends Controller
             foreach ($collection->source as $source) {
                 if ($createRedirect) {
                     $sourceContentNode = $contentNodeRepository->find($source->getKey());
-                    $urlChanges = $slugGenerator->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
+                    $urlChanges = $this->get(SlugGenerator::class)
+                        ->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
                 }
 
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
@@ -162,7 +169,7 @@ class WebCatalogController extends Controller
     {
         $form = $this->createForm(WebCatalogType::class, $webCatalog);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $webCatalog,
             $form,
             function (WebCatalog $webCatalog) {
@@ -177,7 +184,20 @@ class WebCatalogController extends Controller
                     'parameters' => ['id' => $webCatalog->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.webcatalog.saved.message')
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ContentNodeTreeHandler::class,
+            SlugGenerator::class,
+            UpdateHandler::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

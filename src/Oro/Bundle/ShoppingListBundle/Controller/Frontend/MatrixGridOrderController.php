@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -38,19 +39,18 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     public function orderAction(Request $request, Product $product)
     {
-        $matrixOrderFormProvider = $this->getMatrixOrderFormProvider();
-        $matrixGridOrderManager = $this->getMatrixGridOrderManager();
-        $currentShoppingListManager = $this->getCurrentShoppingListManager();
+        $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');
         $shoppingList = $shoppingListId
             ? $currentShoppingListManager->getForCurrentUser($shoppingListId)
             : $currentShoppingListManager->getCurrent();
 
-        $form = $matrixOrderFormProvider->getMatrixOrderForm($product, $shoppingList);
+        $form = $this->get(MatrixGridOrderFormProvider::class)->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $matrixGridOrderManager = $this->get(MatrixGridOrderManager::class);
             $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems(
                 $form->getData(),
                 $product,
@@ -60,7 +60,7 @@ class MatrixGridOrderController extends AbstractLineItemController
             $shoppingList = $shoppingList ?? $currentShoppingListManager->getForCurrentUser($shoppingListId);
             $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
-            $shoppingListManager = $this->getShoppingListManager();
+            $shoppingListManager = $this->get(ShoppingListManager::class);
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
@@ -92,7 +92,7 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
+        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product);
 
         return [
@@ -110,34 +110,16 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
-     * @return MatrixGridOrderFormProvider
+     * {@inheritdoc}
      */
-    private function getMatrixOrderFormProvider()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_shopping_list.layout.data_provider.matrix_order_form');
-    }
-
-    /**
-     * @return MatrixGridOrderManager
-     */
-    private function getMatrixGridOrderManager()
-    {
-        return $this->get('oro_shopping_list.provider.matrix_grid_order_manager');
-    }
-
-    /**
-     * @return ShoppingListManager
-     */
-    private function getShoppingListManager()
-    {
-        return $this->get('oro_shopping_list.manager.shopping_list');
-    }
-
-    /**
-     * @return CurrentShoppingListManager
-     */
-    private function getCurrentShoppingListManager()
-    {
-        return $this->get('oro_shopping_list.manager.current_shopping_list');
+        return array_merge(parent::getSubscribedServices(), [
+            CurrentShoppingListManager::class,
+            ShoppingListManager::class,
+            ProductShoppingListsDataProvider::class,
+            MatrixGridOrderManager::class,
+            MatrixGridOrderFormProvider::class,
+        ]);
     }
 }

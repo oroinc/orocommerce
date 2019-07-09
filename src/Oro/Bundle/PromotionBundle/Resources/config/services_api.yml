@@ -5,7 +5,7 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: !frontend, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: '%oro_order.entity.order.class%' }
 
     oro_promotion.api.order_line_item_discount_provider:
         class: Oro\Bundle\PromotionBundle\Api\OrderLineItemDiscountProvider

@@ -39,7 +39,7 @@
                 {% for productImage in productImages %}
                     <tr>
                         <td>
-                            {{ oro_file_view(productImage, 'image', productImage.image, {'galleryId' : 'images'} ) }}
+                            {{ oro_file_view(productImage.image, {'galleryId' : 'images'} ) }}
                         </td>
 
                         {% for imageType in imageTypes %}

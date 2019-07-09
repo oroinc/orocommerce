@@ -54,7 +54,7 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
                     [
                         'type'       => 'productimages',
                         'id'         => '<toString(@product1_image1->id)>',
-                        'attributes' => ['types' => ['main', 'listing', 'additional']]
+                        'attributes' => ['types' => ['main', 'additional']]
                     ],
                     [
                         'type'       => 'productimages',
@@ -106,7 +106,7 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
                     [
                         'type'       => 'productimages',
                         'id'         => '<toString(@product1_image1->id)>',
-                        'attributes' => ['types' => ['main', 'listing', 'additional']]
+                        'attributes' => ['types' => ['main', 'additional']]
                     ],
                     [
                         'type'       => 'productimages',
@@ -186,11 +186,6 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    [
-                        'type'       => 'productimages',
-                        'id'         => '<toString(@product1_image1->id)>',
-                        'attributes' => ['types' => ['main', 'listing', 'additional']]
-                    ],
                     [
                         'type'       => 'productimages',
                         'id'         => '<toString(@product3_image1->id)>',

@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentBundle\Controller\Api\Rest;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -54,11 +53,11 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
                         $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.enabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
 
@@ -101,11 +100,11 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
                         $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.disabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
 

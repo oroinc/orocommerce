@@ -3,6 +3,12 @@ api:
         Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
             alias:        productfamily
             plural_alias: productfamilies
+        Extend\Entity\EV_Prod_Inventory_Status:
+            alias:        productinventorystatus
+            plural_alias: productinventorystatuses
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            alias:        productsearch
+            plural_alias: productsearch
 
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
@@ -81,6 +87,27 @@ api:
                 delete: false
                 delete_list: false
 
+        Extend\Entity\EV_Prod_Inventory_Status:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/inventory_status.md'
+            hints: [ HINT_TRANSLATABLE ]
+            fields:
+                priority:
+                    exclude: true
+                default:
+                    exclude: true
+            filters:
+                fields:
+                    id:
+                        allow_array: true
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product.md'
             fields:
@@ -113,6 +140,11 @@ api:
                     target_type: to-many
                     property_path: _
                     max_results: -1
+                parentProducts:
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-many
+                    property_path: _
+                    max_results: -1
                 unitPrecisions:
                     data_type: array
                     property_path: _
@@ -135,12 +167,19 @@ api:
                 urls:
                     data_type: array
                     property_path: _
+                inventoryStatus:
+                    property_path: inventory_status
             filters:
                 fields:
                     sku:
                         allow_array: true
+                    inventoryStatus:
+                        allow_array: true
+                    variants: # processed by Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
+                        data_type: boolean
+                        operators: [ '=' ]
+                        property_path: _
             actions:
-                get_list: false
                 create: false
                 update: false
                 delete: false
@@ -152,3 +191,120 @@ api:
                             page_size: -1 # disable paging
                         get_relationship:
                             page_size: -1 # disable paging
+                parentProducts:
+                    actions:
+                        get_subresource:
+                            page_size: -1 # disable paging
+                        get_relationship:
+                            page_size: -1 # disable paging
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            documentation_resource:  '@OroProductBundle/Resources/doc/api_frontend/product_search.md'
+            identifier_field_names: [id]
+            disable_meta_properties: true
+            fields:
+                id:
+                    data_type: integer
+                    property_path: _
+                    depends_on:
+                        - integer.product_id
+                sku:
+                    data_type: string
+                    property_path: text.sku
+                name:
+                    data_type: string
+                    property_path: text.names_LOCALIZATION_ID
+                shortDescription:
+                    data_type: string
+                    property_path: text.shortDescriptions_LOCALIZATION_ID
+                productType:
+                    data_type: string
+                    property_path: text.type
+                isVariant:
+                    data_type: boolean
+                    property_path: integer.is_variant
+                newArrival:
+                    data_type: boolean
+                    property_path: integer.newArrival
+                inventoryStatus:
+                    data_type: string
+                    property_path: text.inventory_status
+                    target_class: Extend\Entity\EV_Prod_Inventory_Status
+                    target_type: to-one
+                orderedAt:
+                    data_type: datetime
+                    property_path: datetime.ordered_at_by_CUSTOMER_USER_ID
+                unitPrecisions:
+                    data_type: array
+                    property_path: _
+                    depends_on:
+                        - text.product_units
+                        - text.primary_unit
+                images:
+                    data_type: array
+                    property_path: _
+                    depends_on:
+                        - text.image_product_medium
+                        - text.image_product_large
+                product:
+                    data_type: integer
+                    property_path: integer.product_id
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                productFamily:
+                    data_type: integer
+                    property_path: integer.attribute_family_id
+                    target_class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+                    target_type: to-one
+            filters:
+                fields:
+                    searchQuery:
+                        data_type: string
+                        type: websiteSearchQuery
+                        options:
+                            entity_class: Oro\Bundle\ProductBundle\Entity\Product
+                            field_mappings:
+                                allText: all_text_LOCALIZATION_ID
+                                id: product_id
+                                skuUppercase: sku_uppercase
+                                name: names_LOCALIZATION_ID
+                                shortDescription: shortDescriptions_LOCALIZATION_ID
+                                productType: type
+                                isVariant: is_variant
+                                inventoryStatus: inventory_status
+                                orderedAt: ordered_at_by_CUSTOMER_USER_ID
+                                minimalPrice: minimal_price_CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
+                                product: product_id
+                                productFamily: attribute_family_id
+                                category: category_id
+            sorters:
+                fields:
+                    relevance: ~ # see Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery::resolveOrderings
+                    id:
+                        property_path: integer.product_id
+                    sku:
+                        property_path: text.sku
+                    skuUppercase:
+                        property_path: text.sku_uppercase
+                    name:
+                        property_path: text.names_LOCALIZATION_ID
+                    productType:
+                        property_path: text.type
+                    isVariant:
+                        property_path: integer.is_variant
+                    newArrival:
+                        property_path: integer.newArrival
+                    inventoryStatus:
+                        property_path: text.inventory_status
+                    orderedAt:
+                        property_path: datetime.ordered_at_by_CUSTOMER_USER_ID
+                    minimalPrice:
+                        property_path: decimal.minimal_price_CPL_ID_CURRENCY
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false
+                get_relationship: false

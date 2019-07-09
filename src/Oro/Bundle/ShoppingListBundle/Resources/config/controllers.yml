@@ -1,0 +1,27 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

@@ -61,7 +61,7 @@ Feature: Product attribute file
     When I type "SKU123" in "search"
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
-    Then I should see "cat1.jpg" link with the url matches "/attachment/[^/]+.jpg"
+    Then I should see "cat1.jpg" link with the url matches "/attachment/.+?\.jpg"
     And I should not see "cat1.jpg" link with the url matches "/admin/"
 
   Scenario: Delete product attribute

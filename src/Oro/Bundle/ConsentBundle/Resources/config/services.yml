@@ -208,7 +208,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
-            - [setClassName, [%oro_consent.entity.consent.class%]]
+            - [setClassName, ['%oro_consent.entity.consent.class%']]
         tags:
             - { name: security.voter, priority: 700 }
 
@@ -217,7 +217,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
-            - [setClassName, [%oro_cms.entity.page.class%]]
+            - [setClassName, ['%oro_cms.entity.page.class%']]
         tags:
             - { name: security.voter, priority: 700 }
 

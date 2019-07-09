@@ -2,17 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
+use Oro\Bundle\PricingBundle\NotificationMessage\Renderer\RendererInterface;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class PriceListController extends Controller
+/**
+ * Adds actions to update, delete and get price list
+ */
+class PriceListController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_pricing_price_list_view", requirements={"id"="\d+"})
@@ -29,16 +38,16 @@ class PriceListController extends Controller
     public function viewAction(PriceList $priceList)
     {
         if (!$priceList->isActual()) {
-            $this->get('session')->getFlashBag()->add(
+            $this->get(SessionInterface::class)->getFlashBag()->add(
                 'warning',
-                $this->get('translator')->trans('oro.pricing.pricelist.not_actual.recalculation')
+                $this->get(TranslatorInterface::class)->trans('oro.pricing.pricelist.not_actual.recalculation')
             );
         }
         $this->renderNotificationMessages(NotificationMessages::CHANNEL_PRICE_LIST, $priceList);
 
         return [
             'entity' => $priceList,
-            'product_price_entity_class' => $this->container->getParameter('oro_pricing.entity.product_price.class')
+            'product_price_entity_class' => ProductPrice::class
         ];
     }
 
@@ -66,7 +75,7 @@ class PriceListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_pricing.entity.price_list.class')
+            'entity_class' => PriceList::class
         ];
     }
 
@@ -113,7 +122,7 @@ class PriceListController extends Controller
      */
     protected function update(PriceList $priceList)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandler::class)->handleUpdate(
             $priceList,
             $this->createForm(PriceListType::class, $priceList),
             function (PriceList $priceList) {
@@ -128,7 +137,7 @@ class PriceListController extends Controller
                     'parameters' => ['id' => $priceList->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.pricing.controller.price_list.saved.message')
         );
     }
 
@@ -138,11 +147,30 @@ class PriceListController extends Controller
      */
     protected function renderNotificationMessages($channel, PriceList $priceList)
     {
-        $messenger = $this->container->get('oro_pricing.notification_message.messenger');
-        $messageRenderer = $this->container->get('oro_pricing.notification_message.renderer.flash_message');
-        $messages = $messenger->receive($channel, PriceList::class, $priceList->getId());
+        $messages = $this
+            ->get(Messenger::class)
+            ->receive($channel, PriceList::class, $priceList->getId());
+
+        $messageRenderer = $this->get(RendererInterface::class);
         foreach ($messages as $message) {
             $messageRenderer->render($message);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                SessionInterface::class,
+                UpdateHandler::class,
+                Messenger::class,
+                RendererInterface::class,
+            ]
+        );
     }
 }

@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Twig;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -12,7 +13,7 @@ use Twig\TwigFunction;
  * Provides a Twig function to generate a coupon code:
  *   - oro_promotion_generate_coupon_code
  */
-class CouponPreviewExtension extends AbstractExtension
+class CouponPreviewExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /**
      * @var ContainerInterface
@@ -47,10 +48,20 @@ class CouponPreviewExtension extends AbstractExtension
     }
 
     /**
-     * @return CodeGenerator
+     * @return CodeGeneratorInterface
      */
     protected function getCouponCodeGenerator()
     {
         return $this->container->get('oro_promotion.coupon_generation.code_generator');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_promotion.coupon_generation.code_generator' => CodeGeneratorInterface::class,
+        ];
     }
 }

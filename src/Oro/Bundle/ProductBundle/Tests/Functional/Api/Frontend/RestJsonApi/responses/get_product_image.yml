@@ -5,7 +5,6 @@ data:
         updatedAt: '@product1_image1->updatedAt->format("Y-m-d\TH:i:s\Z")'
         mimeType: image/jpeg
         types:
-            - listing
             - additional
             - main
         files:
@@ -14,7 +13,6 @@ data:
                 maxHeight: 378
                 dimension: product_extra_large
                 types:
-                    - listing
                     - additional
                     - main
             -
@@ -22,7 +20,6 @@ data:
                 maxHeight: 82
                 dimension: product_small
                 types:
-                    - listing
                     - additional
                     - main
             -
@@ -30,7 +27,6 @@ data:
                 maxHeight: auto
                 dimension: product_large
                 types:
-                    - listing
                     - main
             -
                 maxWidth: null

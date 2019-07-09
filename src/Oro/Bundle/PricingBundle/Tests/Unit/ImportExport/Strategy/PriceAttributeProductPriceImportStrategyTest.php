@@ -7,11 +7,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
-use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -46,7 +46,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $strategyHelper = $this->createMock(ImportStrategyHelper::class);
         $strategyHelper
             ->expects(static::any())
-            ->method('isGranted')
+            ->method('checkPermissionGrantedForEntity')
             ->willReturn(true);
 
         $this->strategy = new PriceAttributeProductPriceImportStrategy(
@@ -58,7 +58,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
             $this->createMock(DoctrineHelper::class),
-            $this->createMock(OwnerChecker::class)
+            $this->createMock(RelatedEntityStateHelper::class)
         );
         $this->strategy->setImportExportContext($this->createMock(ContextInterface::class));
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);

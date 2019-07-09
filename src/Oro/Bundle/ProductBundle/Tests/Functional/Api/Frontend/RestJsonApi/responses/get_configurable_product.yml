@@ -17,10 +17,12 @@ data:
         productAttributes:
             testAttrString: null
             testAttrBoolean: false
-            testAttrFloat: null
+            testAttrFloat: 1.5
             testAttrMoney: null
             testAttrDateTime: null
-            testAttrManyToOne: null
+            testAttrManyToOne:
+                id: '<toString(@customer4->id)>'
+                targetValue: 'Company 4'
             testToOneId: null
             testAttrMultiEnum: {  }
             testAttrManyToMany: {  }
@@ -35,6 +37,10 @@ data:
             - testAttrEnum
             - testAttrBoolean
     relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
         productFamily:
             data:
                 type: productfamilies
@@ -44,3 +50,7 @@ data:
                 - { type: products, id: '<toString(@configurable_product3_variant1->id)>' }
                 - { type: products, id: '<toString(@configurable_product3_variant2->id)>' }
                 - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
+        parentProducts:
+            data: []
+        images:
+            data: []

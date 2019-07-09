@@ -62,7 +62,7 @@ class SearchContentVariantFilteringEventListener
         $event->getConfig()->offsetSetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH, $contentVariantId);
         $event->getConfig()->offsetSetByPath(
             self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
-            $overrideVariantConfiguration
+            (int) $overrideVariantConfiguration
         );
     }
 

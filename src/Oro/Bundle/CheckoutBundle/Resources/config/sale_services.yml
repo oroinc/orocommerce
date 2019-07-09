@@ -1,6 +1,8 @@
 services:
     oro_checkout.shipping_method.provider_main:
         parent: oro_checkout.shipping_method.price_provider_chain_element
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         calls:
             - ['setSuccessor', ['@oro_checkout.shipping_method.quote_provider_chain_element']]
         tags:

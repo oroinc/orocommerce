@@ -11,10 +11,14 @@ services:
             - [addConfigProvider, ['related_products', '@oro_product.related_item.related_product.config_provider']]
             - [addConfigProvider, ['upsell_products', '@oro_product.related_item.upsell_product.config_provider']]
 
+    Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper:
+        alias: oro_product.related_item.helper.config_helper
+
     oro_product.twig.related_item_extension:
         class: Oro\Bundle\ProductBundle\Twig\RelatedItemExtension
         public: false
-        arguments: ['@oro_product.related_item.helper.config_helper']
+        arguments:
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -26,6 +30,9 @@ services:
     oro_product.related_item.related_product.config_provider:
         parent: oro_product.related_item.abstract_config_provider
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider
+
+    Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider:
+        alias: oro_product.related_item.related_product.config_provider
 
     oro_product.related_item.related_product.assigner_database_strategy_abstract:
       abstract: true
@@ -69,6 +76,9 @@ services:
         parent: oro_product.related_item.abstract_config_provider
         public: true
         class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider
+
+    Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider:
+        alias: oro_product.related_item.upsell_product.config_provider
 
     oro_product.related_item.upsell_product.assigner_strategy:
         public: false

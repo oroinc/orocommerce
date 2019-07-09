@@ -1,0 +1,22 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\ProductBundle\Controller\ProductController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ProductBundle\Controller\Frontend\ProductController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: 'oro_product.layout.data_provider.product_view_form_availability_provider' }
+
+    Oro\Bundle\ProductBundle\Controller\BrandController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

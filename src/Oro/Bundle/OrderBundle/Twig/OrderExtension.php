@@ -4,7 +4,8 @@ namespace Oro\Bundle\OrderBundle\Twig;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -19,7 +20,7 @@ use Twig\TwigFunction;
  * Provides a Twig filter to display source document name:
  *   - oro_order_format_source_document
  */
-class OrderExtension extends AbstractExtension
+class OrderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_order_order';
 
@@ -140,5 +141,16 @@ class OrderExtension extends AbstractExtension
     {
         return $this->getShippingTrackingFormatter()
             ->formatShippingTrackingLink($shippingMethodName, $trackingNumber);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_order.formatter.source_document' => SourceDocumentFormatter::class,
+            'oro_order.formatter.shipping_tracking' => ShippingTrackingFormatter::class,
+        ];
     }
 }

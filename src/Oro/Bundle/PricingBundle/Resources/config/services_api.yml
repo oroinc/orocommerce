@@ -144,8 +144,8 @@ services:
             - { name: oro.api.processor, action: update, group: normalize_data, priority: 0, class: '%oro_pricing.entity.product_price.class%'}
             - { name: oro.api.processor, action: create, group: normalize_data, priority: 0, class: '%oro_pricing.entity.product_price.class%'}
 
-    oro_pricing.api.set_price_list_in_context_by_filter:
-        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByFilter'
+    oro_pricing.api.handle_price_list_filter:
+        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\HandlePriceListFilter'
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
@@ -223,3 +223,18 @@ services:
             - '@oro_api.value_transformer'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_product.entity.product.class%' }
+
+    oro_pricing.api.product_search.update_depends_on_config_for_minimal_price_field:
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdateDependsOnConfigForMinimalPriceField
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -85 }
+
+    oro_pricing.api.product_search.compute_minimal_prices:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductSearchMinimalPrices
+        arguments:
+            - '@oro_api.value_transformer'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }

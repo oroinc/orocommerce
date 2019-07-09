@@ -67,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -352,7 +352,11 @@ class OroCatalogBundleInstaller implements
             $schema,
             self::ORO_CATALOG_CATEGORY_TABLE_NAME,
             $fieldName,
-            [],
+            [
+                'attachment' => [
+                    'acl_protected' => false,
+                ]
+            ],
             self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX,

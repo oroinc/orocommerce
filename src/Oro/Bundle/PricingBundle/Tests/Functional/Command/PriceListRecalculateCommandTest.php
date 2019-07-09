@@ -19,6 +19,9 @@ class PriceListRecalculateCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
+    /** @var EntityTriggerManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $databaseTriggerManager;
+
     /**
      * {@inheritdoc}
      */
@@ -27,6 +30,13 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         self::getContainer()->get('oro_config.global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
+
+        $this->databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
+        $this->getContainer()->set(
+            'oro_pricing.database_triggers.manager.combined_prices',
+            $this->databaseTriggerManager
+        );
+
         $this->loadFixtures([
             LoadPriceListRelations::class,
             LoadProductPrices::class,
@@ -87,19 +97,14 @@ class PriceListRecalculateCommandTest extends WebTestCase
             $params[] = '--price-list='.$this->getReference($priceListName)->getId();
         }
 
-        if (false !== array_search('--disable-triggers', $params, true)) {
-            $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
-            $databaseTriggerManager->expects($this->once())
+        if (\in_array('--disable-triggers', $params, true)) {
+            $this->databaseTriggerManager->expects($this->once())
                 ->method('disable');
-            $databaseTriggerManager->expects($this->once())
+            $this->databaseTriggerManager->expects($this->once())
                 ->method('enable');
-            $this->getContainer()->set(
-                'oro_pricing.database_triggers.manager.combined_prices',
-                $databaseTriggerManager
-            );
         }
 
-        $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
+        $result = $this->runCommand(PriceListRecalculateCommand::getDefaultName(), $params);
         $this->assertContains($expectedMessage, $result);
         $this->assertCombinedPriceCount($expectedCount);
 
@@ -114,15 +119,15 @@ class PriceListRecalculateCommandTest extends WebTestCase
     public function commandDataProvider()
     {
         return [
-            'all' => [
-                'expected_message' => 'Start processing',
-                'params' => ['--all'],
-                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
-                'expectedMessages' => 5,
-            ],
             'all with triggers off' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--disable-triggers'],
+                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                'expectedMessages' => 5,
+            ],
+            'all' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all'],
                 'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
                 'expectedMessages' => 5,
             ],

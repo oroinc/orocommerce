@@ -24,7 +24,7 @@ Feature: Editing related products
       | PSKU4 | Product 4          |
       | PSKU3 | Product 3          |
       | PSKU2 | Product 2          |
-    And I click "Cancel"
+    And I click "Cancel" in modal window
 
   Scenario: Create relation
     Given go to Products/ Products
@@ -66,7 +66,7 @@ Feature: Editing related products
       | 1          | PSKU2 | Product 2          |
       | 0          | PSKU5 | Product5(disabled) |
       | 0          | PSKU4 | Product 4          |
-    And I click "Cancel"
+    And I click "Cancel" in modal window
 
   Scenario: Change relation with quick edit
     Given go to Products/ Products
@@ -176,7 +176,7 @@ Feature: Editing related products
       | PSKU4 |
     Then "Select products" button is disabled
     And I should see "Limit of related items has been reached"
-    And I click "Cancel"
+    And I click "Cancel" in modal window
 
   Scenario: Check related grid view after related product title has been updated
     Given go to System/ Configuration

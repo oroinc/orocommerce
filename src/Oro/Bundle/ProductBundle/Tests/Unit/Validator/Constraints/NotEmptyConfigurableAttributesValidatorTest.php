@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;

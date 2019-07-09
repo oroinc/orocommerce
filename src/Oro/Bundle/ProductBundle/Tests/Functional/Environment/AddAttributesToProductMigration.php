@@ -92,7 +92,8 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             false,
             false,
             $this->getAttributeOptions([
-                'entity' => ['label' => 'extend.entity.test.test_attr_enum']
+                'entity' => ['label' => 'extend.entity.test.test_attr_enum'],
+                'attribute' => ['sortable' => true]
             ])
         );
     }
@@ -129,7 +130,8 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             'oro_customer',
             'name',
             $this->getAttributeOptions([
-                'entity' => ['label' => 'extend.entity.test.test_attr_many_to_one']
+                'entity' => ['label' => 'extend.entity.test.test_attr_many_to_one'],
+                'attribute' => ['sortable' => true]
             ])
         );
     }
@@ -146,9 +148,23 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             'testToOneId',
             'oro_dictionary_country',
             'iso2_code',
-            $this->getAttributeOptions([
-                'entity' => ['label' => 'extend.entity.test.test_attr_many_to_one']
-            ])
+            [
+                'entity' => ['label' => 'extend.entity.test.test_attr_many_to_one'],
+                'extend'       => [
+                    'is_extend' => true,
+                    'owner'     => ExtendScope::OWNER_CUSTOM
+                ],
+                'attribute'    => [
+                    'is_attribute' => true,
+                    'filterable'   => false,
+                    'sortable'     => false,
+                    'searchable'   => false,
+                    'enabled'      => true
+                ],
+                'importexport' => [
+                    'excluded' => true
+                ]
+            ]
         );
     }
 
@@ -251,7 +267,8 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             'integer',
             [
                 OroOptions::KEY => $this->getAttributeOptions([
-                    'entity' => ['label' => 'extend.entity.test.test_attr_integer']
+                    'entity' => ['label' => 'extend.entity.test.test_attr_integer'],
+                    'attribute' => ['sortable' => true]
                 ])
             ]
         );
@@ -267,7 +284,8 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             'float',
             [
                 OroOptions::KEY => $this->getAttributeOptions([
-                    'entity' => ['label' => 'extend.entity.test.test_attr_float']
+                    'entity' => ['label' => 'extend.entity.test.test_attr_float'],
+                    'attribute' => ['sortable' => true]
                 ])
             ]
         );

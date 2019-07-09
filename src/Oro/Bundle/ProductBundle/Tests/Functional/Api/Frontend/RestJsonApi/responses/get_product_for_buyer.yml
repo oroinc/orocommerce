@@ -42,9 +42,19 @@ data:
         availabilityDate: '2119-01-20T20:30:00Z'
         variantAttributeNames: []
     relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
         productFamily:
             data:
                 type: productfamilies
                 id: '<toString(@default_product_family->id)>'
         variantProducts:
             data: []
+        parentProducts:
+            data: []
+        images:
+            data:
+                - { type: productimages, id: '<toString(@product1_image1->id)>' }
+                - { type: productimages, id: '<toString(@product1_image2->id)>' }

@@ -21,3 +21,7 @@ layout:
             id: new_arrival_products
             optionName: label
             optionValue: oro.product.new_arrivals.label
+        - '@setOption':
+            id: new_arrival_products
+            optionName: attr.data-page-component-name
+            optionValue: 'new-arrivals-list'

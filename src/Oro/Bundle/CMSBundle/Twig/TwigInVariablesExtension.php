@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -12,17 +14,17 @@ use Twig\TwigFilter;
  *
  * Allowed variables, tags and functions are limited by "@oro_cms.twig.content_security_policy" service.
  */
-class TwigInVariablesExtension extends AbstractExtension
+class TwigInVariablesExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var Environment */
-    protected $twig;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param Environment $twig
+     * @param ContainerInterface $container
      */
-    public function __construct(Environment $twig)
+    public function __construct(ContainerInterface $container)
     {
-        $this->twig = $twig;
+        $this->container = $container;
     }
 
     /**
@@ -41,8 +43,19 @@ class TwigInVariablesExtension extends AbstractExtension
      */
     public function renderContent($content)
     {
-        $template = $this->twig->createTemplate($content);
+        $template = $this->container->get('oro_cms.twig.renderer')
+            ->createTemplate($content);
 
         return $template->render([]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_cms.twig.renderer' => Environment::class,
+        ];
     }
 }

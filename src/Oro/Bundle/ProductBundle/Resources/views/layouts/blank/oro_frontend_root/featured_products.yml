@@ -37,3 +37,7 @@ layout:
             id: featured_products_container
             parentId: page_content
             blockType: container
+        - '@setOption':
+            id: featured_products
+            optionName: attr.data-page-component-name
+            optionValue: 'featured-products-list'

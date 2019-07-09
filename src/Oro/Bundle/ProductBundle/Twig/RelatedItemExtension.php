@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -10,17 +12,17 @@ use Twig\TwigFunction;
  * Provides a Twig function to find out the translation key of a "related items" relation label:
  *   - get_related_items_translation_key
  */
-class RelatedItemExtension extends AbstractExtension
+class RelatedItemExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var RelatedItemConfigHelper */
-    private $helper;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param RelatedItemConfigHelper $helper
+     * @param ContainerInterface $container
      */
-    public function __construct(RelatedItemConfigHelper $helper)
+    public function __construct(ContainerInterface $container)
     {
-        $this->helper = $helper;
+        $this->container = $container;
     }
 
     /**
@@ -41,6 +43,17 @@ class RelatedItemExtension extends AbstractExtension
      */
     public function getRelatedItemsTranslationKey()
     {
-        return $this->helper->getRelatedItemsTranslationKey();
+        return $this->container->get('oro_product.related_item.helper.config_helper')
+            ->getRelatedItemsTranslationKey();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.related_item.helper.config_helper' => RelatedItemConfigHelper::class,
+        ];
     }
 }

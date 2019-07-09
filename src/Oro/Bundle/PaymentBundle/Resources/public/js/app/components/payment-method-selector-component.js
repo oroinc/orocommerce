@@ -51,7 +51,10 @@ define(function(require) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$el.on('change', this.options.selectors.radio, $.proxy(this.updateForms, this));
+
+            this.updateForms = this.updateForms.bind(this);
+
+            this.$el.on('change', this.options.selectors.radio, this.updateForms);
 
             mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
             mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);

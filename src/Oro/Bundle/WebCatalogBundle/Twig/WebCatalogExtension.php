@@ -5,7 +5,8 @@ namespace Oro\Bundle\WebCatalogBundle\Twig;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
  *   - oro_web_catalog_tree
  *   - oro_web_catalog_content_variant_title
  */
-class WebCatalogExtension extends AbstractExtension
+class WebCatalogExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_web_catalog_extension';
 
@@ -34,7 +35,7 @@ class WebCatalogExtension extends AbstractExtension
      */
     protected function getTreeHandler()
     {
-        return $this->container->get('oro_web_catalog.content_node_tree_handler');
+        return $this->container->get(ContentNodeTreeHandler::class);
     }
 
     /**
@@ -42,7 +43,7 @@ class WebCatalogExtension extends AbstractExtension
      */
     protected function getContentVariantTypeRegistry()
     {
-        return $this->container->get('oro_web_catalog.content_variant_type.registry');
+        return $this->container->get(ContentVariantTypeRegistry::class);
     }
 
     /**
@@ -85,5 +86,13 @@ class WebCatalogExtension extends AbstractExtension
         $type = $this->getContentVariantTypeRegistry()->getContentVariantType($typeName);
 
         return $type->getTitle();
+    }
+
+    public static function getSubscribedServices()
+    {
+        return [
+            ContentNodeTreeHandler::class,
+            ContentVariantTypeRegistry::class
+        ];
     }
 }

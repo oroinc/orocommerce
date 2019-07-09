@@ -320,7 +320,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductUnitPrecision[]
      *
-     * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductUnitPrecision",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -396,7 +402,8 @@ class Product extends ExtendProduct implements
      * @ORM\ManyToMany(
      *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
      * )
      * @ORM\JoinTable(
      *      name="oro_product_description",
@@ -428,7 +435,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductVariantLink[]
      *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductVariantLink",
+     *     mappedBy="parentProduct",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -446,7 +459,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductVariantLink[]
      *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductVariantLink",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -466,7 +485,8 @@ class Product extends ExtendProduct implements
      * @ORM\ManyToMany(
      *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
      * @ORM\JoinTable(
      *      name="oro_product_short_desc",
@@ -502,7 +522,8 @@ class Product extends ExtendProduct implements
      *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage",
      *     mappedBy="product",
      *     cascade={"ALL"},
-     *     orphanRemoval=true
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={

@@ -38,26 +38,32 @@ data:
         unitPrecisions:
             - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
             - { unit: '@set->code', precision: 1, conversionRate: 10, default: false }
-        url: "/product1_slug_default"
+        url: '/product1_slug_default'
         urls:
-            - { url: "/product1_slug_en_CA", localizationId: '<toString(@en_CA->id)>' }
-            - { url: "/product1_slug_en_US", localizationId: '<toString(@en_US->id)>' }
-            - { url: "/product1_slug_es", localizationId: '<toString(@es->id)>' }
+            - { url: '/product1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+            - { url: '/product1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
+            - { url: '/product1_slug_es', localizationId: '<toString(@es->id)>' }
         prices:
-            - { price: '12.9900', currencyId: USD, quantity: '1', unit: '@item->code'}
-            - { price: '11.0000', currencyId: USD, quantity: '10', unit: '@item->code'}
+            - { price: '12.9900', currencyId: USD, quantity: '1', unit: '@item->code' }
+            - { price: '11.0000', currencyId: USD, quantity: '10', unit: '@item->code' }
         lowInventory: true
         upcoming: true
         availabilityDate: '2119-01-20T20:30:00Z'
         variantAttributeNames: []
     relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
         productFamily:
             data:
                 type: productfamilies
                 id: '<toString(@default_product_family->id)>'
         variantProducts:
             data: []
+        parentProducts:
+            data: []
         images:
             data:
-                - {type: productimages, id: '<toString(@product1_image1->id)>'}
-                - {type: productimages, id: '<toString(@product1_image2->id)>'}
+                - { type: productimages, id: '<toString(@product1_image1->id)>' }
+                - { type: productimages, id: '<toString(@product1_image2->id)>' }

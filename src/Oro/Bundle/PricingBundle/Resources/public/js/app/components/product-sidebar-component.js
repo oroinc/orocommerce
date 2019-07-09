@@ -56,10 +56,14 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
             this.currenciesContainer = this.options._sourceElement.find(this.options.currenciesSelector);
 
+            this.onPriceListChange = this.onPriceListChange.bind(this);
+            this.onCurrenciesChange = this.onCurrenciesChange.bind(this);
+            this.onShowTierPricesChange = this.onShowTierPricesChange.bind(this);
+
             this.options._sourceElement
-                .on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this))
-                .on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this))
-                .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
+                .on('change', this.options.priceListSelector, this.onPriceListChange)
+                .on('change', this.options.currenciesSelector, this.onCurrenciesChange)
+                .on('change', this.options.showTierPricesSelector, this.onShowTierPricesChange);
         },
 
         onPriceListChange: function(e) {
@@ -68,9 +72,9 @@ define(function(require) {
 
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),
-                beforeSend: $.proxy(this._beforeSend, this),
-                success: $.proxy(this._success, this),
-                complete: $.proxy(this._complete, this),
+                beforeSend: this._beforeSend.bind(this),
+                success: this._success.bind(this),
+                complete: this._complete.bind(this),
                 errorHandlerMessage: __(this.options.errorMessage)
             });
         },

@@ -117,7 +117,7 @@ services:
         class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
         public: false
         arguments:
-            - '@oro_inventory.inventory.low_inventory_provider'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 

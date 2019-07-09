@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 /**
+ * Trigger product reindexation on variant link changes
  * @codeCoverageIgnore No logic here
  */
 class ProductVariantsChangedListener
@@ -30,7 +31,9 @@ class ProductVariantsChangedListener
      */
     public function prePersist(ProductVariantLink $productVariantLink, LifecycleEventArgs $event)
     {
-        $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+        if ($productVariantLink->getProduct()) {
+            $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+        }
     }
 
     /** @ORM\PreRemove()
@@ -39,6 +42,8 @@ class ProductVariantsChangedListener
      */
     public function preRemove(ProductVariantLink $productVariantLink)
     {
-        $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+        if ($productVariantLink->getProduct()) {
+            $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+        }
     }
 }

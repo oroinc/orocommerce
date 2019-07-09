@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,11 +19,26 @@ class ProductTest extends FrontendRestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        // guard
+        self::assertEquals(
+            ['in_stock', 'out_of_stock'],
+            $this->getConfigManager()->get('oro_product.general_frontend_product_visibility')
+        );
+
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml'
         ]);
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    private function getConfigManager(): ConfigManager
+    {
+        return self::getClientInstance()->getContainer()->get('oro_config.manager');
     }
 
     /**
@@ -34,40 +49,100 @@ class ProductTest extends FrontendRestJsonApiTestCase
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
     }
 
-    public function testTryToGetList()
+    public function testGetList()
     {
         $response = $this->cget(
             ['entity' => 'products'],
-            [],
-            [],
-            false
+            ['page[size]' => 100]
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseContains('cget_product.yml', $response);
     }
 
-    public function testTryToGetListFilterBySeveralSku()
+    public function testGetListFilterBySeveralSkus()
     {
         $response = $this->cget(
             ['entity' => 'products'],
-            ['filter' => ['sku' => 'PSKU1,PSKU2,PSKU3']],
-            [],
-            false
+            ['filter' => ['sku' => 'PSKU1,PSKU2,PSKU3']]
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseContains('cget_product_filter_by_sku.yml', $response);
     }
 
-    public function testTryToOptionsForList()
+    public function testGetListFilterBySeveralInventoryStatuses()
     {
-        $response = $this->options(
-            $this->getListRouteName(),
+        $response = $this->cget(
             ['entity' => 'products'],
-            [],
-            false
+            ['filter' => ['inventoryStatus' => 'out_of_stock,discontinued']]
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'          => 'products',
+                        'id'            => '<toString(@product3->id)>',
+                        'relationships' => [
+                            'inventoryStatus' => [
+                                'data' => [
+                                    'type' => 'productinventorystatuses',
+                                    'id'   => '<toString(@out_of_stock->id)>'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilterByVariants()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['variants' => '0']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilterByVariantsWithYesValue()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['variants' => '1'], 'fields[products]' => 'id', 'page[size]' => 100]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product2_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>']
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGet()
@@ -334,11 +409,13 @@ class ProductTest extends FrontendRestJsonApiTestCase
                         'productAttributes' => [
                             'testAttrString'     => null,
                             'testAttrBoolean'    => $emptyBooleanValue,
-                            'testAttrFloat'      => null,
                             'testAttrMoney'      => null,
                             'testAttrDateTime'   => null,
                             'testAttrMultiEnum'  => [],
-                            'testAttrManyToOne'  => null,
+                            'testAttrManyToOne'  => [
+                                'id'          => '<toString(@customer2->id)>',
+                                'targetValue' => 'Company 2'
+                            ],
                             'testToOneId'        => null,
                             'testAttrManyToMany' => [],
                             'testToManyId'       => []
@@ -417,6 +494,40 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_configurable_product_with_variants.yml', $response);
     }
 
+    public function testGetOnlyParentProducts()
+    {
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+            ['fields[products]' => 'parentProducts']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'relationships' => [
+                        'parentProducts' => [
+                            'data' => [
+                                ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                                ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>']
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetWithIncludeParentProducts()
+    {
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+            ['include' => 'parentProducts']
+        );
+
+        $this->assertResponseContains('get_product_with_parent_products.yml', $response);
+    }
+
     public function testTryToGetDisabled()
     {
         $response = $this->get(
@@ -476,7 +587,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
     public function testTryToDelete()
@@ -500,7 +611,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
     public function testGetSubresourceForProductFamily()
@@ -648,6 +759,99 @@ class ProductTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'products',
                 'id'          => '<toString(@configurable_product3->id)>',
                 'association' => 'variantProducts'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testGetSubresourceForParentProducts()
+    {
+        $response = $this->getSubresource([
+            'entity'      => 'products',
+            'id'          => '<toString(@configurable_product1_variant1->id)>',
+            'association' => 'parentProducts'
+        ]);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'products',
+                        'id'         => '<toString(@configurable_product1->id)>',
+                        'attributes' => [
+                            'sku' => 'CPSKU1'
+                        ]
+                    ],
+                    [
+                        'type'       => 'products',
+                        'id'         => '<toString(@configurable_product3->id)>',
+                        'attributes' => [
+                            'sku' => 'CPSKU3'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForParentProducts()
+    {
+        $response = $this->getRelationship([
+            'entity'      => 'products',
+            'id'          => '<toString(@configurable_product1_variant1->id)>',
+            'association' => 'parentProducts'
+        ]);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateRelationshipForParentProducts()
+    {
+        $response = $this->patchRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@configurable_product1_variant1->id)>',
+                'association' => 'parentProducts'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToAddRelationshipForParentProducts()
+    {
+        $response = $this->postRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@configurable_product1_variant1->id)>',
+                'association' => 'parentProducts'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteRelationshipForParentProducts()
+    {
+        $response = $this->deleteRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@configurable_product1_variant1->id)>',
+                'association' => 'parentProducts'
             ],
             [],
             [],

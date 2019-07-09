@@ -5,7 +5,6 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 use Oro\Bundle\OrderBundle\Twig\OrderShippingExtension;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,8 +24,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
         $container = self::getContainerBuilder()
             ->add(
                 'oro_shipping.translator.shipping_method_label',
-                $labelTranslator,
-                ContainerInterface::NULL_ON_INVALID_REFERENCE
+                $labelTranslator
             )
             ->getContainer($this);
         $extension = new OrderShippingExtension($container);
@@ -45,8 +43,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
         $container = self::getContainerBuilder()
             ->add(
                 'oro_shipping.translator.shipping_method_label',
-                null,
-                ContainerInterface::NULL_ON_INVALID_REFERENCE
+                null
             )
             ->getContainer($this);
         $extension = new OrderShippingExtension($container);

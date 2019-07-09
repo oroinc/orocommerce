@@ -27,6 +27,9 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads demo products with images.
+ */
 class LoadProductDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -302,8 +305,8 @@ class LoadProductDemoData extends AbstractFixture implements
         $sku,
         $allImageTypes
     ) {
-        $attachmentManager = $this->container->get('oro_attachment.manager');
-        $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
+        $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
+        $publicMediaCacheManager = $this->container->get('oro_attachment.manager.public_mediacache');
 
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $allImageTypes);
         $imageDimensionsProvider = $this->container->get('oro_product.provider.product_images_dimensions');
@@ -319,9 +322,9 @@ class LoadProductDemoData extends AbstractFixture implements
                     continue;
                 }
 
-                $imagePath = $attachmentManager->getFilteredImageUrl($productImage->getImage(), $filterName);
-
-                $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+                $storagePath = $resizedImagePathProvider
+                    ->getPathForFilteredImage($productImage->getImage(), $filterName);
+                $publicMediaCacheManager->writeToStorage($filteredImage->getContent(), $storagePath);
             }
         }
     }
