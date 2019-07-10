@@ -981,6 +981,10 @@ oro_behat_extension:
         mapping:
           File: 'product_images[oro_product___product_image_watermark_file][value][file]'
 
+    Product Families Grid:
+      selector: 'div[data-page-component-name="attribute-family-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
