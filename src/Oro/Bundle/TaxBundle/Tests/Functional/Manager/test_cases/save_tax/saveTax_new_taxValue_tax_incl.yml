@@ -45,7 +45,7 @@ expectedResult:
         -
             row:
                 includingTax: '95.94'   # 15.99 * 6
-                excludingTax: '86.90'   # 95.94 - 9.037826 = 86.902174
+                excludingTax: '86.9'   # 95.94 - 9.037826 = 86.902174
                 taxAmount: '9.04'       # 95.94 * 0.104 / 1.104 = 9.037826
                 adjustment: '-0.002174' # 9.037826 - 9.04 = -0.002174
                 currency: 'USD'
@@ -56,7 +56,7 @@ expectedResult:
                 adjustment: '-0.003696' # 1.506304 - 1.51 = -0.003696
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '86.90', taxAmount: '9.04', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '86.9', taxAmount: '9.04', currency: 'USD' }
         -
             row:
                 includingTax: '38.85'   # 5.55 * 7

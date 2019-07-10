@@ -42,7 +42,7 @@ class PartnerTest extends AbstractOptionTest
     public function testList()
     {
         $this->assertInternalType('array', Partner::$partners);
-        $this->assertNotEmpty('array', Partner::$partners);
+        $this->assertNotEmpty(Partner::$partners);
         $this->assertArrayHasKey(PayPal::CODE, Partner::$partners);
     }
 }

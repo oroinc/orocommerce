@@ -24,11 +24,11 @@ Feature: Product prices management
       | Quantity value | 1                  |
       | Quantity Unit  | item               |
       | Value          | 7                  |
-    Then I should see following data for Product Price collection:
+    And I save form
+    Then I should see "Product has been saved" flash message
+    And I should see following data for Product Price collection:
       | Price List         | Quantity value | Quantity Unit | Value  |
       | Default Price List | 1              | item          | 7.0000 |
-    When I save form
-    Then I should see "Product has been saved" flash message
 
   Scenario: Check success flash message when update product price
     Given I go to Sales/ Price Lists

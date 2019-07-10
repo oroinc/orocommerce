@@ -116,7 +116,7 @@ expectedResult:
                 currency: 'USD'
             unit:
                 includingTax: '3.42'
-                excludingTax: '2.90'    # 3.42 - 0.519236641 = 2.900763359
+                excludingTax: '2.9'    # 3.42 - 0.519236641 = 2.900763359
                 taxAmount: '0.52'       # 3.42 * 0.179 / 1.179 = 0.519236641
                 adjustment: '-0.000763' # 0.519236641 - 0.52 = -0.000763359
                 currency: 'USD'

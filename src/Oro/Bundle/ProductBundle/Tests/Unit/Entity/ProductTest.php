@@ -439,7 +439,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetStatuses()
     {
         $this->assertInternalType('array', Product::getStatuses());
-        $this->assertNotEmpty('array', Product::getStatuses());
+        $this->assertNotEmpty(Product::getStatuses());
     }
 
     public function testUnitPrecisions()
