@@ -2,7 +2,7 @@
 @ticket-BB-14591
 @fixture-OroProductBundle:related_items_customer_users.yml
 @fixture-OroProductBundle:configurable_products.yml
-
+@skip
 Feature: Enums with uppercase IDs should be selectable in configurable product
   In order to use configurable products
   As a Buyer
