@@ -1603,3 +1603,9 @@ services:
             - '%oro_product.sku.regex_pattern%'
         tags:
             - { name: validator.constraint_validator, alias: oro_product.validator_constraints.sku_regex_validator }
+
+    oro_product.entity.factory.product_family:
+        class: Oro\Bundle\ProductBundle\Entity\Factory\ProductFamilyFactory
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@translator'
