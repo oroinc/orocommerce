@@ -47,7 +47,7 @@
     <tr data-content="{{ name }}"
         {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}
         {{ block('widget_container_attributes') }}
-        class="order-line-item"
+        class="order-line-item oro-item-collection__row--align-top"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
         data-layout="separate">

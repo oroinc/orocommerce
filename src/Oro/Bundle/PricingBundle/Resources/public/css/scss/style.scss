@@ -126,6 +126,8 @@
     }
 
     td {
+        vertical-align: top;
+
         span {
             &.validation-failed {
                 white-space: nowrap;
