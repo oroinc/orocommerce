@@ -108,7 +108,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
@@ -209,7 +209,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
@@ -343,7 +343,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -387,7 +387,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -424,7 +424,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -461,7 +461,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"

@@ -37,7 +37,7 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.normalize_product_price',
             'oro_pricing.api.set_price_list_in_context_by_product_price',
             'oro_pricing.update.load_normalized_entity',
-            'oro_pricing.api.set_price_list_in_context_by_filter',
+            'oro_pricing.api.handle_price_list_filter',
             'oro_pricing.api.enabled_price_sharding_on_query',
             'oro_pricing.api.enable_price_sharding_on_config',
             'oro_pricing.api.save_product_price',

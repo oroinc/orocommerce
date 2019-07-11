@@ -123,9 +123,6 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateExceptionResult()
     {
         $restException = $this->createMock(RestException::class);
-        $restException
-            ->method('getMessage')
-            ->willReturn('');
 
         $expectedTimeInTransitResult = new TimeInTransitResult([
             TimeInTransitResult::STATUS_KEY => false,

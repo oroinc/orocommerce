@@ -111,7 +111,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'row' => ResultElement::create('19.9900', '19.99', '0.0000', '0.0000'),
                     'result' => [
-                        TaxResultElement::create('country', '0.00', '19.9900', '0.00'),
+                        TaxResultElement::create('country', '0.00', '19.99', '0'),
                     ]
                 ],
                 'quantity' => 1,
@@ -126,8 +126,8 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'row' => ResultElement::create('21.3893', '19.99', '1.3993', '-0.0007'),
                     'result' => [
-                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
-                        TaxResultElement::create('region', '0.07', '19.99', '1.3993'),
+                        TaxResultElement::create('country', '0.00', '19.99', '0.000000'),
+                        TaxResultElement::create('region', '0.07', '19.99', '1.399300'),
                     ]
                 ],
                 'quantity' => 1,
