@@ -26,7 +26,9 @@ Feature: Single Page Checkout With Few Shipping Methods
   Scenario: Configure shipping rules
     Given I go to System/Shipping Rules
     And I click Edit "Default" in grid
-    And I add shipping method "Flat Rate 2" with:
+    And I fill "Shipping Rule" with:
+      | Method     | Flat Rate 2 |
+    And I fill form with:
       | Price | 2         |
       | Type  | per_order |
     When I save and close form

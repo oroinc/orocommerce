@@ -96,8 +96,7 @@ class ShoppingListTotalManager
      */
     public function recalculateTotals(ShoppingList $shoppingList, $doFlush)
     {
-        /** @var ShoppingListTotal[] $totals */
-        $totals = $this->getTotalRepository()->findBy(['shoppingList' => $shoppingList]);
+        $totals = $shoppingList->getTotals();
         $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
 
         foreach ($totals as $total) {
@@ -112,6 +111,7 @@ class ShoppingListTotalManager
 
         foreach ($enabledCurrencies as $currency) {
             $total = new ShoppingListTotal($shoppingList, $currency);
+            $shoppingList->addTotal($total);
             $subtotal = $this->lineItemNotPricedSubtotalProvider
                 ->getSubtotalByCurrency($shoppingList, $total->getCurrency());
 
