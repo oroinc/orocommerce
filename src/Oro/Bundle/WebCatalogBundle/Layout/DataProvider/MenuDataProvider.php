@@ -92,10 +92,10 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
                     $this->saveToCache($rootItem);
                 }
             }
-        }
 
-        if (array_key_exists(self::CHILDREN, $rootItem)) {
-            return $rootItem[self::CHILDREN];
+            if (array_key_exists(self::CHILDREN, $rootItem)) {
+                return $rootItem[self::CHILDREN];
+            }
         }
 
         return [];
