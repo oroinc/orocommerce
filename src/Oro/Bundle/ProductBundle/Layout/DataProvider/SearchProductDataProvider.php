@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Converts the search text to additional data for the product page

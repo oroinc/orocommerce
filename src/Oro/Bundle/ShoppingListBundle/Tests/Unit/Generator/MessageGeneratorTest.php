@@ -4,11 +4,11 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Generator;
 
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Translator */
     protected $translator;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface */
@@ -19,7 +19,7 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->generator = new MessageGenerator($this->translator, $this->router);
     }

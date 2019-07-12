@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /** @var UnitValueFormatterInterface */
@@ -16,7 +16,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(Translator::class);
         $this->formatter = $this->createFormatter();
     }
 

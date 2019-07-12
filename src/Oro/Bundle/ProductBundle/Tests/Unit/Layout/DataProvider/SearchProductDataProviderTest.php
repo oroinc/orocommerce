@@ -4,14 +4,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SearchProductDataProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $searchProductHandler;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /** @var SearchProductDataProvider */
@@ -20,7 +20,7 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->searchProductHandler = $this->createMock(SearchProductHandler::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(Translator::class);
 
         $this->provider = new SearchProductDataProvider($this->searchProductHandler, $this->translator);
     }

@@ -7,7 +7,7 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 use Oro\Bundle\PaymentBundle\Event\CollectFormattedPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {

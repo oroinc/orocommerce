@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -72,7 +72,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
 
         $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\Session');
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
 
         $this->processor = new DataStorageAwareComponentProcessor(
             $this->router,

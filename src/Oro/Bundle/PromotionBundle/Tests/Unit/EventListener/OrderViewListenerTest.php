@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\EventListener\OrderViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class OrderViewListenerTest extends \PHPUnit\Framework\TestCase

@@ -10,7 +10,7 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\FormViewListener;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase

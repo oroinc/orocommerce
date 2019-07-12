@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType as ProductImageTypeConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase

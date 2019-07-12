@@ -8,7 +8,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChannelByTypeFactory
 {

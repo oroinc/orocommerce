@@ -9,7 +9,7 @@ use Oro\Component\Expression\ExpressionLanguageConverter;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ExpressionValidatorTest extends \PHPUnit\Framework\TestCase

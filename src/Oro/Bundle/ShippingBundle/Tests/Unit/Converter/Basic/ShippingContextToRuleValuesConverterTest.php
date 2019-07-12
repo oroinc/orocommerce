@@ -84,7 +84,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
                     ShippingContext::FIELD_SHIPPING_ORIGIN => $this->getEntity(ShippingAddressStub::class, [
                         'region' => $this->getEntity(Region::class, [
                             'code' => 'CA',
-                        ]),
+                        ], ['US-CA']),
                     ]),
                     ShippingContext::FIELD_BILLING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
                         'country' => new Country('US'),
@@ -92,9 +92,8 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
                     ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
                         'country' => new Country('US'),
                         'region' => $this->getEntity(Region::class, [
-                            'combinedCode' => 'US-CA',
                             'code' => 'CA',
-                        ]),
+                        ], ['US-CA']),
                         'postalCode' => '90401',
                     ]),
                     ShippingContext::FIELD_PAYMENT_METHOD => 'integration_payment_method',

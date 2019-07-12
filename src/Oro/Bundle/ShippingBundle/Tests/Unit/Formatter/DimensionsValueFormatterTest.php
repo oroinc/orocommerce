@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +18,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
         $this->formatter = new DimensionsValueFormatter($this->translator);
         $this->formatter->setTranslationPrefix(self::TRANSLATION_PREFIX);
