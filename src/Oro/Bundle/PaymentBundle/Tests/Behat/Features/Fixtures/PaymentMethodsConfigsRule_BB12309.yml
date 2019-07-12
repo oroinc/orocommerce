@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     paymentRule:
-        name: '<script>alert(1)</script>'
+        name: '\<script\>alert(1)\</script\>'
         enabled: true
         sortOrder: 5
         expression: 'expression'
@@ -8,7 +8,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfig:
-        type: '<("payment_term_".@paymentTermIntegration->id)>'
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRule:
@@ -26,4 +26,4 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode:
     paymentMethodsConfigsRuleDestinationPostalCode:
         destination: '@paymentMethodsConfigsRuleDestination'
-        name: '<script>alert(2)</script>'
+        name: '\<script\>alert(2)\</script\>'

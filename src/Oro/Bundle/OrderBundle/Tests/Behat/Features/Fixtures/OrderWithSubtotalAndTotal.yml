@@ -21,7 +21,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
     subtotalObject: '@subtotal2'
     totalObject: '@total2'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
   price1:
     value: 5
     currency: USD
@@ -42,7 +42,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     productUnit: '@item'
     productUnitCode: item
 
-Oro\Bundle\CurrencyBundle\Entity\MultiCurrency (local):
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency :
   subtotal1:
     value: 50.00
     baseCurrencyValue: 50.00

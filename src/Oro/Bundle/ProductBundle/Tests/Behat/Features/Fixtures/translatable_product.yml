@@ -24,7 +24,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue1:
     string: 'Product1'
   zuluLocValue1:
-    string: '<script>alert("Product1_ZU");</script>'
+    string: '\<script\>alert("Product1_ZU");\</script\>'
     localization: '@localization_zulu'
   locValue2:
     string: 'Product2'
@@ -46,7 +46,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue1', '@zuluLocValue1']]
+    __calls:
+      - setNames: [['@locValue1', '@zuluLocValue1']]
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -59,7 +60,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision2'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue2', '@zuluLocValue2']]
+    __calls:
+      - setNames: [['@locValue2', '@zuluLocValue2']]
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -72,7 +74,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision3'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue3', '@zuluLocValue3']]
+    __calls:
+      - setNames: [['@locValue3', '@zuluLocValue3']]
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true

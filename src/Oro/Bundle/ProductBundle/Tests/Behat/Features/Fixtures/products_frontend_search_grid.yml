@@ -1,5 +1,5 @@
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProduct{1..30}Name:
+    localProductName{1..30}:
         string: 'Product <current()>'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
@@ -13,7 +13,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
-        addName: ['@localProduct<current()>Name']
+        __calls:
+            - addName: ['@localProductName<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

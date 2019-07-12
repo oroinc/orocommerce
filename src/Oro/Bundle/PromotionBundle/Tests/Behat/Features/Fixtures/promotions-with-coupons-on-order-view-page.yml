@@ -7,9 +7,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\SegmentBundle\Entity\Segment:
     orderPromotionSegment:
         name: 'Promotion Matching All Products'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"number","data":{"value":0,"type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"number","data":{"value":0,"type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@business_unit'
 
@@ -29,9 +29,10 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     orderDiscountPromotion:
-        addLabel: ['@orderPromotionLabel']
-        addDescription: ['@orderPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@orderPromotionLabel']
+            - addDescription: ['@orderPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@orderPromotionSegment'
         rule: '@orderPromotionRule'
         discountConfiguration: '@orderPromotionDiscountConfiguration'

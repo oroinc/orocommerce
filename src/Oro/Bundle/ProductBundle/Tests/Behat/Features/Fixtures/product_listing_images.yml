@@ -2,6 +2,11 @@ include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
     - '@OroLocaleBundle:LocalizationFixture.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
     name: Common Business Unit
@@ -9,17 +14,12 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
-        string: "Product1`\"'&йёщ>"
+        string: <("Product1`\"'&йёщ>")>
     locvalue1_loc1:
         string: 'Product1 (Localization 1)'
         localization: '@localization1'
     localNewCategory:
         string: 'NewCategory'
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
-        unit: '@each'
-        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -27,19 +27,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
-        primaryUnitPrecision: '@precision1'
-        unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
-
-Doctrine\Common\Collections\ArrayCollection(local):
-    products:
-        __construct: [['@product1']]
+        __calls:
+            - setNames: [['@locvalue1' , '@locvalue1_loc1']]
+            - setPrimaryUnitPrecision: ['@precision1']
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']

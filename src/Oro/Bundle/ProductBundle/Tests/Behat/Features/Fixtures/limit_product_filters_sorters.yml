@@ -16,9 +16,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     newAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'new_product_attribute_family_code'
-        addLabel: ['@newProductAttributeFamily']
+        __calls:
+            - addLabel: ['@newProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
 
@@ -29,28 +30,29 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
     product2:
         sku: 'SKU2'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
         organization: '@organization'
         attributeFamily: '@newAttributeFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
     product3:
         sku: 'SKU3'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@newAttributeFamily'
-        addName: ['@locvalue3']
-
-Doctrine\Common\Collections\ArrayCollection(local):
-    products:
-        __construct: [['@product1', '@product2']]
+        __calls:
+            - addName: ['@locvalue3']
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     newCategoryProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+            - addProduct: ['@product2']

@@ -9,7 +9,7 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
-        string: "Product1`\"'&йёщ>"
+        string: <("Product1`\"'&йёщ>")>
     locvalue1_loc1:
         string: 'Product1 (Localization1)'
         localization: '@localization1'
@@ -52,9 +52,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -64,7 +65,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@locvalue1' , '@locvalue1_loc1']]
+        __calls:
+            - setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:
@@ -73,9 +75,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision2'
-        addUnitPrecision: ['@precision-set']
+        __calls:
+            - addUnitPrecision: ['@precision-set']
+            - addName: ['@locvalue2']
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product3:
@@ -85,7 +88,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision3'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product4:
@@ -95,7 +99,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision4'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product5:
@@ -105,7 +110,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision5'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue5']
+        __calls:
+            - addName: ['@locvalue5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
 

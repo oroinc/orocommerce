@@ -3,12 +3,12 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
     name: 'Acme_<current()>'
     organization: '@organization'
     owner: '@admin'
-    createdAt: '2017-10-01 12:00:00'
-    updatedAt: '2017-10-01 13:00:00'
+    createdAt: '<(new DateTime("2017-10-01 12:00:00 UTC"))>'
+    updatedAt: '<(new DateTime("2017-10-01 13:00:00 UTC"))>'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user{1..2}:
-    email: 'customer_user_email_<current()>@example.com'
+    email: 'customer_user_email_<current()>\@example.com'
     username: 'Acme_user_<current()>'
     password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
     salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
@@ -17,7 +17,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: true
     customer: '@customer<current()>'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -76,27 +76,27 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddress1ShippingDefault:
         address: '@customer_address1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     customerAddress1BillingDefault:
         address: '@customer_address1'
-        type: 'billing'
+        type: '@billingType'
         default: true
     customerAddress2BillingDefault:
         address: '@customer_address2'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     customerUserAddress1ShippingDefault:
         address: '@customer_user_address1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     customerUserAddress1BillingDefault:
         address: '@customer_user_address1'
-        type: 'billing'
+        type: '@billingType'
         default: true
     customerUserAddress2BillingDefault:
         address: '@customer_user_address2'
-        type: 'billing'
+        type: '@billingType'
         default: true

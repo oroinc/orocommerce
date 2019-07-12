@@ -25,9 +25,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     attribute_family:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'family'
-        addLabel: ['@attribute_family_label']
+        __calls:
+            - addLabel: ['@attribute_family_label']
         organization: '@organization'
         owner: '@admin'
 
@@ -70,7 +71,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA'
-        addName: ['@configurable_product_A_name']
+        __calls:
+            - addName: ['@configurable_product_A_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         featured: true
@@ -81,7 +83,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA1'
-        addName: ['@product_A_1_name']
+        __calls:
+            - addName: ['@product_A_1_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         featured: true
@@ -91,7 +94,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA2'
-        addName: ['@product_A_2_name']
+        __calls:
+            - addName: ['@product_A_2_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
@@ -101,7 +105,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA3'
-        addName: ['@product_A_3_name']
+        __calls:
+            - addName: ['@product_A_3_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_11:
@@ -110,7 +115,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB11'
-        addName: ['@product_B_11_name']
+        __calls:
+            - addName: ['@product_B_11_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         featured: true
@@ -120,7 +126,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB12'
-        addName: ['@product_B_12_name']
+        __calls:
+            - addName: ['@product_B_12_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
@@ -130,7 +137,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB13'
-        addName: ['@product_B_13_name']
+        __calls:
+            - addName: ['@product_B_13_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_111:
@@ -139,7 +147,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC111'
-        addName: ['@product_C_111_name']
+        __calls:
+            - addName: ['@product_C_111_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
@@ -149,6 +158,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC121'
-        addName: ['@product_C_121_name']
+        __calls:
+            - addName: ['@product_C_121_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'

@@ -18,9 +18,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     tshirt_family:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'T_shirt'
-        addLabel: ['@tshirt_family_label']
+        __calls:
+            - addLabel: ['@tshirt_family_label']
         organization: '@organization'
         owner: '@admin'
 
@@ -41,7 +42,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@tshirt_family'
         primaryUnitPrecision: '@unit_precision1'
-        addName: ['@product1_name']
+        __calls:
+            - addName: ['@product1_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product:
@@ -50,7 +52,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@tshirt_family'
         primaryUnitPrecision: '@unit_precision2'
-        addName: ['@configurable_product_name']
+        __calls:
+            - addName: ['@configurable_product_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product_2:
@@ -59,6 +62,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@tshirt_family'
         primaryUnitPrecision: '@unit_precision3'
-        addName: ['@configurable_product_name_2']
+        __calls:
+            - addName: ['@configurable_product_name_2']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'

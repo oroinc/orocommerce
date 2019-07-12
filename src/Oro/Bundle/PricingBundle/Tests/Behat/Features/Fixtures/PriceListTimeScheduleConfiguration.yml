@@ -1,4 +1,4 @@
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '1'
     currency: 'USD'
@@ -26,7 +26,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@company_A'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -50,11 +50,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']

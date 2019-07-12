@@ -1,6 +1,7 @@
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeDefaultWebCatalog:
-        addTitle: ['@localValueDefaultWebCatalog']
+        __calls:
+            - addTitle: ['@localValueDefaultWebCatalog']
         webCatalog: '@webCatalog'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:

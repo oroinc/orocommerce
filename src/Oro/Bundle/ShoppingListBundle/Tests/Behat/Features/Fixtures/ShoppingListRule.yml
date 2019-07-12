@@ -16,7 +16,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
        confirmed: '1'
        customer: '@customer1'
        organization: '@organization'
-       role: ['@buyer']
+       roles: ['@buyer']
        owner: '@admin'
        website: '@website1'
 
@@ -37,7 +37,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
        sku: 'AA1'
        primaryUnitPrecision: '@precision1'
        additionalUnitPrecisions: ['@precision2']
-       addName: ['@locvalue1']
+       __calls:
+            - addName: ['@locvalue1']
        inventoryStatus: '@enumInventoryStatuses'
        status: 'enabled'
        featured: true

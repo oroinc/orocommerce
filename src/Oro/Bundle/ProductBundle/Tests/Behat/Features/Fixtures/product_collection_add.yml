@@ -22,9 +22,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@localProductAttributeFamily']
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
 
@@ -33,7 +34,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU1'
         primaryUnitPrecision: '@productUnitPrevision1'
-        addName: ['@localProduct1Name']
+        __calls:
+            - addName: ['@localProduct1Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -43,7 +45,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU2'
         primaryUnitPrecision: '@productUnitPrevision2'
-        addName: ['@localProduct2Name']
+        __calls:
+            - addName: ['@localProduct2Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

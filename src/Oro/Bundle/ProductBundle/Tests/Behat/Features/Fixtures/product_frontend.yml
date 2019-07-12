@@ -16,21 +16,24 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
     product2:
         sku: 'SKU2'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     products:
         __construct: [['@product1', '@product2']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']

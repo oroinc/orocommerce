@@ -12,7 +12,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU1'
         primaryUnitPrecision: '@productUnitPrecision1'
-        addName: ['@localProduct1Name']
+        __calls:
+            - addName: ['@localProduct1Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

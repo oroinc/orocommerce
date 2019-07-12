@@ -18,6 +18,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue1']
+    __calls:
+      - addName: ['@locValue1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'

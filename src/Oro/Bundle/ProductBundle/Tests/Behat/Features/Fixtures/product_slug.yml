@@ -24,9 +24,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
   attribute_family:
-    entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+    entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
     code: 'family'
-    addLabel: ['@attribute_family_label']
+    __calls:
+      - addLabel: ['@attribute_family_label']
     organization: '@organization'
     owner: '@admin'
 
@@ -44,20 +45,22 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locvalue']
+    __calls:
+        - addName: ['@locvalue']
+        - addSlugPrototype: ['@localValueProductSlug']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
-    addSlugPrototype: ['@localValueProductSlug']
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
   products:
     __construct: [['@product1']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   categoryLightingProducts:
-    addTitle: ['@localNewCategory']
-    setParentCategory: [1]
-    setProducts: ['@products']
+    __calls:
+        - addTitle: ['@localNewCategory']
+        - setParentCategory: ['@root_category']
+        - setProducts: ['@products']
 
 Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
   webCatalog:
@@ -76,12 +79,15 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
   nodeDefaultWebCatalog:
-    addTitle: ['@localValueDefaultWebCatalog']
+    __calls:
+        - addTitle: ['@localValueDefaultWebCatalog']
+        - addContentVariant: ['@systemPageVariant']
     webCatalog: '@webCatalog'
-    addContentVariant: ['@systemPageVariant']
+
   nodeNewCategory:
-    addTitle: ['@localValueNewCategory']
-    addSlugPrototype: ['@localValueNewCategorySlug']
+    __calls:
+        - addTitle: ['@localValueNewCategory']
+        - addSlugPrototype: ['@localValueNewCategorySlug']
+        - addContentVariant: ['@categoryPageVariant']
     parentNode: '@nodeDefaultWebCatalog'
     webCatalog: '@webCatalog'
-    addContentVariant: ['@categoryPageVariant']

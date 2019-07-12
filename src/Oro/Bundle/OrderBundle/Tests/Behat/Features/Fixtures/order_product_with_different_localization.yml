@@ -2,7 +2,7 @@ include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
     - '@OroLocaleBundle:ZuluLocalization.yml'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD
@@ -32,7 +32,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@product1NameDefault' , '@product1NameZulu']]
+        __calls:
+            - setNames: [['@product1NameDefault' , '@product1NameZulu']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:
@@ -41,7 +42,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'AA2'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@product2NameDefault' , '@product2NameZulu']]
+        __calls:
+            - setNames: [['@product2NameDefault' , '@product2NameZulu']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 

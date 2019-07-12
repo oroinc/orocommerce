@@ -6,7 +6,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfigForPaymentTerm30:
-        type: '<("payment_term_".@paymentTerm30Integration->id)>'
+        type: '<("payment_term_".@paymentTerm30Integration->getId())>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRuleForPaymentTerm30:

@@ -5,7 +5,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
         default: true
-        setCurrencies: [['USD','EUR']]
+        __calls:
+            - setCurrencies: [['USD','EUR']]
         active: true
 
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:

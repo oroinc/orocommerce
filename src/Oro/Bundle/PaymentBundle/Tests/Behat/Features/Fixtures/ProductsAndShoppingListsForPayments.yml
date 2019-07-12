@@ -12,7 +12,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
         primaryUnitPrecision: '@precision'
-        addName: ['@locValue']
+        __calls:
+            - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         owner: '@business_unit'

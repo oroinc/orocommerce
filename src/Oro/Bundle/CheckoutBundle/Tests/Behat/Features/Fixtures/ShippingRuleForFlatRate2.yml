@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     shippingRuleForFlatRate2:
-        name: 'Flat Rate 2$'
+        name: 'Flat Rate 2\$'
         enabled: true
         sortOrder: 1
 
@@ -15,7 +15,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfigForFlatRate2:
-        method: '<("flat_rate_".@flatRate2Integration->id)>'
+        method: '<("flat_rate_".@flatRate2Integration->getId())>'
         typeConfigs: ['@shippingMethodTypeForFlatRate2Config']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

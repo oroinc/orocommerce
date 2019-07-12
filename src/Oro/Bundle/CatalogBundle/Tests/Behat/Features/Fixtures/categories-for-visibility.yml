@@ -1,33 +1,38 @@
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localValueLightingProducts']
-        setParentCategory: [1]
-        setInventoryThreshold: ['@treshhold100']
-        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
+        __calls:
+            - addTitle: ['@localValueLightingProducts']
+            - setParentCategory: ['@root_category']
+            - setInventoryThreshold: ['@treshhold100']
+            - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryRetailSupplies:
-        addTitle: ['@localValueRetailSupplies']
-        setParentCategory: [1]
-        setInventoryThreshold: ['@treshhold200']
-        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
+        __calls:
+            - addTitle: ['@localValueRetailSupplies']
+            - setParentCategory: ['@root_category']
+            - setInventoryThreshold: ['@treshhold200']
+            - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryMedicalApparel:
-        addTitle: ['@localValueMedicalApparel']
-        setParentCategory: [1]
-        setInventoryThreshold: ['@treshhold300']
-        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
+        __calls:
+            - addTitle: ['@localValueMedicalApparel']
+            - setParentCategory: ['@root_category']
+            - setInventoryThreshold: ['@treshhold300']
+            - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryPrinters:
-        addTitle: ['@localValuePrinters']
-        setParentCategory: ['@categoryRetailSupplies']
-        setInventoryThreshold: ['@treshhold400']
-        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
+        __calls:
+            - addTitle: ['@localValuePrinters']
+            - setParentCategory: ['@categoryRetailSupplies']
+            - setInventoryThreshold: ['@treshhold400']
+            - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryFax:
-        addTitle: ['@localValueFax']
-        setParentCategory: ['@categoryRetailSupplies']
-        setInventoryThreshold: ['@treshhold500']
-        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
+        __calls:
+            - addTitle: ['@localValueFax']
+            - setParentCategory: ['@categoryRetailSupplies']
+            - setInventoryThreshold: ['@treshhold500']
+            - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueRetailSupplies:

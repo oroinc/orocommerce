@@ -3,18 +3,18 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Behat;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Nelmio\Alice\Instances\Collection as AliceCollection;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    public function init(Registry $doctrine, Collection $referenceRepository)
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         /** @var AbstractEnumValue[] $enumInventoryStatuses */

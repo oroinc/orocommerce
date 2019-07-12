@@ -17,15 +17,15 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer1'
         organization: '@organization'
-        role: ['@front_admin']
+        roles: ['@front_admin']
         owner: '@admin'
         website: '@website1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     amandaAddress1:
-        region: 'US-FL'
+        region: '@florida'
         frontendOwner: '@amanda'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -35,9 +35,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         postalCode: '33844'
         organization: '@organization'
     amandaAddress2:
-        region: 'US-NY'
+        region: '@new_york'
         frontendOwner: '@amanda'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: true
@@ -49,9 +49,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     customerAddress1:
-        region: 'US-FL'
+        region: '@florida'
         frontendOwner: '@customer1'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -61,9 +61,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         postalCode: '33987'
         organization: '@organization'
     customerAddress2:
-        region: 'US-NY'
+        region: '@new_york'
         frontendOwner: '@customer1'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: true
@@ -76,21 +76,21 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     amandaAddress1ShippingDefault:
         address: '@amandaAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     amandaAddress1BillingDefault:
         address: '@amandaAddress2'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddress1ShippingDefault:
         address: '@customerAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     customerAddress1BillingDefault:
         address: '@customerAddress2'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
@@ -100,8 +100,8 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street2: 'Street 2'
         city: 'Los Angeles'
         postalCode: '90001'
-        country: 'US'
-        region: 'US-CA'
+        country: '@united_states'
+        region: '@california'
         organization: 'Acme'
         namePrefix: 'Mr.'
         nameSuffix: 'M.D.'
@@ -115,8 +115,8 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street2: 'Street 2'
         city: 'London'
         postalCode: '90002'
-        country: 'US'
-        region: 'US-CA'
+        country: '@united_states'
+        region: '@california'
         organization: 'Acme'
         namePrefix: 'Mr.'
         nameSuffix: 'M.D.'
@@ -141,7 +141,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         attributeFamily: '@defaultProductFamily'
@@ -161,7 +162,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         owner: '@admin'
         organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD

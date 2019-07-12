@@ -45,7 +45,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         primaryUnitPrecision: '@precision1'
     product2:
@@ -55,7 +56,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         primaryUnitPrecision: '@precision2'
     product3:
@@ -65,7 +67,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         primaryUnitPrecision: '@precision3'
     product4:
@@ -75,24 +78,27 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         primaryUnitPrecision: '@precision4'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     products:
         __construct: [['@product1', '@product2', '@product3', '@product4']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     priceListForExport:
         name: 'priceListForExport'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

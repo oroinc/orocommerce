@@ -2,6 +2,20 @@ include:
     - '@OroProductBundle:ConfigurableProductFixtures.yml'
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+    precision4:
+        unit: '@each'
+        precision: '1'
+
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
     name: Common Business Unit
@@ -17,25 +31,12 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localNewCategory:
         string: 'NewCategory'
 
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
-        unit: '@each'
-        precision: '1'
-    precision2:
-        unit: '@each'
-        precision: '1'
-    precision3:
-        unit: '@item'
-        precision: '1'
-    precision4:
-        unit: '@each'
-        precision: '1'
-
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -43,33 +44,38 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
-        primaryUnitPrecision: '@precision1'
-        unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         featured: true
+        __calls:
+            - addName: ['@locvalue1']
+            - addUnitPrecision: ['@precision1']
+            - setPrimaryUnitPrecision: ['@precision1']
     product2:
         sku: 'CONTROL1'
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
-        primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         featured: true
+        __calls:
+            - addName: ['@locvalue2']
+            - addUnitPrecision: ['@precision2']
+            - setPrimaryUnitPrecision: ['@precision2']
     product3:
         sku: 'SKU003'
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
-        primaryUnitPrecision: '@precision4'
-        addUnitPrecision: ['@precision3']
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         featured: true
+        __calls:
+            - addUnitPrecision: ['@precision3']
+            - addUnitPrecision: ['@precision4']
+            - setPrimaryUnitPrecision: ['@precision4']
+            - addName: ['@locvalue3']

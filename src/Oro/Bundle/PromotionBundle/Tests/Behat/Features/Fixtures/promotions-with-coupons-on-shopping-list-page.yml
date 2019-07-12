@@ -52,7 +52,7 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_currency: 'USD'
             discount_value: 2
             shipping_options:
-                shipping_method: '<("flat_rate_".@flatRateIntegration->id)>'
+                shipping_method: '<("flat_rate_".@flatRateIntegration->getId())>'
                 shipping_method_type: 'primary'
     flatRate2ShippingPromotionDiscountConfiguration:
         type: 'shipping'
@@ -61,7 +61,7 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_currency: 'USD'
             discount_value: 1
             shipping_options:
-                shipping_method: '<("flat_rate_".@flatRate2Integration->id)>'
+                shipping_method: '<("flat_rate_".@flatRate2Integration->getId())>'
                 shipping_method_type: 'primary'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
@@ -80,7 +80,8 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     orderDiscountPromotion2:
-        addScope: [1]
+        __calls:
+            - addScope: ['@default_scope']
         productsSegment: '@promotionSegment'
         rule: '@orderDiscountPromotionRule2'
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration2'
@@ -88,9 +89,10 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         owner: '@admin'
         useCoupons: true
     flatRateShippingPromotion:
-        addLabel: ['@flatRateShippingPromotionLabel']
-        addDescription: ['@flatRateShippingPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@flatRateShippingPromotionLabel']
+            - addDescription: ['@flatRateShippingPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@promotionSegment'
         rule: '@flatRateShippingPromotionRule'
         discountConfiguration: '@flatRateShippingPromotionDiscountConfiguration'
@@ -98,9 +100,10 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         owner: '@admin'
         useCoupons: true
     flatRate2ShippingPromotion:
-        addLabel: ['@flatRate2ShippingPromotionLabel']
-        addDescription: ['@flatRate2ShippingPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@flatRate2ShippingPromotionLabel']
+            - addDescription: ['@flatRate2ShippingPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@promotionSegment'
         rule: '@flatRate2ShippingPromotionRule'
         discountConfiguration: '@flatRate2ShippingPromotionDiscountConfiguration'

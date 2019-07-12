@@ -16,13 +16,14 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@productWithHtml']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@productWithHtml']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     productWithHtml:
-        sku: '<script>alert(''SKU'');</script>SKU1'
+        sku: '\<script\>alert(''SKU'');\</script\>SKU1'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -30,4 +31,5 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@precision1'
         unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']

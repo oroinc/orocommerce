@@ -16,7 +16,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer1'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'
     branda:
@@ -30,7 +30,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer1'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'
 
@@ -39,23 +39,25 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
     precision2:
-        unit: 'set'
+        unit: '@set'
         precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: '5GN30'
         primaryUnitPrecision: '@precision1'
-        addUnitPrecision: ['@precision1', '@precision2']
-        addName: ['@locValue1']
+        __calls:
+            - addUnitPrecision: ['@precision1', '@precision2']
+            - addName: ['@locValue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
     product2:
         sku: '9OL25'
         primaryUnitPrecision: '@precision2'
-        addUnitPrecision: ['@precision1', '@precision2']
-        addName: ['@locValue2']
+        __calls:
+            - addUnitPrecision: ['@precision1', '@precision2']
+            - addName: ['@locValue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -72,83 +74,83 @@ Oro\Bundle\OrderBundle\Entity\Order:
     order1:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.01.2016 11:00")>'
-        updatedAt: '<date("01.01.2016 11:00")>'
+        createdAt: '<(new DateTime("01.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.01.2016 11:00"))>'
     order2:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.01.2016 11:00")>'
-        updatedAt: '<date("01.01.2016 11:00")>'
+        createdAt: '<(new DateTime("01.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.01.2016 11:00"))>'
     order3:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.01.2016 13:00")>'
-        updatedAt: '<date("01.01.2016 13:00")>'
+        createdAt: '<(new DateTime("01.01.2016 13:00"))>'
+        updatedAt: '<(new DateTime("01.01.2016 13:00"))>'
     order4:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.01.2016 13:00")>'
-        updatedAt: '<date("01.01.2016 13:00")>'
+        createdAt: '<(new DateTime("01.01.2016 13:00"))>'
+        updatedAt: '<(new DateTime("01.01.2016 13:00"))>'
     order5:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("10.01.2016 11:00")>'
-        updatedAt: '<date("10.01.2016 11:00")>'
+        createdAt: '<(new DateTime("10.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("10.01.2016 11:00"))>'
     order6:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("03.01.2016 11:00")>'
-        updatedAt: '<date("03.01.2016 11:00")>'
+        createdAt: '<(new DateTime("03.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
     order7:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("03.01.2016 11:00")>'
-        updatedAt: '<date("03.01.2016 11:00")>'
+        createdAt: '<(new DateTime("03.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
     order8:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("03.01.2016 11:00")>'
-        updatedAt: '<date("03.01.2016 11:00")>'
+        createdAt: '<(new DateTime("03.01.2016 11:00"))>'
+        updatedAt: '<(new DateTime("03.01.2016 11:00"))>'
     order9:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.02.2016 11:00")>'
-        updatedAt: '<date("01.02.2016 11:00")>'
+        createdAt: '<(new DateTime("01.02.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.02.2016 11:00"))>'
     order10:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.02.2016 11:00")>'
-        updatedAt: '<date("01.02.2016 11:00")>'
+        createdAt: '<(new DateTime("01.02.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.02.2016 11:00"))>'
     order11:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.05.2016 11:00")>'
-        updatedAt: '<date("01.05.2016 11:00")>'
+        createdAt: '<(new DateTime("01.05.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.05.2016 11:00"))>'
     order12:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.05.2016 11:00")>'
-        updatedAt: '<date("01.05.2016 11:00")>'
+        createdAt: '<(new DateTime("01.05.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.05.2016 11:00"))>'
     order13:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.06.2016 11:00")>'
-        updatedAt: '<date("01.06.2016 11:00")>'
+        createdAt: '<(new DateTime("01.06.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.06.2016 11:00"))>'
     order14:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.06.2016 11:00")>'
-        updatedAt: '<date("01.06.2016 11:00")>'
+        createdAt: '<(new DateTime("01.06.2016 11:00"))>'
+        updatedAt: '<(new DateTime("01.06.2016 11:00"))>'
     order15:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("01.01.2017 11:00")>'
-        updatedAt: '<date("01.01.2017 11:00")>'
+        createdAt: '<(new DateTime("01.01.2017 11:00"))>'
+        updatedAt: '<(new DateTime("01.01.2017 11:00"))>'
     order16:
         organization: '@organization'
         customerUser: '@amanda'
-        createdAt: '<date("01.01.2017 11:00")>'
-        updatedAt: '<date("01.01.2017 11:00")>'
+        createdAt: '<(new DateTime("01.01.2017 11:00"))>'
+        updatedAt: '<(new DateTime("01.01.2017 11:00"))>'
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     lineitem1:
@@ -161,7 +163,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '15'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order2'
     lineitem3:
         product: '@product2'
@@ -191,13 +193,13 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '40'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order7'
     lineitem8:
         product: '@product1'
         productSku: '5GN30'
         quantity: '11'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order8'
     lineitem9:
         product: '@product2'
@@ -209,7 +211,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '17'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order10'
     lineitem11:
         product: '@product2'
@@ -221,7 +223,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '44'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order12'
     lineitem13:
         product: '@product2'
@@ -233,7 +235,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '56'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order14'
     lineitem15:
         product: '@product2'
@@ -245,5 +247,5 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         product: '@product2'
         productSku: '9OL25'
         quantity: '10'
-        productUnit: 'set'
+        productUnit: '@set'
         order: '@order16'

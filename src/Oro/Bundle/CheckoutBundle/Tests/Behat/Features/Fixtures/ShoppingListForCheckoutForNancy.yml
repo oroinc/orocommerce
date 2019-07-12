@@ -20,15 +20,15 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer1'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     nancyAddress1:
-        region: 'US-NY'
+        region: '@new_york'
         frontendOwner: '@nancy'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -41,18 +41,18 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     nancyAddress1ShippingDefault:
         address: '@nancyAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     nancyAddress1BillingDefault:
         address: '@nancyAddress1'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     customerAddress1:
-        region: 'US-FL'
+        region: '@florida'
         frontendOwner: '@customer1'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -65,7 +65,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddress1ShippingDefault:
         address: '@customerAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
@@ -93,7 +93,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
@@ -106,7 +107,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        shoppingList: '@shoppinglist6'
        organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
         value: '10'
         currency: 'USD'

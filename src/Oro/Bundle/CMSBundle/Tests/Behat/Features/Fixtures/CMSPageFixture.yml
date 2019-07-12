@@ -1,6 +1,7 @@
 Oro\Bundle\CMSBundle\Entity\Page:
     testCMSPage:
-        addTitle: ['@testCMSPageTitle']
+        __calls:
+            - addTitle: ['@testCMSPageTitle']
         content: 'Test landing page description'
         organization: '@organization'
         slugPrototypes: ['@testCMSPageSlugPrototype']

@@ -35,38 +35,33 @@ databaseBefore:
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
     'Oro\Bundle\TaxBundle\Model\ResultElement':
         result_element_1:
-            __construct: false
-            __set: offsetSet
-            includingTax: 105.54 # 95.94 + 9.594
-            excludingTax: 95.94 # 15.99 * 6
-            taxAmount: 9.6 # 95.94 * 0.1
-            adjustment: 0.001
+            __calls:
+                - offsetSet: [includingTax, 105.54] # 95.94 + 9.594
+                - offsetSet: [excludingTax, 95.94] # 15.99 * 6
+                - offsetSet: [taxAmount, 9.6] # 95.94 * 0.1
+                - offsetSet: [adjustment, 0.001]
         result_element_2:
-            __construct: false
-            __set: offsetSet
-            includingTax: 17.59 # 15.99 + 1.599
-            excludingTax: 15.99
-            taxAmount: 1.6 # 15.99 * 0.1
-            adjustment: 0.001
+            __calls:
+                - offsetSet: [includingTax, 17.59] # 15.99 + 1.599
+                - offsetSet: [excludingTax, 15.99]
+                - offsetSet: [taxAmount, 1.6] # 15.99 * 0.1
+                - offsetSet: [adjustment, 0.001]
         result_element_3:
-            __construct: false
-            __set: offsetSet
-            tax: TAX1
-            rate: 0.1
-            taxableAmount: 9.6
-            taxAmount: 1.6
+            __calls:
+                - offsetSet: [tax, TAX1]
+                - offsetSet: [rate, 0.1]
+                - offsetSet: [taxableAmount, 9.6]
+                - offsetSet: [taxAmount, 1.6]
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
-            __construct: false
-            __set: offsetSet
-            row: '@result_element_1'
-            unit: '@result_element_2'
-            taxes:
-                - '@result_element_3'
+            __calls:
+                - offsetSet: [row, '@result_element_1']
+                - offsetSet: [unit, '@result_element_2']
+                - offsetSet: [taxes, ['@result_element_3']]
 databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
-            entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem
+            entityClass: Oro\\Bundle\\OrderBundle\\Entity\\OrderLineItem
             entityId: '@order_line_item_1->id'
             address: address
             result: '@simple_result'
