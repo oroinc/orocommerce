@@ -28,7 +28,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision1'
-        addName: ['@product1_name']
+        __calls:
+            - addName: ['@product1_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product2:
@@ -38,7 +39,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision2'
-        addName: ['@product2_name']
+        __calls:
+            - addName: ['@product2_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product:
@@ -48,7 +50,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision3'
-        addName: ['@configurable_product_name']
+        __calls:
+            - addName: ['@configurable_product_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
 

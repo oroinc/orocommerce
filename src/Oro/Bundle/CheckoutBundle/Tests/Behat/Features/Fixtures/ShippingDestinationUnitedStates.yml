@@ -15,7 +15,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
         methodConfigsRule: '@shippingMethodsConfigsRule'
 

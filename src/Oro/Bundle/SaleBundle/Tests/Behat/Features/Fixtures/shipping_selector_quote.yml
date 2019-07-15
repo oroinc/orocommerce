@@ -22,15 +22,15 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@companyA'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     customerAddress1:
-        region: 'US-FL'
+        region: '@florida'
         frontendOwner: '@companyA'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -42,9 +42,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     amandaAddress1:
-        region: 'US-FL'
+        region: '@florida'
         frontendOwner: '@amanda'
-        country: 'US'
+        country: '@united_states'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: false
@@ -57,21 +57,21 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     amandaAddress1ShippingDefault:
         address: '@amandaAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     amandaAddress1BillingDefault:
         address: '@amandaAddress1'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
-    shippingType:
+    customerShippingType:
         address: '@customerAddress1'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
-    billingType:
+    customerBillingType:
         address: '@customerAddress1'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
@@ -87,7 +87,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
         primaryUnitPrecision: '@precision'
-        addName: ['@productName']
+        __calls:
+            - addName: ['@productName']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         owner: '@business_unit'

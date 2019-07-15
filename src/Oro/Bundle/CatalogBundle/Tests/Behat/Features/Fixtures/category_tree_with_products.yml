@@ -1,5 +1,5 @@
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProduct{1..4}Name:
+    localProductName{1..4}:
         string: 'Product <current()>'
 
     localProductAttributeFamily:
@@ -36,35 +36,41 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@localProductAttributeFamily']
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
     attributeGroupGeneral:
-        addLabel: ['@localProductAttributeFamilyGroupGeneral']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupGeneral']
         code: 'general'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupInventory:
-        addLabel: ['@localProductAttributeFamilyGroupInventory']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupInventory']
         code: 'inventory'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
     attributeGroupImages:
-        addLabel: ['@localProductAttributeFamilyGroupImages']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupImages']
         code: 'images'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupProductPrices:
-        addLabel: ['@localProductAttributeFamilyGroupProductPrices']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupProductPrices']
         code: 'prices'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupSEO:
-        addLabel: ['@localProductAttributeFamilyGroupSEO']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupSEO']
         code: 'seo'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
@@ -115,7 +121,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
-        addName: ['@localProduct<current()>Name']
+        __calls:
+            - addName: ['@localProductName<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -123,22 +130,25 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localValueLightingProducts']
-        setParentCategory: [1]
-        addProduct: ['@product1']
-        setInventoryThreshold: ['@treshhold100']
+        __calls:
+            - addTitle: ['@localValueLightingProducts']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+            - setInventoryThreshold: ['@treshhold100']
 
     categoryRetailSupplies:
-        addTitle: ['@localValueRetailSupplies']
-        setParentCategory: [1]
-        addProduct: ['@product2']
-        setInventoryThreshold: ['@treshhold200']
+        __calls:
+            - addTitle: ['@localValueRetailSupplies']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product2']
+            - setInventoryThreshold: ['@treshhold200']
 
     categoryPrinters:
-        addTitle: ['@localValuePrinters']
-        setParentCategory: ['@categoryRetailSupplies']
-        addProduct: ['@product3']
-        setInventoryThreshold: ['@treshhold300']
+        __calls:
+            - addTitle: ['@localValuePrinters']
+            - setParentCategory: ['@categoryRetailSupplies']
+            - addProduct: ['@product3']
+            - setInventoryThreshold: ['@treshhold300']
 
 Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
     treshhold100:

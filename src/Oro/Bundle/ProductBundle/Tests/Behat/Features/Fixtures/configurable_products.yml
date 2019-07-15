@@ -90,9 +90,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     attribute_family:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'family'
-        addLabel: ['@attribute_family_label']
+        __calls:
+            - addLabel: ['@attribute_family_label']
         organization: '@organization'
         owner: '@admin'
 
@@ -234,7 +235,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA'
-        addName: ['@configurable_product_A_name']
+        __calls:
+            - addName: ['@configurable_product_A_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product_B:
@@ -243,7 +245,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB'
-        addName: ['@configurable_product_B_name']
+        __calls:
+            - addName: ['@configurable_product_B_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product_C:
@@ -252,7 +255,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC'
-        addName: ['@configurable_product_C_name']
+        __calls:
+            - addName: ['@configurable_product_C_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_A_1:
@@ -261,7 +265,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA1'
-        addName: ['@product_A_1_name']
+        __calls:
+            - addName: ['@product_A_1_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_A_2:
@@ -270,7 +275,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA2'
-        addName: ['@product_A_2_name']
+        __calls:
+            - addName: ['@product_A_2_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_A_3:
@@ -279,7 +285,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA3'
-        addName: ['@product_A_3_name']
+        __calls:
+            - addName: ['@product_A_3_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_A_4:
@@ -288,7 +295,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA4'
-        addName: ['@product_A_4_name']
+        __calls:
+            - addName: ['@product_A_4_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_11:
@@ -297,7 +305,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB11'
-        addName: ['@product_B_11_name']
+        __calls:
+            - addName: ['@product_B_11_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_12:
@@ -306,7 +315,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB12'
-        addName: ['@product_B_12_name']
+        __calls:
+            - addName: ['@product_B_12_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_13:
@@ -315,7 +325,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB13'
-        addName: ['@product_B_13_name']
+        __calls:
+            - addName: ['@product_B_13_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_21:
@@ -324,7 +335,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB21'
-        addName: ['@product_B_21_name']
+        __calls:
+            - addName: ['@product_B_21_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_22:
@@ -333,7 +345,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB22'
-        addName: ['@product_B_22_name']
+        __calls:
+            - addName: ['@product_B_22_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_23:
@@ -342,7 +355,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB23'
-        addName: ['@product_B_23_name']
+        __calls:
+            - addName: ['@product_B_23_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_31:
@@ -351,7 +365,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB31'
-        addName: ['@product_B_31_name']
+        __calls:
+            - addName: ['@product_B_31_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_32:
@@ -360,7 +375,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB32'
-        addName: ['@product_B_32_name']
+        __calls:
+            - addName: ['@product_B_32_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_33:
@@ -369,7 +385,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB33'
-        addName: ['@product_B_33_name']
+        __calls:
+            - addName: ['@product_B_33_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_41:
@@ -378,7 +395,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB41'
-        addName: ['@product_B_41_name']
+        __calls:
+            - addName: ['@product_B_41_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_42:
@@ -387,7 +405,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB42'
-        addName: ['@product_B_42_name']
+        __calls:
+            - addName: ['@product_B_42_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_B_43:
@@ -396,7 +415,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB43'
-        addName: ['@product_B_43_name']
+        __calls:
+            - addName: ['@product_B_43_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_111:
@@ -405,7 +425,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC111'
-        addName: ['@product_C_111_name']
+        __calls:
+            - addName: ['@product_C_111_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_121:
@@ -414,7 +435,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC121'
-        addName: ['@product_C_121_name']
+        __calls:
+            - addName: ['@product_C_121_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_131:
@@ -423,7 +445,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC131'
-        addName: ['@product_C_131_name']
+        __calls:
+            - addName: ['@product_C_131_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_211:
@@ -432,7 +455,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC211'
-        addName: ['@product_C_211_name']
+        __calls:
+            - addName: ['@product_C_211_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_221:
@@ -441,7 +465,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC221'
-        addName: ['@product_C_221_name']
+        __calls:
+            - addName: ['@product_C_221_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_231:
@@ -450,7 +475,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC231'
-        addName: ['@product_C_231_name']
+        __calls:
+            - addName: ['@product_C_231_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_311:
@@ -459,7 +485,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC311'
-        addName: ['@product_C_311_name']
+        __calls:
+            - addName: ['@product_C_311_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_321:
@@ -468,7 +495,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC321'
-        addName: ['@product_C_321_name']
+        __calls:
+            - addName: ['@product_C_321_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_331:
@@ -477,7 +505,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC331'
-        addName: ['@product_C_331_name']
+        __calls:
+            - addName: ['@product_C_331_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_411:
@@ -486,7 +515,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC411'
-        addName: ['@product_C_411_name']
+        __calls:
+            - addName: ['@product_C_411_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_421:
@@ -495,7 +525,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC421'
-        addName: ['@product_C_421_name']
+        __calls:
+            - addName: ['@product_C_421_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_431:
@@ -504,7 +535,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC431'
-        addName: ['@product_C_431_name']
+        __calls:
+            - addName: ['@product_C_431_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_112:
@@ -513,7 +545,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC112'
-        addName: ['@product_C_112_name']
+        __calls:
+            - addName: ['@product_C_112_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_122:
@@ -522,7 +555,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC122'
-        addName: ['@product_C_122_name']
+        __calls:
+            - addName: ['@product_C_122_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_132:
@@ -531,7 +565,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC132'
-        addName: ['@product_C_132_name']
+        __calls:
+            - addName: ['@product_C_132_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_212:
@@ -540,7 +575,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC212'
-        addName: ['@product_C_212_name']
+        __calls:
+            - addName: ['@product_C_212_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_222:
@@ -549,7 +585,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC222'
-        addName: ['@product_C_222_name']
+        __calls:
+            - addName: ['@product_C_222_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_232:
@@ -558,7 +595,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC232'
-        addName: ['@product_C_232_name']
+        __calls:
+            - addName: ['@product_C_232_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_312:
@@ -567,7 +605,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC312'
-        addName: ['@product_C_312_name']
+        __calls:
+            - addName: ['@product_C_312_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_322:
@@ -576,7 +615,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC322'
-        addName: ['@product_C_322_name']
+        __calls:
+            - addName: ['@product_C_322_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_332:
@@ -585,7 +625,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC332'
-        addName: ['@product_C_332_name']
+        __calls:
+            - addName: ['@product_C_332_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_412:
@@ -594,7 +635,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC412'
-        addName: ['@product_C_412_name']
+        __calls:
+            - addName: ['@product_C_412_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_422:
@@ -603,7 +645,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC422'
-        addName: ['@product_C_422_name']
+        __calls:
+            - addName: ['@product_C_422_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
     product_C_432:
@@ -612,7 +655,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC432'
-        addName: ['@product_C_432_name']
+        __calls:
+            - addName: ['@product_C_432_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
 

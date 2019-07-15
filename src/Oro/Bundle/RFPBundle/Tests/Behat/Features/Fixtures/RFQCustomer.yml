@@ -6,11 +6,6 @@ Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm:
         label: net 10
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
-    price:
-        value: '10'
-        currency: 'USD'
-
 Oro\Bundle\CustomerBundle\Entity\Customer:
     customer:
         name: 'Company A'
@@ -30,6 +25,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'

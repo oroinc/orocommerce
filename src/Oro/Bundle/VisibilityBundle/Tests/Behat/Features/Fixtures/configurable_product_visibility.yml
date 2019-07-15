@@ -31,9 +31,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@locValueFamily']
+        __calls:
+            - addLabel: ['@locValueFamily']
         organization: '@organization'
         owner: '@admin'
 
@@ -41,7 +42,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product5:
         sku: 'SKU5'
         primaryUnitPrecision: '@precision5'
-        addName: ['@locValue5']
+        __calls:
+            - addName: ['@locValue5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -49,7 +51,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product4:
         sku: 'SKU4'
         primaryUnitPrecision: '@precision4'
-        addName: ['@locValue4']
+        __calls:
+            - addName: ['@locValue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -57,7 +60,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product3:
         sku: 'SKU3'
         primaryUnitPrecision: '@precision3'
-        addName: ['@locValue3']
+        __calls:
+            - addName: ['@locValue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -65,7 +69,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product2:
         sku: 'SKU2'
         primaryUnitPrecision: '@precision2'
-        addName: ['@locValue2']
+        __calls:
+            - addName: ['@locValue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -74,7 +79,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU_CONFIGURABLE'
         type: 'configurable'
         primaryUnitPrecision: '@precision_configurable'
-        addName: ['@locValueConfigurable']
+        __calls:
+            - addName: ['@locValueConfigurable']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

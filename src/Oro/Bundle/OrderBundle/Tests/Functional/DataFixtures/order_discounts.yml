@@ -6,11 +6,11 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
         description: 'Discount 1'
         type: oro_order_discount_item_type_percent
         percent: 20.1
-        amount: '<(@simple_order->subtotal * 20.1 / 100)>'
+        amount: '<(@simple_order->getSubtotal() * 20.1 / 100)>'
         order: '@simple_order'
     order_discount.amount:
         description: 'Discount 2'
         type: oro_order_discount_item_type_amount
         percent: 20.1
-        amount: '<(@simple_order->subtotal * 20.1 / 100)>'
+        amount: '<(@simple_order->getSubtotal() * 20.1 / 100)>'
         order: '@simple_order'

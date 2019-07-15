@@ -18,7 +18,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
   shippingMethodConfig:
-    method: '<("flat_rate_".@flatRateIntegration->id)>'
+    method: '<("flat_rate_".@flatRateIntegration->getId())>'
     typeConfigs: ['@shippingMethodTypeConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
@@ -27,7 +27,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     methodConfigs: ['@shippingMethodConfig']
     currency: 'USD'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '10'
     currency: 'USD'
@@ -50,7 +50,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@customer'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -81,9 +81,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     owner: '@business_unit'
     organization: '@organization'
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue', '@zuluLocValue']]
-    addDescription: ['@zuluLocDescription']
-    addShortDescription: ['@zuluLocShortDescription']
+    __calls:
+      - setNames: [['@locValue', '@zuluLocValue']]
+      - addDescription: ['@zuluLocDescription']
+      - addShortDescription: ['@zuluLocShortDescription']
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   shoppinglist:
@@ -119,7 +120,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     postalCode: '10115'
     frontendOwner: '@amanda'
     owner: '@admin'
-    setDefaults: ['@shippingType', '@billingType']
+    __calls:
+        - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
     primary: true
     organization: '@organization'
@@ -128,7 +130,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
     default: true
-    setCurrencies: [['USD']]
+    __calls:
+        - setCurrencies: [['USD']]
     active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:

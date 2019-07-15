@@ -34,7 +34,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website1'
         currency: USD
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD

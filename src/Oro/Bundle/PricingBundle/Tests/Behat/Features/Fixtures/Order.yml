@@ -15,7 +15,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         lineItems:
             - '@simpleOrderLineItem'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD

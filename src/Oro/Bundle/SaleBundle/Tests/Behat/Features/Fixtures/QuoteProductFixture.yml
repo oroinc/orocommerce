@@ -16,6 +16,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@productName1']
+        __calls:
+            - addName: ['@productName1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

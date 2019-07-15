@@ -15,12 +15,21 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: true
         customer: '@customer2'
         organization: '@organization'
-        role: ['@front_admin']
+        roles: ['@front_admin']
         owner: '@admin'
         website: '@website1'
 
 Oro\Bundle\SaleBundle\Entity\Quote:
-    quote{1..20}:
+    quote1:
+        internal_status: '@quote_internal_status_submitted_for_review'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO1'
+        qid: 'Quote1'
+        website: '@website1'
+
+    quote{2..5}:
         organization: '@organization'
         owner: '@admin'
         customerUser: '@test1'
@@ -28,36 +37,92 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         qid: 'Quote<current()>'
         website: '@website1'
 
-    quote1:
-        internal_status: 'submitted_for_review'
-
     quote6:
         owner: '@charlie'
+        organization: '@organization'
+        customerUser: '@test1'
+        poNumber: 'PO6'
+        qid: 'Quote6'
+        website: '@website1'
 
     quote7:
         customerUser: '@test2'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO7'
+        qid: 'Quote7'
+        website: '@website1'
 
     quote8:
         customer: '@customer2'
         customerUser: '@test3'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO8'
+        qid: 'Quote8'
+        website: '@website1'
 
     quote9:
-        internal_status: 'sent_to_customer'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO9'
+        qid: 'Quote9'
+        website: '@website1'
 
     quote10:
-        customer_status: 'not_approved'
+        customer_status: '@quote_customer_status_not_approved'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO10'
+        qid: 'Quote10'
+        website: '@website1'
 
     quote11:
         expired: true
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO11'
+        qid: 'Quote11'
+        website: '@website1'
 
     quote12:
         validUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO12'
+        qid: 'Quote12'
+        website: '@website1'
 
     quote13:
         shipUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO13'
+        qid: 'Quote13'
+        website: '@website1'
 
     quote14:
         payment_term_7c4f1e8e: '@paymentTerm10'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO14'
+        qid: 'Quote14'
+        website: '@website1'
+
+    quote{15..20}:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO<current()>'
+        qid: 'Quote<current()>'
+        website: '@website1'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm10:
@@ -70,8 +135,8 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
         currentStep: '@workflow_b2b_quote_backoffice_approvals_submitted_for_review'
         # Cannot use '@quote1->id' because quotes are not yet persisted to DB at this point.
         entityId: '1'
-        entityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
-        serializedData: '[]'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        serializedData: <('[]')>
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quoteProduct{1..20}:
@@ -80,7 +145,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
         comment: 'Seller Notes<current()>'
         commentCustomer: 'Customer Notes<current()>'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: 5
         currency: USD

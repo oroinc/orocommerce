@@ -3,8 +3,8 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
     name: 'Acme_<current()>'
     organization: '@organization'
     owner: '@admin'
-    createdAt: '2017-10-01 12:00:00'
-    updatedAt: '2017-10-01 13:00:00'
+    createdAt: '<(new DateTime("2017-10-01 12:00:00 UTC"))>'
+    updatedAt: '<(new DateTime("2017-10-01 13:00:00 UTC"))>'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user{1..12}:
@@ -17,7 +17,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: true
     customer: '@customer<current()>'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -40,7 +40,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     sku: 'SKU123'
     type: 'simple'
     primaryUnitPrecision: '@precision'
-    addName: ['@locValue']
+    __calls:
+        - addName: ['@locValue']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'

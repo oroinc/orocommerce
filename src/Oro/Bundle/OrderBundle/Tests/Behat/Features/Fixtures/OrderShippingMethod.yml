@@ -1,8 +1,3 @@
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
-  price:
-    value: '1'
-    currency: 'USD'
-
 Oro\Bundle\CustomerBundle\Entity\Customer:
   company_A:
     name: 'Company A'
@@ -26,7 +21,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@company_A'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -35,21 +30,21 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit: '@item'
     precision: '1'
 
-Oro\Bundle\ShippingBundle\Model\Weight(local):
+Oro\Bundle\ShippingBundle\Model\Weight:
     weight:
-        unit: 'kg'
+        unit: '@kg'
         value: 1
 
-Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
     dimensionsValue:
         length: 1
         width: 1
         height: 1
 
-Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+Oro\Bundle\ShippingBundle\Model\Dimensions:
     dimensions:
         value: '@dimensionsValue'
-        unit: 'cm'
+        unit: '@centimeter'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue1:
@@ -71,11 +66,12 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue1']
+    __calls:
+        - addName: ['@locValue1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     addressTypes:
         __construct: [['@billingType', '@shippingType']]
 
@@ -102,7 +98,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
     default: true
-    setCurrencies: [['USD']]
+    __calls:
+        - setCurrencies: [['USD']]
     active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
@@ -200,17 +197,17 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
             type: 'per_item'
             handling_fee: 0
     dpdMethodTypeConfig:
-        type: '<(@dpdClassicShippingService->code)>'
+        type: '<(@dpdClassicShippingService->getCode())>'
         enabled: true
         options:
             handling_fee: 10
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     flatRateShippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@flatRateMethodTypeConfig']
     dpdShippingMethodConfig:
-        method: '<("dpd_".@dpdIntegration->id)>'
+        method: '<("dpd_".@dpdIntegration->getId())>'
         typeConfigs: ['@dpdMethodTypeConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

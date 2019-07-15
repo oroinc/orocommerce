@@ -10,9 +10,9 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfig1:
-        type: '<("payment_term_".@paymentTermIntegration->id)>'
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
     paymentMethodConfig2:
-        type: '<("payment_term_".@paymentTermIntegration->id)>'
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRule1:

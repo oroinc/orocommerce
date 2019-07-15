@@ -4,9 +4,9 @@ include:
 Oro\Bundle\SegmentBundle\Entity\Segment:
     productCollection1Segment:
         name: 'Product Collection #1'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@business_unit'
 

@@ -2,7 +2,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
     custom_checkout_workflow:
         name: 'custom_checkout_workflow'
         label: 'Checkout Workflow'
-        relatedEntity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+        relatedEntity: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout'
         entityAttributeName: 'checkout'
         stepsDisplayOrdered: true
         active: true
@@ -63,7 +63,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                 order:
                     type: entity
                     options:
-                       class: Oro\Bundle\OrderBundle\Entity\Order
+                       class: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
                     property_path: null
                     label: oro.workflow.custom_checkout_workflow.attribute.order.label
                 po_number:
@@ -116,7 +116,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     is_unavailable_hidden: false
                     acl_message: null
                     frontend_options: {  }
-                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
+                    form_type: 'Oro\\Bundle\\WorkflowBundle\\Form\\Type\\WorkflowTransitionType'
                     display_type: dialog
                     destination_page: ''
                     form_options: {  }
@@ -144,10 +144,10 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                         - oro_shopping_list_frontend_view
                     acl_resource:
                         - CHECKOUT_CREATE
-                        - $.result.shoppingList
+                        - '\$.result.shoppingList'
                     is_hidden: false
                     acl_message: null
-                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
+                    form_type: 'Oro\\Bundle\\WorkflowBundle\\Form\\Type\\WorkflowTransitionType'
                     display_type: dialog
                     destination_page: ''
                     form_options: {  }
@@ -174,29 +174,29 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                         form_init:
                             -
                                 '@generate_checkout_state_snapshot':
-                                    entity: $checkout
-                                    attribute: $.result.initCheckoutState
+                                    entity: '\$checkout'
+                                    attribute: '\$.result.initCheckoutState'
                         attribute_fields:
                             remove_source: ~
                             po_number: ~
                             ship_until: ~
                             customer_notes:
-                                form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+                                form_type: 'Symfony\\Component\\Form\\Extension\\Core\\Type\\TextareaType'
                                 options:
                                     label: 'Text'
                                     required: true
                                     constraints:
                                         - NotBlank: ~
                             state_token:
-                                form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+                                form_type: 'Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType'
                                 options:
-                                    data: $internal_state_token
+                                    data: '\$internal_state_token'
                                     label: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.attribute.state_token.label
                     is_start: false
                     is_hidden: false
                     is_unavailable_hidden: false
                     acl_message: null
-                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
+                    form_type: 'Oro\\Bundle\\WorkflowBundle\\Form\\Type\\WorkflowTransitionType'
                     destination_page: ''
                     page_template: null
                     dialog_template: null
@@ -217,43 +217,45 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                         -
                             '@find_entity':
                                 conditions:
-                                    '@not_empty': $init_context
+                                    '@not_empty': '\$init_context'
                                 parameters:
-                                    class: $init_context.entityClass
-                                    identifier: $init_context.entityId
-                                    attribute: $.result.shoppingList
+                                    class: '\$init_context.entityClass'
+                                    identifier: '\$init_context.entityId'
+                                    attribute: '\$.result.shoppingList'
                     preconditions:
-                        '@has_elements': $.result.shoppingList.lineItems
+                        '@has_elements': '\$.result.shoppingList.lineItems'
                     actions:
                         -
                             '@run_action_group':
                                 action_group: start_shoppinglist_checkout
                                 parameters_mapping:
-                                    shoppingList: $.result.shoppingList
+                                    shoppingList: '\$.result.shoppingList'
                                     showErrors: true
                                     validateOnStartCheckout: false
                                 results:
-                                    data.checkout: $.checkout
-                                    result.redirectUrl: $.redirectUrl
-                        - '@assign_value': [$checkout.paymentMethod, 'payment_term_2']
-                        - '@flush_entity': $checkout
+                                    data.checkout: '\$.checkout'
+                                    result.redirectUrl: '\$.redirectUrl'
+                        - '@assign_value':
+                            - '\$checkout.paymentMethod'
+                            - 'payment_term_2'
+                        - '@flush_entity': '\$checkout'
                     conditions: {  }
 
                 __start___definition:
                     actions:
                         -
                             '@generate_checkout_state_snapshot':
-                                entity: $checkout
-                                attribute: $.result.startCheckoutState
+                                entity: '\$checkout'
+                                attribute: '\$.result.startCheckoutState'
                         -
                             '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.startCheckoutState
-                                attribute: $state_token
+                                entity: '\$checkout'
+                                state: '\$.result.startCheckoutState'
+                                attribute: '\$state_token'
                         -
                             '@assign_value':
-                                - $internal_state_token
-                                - $state_token
+                                - '\$internal_state_token'
+                                - '\$state_token'
                     preactions: {  }
                     preconditions: {  }
                     conditions: {  }
@@ -262,27 +264,27 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     preconditions: {  }
                     actions:
                         - '@get_class_name':
-                            object: $checkout.sourceEntity.sourceDocument
-                            attribute: $.result.sourceDocumentEntityClassName
+                            object: '\$checkout.sourceEntity.sourceDocument'
+                            attribute: '\$.result.sourceDocumentEntityClassName'
                         - '@call_service_method':
                             service: oro_payment_term.provider.payment_term
                             method: getCurrentPaymentTerm
-                            attribute: $.result.paymentTerm
+                            attribute: '\$.result.paymentTerm'
                         - '@get_order_line_items':
-                            attribute: $.result.lineItems
-                            checkout: $checkout
+                            attribute: '\$.result.lineItems'
+                            checkout: '\$checkout'
                         - '@create_order':
-                            attribute: $order
-                            checkout: $checkout
+                            attribute: '\$order'
+                            checkout: '\$checkout'
                             data:
-                                sourceEntityClass: $.result.sourceDocumentEntityClassName
-                                paymentTerm: $.result.paymentTerm
-                                lineItems: $.result.lineItems
-                        - '@flush_entity': $order
+                                sourceEntityClass: '\$.result.sourceDocumentEntityClassName'
+                                paymentTerm: '\$.result.paymentTerm'
+                                lineItems: '\$.result.lineItems'
+                        - '@flush_entity': '\$order'
                         - '@redirect':
                             route: oro_checkout_frontend_checkout
                             route_parameters:
-                                id: $checkout.id
+                                id: '\$checkout.id'
                     preactions: {  }
                     conditions: {  }
 

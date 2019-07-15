@@ -20,10 +20,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU1'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
-        addMetaTitl: ['@metaTitle']
-        addMetaDescription: ['@metaDescription']
-        addMetaKeyword: ['@metaKeywords']
+        __calls:
+            - addName: ['@locvalue1']
+            - addMetaTitl: ['@metaTitle']
+            - addMetaDescription: ['@metaDescription']
+            - addMetaKeyword: ['@metaKeywords']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -32,7 +33,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU2'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -41,7 +43,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU3'
         primaryUnitPrecision: '@precision3'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -50,7 +53,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU4'
         primaryUnitPrecision: '@precision4'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -59,7 +63,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU5'
         primaryUnitPrecision: '@precision5'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue5']
+        __calls:
+            - addName: ['@locvalue5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
         organization: '@organization'

@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     shippingRule:
-        name: '<script>alert(1)</script>'
+        name: '\<script\>alert(1)\</script\>'
         enabled: true
         sortOrder: 5
         expression: 'expression'
@@ -17,7 +17,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
         methodConfigsRule: '@shippingMethodsConfigsRule'
 
@@ -32,8 +32,8 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     shippingMethodsConfigsRuleDestination:
         country: '@united_states'
         region: '@florida'
-        
+
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode:
     postalCode1:
         destination: '@shippingMethodsConfigsRuleDestination'
-        name: '<script>alert(2)</script>'
+        name: '\<script\>alert(2)\</script\>'

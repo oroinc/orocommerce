@@ -1,31 +1,36 @@
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeDefaultWebCatalog:
-        addTitle: ['@localValueDefaultWebCatalog']
+        __calls:
+            - addTitle: ['@localValueDefaultWebCatalog']
         webCatalog: '@webCatalog'
 
     nodeProducts:
-        addTitle: ['@localValueProducts']
-        addSlugPrototype: ['@localValueProductsSlug']
+        __calls:
+            - addTitle: ['@localValueProducts']
+            - addSlugPrototype: ['@localValueProductsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeNewArrivals:
-        addTitle: ['@localValueNewArrivals']
-        addSlugPrototype: ['@localValueNewArrivalsSlug']
+        __calls:
+            - addTitle: ['@localValueNewArrivals']
+            - addSlugPrototype: ['@localValueNewArrivalsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeClearance:
-        addTitle: ['@localValueClearance']
-        addSlugPrototype: ['@localValueClearanceSlug']
-        addContentVariant: ['@clearanceVariant']
+        __calls:
+            - addTitle: ['@localValueClearance']
+            - addSlugPrototype: ['@localValueClearanceSlug']
+            - addContentVariant: ['@clearanceVariant']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeByBrand:
-        addTitle: ['@localValueByBrand']
-        addSlugPrototype: ['@localValueByBrandSlug']
-        addContentVariant: ['@brandVariant']
+        __calls:
+            - addTitle: ['@localValueByBrand']
+            - addSlugPrototype: ['@localValueByBrandSlug']
+            - addContentVariant: ['@brandVariant']
         ParentNode: '@nodeClearance'
         webCatalog: '@webCatalog'
 

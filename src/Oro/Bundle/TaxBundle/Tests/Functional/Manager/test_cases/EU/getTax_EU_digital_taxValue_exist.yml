@@ -68,21 +68,19 @@ databaseBefore:
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
     'Oro\Bundle\TaxBundle\Model\ResultElement':
         simple_result_element:
-            __construct: false
-            __set: offsetSet
-            includingTax: 123
-            excludingTax: 123
-            taxAmount: 0
-            adjustment: 0
+            __calls:
+                - offsetSet: [includingTax, 123]
+                - offsetSet: [excludingTax, 123]
+                - offsetSet: [taxAmount, 0]
+                - offsetSet: [adjustment, 0]
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
-            __construct: false
-            __set: offsetSet
-            total: '@simple_result_element'
+            __calls:
+                - offsetSet: [total, '@simple_result_element']
 databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
-            entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+            entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
             entityId: '@simple_order->id'
             address: address
             result: '@simple_result'

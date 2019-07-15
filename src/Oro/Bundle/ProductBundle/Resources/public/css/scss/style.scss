@@ -33,7 +33,7 @@
 .oro-item-collection {
     td {
         white-space: nowrap;
-        vertical-align: top;
+        vertical-align: baseline;
 
         .sell {
             margin-top: $content-padding-small;
@@ -44,6 +44,10 @@
                 padding: 0;
             }
         }
+    }
+
+    &__row--align-top td {
+        vertical-align: top;
     }
 
     input[type="text"],

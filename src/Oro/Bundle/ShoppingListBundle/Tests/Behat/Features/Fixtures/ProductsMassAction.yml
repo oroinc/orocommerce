@@ -14,9 +14,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product{1..3}:
@@ -25,6 +26,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue<current()>']
+        __calls:
+            - addName: ['@locvalue<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

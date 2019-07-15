@@ -21,19 +21,23 @@ databaseBefore:
         product_9:
             sku: product_9
             taxCode: '@product_tax_code_with_9_product'
-            addName: ['@product_name_9']
+            __calls:
+                - addName: ['@product_name_9']
         product_10:
             sku: product_10
             taxCode: '@product_tax_code_with_9_product'
-            addName: ['@product_name_10']
+            __calls:
+                - addName: ['@product_name_10']
         product_11:
             sku: product_11
             taxCode: '@product_tax_code_with_9_product'
-            addName: ['@product_name_11']
+            __calls:
+                - addName: ['@product_name_11']
         product_12:
             sku: product_12
             taxCode: '@product_tax_code_with_9_product'
-            addName: ['@product_name_12']
+            __calls:
+                - addName: ['@product_name_12']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_22.21:
             value: 22.21

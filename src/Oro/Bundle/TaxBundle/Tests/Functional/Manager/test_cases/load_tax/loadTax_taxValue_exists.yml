@@ -9,32 +9,28 @@ databaseBefore:
             currency: USD
     'Oro\Bundle\TaxBundle\Model\ResultElement':
         result_element_1:
-            __construct: false
-            __set: offsetSet
-            includingTax: 867.9 # 789 + 78.9
-            excludingTax: 789
-            taxAmount: 78.9 # 789 * 0.1
-            adjustment: 0
-            currency: USD
+            __calls:
+                - offsetSet: [includingTax, 867.9] # 789 + 78.9
+                - offsetSet: [excludingTax, 789]
+                - offsetSet: [taxAmount, 78.9] # 789 * 0.1
+                - offsetSet: [adjustment, 0]
+                - offsetSet: [currency, USD]
         result_element_2:
-            __construct: false
-            __set: offsetSet
-            tax: TAX1
-            rate: 0.1
-            taxableAmount: 789
-            taxAmount: 78.9
-            currency: USD
+            __calls:
+                - offsetSet: [tax, TAX1]
+                - offsetSet: [rate, 0.1]
+                - offsetSet: [taxableAmount, 789]
+                - offsetSet: [taxAmount, 78.9]
+                - offsetSet: [currency, USD]
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
-            __construct: false
-            __set: offsetSet
-            total: '@result_element_1'
-            taxes:
-                - '@result_element_2'
+            __calls:
+                - offsetSet: [total, '@result_element_1']
+                - offsetSet: [taxes, ['@result_element_2']]
 databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
-            entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+            entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
             entityId: '@simple_order->id'
             address: address
             result: '@simple_result'

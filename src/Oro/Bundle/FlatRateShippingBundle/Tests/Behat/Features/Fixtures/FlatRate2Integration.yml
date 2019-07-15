@@ -8,7 +8,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
     flatRate2Settings:
-        addLabel: ['@flatRate2Label']
+        __calls:
+            - addLabel: ['@flatRate2Label']
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
     flatRate2Integration:

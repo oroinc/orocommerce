@@ -6,7 +6,7 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: 'Common Business Unit'
     organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '10'
     currency: 'USD'
@@ -28,7 +28,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     sku: 'SKU123'
     type: 'simple'
     primaryUnitPrecision: '@precision'
-    setNames: [['@locValue', '@zuluValue']]
+    __calls:
+        - setNames: [['@locValue', '@zuluValue']]
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
@@ -39,7 +40,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
     default: true
-    setCurrencies: [['USD']]
+    __calls:
+        - setCurrencies: [['USD']]
     active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:

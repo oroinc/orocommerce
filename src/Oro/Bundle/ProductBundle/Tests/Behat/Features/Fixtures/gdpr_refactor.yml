@@ -21,7 +21,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     owner: '@businessUnit'
     primaryUnitPrecision: '@precision'
-    addName: ['@locValue']
+    __calls:
+        - addName: ['@locValue']
     status: 'enabled'
     inventoryStatus: '@enumInventoryStatuses'
 Oro\Bundle\PricingBundle\Entity\ProductPrice:

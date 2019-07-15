@@ -10,7 +10,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     featuredProduct:
         sku: 'SKU3'
         primaryUnitPrecision: '@precision3'
-        addName: ['@featuredProductLabel']
+        __calls:
+            - addName: ['@featuredProductLabel']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -73,9 +74,9 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
 Oro\Bundle\SegmentBundle\Entity\Segment:
     promotionSegment:
         name: 'Promotion Matching Products #1'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@business_unit'
 
@@ -95,8 +96,9 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     promotionWithSegment:
-        addLabel: ['@promotionWithSegmentLabel']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@promotionWithSegmentLabel']
+            - addScope: ['@default_scope']
         productsSegment: '@promotionSegment'
         rule: '@promotionWithSegmentRule'
         discountConfiguration: '@promotionWithSegmentDiscountConfig'

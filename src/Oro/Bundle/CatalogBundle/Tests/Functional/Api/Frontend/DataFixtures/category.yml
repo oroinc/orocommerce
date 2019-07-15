@@ -97,43 +97,49 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
-        addTitle: ['@category1_name']
-        addShortDescription: ['@category1_short_description']
-        addLongDescription: ['@category1_description']
-        addMetaTitl: ['@category1_meta_title']
-        addMetaDescription: ['@category1_meta_description']
-        addMetaKeyword: ['@category1_meta_keywords']
+        __calls:
+            - addTitle: ['@category1_name']
+            - addShortDescription: ['@category1_short_description']
+            - addLongDescription: ['@category1_description']
+            - addMetaTitl: ['@category1_meta_title']
+            - addMetaDescription: ['@category1_meta_description']
+            - addMetaKeyword: ['@category1_meta_keywords']
         organization: '@organization'
         parentCategory: '@root_category'
         slugs: ['@category1_slug_default', '@category1_slug_en_US', '@category1_slug_en_CA', '@category1_slug_es']
         smallImage: '@file_category1_small_image'
         largeImage: '@file_category1_large_image'
     category1_1:
-        addTitle: ['@category1_1_name']
-        addShortDescription: ['@category1_1_short_description']
-        addLongDescription: ['@category1_1_description']
-        addMetaTitl: ['@category1_1_meta_title']
-        addMetaDescription: ['@category1_1_meta_description']
-        addMetaKeyword: ['@category1_1_meta_keywords']
+        __calls:
+            - addTitle: ['@category1_1_name']
+            - addShortDescription: ['@category1_1_short_description']
+            - addLongDescription: ['@category1_1_description']
+            - addMetaTitl: ['@category1_1_meta_title']
+            - addMetaDescription: ['@category1_1_meta_description']
+            - addMetaKeyword: ['@category1_1_meta_keywords']
         organization: '@organization'
         parentCategory: '@category1'
         slugs: ['@category1_1_slug_default']
     category1_1_1:
-        addTitle: ['@category1_1_1_name']
+        __calls:
+            - addTitle: ['@category1_1_1_name']
         organization: '@organization'
         parentCategory: '@category1_1'
     category2:
-        addTitle: ['@category2_name']
+        __calls:
+            - addTitle: ['@category2_name']
         organization: '@organization'
         parentCategory: '@root_category'
         smallImage: '@file_category2_small_image'
         largeImage: '@file_category2_large_image'
     category3:
-        addTitle: ['@category3_name']
+        __calls:
+            - addTitle: ['@category3_name']
         organization: '@organization'
         parentCategory: '@root_category'
     category3_1:
-        addTitle: ['@category3_1_name']
+        __calls:
+            - addTitle: ['@category3_1_name']
         organization: '@organization'
         parentCategory: '@category3'
 
@@ -194,9 +200,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
         primaryUnitPrecision: '@product1_precision'
-        unitPrecision: ['@product1_precision']
+        unitPrecisions: ['@product1_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@product1_name']
+        __calls:
+            - addName: ['@product1_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -213,9 +220,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@product2_precision'
-        unitPrecision: ['@product2_precision']
+        unitPrecisions: ['@product2_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@product2_name']
+        __calls:
+            - addName: ['@product2_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -226,9 +234,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product3:
         sku: 'PSKU3'
         primaryUnitPrecision: '@product3_precision'
-        unitPrecision: ['@product3_precision']
+        unitPrecisions: ['@product3_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@product3_name']
+        __calls:
+            - addName: ['@product3_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -239,9 +248,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product4:
         sku: 'PSKU4'
         primaryUnitPrecision: '@product4_precision'
-        unitPrecision: ['@product4_precision']
+        unitPrecisions: ['@product4_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@product4_name']
+        __calls:
+            - addName: ['@product4_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -252,9 +262,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product5:
         sku: 'PSKU5'
         primaryUnitPrecision: '@product5_precision'
-        unitPrecision: ['@product5_precision']
+        unitPrecisions: ['@product5_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@product5_name']
+        __calls:
+            - addName: ['@product5_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -265,9 +276,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product1:
         sku: 'CPSKU1'
         primaryUnitPrecision: '@configurable_product1_precision'
-        unitPrecision: ['@configurable_product1_precision']
+        unitPrecisions: ['@configurable_product1_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product1_name']
+        __calls:
+            - addName: ['@configurable_product1_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -284,9 +296,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product2:
         sku: 'CPSKU2'
         primaryUnitPrecision: '@configurable_product2_precision'
-        unitPrecision: ['@configurable_product2_precision']
+        unitPrecisions: ['@configurable_product2_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product2_name']
+        __calls:
+            - addName: ['@configurable_product2_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -303,9 +316,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product1_variant1:
         sku: 'CVPSKU1'
         primaryUnitPrecision: '@configurable_product1_variant1_precision'
-        unitPrecision: ['@configurable_product1_variant1_precision']
+        unitPrecisions: ['@configurable_product1_variant1_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product1_variant1_name']
+        __calls:
+            - addName: ['@configurable_product1_variant1_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -315,14 +329,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrString: 'Variant 1 for CPSKU1'
         testAttrBoolean: false
         testAttrEnum: '@productAttrEnum_option1'
-        parentVariantLinks: ['@configurable_product1_variant2_link']
+        parentVariantLinks: ['@configurable_product1_variant1_link']
         category: '@category1'
     configurable_product1_variant2:
         sku: 'CVPSKU2'
         primaryUnitPrecision: '@configurable_product1_variant2_precision'
-        unitPrecision: ['@configurable_product1_variant2_precision']
+        unitPrecisions: ['@configurable_product1_variant2_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product1_variant2_name']
+        __calls:
+            - addName: ['@configurable_product1_variant2_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -337,9 +352,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product2_variant1:
         sku: 'CVPSKU3'
         primaryUnitPrecision: '@configurable_product2_variant1_precision'
-        unitPrecision: ['@configurable_product2_variant1_precision']
+        unitPrecisions: ['@configurable_product2_variant1_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product2_variant1_name']
+        __calls:
+            - addName: ['@configurable_product2_variant1_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false
@@ -353,9 +369,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product2_variant2:
         sku: 'CVPSKU4'
         primaryUnitPrecision: '@configurable_product2_variant2_precision'
-        unitPrecision: ['@configurable_product2_variant2_precision']
+        unitPrecisions: ['@configurable_product2_variant2_precision']
         attributeFamily: '@default_product_family'
-        addName: ['@configurable_product2_variant2_name']
+        __calls:
+            - addName: ['@configurable_product2_variant2_name']
         status: 'enabled'
         inventoryStatus: '@in_stock'
         featured: false

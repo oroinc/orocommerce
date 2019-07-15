@@ -37,10 +37,12 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision1'
-        addName: ['@product1_name']
+        __calls:
+            - addName: ['@product1_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional1']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional1']
+
     product2:
         type: 'simple'
         sku: 'rtsh_m'
@@ -48,10 +50,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision2'
-        addName: ['@product2_name']
+        __calls:
+            - addName: ['@product2_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional2']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional2']
     configurable_product:
         type: 'configurable'
         sku: 'shirt_main'
@@ -59,10 +62,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision3'
-        addName: ['@configurable_product_name']
+        __calls:
+            - addName: ['@configurable_product_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional3']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional3']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:

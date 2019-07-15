@@ -20,9 +20,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@name']
-        addMetaTitl: ['@metaTitle']
-        addMetaDescription: ['@metaDescription']
-        addMetaKeyword: ['@metaKeywords']
+        __calls:
+            - addName: ['@name']
+            - addMetaTitl: ['@metaTitle']
+            - addMetaDescription: ['@metaDescription']
+            - addMetaKeyword: ['@metaKeywords']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

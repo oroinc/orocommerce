@@ -4,7 +4,7 @@ include:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     productName1:
-        string: "Product1`\"'&йёщ>"
+        string: <("Product1`\"'&йёщ>")>
 
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:
@@ -16,14 +16,14 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'Q123'
         qid: '1'
         website: '@website1'
-        internal_status: 'sent_to_customer'
+        internal_status: '@quote_internal_status_sent_to_customer'
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quoteProduct1:
         product: '@product1'
         quote: '@quote1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     quoteProductPrice1:
         value: 5
         currency: USD
@@ -50,5 +50,5 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
         currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
         # Cannot use '@quote1->id' because quote is not yet persisted to DB at this point.
         entityId: '1'
-        entityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
         serializedData: '[]'

@@ -18,34 +18,42 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     priceListForConfig:
         name: 'priceListForConfig'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
     priceListForWebsite:
         name: 'priceListForWebsite'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
     priceListForCustomerGroup1:
         name: 'priceListForCustomerGroup1'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
     priceListForCustomerGroup2:
         name: 'priceListForCustomerGroup2'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
     priceListForCustomer1:
         name: 'priceListForCustomer1'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
     priceListForCustomer2:
         name: 'priceListForCustomer2'
-        addCurrencyByCode: ['USD']
+        __calls:
+            - addCurrencyByCode: ['USD']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

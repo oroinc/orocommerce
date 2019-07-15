@@ -2,7 +2,7 @@ include:
     - '@OroProductBundle:product_collections_web_catalog.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProduct{1..12}Name:
+    localProductName{1..12}:
         string: 'Product <current()>'
 
     localProductAttributeFamily:
@@ -15,9 +15,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@localProductAttributeFamily']
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
 
@@ -26,7 +27,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
-        addName: ['@localProduct<current()>Name']
+        __calls:
+            - addName: ['@localProductName<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
