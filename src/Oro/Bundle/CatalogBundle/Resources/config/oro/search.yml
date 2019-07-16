@@ -7,6 +7,7 @@ search:
             parameters:
                 id:                     id
         search_template:                OroCatalogBundle:Category:searchResult.html.twig
+        acl_permission:                 'EDIT'
         fields:
             -
                 name:                   defaultTitle
