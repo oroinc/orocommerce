@@ -112,6 +112,11 @@ oro_behat_extension:
       options:
         mapping:
           Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
+  
+  pages:
+    Category Update:
+      class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate
+      route: 'oro_catalog_category_update'
 
   suites:
     OroCatalogBundle:

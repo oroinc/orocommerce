@@ -57,6 +57,7 @@ search:
             parameters:
                 id:                     id
         search_template:                OroProductBundle:Product:searchResult.html.twig
+        acl_permission:                'EDIT'
         fields:
             -
                 name: names
