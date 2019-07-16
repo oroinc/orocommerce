@@ -40,6 +40,7 @@ Feature: Pricing rounding
       |Value     |4.54|
       |Currency  |$   |
     And save and close form
+    Then I should see "Product has been saved" flash message
     And go to Sales/ Quotes
     And click view "Q123" in grid
     And click "Send to Customer"
