@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -69,6 +70,40 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$existingSlug]);
 
         $this->assertEquals($expectedSlug, $this->uniqueSlugResolver->resolve($slugUrl, $entity));
+    }
+
+    public function testResolveExistingSlugWithinBatch()
+    {
+        $slug = '/test';
+        /** @var Localization $frLocalization */
+        $frLocalization = $this->createMock(Localization::class);
+
+        $slugUrl = new SlugUrl($slug);
+        $slugUrlFr = new SlugUrl($slug, $frLocalization);
+
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity1 **/
+        $entity1 = $this->createMock(SluggableInterface::class);
+        $entity1->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity2 **/
+        $entity2 = $this->createMock(SluggableInterface::class);
+        $entity2->expects($this->any())
+            ->method('getId')
+            ->willReturn(2);
+
+        $this->repository->expects($this->any())
+            ->method('findOneDirectUrlBySlug')
+            ->willReturn(null);
+
+        $this->repository->expects($this->any())
+            ->method('findAllDirectUrlsByPattern')
+            ->willReturn([]);
+
+        $this->assertEquals($slug, $this->uniqueSlugResolver->resolve($slugUrl, $entity1));
+        $this->assertEquals($slug, $this->uniqueSlugResolver->resolve($slugUrlFr, $entity1));
+        $this->assertEquals('/test-1', $this->uniqueSlugResolver->resolve($slugUrl, $entity2));
+        $this->assertEquals('/test-1', $this->uniqueSlugResolver->resolve($slugUrlFr, $entity2));
     }
 
     public function testResolveExistingIncrementedSlug()

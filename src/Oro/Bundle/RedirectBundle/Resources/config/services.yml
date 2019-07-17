@@ -36,11 +36,6 @@ services:
     Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
         alias: oro_redirect.routing.slug_url_matcher
 
-    oro_redirect.slug.manager:
-        class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
-        arguments:
-            - "@doctrine"
-
     oro_redirect.slug.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -138,6 +133,8 @@ services:
         public: false
         arguments:
             - "@oro_redirect.repository.slug"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
