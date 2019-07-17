@@ -103,6 +103,7 @@ services:
 
     oro_website_search.fulltext_index_manager:
         class: 'Oro\Bundle\SearchBundle\Engine\FulltextIndexManager'
+        public: true
         arguments:
             - '@doctrine.dbal.default_connection'
             - '%oro_search.drivers%'

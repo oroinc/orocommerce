@@ -36,6 +36,9 @@ class NotificationHelper
     /** @var string */
     protected $emailTemplateClassName;
 
+    /** @var bool */
+    protected $enabled = true;
+
     /**
      * @param ManagerRegistry $registry
      * @param EmailModelBuilder $emailModelBuilder
@@ -52,6 +55,14 @@ class NotificationHelper
         $this->emailModelBuilder = $emailModelBuilder;
         $this->emailProcessor = $emailProcessor;
         $this->featureChecker = $featureChecker;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
     }
 
     /**
@@ -90,6 +101,10 @@ class NotificationHelper
      */
     public function send(Email $emailModel)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $this->emailProcessor->process($emailModel);
     }
 

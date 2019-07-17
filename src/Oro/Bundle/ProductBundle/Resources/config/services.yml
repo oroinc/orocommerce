@@ -1310,6 +1310,7 @@ services:
     oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
 

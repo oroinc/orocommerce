@@ -45,6 +45,7 @@ services:
     oro_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
 
@@ -277,6 +278,7 @@ services:
 
     oro_payment.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        public: true
         arguments:
             - '@event_dispatcher'
 

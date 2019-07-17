@@ -447,6 +447,7 @@ services:
 
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        public: true
         arguments:
             - '@event_dispatcher'
 
