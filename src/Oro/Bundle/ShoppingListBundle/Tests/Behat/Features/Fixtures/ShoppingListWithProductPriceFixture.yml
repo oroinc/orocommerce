@@ -1,7 +1,7 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
         value: '10'
         currency: 'USD'
@@ -10,7 +10,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'pricelist'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
@@ -69,7 +70,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'AA1'
         primaryUnitPrecision: '@precision'
-        addName: ['@locValue']
+        __calls:
+            - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

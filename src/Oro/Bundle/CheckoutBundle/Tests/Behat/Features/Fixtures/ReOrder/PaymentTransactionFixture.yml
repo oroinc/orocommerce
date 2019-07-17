@@ -3,7 +3,7 @@ Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
         owner: '@admin'
         organization: '@organization'
         frontendOwner: '@amanda'
-        entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+        entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
         entityIdentifier: '@order1->id'
         accessIdentifier: '8c4fec37-cb0e-4e18-a106-f3de635d2c62'
         accessToken: 'd96a5408-95bf-4153-abbb-715064d7c33a'
@@ -14,16 +14,16 @@ Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
         active: false
         successful: true
         transactionOptions:
-            successUrl: '\/index.php\/customer\/checkout\/1?transition=finish_checkout'
-            failureUrl: '\/index.php\/customer\/checkout\/1?transition=payment_error'
-            failedShippingAddressUrl: '\/index.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
+            successUrl: '/index.php/customer/checkout/1?transition=finish_checkout'
+            failureUrl: '/index.php/customer/checkout/1?transition=payment_error'
+            failedShippingAddressUrl: '/index.php/customer/checkout/1?transition=back_to_shipping_address_on_fail_address'
             checkoutId: 1
             additionalData: null
     paymentTransaction2:
         owner: '@admin'
         organization: '@organization'
         frontendOwner: '@amanda'
-        entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+        entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
         entityIdentifier: '@order2->id'
         accessIdentifier: '8c4fec37-cc0e-4e18-a206-f3de635d2c62'
         accessToken: 'd96a5408-95bf-4253-abbc-715064d7c33a'
@@ -34,8 +34,8 @@ Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
         active: false
         successful: true
         transactionOptions:
-            successUrl: '\/index.php\/customer\/checkout\/2?transition=finish_checkout'
-            failureUrl: '\/index.php\/customer\/checkout\/2?transition=payment_error'
-            failedShippingAddressUrl: '\/index.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
+            successUrl: '/index.php/customer/checkout/2?transition=finish_checkout'
+            failureUrl: '/index.php/customer/checkout/2?transition=payment_error'
+            failedShippingAddressUrl: '/index.php/customer/checkout/1?transition=back_to_shipping_address_on_fail_address'
             checkoutId: 2
             additionalData: null

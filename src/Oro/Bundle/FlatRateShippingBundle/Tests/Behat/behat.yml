@@ -3,3 +3,7 @@ oro_behat_extension:
         Shipping Rule Flat Rate:
             selector: 'form[name="oro_shipping_methods_configs_rule"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Handling Fee: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]"
+                    Type: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]"

@@ -8,7 +8,7 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
         website: '@website1'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    combinedProductPrice{1..20}Each:
+    combinedProductPriceEach{1..20}:
         pricelist: '@combinedPriceList'
         product: '@product<current()>'
         productSku: 'PSKU<current()>'
@@ -17,7 +17,7 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         value: '<current()>'
         currency: 'USD'
 
-    combinedProductPrice{1..20}Item:
+    combinedProductPriceItem{1..20}:
         pricelist: '@combinedPriceList'
         product: '@product<current()>'
         productSku: 'PSKU<current()>'

@@ -40,6 +40,7 @@ Feature: Pricing rounding
       |Value     |4.54|
       |Currency  |$   |
     And save and close form
+    Then I should see "Product has been saved" flash message
     And go to Sales/ Quotes
     And click view "Q123" in grid
     And click "Send to Customer"
@@ -108,7 +109,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
@@ -209,7 +210,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
@@ -343,7 +344,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -387,7 +388,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -424,7 +425,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -461,7 +462,7 @@ Feature: Pricing rounding
     And click "Product Prices"
     Then should see following grid:
       |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.4500|
+      |Default Price List |1       |item|7.45  |
     And I proceed as the customer
     And click "Account"
     And click "Quotes"

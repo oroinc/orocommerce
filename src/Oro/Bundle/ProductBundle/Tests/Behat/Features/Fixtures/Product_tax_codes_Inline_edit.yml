@@ -44,7 +44,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         taxCode: '@taxCode1'
@@ -55,7 +56,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 

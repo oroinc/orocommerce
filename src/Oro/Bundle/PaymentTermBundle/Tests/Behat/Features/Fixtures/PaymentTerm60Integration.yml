@@ -8,8 +8,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
     paymentTerm60Settings:
-        addLabel: ['@paymentTerm60Label']
-        addShortLabel: ['@paymentTerm60Label']
+        __calls:
+            - addLabel: ['@paymentTerm60Label']
+            - addShortLabel: ['@paymentTerm60Label']
         channel: '@paymentTermIntegration'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:

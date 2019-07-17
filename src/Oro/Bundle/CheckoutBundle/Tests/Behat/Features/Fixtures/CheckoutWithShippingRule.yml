@@ -3,7 +3,7 @@ include:
     - '@OroCheckoutBundle:Payment.yml'
     - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: '10'
         currency: 'USD'
@@ -30,7 +30,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU1'
         type: 'simple'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locProduct1']
+        __calls:
+            - addName: ['@locProduct1']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
@@ -40,7 +41,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU2'
         type: 'simple'
         primaryUnitPrecision: '@precision2'
-        addName: ['@locProduct2']
+        __calls:
+            - addName: ['@locProduct2']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
@@ -61,7 +63,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist1:
         name: 'Pricelist'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
@@ -176,7 +179,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

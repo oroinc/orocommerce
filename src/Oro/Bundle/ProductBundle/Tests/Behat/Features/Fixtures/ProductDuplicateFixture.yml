@@ -34,7 +34,8 @@ Oro\Bundle\ProductBundle\Entity\Brand:
     brand{1..2}:
         owner: '@business_unit'
         organization: '@organization'
-        addName: ['@brandName<current()>']
+        __calls:
+            - addName: ['@brandName<current()>']
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     primaryPrecision1:
@@ -62,7 +63,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryPrecision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@name1']
+        __calls:
+            - addName: ['@name1']
+            - addAdditionalUnitPrecision: ['@additionalPrecision1']
+            - addDescription: ['@description1']
+            - addShortDescription: ['@shortDescription1']
         slugs: ['@productSlug1']
         slugPrototypes: ['@productSlugPrototype1']
         inventoryStatus: '@enumInventoryStatuses'
@@ -70,17 +75,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         featured: true
         newArrival: true
         brand: '@brand1'
-        addAdditionalUnitPrecision: ['@additionalPrecision1']
         taxCode: '@taxCode1'
-        addDescription: ['@description1']
-        addShortDescription: ['@shortDescription1']
     relatedProduct1:
         sku: 'RELATED1'
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryRelatedProductPrecision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@relatedProductName1']
+        __calls:
+            - addName: ['@relatedProductName1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     upsellProduct1:
@@ -89,24 +92,28 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryUpsellProductPrecision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@upsellProductName1']
+        __calls:
+            - addName: ['@upsellProductName1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
-        addTitle: ['@categoryTitle1']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@categoryTitle1']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
     category2:
-        addTitle: ['@categoryTitle2']
-        setParentCategory: [1]
+        __calls:
+            - addTitle: ['@categoryTitle2']
+            - setParentCategory: ['@root_category']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist1:
         name: 'Price List 1'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
@@ -134,21 +141,21 @@ Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct:
         product: '@product1'
         relatedItem: '@upsellProduct1'
 
-Oro\Bundle\ShippingBundle\Model\Weight(local):
+Oro\Bundle\ShippingBundle\Model\Weight:
     weight:
-        unit: 'kg'
+        unit: '@kg'
         value: 1
 
-Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
     dimensionsValue:
         length: 1
         width: 1
         height: 1
 
-Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+Oro\Bundle\ShippingBundle\Model\Dimensions:
     dimensions:
         value: '@dimensionsValue'
-        unit: 'cm'
+        unit: '@centimeter'
 
 Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
     productShippingOptions:

@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -35,7 +34,7 @@ class InlineEditProductController extends FOSRestController
         $createRedirect = $request->get('createRedirect');
 
         if ($productName === null) {
-            return parent::handleView($this->view([], Codes::HTTP_NOT_FOUND));
+            return parent::handleView($this->view([], Response::HTTP_NOT_FOUND));
         }
 
         $redirectGenerationStrategy =
@@ -61,7 +60,7 @@ class InlineEditProductController extends FOSRestController
 
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
-        return parent::handleView($this->view([], Codes::HTTP_OK));
+        return parent::handleView($this->view([], Response::HTTP_OK));
     }
 
     /**
@@ -77,7 +76,7 @@ class InlineEditProductController extends FOSRestController
         $inventoryStatusId = $request->get('inventoryStatusId');
 
         if ($inventoryStatusId === null) {
-            return parent::handleView($this->view([], Codes::HTTP_BAD_REQUEST));
+            return parent::handleView($this->view([], Response::HTTP_BAD_REQUEST));
         }
 
         /** @var AbstractEnumValue $inventoryStatus */
@@ -86,12 +85,12 @@ class InlineEditProductController extends FOSRestController
             ->find($inventoryStatusId);
 
         if (!$inventoryStatus) {
-            return parent::handleView($this->view([], Codes::HTTP_NOT_FOUND));
+            return parent::handleView($this->view([], Response::HTTP_NOT_FOUND));
         }
 
         $product->setInventoryStatus($inventoryStatus);
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
-        return parent::handleView($this->view([], Codes::HTTP_OK));
+        return parent::handleView($this->view([], Response::HTTP_OK));
     }
 }

@@ -2,16 +2,16 @@ include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProduct{1..20}Name:
+    localProductName{1..20}:
         string: 'Product <current()>'
 
-    localProduct{1..20}Description:
+    localProductDescription{1..20}:
         string: 'Product Description<current()>'
 
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
-    localCategory{1..4}Title:
+    localCategoryTitle{1..4}:
         string: 'Category <current()>'
 
     localProductAttributeFamilyGroupGeneral:
@@ -37,35 +37,41 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@localProductAttributeFamily']
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
     attributeGroupGeneral:
-        addLabel: ['@localProductAttributeFamilyGroupGeneral']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupGeneral']
         code: 'general'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupInventory:
-        addLabel: ['@localProductAttributeFamilyGroupInventory']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupInventory']
         code: 'inventory'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
     attributeGroupImages:
-        addLabel: ['@localProductAttributeFamilyGroupImages']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupImages']
         code: 'images'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupProductPrices:
-        addLabel: ['@localProductAttributeFamilyGroupProductPrices']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupProductPrices']
         code: 'prices'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupSEO:
-        addLabel: ['@localProductAttributeFamilyGroupSEO']
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupSEO']
         code: 'seo'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
@@ -116,8 +122,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
-        addName: ['@localProduct<current()>Name']
-        addDescription: ['@localProduct<current()>Description']
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -125,21 +132,72 @@ Oro\Bundle\ProductBundle\Entity\Product:
         taxCode: '@productTaxCode1'
 
     product6:
+        type: 'simple'
+        sku: 'PSKU6'
+        primaryUnitPrecision: '@productUnitPrecision6'
+        __calls:
+            - addName: ['@localProductName6']
+            - addDescription: ['@localProductDescription6']
+        inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
 
     product7:
+        type: 'simple'
+        sku: 'PSKU7'
+        primaryUnitPrecision: '@productUnitPrecision7'
+        __calls:
+            - addName: ['@localProductName7']
+            - addDescription: ['@localProductDescription7']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
 
     product8:
+        type: 'simple'
+        sku: 'PSKU8'
+        primaryUnitPrecision: '@productUnitPrecision8'
+        __calls:
+            -   addName: ['@localProductName8']
+            -   addDescription: ['@localProductDescription8']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode2'
 
     product9:
         type: 'configurable'
+        sku: 'PSKU9'
+        primaryUnitPrecision: '@productUnitPrecision9'
+        __calls:
+            -   addName: ['@localProductName9']
+            -   addDescription: ['@localProductDescription9']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
 
     product10:
         newArrival: true
+        type: 'simple'
+        sku: 'PSKU10'
+        primaryUnitPrecision: '@productUnitPrecision10'
+        __calls:
+            -   addName: ['@localProductName10']
+            -   addDescription: ['@localProductDescription10']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     products1:
         __construct: [['@product1', '@product2', '@product3', '@product4', '@product5']]
     products2:
@@ -151,9 +209,10 @@ Doctrine\Common\Collections\ArrayCollection(local):
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category{1..4}:
-        addTitle: ['@localCategory<current()>Title']
-        setParentCategory: [1]
-        setProducts: ['@products<current()>']
+        __calls:
+            - addTitle: ['@localCategoryTitle<current()>']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products<current()>']
 
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     productTaxCode{1..2}:

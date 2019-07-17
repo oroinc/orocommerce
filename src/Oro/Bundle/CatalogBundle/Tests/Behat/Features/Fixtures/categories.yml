@@ -1,15 +1,18 @@
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localValueLightingProducts']
-        setParentCategory: [1]
+        __calls:
+            - addTitle: ['@localValueLightingProducts']
+            - setParentCategory: ['@root_category']
 
     categoryRetailSupplies:
-        addTitle: ['@localValueRetailSupplies']
-        setParentCategory: [1]
+        __calls:
+            - addTitle: ['@localValueRetailSupplies']
+            - setParentCategory: ['@root_category']
 
     categoryPrinters:
-        addTitle: ['@localValuePrinters']
-        setParentCategory: ['@categoryRetailSupplies']
+        __calls:
+            - addTitle: ['@localValuePrinters']
+            - setParentCategory: ['@categoryRetailSupplies']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueRetailSupplies:

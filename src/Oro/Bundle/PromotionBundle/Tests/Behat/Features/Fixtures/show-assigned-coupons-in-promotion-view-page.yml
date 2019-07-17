@@ -62,16 +62,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\SegmentBundle\Entity\Segment:
     lineItemDiscountPromotionSegment:
         name: 'Promotion Matching Products #1'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@businessUnit'
     orderDiscountPromotionSegment:
         name: 'Promotion Matching Products #2'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@businessUnit'
 
@@ -114,9 +114,10 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     lineItemDiscountPromotion:
-        addLabel: ['@lineItemDiscountPromotionLabel']
-        addDescription: ['@lineItemDiscountPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@lineItemDiscountPromotionLabel']
+            - addDescription: ['@lineItemDiscountPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@lineItemDiscountPromotionSegment'
         rule: '@lineItemDiscountPromotionRule'
         discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
@@ -124,9 +125,10 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         owner: '@admin'
         useCoupons: true
     orderDiscountPromotion:
-        addLabel: ['@orderDiscountPromotionLabel']
-        addDescription: ['@orderDiscountPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@orderDiscountPromotionLabel']
+            - addDescription: ['@orderDiscountPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@orderDiscountPromotionSegment'
         rule: '@orderDiscountPromotionRule'
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
@@ -134,9 +136,10 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         owner: '@admin'
         useCoupons: true
     shippingDiscountPromotion:
-        addLabel: ['@shippingDiscountPromotionLabel']
-        addDescription: ['@shippingDiscountPromotionDesc']
-        addScope: [1]
+        __calls:
+            - addLabel: ['@shippingDiscountPromotionLabel']
+            - addDescription: ['@shippingDiscountPromotionDesc']
+            - addScope: ['@default_scope']
         productsSegment: '@orderDiscountPromotionSegment'
         rule: '@shippingDiscountPromotionRule'
         discountConfiguration: '@shippingDiscountPromotionDiscountConfiguration'

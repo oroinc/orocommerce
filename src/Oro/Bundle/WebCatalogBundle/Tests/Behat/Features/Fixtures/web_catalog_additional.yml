@@ -1,11 +1,13 @@
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeAdditionalWebCatalog:
-        addTitle: ['@localValueAdditionalWebCatalog']
+        __calls:
+            - addTitle: ['@localValueAdditionalWebCatalog']
         webCatalog: '@additionalWebCatalog'
 
     nodeOnSale:
-        addTitle: ['@localValueOnSale']
-        addSlugPrototype: ['@localValueOnSaleSlug']
+        __calls:
+            - addTitle: ['@localValueOnSale']
+            - addSlugPrototype: ['@localValueOnSaleSlug']
         ParentNode: '@nodeAdditionalWebCatalog'
         webCatalog: '@additionalWebCatalog'
 

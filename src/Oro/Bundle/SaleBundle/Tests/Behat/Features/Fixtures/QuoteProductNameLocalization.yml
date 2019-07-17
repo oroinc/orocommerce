@@ -23,7 +23,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@locvalue1' , '@locvalue1_loc1']]
+        __calls:
+            - setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
@@ -36,14 +37,14 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO1'
         qid: 'Quote1'
         website: '@website1'
-        internal_status: 'sent_to_customer'
+        internal_status: '@quote_internal_status_sent_to_customer'
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quote1Product:
         product: '@product1'
         quote: '@quote1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     quote1ProductPrice:
         value: 5
         currency: USD
@@ -70,5 +71,5 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
         currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
         # Cannot use '@quote1->id' because quotes are not yet persisted to DB at this point.
         entityId: '1'
-        entityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
         serializedData: '[]'

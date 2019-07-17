@@ -1,6 +1,7 @@
 Oro\Bundle\CMSBundle\Entity\Page:
     landing_page:
-        addTitle: ['@localValueAbout']
+        __calls:
+            - addTitle: ['@localValueAbout']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueDefaultWebCatalog:

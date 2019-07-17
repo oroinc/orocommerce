@@ -21,19 +21,23 @@ databaseBefore:
         product_1:
             sku: product_1
             taxCode: '@product_tax_code'
-            addName: ['@product_name_1']
+            __calls:
+                - addName: ['@product_name_1']
         product_2:
             sku: product_2
             taxCode: '@product_tax_code'
-            addName: ['@product_name_2']
+            __calls:
+                - addName: ['@product_name_2']
         product_3:
             sku: product_3
             taxCode: '@product_tax_code'
-            addName: ['@product_name_3']
+            __calls:
+                - addName: ['@product_name_3']
         product_4:
             sku: product_4
             taxCode: '@product_tax_code'
-            addName: ['@product_name_4']
+            __calls:
+                - addName: ['@product_name_4']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_3.42:
             value: 3.42
@@ -116,7 +120,7 @@ expectedResult:
                 currency: 'USD'
             unit:
                 includingTax: '3.42'
-                excludingTax: '2.90'    # 3.42 - 0.519236641 = 2.900763359
+                excludingTax: '2.9'    # 3.42 - 0.519236641 = 2.900763359
                 taxAmount: '0.52'       # 3.42 * 0.179 / 1.179 = 0.519236641
                 adjustment: '-0.000763' # 0.519236641 - 0.52 = -0.000763359
                 currency: 'USD'

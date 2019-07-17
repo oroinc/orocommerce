@@ -134,7 +134,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'subtotalDiscountTotal' => 12.77,
                     'shippingDiscountTotal' => 0.0,
                     'discountAmount' => 12.77,
-
                 ]
             ],
             [

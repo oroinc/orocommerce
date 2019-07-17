@@ -2,7 +2,7 @@ include:
   - '@OroCheckoutBundle:Shipping.yml'
   - '@OroTaxBundle:LoadTaxEntitiesFixture.yml'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '10'
     currency: 'USD'
@@ -26,7 +26,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@customer'
     organization: '@organization'
-    role: ['@buyer']
+    roles: ['@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -48,7 +48,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     owner: '@business_unit'
     organization: '@organization'
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue']]
+    __calls:
+        - setNames: [['@locValue']]
     taxCode: '@product_tax_code_1'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
@@ -79,7 +80,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
     default: true
-    setCurrencies: [['USD']]
+    __calls:
+        - setCurrencies: [['USD']]
     active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
@@ -141,7 +143,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     postalCode: '32003'
     frontendOwner: '@amanda'
     owner: '@admin'
-    setDefaults: ['@shippingType', '@billingType']
+    __calls:
+        - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
     primary: true
     organization: '@organization'

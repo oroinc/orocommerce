@@ -1,7 +1,7 @@
 include:
     - '@OroLocaleBundle:LocalizationFixture.yml'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '1'
     currency: 'USD'
@@ -32,7 +32,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@company_A'
     organization: '@organization'
-    role: ['@front_admin', '@buyer']
+    roles: ['@front_admin', '@buyer']
     owner: '@admin'
     website: '@website1'
 
@@ -40,7 +40,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
     default: true
-    setCurrencies: [['USD']]
+    __calls:
+        - setCurrencies: [['USD']]
     active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
@@ -84,7 +85,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue5:
     string: 'Product5'
   locValue6:
-    string: "Product6`\"'&йёщ>"
+    string: <("Product6`\"'&йёщ>")>
   locValue6_loc1:
     string: 'Product6 (Localization 1)'
     localization: '@localization1'
@@ -102,7 +103,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue1']
+    __calls:
+        - addName: ['@locValue1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -114,7 +116,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision2'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue2']
+    __calls:
+        - addName: ['@locValue2']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -126,7 +129,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision3'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue3']
+    __calls:
+        - addName: ['@locValue3']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -138,7 +142,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision4'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue4']
+    __calls:
+        - addName: ['@locValue4']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     newArrival: true
@@ -150,7 +155,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision5'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue5']
+    __calls:
+        - addName: ['@locValue5']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     featured: true
@@ -163,7 +169,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision6'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    setNames: [['@locValue6' , '@locValue6_loc1']]
+    __calls:
+        - setNames: [['@locValue6' , '@locValue6_loc1']]
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     featured: true
@@ -176,7 +183,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision7'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue7']
+    __calls:
+        - addName: ['@locValue7']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     featured: true

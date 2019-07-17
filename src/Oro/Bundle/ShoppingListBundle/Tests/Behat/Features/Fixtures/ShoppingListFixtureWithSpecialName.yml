@@ -17,13 +17,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
-        label: '"Shopping list":\'
+        label: '"Shopping list":\\'
         customer: '@customer1'
         customerUser: '@amanda'
         organization: '@organization'

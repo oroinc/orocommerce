@@ -1,15 +1,15 @@
-Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
     dimensionsValue:
         length: 1
         width: 1
         height: 1
 
-Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+Oro\Bundle\ShippingBundle\Model\Dimensions:
     productDimensions:
         unit: '@meter'
         value: '@dimensionsValue'
 
-Oro\Bundle\ShippingBundle\Model\Weight(local):
+Oro\Bundle\ShippingBundle\Model\Weight:
     productWeight:
         unit: '@kg'
         value: 7

@@ -12,13 +12,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     family1:
         code: 'family1'
-        addLabel: ['@family1_name']
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        __calls:
+            - addLabel: ['@family1_name']
     family2:
         code: 'family2'
-        addLabel: ['@family2_name']
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        __calls:
+            - addLabel: ['@family2_name']
     not_product_family:
         code: 'not_product_family'
-        addLabel: ['@not_product_family_name']
         entityClass: 'Another'
+        __calls:
+            - addLabel: ['@not_product_family_name']

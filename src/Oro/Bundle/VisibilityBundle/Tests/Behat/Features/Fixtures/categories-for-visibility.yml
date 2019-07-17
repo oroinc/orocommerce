@@ -1,11 +1,13 @@
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localValueLightingProducts']
-        setParentCategory: [1]
+        __calls:
+            - addTitle: ['@localValueLightingProducts']
+            - setParentCategory: ['@root_category']
 
     categoryMedicalApparel:
-        addTitle: ['@localValueMedicalApparel']
-        setParentCategory: [1]
+        __calls:
+            - addTitle: ['@localValueMedicalApparel']
+            - setParentCategory: ['@root_category']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueLightingProducts:

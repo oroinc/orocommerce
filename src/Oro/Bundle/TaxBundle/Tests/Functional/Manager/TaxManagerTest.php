@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Fidry\AliceDataFixtures\LoaderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -26,6 +27,9 @@ class TaxManagerTest extends WebTestCase
     /** @var ManagerRegistry */
     protected $doctrine;
 
+    /** @var LoaderInterface */
+    protected $loader;
+
     protected function setUp()
     {
         $this->initClient();
@@ -40,6 +44,7 @@ class TaxManagerTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->propertyAccessor = $this->getContainer()->get('property_accessor');
         $this->doctrine = $this->getContainer()->get('doctrine');
+        $this->loader = $this->getContainer()->get('oro_test.alice_fixture_loader');
     }
 
     /**
@@ -136,9 +141,7 @@ class TaxManagerTest extends WebTestCase
             $database[$class] = $items;
         }
 
-        $objectsData = \Nelmio\Alice\Fixtures::load($database, $this->doctrine->getManager());
-
-        return $objectsData;
+        return $this->loader->load($database);
     }
 
     /**
@@ -161,7 +164,6 @@ class TaxManagerTest extends WebTestCase
 
         return $config;
     }
-
 
     /**
      * @param array $databaseAfter

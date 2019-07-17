@@ -20,8 +20,9 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeRoot:
-        addTitle: ['@localValueRootNode']
-        addContentVariant: ['@systemPageVariant']
+        __calls:
+            - addTitle: ['@localValueRootNode']
+            - addContentVariant: ['@systemPageVariant']
         webCatalog: '@webCatalog'
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:

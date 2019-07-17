@@ -20,3 +20,4 @@ Feature: Upload product watermark image
       | File | cat1.jpg |
     And I save setting
     Then I should see "Configuration saved" flash message
+    And I should see "cat1.jpg"

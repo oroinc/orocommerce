@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Nelmio\Alice\Instances\Collection as AliceCollection;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
 use Oro\Bundle\TranslationBundle\Entity\Repository\TranslationKeyRepository;
 use Oro\Bundle\TranslationBundle\Entity\TranslationKey;
 
@@ -19,7 +19,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    public function init(Registry $doctrine, Collection $referenceRepository)
     {
         $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);
         $this->setProductUnitReferences($doctrine, $referenceRepository);
@@ -29,9 +29,9 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 
     /**
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
-    private function setDefaultProductFamilyReference(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setDefaultProductFamilyReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(AttributeFamily::class);
         $attributeFamily = $repository->findOneBy([
@@ -47,9 +47,9 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 
     /**
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
-    private function setProductUnitReferences(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setProductUnitReferences(Registry $doctrine, Collection $referenceRepository): void
     {
         /** @var ProductUnitRepository $repository */
         $repository = $doctrine->getManager()->getRepository(ProductUnit::class);
@@ -73,11 +73,11 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * Example: translation_key_jsmessages_oro_product_product_unit_bottle_value_label
      *
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
     private function setProductUnitTranslationKeysReferences(
         Registry $doctrine,
-        AliceCollection $referenceRepository
+        Collection $referenceRepository
     ): void {
         /** @var TranslationKeyRepository $repository */
         $repository = $doctrine->getManager()->getRepository('OroTranslationBundle:TranslationKey');
@@ -99,9 +99,9 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 
     /**
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
-    private function setProductAttributesReferences(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setProductAttributesReferences(Registry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManagerForClass(FieldConfigModel::class)->getRepository(FieldConfigModel::class);
 

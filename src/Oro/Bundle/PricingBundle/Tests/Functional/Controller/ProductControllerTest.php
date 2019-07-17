@@ -27,7 +27,7 @@ class ProductControllerTest extends ProductHelperTestCase
     protected $newPrice = [
         'quantity' => 1,
         'unit' => 'box',
-        'price' => '12.34',
+        'price' => '12.3400',
         'currency' => 'EUR',
     ];
 

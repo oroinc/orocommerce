@@ -2,7 +2,7 @@ Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm:
         label: net 10
 
-Oro\Bundle\CurrencyBundle\Entity\MultiCurrency (local):
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency :
     subtotal1:
         value: 50.00
         baseCurrencyValue: 50.00
@@ -29,7 +29,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'FirstOrder'
         website: '@website1'
         currency: USD
-        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
         sourceEntityId: '@shoppinglist1->id'
         sourceEntityIdentifier: 'Shopping list'
         poNumber: 'ORD1'
@@ -45,7 +45,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SecondOrder'
         website: '@website1'
         currency: USD
-        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
         sourceEntityId: '@shoppinglist1->id'
         sourceEntityIdentifier: 'Shopping list'
         poNumber: 'ORD2'
@@ -54,7 +54,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         totalObject: '@total2'
         estimatedShippingCostAmount: 2.00
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD

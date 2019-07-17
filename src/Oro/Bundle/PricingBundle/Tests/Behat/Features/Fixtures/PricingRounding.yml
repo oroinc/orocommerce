@@ -34,7 +34,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     sku: 'SKU123'
     type: 'simple'
     primaryUnitPrecision: '@precision1'
-    addName: ['@locValue1']
+    __calls:
+        - addName: ['@locValue1']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
@@ -44,7 +45,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     sku: 'SKU456'
     type: 'simple'
     primaryUnitPrecision: '@precision2'
-    addName: ['@locValue2']
+    __calls:
+        - addName: ['@locValue2']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
@@ -54,19 +56,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
     sku: 'SKU789'
     type: 'simple'
     primaryUnitPrecision: '@precision3'
-    addName: ['@locValue3']
+    __calls:
+        - addName: ['@locValue3']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
   products:
     __construct: [['@product1','@product2']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   categoryLightingProducts:
-    addTitle: ['@localNewCategory']
-    setParentCategory: [1]
-    setProducts: ['@products']
+    __calls:
+        - addTitle: ['@localNewCategory']
+        - setParentCategory: ['@root_category']
+        - setProducts: ['@products']

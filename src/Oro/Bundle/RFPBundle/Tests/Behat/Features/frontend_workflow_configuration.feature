@@ -333,7 +333,7 @@ Feature: Frontend workflow configuration
 
     And save and close form
     And click "Activate"
-    And click "Activate"
+    And I click "Activate" in modal window
     # for now, in UI no way to change applications
     And I allow workflow "Workflow Button Titles" for "commerce" application
     And go to System/ Localization/ Translations

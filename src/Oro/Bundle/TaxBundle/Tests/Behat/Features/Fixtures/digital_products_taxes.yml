@@ -20,7 +20,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
   digital_product:
     sku: 'SKU124'
     primaryUnitPrecision: '@precision_digital'
-    addName: ['@locValue2']
+    __calls:
+        - addName: ['@locValue2']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     owner: '@business_unit'
@@ -152,7 +153,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     postalCode: '1010'
     frontendOwner: '@amanda'
     owner: '@admin'
-    setDefaults: ['@shippingType', '@billingType']
+    __calls:
+      - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
     primary: true
     organization: '@organization'
@@ -165,7 +167,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     postalCode: '32003'
     frontendOwner: '@amanda'
     owner: '@admin'
-    setDefaults: ['@shippingType', '@billingType']
+    __calls:
+      - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
     primary: true
     organization: '@organization'

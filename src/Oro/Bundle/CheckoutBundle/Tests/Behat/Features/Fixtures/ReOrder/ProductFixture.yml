@@ -47,10 +47,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'AAA1'
         primaryUnitPrecision: '@first_precision_product1'
-        addName: ['@name_product1']
+        __calls:
+            - addName: ['@name_product1']
+            - addAdditionalUnitPrecision: ['@second_precision_product1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
-        addAdditionalUnitPrecision: ['@second_precision_product1']
     product2:
         type: 'simple'
         organization: '@organization'
@@ -58,10 +59,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'BBB2'
         primaryUnitPrecision: '@first_precision_product2'
-        addName: ['@name_product2']
+        __calls:
+            - addName: ['@name_product2']
+            - addAdditionalUnitPrecision: ['@second_precision_product2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
-        addAdditionalUnitPrecision: ['@second_precision_product2']
     product3:
         type: 'simple'
         organization: '@organization'
@@ -69,7 +71,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'CCC3'
         primaryUnitPrecision: '@first_precision_product3'
-        addName: ['@name_product3']
+        __calls:
+            - addName: ['@name_product3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
     product4:
@@ -79,19 +82,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'DDD4'
         primaryUnitPrecision: '@first_precision_product4'
-        addName: ['@name_product4']
+        __calls:
+            - addName: ['@name_product4']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
         status: 'enabled'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     products:
         __construct: [['@product1', '@product2', '@product3', '@product4']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category:
-        addTitle: ['@name_category']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        __calls:
+            - addTitle: ['@name_category']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:

@@ -3,13 +3,14 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
         name: 'Common Business Unit'
         organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
-    price:
-        value: '10'
-        currency: 'USD'
-
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision{1..3}:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
         unit: '@item'
         precision: '1'
 
@@ -17,39 +18,43 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'SKU1'
         type: 'simple'
-        primaryUnitPrecision: '@precision1'
-        addName: ['@locValue1']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue1']
+            - setPrimaryUnitPrecision: ['@precision1']
     product2:
         sku: 'SKU2'
         type: 'simple'
-        primaryUnitPrecision: '@precision2'
-        addName: ['@locValue2']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue2']
+            - setPrimaryUnitPrecision: ['@precision2']
     product3:
         sku: 'SKU3'
         type: 'simple'
-        primaryUnitPrecision: '@precision3'
-        addName: ['@locValue3']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue3']
+            - setPrimaryUnitPrecision: ['@precision3']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
@@ -124,19 +129,22 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
-        addTitle: ['@localNewCategory']
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
         organization: '@organization'
-        setParentCategory: [1]
     category2:
-        addTitle: ['@localNewCategory2']
-        setParentCategory: ['@category1']
-        addProduct: ['@product2']
+        __calls:
+            - addTitle: ['@localNewCategory2']
+            - setParentCategory: ['@category1']
+            - addProduct: ['@product2']
         organization: '@organization'
     category3:
-        addTitle: ['@localNewCategory3']
-        setParentCategory: ['@category2']
-        addProduct: ['@product3']
+        __calls:
+            - addTitle: ['@localNewCategory3']
+            - setParentCategory: ['@category2']
+            - addProduct: ['@product3']
         organization: '@organization'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
@@ -174,6 +182,6 @@ Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     requestproductitem1:
         request_product: '@requestproduct1'
         quantity: 1
-        product_unit_code: 'item'
+        productUnit: '@item'
         value: 2
         currency: 'USD'

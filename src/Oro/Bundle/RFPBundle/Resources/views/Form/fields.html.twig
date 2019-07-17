@@ -230,7 +230,7 @@
     {% endif %}
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
     <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
-        class="rfp-lineitem"
+        class="rfp-lineitem oro-item-collection__row--align-top"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
             >

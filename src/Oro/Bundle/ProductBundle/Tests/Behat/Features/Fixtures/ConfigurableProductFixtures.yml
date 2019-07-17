@@ -1,3 +1,14 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    simpleUnitPrecision1:
+        unit: '@item'
+        precision: '1'
+    simpleUnitPrecision2:
+        unit: '@item'
+        precision: '1'
+    configurableUnitPrecision:
+        unit: '@item'
+        precision: '1'
+
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     simpleProductLoc1:
         string: 'Black Slip-On Clog L'
@@ -10,19 +21,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     clogsCategory:
-        addTitle: ['@clogCategoryLoc']
-        setParentCategory: [1]
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    simpleUnitPrecision1:
-        unit: '@item'
-        precision: '1'
-    simpleUnitPrecision2:
-        unit: '@item'
-        precision: '1'
-    configurableUnitPrecision:
-        unit: '@item'
-        precision: '1'
+        __calls:
+            - addTitle: ['@clogCategoryLoc']
+            - setParentCategory: ['@root_category']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     simpleProduct1:
@@ -31,36 +32,42 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@simpleUnitPrecision1'
-        addName: ['@simpleProductLoc1']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
         featured: true
+        __calls:
+            - addName: ['@simpleProductLoc1']
+            - addUnitPrecision: ['@simpleUnitPrecision1']
+            - setPrimaryUnitPrecision: ['@simpleUnitPrecision1']
     simpleProduct2:
         type: 'simple'
         sku: '1GB82'
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@simpleUnitPrecision2'
-        addName: ['@simpleProductLoc2']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
         featured: true
+        __calls:
+            - addName: ['@simpleProductLoc2']
+            - addUnitPrecision: ['@simpleUnitPrecision2']
+            - setPrimaryUnitPrecision: ['@simpleUnitPrecision2']
     configurableProduct:
         type: 'configurable'
         sku: '1GB83'
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@configurableUnitPrecision'
-        addName: ['@configurableProductLoc']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         newArrival: true
         featured: true
+        __calls:
+            - addName: ['@configurableProductLoc']
+            - addUnitPrecision: ['@configurableUnitPrecision']
+            - setPrimaryUnitPrecision: ['@configurableUnitPrecision']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     simpleProductItemPrice1:

@@ -31,7 +31,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:
@@ -39,7 +40,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA2'
         primaryUnitPrecision: '@precision2'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
     product3:
@@ -47,7 +49,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA3'
         primaryUnitPrecision: '@precision3'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
         status: 'enabled'
     product4:
@@ -55,7 +58,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA4'
         primaryUnitPrecision: '@precision4'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
 

@@ -358,25 +358,25 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
         description: 'Percent Discount'
         type: oro_order_discount_item_type_percent
         percent: 20.1
-        amount: '<(@order1->subtotal * 20.1 / 100)>'
+        amount: '<(@order1->getSubtotal() * 20.1 / 100)>'
     order1_discount_amount:
         order: '@order1'
         description: 'Amount Discount'
         type: oro_order_discount_item_type_amount
         percent: 20.1
-        amount: '<(@order1->subtotal * 20.1 / 100)>'
+        amount: '<(@order1->getSubtotal() * 20.1 / 100)>'
     order3_discount_amount:
         order: '@order3'
         description: 'Amount Discount order 3'
         type: oro_order_discount_item_type_amount
         percent: 2.1
-        amount: '<(@order3->subtotal * 2.1 / 100)>'
+        amount: '<(@order3->getSubtotal() * 2.1 / 100)>'
     another_order_discount_percent:
         order: '@another_order'
         description: 'Percent Discount another order'
         type: oro_order_discount_item_type_percent
         percent: 24.1
-        amount: '<(@another_order->subtotal * 24.1 / 100)>'
+        amount: '<(@another_order->getSubtotal() * 24.1 / 100)>'
 
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:

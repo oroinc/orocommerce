@@ -19,7 +19,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
@@ -41,7 +41,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode
     postalCode1:
         name: '10115'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: '1'
         currency: 'EUR'
@@ -64,7 +64,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer1'
         organization: '@organization'
-        role: ['@buyer']
+        roles: ['@buyer']
         owner: '@admin'
         website: '@website1'
 
@@ -81,7 +81,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -124,7 +125,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         lastName: 'Cole'
         frontendOwner: '@amanda'
         owner: '@admin'
-        setDefaults: ['@shippingType', '@billingType']
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
 
@@ -132,7 +134,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist_shipping:
         name: 'pricelist_shipping'
         default: true
-        setCurrencies: [['USD', 'EUR']]
+        __calls:
+            - setCurrencies: [['USD', 'EUR']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:

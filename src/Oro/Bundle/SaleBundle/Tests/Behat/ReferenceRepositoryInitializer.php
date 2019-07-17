@@ -3,11 +3,11 @@
 namespace Oro\Bundle\SaleBundle\Tests\Behat;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Nelmio\Alice\Instances\Collection as AliceCollection;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteInternalStatuses;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
@@ -16,17 +16,18 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    public function init(Registry $doctrine, Collection $referenceRepository)
     {
         $this->setWorkflowsReference($doctrine, $referenceRepository);
         $this->setInternalStatusesReference($doctrine, $referenceRepository);
+        $this->setCustomerStatusesReference($doctrine, $referenceRepository);
     }
 
     /**
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
-    private function setWorkflowsReference(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setWorkflowsReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $workflowDefinitionRepo = $doctrine->getManager()->getRepository(WorkflowDefinition::class);
         $workflowName = 'b2b_quote_backoffice_approvals';
@@ -45,17 +46,31 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 
     /**
      * @param Registry $doctrine
-     * @param AliceCollection $referenceRepository
+     * @param Collection $referenceRepository
      */
-    private function setInternalStatusesReference(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setInternalStatusesReference(Registry $doctrine, Collection $referenceRepository): void
     {
         $enumClass = ExtendHelper::buildEnumValueClassName(Quote::INTERNAL_STATUS_CODE);
+        $repository = $doctrine->getManager()->getRepository($enumClass);
 
-        foreach (LoadQuoteInternalStatuses::getDataKeys() as $status) {
-            $referenceRepository->set(
-                sprintf('quote_internal_status_%s', $status),
-                $doctrine->getManagerForClass($enumClass)->getReference($enumClass, $status)
-            );
+        /** @var AbstractEnumValue $status */
+        foreach ($repository->findAll() as $status) {
+            $referenceRepository->set(sprintf('quote_internal_status_%s', $status->getId()), $status);
+        }
+    }
+
+    /**
+     * @param Registry $doctrine
+     * @param Collection $referenceRepository
+     */
+    private function setCustomerStatusesReference(Registry $doctrine, Collection $referenceRepository): void
+    {
+        $enumClass = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
+        $repository = $doctrine->getManager()->getRepository($enumClass);
+
+        /** @var AbstractEnumValue $status */
+        foreach ($repository->findAll() as $status) {
+            $referenceRepository->set(sprintf('quote_customer_status_%s', $status->getId()), $status);
         }
     }
 }

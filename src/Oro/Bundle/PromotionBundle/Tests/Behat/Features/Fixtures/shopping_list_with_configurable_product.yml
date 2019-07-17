@@ -15,7 +15,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU_CONFIGURABLE'
         type: 'configurable'
         primaryUnitPrecision: '@precision_configurable'
-        addName: ['@locValueConfigurable']
+        __calls:
+            - addName: ['@locValueConfigurable']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

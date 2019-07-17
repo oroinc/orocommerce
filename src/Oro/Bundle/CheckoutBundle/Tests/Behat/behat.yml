@@ -18,17 +18,14 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
-        - OroProductBundle::QuickOrderFormContext
         - OroPricingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroDataGridBundle::GridContext
         - OroUIBundle::DatepickerContext
         - OroEmailBundle::EmailContext
         - OroPromotionBundle::PromotionContext
         - OroWorkflowBundle::FeatureContext
         - OroNavigationBundle::TabContext
-        - OroFlatRateShippingBundle::FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 

@@ -25,11 +25,11 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $crawler->html());
         $this->assertEquals(
-            '123',
+            '123.00',
             $form['oro_catalog_category[minimumQuantityToOrder][scalarValue]']->getValue()
         );
         $this->assertEquals(
-            '321',
+            '321.00',
             $form['oro_catalog_category[maximumQuantityToOrder][scalarValue]']->getValue()
         );
     }

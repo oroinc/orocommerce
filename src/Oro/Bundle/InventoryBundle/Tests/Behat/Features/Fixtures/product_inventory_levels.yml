@@ -22,7 +22,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU1'
         type: 'simple'
         primaryUnitPrecision: '@precision1'
-        addName: ['@productName1']
+        __calls:
+            - addName: ['@productName1']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
@@ -32,7 +33,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU2'
         type: 'simple'
         primaryUnitPrecision: '@precision2'
-        addName: ['@productName2']
+        __calls:
+            - addName: ['@productName2']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'

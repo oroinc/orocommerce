@@ -10,7 +10,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
         primaryUnitPrecision: '@precision'
-        addName: ['@locValue']
+        __calls:
+            - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
@@ -18,7 +19,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
