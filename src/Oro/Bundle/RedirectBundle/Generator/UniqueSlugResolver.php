@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 
+/**
+ * Keep slug URLs unique per entity by adding suffix on duplicates.
+ */
 class UniqueSlugResolver
 {
     const INCREMENTED_SLUG_PATTERN = '/^(.*)-\d+$/';
@@ -16,6 +20,13 @@ class UniqueSlugResolver
      * @var SlugRepository
      */
     protected $repository;
+
+    /**
+     * Store URLs processed in the current batch to increment suffixes for entities withing same transaction.
+     *
+     * @var array
+     */
+    private $processedUrls = [];
 
     /**
      * @param SlugRepository $repository
@@ -34,15 +45,21 @@ class UniqueSlugResolver
     {
         $slug = $slugUrl->getUrl();
 
-        if ($this->repository->findOneDirectUrlBySlug($slug, $entity)) {
+        if ($this->hasExistingSlug($slug, $entity)) {
             $baseSlug = $this->getBaseSlug($slug, $entity);
 
             $resolvedSlug = $this->getIncrementedSlug($baseSlug, $entity);
         } else {
             $resolvedSlug = $slug;
         }
+        $this->processedUrls[$resolvedSlug] = $this->getEntityIdentifier($entity);
 
         return $resolvedSlug;
+    }
+
+    public function onFlush()
+    {
+        $this->processedUrls = [];
     }
 
     /**
@@ -91,9 +108,9 @@ class UniqueSlugResolver
      */
     protected function getPreMatchedIncrementSlug($slug, SluggableInterface $entity)
     {
-        return $this->repository->findAllDirectUrlsByPattern(
-            sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug),
-            $entity
+        return array_merge(
+            $this->findProcessedUrls($slug, $entity),
+            $this->findStoredUrls($slug, $entity)
         );
     }
 
@@ -104,5 +121,67 @@ class UniqueSlugResolver
     protected function buildSlugIncrementPattern($slug)
     {
         return sprintf(self::SLUG_INCREMENT_PATTERN, preg_quote($slug, '/'));
+    }
+
+    /**
+     * @param string $slug
+     * @param SluggableInterface $entity
+     * @return bool
+     */
+    private function hasExistingSlug(string $slug, SluggableInterface $entity): bool
+    {
+        return $this->hasUrlDuplicateWithinBatch($slug, $entity)
+            || $this->repository->findOneDirectUrlBySlug($slug, $entity);
+    }
+
+    /**
+     * @param $slug
+     * @param SluggableInterface $entity
+     * @return array|string[]
+     */
+    private function findStoredUrls(string $slug, SluggableInterface $entity)
+    {
+        return $this->repository->findAllDirectUrlsByPattern(
+            sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug),
+            $entity
+        );
+    }
+
+    /**
+     * @param string $slug
+     * @param SluggableInterface $entity
+     * @return array
+     */
+    private function findProcessedUrls(string $slug, SluggableInterface $entity): array
+    {
+        $foundUrls = [];
+        $currentEntityId = $this->getEntityIdentifier($entity);
+        foreach ($this->processedUrls as $url => $entityId) {
+            if ($entityId !== $currentEntityId && strpos($url, $slug . '-') === 0) {
+                $foundUrls[] = $url;
+            }
+        }
+
+        return $foundUrls;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return string
+     */
+    private function getEntityIdentifier(SluggableInterface $entity): string
+    {
+        return ClassUtils::getClass($entity) . ':' . $entity->getId();
+    }
+
+    /**
+     * @param string $slug
+     * @param SluggableInterface $entity
+     * @return bool
+     */
+    private function hasUrlDuplicateWithinBatch(string $slug, SluggableInterface $entity): bool
+    {
+        return !empty($this->processedUrls[$slug])
+            && $this->processedUrls[$slug] !== $this->getEntityIdentifier($entity);
     }
 }
