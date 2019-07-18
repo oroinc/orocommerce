@@ -5,9 +5,17 @@ namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Get chunk of ids for given entity.
+ */
 class EntityIdentifierRepository
 {
     const QUERY_LIMIT = 100000;
+
+    /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
 
     /**
      * @param DoctrineHelper $doctrineHelper

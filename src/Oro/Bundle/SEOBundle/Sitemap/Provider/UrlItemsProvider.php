@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
@@ -19,6 +18,9 @@ use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provides UrlItems for sitemap generation
+ */
 class UrlItemsProvider implements UrlItemsProviderInterface
 {
     const ENTITY_ALIAS = 'entityAlias';
@@ -282,7 +284,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
-     * @return EntityManagerInterface|ObjectManager
+     * @return EntityManagerInterface
      */
     protected function getEntityManager()
     {
