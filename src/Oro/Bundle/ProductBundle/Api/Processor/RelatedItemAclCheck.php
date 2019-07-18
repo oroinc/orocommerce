@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -42,6 +43,7 @@ class RelatedItemAclCheck implements ProcessorInterface
             return;
         }
 
+        /** @var QueryBuilder $qb */
         $qb = $context->getQuery();
         $rootAlias = $this->doctrineHelper->getRootAlias($qb);
         $qb->leftJoin(sprintf('%s.product', $rootAlias), 'p')
