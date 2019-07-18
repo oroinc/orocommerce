@@ -4,7 +4,6 @@
     .content-variant-item {
         position: relative;
         padding: 10px 40px;
-        border: 1px solid $additional-extra-lighten;
         background: $primary-900;
         border-radius: 4px;
 
@@ -33,11 +32,11 @@
 
         input[type="radio"] {
             margin-top: -2px;
-            margin-right: 7px;
+            margin-#{$end}: 7px;
         }
 
         .content-variant-item-default-label {
-            margin-left: 7px;
+            margin-#{$start}: 7px;
         }
     }
 
@@ -48,22 +47,7 @@
     .removeVariantBtn {
         position: absolute;
         top: 4px;
-        right: 4px;
-        font-size: 0;
-        line-height: 0;
-        margin: 0 0 0 5px;
-
-        &:after {
-            display: inline-block;
-            font: 14px/1em FontAwesome;
-            color: #ddd;
-            content: '\f00d';
-            text-indent: 0;
-        }
-
-        &:hover:after {
-            color: #888;
-        }
+        #{$end}: 4px;
     }
 
     .scope-collection {
@@ -71,7 +55,7 @@
             display: block !important;
 
             .row-oro {
-                background: #fff !important;
+                background: $primary-inverse !important;
             }
         }
     }
