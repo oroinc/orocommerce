@@ -320,6 +320,7 @@ services:
 
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
+        public: true
 
     oro_product.provider.product_inventory_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider'
@@ -328,6 +329,7 @@ services:
 
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
+        public: true
 
     oro_product.product_unit.cache:
         public: false
@@ -337,6 +339,7 @@ services:
 
     oro_product.provider.product_units_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_product.formatter.product_unit_label'
@@ -1279,6 +1282,7 @@ services:
 
     oro_product.provider.brand_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
+        public: true
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter

@@ -441,6 +441,7 @@ services:
 
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
+        public: true
 
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener

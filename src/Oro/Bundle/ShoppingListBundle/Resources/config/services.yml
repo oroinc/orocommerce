@@ -477,6 +477,7 @@ services:
 
     oro_shopping_list.datagrid.total_currency_helper:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper
+        public: true
         arguments:
             - '@oro_currency.config.currency'
             - '@oro_pricing.provider.website_currency_provider'

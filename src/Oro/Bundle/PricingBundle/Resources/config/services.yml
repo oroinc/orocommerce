@@ -1253,6 +1253,7 @@ services:
 
     oro_pricing.provider.price_list_default_value:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+        public: true
         arguments:
             - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'

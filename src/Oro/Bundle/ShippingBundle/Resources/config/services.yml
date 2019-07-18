@@ -402,6 +402,7 @@ services:
 
     oro_shipping.provider.basic_shipping_methods_choices:
         class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        public: true
         arguments:
         - '@oro_shipping.shipping_method_provider'
         - '@translator'

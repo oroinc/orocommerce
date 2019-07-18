@@ -107,6 +107,7 @@ services:
 
     oro_payment.provider.payment_status:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
+        public: true
         arguments:
             - '@oro_payment.provider.payment_transaction'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -199,6 +200,7 @@ services:
 
     oro_payment.formatter.payment_status_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter'
+        public: true
         arguments:
             - "@translator"
 
