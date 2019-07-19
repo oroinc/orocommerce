@@ -1,7 +1,7 @@
 services:
-
     oro_order.api.form_listener.discount:
         class: 'Oro\Bundle\OrderBundle\Api\Form\EventListener\DiscountListener'
+        public: true
         arguments:
             - '@oro_order.order.total.total_helper'
 

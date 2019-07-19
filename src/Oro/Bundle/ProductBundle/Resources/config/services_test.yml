@@ -1,8 +1,10 @@
 services:
     oro_product.importexport.normalizer.product_image.test:
         alias: oro_product.importexport.normalizer.product_image
+        public: true
 
     oro_product.tests.migration_listener:
         class: Oro\Bundle\ProductBundle\Tests\Functional\Environment\TestEntitiesMigrationListener
+        public: true
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }

@@ -49,6 +49,7 @@ services:
 
     oro_pricing.api_form_subscriber.add_schedules_to_price_list:
         class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Form\AddSchedulesToPriceListApiFormSubscriber'
+        public: true
 
     oro_pricing.api.save_price_list_schedules_to_context:
         class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\SavePriceListSchedulesToContext'

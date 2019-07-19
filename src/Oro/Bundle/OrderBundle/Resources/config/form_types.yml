@@ -88,6 +88,7 @@ services:
 
     oro_order.form.type.event_listener.subtotals_subscriber:
         class: 'Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber'
+        public: true
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_order.pricing.price_matcher'
