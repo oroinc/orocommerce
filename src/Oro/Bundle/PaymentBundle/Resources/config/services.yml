@@ -22,6 +22,7 @@ services:
 
     oro_payment.datagrid.payment_rule_actions_visibility_provider:
         parent: oro_rule.action.visibility_provider
+        public: true
 
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'

@@ -331,6 +331,7 @@ services:
 
     oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
         parent: oro_rule.action.visibility_provider
+        public: true
 
     oro_shipping.converter.shipping_context_to_rule_values:
         class: 'Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter'

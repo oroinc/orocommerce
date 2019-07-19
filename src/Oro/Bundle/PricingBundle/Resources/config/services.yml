@@ -39,6 +39,7 @@ services:
 
     oro_pricing.datagrid.price_list_permissions_provider:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'
+        public: true
 
     oro_pricing.form.autocomplete.price_list.search_handler:
         public: false
