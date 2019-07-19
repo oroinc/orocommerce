@@ -6,6 +6,13 @@
     display: inline-block;
     vertical-align: middle;
 
+    &_paypal {
+        width: 39px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/paypal.png') no-repeat;
+    }
+
     &_mastercard {
         width: 39px;
         height: 25px;
