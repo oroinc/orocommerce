@@ -4,9 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -16,6 +17,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductSearchTest extends FrontendRestJsonApiTestCase
 {
+    use WebsiteSearchExtensionTrait;
+    use PreviouslyPurchasedFeatureTrait;
+
     protected function setUp()
     {
         parent::setUp();
@@ -23,22 +27,28 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
-            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml',
+            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml'
         ]);
     }
 
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();
-        $this->getSearchIndexer()->reindex(Product::class);
+        $this->enablePreviouslyPurchasedFeature($this->getReference('website'));
+        $this->reindexProductData();
     }
 
     /**
-     * @return IndexerInterface
+     * @param array $expectedContent
+     *
+     * @return array
      */
-    private function getSearchIndexer()
+    private function getExpectedContentWithPaginationLinks(array $expectedContent): array
     {
-        return self::getContainer()->get('oro_website_search.indexer');
+        $content = Yaml::dump($expectedContent);
+        $content = str_replace('{baseUrl}', $this->getApiBaseUrl(), $content);
+
+        return self::processTemplateData(Yaml::parse($content));
     }
 
     public function testNoSearchQueryFilter()
@@ -167,7 +177,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'data'     => [
                     [
                         'type' => 'productsearch',
-                        'id'   => '<toString(@product1->id)>',
+                        'id'   => '<toString(@product1->id)>'
                     ]
                 ],
                 'included' => [
@@ -621,9 +631,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'title'  => 'filter constraint',
                 'detail' => 'The operator ">" is not supported for the field "testAttrEnum".'
                     . ' Supported operators: =, !=, in, !in.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
@@ -644,9 +652,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'detail' => 'Not allowed operator. Unexpected token "operator" of value "~" '
                     . '("operator" expected with value ">, >=, <, <=, =, !=, in, !in, exists, notexists") '
                     . 'around position 14.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
@@ -667,9 +673,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'detail' => 'Not allowed operator. Unexpected token "operator" of value ">" '
                     . '("operator" expected with value "~, !~, =, !=, in, !in, starts_with, exists, notexists, like, '
                     . 'notlike") around position 6.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
@@ -690,9 +694,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'detail' => 'Not allowed operator. Unexpected token "operator" of value "~" '
                     . '("operator" expected with value ">, >=, <, <=, =, !=, in, !in, exists, notexists") '
                     . 'around position 14.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
@@ -711,15 +713,13 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             [
                 'title'  => 'filter constraint',
                 'detail' => 'Unexpected string "test" in where statement around position 13.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
     }
 
-    public function testTryToFilterByNonIndexedField()
+    public function testTryToFilterByNotSupportedField()
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -731,10 +731,8 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'filter constraint',
-                'detail' => 'Field "name123" is not supported.',
-                'source' => [
-                    'parameter' => 'filter[searchQuery]'
-                ]
+                'detail' => 'The field "name123" is not supported.',
+                'source' => ['parameter' => 'filter[searchQuery]']
             ],
             $response
         );
@@ -785,6 +783,62 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                             'sku' => 'PSKU3'
                         ]
                     ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testSortByLocalizedField()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['fields[productsearch]' => 'sku,name', 'sort' => '-name']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@product3->id)>',
+                        'attributes' => [
+                            'sku'  => 'PSKU3',
+                            'name' => 'Product 3'
+                        ]
+                    ],
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@product1->id)>',
+                        'attributes' => [
+                            'sku'  => 'PSKU1',
+                            'name' => 'Product 1'
+                        ]
+                    ],
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@configurable_product3->id)>',
+                        'attributes' => [
+                            'sku'  => 'CPSKU3',
+                            'name' => 'Configurable Product 3'
+                        ]
+                    ],
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@configurable_product2->id)>',
+                        'attributes' => [
+                            'sku'  => 'CPSKU2',
+                            'name' => 'Configurable Product 2'
+                        ]
+                    ],
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@configurable_product1->id)>',
+                        'attributes' => [
+                            'sku'  => 'CPSKU1',
+                            'name' => 'Configurable Product 1'
+                        ]
+                    ],
                 ]
             ],
             $response
@@ -1044,7 +1098,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToSortByNonSupportedField()
+    public function testTryToSortByNotSupportedField()
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -1057,9 +1111,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             [
                 'title'  => 'sort constraint',
                 'detail' => 'Sorting by "name123" field is not supported.',
-                'source' => [
-                    'parameter' => 'sort'
-                ]
+                'source' => ['parameter' => 'sort']
             ],
             $response
         );
@@ -1148,5 +1200,65 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
 
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testPaginationLinksFirstPage()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'isVariant = 0'], 'page' => ['size' => 2]],
+            ['HTTP_HATEOAS' => true]
+        );
+
+        $url = '{baseUrl}/productsearch';
+        $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
+        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
+            'links' => [
+                'self' => $url,
+                'next' => $urlWithFilter . '&page%5Bsize%5D=2&page%5Bnumber%5D=2'
+            ]
+        ]);
+        $this->assertResponseContains($expectedLinks, $response);
+    }
+
+    public function testPaginationLinksSecondPage()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'isVariant = 0'], 'page' => ['size' => 2, 'number' => 2]],
+            ['HTTP_HATEOAS' => true]
+        );
+
+        $url = '{baseUrl}/productsearch';
+        $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
+        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
+            'links' => [
+                'self'  => $url,
+                'first' => $urlWithFilter . '&page%5Bsize%5D=2',
+                'prev'  => $urlWithFilter . '&page%5Bsize%5D=2',
+                'next'  => $urlWithFilter . '&page%5Bnumber%5D=3&page%5Bsize%5D=2'
+            ]
+        ]);
+        $this->assertResponseContains($expectedLinks, $response);
+    }
+
+    public function testPaginationLinksLastPage()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'isVariant = 0'], 'page' => ['size' => 2, 'number' => 3]],
+            ['HTTP_HATEOAS' => true]
+        );
+
+        $url = '{baseUrl}/productsearch';
+        $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
+        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
+            'links' => [
+                'self'  => $url,
+                'first' => $urlWithFilter . '&page%5Bsize%5D=2',
+                'prev'  => $urlWithFilter . '&page%5Bnumber%5D=2&page%5Bsize%5D=2'
+            ]
+        ]);
+        $this->assertResponseContains($expectedLinks, $response);
     }
 }

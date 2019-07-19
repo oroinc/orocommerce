@@ -50,6 +50,17 @@ The parentheses in complex queries can be used to enforce the precedence of oper
 
 **Note:** a string value that contains a space symbol must be enclosed by double quotes (`"`).
 
+**Note:** for boolean values use `0` for `false` and `1` for `true`.
+
+**Note:** a datetime value must be enclosed by double quotes (`"`) and formatted as `YYYY-MM-DD hh:mm:ss`, where:
+
+- `YYYY` - four-digit year
+- `MM` - two-digit month (01=January, etc.)
+- `DD` - two-digit day of month (01 through 31)
+- `hh` - two digits of hour (00 through 23)
+- `mm` - two digits of minute (00 through 59)
+- `ss` - two digits of second (00 through 59)
+
 <br />
 Keywords:
 
@@ -106,6 +117,61 @@ The `minimalPrice_{unit}` means that `{unit}` can be replaced with any
 [product unit](https://oroinc.com/b2b-ecommerce/doc/current/user-guide/product-units).
 E.g., to specify the minimal price for the `set` product unit, the field name will be `minimalPrice_set`.
 
+#### **aggregations** filter
+
+This filter is used to request aggregated data.
+
+This filter should contain comma delimited definitions of aggregations.
+The definition of each aggregation can be `fieldName aggregatingFunction`
+or `fieldName aggregatingFunction resultName`. An example is 
+`minimalPrice sum sumOfMinimalPrices,productType count`.
+
+If `resultName` is not specified, it is built automatically as `fieldName` + `aggregatingFunction` with
+uppercased first character, e.g., the result name for `productType count` will be `productTypeCount`.
+
+The list of fields for which the aggregated data can be requested:
+
+`id`, `sku`, `skuUppercase`, `name`, `shortDescription`, `productType`, `isVariant`, `newArrival`,
+`inventoryStatus`, `minimalPrice`, `minimalPrice_{unit}`, `orderedAt`, `product`, `productFamily`, `category`.
+
+Also, any filterable product attribute can be used.
+
+Aggregating functions:
+
+| Function | Description |
+|----------|-------------|
+| `count` | Counts the number of values that are extracted from the search index. |
+| `sum` | Sums up numeric values that are extracted from the search index. |
+| `avg` | Computes the average of numeric values that are extracted from the search index. |
+| `min` | Returns the minimum value among numeric values that are extracted from the search index. |
+| `max` | Returns the maximum value among the numeric values that are extracted from the search index. |
+
+<br />
+The aggregated data is returned in the `aggregatedData` field of `meta` section of the response.
+
+The response for the `count` aggregating function is an array. Each element of this array is an object with
+2 properties, `value` and `count`.
+The `value` property contains a value for which the count is calculated.
+The `count` property contains the number of occurrences of the value in the search result.
+
+The response for other aggregating functions is a number.
+
+An example:
+
+```JSON
+{
+    "meta": {
+        "aggregatedData": {
+            "minimalPriceSum": 123.45,
+            "productTypeCount": [
+                { "value": "simple", "count": 10 },
+                { "value": "configurable", "count": 5 }
+            ]
+        }
+    }
+}
+```
+
 #### **sort** filter
 
 This filter is used to sort the result data.
@@ -147,10 +213,6 @@ Specifies if the product is a new arrival.
 
 The status of the inventory of the product, in stock if there is a minimum quantity that can be ordered.
 
-### orderedAt
-
-The date when the customer last ordered the product.
-
 ### unitPrecisions
 
 An array of precisions for each product unit selected for the product.
@@ -191,3 +253,7 @@ The product attribute family which defines attributes that can be used by produc
 ### searchQuery
 
 The filter that is used to specify the search query.
+
+### aggregations
+
+The filter that is used to request aggregated data.

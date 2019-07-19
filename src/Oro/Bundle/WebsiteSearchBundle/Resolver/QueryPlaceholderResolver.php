@@ -6,6 +6,9 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
+/**
+ * Provides functionality to replace placeholders with their values in field names in all parts of a search query.
+ */
 class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 {
     /** @var PlaceholderInterface */
@@ -27,6 +30,7 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         $this->replaceInSelect($query);
         $this->replaceInFrom($query);
         $this->replaceInCriteria($query);
+        $this->replaceInAggregations($query);
     }
 
     /**
@@ -89,5 +93,25 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
             }
             $criteria->orderBy($orderings);
         }
+    }
+
+    /**
+     * @param Query $query
+     */
+    private function replaceInAggregations(Query $query)
+    {
+        $aggregations = $query->getAggregations();
+        if (!$aggregations) {
+            return;
+        }
+
+        $newAggregations = [];
+        foreach ($aggregations as $name => $item) {
+            $newAggregations[$name] = [
+                'field'    => $this->placeholder->replaceDefault($item['field']),
+                'function' => $item['function']
+            ];
+        }
+        $query->setAggregations($newAggregations);
     }
 }

@@ -231,9 +231,6 @@ api:
                     property_path: text.inventory_status
                     target_class: Extend\Entity\EV_Prod_Inventory_Status
                     target_type: to-one
-                orderedAt:
-                    data_type: datetime
-                    property_path: datetime.ordered_at_by_CUSTOMER_USER_ID
                 unitPrecisions:
                     data_type: array
                     property_path: _
@@ -272,7 +269,24 @@ api:
                                 productType: type
                                 isVariant: is_variant
                                 inventoryStatus: inventory_status
-                                orderedAt: ordered_at_by_CUSTOMER_USER_ID
+                                minimalPrice: minimal_price_CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
+                                product: product_id
+                                productFamily: attribute_family_id
+                                category: category_id
+                    aggregations:
+                        data_type: string
+                        type: websiteSearchAggregation
+                        options:
+                            entity_class: Oro\Bundle\ProductBundle\Entity\Product
+                            field_mappings:
+                                id: product_id
+                                skuUppercase: sku_uppercase
+                                name: names_LOCALIZATION_ID
+                                shortDescription: shortDescriptions_LOCALIZATION_ID
+                                productType: type
+                                isVariant: is_variant
+                                inventoryStatus: inventory_status
                                 minimalPrice: minimal_price_CPL_ID_CURRENCY
                                 minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
                                 product: product_id
@@ -297,8 +311,6 @@ api:
                         property_path: integer.newArrival
                     inventoryStatus:
                         property_path: text.inventory_status
-                    orderedAt:
-                        property_path: datetime.ordered_at_by_CUSTOMER_USER_ID
                     minimalPrice:
                         property_path: decimal.minimal_price_CPL_ID_CURRENCY
             actions:

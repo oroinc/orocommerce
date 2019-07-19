@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Filter\FilterValueAccessorInterface;
+use Oro\Bundle\ApiBundle\Exception\InvalidSearchQueryException;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\ErrorSource;
+use Oro\Bundle\ApiBundle\Model\SearchResult;
 use Oro\Bundle\ApiBundle\Processor\ListContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Request\DataType;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\ProductBundle\Api\Model\ProductSearch;
-use Oro\Bundle\SearchBundle\Query\Result as SearchResult;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -24,6 +23,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class LoadProductSearchData implements ProcessorInterface
 {
+    public const SEARCH_RESULT = 'search_result';
+
     /**
      * {@inheritdoc}
      */
@@ -45,30 +46,23 @@ class LoadProductSearchData implements ProcessorInterface
         $config = $context->getConfig();
         $this->updateConfigAndMetadata($config, $context->getMetadata());
 
+        $searchResult = new SearchResult($query, $config->getHasMore());
+        $context->set(self::SEARCH_RESULT, $searchResult);
+
         try {
-            $searchResult = $query->getResult();
-            $data = $this->loadData($searchResult, $config);
-        } catch (\Exception $e) {
-            if ($e instanceof DriverException
-                || (
-                    class_exists('Elasticsearch\Common\Exceptions\BadRequest400Exception')
-                    && $e instanceof \Elasticsearch\Common\Exceptions\BadRequest400Exception
-                )
-            ) {
-                $context->addError(
-                    Error::createValidationError(Constraint::FILTER, 'Invalid search query.')
-                        ->setSource(ErrorSource::createByParameter(
-                            $this->getSearchQueryFilterName($context->getFilterValues())
-                        ))
-                );
-
-                return;
+            $searchRecords = $searchResult->getRecords();
+        } catch (InvalidSearchQueryException $e) {
+            $error = Error::createValidationError(Constraint::FILTER, $e->getMessage());
+            $filterValue = $context->getFilterValues()->get('searchQuery');
+            if (null !== $filterValue) {
+                $error->setSource(ErrorSource::createByParameter($filterValue->getSourceKey()));
             }
+            $context->addError($error);
 
-            throw $e;
+            return;
         }
 
-        $context->setResult($data);
+        $context->setResult($this->loadData($searchRecords, $config));
 
         // set callback to be used to calculate total count
         $context->setTotalCountCallback(
@@ -76,22 +70,6 @@ class LoadProductSearchData implements ProcessorInterface
                 return $searchResult->getRecordsCount();
             }
         );
-    }
-
-    /**
-     * @param FilterValueAccessorInterface $filterValues
-     *
-     * @return string
-     */
-    private function getSearchQueryFilterName(FilterValueAccessorInterface $filterValues): string
-    {
-        $searchQueryFilterName = 'searchQuery';
-        $searchQueryFilterValue = $filterValues->get($searchQueryFilterName);
-        if (null === $searchQueryFilterValue) {
-            return $searchQueryFilterName;
-        }
-
-        return $searchQueryFilterValue->getSourceKey();
     }
 
     /**
@@ -129,20 +107,24 @@ class LoadProductSearchData implements ProcessorInterface
     }
 
     /**
-     * @param SearchResult           $searchResult
+     * @param SearchResultItem[]     $records
      * @param EntityDefinitionConfig $config
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    private function loadData(SearchResult $searchResult, EntityDefinitionConfig $config): array
+    private function loadData(array $records, EntityDefinitionConfig $config): array
     {
         $data = [];
-        $booleanFieldNames = $this->getBooleanFieldNames($config);
+        $fieldsThatRequireTypeConversion = $this->getFieldsThatRequireTypeConversion($config);
         $unitsFieldName = 'text_product_units';
-        /** @var SearchResultItem[] $items */
-        $items = $searchResult->toArray();
-        foreach ($items as $item) {
-            $selectedData = $item->getSelectedData();
+        foreach ($records as $key => $record) {
+            if (ConfigUtil::INFO_RECORD_KEY === $key) {
+                $data[$key] = $record;
+                continue;
+            }
+
+            $selectedData = $record->getSelectedData();
             $dataItem = new ProductSearch(
                 $selectedData[$config->findFieldNameByPropertyPath('integer_product_id')]
             );
@@ -160,10 +142,17 @@ class LoadProductSearchData implements ProcessorInterface
                     // to avoid exceptions in data transformers
                     $value = null;
                 }
-                if (null !== $value && in_array($fieldName, $booleanFieldNames, true)) {
-                    // convert boolean values to boolean data-type
-                    // because the search index uses integer data-type for boolean values
-                    $value = (boolean)$value;
+                if (null !== $value && isset($fieldsThatRequireTypeConversion[$fieldName])) {
+                    $dataType = $fieldsThatRequireTypeConversion[$fieldName];
+                    if (DataType::BOOLEAN === $dataType) {
+                        // convert boolean values to boolean data-type
+                        // because the search index uses integer data-type for boolean values
+                        $value = (boolean)$value;
+                    } elseif (DataType::DATETIME === $dataType && !$value instanceof \DateTimeInterface) {
+                        // convert datetime, date and time values to DateTime object
+                        // because elasticsearch storage engine store them as a string
+                        $value = \DateTime::createFromFormat('Y-m-d H:i:s', $value, new \DateTimeZone('UTC'));
+                    }
                 }
                 $field = $config->getField($fieldName);
                 $propertyPath = null !== $field
@@ -181,18 +170,25 @@ class LoadProductSearchData implements ProcessorInterface
     /**
      * @param EntityDefinitionConfig $config
      *
-     * @return string[]
+     * @return array [field name => search data type, ...]
      */
-    private function getBooleanFieldNames(EntityDefinitionConfig $config): array
+    private function getFieldsThatRequireTypeConversion(EntityDefinitionConfig $config): array
     {
-        $booleanFieldNames = [];
+        $result = [];
         $fields = $config->getFields();
         foreach ($fields as $fieldName => $field) {
-            if ($field->getDataType() === DataType::BOOLEAN) {
-                $booleanFieldNames[] = $fieldName;
+            switch ($field->getDataType()) {
+                case DataType::BOOLEAN:
+                    $result[$fieldName] = DataType::BOOLEAN;
+                    break;
+                case DataType::DATETIME:
+                case DataType::DATE:
+                case DataType::TIME:
+                    $result[$fieldName] = DataType::DATETIME;
+                    break;
             }
         }
 
-        return $booleanFieldNames;
+        return $result;
     }
 }
