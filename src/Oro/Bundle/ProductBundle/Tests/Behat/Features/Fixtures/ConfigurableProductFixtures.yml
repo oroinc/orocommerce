@@ -25,10 +25,28 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@clogCategoryLoc']
             - setParentCategory: ['@root_category']
 
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    simpleProduct1Slug:
+        url: '/black-slip-on-clog-l'
+        slugPrototype: 'black-slip-on-clog-l'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: {'id': '@simpleProduct1->id'}
+    simpleProduct2Slug:
+        url: '/white-slip-on-clog-m'
+        slugPrototype: 'white-slip-on-clog-m'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: {'id': '@simpleProduct2->id'}
+    configurableProductSlug:
+        url: '/slip-on-clog'
+        slugPrototype: 'slip-on-clog'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: {'id': '@configurableProductSlug->id'}
+
 Oro\Bundle\ProductBundle\Entity\Product:
     simpleProduct1:
         type: 'simple'
         sku: '1GB81'
+        slugs: ['@simpleProduct1Slug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
@@ -43,6 +61,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     simpleProduct2:
         type: 'simple'
         sku: '1GB82'
+        slugs: ['@simpleProduct2Slug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
@@ -57,6 +76,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurableProduct:
         type: 'configurable'
         sku: '1GB83'
+        slugs: ['@configurableProductSlug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'

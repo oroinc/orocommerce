@@ -108,7 +108,7 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
      */
     private function getRootNodesByWebCatalog(WebCatalog $webCatalog)
     {
-        $websites = $this->getWebsites();
+        $websites = $this->getWebsites($webCatalog);
         $webCatalogValues = $this->configManager->getValues('oro_web_catalog.web_catalog', $websites);
         $navigationRootValues = [];
         foreach ($webCatalogValues as $websiteId => $value) {
@@ -134,15 +134,17 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
     }
 
     /**
+     * @param WebCatalog $webCatalog
+     *
      * @return array
      */
-    private function getWebsites(): array
+    private function getWebsites(WebCatalog $webCatalog): array
     {
         $repository = $this->registry
             ->getManagerForClass(Website::class)
             ->getRepository(Website::class);
 
-        return $repository->getAllWebsites();
+        return $repository->getAllWebsites($webCatalog->getOrganization());
     }
 
     /**

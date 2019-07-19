@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,6 +17,11 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
     protected $productRepository;
 
     /**
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $aclHelper;
+
+    /**
      * @var SkuCachedProductProvider
      */
     protected $testedProvider;
@@ -21,8 +29,9 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
-        $this->testedProvider = new SkuCachedProductProvider($this->productRepository);
+        $this->testedProvider = new SkuCachedProductProvider($this->productRepository, $this->aclHelper);
     }
 
     /**
@@ -37,22 +46,34 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
     {
         $skuOne = '1';
         $skuTwo = '2';
-        $productMockOne = $this->createProductMock($skuOne);
-        $productMockTwo = $this->createProductMock($skuTwo);
+        $productMockOne = $this->createProductMock();
+        $productMockTwo = $this->createProductMock();
 
-        $this->productRepository
-            ->expects(static::once())
-            ->method('findBy')
-            ->with(['sku' => [$skuOne, $skuTwo]])
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
             ->willReturn([$productMockOne, $productMockTwo]);
 
+        $this->productRepository
+            ->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with([$skuOne, $skuTwo])
+            ->willReturn($qb);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
         $productMockOne
-            ->expects(static::once())
+            ->expects($this->once())
             ->method('getSku')
             ->willReturn($skuOne);
 
         $productMockTwo
-            ->expects(static::once())
+            ->expects($this->once())
             ->method('getSku')
             ->willReturn($skuTwo);
 
@@ -71,11 +92,23 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
         $sku = '1';
         $productMock = $this->createProductMock();
 
-        $this->productRepository
-            ->expects(static::exactly(2))
-            ->method('findOneBySku')
-            ->with($sku)
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->exactly(2))
+            ->method('getOneOrNullResult')
             ->willReturn($productMock);
+
+        $this->productRepository
+            ->expects($this->exactly(2))
+            ->method('getBySkuQueryBuilder')
+            ->with($sku)
+            ->willReturn($qb);
+
+        $this->aclHelper
+            ->expects($this->exactly(2))
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
 
         $actualProduct = $this->testedProvider->getBySku($sku);
 
@@ -91,11 +124,23 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
         $skuOne = '1';
         $skuTwo = '2';
 
-        $this->productRepository
-            ->expects(static::once())
-            ->method('findBy')
-            ->with(['sku' => [$skuOne, $skuTwo]])
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
             ->willReturn([]);
+
+        $this->productRepository
+            ->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with([$skuOne, $skuTwo])
+            ->willReturn($qb);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
 
         $this->testedProvider->addSkuToCache($skuOne);
         $this->testedProvider->addSkuToCache($skuTwo);
@@ -111,16 +156,28 @@ class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
     {
         $skuOne = '1';
         $skuTwo = '2';
-        $productMockOne = $this->createProductMock($skuOne);
+        $productMockOne = $this->createProductMock();
 
-        $this->productRepository
-            ->expects(static::once())
-            ->method('findBy')
-            ->with(['sku' => [$skuOne, $skuTwo]])
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
             ->willReturn([$productMockOne]);
 
+        $this->productRepository
+            ->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with([$skuOne, $skuTwo])
+            ->willReturn($qb);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
         $productMockOne
-            ->expects(static::once())
+            ->expects($this->once())
             ->method('getSku')
             ->willReturn($skuOne);
 

@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -55,6 +56,9 @@ class ShoppingListLineItemHandler
     /** @var ProductManager */
     protected $productManager;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param ManagerRegistry $managerRegistry
      * @param ShoppingListManager $shoppingListManager
@@ -63,6 +67,7 @@ class ShoppingListLineItemHandler
      * @param TokenAccessorInterface $tokenAccessor
      * @param FeatureChecker $featureChecker
      * @param ProductManager $productManager
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -71,7 +76,8 @@ class ShoppingListLineItemHandler
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         FeatureChecker $featureChecker,
-        ProductManager $productManager
+        ProductManager $productManager,
+        AclHelper $aclHelper
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
@@ -80,6 +86,7 @@ class ShoppingListLineItemHandler
         $this->tokenAccessor = $tokenAccessor;
         $this->featureChecker = $featureChecker;
         $this->productManager = $productManager;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -103,7 +110,7 @@ class ShoppingListLineItemHandler
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
         $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        $iterableResult = $queryBuilder->getQuery()->iterate();
+        $iterableResult = $this->aclHelper->apply($queryBuilder)->iterate();
         $lineItems = [];
 
         $skus = array_map('mb_strtoupper', array_keys($productUnitsWithQuantities));

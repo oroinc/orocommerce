@@ -59,6 +59,7 @@ oro_behat_extension:
       options:
         mapping:
           SKU: 'oro_product[sku]'
+          URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Name: 'oro_product[names][values][default]'
           Status: 'oro_product[status]'
           Unit Of Quantity: 'oro_product[primaryUnitPrecision][unit]'

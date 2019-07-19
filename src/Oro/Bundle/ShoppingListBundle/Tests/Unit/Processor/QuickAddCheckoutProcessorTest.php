@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
@@ -90,7 +92,12 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->dateFormatter = $this->getMockBuilder(DateTimeFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->processor = new QuickAddCheckoutProcessor($this->handler, $this->registry, $this->messageGenerator);
+        $this->processor = new QuickAddCheckoutProcessor(
+            $this->handler,
+            $this->registry,
+            $this->messageGenerator,
+            $this->aclHelper
+        );
 
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
@@ -198,7 +205,25 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             'redirectUrl' => $redirectUrl
         ]);
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([
+                ['id' => 1, 'sku' => 'SKU1АБВ'],
+                ['id' => 2, 'sku' => 'SKU2'],
+            ]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(['sku1абв', 'sku2'])
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->actionGroupRegistry->expects($this->once())
             ->method('findByName')
@@ -261,7 +286,25 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->expects($this->never())
             ->method('flush');
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([
+                ['id' => 1, 'sku' => 'SKU1АБВ'],
+                ['id' => 2, 'sku' => 'SKU2'],
+            ]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(['sku1абв', 'sku2'])
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $actionData = new ActionData([
             'shoppingList' => $shoppingList,
@@ -316,7 +359,25 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             'errors' => []
         ]);
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([
+                ['id' => 1, 'sku' => 'SKU1АБВ'],
+                ['id' => 2, 'sku' => 'SKU2'],
+            ]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(['sku1абв', 'sku2'])
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->actionGroupRegistry->expects($this->once())
             ->method('findByName')
@@ -350,8 +411,6 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         $data = $this->getProductData();
 
-        $productIds = ['sku1' => 1, 'sku2' => 2];
-
         $shoppingList = new ShoppingList();
         $this->shoppingListManager->expects($this->once())
             ->method('create')
@@ -365,7 +424,22 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(['sku1абв', 'sku2'])
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->handler->expects($this->once())
             ->method('createForShoppingList')
@@ -402,7 +476,25 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([
+                ['id' => 1, 'sku' => 'SKU1АБВ'],
+                ['id' => 2, 'sku' => 'SKU2'],
+            ]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(['sku1абв', 'sku2'])
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->handler->expects($this->once())
             ->method('createForShoppingList')

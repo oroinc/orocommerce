@@ -8,10 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
+ * Slug entity class.
+ *
  * @ORM\Table(name="oro_redirect_slug", indexes={
  *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
  *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
@@ -27,13 +31,20 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Slug
+class Slug implements OrganizationAwareInterface
 {
+    use OrganizationAwareTrait;
+
     const DELIMITER = '/';
 
     /**
@@ -245,7 +256,7 @@ class Slug
     public function resetScopes()
     {
         $this->scopes->clear();
-        
+
         return $this;
     }
 

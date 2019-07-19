@@ -152,3 +152,30 @@ Example:
 }
 ```
 {@/request}
+
+### organization
+
+#### get_subresource
+
+Retrieve the record of the organization a specific inventory level belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the organization that a specific inventory level belongs to.
+
+#### update_relationship
+
+Replace the organization that a specific inventory level belongs to.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "organizations",
+    "id": "1"
+  }
+}
+```
+{@/request}

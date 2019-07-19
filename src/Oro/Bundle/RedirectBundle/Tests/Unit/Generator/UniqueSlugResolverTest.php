@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
@@ -20,16 +23,20 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
     protected $repository;
 
     /**
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $aclHelper;
+
+    /**
      * @var UniqueSlugResolver
      */
     protected $uniqueSlugResolver;
 
     protected function setUp()
     {
-        $this->repository = $this->getMockBuilder(SlugRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->uniqueSlugResolver = new UniqueSlugResolver($this->repository);
+        $this->repository = $this->createMock(SlugRepository::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->uniqueSlugResolver = new UniqueSlugResolver($this->repository, $this->aclHelper);
     }
 
     public function testResolveNewSlug()
@@ -40,10 +47,22 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
-        $this->repository->expects($this->once())
-            ->method('findOneDirectUrlBySlug')
-            ->with($slug, $entity)
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn(null);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->repository->expects($this->once())
+            ->method('getOneDirectUrlBySlugQueryBuilder')
+            ->with($slug, $entity)
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->assertEquals($slug, $this->uniqueSlugResolver->resolve($slugUrl, $entity));
     }
@@ -59,10 +78,22 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
-        $this->repository->expects($this->once())
-            ->method('findOneDirectUrlBySlug')
-            ->with($slug, $entity)
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn(new Slug());
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->repository->expects($this->once())
+            ->method('getOneDirectUrlBySlugQueryBuilder')
+            ->with($slug, $entity)
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->repository->expects($this->once())
             ->method('findAllDirectUrlsByPattern')
@@ -92,9 +123,21 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(2);
 
-        $this->repository->expects($this->any())
-            ->method('findOneDirectUrlBySlug')
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->any())
+            ->method('getOneOrNullResult')
             ->willReturn(null);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->repository->expects($this->any())
+            ->method('getOneDirectUrlBySlugQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->any())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->repository->expects($this->any())
             ->method('findAllDirectUrlsByPattern')
@@ -117,12 +160,28 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
-        $this->repository->expects($this->any())
-            ->method('findOneDirectUrlBySlug')
-            ->willReturnMap([
-                [$slug, $entity, null, $this->getEntity(Slug::class, ['id' => 123])],
-                ['/test', $entity, null, $this->getEntity(Slug::class, ['id' => 42])]
-            ]);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->exactly(2))
+            ->method('getOneOrNullResult')
+            ->willReturnOnConsecutiveCalls(
+                [$this->getEntity(Slug::class, ['id' => 123])],
+                [$this->getEntity(Slug::class, ['id' => 42])]
+            );
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->repository->expects($this->exactly(2))
+            ->method('getOneDirectUrlBySlugQueryBuilder')
+            ->withConsecutive(
+                [$slug, $entity],
+                ['/test', $entity]
+            )
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->exactly(2))
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->repository->expects($this->once())
             ->method('findAllDirectUrlsByPattern')

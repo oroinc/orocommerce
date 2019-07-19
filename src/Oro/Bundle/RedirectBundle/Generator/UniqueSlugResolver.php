@@ -6,6 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Keep slug URLs unique per entity by adding suffix on duplicates.
@@ -22,6 +23,11 @@ class UniqueSlugResolver
     protected $repository;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * Store URLs processed in the current batch to increment suffixes for entities withing same transaction.
      *
      * @var array
@@ -30,10 +36,12 @@ class UniqueSlugResolver
 
     /**
      * @param SlugRepository $repository
+     * @param AclHelper $aclHelper
      */
-    public function __construct(SlugRepository $repository)
+    public function __construct(SlugRepository $repository, AclHelper $aclHelper)
     {
         $this->repository = $repository;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -93,7 +101,8 @@ class UniqueSlugResolver
         if (preg_match(self::INCREMENTED_SLUG_PATTERN, $slug, $matches)) {
             $baseSlug = $matches[1];
 
-            if ($this->repository->findOneDirectUrlBySlug($baseSlug, $entity)) {
+            $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder($baseSlug, $entity);
+            if ($this->aclHelper->apply($qb)->getOneOrNullResult()) {
                 return $baseSlug;
             }
         }
@@ -130,8 +139,13 @@ class UniqueSlugResolver
      */
     private function hasExistingSlug(string $slug, SluggableInterface $entity): bool
     {
-        return $this->hasUrlDuplicateWithinBatch($slug, $entity)
-            || $this->repository->findOneDirectUrlBySlug($slug, $entity);
+        if ($this->hasUrlDuplicateWithinBatch($slug, $entity)) {
+            return true;
+        }
+
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
+
+        return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
     }
 
     /**

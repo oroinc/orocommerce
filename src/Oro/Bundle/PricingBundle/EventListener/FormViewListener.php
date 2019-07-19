@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -50,21 +51,29 @@ class FormViewListener implements FeatureToggleableInterface
     protected $priceAttributePricesProvider;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param TranslatorInterface $translator
-     * @param DoctrineHelper                $doctrineHelper
-     * @param PriceAttributePricesProvider  $provider
+     * @param DoctrineHelper $doctrineHelper
+     * @param PriceAttributePricesProvider $provider
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         PriceAttributePricesProvider $provider,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        AclHelper $aclHelper
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceAttributePricesProvider = $provider;
         $this->authorizationChecker = $authorizationChecker;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -106,7 +115,9 @@ class FormViewListener implements FeatureToggleableInterface
      */
     protected function getProductAttributesPriceLists()
     {
-        return $this->getPriceAttributePriceListRepository()->findAll();
+        $qb = $this->getPriceAttributePriceListRepository()->getPriceAttributesQueryBuilder();
+
+        return $this->aclHelper->apply($qb)->getResult();
     }
 
     /**
@@ -114,7 +125,7 @@ class FormViewListener implements FeatureToggleableInterface
      */
     protected function getPriceAttributePriceListRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributePriceList');
+        return $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
     }
 
     /**

@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,15 +25,19 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
     protected $doctrineHelper;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
-        $this->service = new SkuIncrementor($this->doctrineHelper, self::PRODUCT_CLASS);
+        $this->service = new SkuIncrementor($this->doctrineHelper, $this->aclHelper, self::PRODUCT_CLASS);
     }
 
     /**
@@ -57,7 +65,13 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                ['ABC123', 'ABC123-66', 'ABC123-77', 'ABC123-88', 'ABC123-89abc'],
+                [
+                    ['sku' => 'ABC123'],
+                    ['sku' => 'ABC123-66'],
+                    ['sku' => 'ABC123-77'],
+                    ['sku' => 'ABC123-88'],
+                    ['sku' => 'ABC123-88abc'],
+                ],
                 [
                     'ABC123-89' => 'ABC123-77',
                     'ABC123-90' => 'ABC123-77',
@@ -65,7 +79,10 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             [
-                ['DEF123-66', 'DEF123-88'],
+                [
+                    ['sku' => 'DEF123-66'],
+                    ['sku' => 'DEF123-88']
+                ],
                 [
                     'DEF123-66-1' => 'DEF123-66',
                     'DEF123-66-2' => 'DEF123-66',
@@ -74,13 +91,18 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             [
-                ['SKU-001-updated', 'SKU-001-updated-1'],
+                [
+                    ['sku' => 'SKU-001-updated'],
+                    ['sku' => 'SKU-001-updated-1']
+                ],
                 [
                     'SKU-001-updated-2' => 'SKU-001-updated-1',
                 ]
             ],
             [
-                ['SKU-001-updated-1'],
+                [
+                    ['sku' => 'SKU-001-updated-1']
+                ],
                 [
                     'SKU-001-updated-1-1' => 'SKU-001-updated-1',
                 ]
@@ -89,29 +111,42 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $existingSku
+     * @param array $existingSku
+     *
      * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getProductRepositoryMock($existingSku)
     {
-        $mock = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mock
-            ->expects($this->any())
-            ->method('findAllSkuByPattern')
-            ->withAnyParameters()
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->any())
+            ->method('getResult')
             ->willReturn($existingSku);
 
-        $mock
-            ->expects($this->any())
-            ->method('findOneBySku')
-            ->willReturnCallback(function ($sku) use ($existingSku) {
-                return in_array($sku, $existingSku, true) ? new Product() : null;
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository->expects($this->any())
+            ->method('getAllSkuByPatternQueryBuilder')
+            ->withAnyParameters()
+            ->willReturn($queryBuilder);
+        $repository->expects($this->any())
+            ->method('getBySkuQueryBuilder')
+            ->willReturnCallback(function ($sku) use ($queryBuilder, $query, $existingSku) {
+                $query->expects($this->any())
+                    ->method('getOneOrNullResult')
+                    ->willReturnCallback(function () use ($existingSku, $sku) {
+                        return in_array($sku, array_column($existingSku, 'sku'), true) ? new Product() : null;
+                    });
+
+                return $queryBuilder;
             });
 
-        return $mock;
+        $this->aclHelper
+            ->expects($this->any())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
+        return $repository;
     }
 }

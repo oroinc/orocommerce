@@ -15,6 +15,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Provides edit actions to update visibility for product and scope
+ */
 class ProductVisibilityController extends Controller
 {
     /**
@@ -28,7 +31,7 @@ class ProductVisibilityController extends Controller
      */
     public function editAction(Request $request, Product $product)
     {
-        $scopes = $this->get('oro_visibility.root_scopes_provider')->getScopes();
+        $scopes = $this->get('oro_visibility.root_scopes_provider')->getScopes($product);
         if (0 === count($scopes)) {
             $preloadedScopes = [];
         } else {
@@ -98,7 +101,7 @@ class ProductVisibilityController extends Controller
                 'ownership_disabled' => true,
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
-                ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
+                ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     EntityVisibilityType::ALL_CLASS => $this

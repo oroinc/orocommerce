@@ -35,6 +35,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\ProductBundle\Entity\Product:
    product1:
        sku: 'AA1'
+       organization: '@organization'
        primaryUnitPrecision: '@precision1'
        additionalUnitPrecisions: ['@precision2']
        __calls:

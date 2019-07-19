@@ -56,7 +56,7 @@ class HideInvisibleProductCategories implements ProcessorInterface
         );
 
         foreach ($data as $key => $item) {
-            if (!isset($availableCategoriesIds[$item[$categoryFieldName]['id']])) {
+            if (!isset($item[$categoryFieldName]['id'], $availableCategoriesIds[$item[$categoryFieldName]['id']])) {
                 $data[$key][$categoryFieldName] = null;
             }
         }

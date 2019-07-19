@@ -47,7 +47,7 @@ services:
         arguments:
             - "@oro_inventory.validator.quantity_to_order_validator"
             - "@oro_entity.doctrine_helper"
-            - "@translator"
+            - "@oro_security.acl_helper"
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_product_row_validator }
 
@@ -81,6 +81,9 @@ services:
         class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryManager'
         arguments:
             - '@oro_entity.doctrine_helper'
+
+    Oro\Bundle\InventoryBundle\Inventory\InventoryManager:
+        alias: 'oro_inventory.manager.inventory_manager'
 
     oro_inventory.provider.inventory_quantity:
         class: 'Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider'

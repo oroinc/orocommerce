@@ -16,6 +16,7 @@ use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Repository for Slug entity
@@ -42,9 +43,9 @@ class SlugRepository extends EntityRepository
      * @param string $slug
      * @param SlugAwareInterface|null $restrictedEntity
      * @param ScopeCriteria|null $scopeCriteria
-     * @return null|Slug
+     * @return QueryBuilder
      */
-    public function findOneDirectUrlBySlug(
+    public function getOneDirectUrlBySlugQueryBuilder(
         $slug,
         SlugAwareInterface $restrictedEntity = null,
         ScopeCriteria $scopeCriteria = null
@@ -55,7 +56,7 @@ class SlugRepository extends EntityRepository
         $qb->setMaxResults(1);
         $this->restrictByEntitySlugs($qb, $restrictedEntity);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb;
     }
 
     /**
@@ -90,32 +91,37 @@ class SlugRepository extends EntityRepository
     /**
      * @param string $url
      * @param ScopeCriteria $scopeCriteria
+     * @param AclHelper $aclHelper
      * @return Slug|null
      */
-    public function getSlugByUrlAndScopeCriteria($url, ScopeCriteria $scopeCriteria)
+    public function getSlugByUrlAndScopeCriteria($url, ScopeCriteria $scopeCriteria, AclHelper $aclHelper = null)
     {
         $qb = $this->getSlugByUrlQueryBuilder($url);
 
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId');
 
-        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, $aclHelper);
     }
 
     /**
      * @param string $slugPrototype
      * @param ScopeCriteria $scopeCriteria
+     * @param AclHelper $aclHelper
      * @return Slug|null
      */
-    public function getSlugBySlugPrototypeAndScopeCriteria($slugPrototype, ScopeCriteria $scopeCriteria)
-    {
+    public function getSlugBySlugPrototypeAndScopeCriteria(
+        $slugPrototype,
+        ScopeCriteria $scopeCriteria,
+        AclHelper $aclHelper = null
+    ) {
         $qb = $this->createQueryBuilder('slug');
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId')
             ->where($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
             ->setParameter('slugPrototype', $slugPrototype);
 
-        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, $aclHelper);
     }
 
     /**
@@ -357,12 +363,18 @@ class SlugRepository extends EntityRepository
     /**
      * @param QueryBuilder $qb
      * @param ScopeCriteria $scopeCriteria
+     * @param AclHelper $aclHelper
      * @return null|Slug
      */
-    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria)
-    {
+    private function getMatchingSlugForCriteria(
+        QueryBuilder $qb,
+        ScopeCriteria $scopeCriteria,
+        AclHelper $aclHelper = null
+    ) {
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
-        $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
+        $query = $aclHelper ? $aclHelper->apply($qb) : $qb->getQuery();
+
+        $result = $query->getResult(MatchingSlugHydrator::NAME);
         if (!$result) {
             return null;
         }

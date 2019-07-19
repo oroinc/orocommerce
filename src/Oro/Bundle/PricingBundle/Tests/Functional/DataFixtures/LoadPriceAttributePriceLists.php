@@ -3,10 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
-class LoadPriceAttributePriceLists extends AbstractFixture
+class LoadPriceAttributePriceLists extends AbstractFixture implements DependentFixtureInterface
 {
     const PRICE_ATTRIBUTE_PRICE_LIST_1 = 'price_attribute_price_list_1';
     const PRICE_ATTRIBUTE_PRICE_LIST_2 = 'price_attribute_price_list_2';
@@ -56,12 +59,20 @@ class LoadPriceAttributePriceLists extends AbstractFixture
         ],
     ];
 
+    public function getDependencies()
+    {
+        return [LoadOrganization::class];
+    }
+
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
         $now = new \DateTime();
+        /** @var Organization $organization */
+        $organization = $this->getReference('organization');
 
         foreach ($this->data as $priceAttributePriceListData) {
             $priceAttributePriceList = new PriceAttributePriceList();
@@ -70,6 +81,7 @@ class LoadPriceAttributePriceLists extends AbstractFixture
                 ->setName($priceAttributePriceListData['name'])
                 ->setFieldName($priceAttributePriceListData['fieldName'])
                 ->setCurrencies($priceAttributePriceListData['currencies'])
+                ->setOrganization($organization)
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);
 

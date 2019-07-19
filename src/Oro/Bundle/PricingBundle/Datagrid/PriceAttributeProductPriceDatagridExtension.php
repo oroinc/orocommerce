@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -35,6 +36,9 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
     /** @var SelectedFieldsProviderInterface */
     private $selectedFieldsProvider;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /** @var array */
     private $enabledPriceColumns;
 
@@ -42,15 +46,18 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param DoctrineHelper $doctrineHelper
      * @param SelectedFieldsProviderInterface $selectedFieldsProvider
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
-        SelectedFieldsProviderInterface $selectedFieldsProvider
+        SelectedFieldsProviderInterface $selectedFieldsProvider,
+        AclHelper $aclHelper
     ) {
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
         $this->selectedFieldsProvider = $selectedFieldsProvider;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -156,9 +163,9 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
 
         /** @var PriceAttributePriceListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
-        $attributesWithCurrencies = $repository->getAttributesWithCurrencies($currencies);
+        $qb = $repository->getAttributesWithCurrenciesQueryBuilder($currencies);
 
-        return $attributesWithCurrencies;
+        return $this->aclHelper->apply($qb)->getResult();
     }
 
     /**

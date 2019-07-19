@@ -53,6 +53,15 @@ oro_behat_extension:
         locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-select-btn")]'
         type: xpath
 
+    Tax Product Code hamburger:
+      selector:
+        locator: '//label[text()="Product Tax Code"]/../..//button[contains(@class,"entity-select-btn")]'
+        type: xpath
+
+    Select Product Tax Code Grid:
+      selector: 'div[data-page-component-name="products-tax-code-select-grid"] div.oro-datagrid'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     Tax US Sales Tax Form:
       selector: 'form[name="us_sales_tax"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

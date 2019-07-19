@@ -17,7 +17,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
 
     public function testGetAttributesWithoutCurrencies()
     {
-        $priceAttributesWithCurrencies = $this->getRepository()->getAttributesWithCurrencies([]);
+        $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder([]);
+        $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
         $this->assertCount(0, $priceAttributesWithCurrencies);
     }
 
@@ -28,7 +29,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
      */
     public function testGetAttributesWithCurrencies($currencies, $expectedPriceAttributes)
     {
-        $priceAttributesWithCurrencies = $this->getRepository()->getAttributesWithCurrencies($currencies);
+        $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder($currencies);
+        $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
         $this->assertCount(count($expectedPriceAttributes), $priceAttributesWithCurrencies);
         foreach ($priceAttributesWithCurrencies as $attribute) {
             $this->assertTrue($this->checkExistPair($attribute, $expectedPriceAttributes));
@@ -66,6 +68,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     {
         $actual = $this->getRepository()->getFieldNames();
 
+        /** @var PriceAttributePriceList[] $priceAttributePriceLists */
         $priceAttributePriceLists = $this->getContainer()->get('doctrine')
             ->getManagerForClass(PriceAttributePriceList::class)
             ->getRepository(PriceAttributePriceList::class)
@@ -77,6 +80,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
             $item['id'] = $priceAttributePriceList->getId();
             $item['name'] = $priceAttributePriceList->getName();
             $item['fieldName'] = $priceAttributePriceList->getFieldName();
+            $item['organization_name'] = $priceAttributePriceList->getOrganization()->getName();
 
             array_push($expected, $item);
         }
@@ -101,7 +105,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
 
         return false;
     }
-    
+
     /**
      * @return PriceAttributePriceListRepository
      */
@@ -109,6 +113,6 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceAttributePriceList');
+            ->getRepository(PriceAttributePriceList::class);
     }
 }

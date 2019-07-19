@@ -3,8 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Contains business specific methods for retrieving product unit precision entities.
+ */
 class ProductUnitPrecisionRepository extends EntityRepository
 {
     /**
@@ -50,5 +54,18 @@ class ProductUnitPrecisionRepository extends EntityRepository
             ->setParameter('productId', $productId);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getProductUnitPrecisionsQueryBuilder()
+    {
+        $queryBuilder = $this->createQueryBuilder('pup');
+        $queryBuilder
+            ->innerJoin('pup.product', 'p')
+            ->innerJoin('pup.unit', 'pu');
+
+        return $queryBuilder;
     }
 }

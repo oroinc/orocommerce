@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -15,6 +16,7 @@ use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityWithOrganizationStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -150,6 +152,11 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             ->setRouteName('some_route')
             ->setRouteParameters(['id' => 42]);
 
+        $organization = new Organization();
+        $organization->setName('Oro');
+        $slugTwoWithOrganization = clone $slugTwo;
+        $slugTwoWithOrganization->setOrganization($organization);
+
         return [
             'no slugs' => [
                 (new SluggableEntityStub())
@@ -229,6 +236,19 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
                     ->addSlug($defaultSlug),
                 (new SluggableEntityStub())
                     ->addSlugPrototype($emptyStringValue)
+            ],
+            'added with organization' => [
+                (new SluggableEntityWithOrganizationStub())
+                    ->setOrganization($organization)
+                    ->addSlugPrototype($valueOne)
+                    ->addSlugPrototype($valueTwo)
+                    ->addSlug($defaultSlug),
+                (new SluggableEntityWithOrganizationStub())
+                    ->setOrganization($organization)
+                    ->addSlugPrototype($valueOne)
+                    ->addSlugPrototype($valueTwo)
+                    ->addSlug($defaultSlug)
+                    ->addSlug($slugTwoWithOrganization)
             ],
         ];
     }

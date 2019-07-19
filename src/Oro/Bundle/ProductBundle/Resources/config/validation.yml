@@ -1,7 +1,7 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: [sku]
+            fields: [sku, organization]
             repositoryMethod: findByCaseInsensitive
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks: ~
