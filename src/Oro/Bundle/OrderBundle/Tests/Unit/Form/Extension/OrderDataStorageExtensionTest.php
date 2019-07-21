@@ -29,6 +29,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             $requestStack,
             $this->storage,
             $this->doctrineHelper,
+            $this->aclHelper,
             $this->productClass
         );
         $this->extension->setDataClass('Oro\Bundle\OrderBundle\Entity\Order');

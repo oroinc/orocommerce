@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
@@ -14,6 +15,9 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
+/**
+ * Factory for creating taxes
+ */
 class TaxEntitiesFactory
 {
     use UserUtilityTrait;
@@ -52,20 +56,23 @@ class TaxEntitiesFactory
     /**
      * @param string $code
      * @param string $description
+     * @param OrganizationInterface $organization
      * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return ProductTaxCode
      */
     public function createProductTaxCode(
-        $code,
-        $description,
+        string $code,
+        string $description,
+        OrganizationInterface $organization,
         ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $taxCode = new ProductTaxCode();
         $taxCode->setCode($code);
         $taxCode->setDescription($description);
+        $taxCode->setOrganization($organization);
 
         if ($persistTo) {
             $persistTo->persist($taxCode);

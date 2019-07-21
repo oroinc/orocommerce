@@ -11,9 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
 class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $placeholder;
 
     /**
@@ -23,11 +21,9 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->placeholder = $this
-            ->getMockBuilder(PlaceholderInterface::class)
-            ->getMock();
+        $this->placeholder = $this->createMock(PlaceholderInterface::class);
 
-        $this->placeholderResolver = new QueryPlaceholderResolver($this->placeholder, []);
+        $this->placeholderResolver = new QueryPlaceholderResolver($this->placeholder);
     }
 
     public function testReplaceInFrom()
@@ -119,6 +115,24 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->assertComparisonEquals($expectedComparison, $actualComparison);
         $this->assertEquals($expectedCriteria->getOrderings(), $query->getCriteria()->getOrderings());
+    }
+
+    public function testReplaceInAggregations()
+    {
+        $query = new Query();
+        $query->addAggregate('aggregate1', 'field_name_NAME_ID', 'count');
+
+        $this->placeholder->expects($this->once())
+            ->method('replaceDefault')
+            ->with('field_name_NAME_ID')
+            ->willReturn('field_name_2');
+
+        $this->placeholderResolver->replace($query);
+
+        $this->assertEquals(
+            ['aggregate1' => ['field' => 'field_name_2', 'function' => 'count']],
+            $query->getAggregations()
+        );
     }
 
     /**

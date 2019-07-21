@@ -4,7 +4,11 @@ namespace Oro\Bundle\ProductBundle\Duplicator;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+/**
+ * Increments provided product SKU for a duplicated product.
+ */
 class SkuIncrementor implements SkuIncrementorInterface
 {
     const INCREMENTED_SKU_PATTERN = '/^(.*)-\d+$/';
@@ -22,17 +26,24 @@ class SkuIncrementor implements SkuIncrementorInterface
     protected $newSku = [];
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @var string
      */
     protected $productClass;
 
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param AclHelper $aclHelper
      * @param string $productClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $productClass)
+    public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper, $productClass)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->aclHelper = $aclHelper;
         $this->productClass = $productClass;
     }
 
@@ -71,7 +82,18 @@ class SkuIncrementor implements SkuIncrementorInterface
      */
     protected function getPreMatchedIncrementSku($sku)
     {
-        return $this->getRepository()->findAllSkuByPattern(sprintf(self::SKU_INCREMENT_DATABASE_PATTERN, $sku));
+        $qb = $this->getRepository()
+            ->getAllSkuByPatternQueryBuilder(sprintf(self::SKU_INCREMENT_DATABASE_PATTERN, $sku));
+
+        /** @var array $result */
+        $result = $this->aclHelper->apply($qb)->getResult();
+
+        $matchedSku = [];
+        foreach ($result as $item) {
+            $matchedSku[] = $item['sku'];
+        }
+
+        return $matchedSku;
     }
 
     /**
@@ -83,7 +105,8 @@ class SkuIncrementor implements SkuIncrementorInterface
         if (preg_match(self::INCREMENTED_SKU_PATTERN, $sku, $matches)) {
             $baseSku = $matches[1];
 
-            if ($this->getRepository()->findOneBySku($baseSku)) {
+            $qb = $this->getRepository()->getBySkuQueryBuilder($baseSku);
+            if ($this->aclHelper->apply($qb)->getOneOrNullResult()) {
                 return $baseSku;
             }
         }

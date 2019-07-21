@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-16150
+@ticket-BB-16831
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Quote expiration email notification
@@ -7,9 +8,18 @@ Feature: Quote expiration email notification
   As an Administrator
   I want to receive email notification when Quote's marked expired
 
-  Scenario: Create Quote and send it to customer
+  Scenario: Set timezone for the application
     Given I login as administrator
-    And I go to Sales/ Quotes
+    When I go to System / Configuration
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use default" for "Timezone" field
+    And I fill form with:
+      | Timezone | America/New York |
+    And I save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Create Quote and send it to customer
+    When I go to Sales/ Quotes
     And I click "Create Quote"
     And I fill "Quote Form" with:
       | Customer User   | Amanda Cole |
@@ -26,10 +36,12 @@ Feature: Quote expiration email notification
     When I click "Expire"
     And click "Mark as Expired"
     Then I should see "Quote #31 was successfully marked as expired" flash message
+    And email with Subject "Quote #31 has expired" was not sent
     And email with Subject "Quote #31 has marked as expired" containing the following was sent:
       | To   | admin@example.com                           |
       | Body | Quote #31 has marked as expired by John Doe |
-    And email with Subject "Quote #31 has expired" was not sent
+    And email date less than "-2 hours"
+    And email date greater than "-6 hours"
 
   Scenario: Create Expired Quote and send it to customer
     When I go to Sales/ Quotes

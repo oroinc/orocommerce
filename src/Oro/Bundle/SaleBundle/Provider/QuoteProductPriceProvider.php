@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Handles logic for getting prices for certain quote
@@ -42,21 +43,29 @@ class QuoteProductPriceProvider
     protected $doctrineHelper;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      * @param CurrencyProviderInterface $currencyProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
         CurrencyProviderInterface $currencyProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        AclHelper $aclHelper
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
         $this->currencyProvider = $currencyProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -214,7 +223,8 @@ class QuoteProductPriceProvider
     ) {
         /** @var ProductRepository $productRepository */
         $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
-        $product = $productRepository->findOneBySku($sku);
+        $qb = $productRepository->getBySkuQueryBuilder($sku);
+        $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
         if ($product === null) {
             return null;
         }

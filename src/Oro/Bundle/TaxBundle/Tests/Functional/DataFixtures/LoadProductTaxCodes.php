@@ -5,12 +5,17 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
     const TAX_3 = 'TAX3';
@@ -55,9 +60,16 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     protected function createProductTaxCode(ObjectManager $manager, $code, $description, $productRefs)
     {
+        /** @var User $user */
+        $user = $this->getFirstUser($manager);
+
+        /** @var OrganizationInterface $organization */
+        $organization = $user->getOrganization();
+
         $productTaxCode = new ProductTaxCode();
         $productTaxCode->setCode($code);
         $productTaxCode->setDescription($description);
+        $productTaxCode->setOrganization($organization);
         foreach ($productRefs as $productRef) {
             /** @var Product $product */
             $product = $this->getReference($productRef);

@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
@@ -52,6 +53,9 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /** @var SymmetricCrypterInterface */
     private $crypter;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param SegmentManager $segmentManager
      * @param ProductSegmentProviderInterface $productSegmentProvider
@@ -60,6 +64,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      * @param RegistryInterface $registry
      * @param TokenStorageInterface $tokenStorage
      * @param SymmetricCrypterInterface $crypter
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         SegmentManager $segmentManager,
@@ -68,7 +73,8 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ConfigManager $configManager,
         RegistryInterface $registry,
         TokenStorageInterface $tokenStorage,
-        SymmetricCrypterInterface $crypter
+        SymmetricCrypterInterface $crypter,
+        AclHelper $aclHelper
     ) {
         $this->segmentManager = $segmentManager;
         $this->productSegmentProvider = $productSegmentProvider;
@@ -77,6 +83,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $this->registry = $registry;
         $this->tokenStorage = $tokenStorage;
         $this->crypter = $crypter;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -206,7 +213,9 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
             }
         }
 
-        return $em->createQuery($data[self::DQL]);
+        $query = $em->createQuery($data[self::DQL]);
+
+        return $this->aclHelper->apply($query);
     }
 
     /**

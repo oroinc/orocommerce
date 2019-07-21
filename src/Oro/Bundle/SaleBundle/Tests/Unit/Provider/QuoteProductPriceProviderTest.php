@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -18,6 +20,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -40,18 +43,23 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     protected function setUp()
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,
             $this->priceScopeCriteriaFactory,
             $this->currencyProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->aclHelper
         );
     }
 
@@ -401,10 +409,21 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 $productRepository,
                 $unitRepository
             );
-        $productRepository->expects($this->once())
-            ->method('findOneBySku')
-            ->with('psku')
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn($product);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $productRepository->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with('psku')
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
         $unitRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['code' => 'punit'])
@@ -472,10 +491,22 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepository')
             ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
             ->willReturn($productRepository);
-        $productRepository->expects($this->once())
-            ->method('findOneBySku')
-            ->with('psku')
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn(null);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $productRepository->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with('psku')
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
         $unitRepository->expects($this->never())
             ->method('findOneBy');
 
@@ -515,10 +546,22 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 $productRepository,
                 $unitRepository
             );
-        $productRepository->expects($this->once())
-            ->method('findOneBySku')
-            ->with('psku')
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn($product);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $productRepository->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with('psku')
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
         $unitRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['code' => 'punit'])

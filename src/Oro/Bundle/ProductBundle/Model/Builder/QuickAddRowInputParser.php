@@ -3,11 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Creates the instance of QuickAddRow model based on the passed data.
@@ -20,14 +22,22 @@ class QuickAddRowInputParser
     /** @var ProductUnitsProvider */
     private $productUnitsProvider;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param ManagerRegistry $registry
      * @param ProductUnitsProvider $productUnitsProvider
+     * @param AclHelper $aclHelper
      */
-    public function __construct(ManagerRegistry $registry, ProductUnitsProvider $productUnitsProvider)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ProductUnitsProvider $productUnitsProvider,
+        AclHelper $aclHelper
+    ) {
         $this->registry = $registry;
         $this->productUnitsProvider = $productUnitsProvider;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -51,9 +61,10 @@ class QuickAddRowInputParser
      */
     public function createFromRequest(array $product, int $index): QuickAddRow
     {
-        $sku = $product[ProductDataStorage::PRODUCT_SKU_KEY];
-        $quantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
-        $unit = $product[ProductDataStorage::PRODUCT_UNIT_KEY] ?? null;
+        $sku = trim($product[ProductDataStorage::PRODUCT_SKU_KEY]);
+        $quantity = (float)$product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
+        $unit = isset($product[ProductDataStorage::PRODUCT_UNIT_KEY])
+            ? trim($product[ProductDataStorage::PRODUCT_UNIT_KEY]) : null;
 
         return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
     }
@@ -80,7 +91,9 @@ class QuickAddRowInputParser
     private function resolveUnit(string $sku, ?string $unitName = null): ?string
     {
         if (!$unitName) {
-            $defaultUnitName = $this->getProductRepository()->getPrimaryUnitPrecisionCode($sku);
+            $qb = $this->getProductRepository()->getPrimaryUnitPrecisionCodeQueryBuilder($sku);
+            $defaultUnitName = $this->aclHelper->apply($qb)->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+
             return $defaultUnitName ?: $unitName;
         }
 

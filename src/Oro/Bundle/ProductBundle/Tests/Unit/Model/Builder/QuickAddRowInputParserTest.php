@@ -3,10 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,6 +22,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
@@ -27,13 +33,11 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->registry->method('getRepository')->willReturnMap([
             [Product::class, null, $this->productRepository],
         ]);
-
-        $this->productRepository->method('getPrimaryUnitPrecisionCode')
-            ->willReturn('item');
 
         $this->productUnitsProvider->method('getAvailableProductUnits')
             ->willReturn(
@@ -43,7 +47,11 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->quickAddRowInputParser = new QuickAddRowInputParser($this->registry, $this->productUnitsProvider);
+        $this->quickAddRowInputParser = new QuickAddRowInputParser(
+            $this->registry,
+            $this->productUnitsProvider,
+            $this->aclHelper
+        );
     }
 
     /**
@@ -55,6 +63,10 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     public function testCreateFromFileLine($input, $expected)
     {
         $index = 0;
+        $input = array_values($input);
+        if (!array_key_exists(2, $input)) {
+            $this->assertProductRepository();
+        }
 
         $result = $this->quickAddRowInputParser->createFromFileLine($input, $index++);
 
@@ -75,7 +87,11 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     {
         $index = 0;
 
-        $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
+        if (!array_key_exists('productUnit', $input)) {
+            $this->assertProductRepository();
+        }
+
+        $result = $this->quickAddRowInputParser->createFromRequest($input, $index++);
 
         $this->assertEquals($expected[0], $result->getSku());
         $this->assertEquals($expected[1], $result->getQuantity());
@@ -93,6 +109,11 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     public function testCreateFromPasteTextLine($input, $expected)
     {
         $index = 0;
+        $input = array_values($input);
+
+        if (!array_key_exists(2, $input)) {
+            $this->assertProductRepository();
+        }
 
         $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
 
@@ -111,9 +132,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'input' => [
-                    ' SKU5  ',
-                    ' 4.5',
-                    'item '
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'item '
                 ],
                 'expected' => [
                     'SKU5',
@@ -123,9 +144,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'input' => [
-                    'ss2',
-                    '   6 ',
-                    'liter'
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                    'productUnit' => 'liter'
                 ],
                 'expected' => [
                     'ss2',
@@ -135,8 +156,8 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'input' => [
-                    'ss2',
-                    '   6 ',
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
                 ],
                 'expected' => [
                     'ss2',
@@ -146,9 +167,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'input' => [
-                    ' SKU5  ',
-                    ' 4.5',
-                    'Stunde '
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'Stunde '
                 ],
                 'expected' => [
                     'SKU5',
@@ -158,9 +179,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'input' => [
-                    ' SKU5  ',
-                    ' 4.5',
-                    'ELEMENT '
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'ELEMENT '
                 ],
                 'expected' => [
                     'SKU5',
@@ -169,5 +190,26 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
+    }
+
+    private function assertProductRepository()
+    {
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->with(AbstractQuery::HYDRATE_SINGLE_SCALAR)
+            ->willReturn('item');
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->productRepository
+            ->expects($this->once())
+            ->method('getPrimaryUnitPrecisionCodeQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
     }
 }

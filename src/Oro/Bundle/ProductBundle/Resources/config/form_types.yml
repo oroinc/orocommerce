@@ -98,6 +98,7 @@ services:
             - "@request_stack"
             - "@oro_product.storage.product_data_storage"
             - "@oro_entity.doctrine_helper"
+            - '@oro_security.acl_helper'
             - '%oro_product.entity.product.class%'
         calls:
             - [setLogger,  ["@logger"]]

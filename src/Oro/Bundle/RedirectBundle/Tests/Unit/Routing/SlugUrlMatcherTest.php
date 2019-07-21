@@ -9,6 +9,7 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +45,11 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     private $matchedUrlDecisionMaker;
 
     /**
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $aclHelper;
+
+    /**
      * @var SlugUrlMatcher
      */
     private $matcher;
@@ -51,21 +57,17 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->router = $this->createMock(RouterInterface::class);
-        $this->repository = $this->getMockBuilder(SlugRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(SlugRepository::class);
+        $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->matcher = new SlugUrlMatcher(
             $this->router,
             $this->repository,
             $this->scopeManager,
-            $this->matchedUrlDecisionMaker
+            $this->matchedUrlDecisionMaker,
+            $this->aclHelper
         );
     }
 
@@ -435,8 +437,8 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->repository->expects($this->exactly(2))
             ->method('getSlugByUrlAndScopeCriteria')
             ->withConsecutive(
-                [$contextUrl, $scopeCriteria],
-                [$itemUrl, $scopeCriteria]
+                [$contextUrl, $scopeCriteria, $this->aclHelper],
+                [$itemUrl, $scopeCriteria, $this->aclHelper]
             )
             ->willReturnOnConsecutiveCalls(
                 $contextSlug,
@@ -511,12 +513,12 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
 
         $this->repository->expects($this->once())
             ->method('getSlugByUrlAndScopeCriteria')
-            ->with($contextUrl, $scopeCriteria)
+            ->with($contextUrl, $scopeCriteria, $this->aclHelper)
             ->willReturnOnConsecutiveCalls($contextSlug);
 
         $this->repository->expects($this->once())
             ->method('getSlugBySlugPrototypeAndScopeCriteria')
-            ->with($itemUrl, $scopeCriteria)
+            ->with($itemUrl, $scopeCriteria, $this->aclHelper)
             ->willReturnOnConsecutiveCalls($urlSlug);
 
         $this->assertRouterCalls(
@@ -585,7 +587,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
 
         $this->repository->expects($this->once())
             ->method('getSlugByUrlAndScopeCriteria')
-            ->with($contextUrl, $scopeCriteria)
+            ->with($contextUrl, $scopeCriteria, $this->aclHelper)
             ->willReturn($contextSlug);
         $this->router->expects($this->once())
             ->method('generate')

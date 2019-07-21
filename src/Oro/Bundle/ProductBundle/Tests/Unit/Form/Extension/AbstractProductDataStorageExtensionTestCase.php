@@ -3,14 +3,18 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageExtensionStub;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +35,9 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
     protected $request;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
+    protected $aclHelper;
 
     /** @var ProductDataStorageExtensionStub */
     protected $extension;
@@ -58,6 +65,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
@@ -68,6 +76,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             $requestStack,
             $this->storage,
             $this->doctrineHelper,
+            $this->aclHelper,
             $this->productClass
         );
 
@@ -120,8 +129,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->entity->product = null;
         $this->entity->anotherProperty = null;
 
-        $sku = 'TEST';
-        $product = $this->getProductEntity($sku);
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => ['product' => 1, 'notExistsProperty' => 'some_string'],
         ];
@@ -183,18 +190,27 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
      */
     protected function assertProductRepositoryCalled(Product $product)
     {
-        $repo = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->once())
-            ->method('findOneBySku')
-            ->with($product->getSku())
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
             ->willReturn($product);
+
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->willReturn($qb);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with($this->productClass)
             ->willReturn($repo);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
     }
 
     /**

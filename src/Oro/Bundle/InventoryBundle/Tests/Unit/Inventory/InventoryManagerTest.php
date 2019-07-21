@@ -7,6 +7,8 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\Repository\OrganizationRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -43,6 +45,12 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision->expects($this->exactly(2))
             ->method('getProduct')
             ->willReturn($product);
+
+        $organizationRepository = $this->createMock(OrganizationRepository::class);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Organization::class)
+            ->willReturn($organizationRepository);
 
         /** @var InventoryLevel $result */
         $result = $this->inventoryManager->createInventoryLevel($productUnitPrecision);

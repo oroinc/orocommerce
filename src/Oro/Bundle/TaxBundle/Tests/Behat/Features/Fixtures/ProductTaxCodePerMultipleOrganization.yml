@@ -1,0 +1,52 @@
+include:
+  - '@OroOrganizationProBundle:SecondOrganizationFixture.yml'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+  customer_tax_code_from_oro_pro_org:
+    code: 'CustomerTaxCodeFromOroProOrg'
+    owner: '@admin'
+    organization: '@second_organization'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+  tax:
+    code: 'Tax'
+    rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+  tax_jurisdiction:
+    code: 'TaxJurisdiction'
+    country: '@germany'
+    region: '@berlin'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  product_name:
+    string: 'ProductOrgOroPro'
+
+  attribute_family_label:
+    string: 'ProductAttributeOrgOroPro'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+  second_attribute_family:
+    entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+    code: 'family'
+    __calls:
+        - addLabel: ['@attribute_family_label']
+    organization: '@second_organization'
+    owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product_org_oro_pro:
+    sku: 'SkuOrgOroPro'
+    primaryUnitPrecision: '@precision1'
+    __calls:
+      - addName: ['@product_name']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    owner: '@second_business_unit'
+    organization: '@second_organization'
+    attributeFamily: '@second_attribute_family'

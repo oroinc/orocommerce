@@ -10,6 +10,7 @@ trusted_data:
         Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder:
             getChildCategoriesIdsWithFallbackToParent:
                 node: true
+                idx: true
         Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository:
             insertByProduct:
                 productVisibility: true

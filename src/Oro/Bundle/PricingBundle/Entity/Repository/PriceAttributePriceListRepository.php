@@ -3,14 +3,19 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Entity repository for PriceAttributePriceList entity
+ */
 class PriceAttributePriceListRepository extends BasePriceListRepository
 {
     /**
-     * @param array $currencies
-     * @return array
+     * @param $currencies
+     *
+     * @return QueryBuilder
      */
-    public function getAttributesWithCurrencies($currencies)
+    public function getAttributesWithCurrenciesQueryBuilder($currencies)
     {
         $qb = $this->createQueryBuilder('price_attribute_price_list')
             ->select(
@@ -28,8 +33,7 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
         $qb->andWhere($qb->expr()->in('price_attribute_currency.currency', ':currencies'))
             ->setParameter('currencies', $currencies);
 
-
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     /**
@@ -41,10 +45,22 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
             ->select('
                 price_attribute_price_list.id,
                 price_attribute_price_list.name,
-                price_attribute_price_list.fieldName
+                price_attribute_price_list.fieldName,
+                organization.name as organization_name
             ')
+            ->leftJoin('price_attribute_price_list.organization', 'organization')
             ->orderBy('price_attribute_price_list.id');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getPriceAttributesQueryBuilder()
+    {
+        return $this->createQueryBuilder('price_attribute_price_list')
+            ->select('price_attribute_price_list')
+            ->orderBy('price_attribute_price_list.createdAt');
     }
 }

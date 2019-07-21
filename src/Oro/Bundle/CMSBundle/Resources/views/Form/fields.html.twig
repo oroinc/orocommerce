@@ -88,7 +88,7 @@
                 {{ scopes }}
             </div>
 
-            <button class="removeVariantBtn btn btn-action btn-link" type="button" data-related="{{ name }}" data-action="remove">×</button>
+            <button class="removeVariantBtn btn btn-icon btn-square-light" type="button" data-related="{{ name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </div>
     {% endspaceless %}
 {% endmacro %}

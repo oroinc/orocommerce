@@ -10,6 +10,7 @@ services:
         public: false
         arguments:
             - '@oro_product.repository.product'
+            - '@oro_security.acl_helper'
 
     oro_order.api.frontend.order_line_item_query_modifier:
         class: Oro\Bundle\OrderBundle\Api\OrderLineItemQueryModifier

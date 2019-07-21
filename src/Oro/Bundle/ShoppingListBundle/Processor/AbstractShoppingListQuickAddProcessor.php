@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -42,18 +43,26 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
     protected $messageGenerator;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
-     * @param ManagerRegistry $registry,
+     * @param ManagerRegistry $registry
      * @param MessageGenerator $messageGenerator
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
         ManagerRegistry $registry,
-        MessageGenerator $messageGenerator
+        MessageGenerator $messageGenerator,
+        AclHelper $aclHelper
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
         $this->registry = $registry;
         $this->messageGenerator = $messageGenerator;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -65,7 +74,15 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
     {
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
         $productSkus = \array_column($data, ProductDataStorage::PRODUCT_SKU_KEY);
-        $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
+
+        $qb = $this->getProductRepository()->getProductsIdsBySkuQueryBuilder($productSkus);
+        $productsData = $this->aclHelper->apply($qb)->getArrayResult();
+
+        $productIds = [];
+        foreach ($productsData as $key => $productData) {
+            $productIds[$productData['sku']] = $productData['id'];
+            unset($productsData[$key]);
+        }
 
         $productUnitsWithQuantities = [];
         foreach ($data as $product) {

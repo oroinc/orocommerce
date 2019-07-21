@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -69,16 +71,33 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework
 
         $this->categoryRepository
             ->expects($this->any())
-            ->method('findOneByProductSku')
+            ->method('findOneByProductSkuQueryBuilder')
             ->willReturnCallback(
                 function ($sku) {
                     if (!isset($this->categoriesByProduct[$sku])) {
-                        return null;
+                        $result = null;
+                    } else {
+                        $this->findByProductSkuCalls[$sku]++;
+                        $result = $this->categoriesByProduct[$sku];
                     }
 
-                    $this->findByProductSkuCalls[$sku]++;
+                    $query = $this->createMock(AbstractQuery::class);
+                    $query->expects($this->once())
+                        ->method('getOneOrNullResult')
+                        ->willReturn($result);
+                    $queryBuilder = $this->createMock(QueryBuilder::class);
+                    $queryBuilder->expects($this->once())
+                        ->method('andWhere')
+                        ->with('category.organization = :organization')
+                        ->willReturnSelf();
+                    $queryBuilder->expects($this->once())
+                        ->method('setParameter')
+                        ->willReturnSelf();
+                    $queryBuilder->expects($this->once())
+                        ->method('getQuery')
+                        ->willReturn($query);
 
-                    return $this->categoriesByProduct[$sku];
+                    return $queryBuilder;
                 }
             );
 

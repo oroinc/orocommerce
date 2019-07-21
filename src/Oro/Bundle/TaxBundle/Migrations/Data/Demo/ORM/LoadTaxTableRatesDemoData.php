@@ -7,12 +7,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loading demo data for taxes
+ */
 class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
@@ -36,6 +40,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
             'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
             'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
+            LoadOrganizationAndBusinessUnitData::class
         ];
     }
 
@@ -100,8 +105,15 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
      */
     private function loadProductTaxCodes(ObjectManager $manager, $productTaxCodes)
     {
+        $owner = $this->getAdminUser($manager);
         foreach ($productTaxCodes as $code => $data) {
-            $taxCode = $this->entitiesFactory->createProductTaxCode($code, $data['description'], $manager, $this);
+            $taxCode = $this->entitiesFactory->createProductTaxCode(
+                $code,
+                $data['description'],
+                $owner->getOrganization(),
+                $manager,
+                $this
+            );
             foreach ($data['products'] as $sku) {
                 $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
                 if ($product) {

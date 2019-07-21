@@ -138,10 +138,9 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * @param string $productSku
      * @param bool $includeTitles
-     * @return null|Category
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return QueryBuilder
      */
-    public function findOneByProductSku($productSku, $includeTitles = false)
+    public function findOneByProductSkuQueryBuilder($productSku, $includeTitles = false)
     {
         $qb = $this->createQueryBuilder('category');
 
@@ -150,13 +149,26 @@ class CategoryRepository extends NestedTreeRepository
             $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'));
         }
 
-        return $qb
+        $qb
             ->select('partial category.{id}')
             ->innerJoin('category.products', 'p', Join::WITH, $qb->expr()->eq('p.sku', ':sku'))
             ->setParameter('sku', $productSku)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+
+        return $qb;
+    }
+
+    /**
+     * @param string $productSku
+     * @param bool $includeTitles
+     * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByProductSku($productSku, $includeTitles = false)
+    {
+        $qb = $this->findOneByProductSkuQueryBuilder($productSku, $includeTitles);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

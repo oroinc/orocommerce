@@ -100,7 +100,10 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $category = $this->getCategoryRepository()->findOneByProductSku($sku, $includeTitles);
+        $qb = $this->getCategoryRepository()->findOneByProductSkuQueryBuilder($sku, $includeTitles)
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $product->getOrganization());
+        $category = $qb->getQuery()->getOneOrNullResult();
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 

@@ -8,11 +8,15 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
+/**
+ * DataGrid mass action handler that add products to shopping list.
+ */
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
     /** @var MessageGenerator */
@@ -27,22 +31,28 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     /** @var ProductShoppingListsDataProvider */
     protected $productShoppingListsDataProvider;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
      * @param MessageGenerator $messageGenerator
      * @param ManagerRegistry $managerRegistry
      * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
         MessageGenerator $messageGenerator,
         ManagerRegistry $managerRegistry,
-        ProductShoppingListsDataProvider $productShoppingListsDataProvider
+        ProductShoppingListsDataProvider $productShoppingListsDataProvider,
+        AclHelper $aclHelper
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
         $this->messageGenerator = $messageGenerator;
         $this->managerRegistry = $managerRegistry;
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -133,7 +143,10 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      */
     protected function getProductsShoppingLists(array $productIds)
     {
-        $products = $this->managerRegistry->getRepository(Product::class)->getProductsByIds($productIds);
+        $qb = $this->managerRegistry->getRepository(Product::class)->getProductsQueryBuilder($productIds);
+        $qb->orderBy('p.id');
+
+        $products = $this->aclHelper->apply($qb)->getResult();
 
         $shoppingListsByProducts = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
         $productsShoppingLists = [];

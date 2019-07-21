@@ -82,8 +82,8 @@ use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 $query = new Query();
 $query
     ->addSelect(['text.sku', 'text.name', 'decimal.price'])
-    ->from('oro_product')
-    ->getCriteria()
+    ->from('oro_product');
+$query->getCriteria()
     ->andWhere(Criteria::expr()->contains('text.all_text', 'product'))
     ->orderBy(['decimal.price' => Query::ORDER_ASC]);
 

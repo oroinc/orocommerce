@@ -1,6 +1,6 @@
 Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [code, organization]
     properties:
         code:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~

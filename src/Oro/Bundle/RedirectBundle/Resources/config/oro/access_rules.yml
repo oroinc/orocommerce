@@ -1,0 +1,4 @@
+access_rules:
+    frontend:
+        entities:
+            - 'Oro\Bundle\RedirectBundle\Entity\Slug'

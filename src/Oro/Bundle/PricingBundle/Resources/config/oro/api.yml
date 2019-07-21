@@ -84,6 +84,10 @@ api:
                     exclude: true
                 delete_list:
                     exclude: true
+            subresources:
+                organization:
+                    actions:
+                        update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer_group.md'
             form_event_subscriber:

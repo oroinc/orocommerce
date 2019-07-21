@@ -128,3 +128,24 @@ api:
             # but it should be defined to correct work of "shippingTrackings" property
             # of the order API resource
             actions: false
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            documentation_resource:  '@OroOrderBundle/Resources/doc/api_frontend/product_search.md'
+            fields:
+                orderedAt:
+                    data_type: datetime
+                    property_path: datetime.ordered_at_by_CUSTOMER_USER_ID
+            filters:
+                fields:
+                    searchQuery:
+                        options:
+                            field_mappings:
+                                orderedAt: ordered_at_by_CUSTOMER_USER_ID
+                    aggregations:
+                        options:
+                            field_mappings:
+                                orderedAt: ordered_at_by_CUSTOMER_USER_ID
+            sorters:
+                fields:
+                    orderedAt:
+                        property_path: datetime.ordered_at_by_CUSTOMER_USER_ID

@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -60,6 +61,11 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $requestStack;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param string $className
      * @param ProductSearchRepository $productSearchRepository
      * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
@@ -68,6 +74,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param RequestStack $requestStack
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         $className,
@@ -77,7 +84,8 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         ProductPriceFormatter $productPriceFormatter,
         UserCurrencyManager $userCurrencyManager,
         ProductPriceProviderInterface $productPriceProvider,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        AclHelper $aclHelper
     ) {
         $this->className = $className;
         $this->productSearchRepository = $productSearchRepository;
@@ -87,6 +95,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceProvider = $productPriceProvider;
         $this->requestStack = $requestStack;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -111,7 +120,10 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             return ['results' => [], 'more' => false];
         }
 
-        $products = $this->getProductRepository()->getProductsByIds(array_keys($searchResultData));
+        $qb = $this->getProductRepository()->getProductsQueryBuilder(array_keys($searchResultData));
+        $qb->orderBy('p.id');
+
+        $products = $this->aclHelper->apply($qb)->getResult();
         $items = $this->buildItemsArray(
             $products,
             $this->findPrices($products),

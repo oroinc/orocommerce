@@ -6,6 +6,7 @@ use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
@@ -65,23 +66,34 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected $scopeCriteria;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param RouterInterface $router
      * @param SlugRepository $slugRepository
      * @param ScopeManager $scopeManager
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         RouterInterface $router,
         SlugRepository $slugRepository,
         ScopeManager $scopeManager,
-        MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+        MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
+        AclHelper $aclHelper
     ) {
         $this->router = $router;
         $this->slugRepository = $slugRepository;
         $this->scopeManager = $scopeManager;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
+        $this->aclHelper = $aclHelper;
     }
 
+    /**
+     * @param RequestMatcherInterface|UrlMatcherInterface $baseMatcher
+     */
     public function setBaseMatcher($baseMatcher)
     {
         $this->baseMatcher = $baseMatcher;
@@ -275,7 +287,8 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         $url = $this->getCleanUrl($url);
 
-        return $this->slugRepository->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
+        return $this->slugRepository
+            ->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
     }
 
     /**
@@ -286,7 +299,8 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         $url = $this->getCleanUrl($url);
 
-        return $this->slugRepository->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria());
+        return $this->slugRepository
+            ->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
     }
 
     /**

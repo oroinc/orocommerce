@@ -24,7 +24,8 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
             $this->getContainer()->get('doctrine')->getRepository(Product::class),
             $this->getContainer()->get('oro_product.product.manager'),
             $this->getContainer()->get('event_dispatcher'),
-            $this->getContainer()->get('oro_product.model.builder.quick_add_row_input_parser')
+            $this->getContainer()->get('oro_product.model.builder.quick_add_row_input_parser'),
+            $this->getContainer()->get('oro_security.acl_helper')
         );
     }
 
@@ -100,6 +101,8 @@ TEXT;
 
     /**
      * @dataProvider uploadedFileProvider
+     *
+     * @param string $fileName
      */
     public function testBuildFromFile($fileName)
     {
@@ -124,6 +127,9 @@ TEXT;
         $this->quickAddRowCollectionBuilder->buildFromFile($file);
     }
 
+    /**
+     * @return array
+     */
     public function uploadedFileProvider()
     {
         return [

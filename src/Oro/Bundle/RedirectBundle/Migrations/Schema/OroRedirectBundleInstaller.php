@@ -13,7 +13,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -43,6 +43,7 @@ class OroRedirectBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('url_hash', 'string', ['length' => 32]);
         $table->addColumn('route_name', 'string', ['length' => 255]);
@@ -55,6 +56,12 @@ class OroRedirectBundleInstaller implements Installation
         $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
         $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
         $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx', []);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**

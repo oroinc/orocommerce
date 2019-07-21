@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
@@ -19,16 +21,23 @@ class ProductBySkuValidator extends ConstraintValidator
     protected $registry;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @var PropertyAccessor
      */
     protected $propertyAccessor;
 
     /**
      * @param ManagerRegistry $registry
+     * @param AclHelper $aclHelper
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -44,7 +53,10 @@ class ProductBySkuValidator extends ConstraintValidator
             if ($products !== null) {
                 $valid = isset($products[mb_strtoupper($value)]);
             } else {
-                $product = $this->registry->getRepository('OroProductBundle:Product')->findOneBySku($value);
+                $repository = $this->registry->getRepository(Product::class);
+
+                $qb = $repository->getBySkuQueryBuilder($value);
+                $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
                 $valid = !empty($product);
             }
 

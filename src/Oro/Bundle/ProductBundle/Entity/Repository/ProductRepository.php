@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -20,16 +18,33 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 class ProductRepository extends EntityRepository
 {
     /**
+     * @param mixed $skus
+     *
+     * @return QueryBuilder
+     */
+    public function getBySkuQueryBuilder($skus)
+    {
+        /** @var array $skus */
+        $skus = !is_array($skus) ? [$skus] : $skus;
+        foreach ($skus as $key => $sku) {
+            $skus[$key] = mb_strtoupper($sku);
+        }
+
+        $queryBuilder = $this->createQueryBuilder('product');
+        $queryBuilder->where($queryBuilder->expr()->in('product.skuUppercase', ':skus'))
+            ->setParameter('skus', $skus);
+
+        return $queryBuilder;
+    }
+
+    /**
      * @param string $sku
      *
      * @return null|Product
      */
     public function findOneBySku($sku)
     {
-        $queryBuilder = $this->createQueryBuilder('product');
-
-        $queryBuilder->andWhere('product.skuUppercase = :sku')
-            ->setParameter('sku', mb_strtoupper($sku));
+        $queryBuilder = $this->getBySkuQueryBuilder($sku);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
@@ -37,25 +52,16 @@ class ProductRepository extends EntityRepository
     /**
      * @param string $pattern
      *
-     * @return string[]
+     * @return QueryBuilder
      */
-    public function findAllSkuByPattern($pattern)
+    public function getAllSkuByPatternQueryBuilder($pattern)
     {
-        $matchedSku = [];
+        $queryBuilder = $this->createQueryBuilder('product');
+        $queryBuilder->select('product.sku')
+            ->where($queryBuilder->expr()->like('product.sku', ':pattern'))
+            ->setParameter('pattern', $pattern);
 
-        $results = $this
-            ->createQueryBuilder('product')
-            ->select('product.sku')
-            ->where('product.sku LIKE :pattern')
-            ->setParameter('pattern', $pattern)
-            ->getQuery()
-            ->getResult();
-
-        foreach ($results as $result) {
-            $matchedSku[] = $result['sku'];
-        }
-
-        return $matchedSku;
+        return $queryBuilder;
     }
 
     /**
@@ -81,9 +87,9 @@ class ProductRepository extends EntityRepository
     /**
      * @param array $productSkus
      *
-     * @return array Ids
+     * @return QueryBuilder
      */
-    public function getProductsIdsBySku(array $productSkus = [])
+    public function getProductsIdsBySkuQueryBuilder(array $productSkus = [])
     {
         $productsQueryBuilder = $this
             ->createQueryBuilder('p')
@@ -98,18 +104,9 @@ class ProductRepository extends EntityRepository
                 ->setParameter('product_skus', $upperCaseSkus);
         }
 
-        $productsData = $productsQueryBuilder
-            ->orderBy($productsQueryBuilder->expr()->asc('p.id'))
-            ->getQuery()
-            ->getArrayResult();
+        $productsQueryBuilder->orderBy($productsQueryBuilder->expr()->asc('p.id'));
 
-        $productsSkusToIds = [];
-        foreach ($productsData as $key => $productData) {
-            $productsSkusToIds[$productData['sku']] = $productData['id'];
-            unset($productsData[$key]);
-        }
-
-        return $productsSkusToIds;
+        return $productsQueryBuilder;
     }
 
     /**
@@ -142,59 +139,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * This method is searching for products
-     * through skus and localized product names.
-     *
-     * @param $search
-     * @param $firstResult
-     * @param $maxResults
-     * @return QueryBuilder
-     */
-    public function getLocalizedSearchQueryBuilder($search, $firstResult, $maxResults)
-    {
-        $productsQueryBuilder = $this
-            ->createQueryBuilder('p');
-
-        $productsQueryBuilder
-            ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
-            ->where(
-                $productsQueryBuilder->expr()->orX(
-                    $productsQueryBuilder->expr()->like('p.skuUppercase', ':search_upper'),
-                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search_lower')
-                )
-            )
-            ->setParameters([
-                'search_upper' => '%' . mb_strtoupper($search) . '%',
-                'search_lower' => '%' . mb_strtolower($search) . '%',
-            ])
-            ->addOrderBy('p.id')
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults);
-
-        return $productsQueryBuilder;
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @return $this
-     *
-     * @deprecated Since 1.5 "name" is available as a column in product table
-     */
-    public function selectNames(QueryBuilder $queryBuilder)
-    {
-        $queryBuilder
-            ->addSelect('product_names')
-            ->innerJoin(
-                'product.names',
-                'product_names',
-                Expr\Join::WITH,
-                $queryBuilder->expr()->isNull('product_names.localization')
-            );
-
-        return $this;
-    }
-
-    /**
      * @param array $skus
      * @return QueryBuilder
      */
@@ -209,44 +153,6 @@ class ProductRepository extends EntityRepository
             ->setParameter('product_skus', $upperCaseSkus);
 
         return $qb;
-    }
-
-    /**
-     * @param array $skus
-     * @return Product[]
-     */
-    public function getProductWithNamesBySku(array $skus)
-    {
-        $qb = $this->getProductWithNamesBySkuQueryBuilder($skus);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param array $skus
-     * @return QueryBuilder
-     */
-    public function getFilterSkuQueryBuilder(array $skus)
-    {
-        // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map('mb_strtoupper', $skus);
-
-        $queryBuilder = $this->createQueryBuilder('product');
-        $queryBuilder
-            ->select('product.sku')
-            ->where($queryBuilder->expr()->in('product.skuUppercase', ':product_skus'))
-            ->setParameter('product_skus', $upperCaseSkus);
-        return $queryBuilder;
-    }
-
-    /**
-     * @param array $skus
-     * @return QueryBuilder
-     */
-    public function getFilterProductWithNamesQueryBuilder(array $skus)
-    {
-        return $this->getFilterSkuQueryBuilder($skus)->select('product, product_names')
-            ->innerJoin('product.names', 'product_names');
     }
 
     /**
@@ -307,31 +213,20 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param string $sku
-     * @return string|null
+     *
+     * @return QueryBuilder
      */
-    public function getPrimaryUnitPrecisionCode($sku)
+    public function getPrimaryUnitPrecisionCodeQueryBuilder($sku)
     {
         $qb = $this->createQueryBuilder('product');
 
-        return $qb
+        $qb
             ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
             ->where($qb->expr()->eq('product.skuUppercase', ':sku'))
-            ->setParameter('sku', mb_strtoupper($sku))
-            ->getQuery()
-            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
-    }
+            ->setParameter('sku', mb_strtoupper($sku));
 
-    /**
-     * @param array $ids
-     * @return array|Product[]
-     */
-    public function getProductsByIds(array $ids)
-    {
-        $queryBuilder = $this->getProductsQueryBuilder($ids)
-            ->orderBy('p.id');
-
-        return $queryBuilder->getQuery()->getResult();
+        return $qb;
     }
 
     /**
@@ -394,7 +289,12 @@ class ProductRepository extends EntityRepository
         foreach ($criteria as $fieldName => $fieldValue) {
             QueryBuilderUtil::checkIdentifier($fieldName);
             if (!is_string($fieldValue)) {
-                throw new \LogicException(sprintf('Value of %s must be string', $fieldName));
+                $productFieldName = sprintf('product.%s', $fieldName);
+                $queryBuilder
+                    ->andWhere($queryBuilder->expr()->eq($productFieldName, ':' . $fieldName))
+                    ->setParameter($fieldName, $fieldValue);
+
+                continue;
             }
 
             $parameterName = $fieldName . 'Value';
@@ -432,35 +332,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param $type
-     * @param $fieldName
-     * @param $fieldValue
-     * @param $isRelationField
-     * @return mixed
-     */
-    public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
-    {
-        QueryBuilderUtil::checkIdentifier($fieldName);
-
-        if ($isRelationField) {
-            return $this->createQueryBuilder('p')
-                ->select('p')
-                ->join('p.' . $fieldName, 'attr')
-                ->where('attr = :valueId')
-                ->setParameter('valueId', $fieldValue)
-                ->andWhere('p.type = :type')
-                ->setParameter('type', $type)
-                ->getQuery()
-                ->getResult();
-        } else {
-            return $this->findBy([
-                'type' => $type,
-                $fieldName => $fieldValue
-            ]);
-        }
-    }
-
-    /**
      * @param string $type
      * @param string $fieldName
      * @param array $attributeOptions
@@ -494,17 +365,6 @@ class ProductRepository extends EntityRepository
         }
 
         return $flattenedResult;
-    }
-
-    /**
-     * Returns array of product ids that have required attribute in their attribute family
-     *
-     * @param FieldConfigModel $attribute
-     * @return array
-     */
-    public function getProductIdsByAttribute(FieldConfigModel $attribute)
-    {
-        return $this->getProductIdsByAttributeId($attribute->getId());
     }
 
     /**
@@ -556,9 +416,10 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array|int[]|Product[] $products
-     * @return array
+     *
+     * @return QueryBuilder
      */
-    public function getConfigurableProductIds(array $products): array
+    public function getConfigurableProductIdsQueryBuilder(array $products)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'p')
@@ -568,7 +429,7 @@ class ProductRepository extends EntityRepository
             ->setParameter('products', $products)
             ->setParameter('type', Product::TYPE_CONFIGURABLE);
 
-        return array_column($qb->getQuery()->getArrayResult(), 'id');
+        return $qb;
     }
 
     /**

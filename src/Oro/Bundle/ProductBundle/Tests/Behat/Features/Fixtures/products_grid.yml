@@ -217,6 +217,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     productTaxCode{1..2}:
         code: 'productTaxCode<current()>'
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price{1..20}:
@@ -245,6 +246,7 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     priceAttributePriceList:
         name: 'Price Attribute'
         fieldName: 'priceAttribute'
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency:
     priceAttributeCurrency:

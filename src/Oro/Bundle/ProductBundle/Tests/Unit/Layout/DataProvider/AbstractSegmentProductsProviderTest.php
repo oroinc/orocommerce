@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -47,6 +48,9 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $crypter;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $aclHelper;
+
     /** @var AbstractSegmentProductsProvider */
     protected $segmentProductsProvider;
 
@@ -67,6 +71,12 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->cache = $this->createMock(CacheProvider::class);
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
+
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->aclHelper
+            ->expects($this->any())
+            ->method('apply')
+            ->willReturnArgument(0);
 
         $this->createSegmentProvider($registry);
 

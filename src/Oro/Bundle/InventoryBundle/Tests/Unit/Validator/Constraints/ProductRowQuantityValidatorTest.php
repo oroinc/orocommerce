@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantity;
@@ -10,6 +12,7 @@ use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
@@ -25,6 +28,11 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
      * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
+
+    /**
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $aclHelper;
 
     /**
      * @var ProductRowQuantityValidator
@@ -43,17 +51,15 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->validatorService = $this->getMockBuilder(QuantityToOrderValidatorService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
         $this->constraint = new ProductRowQuantity();
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new ProductRowQuantityValidator(
             $this->validatorService,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->aclHelper
         );
         $this->validator->initialize($this->context);
     }
@@ -74,7 +80,13 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $productRow = new ProductRow();
         $productRow->productSku = 'sku';
-        $repository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn(null);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $repository = $this->createMock(ProductRepository::class);
         $this
             ->doctrineHelper
             ->expects($this->once())
@@ -83,9 +95,14 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
         $repository
             ->expects($this->once())
-            ->method('findOneBySku')
+            ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
-            ->willReturn(null);
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
         $this->context->expects($this->never())->method('addViolation');
         $this->validator->validate($productRow, $this->constraint);
     }
@@ -95,7 +112,13 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
         $productRow = new ProductRow();
         $productRow->productSku = 'sku';
         $productRow->productQuantity = 'string';
-        $repository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn(new Product());
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $repository = $this->createMock(ProductRepository::class);
         $this
             ->doctrineHelper
             ->expects($this->once())
@@ -104,9 +127,15 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
         $repository
             ->expects($this->once())
-            ->method('findOneBySku')
+            ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
-            ->willReturn(new Product());
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
         $this->context->expects($this->never())->method('addViolation');
         $this->validator->validate($productRow, $this->constraint);
     }
@@ -117,7 +146,12 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
         $productRow = new ProductRow();
         $productRow->productSku = 'sku';
         $productRow->productQuantity = 10;
-        $repository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($product);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $repository = $this->createMock(ProductRepository::class);
         $this
             ->doctrineHelper
             ->expects($this->once())
@@ -126,9 +160,14 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
         $repository
             ->expects($this->once())
-            ->method('findOneBySku')
+            ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
-            ->willReturn($product);
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
         $this
             ->validatorService
             ->expects($this->once())
@@ -152,7 +191,13 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
         $productRow->productSku = 'sku';
         $productRow->productQuantity = 10;
         $maxErrorMessage = 'maxMessage';
-        $repository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($product);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $repository = $this->createMock(ProductRepository::class);
         $this
             ->doctrineHelper
             ->expects($this->once())
@@ -161,9 +206,14 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
         $repository
             ->expects($this->once())
-            ->method('findOneBySku')
+            ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
-            ->willReturn($product);
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
         $this
             ->validatorService
             ->expects($this->once())
@@ -196,7 +246,13 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
         $productRow->productSku = 'sku';
         $productRow->productQuantity = 10;
         $minMessage = 'minMessage';
-        $repository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($product);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $repository = $this->createMock(ProductRepository::class);
         $this
             ->doctrineHelper
             ->expects($this->once())
@@ -205,9 +261,14 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
         $repository
             ->expects($this->once())
-            ->method('findOneBySku')
+            ->method('getBySkuQueryBuilder')
             ->with($productRow->productSku)
-            ->willReturn($product);
+            ->willReturn($queryBuilder);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
         $this
             ->validatorService
             ->expects($this->once())

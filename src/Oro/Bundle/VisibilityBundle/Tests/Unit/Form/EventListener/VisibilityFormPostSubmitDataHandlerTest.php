@@ -98,6 +98,13 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
         $customerGroupForm = $this->createMock(FormInterface::class);
         $customerGroupForm->method('getData')->willReturn([]);
 
+        $form->method('has')->willReturnMap(
+            [
+                ['all', true],
+                ['customer', true],
+                ['customerGroup', true],
+            ]
+        );
         $form->method('get')->willReturnMap(
             [
                 ['all', $allForm],
@@ -109,7 +116,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
         $productVisibility = new ProductVisibility();
         $customerProductVisibility1 = (new CustomerProductVisibility())->setVisibility('hidden');
         $customerProductVisibility2 = (new CustomerProductVisibility())->setVisibility('visible');
-        $customerProductVisibility3 = (new CustomerProductVisibility());
+        $customerProductVisibility3 = new CustomerProductVisibility();
         $this->fieldDataProvider->method('findFormFieldData')
             ->willReturnMap(
                 [

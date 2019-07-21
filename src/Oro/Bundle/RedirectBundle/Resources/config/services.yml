@@ -28,6 +28,7 @@ services:
             - '@oro_redirect.repository.slug'
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
+            - '@oro_security.acl_helper'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
         tags:
@@ -133,6 +134,7 @@ services:
         public: false
         arguments:
             - "@oro_redirect.repository.slug"
+            - '@oro_security.acl_helper'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 

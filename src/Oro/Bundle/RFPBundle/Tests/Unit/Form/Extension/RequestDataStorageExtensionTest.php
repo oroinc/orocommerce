@@ -76,6 +76,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             $requestStack,
             $this->storage,
             $this->doctrineHelper,
+            $this->aclHelper,
             $this->productClass
         );
         $this->extension->setDataClass('Oro\Bundle\RFPBundle\Entity\Request');

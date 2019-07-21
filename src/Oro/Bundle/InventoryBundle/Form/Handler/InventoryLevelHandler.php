@@ -8,10 +8,14 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer as LevelTransformer;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * This handler is saving the data when updating inventory levels
+ */
 class InventoryLevelHandler
 {
     /**
@@ -35,21 +39,29 @@ class InventoryLevelHandler
     protected $roundingService;
 
     /**
+     * @var InventoryManager
+     */
+    private $inventoryManager;
+
+    /**
      * @param FormInterface $form
      * @param ObjectManager $manager
      * @param Request $request
      * @param RoundingServiceInterface $rounding
+     * @param InventoryManager $inventoryManager
      */
     public function __construct(
         FormInterface $form,
         ObjectManager $manager,
         Request $request,
-        RoundingServiceInterface $rounding
+        RoundingServiceInterface $rounding,
+        InventoryManager $inventoryManager
     ) {
         $this->form = $form;
         $this->manager = $manager;
         $this->request = $request;
         $this->roundingService = $rounding;
+        $this->inventoryManager = $inventoryManager;
     }
 
     /**
@@ -113,8 +125,7 @@ class InventoryLevelHandler
 
         $level = $this->findInventoryLevel($precision);
         if (!$level) {
-            $level = new InventoryLevel();
-            $level->setProductUnitPrecision($precision);
+            $level = $this->inventoryManager->createInventoryLevel($precision);
         }
         $level->setQuantity($quantity);
 

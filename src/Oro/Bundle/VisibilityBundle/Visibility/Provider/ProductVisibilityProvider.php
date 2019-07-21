@@ -15,6 +15,9 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibil
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Visibility Provider for Product entity.
+ */
 class ProductVisibilityProvider
 {
     use ProductVisibilityTrait;
@@ -227,7 +230,8 @@ class ProductVisibilityProvider
         $visibilityCondition = $this->getVisibilityConditionForVisibilityTerms($visibilities);
 
         $queryBuilder
-            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, $this->getCategoryConfigValue()))
+            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, ':productVisibilityCategoryConfigValue'))
+            ->setParameter('productVisibilityCategoryConfigValue', $this->getCategoryConfigValue())
             ->addOrderBy('product.id', Query::ORDER_ASC);
 
         return $queryBuilder;
@@ -416,8 +420,9 @@ class ProductVisibilityProvider
         $queryBuilder
             ->select('product.id as productId, IDENTITY(scope.customer) as customerId')
             ->andWhere(
-                $queryBuilder->expr()->eq($customerVisibilityCondition, $this->inverseVisibility($productVisibility))
-            );
+                $queryBuilder->expr()->eq($customerVisibilityCondition, ':invertedProductVisibility')
+            )
+            ->setParameter('invertedProductVisibility', $this->inverseVisibility($productVisibility));
 
         return $queryBuilder->getQuery()->getArrayResult();
     }
@@ -448,9 +453,10 @@ class ProductVisibilityProvider
             ->andWhere(
                 $queryBuilder->expr()->eq(
                     $customerGroupVisibilityCondition,
-                    $this->inverseVisibility($productVisibility)
+                    ':invertedProductVisibility'
                 )
             )
+            ->setParameter('invertedProductVisibility', $this->inverseVisibility($productVisibility))
             ->addOrderBy('customer.id', 'ASC');
 
         return $queryBuilder->getQuery()->getArrayResult();

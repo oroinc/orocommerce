@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
@@ -29,6 +30,12 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $aclHelper;
+
+    /**
+     * @return string
+     */
     abstract public function getProcessorName();
 
     /**
@@ -56,7 +63,14 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->em);
         $this->em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
 
-        $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+
+        $this->processor = new QuickAddProcessor(
+            $this->handler,
+            $this->registry,
+            $this->messageGenerator,
+            $this->aclHelper
+        );
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
     }
 

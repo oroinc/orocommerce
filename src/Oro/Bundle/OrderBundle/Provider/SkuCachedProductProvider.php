@@ -4,7 +4,11 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+/**
+ * Product local cache by sku.
+ */
 class SkuCachedProductProvider
 {
     /**
@@ -23,11 +27,18 @@ class SkuCachedProductProvider
     private $productRepository;
 
     /**
-     * @param ProductRepository $productRepository
+     * @var AclHelper
      */
-    public function __construct(ProductRepository $productRepository)
+    private $aclHelper;
+
+    /**
+     * @param ProductRepository $productRepository
+     * @param AclHelper $aclHelper
+     */
+    public function __construct(ProductRepository $productRepository, AclHelper $aclHelper)
     {
         $this->productRepository = $productRepository;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -37,7 +48,7 @@ class SkuCachedProductProvider
      */
     public function addSkuToCache($sku)
     {
-        if (in_array($sku, $this->cachedSkus)) {
+        if (in_array($sku, $this->cachedSkus, true)) {
             return $this;
         }
 
@@ -53,8 +64,10 @@ class SkuCachedProductProvider
      */
     public function getBySku($sku)
     {
-        if (false === in_array($sku, $this->cachedSkus)) {
-            return $this->productRepository->findOneBySku($sku);
+        if (false === in_array($sku, $this->cachedSkus, true)) {
+            $qb = $this->productRepository->getBySkuQueryBuilder($sku);
+
+            return $this->aclHelper->apply($qb)->getOneOrNullResult();
         }
 
         if (null === $this->cachedProductsBySku) {
@@ -72,9 +85,10 @@ class SkuCachedProductProvider
     {
         $this->cachedProductsBySku = [];
 
-        /** @var Product[] $products */
-        $products = $this->productRepository->findBy(['sku' => $this->cachedSkus]);
+        $qb = $this->productRepository->getBySkuQueryBuilder($this->cachedSkus);
 
+        /** @var Product[] $products */
+        $products = $this->aclHelper->apply($qb)->getResult();
         foreach ($products as $product) {
             $this->cachedProductsBySku[$product->getSku()] = $product;
         }

@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
 /**
  * This entity represents price list with price attributes
@@ -21,11 +22,18 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          }
  *      }
  * )
  */
 class PriceAttributePriceList extends BasePriceList
 {
+    use OrganizationAwareTrait;
+
     /**
      * @var Collection|PriceAttributeProductPrice[]
      *

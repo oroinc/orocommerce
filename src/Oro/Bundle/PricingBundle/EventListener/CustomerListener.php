@@ -112,7 +112,7 @@ class CustomerListener extends AbstractPriceListCollectionAwareListener
     {
         /** @var WebsiteRepository $websiteRepo */
         $websiteRepo = $this->doctrineHelper->getEntityRepository(Website::class);
-        foreach ($websiteRepo->getAllWebsites() as $website) {
+        foreach ($websiteRepo->getAllWebsites($customer->getOrganization()) as $website) {
             $this->triggerHandler->handleCustomerChange($customer, $website);
         }
     }
