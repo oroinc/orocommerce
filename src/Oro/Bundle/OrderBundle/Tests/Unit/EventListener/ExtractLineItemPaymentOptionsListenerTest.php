@@ -71,9 +71,20 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $itemWithProduct2->setCurrency('EUR');
         $itemWithProduct2->setProductUnitCode('kg');
 
+        $product3Sku = 'FPROD';
+        $product3Name = 'Free Product';
+        $itemWithProduct3 = new OrderLineItem();
+        $itemWithProduct3->setProductSku($product3Sku);
+        $itemWithProduct3->setFreeFormProduct($product3Name);
+        $itemWithProduct3->setValue(5);
+        $itemWithProduct3->setQuantity(1);
+        $itemWithProduct3->setCurrency('EUR');
+        $itemWithProduct3->setProductUnitCode('kg');
+
         $entity = new Order();
         $entity->addLineItem($itemWithProduct1);
         $entity->addLineItem($itemWithProduct2);
+        $entity->addLineItem($itemWithProduct3);
         $entity->addLineItem(new OrderLineItem());
 
         $this->htmlTagHelper->expects($this->exactly(2))
@@ -109,6 +120,16 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $this->assertEquals(0.1, $model2->getQty(), '', 1e-6);
         $this->assertEquals('EUR', $model2->getCurrency());
         $this->assertEquals('kg', $model2->getUnit());
+
+        /** @var LineItemOptionModel $model3 */
+        $model3 = $models[2];
+
+        $this->assertEquals('FPROD Free Product', $model3->getName());
+        $this->assertNull($model3->getDescription());
+        $this->assertEquals(5, $model3->getCost());
+        $this->assertEquals(1, $model3->getQty());
+        $this->assertEquals('EUR', $model3->getCurrency());
+        $this->assertEquals('kg', $model3->getUnit());
     }
 
     public function testOnExtractLineItemPaymentOptionsWithoutLineItems()
