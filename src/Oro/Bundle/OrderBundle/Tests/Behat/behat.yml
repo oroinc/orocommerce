@@ -231,5 +231,6 @@ oro_behat_extension:
         - OroTaxBundle::TaxContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroQueryDesignerBundle::QueryDesignerContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

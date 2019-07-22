@@ -49,7 +49,7 @@
         class="tax-zip-code-list tax-zip-code-list-item">
         {{ form_widget(form) }}
         <td class="tax-zip-code-list-remove">
-            <button type="button" class="removeRow btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
+            <button type="button" class="removeRow btn btn-icon btn-square-lighter" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </td>
     </tr>
 {% endmacro %}
@@ -83,13 +83,13 @@
         <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
             {{ form_widget(form, {disabled: disabled}) }}
             {% if allow_delete %}
-                <button class="removeRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}">
-                    <span class="fa-close"></span>
+                <button class="removeRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}">
+                    <span class="fa-trash-o" aria-hidden="true"></span>
                 </button>
             {% endif %}
             {% if allow_add_after %}
-                <button class="addAfterRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}">
-                    <span class="fa-search-plus"></span>
+                <button class="addAfterRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}" aria-label="{{ 'Add row'|trans }}">
+                    <span class="fa-search-plus" aria-hidden="true"></span>
                 </button>
             {% endif %}
         </div>

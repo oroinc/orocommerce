@@ -4,3 +4,10 @@ trusted_data:
         Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener:
             getWebCatalogEntityIdsQueryBuilder:
                 rootAlias: true
+    properties:
+        Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider:
+            getQueryBuilder:
+                entityClass: true
+    check_methods_safety:
+        Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider:
+            getFieldName: true

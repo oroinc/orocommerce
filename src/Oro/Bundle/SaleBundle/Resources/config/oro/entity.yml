@@ -9,3 +9,14 @@ oro_entity:
                     join:
                         left:
                             - { join: entity.customerUser, alias: user }
+
+    virtual_relations:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            quote:
+                relation_type: oneToOne
+                related_entity_name: Oro\Bundle\SaleBundle\Entity\Quote
+                label: oro.sale.quote.entity_label
+                query:
+                    join:
+                        left:
+                            - { join: 'Oro\Bundle\SaleBundle\Entity\Quote', alias: quote, conditionType: 'WITH', condition: "entity.sourceEntityClass = 'Oro\\Bundle\\SaleBundle\\Entity\\Quote' AND entity.sourceEntityId = quote.id" }
