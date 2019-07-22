@@ -50,12 +50,15 @@ class PaymentOrderLineItemOptionsProvider
 
             $product = $lineItem->getProduct();
 
-            if (!$product) {
+            if ($product) {
+                $name = implode(' ', array_filter([$product->getSku(), (string)$product->getName($localization)]));
+                $description = $this->htmlTagHelper->stripTags((string)$product->getShortDescription($localization));
+            } elseif ($lineItem->getFreeFormProduct()) {
+                $name = implode(' ', array_filter([$lineItem->getProductSku(), $lineItem->getFreeFormProduct()]));
+                $description = null;
+            } else {
                 continue;
             }
-
-            $name = implode(' ', array_filter([$product->getSku(), (string)$product->getName($localization)]));
-            $description = $this->htmlTagHelper->stripTags((string)$product->getShortDescription($localization));
 
             $result[] = (new LineItemOptionModel())
                 ->setName($name)
