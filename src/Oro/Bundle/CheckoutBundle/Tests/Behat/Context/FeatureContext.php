@@ -186,7 +186,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
-        $checkoutStep->assertTitle($title);
+
+        $spinExecutionResult = $this->spin(function () use ($checkoutStep, $title) {
+            return $checkoutStep->assertTitle($title);
+        }, 3);
+
+        // Try once more if assertions failed in spin and increase chances as well as output Exeption on fail
+        if ($spinExecutionResult === null) {
+            $checkoutStep->assertTitle($title);
+        }
     }
 
     /**
