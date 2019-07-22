@@ -7,6 +7,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\SubtotalAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
+/**
+ * CheckoutStep element with getSubtotal, assertTitle and getLineItems methods
+ */
 class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalAwareInterface
 {
     /**
@@ -21,6 +24,10 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
         return $subtotals->getSubtotal($subtotalName);
     }
 
+    /**
+     * @param $title
+     * @return bool
+     */
     public function assertTitle($title)
     {
         $currentTitle = $this->getElement('CheckoutStepTitle');
@@ -32,6 +39,8 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
             $currentTitleText,
             sprintf('Expected title "%s", does not contains in "%s" current title', $title, $currentTitleText)
         );
+
+        return true;
     }
 
     /**
