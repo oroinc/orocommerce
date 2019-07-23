@@ -75,6 +75,22 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($productPrice, $this->constraint);
     }
 
+    public function testValidateWithEmptyCurrency()
+    {
+        $price = new Price();
+        $price
+            ->setValue('50')
+            ->setCurrency('');
+
+        $productPrice = $this->getProductPrice();
+        $productPrice->setPrice($price);
+
+        $this->context->expects($this->never())
+            ->method('buildViolation');
+
+        $this->validator->validate($productPrice, $this->constraint);
+    }
+
     public function testValidateWithNotAllowedCurrency()
     {
         $invalidCurrency = 'ABC';

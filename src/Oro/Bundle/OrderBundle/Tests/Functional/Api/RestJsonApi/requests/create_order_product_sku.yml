@@ -1,34 +1,13 @@
 data:
       type: orders
       attributes:
-          identifier: 'new_order'
-          poNumber: '2345678'
-          customerNotes: null
-          shipUntil: '2017-04-12'
           currency: 'USD'
-          shippingMethod: null
-          shippingMethodType: null
-          estimatedShippingCostAmount: null
-          overriddenShippingCostAmount: null
-          sourceEntityClass: null
-          sourceEntityId: null
-          sourceEntityIdentifier: null
-          createdAt: '2017-04-12T14:11:39Z'
-          updatedAt: '2017-04-12T14:11:39Z'
       relationships:
-          billingAddress:
-              data: null
-          shippingAddress:
-              data: null
           lineItems:
               data:
                   -
                       type: orderlineitems
                       id: line_item_1
-          discounts:
-              data: []
-          shippingTrackings:
-              data: []
           organization:
               data:
                   type: organizations
@@ -46,14 +25,11 @@ included:
         type: orderlineitems
         id: line_item_1
         attributes:
+            productSku: product-1
             quantity: 1
             value: 10
             currency: 'USD'
         relationships:
-            product:
-                data:
-                    type: products
-                    id: '<toString(@product-1->id)>'
             productUnit:
                 data:
                     type: productunits

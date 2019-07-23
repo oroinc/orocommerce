@@ -41,6 +41,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     properties:
         order:
             - NotBlank: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                message: oro.order.orderlineitem.order.changed
+                groups: [ api ]
         productSku:
             - NotBlank:
                 groups: [ Import ]

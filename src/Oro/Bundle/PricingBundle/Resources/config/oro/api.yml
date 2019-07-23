@@ -58,18 +58,12 @@ api:
                     exclude: true
                 quantity:
                     exclude: true
-                # start: this is added in order to properly handle "price" object that is created out of currency and value
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
-                # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
             fields:
@@ -176,17 +170,12 @@ api:
                         operators: ['=']
                         allow_array: false
             fields:
-                # this is added in order to properly handle "price" parameter that is created out of these values
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                          - NotBlank: ~
                 productSku:
                     exclude: true
                 priceRule:
