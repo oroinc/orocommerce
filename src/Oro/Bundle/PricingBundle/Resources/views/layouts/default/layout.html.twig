@@ -75,28 +75,28 @@
         <tbody>
         <% var addNewLine = false %>
         <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
-        <% _.each(model.product_units, function(key) { %>
-        <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
+        <% _.each(model.product_units, function(val, unit) { %>
+        <% var prices = _.filter(modelPrices, function(price){return price.unit === unit}); %>
         <% if (prices.length) { %>
         <tr>
             <td colspan="2" class="text-capitalize">
-                <%= addNewLine ? '<br/>' : '' %>
-                <b><%= _.__('oro.product.product_unit.' + key + '.label.full') %></b>
+                <%- addNewLine ? '<br/>' : '' %>
+                <b><%- _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
             </td>
         </tr>
         <% addNewLine = true %>
         <% _.each(prices, function(price) { %>
         <tr class="<% if (!_.isEmpty(matchedPrice) && price.unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
-            <td><%= price.quantity %></td>
+            <td><%- price.quantity %></td>
             <td>
                 <% if (clickable) { %>
                 <a
                         href="#"
-                        data-price="<%= parseFloat(price.price) %>"
-                        data-unit="<%= price.unit %>"
-                ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                        data-price="<%- parseFloat(price.price) %>"
+                        data-unit="<%- price.unit %>"
+                ><%- formatter.formatCurrency(price.price, price.currency) %></a>
                 <% } else { %>
-                <%= formatter.formatCurrency(price.price, price.currency) %>
+                <%- formatter.formatCurrency(price.price, price.currency) %>
                 <% } %>
             </td>
         </tr>

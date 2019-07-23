@@ -166,7 +166,7 @@ define(function(require) {
             this.renderHint();
 
             var $pricesHintEl = this.getElement('pricesHintContentRendered');
-            if (this.model.get('subtotal') === this.options.subtotalNotAvailable) {
+            if (this.model.get('subtotal')) {
                 $pricesHintEl.show();
             } else {
                 $pricesHintEl.hide();
