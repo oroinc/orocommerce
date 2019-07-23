@@ -280,7 +280,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
@@ -343,7 +343,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ _self.oro_rfp_request_lineitem_requested_prototype(child) }}
