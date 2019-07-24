@@ -139,7 +139,7 @@ class AjaxLineItemController extends AbstractLineItemController
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
-     * @Method("POST")
+     * @Method("DELETE")
      *
      * @param Request $request
      * @param Product $product

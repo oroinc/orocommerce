@@ -35,12 +35,8 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->quoteProductFormatter = $this->getMockBuilder(QuoteProductFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteProductFormatter = $this->createMock(QuoteProductFormatter::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_sale.formatter.quote_product', $this->quoteProductFormatter)

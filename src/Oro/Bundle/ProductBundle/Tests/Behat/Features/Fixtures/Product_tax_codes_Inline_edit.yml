@@ -65,6 +65,8 @@ Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     taxCode1:
         code: 'TaxCode1'
         description: 'Tax Code 1'
+        organization: '@organization'
     taxCode2:
         code: 'TaxCode2'
         description: 'Tax Code 2'
+        organization: '@organization'

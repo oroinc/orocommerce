@@ -23,6 +23,7 @@ oro:
             entity_label:           'Slug'
             entity_plural_label:    'Slugs'
             id.label:               'ID'
+            organization.label: Organization
             url.label:              'Url'
             route_name.label:       'Route name'
             route_parameters.label: 'Route parameters'

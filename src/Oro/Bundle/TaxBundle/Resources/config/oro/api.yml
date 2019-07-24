@@ -11,3 +11,9 @@ api:
                 taxCode:
                     description: Tax code
                     data_type: association:manyToOne
+                organization:
+                    exclude: true
+            subresources:
+                organization:
+                    actions:
+                        update_relationship: false

@@ -5,7 +5,11 @@ namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+/**
+ * Top selling products
+ */
 class TopSellingItemsProvider implements ProductsProviderInterface
 {
     const DEFAULT_QUANTITY = 10;
@@ -21,15 +25,23 @@ class TopSellingItemsProvider implements ProductsProviderInterface
     protected $productManager;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param ProductRepository $productRepository
-     * @param ProductManager    $productManager
+     * @param ProductManager $productManager
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ProductRepository $productRepository,
-        ProductManager $productManager
+        ProductManager $productManager,
+        AclHelper $aclHelper
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -39,6 +51,7 @@ class TopSellingItemsProvider implements ProductsProviderInterface
     {
         $queryBuilder = $this->productRepository->getFeaturedProductsQueryBuilder(self::DEFAULT_QUANTITY);
         $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        return $queryBuilder->getQuery()->getResult();
+
+        return $this->aclHelper->apply($queryBuilder)->getResult();
     }
 }

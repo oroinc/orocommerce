@@ -109,6 +109,7 @@ services:
             - "@oro_security.token_accessor"
             - "@oro_featuretoggle.checker.feature_checker"
             - "@oro_product.product.manager"
+            - '@oro_security.acl_helper'
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
@@ -132,6 +133,7 @@ services:
             - "@oro_shopping_list.handler.shopping_list_line_item"
             - "@doctrine"
             - "@oro_shopping_list.service.message_generator"
+            - "@oro_security.acl_helper"
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
 

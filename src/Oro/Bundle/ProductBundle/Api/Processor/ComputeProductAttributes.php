@@ -316,7 +316,7 @@ class ComputeProductAttributes implements ProcessorInterface
     ): array {
         $productIds = [];
         foreach ($data as $item) {
-            if (Product::TYPE_SIMPLE === $item[$productTypeFieldName]) {
+            if (isset($item[$productTypeFieldName]) && Product::TYPE_SIMPLE === $item[$productTypeFieldName]) {
                 $productIds[] = $item[$productIdFieldName];
             }
         }

@@ -113,6 +113,9 @@ oro.pricing:
             label: 'Field Name'
             description: 'Price attribute expression field name'
         id.label: Id
+        organization:
+            label: Organization
+            description: The relationship on organization.
         currencies.label: Currencies
         prices:
             label: 'Price Attribute Product Prices'

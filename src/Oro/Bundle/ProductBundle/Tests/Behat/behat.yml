@@ -31,6 +31,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    SelectProductsGrid:
+      selector: 'div[data-page-component-name="products-select-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     Products GridFiltersButton:
       selector: 'div[data-page-component-name="products-grid"] div.filter-container > button.select-filter-widget'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
@@ -112,6 +116,11 @@ oro_behat_extension:
     RelatedProductsEditGridFilterStringItem:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
+    ## Tax Code ##
+    SelectTaxCodeGrid:
+      selector: 'div[data-page-component-name="products-tax-code-select-grid"] div.oro-datagrid'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     ## Upsell Products ##
     SelectUpsellProductsGrid:
@@ -750,6 +759,14 @@ oro_behat_extension:
           Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
           Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
 
+    Featured Products Form:
+      selector: 'form[name="featured_products"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product Segment Default: 'featured_products[oro_product___featured_products_segment_id][use_parent_scope_value]'
+          Product Segment: 'featured_products[oro_product___featured_products_segment_id][value]'
+
     Product Images Form:
       selector: 'form[name="product_images"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -896,6 +913,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//label[text()="Brand"]/../..//button[contains(@class, "entity-select-btn")]'
+
+    Tax code humburger button:
+      selector:
+        type: xpath
+        locator: '//label[text()="Tax Code"]/../..//button[contains(@class, "entity-select-btn")]'
 
     Frontend Product Grid MultipleChoice:
       selector: 'div.filter-item'

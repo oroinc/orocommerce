@@ -11,11 +11,15 @@ use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductCleanUpListen
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
+
+    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $aclHelper;
 
     /** @var FrontendProductCleanUpListener */
     private $listener;
@@ -29,7 +33,8 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->listener = new FrontendProductCleanUpListener($this->doctrineHelper);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->listener = new FrontendProductCleanUpListener($this->doctrineHelper, $this->aclHelper);
         /** @var $datagridMock DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
         $datagridMock = $this->createMock(DatagridInterface::class);
         /** @var $queryMock SearchQueryInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -89,17 +94,16 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
             ->with('p.id')
             ->willReturn($queryBuilder);
 
-        $query = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryBuilder->expects($this->once())
-            ->method('getQuery')
-            ->willReturn($query);
-
+        $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getArrayResult')
             ->willReturn($expectedResult);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')

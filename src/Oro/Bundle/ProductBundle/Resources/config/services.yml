@@ -122,7 +122,8 @@ services:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
             - '%oro_product.entity.product.class%'
 
     oro_product.service.duplicator:
@@ -181,6 +182,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
         arguments:
             - "@doctrine"
+            - "@oro_security.acl_helper"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_product_by_sku_validator }
 
@@ -587,6 +589,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_product.product.manager'
+            - '@oro_security.acl_helper'
             - '%oro_product.entity.product.class%'
 
     oro_product.repository.product_image:
@@ -599,6 +602,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_product.provider.product_units_provider'
+            - '@oro_security.acl_helper'
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
@@ -608,6 +612,7 @@ services:
             - "@oro_product.product.manager"
             - "@event_dispatcher"
             - "@oro_product.model.builder.quick_add_row_input_parser"
+            - "@oro_security.acl_helper"
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -787,6 +792,7 @@ services:
             - '@doctrine'
             - '@security.token_storage'
             - '@oro_security.encoder.default'
+            - '@oro_security.acl_helper'
         calls:
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
 
@@ -946,6 +952,7 @@ services:
             - '@property_accessor'
             - '@event_dispatcher'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
+            - '@oro_security.acl_helper'
 
     Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider:
         alias: 'oro_product.provider.product_variant_availability_provider'
@@ -1363,6 +1370,7 @@ services:
         arguments:
             - '@oro_segment.segment_manager'
             - '@logger'
+            - '@oro_website.manager'
 
     oro_product.doctrine.abstract_cached_provider_decorator:
         class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
@@ -1527,14 +1535,16 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
+            - "@oro_security.acl_helper"
         tags:
             - { name: oro_action.condition, alias: at_least_one_available_product }
 
     oro_product.action.remove_restricted_products:
         class: Oro\Bundle\ProductBundle\Action\RemoveRestrictedProducts
         arguments:
-            - "@oro_product.repository.product"
-            - "@oro_product.product.manager"
+            - '@oro_product.repository.product'
+            - '@oro_product.product.manager'
+            - '@oro_security.acl_helper'
             - '@oro_action.expression.context_accessor'
         tags:
             - { name: oro_action.action, alias: remove_restricted_products }
@@ -1588,6 +1598,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductCleanUpListener'
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter}
 

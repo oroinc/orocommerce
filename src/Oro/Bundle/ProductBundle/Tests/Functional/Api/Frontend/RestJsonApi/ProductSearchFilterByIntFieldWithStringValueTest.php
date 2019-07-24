@@ -4,8 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -13,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonApiTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp()
     {
         parent::setUp();
@@ -27,15 +28,7 @@ class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonA
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();
-        $this->getSearchIndexer()->reindex(Product::class);
-    }
-
-    /**
-     * @return IndexerInterface
-     */
-    private function getSearchIndexer()
-    {
-        return self::getContainer()->get('oro_website_search.indexer');
+        $this->reindexProductData();
     }
 
     public function testTryToFilterByIntFieldWithStringValue()

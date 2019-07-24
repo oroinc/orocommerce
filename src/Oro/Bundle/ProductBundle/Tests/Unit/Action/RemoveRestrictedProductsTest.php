@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductHolderStub;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -18,14 +19,17 @@ class RemoveRestrictedProductsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject */
-    private $query;
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $queryBuilder;
 
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
     /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     private $productManager;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
     /** @var RemoveRestrictedProducts */
     private $action;
@@ -35,27 +39,20 @@ class RemoveRestrictedProductsTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->query = $this->getMockForAbstractClass(
-            AbstractQuery::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getArrayResult']
-        );
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->expects($this->any())
-            ->method('getQuery')
-            ->willReturn($this->query);
-
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository = $this->createMock(ProductRepository::class);
         $this->repository->expects($this->any())
             ->method('getProductsQueryBuilder')
-            ->willReturn($queryBuilder);
+            ->willReturn($this->queryBuilder);
 
         $this->productManager = $this->createMock(ProductManager::class);
-        $this->action = new RemoveRestrictedProducts($this->repository, $this->productManager, new ContextAccessor());
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->action = new RemoveRestrictedProducts(
+            $this->repository,
+            $this->productManager,
+            $this->aclHelper,
+            new ContextAccessor()
+        );
         $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
     }
 
@@ -71,9 +68,15 @@ class RemoveRestrictedProductsTest extends \PHPUnit\Framework\TestCase
         ];
         $this->action->initialize($options);
 
-        $this->query->expects($this->once())
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
             ->method('getArrayResult')
             ->willReturn([['id' => 1]]);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($this->queryBuilder)
+            ->willReturn($query);
 
         $context = new \ArrayObject(['path' => ['products' => $productsHolders]]);
         $expectedContext = new \ArrayObject([

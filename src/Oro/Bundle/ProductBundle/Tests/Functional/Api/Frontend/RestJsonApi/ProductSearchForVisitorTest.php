@@ -5,11 +5,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp()
     {
         parent::setUp();
@@ -18,22 +19,14 @@ class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
             LoadCustomerData::class,
             LoadCustomerUserRoles::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
-            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml',
+            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml'
         ]);
     }
 
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();
-        $this->getSearchIndexer()->reindex(Product::class);
-    }
-
-    /**
-     * @return IndexerInterface
-     */
-    private function getSearchIndexer()
-    {
-        return self::getContainer()->get('oro_website_search.indexer');
+        $this->reindexProductData();
     }
 
     public function testGetList()

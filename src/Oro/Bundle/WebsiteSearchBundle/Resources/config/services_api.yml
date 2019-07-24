@@ -4,7 +4,26 @@ services:
         public: false
         arguments:
             - '@oro_website_search.provider.search_mapping'
+            - '@oro_website_search.api.field_resolver_factory.website_search_query_filter'
             - '@oro_website_search.api.search_query_criteria_visitor'
+
+    oro_website_search.api.filter_factory.website_search_aggregation:
+        class: Oro\Bundle\ApiBundle\Filter\SearchAggregationFilterFactory
+        public: false
+        arguments:
+            - '@oro_website_search.api.field_resolver_factory.website_search_aggregation_filter'
+
+    oro_website_search.api.field_resolver_factory.website_search_query_filter:
+        class: Oro\Bundle\WebsiteSearchBundle\Api\SearchFieldResolverFactory
+        public: false
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.api.field_resolver_factory.website_search_aggregation_filter:
+        class: Oro\Bundle\ApiBundle\Filter\SearchFieldResolverFactory
+        public: false
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.api.search_query_criteria_visitor:
         class: Oro\Bundle\WebsiteSearchBundle\Api\SearchQueryCriteriaVisitor

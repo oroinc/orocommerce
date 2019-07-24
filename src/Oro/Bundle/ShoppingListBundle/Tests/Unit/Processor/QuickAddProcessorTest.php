@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,10 +16,18 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
     {
         parent::setUp();
 
-        $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
+        $this->processor = new QuickAddProcessor(
+            $this->handler,
+            $this->registry,
+            $this->messageGenerator,
+            $this->aclHelper
+        );
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getProcessorName()
     {
         return QuickAddProcessor::NAME;
@@ -52,7 +62,26 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             )
         );
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $result = [];
+        foreach ($productIds as $sku => $id) {
+            $result[] = ['id' => $id, 'sku' => $sku];
+        }
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn($result);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with(array_column($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY], 'productSku'))
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         if ($failed) {
             $this->handler->expects($this->once())
@@ -74,6 +103,30 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         } elseif ($entitiesCount) {
             $this->assertFlashMessage($request);
         }
+
+        $this->processor->process($data, $request);
+    }
+
+    public function testProcessEmpty()
+    {
+        $data = [];
+        $request = new Request();
+
+        $this->handler
+            ->expects($this->never())
+            ->method('getShoppingList');
+
+        $this->productRepository->expects($this->never())
+            ->method('getProductsIdsBySkuQueryBuilder')
+            ->with([]);
+
+        $this->aclHelper
+            ->expects($this->never())
+            ->method('apply');
+
+        $this->handler
+            ->expects($this->never())
+            ->method('createForShoppingList');
 
         $this->processor->process($data, $request);
     }
@@ -111,7 +164,6 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
     public function processDataProvider()
     {
         return [
-            'empty' => [[], new Request()],
             'new shopping list' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [

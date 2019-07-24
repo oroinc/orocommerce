@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Removes products that are presented in search index, but were removed from DB already
@@ -16,12 +17,17 @@ class FrontendProductCleanUpListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param AclHelper $aclHelper
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -43,10 +49,8 @@ class FrontendProductCleanUpListener
         /** @var ProductRepository $productRepository */
         $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
 
-        $existingProductIds = $productRepository->getProductsQueryBuilder($requestedProductIds)
-            ->select('p.id')
-            ->getQuery()
-            ->getArrayResult();
+        $qb = $productRepository->getProductsQueryBuilder($requestedProductIds)->select('p.id');
+        $existingProductIds = $this->aclHelper->apply($qb)->getArrayResult();
 
         if (count($requestedProductIds) != count($existingProductIds)) {
             $existingProductIds = array_column($existingProductIds, 'id');

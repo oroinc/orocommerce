@@ -158,10 +158,27 @@ services:
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -90 }
 
+    oro_product.api.product_search.handle_aggregations_filter:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\HandleSearchAggregationFilter
+        tags:
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -95 }
+
     oro_product.api.product_search.load_data:
         class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchData
         tags:
             - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
+
+    oro_product.api.product_search.load_aggregated_data:
+        class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchAggregatedData
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -10 }
+
+    oro_product.api.product_search.normalize_aggregated_data:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\NormalizeSearchAggregatedData
+        arguments:
+            - '@oro_api.value_transformer'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -12 }
 
     oro_product.api.product_search.load_expanded_entities:
         class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchExpandedEntities

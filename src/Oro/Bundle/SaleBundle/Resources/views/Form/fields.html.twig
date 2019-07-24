@@ -57,7 +57,7 @@
         data-page-component-options="{{ page_component_options|json_encode }}">
         {{ form_widget(form) }}
         <td class="quote-lineitem-remove">
-            <button type="button" class="removeLineItem btn btn-icon btn-square-lighter"><span class="fa-close"></span>{{ 'oro.sale.quote.lineitem.remove'|trans }}</button>
+            <button type="button" class="removeLineItem btn btn-icon btn-square-lighter" aria-label="{{ 'oro.sale.quote.lineitem.remove'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </td>
     </tr>
 {% endmacro %}
@@ -206,7 +206,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody class="quote-lineitem-offers-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                <tbody class="quote-lineitem-offers-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ fields.oro_sale_quote_product_offer_prototype(child, false, widgetContainerAttributes) }}
@@ -250,7 +250,7 @@
         data-layout="separate">
         {{ form_widget(form, { 'prototype' : prototype}) }}
         <td class="quote-lineitem-offers-remove">
-            <button type="button" class="removeRow btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
+            <button type="button" class="removeRow btn btn-icon btn-square-lighter" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </td>
     </tr>
 {% endmacro %}

@@ -3,8 +3,11 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PayPalBundle\Tests\Functional\Controller\Frontend\Stub\PaymentCallbackStubListener;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -49,12 +52,6 @@ class CallbackControllerTest extends WebTestCase
             [],
             ['REMOTE_ADDR' => self::ALLOWED_REMOTE_ADDR]
         );
-
-        $paymentTransactionRepository = $this->getContainer()->get('doctrine')
-            ->getRepository('OroPaymentBundle:PaymentTransaction');
-
-        /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $paymentTransactionRepository->find($paymentTransaction->getId());
 
         // Active flag of charge transaction after complete(notify request) action should be changed to false
         $this->assertFalse($paymentTransaction->isActive());
@@ -140,5 +137,156 @@ class CallbackControllerTest extends WebTestCase
         $this->assertTrue($paymentTransaction->isActive());
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+    }
+
+    public function testErrorCallbackForPendingTransactionExpressCheckout()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(
+            LoadPaymentTransactionData::PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION
+        );
+
+        $callbackCalled = false;
+
+        $this->getContainer()->get('event_dispatcher')->addListener(
+            'oro_payment.callback.error',
+            [new PaymentCallbackStubListener($callbackCalled), 'onError']
+        );
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_payment_callback_error',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                ]
+            )
+        );
+
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+
+        if (!$callbackCalled) {
+            $this->fail('onError callback must be called.'
+                . 'CheckCallbackRelevanceListener must not stop propagation of handling event for pending transaction');
+        }
+
+        $this->assertRedirectToFailureUrl($this->client->getResponse());
+    }
+
+    public function testErrorCallbackForPaidTransactionExpressCheckout()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(
+            LoadPaymentTransactionData::PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION
+        );
+
+        $callbackCalled = false;
+
+        $this->getContainer()->get('event_dispatcher')->addListener(
+            'oro_payment.callback.error',
+            [new PaymentCallbackStubListener($callbackCalled), 'onError']
+        );
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_payment_callback_error',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                ]
+            )
+        );
+
+        if ($callbackCalled) {
+            $this->fail('onError callback must not be called.'
+                . 'CheckCallbackRelevanceListener must stop propagation of handling event');
+        }
+
+        $this->assertRedirectToFailureUrl($this->client->getResponse());
+    }
+
+    public function testReturnCallbackForPendingTransactionExpressCheckout()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(
+            LoadPaymentTransactionData::PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION
+        );
+
+        $callbackCalled = false;
+
+        $this->getContainer()->get('event_dispatcher')->addListener(
+            'oro_payment.callback.return',
+            [new PaymentCallbackStubListener($callbackCalled), 'onReturn']
+        );
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_payment_callback_return',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                ]
+            )
+        );
+
+        $this->assertTrue($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+
+        if (!$callbackCalled) {
+            $this->fail('onReturn callback must be called.'
+                . 'CheckCallbackRelevanceListener must not stop propagation of handling event for pending transaction');
+        }
+
+        // Redirect to failure url is expected here
+        // because PayflowExpressCheckoutListener::onReturn doesn't handle this test transaction
+        $this->assertRedirectToFailureUrl($this->client->getResponse());
+    }
+
+    public function testReturnCallbackForPaidTransactionExpressCheckout()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(
+            LoadPaymentTransactionData::PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION
+        );
+
+        $callbackCalled = false;
+
+        $this->getContainer()->get('event_dispatcher')->addListener(
+            'oro_payment.callback.return',
+            [new PaymentCallbackStubListener($callbackCalled), 'onReturn']
+        );
+
+        // Repeat request with same data
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_payment_callback_return',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                ]
+            )
+        );
+
+        if ($callbackCalled) {
+            $this->fail('onReturn callback must not be called.'
+                . 'CheckCallbackRelevanceListener must stop propagation of handling event');
+        }
+
+        // Redirect to failure url is expected here
+        // because PayflowExpressCheckoutListener::onReturn doesn't handle this test transaction
+        $this->assertRedirectToFailureUrl($this->client->getResponse());
+    }
+
+    /**
+     * @param RedirectResponse|Response|null $response
+     */
+    private function assertRedirectToFailureUrl(?Response $response)
+    {
+        $this->assertNotNull($response);
+        $this->assertResponseStatusCodeEquals($response, 302);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+
+        $this->assertEquals('https://example.com/failure-url', $response->getTargetUrl());
     }
 }

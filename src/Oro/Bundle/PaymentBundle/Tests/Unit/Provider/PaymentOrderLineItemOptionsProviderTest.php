@@ -79,23 +79,16 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
             ->addName($product2Name)
             ->addShortDescription($product2Description);
 
-        $itemWithProduct1 = new OrderLineItem();
-        $itemWithProduct1->setProduct($product1);
-        $itemWithProduct1->setValue(123.456);
-        $itemWithProduct1->setQuantity(2);
-        $itemWithProduct1->setCurrency('USD');
-        $itemWithProduct1->setProductUnitCode('item');
-
-        $itemWithProduct2 = new OrderLineItem();
-        $itemWithProduct2->setProduct($product2);
-        $itemWithProduct2->setValue(321.654);
-        $itemWithProduct2->setQuantity(0.1);
-        $itemWithProduct2->setCurrency('EUR');
-        $itemWithProduct2->setProductUnitCode('kg');
+        $itemWithProduct1 = $this->createOrderLineItem($product1, 123.456, 2, 'USD', 'item');
+        $itemWithProduct2 = $this->createOrderLineItem($product2, 321.654, 0.1, 'EUR', 'kg');
+        $itemWithProduct3 = $this->createOrderLineItem(null, 5, 1, 'EUR', 'kg');
+        $itemWithProduct3->setProductSku('FPROD');
+        $itemWithProduct3->setFreeFormProduct('Free Product');
 
         $entity = new Order();
         $entity->addLineItem($itemWithProduct1);
         $entity->addLineItem($itemWithProduct2);
+        $entity->addLineItem($itemWithProduct3);
 
         $this->htmlTagHelper
             ->expects($this->exactly(2))
@@ -128,6 +121,16 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         $this->assertEquals(0.1, $model2->getQty(), '', 1e-6);
         $this->assertEquals('EUR', $model2->getCurrency());
         $this->assertEquals('kg', $model2->getUnit());
+
+        /** @var LineItemOptionModel $model3 */
+        $model3 = $models[2];
+
+        $this->assertEquals('FPROD Free Product', $model3->getName());
+        $this->assertNull($model3->getDescription());
+        $this->assertEquals(5, $model3->getCost());
+        $this->assertEquals(1, $model3->getQty());
+        $this->assertEquals('EUR', $model3->getCurrency());
+        $this->assertEquals('kg', $model3->getUnit());
     }
 
     public function testGetLineItemOptionsWithoutLineItems(): void
@@ -140,7 +143,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         $this->assertEmpty($models);
     }
 
-    public function testGetLineItemOptionsWithoutProduct()
+    public function testGetLineItemOptionsWithoutProductAndFreeFormItem()
     {
         $entity = new Order();
         $entity->addLineItem(new OrderLineItem());
@@ -167,5 +170,30 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
             ->willReturn($localization);
 
         return $userLocalizationManager;
+    }
+
+    /**
+     * @param Product|null $product
+     * @param float|null $value
+     * @param float|null $quantity
+     * @param string|null $currency
+     * @param string|null $productUnitCode
+     * @return OrderLineItem
+     */
+    private function createOrderLineItem(
+        ?Product $product = null,
+        ?float $value = null,
+        ?float $quantity = null,
+        ?string $currency = null,
+        ?string $productUnitCode = null
+    ): OrderLineItem {
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->setValue($value);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setCurrency($currency);
+        $lineItem->setProductUnitCode($productUnitCode);
+
+        return $lineItem;
     }
 }

@@ -28,6 +28,19 @@ Feature: Featured product using segment records limit with cache
     When I save form
     Then I should see "Segment saved" flash message
 
+    # Change Featured Products order for prevent incorrect sorting
+    And I go to Reports & Segments / Manage Segments
+    And I click edit "Featured Products" in grid
+    And I click "Edit First Segment Column"
+    And I fill "Segment Form" with:
+      | Sorting | Desc |
+    And I click "Save Column Button"
+    And I click "Edit Second Segment Column"
+    And I fill "Segment Form" with:
+      | Sorting | None |
+    And I click "Save Column Button"
+    And I save and close form
+
     Given I proceed as the Guest
     When I go to homepage
     Then I should see the following products in the "Featured Products Block":

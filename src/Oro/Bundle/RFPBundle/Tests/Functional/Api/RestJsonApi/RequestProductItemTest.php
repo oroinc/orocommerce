@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -17,6 +16,35 @@ class RequestProductItemTest extends RestJsonApiTestCase
     {
         parent::setUp();
         $this->loadFixtures([LoadRequestData::class]);
+    }
+
+    /**
+     * @return array
+     */
+    private function getCreateData()
+    {
+        /** @var Request $request */
+        $request = $this->getReference(LoadRequestData::REQUEST1);
+        $requestProduct = $request->getRequestProducts()->first();
+
+        return [
+            'data' => [
+                'type'          => 'requestproductitems',
+                'attributes'    => [
+                    'quantity' => 10,
+                    'value'    => 100,
+                    'currency' => 'USD'
+                ],
+                'relationships' => [
+                    'productUnit'    => [
+                        'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
+                    ],
+                    'requestProduct' => [
+                        'data' => ['type' => 'requestproducts', 'id' => (string)$requestProduct->getId()]
+                    ]
+                ]
+            ]
+        ];
     }
 
     public function testGetList()
@@ -43,7 +71,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
             ['entity' => 'requestproductitems', 'id' => $entity->getId()]
         );
 
-        $this->assertResponseNotEmpty($response);
+        self::assertResponseNotEmpty($response);
     }
 
     /**
@@ -51,31 +79,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
      */
     public function testCreateEntity()
     {
-        /** @var ProductUnit $productUnit */
-        $productUnit = $this->getReference('product_unit.liter');
-        /** @var Request $request */
-        $request = $this->getReference(LoadRequestData::REQUEST1);
-        $requestProduct = $request->getRequestProducts()->first();
-
-        $data = [
-            'data' => [
-                'type' => 'requestproductitems',
-                'attributes' => [
-                    'quantity' => 10,
-                    'value' => 100,
-                    'currency' => 'USD'
-                ],
-                'relationships' => [
-                    'productUnit' => [
-                        'data' => ['type' => 'productunits', 'id' => $productUnit->getCode()]
-                    ],
-                    'requestProduct' => [
-                        'data' => ['type' => 'requestproducts', 'id' => (string)$requestProduct->getId()]
-                    ]
-                ]
-            ]
-        ];
-
+        $data = $this->getCreateData();
         $response = $this->post(
             ['entity' => 'requestproductitems'],
             $data
@@ -89,6 +93,69 @@ class RequestProductItemTest extends RestJsonApiTestCase
         return (int)$entityId;
     }
 
+    public function testTryToCreateEmptyValue()
+    {
+        $data = $this->getCreateData();
+        $data['data']['attributes']['value'] = '';
+        $response = $this->post(
+            ['entity' => 'requestproductitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'Price value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateEmptyCurrency()
+    {
+        $data = $this->getCreateData();
+        $data['data']['attributes']['currency'] = '';
+        $response = $this->post(
+            ['entity' => 'requestproductitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongValue()
+    {
+        $data = $this->getCreateData();
+        $data['data']['attributes']['value'] = 'test';
+        $response = $this->post(
+            ['entity' => 'requestproductitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'type constraint',
+                'detail' => 'This value should be of type numeric.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
     /**
      * @depends testCreateEntity
      *
@@ -98,8 +165,8 @@ class RequestProductItemTest extends RestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'id' => (string)$entityId,
-                'type' => 'requestproductitems',
+                'id'         => (string)$entityId,
+                'type'       => 'requestproductitems',
                 'attributes' => [
                     'value' => 150
                 ]

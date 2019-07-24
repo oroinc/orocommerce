@@ -1,12 +1,5 @@
 services:
-    oro_rfp.api.processor.update_request_data_for_request_entity:
-        class: 'Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestEntity'
+    oro_rfp.api.update_price_by_value_and_currency:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
         tags:
-            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
-
-    oro_rfp.api.processor.update_request_data_for_request_product_item:
-        class: 'Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestProductItem'
-        tags:
-            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_rfp.entity.request_product_item.class%' }
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request_product_item.class%' }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem }

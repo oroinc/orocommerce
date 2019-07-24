@@ -103,7 +103,8 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
                 continue;
             }
 
-            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
             if (!$product) {
                 continue;
             }
@@ -211,7 +212,8 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         $repository = $this->getProductRepository();
         foreach ($products as $product) {
             if (!empty($product['productSku'])) {
-                $product = $repository->findOneBySku($product['productSku']);
+                $qb = $repository->getBySkuQueryBuilder($product['productSku']);
+                $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
                 if (!empty($product) && ($this->isAllowedProduct($product) === true)) {
                     return true;
                 }

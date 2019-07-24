@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -126,6 +127,10 @@ class SlugEntityGenerator
             if ($this->getExistingSlugs($slugUrl, $entity->getSlugs())->isEmpty()) {
                 $routeData = $this->routingInformationProvider->getRouteData($entity);
                 $slug = $this->createSlug($routeData, $slugUrl);
+                if ($entity instanceof OrganizationAwareInterface) {
+                    $slug->setOrganization($entity->getOrganization());
+                }
+
                 $entity->addSlug($slug);
 
                 $this->urlCache->setUrl(

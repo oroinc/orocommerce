@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,21 +44,29 @@ class QuickAddRowCollectionBuilder
     protected $quickAddRowInputParser;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @param EntityRepository $productRepository
      * @param ProductManager $productManager
      * @param EventDispatcherInterface $eventDispatcher
      * @param QuickAddRowInputParser $quickAddRowInputParser
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
         EventDispatcherInterface $eventDispatcher,
-        QuickAddRowInputParser $quickAddRowInputParser
+        QuickAddRowInputParser $quickAddRowInputParser,
+        AclHelper $aclHelper
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->quickAddRowInputParser = $quickAddRowInputParser;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -162,7 +171,7 @@ class QuickAddRowCollectionBuilder
         $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
             ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
 
-        $query = $restricted->getQuery();
+        $query = $this->aclHelper->apply($restricted);
 
         /** @var Product[] $products */
         $products = $query->execute();

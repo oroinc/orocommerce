@@ -61,7 +61,7 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
         $this->deleteCustomerVisibility($customer);
 
         $customerVisibilityFieldName = $this->getCustomerVisibilityFieldName($customer);
-        foreach ($this->getAllWebsites() as $website) {
+        foreach ($this->getAllWebsites($customer) as $website) {
             $iterator = $this->getCustomerVisibilityIterator($customer, $website);
 
             $productAlias = $this->getProductAliasByWebsite($website);
@@ -106,13 +106,16 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
     );
 
     /**
+     * @param Customer $customer
+     *
      * @return Website[]
      */
-    protected function getAllWebsites()
+    protected function getAllWebsites(Customer $customer)
     {
         /** @var WebsiteRepository $websiteRepository */
         $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        return $websiteRepository->getAllWebsites();
+
+        return $websiteRepository->getAllWebsites($customer->getOrganization());
     }
 
     /**

@@ -67,7 +67,8 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
             $this->configManager,
             $registry,
             $this->tokenStorage,
-            $this->crypter
+            $this->crypter,
+            $this->aclHelper
         );
     }
 

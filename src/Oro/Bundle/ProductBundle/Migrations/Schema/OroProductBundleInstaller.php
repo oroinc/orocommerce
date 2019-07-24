@@ -165,7 +165,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('is_featured', 'boolean', ['default' => false]);
         $table->addColumn('is_new_arrival', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['sku']);
+        $table->addUniqueIndex(['sku', 'organization_id'], 'uidx_oro_product_sku_organization');
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_product_updated_at', []);
         $table->addIndex(['sku'], 'idx_oro_product_sku', []);

@@ -80,7 +80,7 @@ The **code** property is a string contains the payment method code.
 
 The **label** property is a string contains the payment method label.
 
-Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"method": "money_order_5", "number": "Money Order"}\]**
+Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"code": "pay_pal_express_5", "label": "PayPal Express"}\]**
 
 ## SUBRESOURCES
 

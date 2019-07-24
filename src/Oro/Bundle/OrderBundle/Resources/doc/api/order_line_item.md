@@ -85,12 +85,6 @@ Example:
       "shipBy": "2016-04-30"
     },
     "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
-      },
       "product": {
         "data": {
           "type": "products",
@@ -102,18 +96,6 @@ Example:
 }
 ```
 {@/request}
-
-### delete
-
-Delete a specific order line item record.
-
-{@inheritdoc}
-
-### delete_list
-
-Delete a collection of line item records.
-
-{@inheritdoc}
 
 ## FIELDS
 
@@ -208,23 +190,6 @@ Retrieve the order record a specific line item record is assigned to.
 #### get_relationship
 
 Retrieve the ID of the order record which a specific line item record is assigned to.
-
-#### update_relationship
-
-Replace order a specific line item record is assigned to.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "orders",
-    "id": "1"
-  }
-}
-```
-{@/request}
 
 ### parentProduct
 

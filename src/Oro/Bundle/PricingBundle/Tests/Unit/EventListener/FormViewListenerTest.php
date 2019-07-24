@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
@@ -40,6 +44,9 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     protected function setUp()
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -57,12 +64,14 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->listener = new FormViewListener(
             $this->translator,
             $this->doctrineHelper,
             $this->priceAttributePricesProvider,
-            $this->authorizationChecker
+            $this->authorizationChecker,
+            $this->aclHelper
         );
     }
 
@@ -97,17 +106,29 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnProductViewFeatureDisabled()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $priceAttributePriceListRepository */
-        $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceAttributeProductPriceRepository */
+        $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
+            ->willReturn([]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $priceAttributePriceListRepository->expects($this->once())
-            ->method('findAll')->willReturn([]);
+            ->method('getPriceAttributesQueryBuilder')
+            ->willReturn($queryBuilder);
 
-        $this->doctrineHelper->expects($this->any())
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
+        $this->doctrineHelper
+            ->expects($this->any())
             ->method('getEntityRepository')
-            ->willReturnMap([
-                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
-            ]);
+            ->willReturn($priceAttributePriceListRepository);
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -157,9 +178,8 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($templateHtmlProductPrice);
 
         $this->authorizationChecker
-            ->expects($this->once())
+            ->expects($this->exactly(1))
             ->method('isGranted')
-            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
             ->willReturn(true);
 
         $this->featureChecker->expects($this->once())
@@ -204,7 +224,6 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker
             ->expects($this->once())
             ->method('isGranted')
-            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
             ->willReturn(false);
 
         $event = $this->createEvent($this->getEnvironment(), $product);
@@ -278,20 +297,37 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $entity, $formView);
     }
 
+    /**
+     * @param $product
+     * @param $templateHtmlProductAttributePrice
+     */
     private function assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice)
     {
         $priceList = new PriceAttributePriceList();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $priceAttributePriceListRepository */
-        $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceAttributePriceListRepository */
+        $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
+            ->willReturn([$priceList]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $priceAttributePriceListRepository->expects($this->once())
-            ->method('findAll')->willReturn([$priceList]);
+            ->method('getPriceAttributesQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturnMap([
-                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
+                [PriceAttributePriceList::class, $priceAttributePriceListRepository],
             ]);
 
         $this->priceAttributePricesProvider->expects($this->once())->method('getPricesWithUnitAndCurrencies')

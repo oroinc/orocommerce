@@ -174,8 +174,8 @@ class ManuallyAddedProductCollectionIndexerListener
     protected function collectManuallyAddedByVariantId(array $variantsByRecordId): array
     {
         $variantIds = [];
-        foreach ($variantsByRecordId as $ids) {
-            $variantIds = array_merge($variantIds, $ids);
+        if ($variantsByRecordId) {
+            $variantIds = array_merge(...$variantsByRecordId);
         }
 
         $repository = $this->registry->getManagerForClass(ContentVariant::class)->getRepository(ContentVariant::class);
@@ -183,7 +183,8 @@ class ManuallyAddedProductCollectionIndexerListener
         $result = $builder
             ->innerJoin('cv.product_collection_segment', 's')
             ->select('cv.id, s.definition')
-            ->where($builder->expr()->in('cv.id', array_unique($variantIds)))
+            ->where($builder->expr()->in('cv.id', ':variantIds'))
+            ->setParameter('variantIds', array_unique($variantIds))
             ->getQuery()
             ->getArrayResult();
 

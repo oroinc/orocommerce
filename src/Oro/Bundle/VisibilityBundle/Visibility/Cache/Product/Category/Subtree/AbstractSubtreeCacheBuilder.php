@@ -10,6 +10,9 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 
+/**
+ * Abstract implementation reusable by visibility resolve functionality.
+ */
 abstract class AbstractSubtreeCacheBuilder
 {
     /**
@@ -156,7 +159,7 @@ abstract class AbstractSubtreeCacheBuilder
          * Also excluded final leaf of category tree
          * To optimize performance exclude nodes whose parents are already processed
          */
-        foreach ($categoriesWithStaticFallback as $node) {
+        foreach ($categoriesWithStaticFallback as $idx => $node) {
             $this->excludedCategories[] = $node;
             if ($this->isExcludedByParent($node)) {
                 continue;
@@ -166,12 +169,15 @@ abstract class AbstractSubtreeCacheBuilder
                 $qb->andWhere(
                     $qb->expr()->not(
                         $qb->expr()->andX(
-                            $qb->expr()->gte('node.level', $node['level']),
-                            $qb->expr()->gte('node.left', $node['left']),
-                            $qb->expr()->lte('node.right', $node['right'])
+                            $qb->expr()->gte('node.level', ':nodeLevel' . $idx),
+                            $qb->expr()->gte('node.left', ':nodeLeft' . $idx),
+                            $qb->expr()->lte('node.right', ':nodeRight' . $idx)
                         )
                     )
                 );
+                $qb->setParameter('nodeLevel' . $idx, $node['level']);
+                $qb->setParameter('nodeLeft' . $idx, $node['left']);
+                $qb->setParameter('nodeRight' . $idx, $node['right']);
             }
         }
 

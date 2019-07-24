@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_16';
     }
 
     /**
@@ -87,6 +87,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->addOroCplActivationRuleForeignKeys($schema);
         $this->addOroPriceAttributeCurrencyForeignKeys($schema);
         $this->addOroPriceAttributeProductPriceForeignKeys($schema);
+        $this->addOroPriceAttributeOrganizationForeignKeys($schema);
         $this->addOroriceListToProductForeignKeys($schema);
         $this->addOroPriceRuleForeignKeys($schema);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
@@ -1040,6 +1041,21 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
             ['price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addOroPriceAttributeOrganizationForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_price_attribute_pl');
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

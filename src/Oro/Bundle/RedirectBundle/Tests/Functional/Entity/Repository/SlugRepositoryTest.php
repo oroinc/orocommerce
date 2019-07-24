@@ -142,7 +142,8 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testFindOneDirectUrlBySlug()
     {
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/first');
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/first');
+        $actual = $qb->getQuery()->getOneOrNullResult();
 
         $this->assertNotEmpty($actual);
         $this->assertEquals($this->getReference('reference:/slug/first')->getId(), $actual->getId());
@@ -150,7 +151,8 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testFindOneDirectUrlBySlugScopedSlug()
     {
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/page');
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/page');
+        $actual = $qb->getQuery()->getOneOrNullResult();
 
         $this->assertEmpty($actual);
     }
@@ -162,7 +164,8 @@ class SlugRepositoryTest extends WebTestCase
             ->method('getSlugs')
             ->willReturn([$this->getReference('reference:/slug/first')]);
 
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/first', $restrictedEntity);
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/first', $restrictedEntity);
+        $actual = $qb->getQuery()->getOneOrNullResult();
         $this->assertEmpty($actual);
     }
 

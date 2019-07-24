@@ -63,3 +63,34 @@ data:
                 data:
                     type: productunits
                     id: '<toString(@product_unit.box->code)>'
+    -
+        type: orderlineitems
+        id: '<toString(@order_line_item.3->id)>'
+        attributes:
+            productSku: product-2
+            productName: product-2.names.default
+            productVariantFields: {  }
+            freeFormProduct: null
+            quantity: 1
+            productUnitCode: box
+            value: '10.0000'
+            currency: USD
+            priceType: 10
+            shipBy: null
+            fromExternalSource: false
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@simple_order2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->code)>'

@@ -58,18 +58,12 @@ api:
                     exclude: true
                 quantity:
                     exclude: true
-                # start: this is added in order to properly handle "price" object that is created out of currency and value
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
-                # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
             fields:
@@ -84,6 +78,10 @@ api:
                     exclude: true
                 delete_list:
                     exclude: true
+            subresources:
+                organization:
+                    actions:
+                        update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer_group.md'
             form_event_subscriber:
@@ -172,17 +170,12 @@ api:
                         operators: ['=']
                         allow_array: false
             fields:
-                # this is added in order to properly handle "price" parameter that is created out of these values
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                          - NotBlank: ~
                 productSku:
                     exclude: true
                 priceRule:

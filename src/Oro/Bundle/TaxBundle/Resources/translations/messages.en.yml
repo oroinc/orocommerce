@@ -28,6 +28,9 @@ oro.tax:
         description:
             label:            'Description'
             description:      The description of the tax
+        organization:
+            label: Organization
+            description: The relationship on organization.
 
     customertaxcode:
         entity_label: 'Customer Tax Code'

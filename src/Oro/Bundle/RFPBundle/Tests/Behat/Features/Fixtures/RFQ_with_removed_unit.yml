@@ -14,6 +14,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:

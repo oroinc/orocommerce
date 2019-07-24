@@ -6,7 +6,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+/**
+ * Provide products consider applied restrictions (ACL, Product Visibility, etc.)
+ */
 class RestrictedProductRepository
 {
     /** @var DoctrineHelper */
@@ -15,18 +19,27 @@ class RestrictedProductRepository
     /** @var ProductManager */
     private $productManager;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /** @var string */
     private $productClass;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ProductManager $productManager
-     * @param string         $productClass
+     * @param AclHelper $aclHelper
+     * @param string $productClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ProductManager $productManager, $productClass)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ProductManager $productManager,
+        AclHelper $aclHelper,
+        $productClass
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->productManager = $productManager;
+        $this->aclHelper = $aclHelper;
         $this->productClass = $productClass;
     }
 
@@ -47,6 +60,8 @@ class RestrictedProductRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $this->productManager->restrictQueryBuilder($queryBuilder, [])->getQuery()->getResult();
+        $restrictedQueryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
+
+        return $this->aclHelper->apply($restrictedQueryBuilder)->getResult();
     }
 }

@@ -39,19 +39,12 @@ api:
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'
             fields:
-                # this is added in order to properly handle "price" parameter that is created out of these values
-                # which are not present in validations.yml and so are not handled by api
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
-            # there is already a productUnit required property in entity
             actions:
                 create:
                     fields:
@@ -61,6 +54,12 @@ api:
                     fields:
                         productUnitCode:
                             exclude: true
+                delete: false
+                delete_list: false
+            subresources:
+                order:
+                    actions:
+                        update_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderAddress:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_address.md'
@@ -82,7 +81,6 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'
-            form_event_subscriber: oro_order.api.form_listener.discount
 
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_shipping_tracking.md'

@@ -25,6 +25,10 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *
  * @ORM\Table(
  *      name="oro_product",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="uidx_oro_product_sku_organization",
+ *          columns={"sku", "organization_id"})
+ *      },
  *      indexes={
  *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
@@ -174,7 +178,7 @@ class Product extends ExtendProduct implements
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

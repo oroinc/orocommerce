@@ -8,7 +8,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePri
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -25,90 +24,160 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         parent::setUp();
 
         $this->loadFixtures([
-            LoadPriceAttributeProductPrices::class,
+            LoadPriceAttributeProductPrices::class
         ]);
     }
 
     public function testGetList()
     {
-        $parameters = [
-            'filter' => [
-                'product' => ['@product-1->id'],
-            ],
-            'sort' => 'id',
-        ];
-        $response = $this->cget(['entity' => $this->getEntityApiName()], $parameters);
-
-        $this->assertResponseContains($this->getAliceFilesFolderName() . '/get_list.yml', $response);
-    }
-
-    public function testCreateDuplicate()
-    {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityApiName()]);
-        $parameters = $this->getRequestData(
-            $this->getAliceFilesFolderName() . '/create.yml'
+        $response = $this->cget(
+            ['entity' => 'priceattributeproductprices'],
+            ['filter' => ['product' => ['@product-1->id']], 'sort' => 'id']
         );
 
-        $this->post($routeParameters, $parameters);
-
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'unique entity constraint',
-            $response->getContent()
-        );
-    }
-
-    public function testCreateWrongCurrency()
-    {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityApiName()]);
-        $parameters = $this->getRequestData(
-            $this->getAliceFilesFolderName() . '/create_wrong_currency.yml'
-        );
-
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Currency \"EUR\" is not valid for current price list',
-            $response->getContent()
-        );
-    }
-
-    public function testCreateWrongProductUnit()
-    {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityApiName()]);
-        $parameters = $this->getRequestData(
-            $this->getAliceFilesFolderName() . '/create_wrong_unit.yml'
-        );
-
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Unit \"box\" is not allowed for product',
-            $response->getContent()
-        );
+        $this->assertResponseContains('price_attribute_product_price/get_list.yml', $response);
     }
 
     public function testCreate()
     {
         $this->post(
-            ['entity' => $this->getEntityApiName()],
-            $this->getAliceFilesFolderName() . '/create.yml'
+            ['entity' => 'priceattributeproductprices'],
+            'price_attribute_product_price/create.yml'
         );
 
         $price = $this->getEntityManager()
             ->getRepository(PriceAttributeProductPrice::class)
             ->findOneBy([
                 'priceList' => $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2),
-                'product' => $this->getReference(LoadProductData::PRODUCT_3),
-                'unit' => $this->getReference(LoadProductUnits::LITER),
+                'product'   => $this->getReference(LoadProductData::PRODUCT_3),
+                'unit'      => $this->getReference(LoadProductUnits::LITER)
             ]);
 
-        static::assertEquals(24.57, $price->getPrice()->getValue());
-        static::assertSame('USD', $price->getPrice()->getCurrency());
+        self::assertEquals(24.57, $price->getPrice()->getValue());
+        self::assertSame('USD', $price->getPrice()->getCurrency());
+    }
+
+    public function testTryToCreateDuplicate()
+    {
+        $routeParameters = ['entity' => 'priceattributeproductprices'];
+        $parameters = $this->getRequestData('price_attribute_product_price/create.yml');
+
+        $this->post($routeParameters, $parameters);
+
+        $response = $this->post($routeParameters, $parameters, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique entity constraint',
+                'detail' => 'This value is used. Unique constraint: product,priceList,unit,currency,quantity'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateEmptyValue()
+    {
+        $data = $this->getRequestData('price_attribute_product_price/create.yml');
+        $data['data']['attributes']['value'] = '';
+        $response = $this->post(
+            ['entity' => 'priceattributeproductprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'Price value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateEmptyCurrency()
+    {
+        $data = $this->getRequestData('price_attribute_product_price/create.yml');
+        $data['data']['attributes']['currency'] = '';
+        $response = $this->post(
+            ['entity' => 'priceattributeproductprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongValue()
+    {
+        $data = $this->getRequestData('price_attribute_product_price/create.yml');
+        $data['data']['attributes']['value'] = 'test';
+        $response = $this->post(
+            ['entity' => 'priceattributeproductprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'type constraint',
+                'detail' => 'This value should be of type numeric.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongCurrency()
+    {
+        $data = $this->getRequestData('price_attribute_product_price/create.yml');
+        $data['data']['attributes']['currency'] = 'EUR';
+        $response = $this->post(
+            ['entity' => 'priceattributeproductprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'product price currency constraint',
+                'detail' => 'Currency "EUR" is not valid for current price list.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongProductUnit()
+    {
+        $data = $this->getRequestData('price_attribute_product_price/create.yml');
+        $data['data']['relationships']['unit']['data']['id'] = '<toString(@product_unit.box->code)>';
+        $response = $this->post(
+            ['entity' => 'priceattributeproductprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'product price allowed units constraint',
+                'detail' => 'Unit "box" is not allowed for product "product-3".',
+                'source' => ['pointer' => '/data/relationships/unit/data']
+            ],
+            $response
+        );
     }
 
     public function testDeleteList()
@@ -117,12 +186,8 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         $priceId2 = $this->getReference('price_attribute_product_price.2')->getId();
 
         $this->cdelete(
-            ['entity' => $this->getEntityApiName()],
-            [
-                'filter' => [
-                    'id' => [$priceId1, $priceId2]
-                ]
-            ]
+            ['entity' => 'priceattributeproductprices'],
+            ['filter' => ['id' => [$priceId1, $priceId2]]]
         );
 
         $this->assertNull(
@@ -138,12 +203,11 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
     {
         $priceId = $this->getFirstPrice()->getId();
 
-        $response = $this->get([
-            'entity' => $this->getEntityApiName(),
-            'id' => $priceId
-        ]);
+        $response = $this->get(
+            ['entity' => 'priceattributeproductprices', 'id' => $priceId]
+        );
 
-        $this->assertResponseContains($this->getAliceFilesFolderName() . '/get.yml', $response);
+        $this->assertResponseContains('price_attribute_product_price/get.yml', $response);
     }
 
     public function testUpdate()
@@ -151,41 +215,39 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         $priceId = $this->getFirstPrice()->getId();
 
         $this->patch(
-            ['entity' => $this->getEntityApiName(), 'id' => (string)$priceId],
-            $this->getAliceFilesFolderName() . '/update.yml'
+            ['entity' => 'priceattributeproductprices', 'id' => (string)$priceId],
+            'price_attribute_product_price/update.yml'
         );
 
         $price = $this->getEntityManager()
             ->getRepository(PriceAttributeProductPrice::class)
             ->find($priceId);
 
-        static::assertEquals(78.95, $price->getPrice()->getValue());
-        static::assertEquals('EUR', $price->getPrice()->getCurrency());
-        static::assertEquals(
+        self::assertEquals(78.95, $price->getPrice()->getValue());
+        self::assertEquals('EUR', $price->getPrice()->getCurrency());
+        self::assertEquals(
             $this->getReference('product_unit.milliliter'),
             $price->getProductUnit()
         );
     }
 
-    public function testUpdateToDuplicate()
+    public function testTryToUpdateToDuplicate()
     {
         $priceId = $this->getFirstPrice()->getId();
 
-        $routeParameters = self::processTemplateData([
-            'entity' => $this->getEntityApiName(),
-            'id' => (string)$priceId
-        ]);
-
-        $parameters = $this->getRequestData(
-            $this->getAliceFilesFolderName() . '/update_duplicate.yml'
+        $response = $this->patch(
+            ['entity' => 'priceattributeproductprices', 'id' => (string)$priceId],
+            'price_attribute_product_price/update_duplicate.yml',
+            [],
+            false
         );
 
-        $response = $this->patch($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'unique entity constraint',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique entity constraint',
+                'detail' => 'This value is used. Unique constraint: product,priceList,unit,currency,quantity'
+            ],
+            $response
         );
     }
 
@@ -193,10 +255,9 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
     {
         $priceId = $this->getFirstPrice()->getId();
 
-        $this->delete([
-            'entity' => $this->getEntityApiName(),
-            'id' => $priceId,
-        ]);
+        $this->delete(
+            ['entity' => 'priceattributeproductprices', 'id' => $priceId]
+        );
 
         $this->assertNull(
             $this->getEntityManager()->find(PriceAttributeProductPrice::class, $priceId)
@@ -217,48 +278,48 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         $price = $this->getFirstPrice();
 
         $response = $this->getRelationship([
-            'entity' => $this->getEntityApiName(),
-            'id' => $price->getId(),
-            'association' => 'priceList',
+            'entity'      => 'priceattributeproductprices',
+            'id'          => $price->getId(),
+            'association' => 'priceList'
         ]);
 
         $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'priceattributepricelists',
-                    'id' => (string)$price->getPriceList()->getId(),
+                    'id'   => (string)$price->getPriceList()->getId()
                 ]
             ],
             $response
         );
 
         $response = $this->getRelationship([
-            'entity' => $this->getEntityApiName(),
-            'id' => $price->getId(),
-            'association' => 'product',
+            'entity'      => 'priceattributeproductprices',
+            'id'          => $price->getId(),
+            'association' => 'product'
         ]);
 
         $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'products',
-                    'id' => (string)$price->getProduct()->getId(),
+                    'id'   => (string)$price->getProduct()->getId()
                 ]
             ],
             $response
         );
 
         $response = $this->getRelationship([
-            'entity' => $this->getEntityApiName(),
-            'id' => $price->getId(),
-            'association' => 'unit',
+            'entity'      => 'priceattributeproductprices',
+            'id'          => $price->getId(),
+            'association' => 'unit'
         ]);
 
         $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'productunits',
-                    'id' => (string)$price->getProductUnit()->getCode(),
+                    'id'   => (string)$price->getProductUnit()->getCode()
                 ]
             ],
             $response
@@ -271,42 +332,42 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
 
         $this->patchRelationship(
             [
-                'entity' => $this->getEntityApiName(),
-                'id' => $price->getId(),
-                'association' => 'priceList',
+                'entity'      => 'priceattributeproductprices',
+                'id'          => $price->getId(),
+                'association' => 'priceList'
             ],
             [
                 'data' => [
                     'type' => 'priceattributepricelists',
-                    'id' => (string)$this->getReference('price_attribute_price_list_2')->getId(),
+                    'id'   => (string)$this->getReference('price_attribute_price_list_2')->getId()
                 ]
             ]
         );
 
         $this->patchRelationship(
             [
-                'entity' => $this->getEntityApiName(),
-                'id' => $price->getId(),
-                'association' => 'unit',
+                'entity'      => 'priceattributeproductprices',
+                'id'          => $price->getId(),
+                'association' => 'unit'
             ],
             [
                 'data' => [
                     'type' => 'productunits',
-                    'id' => (string)$this->getReference('product_unit.milliliter')->getCode(),
+                    'id'   => (string)$this->getReference('product_unit.milliliter')->getCode()
                 ]
             ]
         );
 
         $this->patchRelationship(
             [
-                'entity' => $this->getEntityApiName(),
-                'id' => $price->getId(),
-                'association' => 'product',
+                'entity'      => 'priceattributeproductprices',
+                'id'          => $price->getId(),
+                'association' => 'product'
             ],
             [
                 'data' => [
                     'type' => 'products',
-                    'id' => (string)$this->getReference('product-4')->getId(),
+                    'id'   => (string)$this->getReference('product-4')->getId()
                 ]
             ]
         );
@@ -315,17 +376,17 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             ->getRepository(PriceAttributeProductPrice::class)
             ->find($price->getId());
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference('price_attribute_price_list_2'),
             $updatedPrice->getPriceList()
         );
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference('product_unit.milliliter'),
             $updatedPrice->getProductUnit()
         );
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference('product-4'),
             $updatedPrice->getProduct()
         );
@@ -336,11 +397,11 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
      * @param string $associationName
      * @param string $associationId
      */
-    protected function assertGetSubResource(int $entityId, string $associationName, string $associationId)
+    private function assertGetSubResource(int $entityId, string $associationName, string $associationId)
     {
         $response = $this->getSubresource([
-            'entity' => $this->getEntityApiName(),
-            'id' => $entityId,
+            'entity'      => 'priceattributeproductprices',
+            'id'          => $entityId,
             'association' => $associationName
         ]);
 
@@ -350,25 +411,9 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
     }
 
     /**
-     * @return string
-     */
-    protected function getEntityApiName(): string
-    {
-        return 'priceattributeproductprices';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAliceFilesFolderName(): string
-    {
-        return 'price_attribute_product_price';
-    }
-
-    /**
      * @return PriceAttributeProductPrice
      */
-    protected function getFirstPrice()
+    private function getFirstPrice()
     {
         return $this->getReference('price_attribute_product_price.1');
     }

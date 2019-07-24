@@ -4,16 +4,17 @@ namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_CLASS = 'OroProductBundle:Product';
-
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
@@ -30,6 +31,11 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
     protected $constraint;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @var ProductBySkuValidator
      */
     protected $validator;
@@ -39,8 +45,9 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->createMock(Registry::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->constraint = $this->createMock(ProductBySku::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
-        $this->validator = new ProductBySkuValidator($this->registry);
+        $this->validator = new ProductBySkuValidator($this->registry, $this->aclHelper);
         $this->validator->initialize($this->context);
     }
 
@@ -111,20 +118,26 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($form);
 
         if (!$useOptions) {
-            /** @var \PHPUnit\Framework\MockObject\MockObject|ProductRepository */
-            $repository = $this
-                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
+            $repository = $this->createMock(ProductRepository::class);
 
+            $query = $this->createMock(AbstractQuery::class);
+            $query->expects($this->once())
+                ->method('getOneOrNullResult')
+                ->willReturn($product);
+            $queryBuilder = $this->createMock(QueryBuilder::class);
             $repository->expects($this->once())
-                ->method('findOneBySku')
+                ->method('getBySkuQueryBuilder')
                 ->with($sku)
-                ->will($this->returnValue($product));
+                ->willReturn($queryBuilder);
+            $this->aclHelper
+                ->expects($this->once())
+                ->method('apply')
+                ->with($queryBuilder)
+                ->willReturn($query);
 
             $this->registry->expects($this->once())
                 ->method('getRepository')
-                ->with(self::PRODUCT_CLASS)
+                ->with(Product::class)
                 ->will($this->returnValue($repository));
         }
 

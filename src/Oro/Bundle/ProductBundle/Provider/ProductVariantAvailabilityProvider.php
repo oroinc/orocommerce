@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -35,25 +36,31 @@ class ProductVariantAvailabilityProvider
     /** @var ProductVariantFieldValueHandlerRegistry */
     private $fieldValueHandlerRegistry;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
      * @param PropertyAccessor $propertyAccessor
      * @param EventDispatcherInterface $eventDispatcher
      * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomFieldProvider $customFieldProvider,
         PropertyAccessor $propertyAccessor,
         EventDispatcherInterface $eventDispatcher,
-        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
+        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry,
+        AclHelper $aclHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->eventDispatcher = $eventDispatcher;
         $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -292,7 +299,8 @@ class ProductVariantAvailabilityProvider
         if ($productsToLoadFromDb) {
             /** @var ProductRepository $productRepository */
             $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
-            $configurableProductIds = $productRepository->getConfigurableProductIds($productsToLoadFromDb);
+            $qb = $productRepository->getConfigurableProductIdsQueryBuilder($productsToLoadFromDb);
+            $configurableProductIds = array_column($this->aclHelper->apply($qb)->getArrayResult(), 'id');
             if (!$configurableProductIds) {
                 return $configurableProducts;
             }

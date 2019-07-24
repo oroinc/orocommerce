@@ -12,6 +12,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Provides a method to save visibility form data
+ */
 class VisibilityFormPostSubmitDataHandler
 {
     /**
@@ -59,6 +62,9 @@ class VisibilityFormPostSubmitDataHandler
     protected function saveFormAllData(FormInterface $form)
     {
         $targetEntity = $form->getData();
+        if (!$form->has(EntityVisibilityType::ALL_FIELD)) {
+            return;
+        }
         $visibility = $form->get(EntityVisibilityType::ALL_FIELD)->getData();
 
         if (!$visibility) {
@@ -99,6 +105,9 @@ class VisibilityFormPostSubmitDataHandler
     protected function saveFormFieldData(FormInterface $form, $field)
     {
         $targetEntity = $form->getData();
+        if (!$form->has($field)) {
+            return;
+        }
         $visibilitiesData = $form->get($field)->getData();
         $visibilitiesEntity = $this->formFieldDataProvider
             ->findFormFieldData($form, $field);

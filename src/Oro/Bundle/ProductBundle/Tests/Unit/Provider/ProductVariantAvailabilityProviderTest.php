@@ -20,6 +20,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductProxyStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
@@ -67,6 +68,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
     /**
      * {@inheritdoc}
@@ -133,12 +137,15 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getQuery')
             ->willReturn($this->query);
 
+        $this->aclHelper = $this->createMock(AclHelper::class);
+
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
             $this->doctrineHelper,
             $this->customFieldProvider,
             $propertyAccessor,
             $this->dispatcher,
-            $variantFieldValueHandlerRegistry
+            $variantFieldValueHandlerRegistry,
+            $this->aclHelper
         );
     }
 
@@ -619,10 +626,22 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ['id' => 11, 'type' => Product::TYPE_SIMPLE]
         );
 
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn([['id' => 5]]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
         $this->productRepository->expects($this->once())
-            ->method('getConfigurableProductIds')
+            ->method('getConfigurableProductIdsQueryBuilder')
             ->with([$notLoadedProxy1, $notLoadedProxy2])
-            ->willReturn([5]);
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
         $products = [
             $loadedConfigurableProduct,

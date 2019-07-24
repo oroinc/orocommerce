@@ -101,8 +101,8 @@
             <span class="btn btn-icon btn-square-light sortable-handle ui-sortable-handle" data-name="sortable-handle">
                 <span class="fa-arrows-v handle"></span>
             </span>
-            <button type="button" class="btn btn-icon btn-square-lighter removeRow">
-                <span class="fa-close"></span>
+            <button type="button" class="btn btn-icon btn-square-lighter removeRow" aria-label="{{ 'Remove row'|trans }}">
+                <span class="fa-trash-o" aria-hidden="true"></span>
             </button>
         </td>
     {% endspaceless %}
@@ -171,7 +171,7 @@
             fieldType: '.price-rule-item-currency-type-field',
             expressionType: '.price-rule-item-currency-type-expression'
         } %}
-        <div class="price_rule" data-content>
+        <div class="price_rule" data-content="{{ name }}">
             <div class="control-group control-group-text">
                 <div class="control-label wrap">
                     <label>{{ 'oro.pricing.pricerule.price_for_quantity.label'|trans }}</label>
@@ -256,7 +256,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="removeRow btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
+                        <button type="button" class="removeRow btn btn-icon btn-square-lighter" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
                     </div>
                     <div class="price-rule-item-quantity-type-field error-block">
                         {{ form_errors(form.quantity) }}

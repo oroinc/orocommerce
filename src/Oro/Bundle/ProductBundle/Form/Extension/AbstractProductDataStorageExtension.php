@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -20,6 +21,9 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Abstract product data storage form type extension that generates new line item and adds it to entity
+ */
 abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -48,21 +52,27 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     /** @var ProductRepository */
     protected $productRepository;
 
+    /** @var AclHelper */
+    protected $aclHelper;
+
     /**
      * @param RequestStack $requestStack
      * @param ProductDataStorage $storage
      * @param DoctrineHelper $doctrineHelper
+     * @param AclHelper $aclHelper
      * @param string $productClass
      */
     public function __construct(
         RequestStack $requestStack,
         ProductDataStorage $storage,
         DoctrineHelper $doctrineHelper,
+        AclHelper $aclHelper,
         $productClass
     ) {
         $this->requestStack = $requestStack;
         $this->storage = $storage;
         $this->doctrineHelper = $doctrineHelper;
+        $this->aclHelper = $aclHelper;
         $this->productClass = $productClass;
     }
 
@@ -163,7 +173,8 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                 continue;
             }
 
-            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
             if (!$product) {
                 continue;
             }

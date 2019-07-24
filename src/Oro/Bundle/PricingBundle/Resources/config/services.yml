@@ -283,6 +283,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
             - '@security.authorization_checker'
+            - '@oro_security.acl_helper'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -1092,6 +1093,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.provider.product_price'
             - '@request_stack'
+            - '@oro_security.acl_helper'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
 
@@ -1298,7 +1300,12 @@ services:
 
     oro_pricing.datagrid.extension.price_attribute_product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension'
-        parent: oro_pricing.datagrid.extension.price
+        public: false
+        arguments:
+            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_datagrid.provider.selected_fields'
+            - '@oro_security.acl_helper'
         tags:
             - { name: oro_datagrid.extension }
 

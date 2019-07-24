@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeData;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -117,7 +117,11 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testFindAllSkuByPattern($pattern, array $expectedSkuList)
     {
-        $actualSkuList = $this->getRepository()->findAllSkuByPattern($pattern);
+        $result = $this->getRepository()->getAllSkuByPatternQueryBuilder($pattern)->getQuery()->getResult();
+        $actualSkuList = [];
+        foreach ($result as $item) {
+            $actualSkuList[] = $item['sku'];
+        }
 
         $this->assertCount(count($expectedSkuList), $actualSkuList);
         foreach ($expectedSkuList as $expectedSku) {
@@ -184,36 +188,22 @@ class ProductRepositoryTest extends WebTestCase
         $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
         $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
 
+        $result = $this->getRepository()->getProductsIdsBySkuQueryBuilder(
+            [
+                $product3->getSku(),
+                mb_strtoupper($product7->getSku()),
+                mb_strtolower($product2->getSku()),
+            ]
+        )->getQuery()->getArrayResult();
+
         $this->assertEquals(
             [
-                $product7->getSku() => $product7->getId(),
-                $product2->getSku() => $product2->getId(),
-                $product3->getSku() => $product3->getId(),
+                ['id' => $product2->getId(), 'sku' => $product2->getSku()],
+                ['id' => $product3->getId(), 'sku' => $product3->getSku()],
+                ['id' => $product7->getId(), 'sku' => $product7->getSku()],
             ],
-            $this->getRepository()->getProductsIdsBySku(
-                [
-                    $product3->getSku(),
-                    mb_strtoupper($product7->getSku()),
-                    mb_strtolower($product2->getSku()),
-                ]
-            )
+            $result
         );
-    }
-
-    /**
-     * @dataProvider getProductsNamesBySkuDataProvider
-     *
-     * @param array $productSkus
-     * @param array $expectedData
-     */
-    public function testGetProductsNamesBySku(array $productSkus, array $expectedData)
-    {
-        $result = $this->getRepository()->getProductWithNamesBySku($productSkus);
-        $expectedData = $this->referencesToEntities($expectedData);
-        $this->assertCount(count($expectedData), $result);
-        foreach ($expectedData as $expectedProduct) {
-            $this->assertContains($expectedProduct, $result);
-        }
     }
 
     /**
@@ -242,18 +232,6 @@ class ProductRepositoryTest extends WebTestCase
                 'expectedData' => [],
             ]
         ];
-    }
-
-    public function testGetFilterSkuQueryBuilder()
-    {
-        /** @var Product $product */
-        $product = $this->getRepository()->findOneBy(['sku' => LoadProductData::PRODUCT_7]);
-
-        $builder = $this->getRepository()->getFilterSkuQueryBuilder([$product->getSku()]);
-        $result = $builder->getQuery()->getResult();
-
-        $this->assertCount(1, $result);
-        $this->assertEquals($product->getSku(), $result[0]['sku']);
     }
 
     /**
@@ -341,7 +319,10 @@ class ProductRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getRepository()->findOneBy(['sku' => LoadProductData::PRODUCT_9]);
 
-        $result = $this->repository->getPrimaryUnitPrecisionCode(mb_strtolower($product->getSku()));
+        $result = $this->repository
+            ->getPrimaryUnitPrecisionCodeQueryBuilder(mb_strtolower($product->getSku()))
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
         $this->assertEquals($product->getPrimaryUnitPrecision()->getProductUnitCode(), $result);
     }
 
@@ -356,28 +337,6 @@ class ProductRepositoryTest extends WebTestCase
         }, $references);
     }
 
-    public function testGetProductsByIds()
-    {
-        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
-        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
-        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
-
-        $this->assertEquals(
-            [
-                $product1,
-                $product2,
-                $product3,
-            ],
-            $this->getRepository()->getProductsByIds(
-                [
-                    $product1->getId(),
-                    $product2->getId(),
-                    $product3->getId(),
-                ]
-            )
-        );
-    }
-
     /**
      * @param array $criteria
      * @param array $expectedSkus
@@ -385,6 +344,34 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testFindByCaseInsensitive(array $criteria, array $expectedSkus)
     {
+        $actualProducts = $this->repository->findByCaseInsensitive($criteria);
+
+        $actualSkus = [];
+        foreach ($actualProducts as $product) {
+            $actualSkus[] = $product->getSku();
+        }
+
+        $this->assertCount(count($expectedSkus), $actualSkus);
+        foreach ($expectedSkus as $expectedSku) {
+            $this->assertContains($expectedSku, $actualSkus);
+        }
+    }
+
+    public function testFindByCaseInsensitiveWithObject()
+    {
+        $criteria = ['organization' => $this->getEntity(Organization::class, ['id' => 1])];
+        $expectedSkus = [
+            LoadProductData::PRODUCT_1,
+            LoadProductData::PRODUCT_2,
+            LoadProductData::PRODUCT_3,
+            LoadProductData::PRODUCT_4,
+            LoadProductData::PRODUCT_5,
+            LoadProductData::PRODUCT_6,
+            LoadProductData::PRODUCT_7,
+            LoadProductData::PRODUCT_8,
+            LoadProductData::PRODUCT_9,
+        ];
+
         $actualProducts = $this->repository->findByCaseInsensitive($criteria);
 
         $actualSkus = [];
@@ -435,40 +422,10 @@ class ProductRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Value of testField must be string
-     */
-    public function testFindByCaseInsensitiveWithInvalidCriteria()
-    {
-        $this->repository->findByCaseInsensitive(['testField' => new \DateTime()]);
-    }
-
     public function testGetFeaturedProductsQueryBuilder()
     {
         $queryBuilder = $this->getRepository()->getFeaturedProductsQueryBuilder(2);
         $result = $queryBuilder->getQuery()->getResult();
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-    }
-
-    public function testFindByAttributeValue()
-    {
-        $result = $this->repository
-            ->findByAttributeValue(Product::TYPE_SIMPLE, 'sku', LoadProductData::PRODUCT_1, false);
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-
-        $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'inventory_status', 'in_stock', false);
-        $this->assertCount(5, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-
-        $localizedFallbackRepository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class')
-        );
-
-        $name = $localizedFallbackRepository->findOneBy(['string' => LoadProductData::PRODUCT_1_DEFAULT_NAME]);
-        $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'names', $name->getId(), true);
         $this->assertCount(1, $result);
         $this->assertInstanceOf(Product::class, $result[0]);
     }
@@ -478,27 +435,14 @@ class ProductRepositoryTest extends WebTestCase
         $skus = [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_7];
         $uppercaseSkus = ['PRODUCT-1', 'ПРОДУКТ-7'];
 
-        $result1 = $this->getRepository()->getProductsIdsBySku($skus);
-        $result2 = $this->getRepository()->getProductsIdsBySku($uppercaseSkus);
-
-        $this->assertEquals($result1, $result2);
-
-        $result1 = $this->getRepository()->getProductWithNamesBySku($skus);
-        $result2 = $this->getRepository()->getProductWithNamesBySku($uppercaseSkus);
-
-        $this->assertEquals($result1, $result2);
-
         $result1 = $this->getRepository()
-            ->getFilterProductWithNamesQueryBuilder($skus)
-            ->getQuery()->getArrayResult();
+            ->getPrimaryUnitPrecisionCodeQueryBuilder($skus[0])
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
         $result2 = $this->getRepository()
-            ->getFilterProductWithNamesQueryBuilder($uppercaseSkus)
-            ->getQuery()->getArrayResult();
-
-        $this->assertEquals($result1, $result2);
-
-        $result1 = $this->getRepository()->getPrimaryUnitPrecisionCode($skus[0]);
-        $result2 = $this->getRepository()->getPrimaryUnitPrecisionCode($uppercaseSkus[0]);
+            ->getPrimaryUnitPrecisionCodeQueryBuilder($uppercaseSkus[0])
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
 
         $this->assertEquals($result1, $result2);
 
@@ -506,25 +450,6 @@ class ProductRepositoryTest extends WebTestCase
         $result2 = $this->getRepository()->findOneBySku($uppercaseSkus[0]);
 
         $this->assertEquals($result1, $result2);
-    }
-
-    public function testGetProductIdsByAttribute()
-    {
-        /** @var FieldConfigModel $attribute */
-        $attribute = $this->getEntity(
-            FieldConfigModel::class,
-            ['id' => LoadAttributeData::getAttributeIdByName(LoadAttributeData::REGULAR_ATTRIBUTE_2)]
-        );
-
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_4);
-
-        $this->assertEquals(
-            [
-                $product->getId(),
-            ],
-            $this->getRepository()->getProductIdsByAttribute($attribute)
-        );
     }
 
     public function testGetProductIdsByAttributeFamilies()
@@ -556,7 +481,10 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             [$product8->getId()],
-            $this->getRepository()->getConfigurableProductIds([$product1, $product8])
+            array_column($this->getRepository()
+                ->getConfigurableProductIdsQueryBuilder([$product1, $product8])
+                ->getQuery()
+                ->getArrayResult(), 'id')
         );
     }
 

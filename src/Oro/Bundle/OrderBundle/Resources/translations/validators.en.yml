@@ -18,3 +18,5 @@ oro:
                 blank: 'Please choose Product.'
             product_price:
                 blank: 'No matching price found.'
+            order:
+                changed: 'Line Item order cannot be changed once set.'

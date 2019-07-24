@@ -24,7 +24,7 @@ data:
               data:
                   -
                       type: orderlineitems
-                      id: '<toString(@order_line_item.1->id)>'
+                      id: line_item_1
           discounts:
               data: []
           shippingTrackings:
@@ -41,3 +41,20 @@ data:
               data:
                    type: customers
                    id: '<toString(@simple_order->customer->id)>'
+included:
+    -
+        type: orderlineitems
+        id: line_item_1
+        attributes:
+            quantity: 1
+            value: 10
+            currency: 'USD'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'

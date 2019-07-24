@@ -6,8 +6,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provider search and verify presence of a segment
+ */
 class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderInterface
 {
     /**
@@ -21,13 +25,23 @@ class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderI
     private $logger;
 
     /**
-     * @param SegmentManager  $segmentManager
-     * @param LoggerInterface $logger
+     * @var WebsiteManager
      */
-    public function __construct(SegmentManager $segmentManager, LoggerInterface $logger)
-    {
+    private $websiteManager;
+
+    /**
+     * @param SegmentManager $segmentManager
+     * @param LoggerInterface $logger
+     * @param WebsiteManager $websiteManager
+     */
+    public function __construct(
+        SegmentManager $segmentManager,
+        LoggerInterface $logger,
+        WebsiteManager $websiteManager
+    ) {
         $this->segmentManager = $segmentManager;
         $this->logger = $logger;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -37,11 +51,16 @@ class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderI
      */
     public function getProductSegmentById($segmentId)
     {
+        $website = $this->websiteManager->getCurrentWebsite();
         $segment = $this->segmentManager->findById($segmentId);
 
         if (!$segment) {
             $this->logger->error('Segment was not found', ['id' => $segmentId]);
 
+            return null;
+        }
+
+        if ($segment->getOrganization() !== $website->getOrganization()) {
             return null;
         }
 

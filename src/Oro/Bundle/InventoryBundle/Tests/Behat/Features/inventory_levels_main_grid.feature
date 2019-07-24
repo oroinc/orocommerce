@@ -1,7 +1,7 @@
 @regression
 @ticket-BB-16745
 @fixture-OroInventoryBundle:product_inventory_levels.yml
-
+@community-edition-only
 Feature: Inventory Levels Main Grid
 
     Scenario: Inventory -> Inventory Levels page opens

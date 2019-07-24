@@ -16,3 +16,4 @@ services:
             - '@oro_shopping_list.service.message_generator'
             - '@doctrine'
             - '@oro_shopping_list.data_provider.product_shopping_lists'
+            - '@oro_security.acl_helper'

@@ -8,6 +8,7 @@ use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeEx
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
 use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -79,7 +80,8 @@ class InventoryLevelController extends AbstractController
             $form,
             $this->getDoctrine()->getManagerForClass('OroInventoryBundle:InventoryLevel'),
             $request,
-            $this->get(QuantityRoundingService::class)
+            $this->get(QuantityRoundingService::class),
+            $this->get(InventoryManager::class)
         );
 
         $result = $this->get(UpdateHandler::class)->handleUpdate(
@@ -125,6 +127,7 @@ class InventoryLevelController extends AbstractController
                 TranslatorInterface::class,
                 UpdateHandler::class,
                 QuantityRoundingService::class,
+                InventoryManager::class
             ]
         );
     }

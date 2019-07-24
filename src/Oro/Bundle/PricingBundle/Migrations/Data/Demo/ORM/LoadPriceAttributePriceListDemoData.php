@@ -4,10 +4,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Price attribute demo data
+ */
 class LoadPriceAttributePriceListDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     /**
@@ -28,6 +32,8 @@ class LoadPriceAttributePriceListDemoData extends AbstractFixture implements Con
      */
     public function load(ObjectManager $manager)
     {
+        /** @var Organization $organization */
+        $organization = $manager->getRepository(Organization::class)->find(1);
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_attribute.csv');
 
@@ -46,7 +52,8 @@ class LoadPriceAttributePriceListDemoData extends AbstractFixture implements Con
             $priceAttribute = new PriceAttributePriceList();
             $priceAttribute->setName($row['name'])
                 ->setFieldName($row['fieldName'])
-                ->setCurrencies($currencies);
+                ->setCurrencies($currencies)
+                ->setOrganization($organization);
 
             $manager->persist($priceAttribute);
         }

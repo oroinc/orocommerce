@@ -61,7 +61,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice:
+    combinedProductPrice:
         pricelist: '@combinedPriceList'
         product: '@product'
         productSku: 'SKU123'
