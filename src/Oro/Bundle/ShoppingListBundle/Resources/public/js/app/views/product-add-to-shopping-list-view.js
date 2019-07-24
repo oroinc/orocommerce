@@ -424,6 +424,26 @@ define(function(require) {
             });
         },
 
+        _removeProductFromShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
+            var self = this;
+
+            mediator.execute('showLoading');
+            $.ajax({
+                type: 'DELETE',
+                url: routing.generate(url, urlOptions),
+                data: formData,
+                success: function(response) {
+                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                },
+                complete: function() {
+                    mediator.execute('hideLoading');
+                }
+            });
+        },
+
         _onUnitChanged: function() {
             this._setEditLineItem();
             if (this.rendered) {
@@ -441,7 +461,7 @@ define(function(require) {
         },
 
         _removeLineItem: function(url, urlOptions, formData) {
-            this._addProductToShoppingList(url, urlOptions, formData);
+            this._removeProductFromShoppingList(url, urlOptions, formData);
         },
 
         _saveLineItem: function(url, urlOptions, formData) {
