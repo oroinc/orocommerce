@@ -9,6 +9,15 @@ api:
                 updatedAt:
                     form_options:
                         mapped: false
+                customer_status:
+                    form_options:
+                        mapped: false
+                internal_status:
+                    form_options:
+                        mapped: false
+                requestAdditionalNotes:
+                    form_options:
+                        mapped: false
 
         Oro\Bundle\RFPBundle\Entity\RequestProduct:
             documentation_resource: '@OroRFPBundle/Resources/doc/api/request_products.md'
@@ -22,13 +31,9 @@ api:
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 productUnitCode:
                     exclude: true
 

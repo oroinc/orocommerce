@@ -63,7 +63,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
     public function testRemoveProductFromView()
     {
         $this->ajaxRequest(
-            'POST',
+            'DELETE',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
                 [

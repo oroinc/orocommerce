@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -17,7 +16,6 @@ interface DiscountLineItemInterface extends
     QuantityAwareInterface,
     PriceAwareInterface,
     PriceTypeAwareInterface,
-    SettablePriceAwareInterface,
     SubtotalAwareInterface
 {
     /**

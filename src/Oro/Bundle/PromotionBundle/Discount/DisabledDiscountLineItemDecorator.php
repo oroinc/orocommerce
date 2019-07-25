@@ -33,7 +33,9 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Price $price
+     *
+     * @return $this
      */
     public function setPrice(Price $price)
     {

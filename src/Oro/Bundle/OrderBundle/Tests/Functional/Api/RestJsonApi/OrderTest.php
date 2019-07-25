@@ -4,7 +4,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -52,10 +54,165 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
-        self::assertSame('78.5000', $order->getTotal());
+        self::assertSame('10.0000', $order->getTotal());
         self::assertEquals('USD', $order->getCurrency());
         self::assertNotEmpty($order->getOwner()->getId());
         self::assertEquals($organizationId, $order->getOrganization()->getId());
+    }
+
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSku()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product-1');
+        $productId = $product->getId();
+        $productSku = $product->getSku();
+
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($productSku, $lineItem->getProductSku());
+        self::assertSame($productId, $lineItem->getProduct()->getId());
+    }
+
+    public function testTryToCreateWhenLineItemDoesNotHaveProductRelationshipAndHaveUnknownProductSku()
+    {
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['productSku'] = 'unknown';
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'line item product constraint',
+                    'detail' => 'Please choose Product.',
+                    'source' => ['pointer' => '/data/relationships/lineItems/data/0']
+                ],
+                [
+                    'title'  => 'line item product constraint',
+                    'detail' => 'Please choose Product.',
+                    'source' => ['pointer' => '/included/0/relationships/product/data']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuForFreeFormProduct()
+    {
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['freeFormProduct'] = 'Test';
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals('Test', $lineItem->getFreeFormProduct());
+        self::assertEquals('product-1', $lineItem->getProductSku());
+        self::assertTrue(null === $lineItem->getProduct());
+    }
+
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipAndHaveUnknownProductSkuForFreeFormProduct()
+    {
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['freeFormProduct'] = 'Test';
+        $data['included'][0]['attributes']['productSku'] = 'unknown';
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals('Test', $lineItem->getFreeFormProduct());
+        self::assertEquals('unknown', $lineItem->getProductSku());
+        self::assertTrue(null === $lineItem->getProduct());
+    }
+
+    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProduct()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product-1');
+        $productId = $product->getId();
+        $productSku = $product->getSku();
+
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['productSku'] = 'product-2';
+        $data['included'][0]['relationships']['product']['data'] = [
+            'type' => 'products',
+            'id'   => (string)$productId
+        ];
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($productSku, $lineItem->getProductSku());
+        self::assertSame($productId, $lineItem->getProduct()->getId());
+    }
+
+    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProductForFreeFormProduct()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product-1');
+        $productId = $product->getId();
+        $productSku = $product->getSku();
+
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['freeFormProduct'] = 'Test';
+        $data['included'][0]['attributes']['productSku'] = 'product-2';
+        $data['included'][0]['relationships']['product']['data'] = [
+            'type' => 'products',
+            'id'   => (string)$productId
+        ];
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals('Test', $lineItem->getFreeFormProduct());
+        self::assertEquals($productSku, $lineItem->getProductSku());
+        self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
     public function testUpdate()
@@ -230,6 +387,176 @@ class OrderTest extends RestJsonApiTestCase
             ['data' => ['type' => 'customerusers', 'id' => (string)$customerUserId]],
             $response
         );
+    }
+
+    public function testTryToCreateWithoutLineItems()
+    {
+        $data = [
+            'data' => [
+                'type'          => 'orders',
+                'attributes'    => [
+                    'identifier' => 'new_order1'
+                ],
+                'relationships' => [
+                    'customer' => [
+                        'data' => ['type' => 'customers', 'id' => '<toString(@my_order->customer->id)>']
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'count constraint',
+                'detail' => 'Please add at least one Line Item',
+                'source' => ['pointer' => '/data/relationships/lineItems/data']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToSetEmptyLineItems()
+    {
+        $data = [
+            'data' => [
+                'type'          => 'orders',
+                'id'            => '<toString(@simple_order2->id)>',
+                'relationships' => [
+                    'lineItems' => [
+                        'data' => []
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => '<toString(@simple_order2->id)>'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'count constraint',
+                'detail' => 'Please add at least one Line Item',
+                'source' => ['pointer' => '/data/relationships/lineItems/data']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToDeleteLastLineItemFromOrder()
+    {
+        $data = [
+            'data' => [
+                ['type' => 'orderlineitems', 'id' => '<toString(@order_line_item.3->id)>']
+            ]
+        ];
+        $response = $this->deleteRelationship(
+            ['entity' => 'orders', 'id' => '<toString(@simple_order2->id)>', 'association' => 'lineItems'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'count constraint',
+                'detail' => 'Please add at least one Line Item'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToMoveExitingLineItemToNewOrder()
+    {
+        $data = [
+            'data' => [
+                'type'          => 'orders',
+                'attributes'    => [
+                    'identifier' => 'new_order1'
+                ],
+                'relationships' => [
+                    'customer'  => [
+                        'data' => ['type' => 'customers', 'id' => '<toString(@my_order->customer->id)>']
+                    ],
+                    'lineItems' => [
+                        'data' => [
+                            ['type' => 'orderlineitems', 'id' => '<toString(@order_line_item.1->id)>']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unchangeable field constraint',
+                'detail' => 'Line Item order cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/lineItems/data/0']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToMoveExitingLineItemToAnotherOrder()
+    {
+        $data = [
+            'data' => [
+                'type'          => 'orders',
+                'id'            => '<toString(@my_order->id)>',
+                'relationships' => [
+                    'lineItems' => [
+                        'data' => [
+                            ['type' => 'orderlineitems', 'id' => '<toString(@order_line_item.1->id)>']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => '<toString(@my_order->id)>'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unchangeable field constraint',
+                'detail' => 'Line Item order cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/lineItems/data/0']
+            ],
+            $response
+        );
+    }
+
+    public function testDeleteLineItemFromOrder()
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $lineItemId = $this->getReference('order_line_item.2')->getId();
+
+        $data = [
+            'data' => [
+                ['type' => 'orderlineitems', 'id' => (string)$lineItemId]
+            ]
+        ];
+        $this->deleteRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'lineItems'],
+            $data
+        );
+
+        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        self::assertTrue(null === $lineItem);
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
     }
 
     public function testDeleteList()

@@ -18,3 +18,10 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         productUnit: '@product_unit.box'
         value: 30.5
         currency: USD
+    order_line_item.3:
+        order: '@simple_order2'
+        product: '@product-2'
+        quantity: 1
+        productUnit: '@product_unit.box'
+        value: 10
+        currency: USD

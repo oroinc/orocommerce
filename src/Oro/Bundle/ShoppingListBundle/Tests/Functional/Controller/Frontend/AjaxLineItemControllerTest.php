@@ -228,7 +228,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         }
 
         $this->ajaxRequest(
-            'POST',
+            'DELETE',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
                 [

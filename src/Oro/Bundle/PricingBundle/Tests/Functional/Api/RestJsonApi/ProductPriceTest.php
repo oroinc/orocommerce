@@ -64,7 +64,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListWithoutPriceListFilter()
+    public function testTryToGetListWithoutPriceListFilter()
     {
         $response = $this->cget(
             ['entity' => 'productprices'],
@@ -102,7 +102,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertMessagesSentForCreateRequest('price_list_3');
     }
 
-    public function testCreateDuplicate()
+    public function testTryToCreateDuplicate()
     {
         $this->post(
             ['entity' => 'productprices'],
@@ -126,26 +126,106 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithWrongAttributes()
+    public function testTryToCreateEmptyValue()
     {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['attributes']['value'] = '';
         $response = $this->post(
             ['entity' => 'productprices'],
-            'product_price/create_wrong.yml',
+            $data,
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseContainsValidationError(
             [
-                [
-                    'title'  => 'product price currency constraint',
-                    'detail' => 'Currency "EUR" is not valid for current price list. Source: price.currency.'
-                ],
-                [
-                    'title'  => 'product price allowed units constraint',
-                    'detail' => 'Unit "liter" is not allowed for product "product-5".',
-                    'source' => ['pointer' => '/data/relationships/unit/data']
-                ]
+                'title'  => 'not blank constraint',
+                'detail' => 'Price value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateEmptyCurrency()
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['attributes']['currency'] = '';
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongValue()
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['attributes']['value'] = 'test';
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'type constraint',
+                'detail' => 'This value should be of type numeric.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongCurrency()
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['attributes']['currency'] = 'EUR';
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'product price currency constraint',
+                'detail' => 'Currency "EUR" is not valid for current price list.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongProductUnit()
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['relationships']['unit']['data']['id'] = '<toString(@product_unit.liter->code)>';
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'product price allowed units constraint',
+                'detail' => 'Unit "liter" is not allowed for product "product-5".',
+                'source' => ['pointer' => '/data/relationships/unit/data']
             ],
             $response
         );
@@ -190,7 +270,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteListWithoutPriceListFilter()
+    public function testTryToDeleteListWithoutPriceListFilter()
     {
         $response = $this->cdelete(
             ['entity' => 'productprices'],
@@ -208,7 +288,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetWithoutPriceListInId()
+    public function testTryToGetWithoutPriceListInId()
     {
         $response = $this->get(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPrice()->getId()],
@@ -227,7 +307,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetWithWrongPriceListInId()
+    public function testTryToGetWithWrongPriceListInId()
     {
         $response = $this->get(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId('price_list_2')],
@@ -246,7 +326,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetWithNotExistingId()
+    public function testTryToGetWithNotExistingId()
     {
         $notExistingId = $this->getFirstProductPrice()->getId() . 'a-' . $this->getReference('price_list_1')->getId();
         $response = $this->get(
@@ -295,7 +375,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertMessagesSentForCreateRequest('price_list_1');
     }
 
-    public function testUpdateWithPriceList()
+    public function testTryToUpdateWithPriceList()
     {
         $response = $this->patch(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
@@ -313,7 +393,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateDuplicate()
+    public function testTryToUpdateDuplicate()
     {
         $response = $this->patch(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],

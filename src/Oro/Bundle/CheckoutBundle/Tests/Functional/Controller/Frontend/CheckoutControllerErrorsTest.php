@@ -91,7 +91,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             'shoppingListId' => $shoppingList->getId(),
             'lineItemId' => $this->getLineItemIdByProductId($productId, $shoppingList)
         ]);
-        $this->ajaxRequest('POST', $url);
+        $this->ajaxRequest('DELETE', $url);
         $result = $this->client->getResponse();
         static::assertResponseStatusCodeEquals($result, 200);
         $response = json_decode($result->getContent(), true);

@@ -6,10 +6,12 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -71,7 +73,10 @@ class OrderLineItemTest extends RestJsonApiTestCase
 
     public function testCreateWithProductSku()
     {
-        $productSku = $this->getReference(LoadProductData::PRODUCT_4)->getSku();
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
+        $productId = $product->getId();
+        $productSku = $product->getSku();
 
         $response = $this->post(
             ['entity' => 'orderlineitems'],
@@ -83,6 +88,70 @@ class OrderLineItemTest extends RestJsonApiTestCase
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
         self::assertEquals($productSku, $lineItem->getProduct()->getSku());
+        self::assertSame($productId, $lineItem->getProduct()->getId());
+    }
+
+    public function testTryToCreateEmptyValue()
+    {
+        $data = $this->getRequestData('create_line_item_with_product_sku.yml');
+        $data['data']['attributes']['value'] = '';
+        $response = $this->post(
+            ['entity' => 'orderlineitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'Price value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateEmptyCurrency()
+    {
+        $data = $this->getRequestData('create_line_item_with_product_sku.yml');
+        $data['data']['attributes']['currency'] = '';
+        $response = $this->post(
+            ['entity' => 'orderlineitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWrongValue()
+    {
+        $data = $this->getRequestData('create_line_item_with_product_sku.yml');
+        $data['data']['attributes']['value'] = 'test';
+        $response = $this->post(
+            ['entity' => 'orderlineitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title'  => 'type constraint',
+                'detail' => 'This value should be of type numeric.',
+                'source' => ['pointer' => '/data/attributes/value']
+            ],
+            $response
+        );
     }
 
     public function testUpdate()
@@ -146,24 +215,19 @@ class OrderLineItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateRelationshipForOrder()
+    public function testTryToUpdateRelationshipForOrder()
     {
-        $lineItemId = $this->getReference('order_line_item.1')->getId();
-        $targetOrderId = $this->getReference(LoadOrders::MY_ORDER)->getId();
-
-        $this->patchRelationship(
-            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'order'],
+        $response = $this->patchRelationship(
             [
-                'data' => [
-                    'type' => 'orders',
-                    'id'   => (string)$targetOrderId
-                ]
-            ]
+                'entity'      => 'orderlineitems',
+                'id'          => '<toString(@order_line_item.1->id)>',
+                'association' => 'order'
+            ],
+            ['data' => ['type' => 'orders', 'id' => '<toString(@my_order->id)>']],
+            [],
+            false
         );
-
-        /** @var OrderLineItem $lineItem */
-        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
-        self::assertEquals($targetOrderId, $lineItem->getOrder()->getId());
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
     public function testGetSubresourceForProduct()
@@ -200,6 +264,21 @@ class OrderLineItemTest extends RestJsonApiTestCase
         );
     }
 
+    public function testUpdateRelationshipForProduct()
+    {
+        $lineItemId = $this->getReference('order_line_item.2')->getId();
+        $productId = $this->getReference('product-1')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'product'],
+            ['data' => ['type' => 'products', 'id' => (string)$productId]]
+        );
+
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        self::assertSame($productId, $lineItem->getProduct()->getId());
+    }
+
     public function testGetSubresourceForParentProduct()
     {
         /** @var OrderLineItem $lineItem */
@@ -232,6 +311,21 @@ class OrderLineItemTest extends RestJsonApiTestCase
             ['data' => ['type' => 'products', 'id' => (string)$parentProductId]],
             $response
         );
+    }
+
+    public function testUpdateRelationshipForParentProduct()
+    {
+        $lineItemId = $this->getReference('order_line_item.1')->getId();
+        $parentProductId = $this->getReference('product-2')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'parentProduct'],
+            ['data' => ['type' => 'products', 'id' => (string)$parentProductId]]
+        );
+
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        self::assertSame($parentProductId, $lineItem->getParentProduct()->getId());
     }
 
     public function testGetSubresourceForProductUnit()
@@ -268,16 +362,129 @@ class OrderLineItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteList()
+    public function testUpdateRelationshipForProductUnit()
     {
         $lineItemId = $this->getReference('order_line_item.1')->getId();
+        $productUnitCode = $this->getReference('product_unit.box')->getCode();
 
-        $this->cdelete(
-            ['entity' => 'orderlineitems'],
-            ['filter' => ['id' => $lineItemId]]
+        $this->patchRelationship(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'productUnit'],
+            ['data' => ['type' => 'productunits', 'id' => (string)$productUnitCode]]
         );
 
+        /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
-        self::assertTrue(null === $lineItem);
+        self::assertSame($productUnitCode, $lineItem->getProductUnit()->getCode());
+    }
+
+    public function testUpdateOrderForExistingLineItemWhenOrderIdEqualsToLineItemOrderId()
+    {
+        $lineItemId = $this->getReference('order_line_item.2')->getId();
+        $orderId = $this->getReference('simple_order')->getId();
+
+        $this->patch(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type'          => 'orderlineitems',
+                    'id'            => (string)$lineItemId,
+                    'relationships' => [
+                        'order' => ['data' => ['type' => 'orders', 'id' => (string)$orderId]]
+                    ]
+                ]
+            ]
+        );
+
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        self::assertSame($orderId, $lineItem->getOrder()->getId());
+    }
+
+    public function testTryToSetNullOrderForExistingLineItem()
+    {
+        $lineItemId = $this->getReference('order_line_item.2')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type'          => 'orderlineitems',
+                    'id'            => (string)$lineItemId,
+                    'relationships' => [
+                        'order' => [
+                            'data' => null
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/order/data']
+                ],
+                [
+                    'title'  => 'unchangeable field constraint',
+                    'detail' => 'Line Item order cannot be changed once set.',
+                    'source' => ['pointer' => '/data/relationships/order/data']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToChangeOrderForExistingLineItem()
+    {
+        $lineItemId = $this->getReference('order_line_item.2')->getId();
+        $orderId = $this->getReference('my_order')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type'          => 'orderlineitems',
+                    'id'            => (string)$lineItemId,
+                    'relationships' => [
+                        'order' => ['data' => ['type' => 'orders', 'id' => (string)$orderId]]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unchangeable field constraint',
+                'detail' => 'Line Item order cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/order/data']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToDelete()
+    {
+        $response = $this->delete(
+            ['entity' => 'orderlineitems', 'id' => '<toString(order_line_item.1->id)>'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, PATCH');
+    }
+
+    public function testTryToDeleteList()
+    {
+        $response = $this->cdelete(
+            ['entity' => 'orderlineitems'],
+            ['filter' => ['id' => '<toString(order_line_item.1->id)>']],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, POST');
     }
 }

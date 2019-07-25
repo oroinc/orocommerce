@@ -106,13 +106,11 @@ services:
             - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer.class%' }
             - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer.class%' }
 
-    oro_pricing.api.set_price_by_value_and_currency:
-        class: 'Oro\Bundle\CurrencyBundle\Api\Processor\SetPriceByValueAndCurrency'
+    oro_pricing.api.update_price_by_value_and_currency:
+        class: 'Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency'
         tags:
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
-            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_pricing.entity.price_attribute_product_price.class%' }
-            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_pricing.entity.price_attribute_product_price.class%' }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: '%oro_pricing.entity.price_attribute_product_price.class%' }
 
     oro_pricing.api.normalize_product_price_id:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeInputProductPriceId'
