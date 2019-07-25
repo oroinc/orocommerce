@@ -70,6 +70,9 @@ oro_behat_extension:
           Configurable Attributes Color:
             type: 'xpath'
             locator: '//input[contains(@id,"oro_product_variantFields_Color_is_selected-uid")]'
+          Configurable Attributes ColorPro:
+            type: 'xpath'
+            locator: '//input[contains(@id,"oro_product_variantFields_ColorPro_is_selected-uid")]'
           Configurable Attributes Size:
             type: 'xpath'
             locator: '//input[contains(@id,"oro_product_variantFields_Size_is_selected-uid")]'

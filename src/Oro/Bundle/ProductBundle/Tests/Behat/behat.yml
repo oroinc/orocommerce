@@ -693,6 +693,9 @@ oro_behat_extension:
     T_shirt attribute group:
       selector: "select[name='oro_attribute_family[attributeGroups][t_shirt_group][attributeRelations][]']"
 
+    General Group Attributes:
+      selector: "select[name='oro_attribute_family[attributeGroups][general][attributeRelations][]']"
+
     ImageCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
 
