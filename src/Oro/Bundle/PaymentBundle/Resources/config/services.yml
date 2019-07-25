@@ -228,7 +228,7 @@ services:
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
-        public: false
+        public: true
 
     oro_payment.context.doctrine_line_item_collection_factory:
         class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory'

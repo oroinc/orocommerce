@@ -86,7 +86,6 @@ class ConsentType extends AbstractType
                         'oro.consent.type.optional' => false,
                         'oro.consent.type.mandatory' => true
                     ],
-                    'choices_as_values' => true,
                     'placeholder' => false,
                 ]
             )

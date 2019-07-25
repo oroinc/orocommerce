@@ -4,9 +4,9 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
 {

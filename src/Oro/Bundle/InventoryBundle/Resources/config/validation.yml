@@ -14,10 +14,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         manageInventory:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
-                - Choice: ['0', '1']
+                - Choice: [0, 1, '0', '1']
         highlightLowInventory:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
-                - Choice: ['0', '1']
+                - Choice: [0, 1, '0', '1']
         inventoryThreshold:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
                 - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
@@ -30,13 +30,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
                     max: 100000000
         backOrder:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
-                - Choice: ['0', '1']
+                - Choice: [0, 1, '0', '1']
         decrementQuantity:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
-                - Choice: ['0', '1']
+                - Choice: [0, 1, '0', '1']
         isUpcoming:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
-                - Choice: ['0', '1']
+                - Choice: [0, 1, '0', '1']
         minimumQuantityToOrder:
             - Oro\Bundle\EntityBundle\Validator\Constraints\RelatedEntityFieldFallbackValueConstraint:
                 - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:

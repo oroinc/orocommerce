@@ -1314,6 +1314,7 @@ services:
 
     oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
+        public: true
         arguments:
             - '@oro_config.manager'
             - '@translator'

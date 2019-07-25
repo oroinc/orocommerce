@@ -23,6 +23,7 @@ services:
 
     oro_shipping.mass_action.status_handler:
         class: 'Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler'
+        public: true
         arguments:
             - 'oro.shipping.datagrid.status.success_message'
             - 'OroShippingBundle:ShippingMethodsConfigsRule'

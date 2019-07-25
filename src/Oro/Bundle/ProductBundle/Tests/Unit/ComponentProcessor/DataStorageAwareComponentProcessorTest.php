@@ -55,7 +55,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     protected $session;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|Translator
      */
     protected $translator;
 

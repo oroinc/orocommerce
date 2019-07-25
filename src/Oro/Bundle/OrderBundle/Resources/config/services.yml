@@ -393,6 +393,7 @@ services:
 
     oro_order.datagrid.orders_view_list:
         class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
+        public: true
         arguments:
             - '@translator'
 

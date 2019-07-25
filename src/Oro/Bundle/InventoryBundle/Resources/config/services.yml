@@ -79,6 +79,7 @@ services:
 
     oro_inventory.manager.inventory_manager:
         class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryManager'
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
 

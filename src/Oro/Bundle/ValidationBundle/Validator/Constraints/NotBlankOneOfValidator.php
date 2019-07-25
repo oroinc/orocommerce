@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotBlankOneOfValidator extends ConstraintValidator
 {

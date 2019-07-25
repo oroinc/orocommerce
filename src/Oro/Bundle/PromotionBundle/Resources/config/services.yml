@@ -534,6 +534,7 @@ services:
 
     oro_promotion.mass_action.coupon_edit_mass_action_handler:
         parent: oro_promotion.mass_action.coupon_mass_action_handler
+        public: true
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponEditMassActionHandler
         calls:
             - ['setTranslator', ['@translator']]
@@ -541,6 +542,7 @@ services:
 
     oro_promotion.mass_action.assigned_coupon_unassign_mass_action_handler:
         parent: oro_promotion.mass_action.coupon_mass_action_handler
+        public: true
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponUnassignActionHandler
         calls:
             - ['setTranslator', ['@translator']]

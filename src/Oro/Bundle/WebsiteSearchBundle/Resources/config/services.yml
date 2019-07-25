@@ -82,6 +82,7 @@ services:
 
     oro_website_search.query_factory:
         class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory'
+        public: true
         arguments:
             - '@oro_website_search.engine'
 
