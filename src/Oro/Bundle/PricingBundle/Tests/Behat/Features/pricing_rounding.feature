@@ -6,6 +6,7 @@
 @fixture-OroPricingBundle:PricingRounding.yml
 @fixture-OroPricingBundle:PricingRoundingInventoryLevel.yml
 @fixture-OroPricingBundle:PricingRoundingQuote.yml
+@skip
 
 Feature: Pricing rounding
   In order to check pricing rounding in shopping list/order/rfq/quote
