@@ -47,7 +47,7 @@ Example:
         "data": [
           {
             "type": "orderlineitems",
-            "id": "1"
+            "id": "line_item_1"
           }
         ]
       },
@@ -58,7 +58,35 @@ Example:
         }
       }
     }
-  }
+  },
+  "included": [
+    {
+      "type": "orderlineitems",
+      "id": "line_item_1",
+      "attributes": {
+        "productSku": "4HC51",
+        "quantity": 19,     
+        "value": 23.55,
+        "currency": "USD",
+        "priceType": 10,
+        "shipBy": "2016-04-30"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "23"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "piece"
+          }
+        }      
+      }
+    }
+  ]
 }
 ```
 {@/request}

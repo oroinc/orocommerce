@@ -15,10 +15,10 @@ use Oro\Bundle\UserBundle\Tests\Functional\Api\DataFixtures\LoadUserData;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @dbIsolationPerTest
  */
 class RelatedProductTest extends RestJsonApiTestCase
 {
@@ -55,14 +55,21 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
             [],
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 LoadUserData::USER_NAME,
                 LoadUserData::USER_PASSWORD
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to change related products.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     /**
@@ -80,21 +87,21 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
             [],
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
                 CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testGet()
     {
         $response = $this->get([
             'entity' => 'relatedproducts',
-            'id' => '<toString(@related-product-product-3-product-1->id)>',
+            'id'     => '<toString(@related-product-product-3-product-1->id)>',
         ]);
 
         $this->assertResponseContains('related_product/get.yml', $response);
@@ -109,17 +116,24 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-3-product-1->id)>',
+                'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 LoadUserData::USER_NAME,
                 LoadUserData::USER_PASSWORD
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to change related products.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     /**
@@ -137,17 +151,17 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-3-product-1->id)>',
+                'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
                 CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testValidationErrorOnPostInCaseFunctionalityIsDisabled()
@@ -284,21 +298,21 @@ class RelatedProductTest extends RestJsonApiTestCase
         $this->delete(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-5-product-4->id)>',
+                'id'     => '<toString(@related-product-product-5-product-4->id)>',
             ]
         );
 
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-5-product-4->id)>',
+                'id'     => '<toString(@related-product-product-5-product-4->id)>',
             ],
             [],
             [],
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -323,22 +337,22 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->delete(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-3-product-1->id)>',
+                'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
                 CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
 
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id' => '<toString(@related-product-product-3-product-1->id)>',
+                'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ]
         );
 
@@ -368,14 +382,21 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->post(
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 LoadUserData::USER_NAME,
                 LoadUserData::USER_PASSWORD
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to change related products.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     /**
@@ -394,14 +415,14 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->post(
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
-            $this->generateWsseAuthHeader(
+            self::generateWsseAuthHeader(
                 LoadUserData::USER_NAME_2,
                 LoadUserData::USER_PASSWORD_2
             ),
             false
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     /**
@@ -409,7 +430,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      */
     private function setRelatedProductsEnabled($enabled)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getContainer()->get('oro_config.global');
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED);
         $configManager->set($name, $enabled);
         $configManager->flush();
@@ -420,7 +441,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      */
     private function setRelatedProductsLimit($limit)
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getContainer()->get('oro_config.manager');
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
         $configManager->set($name, $limit, 0);
         $configManager->set($name, $limit, 1);

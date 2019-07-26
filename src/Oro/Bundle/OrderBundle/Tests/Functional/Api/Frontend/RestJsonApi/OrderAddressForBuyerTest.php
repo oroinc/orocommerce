@@ -54,7 +54,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetForCustomerFromAnotherDepartment()
@@ -65,8 +72,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToCreate()
@@ -117,8 +130,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'country'
             ]
         );
@@ -132,8 +145,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'country'
             ]
         );
@@ -147,24 +160,44 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'country'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testGetRelationshipForCountryForChildCustomer()
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'country'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetSubresourceForCountryForCustomerFromAnotherDepartment()
@@ -179,7 +212,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForCountryForCustomerFromAnotherDepartment()
@@ -189,17 +229,27 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderaddresses',
                 'id'          => '<toString(@another_order_billing_address->id)>',
                 'association' => 'country'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForCountry()
     {
         $response = $this->patchRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'country'
             ],
             [],
@@ -213,8 +263,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'region'
             ]
         );
@@ -228,8 +278,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'region'
             ]
         );
@@ -243,24 +293,44 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'region'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testGetRelationshipForRegionForChildCustomer()
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'region'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetSubresourceForRegionForCustomerFromAnotherDepartment()
@@ -275,7 +345,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForRegionForCustomerFromAnotherDepartment()
@@ -285,17 +362,27 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderaddresses',
                 'id'          => '<toString(@another_order_billing_address->id)>',
                 'association' => 'region'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForRegion()
     {
         $response = $this->patchRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'region'
             ],
             [],
@@ -309,8 +396,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerAddress'
             ]
         );
@@ -324,8 +411,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerAddress'
             ]
         );
@@ -339,24 +426,44 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'customerAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testGetRelationshipForCustomerAddressForChildCustomer()
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'customerAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetSubresourceForCustomerAddressForCustomerFromAnotherDepartment()
@@ -371,7 +478,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForCustomerAddressForCustomerFromAnotherDepartment()
@@ -381,17 +495,27 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderaddresses',
                 'id'          => '<toString(@another_order_billing_address->id)>',
                 'association' => 'customerAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForCustomerAddress()
     {
         $response = $this->patchRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerAddress'
             ],
             [],
@@ -405,8 +529,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerUserAddress'
             ]
         );
@@ -420,8 +544,8 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerUserAddress'
             ]
         );
@@ -435,24 +559,44 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->getSubresource(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'customerUserAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testGetRelationshipForCustomerUserAddressForChildCustomer()
     {
         $response = $this->getRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order3_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order3_billing_address->id)>',
                 'association' => 'customerUserAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetSubresourceForCustomerUserAddressForCustomerFromAnotherDepartment()
@@ -467,7 +611,14 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForCustomerUserAddressForCustomerFromAnotherDepartment()
@@ -477,17 +628,27 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderaddresses',
                 'id'          => '<toString(@another_order_billing_address->id)>',
                 'association' => 'customerUserAddress'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForCustomerUserAddress()
     {
         $response = $this->patchRelationship(
             [
-                'entity' => 'orderaddresses',
-                'id' => '<toString(@order1_billing_address->id)>',
+                'entity'      => 'orderaddresses',
+                'id'          => '<toString(@order1_billing_address->id)>',
                 'association' => 'customerUserAddress'
             ],
             [],

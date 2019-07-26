@@ -35,12 +35,15 @@ class RelatedItemSecurityCheck implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         if (!$this->authorizationChecker->isGranted('oro_related_products_edit')) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException('No access to change related products.');
         }
 
         foreach ($this->productPermissions as $productPermission) {
             if (!$this->authorizationChecker->isGranted($productPermission, Product::class)) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedException(sprintf(
+                    'No access by "%s" permission to products.',
+                    $productPermission
+                ));
             }
         }
 

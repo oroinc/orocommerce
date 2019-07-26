@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -158,16 +159,21 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForInvisibleCategory()
+    public function testTryToGetSubresourceForInvisibleCategory()
     {
         $response = $this->getSubresource(
-            ['entity' => 'products', 'id' => '<toString(@product5->id)>', 'association' => 'category']
+            ['entity' => 'products', 'id' => '<toString(@product5->id)>', 'association' => 'category'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(
+        $this->assertResponseValidationError(
             [
-                'data' => null
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
             ],
-            $response
+            $response,
+            Response::HTTP_FORBIDDEN
         );
     }
 
@@ -187,16 +193,21 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForInvisibleCategory()
+    public function testTryToGetRelationshipForInvisibleCategory()
     {
         $response = $this->getRelationship(
-            ['entity' => 'products', 'id' => '<toString(@product5->id)>', 'association' => 'category']
+            ['entity' => 'products', 'id' => '<toString(@product5->id)>', 'association' => 'category'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(
+        $this->assertResponseValidationError(
             [
-                'data' => null
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
             ],
-            $response
+            $response,
+            Response::HTTP_FORBIDDEN
         );
     }
 
