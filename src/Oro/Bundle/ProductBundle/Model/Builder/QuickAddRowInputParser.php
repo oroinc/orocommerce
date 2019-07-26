@@ -81,18 +81,13 @@ class QuickAddRowInputParser
     {
         if (!$unitName) {
             $defaultUnitName = $this->getProductRepository()->getPrimaryUnitPrecisionCode($sku);
-            return $defaultUnitName ?: $unitName;
+            return $defaultUnitName ?: null;
         }
 
         $unit = \strtolower($unitName);
+        $availableUnits = $this->getAvailableProductUnitCodes();
 
-        foreach ($this->getAvailableProductUnitCodes() as $label => $code) {
-            if (\in_array($unit, [$label, $code], true)) {
-                return $code;
-            }
-        }
-
-        return $unitName;
+        return \array_key_exists($unit, $availableUnits) ? $availableUnits[$unit] : null;
     }
 
     /**

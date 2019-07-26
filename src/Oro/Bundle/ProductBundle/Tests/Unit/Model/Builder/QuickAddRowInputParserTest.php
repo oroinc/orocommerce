@@ -118,7 +118,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'SKU5',
                     '4.5',
-                    'item'
+                    null
                 ]
             ],
             [
@@ -130,7 +130,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'ss2',
                     '6',
-                    'liter'
+                    null
                 ]
             ],
             [

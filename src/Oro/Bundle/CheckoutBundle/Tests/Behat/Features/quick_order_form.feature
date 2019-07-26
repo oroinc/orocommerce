@@ -328,15 +328,15 @@ Feature: Quick order form
     When I import file for quick order
     Then I should see next rows in "Quick Order Import Validation" table
       | Item #                           | Qty | Unit         | Price    |
-      | PSKU1 - Product1 (Localization1) | 2   | item (lang1) | US$90.00 |
-      | PSKU2 - Product2                 | 6   | item (lang1) | N/A      |
+      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
+      | PSKU2 - Product2                 | 3   | item (lang1) | N/A      |
     And I click "Add to Form"
     And "QuickAddForm" must contains values:
       | SKU1  | psku1 - Product1 (Localization1) |
-      | QTY1  | 2                                |
+      | QTY1  | 1                                |
       | UNIT1 | item (lang1)                     |
       | SKU2  | PSKU2 - Product2                 |
-      | QTY2  | 6                                |
+      | QTY2  | 3                                |
       | UNIT2 | item (lang1)                     |
 
   Scenario: Check unit names are localized in copy paste form

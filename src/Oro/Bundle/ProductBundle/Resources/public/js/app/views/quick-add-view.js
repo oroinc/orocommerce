@@ -12,6 +12,7 @@ define(function(require) {
     QuickAddView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             container: '[data-role="quick-order-add-container"]',
+            collection: '.js-item-collection',
             rows: '[data-name="field__name"]',
             displayName: '[data-name="field__product-display-name"]',
             sku: '[data-name="field__product-sku"]',
@@ -41,7 +42,7 @@ define(function(require) {
         listen: {
             'quick-add-copy-paste-form:submit mediator': 'addQuickAddRows',
             'quick-add-import-form:submit mediator': 'addQuickAddRows',
-            'quick-add-form-item:unit-invalid mediator': 'addOneRow'
+            'quick-add-copy-paste-form:process-complete mediator': 'onQuickAddRowsComplete'
         },
 
         newRows: [],
@@ -52,6 +53,9 @@ define(function(require) {
          * @inheritDoc
          */
         constructor: function QuickAddView() {
+            this.onCollectionItemRemove = _.debounce(this.onCollectionItemRemove, 0);
+            this.onQuickAddRowsComplete = _.debounce(this.onQuickAddRowsComplete, 0);
+
             QuickAddView.__super__.constructor.apply(this, arguments);
         },
 
@@ -111,6 +115,10 @@ define(function(require) {
         },
 
         addQuickAddRows: function(data) {
+            this.rowsCountBeforeQuickAdd = this.getRowsCount();
+            this.getElement('collection').on('content:remove' + this.eventNamespace(),
+                this.onCollectionItemRemove.bind(this));
+
             this.rowsPromise = $.Deferred();
             _.each(data, function(rowData) {
                 if (this.findRow(rowData)) {
@@ -120,17 +128,32 @@ define(function(require) {
                 }
             }, this);
 
-            if (this.getEmptyRows().length >= this.newRows.length) {
+            var emptyRowLength = this.getEmptyRows().length;
+
+            if (emptyRowLength >= this.newRows.length) {
                 this.fillNewRowsWithData();
                 this.updateRowsWithData();
                 this.rowsPromise.resolve();
+            } else {
+                this.addRows(this.newRows.length - emptyRowLength);
             }
 
-            while (this.getEmptyRows().length < this.newRows.length) {
-                $('.add-list-item').click();
+            if (data.length) {
+                this.validateData(data);
             }
+        },
 
-            this.validateData(data);
+        onCollectionItemRemove: function() {
+            var rowsNeeded = this.rowsCountBeforeQuickAdd - this.getRowsCount();
+
+            if (rowsNeeded > 0) {
+                this.addRows(rowsNeeded);
+            }
+        },
+
+        onQuickAddRowsComplete: function() {
+            this.getElement('collection').off('content:remove' + this.eventNamespace());
+            delete this.rowsCountBeforeQuickAdd;
         },
 
         validateData: function(data) {
@@ -174,7 +197,7 @@ define(function(require) {
 
             var $rows = this.getEmptyRows();
             _.each(this.newRows, function(item, i) {
-                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $rows.eq(i), triggerBlurEvent: false});
+                mediator.trigger('quick-add-form-row:update', {item: item, $el: $rows.eq(i), triggerBlurEvent: false});
             });
 
             this.newRows = [];
@@ -187,7 +210,7 @@ define(function(require) {
 
             _.each(this.existingRows, function(item) {
                 var $row = $(this.findRow(item));
-                mediator.trigger('quick-add-form:rows-ready', {item: item, $el: $row, triggerBlurEvent: false});
+                mediator.trigger('quick-add-form-row:update', {item: item, $el: $row, triggerBlurEvent: false});
             }, this);
 
             this.existingRows = [];
@@ -202,16 +225,15 @@ define(function(require) {
 
         findRow: function(rowData) {
             this.clearElementsCache();
+
             var rows = this.getElement('rows');
+            var rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
+
             return _.find(rows, function(row) {
                 var $unit = $(row).find(this.elements.unit);
-                var unitValue = $unit.val();
-                unitValue = _.isString(unitValue) ? unitValue.toLowerCase() : '';
                 var unitLabel = $unit.find('option:selected').text().toLowerCase();
-                var rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
 
-                return $(row).find(this.elements.sku).val() === rowData.sku &&
-                    _.contains([unitLabel, unitValue], rowDataUnit);
+                return unitLabel === rowDataUnit && $(row).find(this.elements.sku).val() === rowData.sku;
             }, this);
         },
 
@@ -220,10 +242,13 @@ define(function(require) {
             return this.getElement('rows').length;
         },
 
-        addOneRow: function() {
-            var addButton = this.getElement('add');
-            addButton.data('row-add-only-one', true);
-            addButton.click();
+        addRows: function(count) {
+            var $collectionElement = this.getElement('collection');
+            var oldCount = $collectionElement.data('row-count-add');
+
+            $collectionElement.data('row-count-add', count);
+            this.getElement('add').click();
+            $collectionElement.data('row-count-add', oldCount);
         },
 
         dispose: function() {
