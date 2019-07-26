@@ -101,12 +101,24 @@ oro:
 
         paymenttransaction:
             entity_plural_label: Payment Transactions
+            entity_label: Payment Transaction
             id.label: Id
             paymentMethod.label: Payment Method
             action.label: Type
             amount.label: Amount
             active.label: Active
+            currency.label: Currency
+            payment_method.label: Payment Method
+            reference.label: Reference
+            frontend_owner.label: Frontend Owner
+            source_payment_transaction.label: Source Payment Transaction
             successful.label: Successful
+            access_identifier.label: Access Identifier
+            entity_class.label: Entity Class
+            entity_identifier.label: Entity Identifier
+            organization.label: Organization
+            owner.label: Owner
+            related_payment_transactions.label: Related Payment Transactions
             types:
                 authorize.label: Authorize
                 charge.label: Charge

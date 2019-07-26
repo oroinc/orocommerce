@@ -11,6 +11,7 @@ oro_behat_extension:
         - OroSecurityBundle::ACLContext
         - OroUIBundle::ContextSelectorContext
         - OroLocaleBundle::LocalizationContext
+        - OroQueryDesignerBundle::QueryDesignerContext
       paths:
         - '@OroPaymentBundle/Tests/Behat/Features'
 
