@@ -2,15 +2,25 @@
 
 namespace Oro\Bundle\TaxBundle\Manager;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\EventListener\DoctrineFlushProgressListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
+/**
+ * Class provides a methods to work with TaxValue entity
+ *
+ * Should not be used outside this bundle
+ */
 class TaxValueManager
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var DoctrineFlushProgressListener */
+    protected $doctrineFlushProgressListener;
 
     /** @var string */
     protected $taxValueClass;
@@ -26,11 +36,22 @@ class TaxValueManager
      * @param string $taxValueClass
      * @param string $taxClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxValueClass, $taxClass)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        $taxValueClass,
+        $taxClass
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->taxValueClass = (string)$taxValueClass;
         $this->taxClass = (string)$taxClass;
+    }
+
+    /**
+     * @param DoctrineFlushProgressListener $doctrineFlushProgressListener
+     */
+    public function setDoctrineFlushProgressListener(DoctrineFlushProgressListener $doctrineFlushProgressListener)
+    {
+        $this->doctrineFlushProgressListener = $doctrineFlushProgressListener;
     }
 
     /**
@@ -145,20 +166,39 @@ class TaxValueManager
 
     /**
      * @param TaxValue $taxValue
-     * @param bool $flush
+     * @param bool $flush, deprecated since 3.1, will be removed in 4.0
      */
     public function saveTaxValue(TaxValue $taxValue, $flush = true)
     {
         $em = $this->getTaxValueEntityManager();
-
-        /** todo: BB-3483  */
-        $em->getUnitOfWork()->scheduleExtraUpdate($taxValue, ['result' => [null, $taxValue->getResult()]]);
-
         $em->persist($taxValue);
 
-        if ($flush) {
-            $em->flush($taxValue);
+        if ($this->doctrineFlushProgressListener->isFlushInProgress($em)) {
+            // If flush is in progress we can compute changeset and doctrine will update it
+            $em->getUnitOfWork()->computeChangeSet(
+                $em->getClassMetadata(ClassUtils::getClass($taxValue)),
+                $taxValue
+            );
         }
+    }
+
+    /**
+     * Flush tax value changes to database if it is allowed to do
+     *
+     * @param null|TaxValue|TaxValue[] $entity
+     * @return bool
+     */
+    public function flushTaxValueIfAllowed($entity = null): bool
+    {
+        $em = $this->getTaxValueEntityManager();
+
+        if (!$this->doctrineFlushProgressListener->isFlushInProgress($em)) {
+            $em->flush($entity);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

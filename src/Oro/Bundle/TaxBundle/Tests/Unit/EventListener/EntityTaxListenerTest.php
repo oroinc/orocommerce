@@ -11,6 +11,7 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -45,6 +46,7 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
 
         $this->listener = new EntityTaxListener($taxProviderRegistry);
+        $this->listener->setEntityClass(Order::class);
     }
 
     protected function tearDown()
@@ -120,20 +122,21 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $taxValue->getEntityId());
     }
 
-    /**
-     * @param null|bool $state
-     * @param bool $expected
-     *
-     * @dataProvider stateProvider
-     */
-    public function testPreRemove($state, $expected)
+    public function testPreRemove()
     {
-        if (null !== $state) {
-            $this->listener->setEnabled($state);
-        }
-
         $order = new Order();
-        $this->taxProvider->expects($this->exactly((int) $expected))->method('removeTax')->with($order);
+        $this->taxProvider->expects($this->once())->method('removeTax')->with($order);
+
+        $this->listener->preRemove($order);
+    }
+
+    public function testPreRemoveWithDisabledTaxesCatchException()
+    {
+        $order = new Order();
+        $this->taxProvider->expects($this->once())
+            ->method('removeTax')
+            ->with($order)
+            ->willThrowException(new TaxationDisabledException());
 
         $this->listener->preRemove($order);
     }

@@ -14,6 +14,9 @@ use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoDat
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads PaymentTerm demo data for exist orders
+ */
 class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -43,16 +46,6 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
 
         $orders = $this->container->get('doctrine')->getRepository('OroOrderBundle:Order')->findAll();
 
-        $orderTaxListener = $this->container->get('oro_tax.event_listener.order_tax');
-        $orderLineItemTaxListener = $this->container->get('oro_tax.event_listener.order_line_item_tax');
-
-        /**
-         * Listeners should be disable because of BB-11299
-         * TODO: Remove code after BB-11299
-         */
-        $orderTaxListener->setEnabled(false);
-        $orderLineItemTaxListener->setEnabled(false);
-
         /** @var Order[] $orders */
         foreach ($orders as $order) {
             $paymentTransaction = $paymentTransactionProvider->getPaymentTransaction($order);
@@ -73,9 +66,6 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
         }
 
         $manager->flush();
-
-        $orderTaxListener->setEnabled(true);
-        $orderLineItemTaxListener->setEnabled(true);
     }
 
     /**
