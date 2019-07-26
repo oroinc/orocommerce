@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
-use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
@@ -31,25 +30,6 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
-    {
-        /** @var EntityTaxListener $orderTaxValueListener */
-        $orderTaxValueListener = $this->container->get('oro_tax.event_listener.order_tax');
-        /** @var EntityTaxListener $lineItemTaxValueListener */
-        $lineItemTaxValueListener = $this->container->get('oro_tax.event_listener.order_line_item_tax');
-        $orderTaxValueListener->setEnabled(false);
-        $lineItemTaxValueListener->setEnabled(false);
-        try {
-            $this->loadTaxes($manager);
-        } finally {
-            $orderTaxValueListener->setEnabled(true);
-            $lineItemTaxValueListener->setEnabled(true);
-        }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    private function loadTaxes(ObjectManager $manager)
     {
         /** @var Order $order1 */
         $order1 = $this->getReference('order1');

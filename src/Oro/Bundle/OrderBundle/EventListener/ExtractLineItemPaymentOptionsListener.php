@@ -45,14 +45,17 @@ class ExtractLineItemPaymentOptionsListener
 
             $product = $lineItem->getProduct();
 
-            if (!$product) {
+            if ($product) {
+                $name = implode(' ', array_filter([$product->getSku(), (string)$product->getName($localization)]));
+                $description = $this->htmlTagHelper->stripTags((string)$product->getShortDescription($localization));
+            } elseif ($lineItem->getFreeFormProduct()) {
+                $name = implode(' ', array_filter([$lineItem->getProductSku(), $lineItem->getFreeFormProduct()]));
+                $description = null;
+            } else {
                 continue;
             }
 
-            $lineItemModel = new LineItemOptionModel();
-            $name = implode(' ', array_filter([$product->getSku(), (string)$product->getName($localization)]));
-            $description = $this->htmlTagHelper->stripTags((string)$product->getShortDescription($localization));
-            $lineItemModel
+            $lineItemModel = (new LineItemOptionModel())
                 ->setName($name)
                 ->setDescription($description)
                 ->setCost($lineItem->getValue())

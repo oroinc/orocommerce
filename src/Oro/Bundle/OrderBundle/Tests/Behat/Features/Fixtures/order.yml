@@ -10,6 +10,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SimpleOrder'
         website: '@website1'
         currency: USD
+        poNumber: 'ORD1'
     secondOrder:
         organization: '@organization'
         owner: '@admin'
@@ -18,6 +19,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SecondOrder'
         website: '@website1'
         currency: USD
+        poNumber: 'ORD2'
 
 Oro\Bundle\CurrencyBundle\Entity\Price (local):
     price1:

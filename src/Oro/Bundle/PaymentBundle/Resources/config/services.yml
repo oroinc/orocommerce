@@ -333,3 +333,14 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_payment.entity.payment_transaction.class%', event: prePersist }
+
+    oro_payment.provider.payment_order_line_item_options:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider'
+        public: false
+        arguments:
+            - '@oro_ui.html_tag_helper'
+            - '@oro_frontend_localization.manager.user_localization'
+
+    oro_payment.provider.payment_order_shipping_address_options:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderShippingAddressOptionsProvider'
+        public: false

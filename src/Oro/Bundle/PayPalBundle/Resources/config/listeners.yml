@@ -45,6 +45,28 @@ services:
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError }
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }
 
+    oro_paypal.event_listener.callback.check_callback_relevance.payflow_gateway.express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\Callback\CheckCallbackRelevanceListener'
+        lazy: true
+        arguments:
+            - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
+            - '@oro_payment.provider.payment_status'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
+
+    oro_paypal.event_listener.callback.check_callback_relevance.payments_pro.express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\Callback\CheckCallbackRelevanceListener'
+        lazy: true
+        arguments:
+            - '@oro_paypal.method.provider.payments_pro.express_checkout'
+            - '@oro_payment.provider.payment_status'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
+
     oro_paypal.event_listener.callback.payflow_gateway.express_checkout.redirect:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
         lazy: true

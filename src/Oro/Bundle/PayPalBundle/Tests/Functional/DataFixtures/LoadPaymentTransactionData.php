@@ -5,7 +5,11 @@ namespace Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\ChannelBundle\Entity\Channel;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -15,71 +19,31 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     use EntityTrait;
 
     const PAYFLOW_AUTHORIZE_TRANSACTION = 'payflow_authorize_transaction';
-    const PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER = 'payflow_authorize_transaction_ip_filter';
+    const PAYFLOW_CHARGE_TRANSACTION = 'payflow_charge_transaction';
+    const PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION = 'payments_pro_ec_authorize_pending_transaction';
+    const PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION = 'payments_pro_ec_authorize_paid_transaction';
 
     /** {@inheritdoc} */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
-            'Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalChannelData',
+            LoadCustomerUserData::class,
+            LoadPayPalChannelData::class,
+            LoadOrders::class,
         ];
     }
-
-    /**
-     * @var array
-     */
-    protected $data = [
-        self::PAYFLOW_AUTHORIZE_TRANSACTION => [
-            'amount' => '1000.00',
-            'currency' => 'USD',
-            'action' => PaymentMethodInterface::AUTHORIZE,
-            'entityIdentifier' => 1,
-            'entityClass' => '\stdClass',
-            'frontendOwner' => LoadCustomerUserData::EMAIL,
-            'response' => [
-                'SECURETOKEN' => 'SECURETOKEN',
-                'SECURETOKENID' => 'SECURETOKENID',
-            ],
-            'channel_reference' => 'paypal:channel_1',
-            'method_prefix' => 'paypal_payflow_gateway_credit_card'
-        ],
-        self::PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER => [
-            'amount' => '1000.00',
-            'currency' => 'USD',
-            'action' => PaymentMethodInterface::AUTHORIZE,
-            'entityIdentifier' => 1,
-            'entityClass' => '\stdClass',
-            'frontendOwner' => LoadCustomerUserData::EMAIL,
-            'response' => [
-                'SECURETOKEN' => 'SECURETOKEN',
-                'SECURETOKENID' => 'SECURETOKENID',
-            ],
-            'channel_reference' => 'paypal:channel_1',
-            'method_prefix' => 'paypal_payflow_gateway_credit_card'
-        ],
-    ];
 
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->data as $reference => $data) {
+        foreach ($this->getData() as $reference => $data) {
             $paymentTransaction = new PaymentTransaction();
 
-            $data['frontendOwner'] = $this->getReference($data['frontendOwner']);
-
             foreach ($data as $property => $value) {
-                if ($this->getPropertyAccessor()->isWritable($paymentTransaction, $property)) {
-                    $this->setValue($paymentTransaction, $property, $value);
-                }
+                $this->setValue($paymentTransaction, $property, $value);
             }
-
-            $channel = $this->getReference($data['channel_reference']);
-            $paymentMethod = sprintf('%s_%s', $data['method_prefix'], $channel->getId());
-
-            $paymentTransaction->setPaymentMethod($paymentMethod);
 
             $this->setReference($reference, $paymentTransaction);
 
@@ -87,5 +51,102 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    private function getData(): array
+    {
+        /** @var CustomerUser $frontendOwner */
+        $frontendOwner = $this->getReference(LoadCustomerUserData::EMAIL);
+
+        /** @var Order $order1 */
+        $order1 = $this->getReference(LoadOrders::ORDER_1);
+
+        /** @var Order $order2 */
+        $order2 = $this->getReference(LoadOrders::ORDER_2);
+
+        /** @var Order $order3 */
+        $order3 = $this->getReference(LoadOrders::ORDER_3);
+
+        /** @var Order $order4 */
+        $order4 = $this->getReference(LoadOrders::ORDER_4);
+
+        /** @var Channel $channel */
+        $channel = $this->getReference('paypal:channel_1');
+
+        $paymentsPro1Channel = $this->getReference('paypal:channel_3');
+
+        return [
+            self::PAYFLOW_AUTHORIZE_TRANSACTION => [
+                'amount' => '1000.00',
+                'currency' => 'USD',
+                'action' => PaymentMethodInterface::AUTHORIZE,
+                'entityIdentifier' => $order1->getId(),
+                'entityClass' => Order::class,
+                'frontendOwner' => $frontendOwner,
+                'response' => [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                'payment_method' => 'paypal_payflow_gateway_credit_card_' . $channel->getId(),
+                'active' => true,
+                'successful' => true,
+            ],
+            self::PAYFLOW_CHARGE_TRANSACTION => [
+                'amount' => '1000.00',
+                'currency' => 'USD',
+                'action' => PaymentMethodInterface::CHARGE,
+                'entityIdentifier' => $order2->getId(),
+                'entityClass' => Order::class,
+                'frontendOwner' => $frontendOwner,
+                'response' => [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                'payment_method' => 'paypal_payflow_gateway_credit_card_' . $channel->getId(),
+                'active' => true,
+                'successful' => true,
+            ],
+            self::PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION => [
+                'amount' => '1000.00',
+                'currency' => 'USD',
+                'action' => PaymentMethodInterface::AUTHORIZE,
+                'entityIdentifier' => $order3->getId(),
+                'entityClass' => Order::class,
+                'frontendOwner' => $frontendOwner,
+                'response' => [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                'transactionOptions' => [
+                    'successUrl' => 'https://example.com/success-url',
+                    'failureUrl' => 'https://example.com/failure-url'
+                ],
+                'payment_method' => 'paypal_payments_pro_express_checkout_' . $paymentsPro1Channel->getId(),
+                'active' => true,
+                'successful' => false,
+            ],
+            self::PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION => [
+                'amount' => '1000.00',
+                'currency' => 'USD',
+                'action' => PaymentMethodInterface::AUTHORIZE,
+                'entityIdentifier' => $order4->getId(),
+                'entityClass' => Order::class,
+                'frontendOwner' => $frontendOwner,
+                'response' => [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                'transactionOptions' => [
+                    'successUrl' => 'https://example.com/success-url',
+                    'failureUrl' => 'https://example.com/failure-url'
+                ],
+                'payment_method' => 'paypal_payments_pro_express_checkout_' . $paymentsPro1Channel->getId(),
+                'active' => true,
+                'successful' => true,
+            ],
+        ];
     }
 }

@@ -17,7 +17,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody class="tax-zip-code-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                    <tbody class="tax-zip-code-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.oro_tax_zip_code_collection_prototype(child) }}

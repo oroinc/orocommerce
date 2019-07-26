@@ -9,6 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
+ * Represents calculated taxes in database
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="oro_tax_value",

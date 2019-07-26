@@ -253,9 +253,11 @@ services:
         class: 'Oro\Bundle\TaxBundle\Manager\TaxValueManager'
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
             - '%oro_tax.entity.tax_value.class%'
             - '%oro_tax.entity.tax.class%'
+        calls:
+            - [setDoctrineFlushProgressListener, ['@oro_entity.event_listener.doctrine_flush_progress_listener']]
 
     oro_tax.factory.tax:
         class: 'Oro\Bundle\TaxBundle\Factory\TaxFactory'
@@ -487,28 +489,41 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_tax.entity.tax_value.class%', event: postRemove }
 
-    oro_tax.event_listener.order_tax:
-        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
-        #TODO: Set to false after BB-11299
-        public: true
+    # Service helps built-in tax provider to manage TaxValue entities in the DB
+    oro_tax.event_listener.builin_entity_tax:
+        class: 'Oro\Bundle\TaxBundle\EventListener\BuiltinEntityTaxListener'
+        public: false
         arguments:
             - '@oro_tax.provider.tax_provider_registry'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preFlush }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
-
-    oro_tax.event_listener.order_line_item_tax:
-        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
-        #TODO: Set to false after BB-11299
-        public: true
-        arguments:
-            - '@oro_tax.provider.tax_provider_registry'
-        tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preFlush }
+
+    oro_tax.event_listener.order_tax:
+        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
+        public: false
+        arguments:
+            - '@oro_tax.provider.tax_provider_registry'
+        calls:
+            - [setEntityClass, ['%oro_order.entity.order.class%']]
+        tags:
+            # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
+            - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
+
+    # Service tracks changes of OrderLineItem entity and call tax calculation process
+    oro_tax.event_listener.order_line_item_tax:
+        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
+        public: false
+        arguments:
+            - '@oro_tax.provider.tax_provider_registry'
+        calls:
+            - [setEntityClass, ['%oro_order.entity.order_line_item.class%']]
+        tags:
+            # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
+            - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preRemove }
 
     oro_tax.layout.data_provider.tax:

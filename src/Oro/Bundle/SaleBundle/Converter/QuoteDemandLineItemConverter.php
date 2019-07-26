@@ -31,6 +31,11 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
 
         foreach ($lineItems as $lineItem) {
             $quoteProductOffer = $lineItem->getQuoteProductOffer();
+            $productSku = $quoteProductOffer->getProductSku()
+                ??  $quoteProductOffer->getQuoteProduct()->getProductSku();
+            $freeFormProduct = !$quoteProductOffer->getQuoteProduct()->getProduct()
+                ? $quoteProductOffer->getQuoteProduct()->getFreeFormProduct()
+                : null;
 
             $checkoutLineItem = new CheckoutLineItem();
             $checkoutLineItem
@@ -38,8 +43,8 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
                 ->setPriceFixed(true)
                 ->setProduct($quoteProductOffer->getProduct())
                 ->setParentProduct($quoteProductOffer->getParentProduct())
-                ->setFreeFormProduct($quoteProductOffer->getQuoteProduct()->getFreeFormProduct())
-                ->setProductSku($quoteProductOffer->getProductSku())
+                ->setFreeFormProduct($freeFormProduct)
+                ->setProductSku($productSku)
                 ->setProductUnit($quoteProductOffer->getProductUnit())
                 ->setProductUnitCode($quoteProductOffer->getProductUnitCode())
                 ->setQuantity($lineItem->getQuantity())

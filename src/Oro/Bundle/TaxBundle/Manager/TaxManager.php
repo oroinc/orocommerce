@@ -139,6 +139,8 @@ class TaxManager
             }
         }
 
+        $this->taxValueManager->flushTaxValueIfAllowed();
+
         return $taxable->getResult();
     }
 
@@ -249,6 +251,7 @@ class TaxManager
         $itemTransformer = $this->getTaxTransformer($taxable->getClassName());
         $taxItemValue = $itemTransformer->reverseTransform($itemResult, $taxable);
 
+        // Save without flush, flush must be called separately
         $this->taxValueManager->saveTaxValue($taxItemValue);
     }
 

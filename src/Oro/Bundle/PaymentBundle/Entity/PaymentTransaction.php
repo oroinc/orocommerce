@@ -24,9 +24,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
- * @Config(
- *       mode="hidden"
- * )
+ * @Config()
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
@@ -64,6 +62,17 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var string
      * @ORM\Column(name="access_token", type="string")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $accessToken;
 
@@ -82,6 +91,17 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var string
      * @ORM\Column(name="reference", type="string", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $reference;
 
@@ -133,18 +153,51 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var array
      * @ORM\Column(name="request", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $request;
 
     /**
      * @var array
      * @ORM\Column(name="response", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $response;
 
     /**
      * @var array
      * @ORM\Column(name="transaction_options", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $transactionOptions;
 
