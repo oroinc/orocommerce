@@ -29,8 +29,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $this->loadFixtures([
             LoadFrontendProductData::class
         ]);
-
-        $this->client->getContainer()->set('test_service', $this);
     }
 
     public function testFrontendVisibilityWithZeroValue()
@@ -71,9 +69,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         /*** @var ProductSearchQueryRestrictionEvent $firedEvent */
         $this->firedEvent = null;
 
-        $dispatcher->addListenerService(
+        $dispatcher->addListener(
             ProductSearchQueryRestrictionEvent::NAME,
-            ['test_service', 'eventCatcher']
+            [$this, 'eventCatcher']
         );
 
         $this->client->request('GET', $url);
@@ -141,14 +139,14 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
 
         $this->client->restart();
-        $dispatcher = $this->client->getContainer()->get('event_dispatcher');
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
 
         /*** @var ProductSearchQueryRestrictionEvent $firedEvent */
         $this->firedEvent = null;
 
-        $dispatcher->addListenerService(
+        $dispatcher->addListener(
             ProductDBQueryRestrictionEvent::NAME,
-            ['test_service', 'eventCatcher']
+            [$this, 'eventCatcher']
         );
 
         $this->client->request('GET', $url);

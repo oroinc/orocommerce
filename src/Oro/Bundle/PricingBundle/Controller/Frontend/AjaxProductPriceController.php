@@ -74,7 +74,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             parent::getSubscribedServices(),
             [
                 MatchingPriceProvider::class,
-                UserCurrencyManager::class
+                UserCurrencyManager::class,
             ]
         );
     }

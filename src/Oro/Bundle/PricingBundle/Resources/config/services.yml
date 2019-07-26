@@ -424,6 +424,7 @@ services:
 
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
+        public: true
         arguments:
             - '@request_stack'
             - '@doctrine'
@@ -1154,6 +1155,7 @@ services:
 
     oro_pricing.shard_manager:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
+        public: true
         calls:
             - [setRegistry, ['@doctrine']]
             - [addEntityForShard, ['prices', '%oro_pricing.entity.product_price.class%']]

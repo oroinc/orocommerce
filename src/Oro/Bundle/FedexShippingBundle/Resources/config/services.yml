@@ -110,6 +110,7 @@ services:
 
     oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
+        public: true
         arguments:
             - '@oro_security.encoder.default'
             - '@oro_shipping.shipping_origin.provider'
