@@ -16,44 +16,50 @@
 {% endblock %}
 
 {% block content %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="layout-content">
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {{ parent() }}
+        {{ parent() }}
 
-    {% set treeOptions = {
-        'view' : 'orocatalog/js/app/views/tree-manage-view',
-        'data' : oro_category_list(null, rootCategory),
-        'updateAllowed' : is_granted('oro_catalog_category_update'),
-        'onSelectRoute' : 'oro_catalog_category_update',
-        'onMoveRoute' : 'oro_catalog_category_move'
-    } %}
+        {% set treeOptions = {
+            'view' : 'orocatalog/js/app/views/tree-manage-view',
+            'data' : oro_category_list(null, rootCategory),
+            'updateAllowed' : is_granted('oro_catalog_category_update'),
+            'onSelectRoute' : 'oro_catalog_category_update',
+            'onMoveRoute' : 'oro_catalog_category_move'
+        } %}
 
-    <div class="sidebar-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
-            scrollbar: '[data-role="jstree-container"]'
-        }} %}
-            {% block sidebar %}
-                {% import 'OroUIBundle::macros.html.twig' as UI %}
-                {{ UI.renderJsTree(
-                    {
-                        'label': 'oro.catalog.category.entity_plural_label'|trans,
-                        'treeOptions': treeOptions
-                    },
-                    {
-                        'move': {
-                          'routeName': 'oro_catalog_category_move_form'
+        <div class="scrollable-container sidebar-container">
+            {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
+                scrollbar: '[data-role="jstree-container"]'
+            }} %}
+                {% block sidebar %}
+                    {% import 'OroUIBundle::macros.html.twig' as UI %}
+                    {{ UI.renderJsTree(
+                        {
+                            'label': 'oro.catalog.category.entity_plural_label'|trans,
+                            'treeOptions': treeOptions
+                        },
+                        {
+                            'move': {
+                              'routeName': 'oro_catalog_category_move_form'
+                            }
                         }
-                    }
-                ) }}
-            {% endblock sidebar %}
+                    ) }}
+                {% endblock sidebar %}
 
-            {% block content %}
-                {% if is_granted('oro_catalog_category_create') and is_granted('oro_catalog_category_update') %}
-                    <div class="tree-empty-content scrollable-container">
-                        {{ 'oro.catalog.template.select_existing_or_create_new'|trans }}
-                    </div>
-                {% endif %}
-            {% endblock content %}
-        {% endembed %}
+                {% block content %}
+                    {% if is_granted('oro_catalog_category_create') and is_granted('oro_catalog_category_update') %}
+                        <div class="category-data">
+                            <div class="tree-empty-content scrollable-container">
+                                <div class="no-data">
+                                    {{ 'oro.catalog.template.select_existing_or_create_new'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endblock content %}
+            {% endembed %}
+        </div>
     </div>
 {% endblock content %}
