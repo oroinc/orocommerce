@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Exception\AssignerNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Allows to assign or remove related items to Product entity from UI.

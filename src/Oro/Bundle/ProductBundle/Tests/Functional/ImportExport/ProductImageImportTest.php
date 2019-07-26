@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityRepository;
-use Gaufrette\File;
 use Oro\Bundle\ImportExportBundle\Async\Topics;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
@@ -49,7 +48,6 @@ class ProductImageImportTest extends WebTestCase
         );
     }
 
-
     public function testExportTemplate()
     {
         $this->assertExportTemplateWorks(
@@ -80,7 +78,7 @@ class ProductImageImportTest extends WebTestCase
 
         // Take the name of the file from the header because there is no alternative way to know the filename
         $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
-        preg_match('/^.*"(export_template_[a-z0-9_]+.csv)"$/', $contentDisposition, $matches);
+        preg_match('/^.*"?(export_template_[a-z0-9_]+.csv)"?$/', $contentDisposition, $matches);
 
         static::assertContains(
             $this->getFileContent($expectedCsvFilePath),

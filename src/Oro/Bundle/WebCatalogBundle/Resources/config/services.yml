@@ -418,6 +418,7 @@ services:
 
     oro_web_catalog.form.data_transformer.navigation_root_option:
         class: 'Oro\Bundle\WebCatalogBundle\Form\DataTransformer\NavigationRootOptionTransformer'
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
 

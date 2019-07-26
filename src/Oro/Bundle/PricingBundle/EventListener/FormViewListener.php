@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds scroll blocks with product price and product price attributes data on view and edit pages

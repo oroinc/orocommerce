@@ -41,8 +41,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Role\RoleInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -164,7 +164,7 @@ class QuoteTypeTest extends AbstractTest
 
         if (null !== $customerUserId) {
             $customer = $this->createMock(Customer::class);
-            $role = $this->createMock(RoleInterface::class);
+            $role = $this->createMock(Role::class);
 
             /** @var CustomerUser $customerUser */
             $customerUser = $this->getEntity(CustomerUser::class, $customerUserId);

@@ -214,10 +214,15 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         return $this->getEntity(ShippingAddressStub::class, [
             'country' => new Country($data['country']),
-            'region' => $this->getEntity(Region::class, [
-                'combinedCode' => $data['region']['combinedCode'],
-                'code' => $data['region']['code'],
-            ]),
+            'region' => $this->getEntity(
+                Region::class,
+                [
+                    'code' => $data['region']['code'],
+                ],
+                [
+                    'combinedCode' => $data['region']['combinedCode'],
+                ]
+            ),
             'postalCode' => $data['postalCode'],
         ]);
     }

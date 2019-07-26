@@ -16,7 +16,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase

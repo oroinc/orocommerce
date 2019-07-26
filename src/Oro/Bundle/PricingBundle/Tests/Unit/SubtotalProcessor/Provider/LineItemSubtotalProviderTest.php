@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstruc
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {

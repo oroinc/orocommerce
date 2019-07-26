@@ -9,6 +9,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Migrations\Data\Demo\ORM\AbstractLoadEntityWorkflowDemoData;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
+/**
+ * Adds workflow demo data for the quote entity.
+ */
 class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
 {
     /**
@@ -26,11 +29,8 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
      */
     public function load(ObjectManager $manager)
     {
-        $transport = $this->container->get('swiftmailer.mailer.default.transport.real');
-        $this->container->set(
-            'swiftmailer.mailer.default.transport.real',
-            new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())
-        );
+        $helper = $this->container->get('oro_sale.helper.notification');
+        $helper->setEnabled(false);
 
         $notificationListener = $this->container->get('oro_workflow.listener.workflow_transition_record');
         $notificationListener->setEnabled(false);
@@ -38,8 +38,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         parent::load($manager);
 
         $notificationListener->setEnabled(true);
-
-        $this->container->set('swiftmailer.mailer.default.transport.real', $transport);
+        $helper->setEnabled(true);
     }
 
     /**

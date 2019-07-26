@@ -25,7 +25,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

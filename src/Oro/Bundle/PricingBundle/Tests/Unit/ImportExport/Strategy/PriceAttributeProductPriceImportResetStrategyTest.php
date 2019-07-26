@@ -17,7 +17,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceReposit
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportResetStrategy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 {

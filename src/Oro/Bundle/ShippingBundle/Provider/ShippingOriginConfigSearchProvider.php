@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Provider\SearchProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provide information about shipping origin for config search.

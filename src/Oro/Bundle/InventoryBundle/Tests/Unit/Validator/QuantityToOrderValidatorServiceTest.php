@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

@@ -15,7 +15,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
 {

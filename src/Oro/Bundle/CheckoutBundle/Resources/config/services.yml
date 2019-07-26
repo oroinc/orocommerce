@@ -487,6 +487,7 @@ services:
 
     oro_checkout.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
+        public: true
 
     oro_checkout.event_listener.shipping_methods:
         class: Oro\Bundle\CheckoutBundle\EventListener\ShippingMethodsListener

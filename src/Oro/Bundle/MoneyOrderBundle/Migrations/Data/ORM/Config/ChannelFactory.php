@@ -7,7 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChannelFactory
 {

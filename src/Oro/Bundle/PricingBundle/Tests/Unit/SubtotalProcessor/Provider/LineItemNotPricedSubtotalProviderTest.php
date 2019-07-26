@@ -19,7 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {

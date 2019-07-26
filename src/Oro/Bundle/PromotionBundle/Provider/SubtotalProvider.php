@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {

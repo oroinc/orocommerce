@@ -8,10 +8,10 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadContentVariantSegmentsWithRelationsData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadSegmentsWithRelationsData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWebCatalogsData;
+use Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelperStub;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -20,7 +20,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 /**
  * @dbIsolationPerTest
  */
-class ContentVariantSegmentEntityListenerTest extends WebTestCase
+class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
@@ -99,13 +99,10 @@ class ContentVariantSegmentEntityListenerTest extends WebTestCase
     public function testListenerWhenNewSegmentCreatedAndWebCatalogIsOff()
     {
         $this->setWebCatalogForWebsite();
-        $container = self::getContainer();
-        $container->set(
-            'oro_product.helper.product_collection_segment',
-            new ProductCollectionSegmentHelper(
-                $container->get('oro_product.alias.provider.content_variant_segment_provider')
-            )
-        );
+
+        /** @var ProductCollectionSegmentHelperStub $helper */
+        $helper = self::getContainer()->get('oro_product.helper.product_collection_segment');
+        $helper->setIsWebCatalogUsageProviderEnabled(false);
 
         $this->assertEmpty(
             self::getMessageCollector()->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT)

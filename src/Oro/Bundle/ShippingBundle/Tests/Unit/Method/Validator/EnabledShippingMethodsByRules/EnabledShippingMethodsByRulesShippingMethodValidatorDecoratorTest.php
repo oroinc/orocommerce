@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {

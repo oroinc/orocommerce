@@ -165,6 +165,19 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
         $this->helper->send($emailModel);
     }
 
+    public function testSendDisabled(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, ['id' => 42]);
+        $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42, 'quote_email_link');
+
+        $this->emailProcessor->expects($this->never())->method($this->anything());
+        $this->registry->expects($this->never())->method($this->anything());
+
+        $this->helper->setEnabled(false);
+        $this->helper->send($emailModel);
+    }
+
     /**
      * @param string $className
      * @return \PHPUnit\Framework\MockObject\MockObject|ObjectManager

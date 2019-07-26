@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractUnitFormatter
 {

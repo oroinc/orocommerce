@@ -12,11 +12,11 @@ use Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutName;
 use Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutNameValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UniqueExpressCheckoutNameValidatorTest extends TestCase
 {

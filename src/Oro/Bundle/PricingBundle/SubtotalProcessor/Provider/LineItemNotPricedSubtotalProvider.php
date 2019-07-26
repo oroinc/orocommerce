@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Subtotal provider for line items without prices. SUM(ROUND(price*qty))

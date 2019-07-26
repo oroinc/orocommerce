@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslat
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\Form\Tests\Fixtures\Type;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
 {

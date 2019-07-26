@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductSelectTypeTest extends FormIntegrationTestCase
 {
@@ -29,7 +29,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
         $this->translator
             ->expects(static::any())

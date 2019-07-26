@@ -17,7 +17,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductPageVariantTypeTest extends FormIntegrationTestCase
 {

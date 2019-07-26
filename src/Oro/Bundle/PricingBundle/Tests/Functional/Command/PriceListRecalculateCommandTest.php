@@ -15,6 +15,9 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceListRecalculateCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
@@ -28,12 +31,12 @@ class PriceListRecalculateCommandTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        self::getContainer()->get('oro_config.global')
+        $this->getContainer()->get('oro_config.global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
 
         $this->databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
         $this->getContainer()->set(
-            'oro_pricing.database_triggers.manager.combined_prices',
+            'oro_pricing.database_triggers.manager.combined_prices.test',
             $this->databaseTriggerManager
         );
 

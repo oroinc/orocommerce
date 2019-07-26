@@ -21,7 +21,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -81,7 +81,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     {
         parent::setUp();
 
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+        $this->translator = $this->getMockBuilder('Symfony\Contracts\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->actionGroupRegistry = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionGroupRegistry')

@@ -13,7 +13,7 @@ use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {

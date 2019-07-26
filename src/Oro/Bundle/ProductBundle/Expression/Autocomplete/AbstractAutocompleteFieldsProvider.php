@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsProviderInterface
 {

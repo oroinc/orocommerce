@@ -11,7 +11,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
 {

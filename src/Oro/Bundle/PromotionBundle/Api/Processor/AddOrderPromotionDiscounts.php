@@ -7,7 +7,7 @@ use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds promotion discounts to "discounts" collection of Order entity.

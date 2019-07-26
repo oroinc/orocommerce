@@ -26,8 +26,6 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
     private const CONSTRAINT_ERROR_2 = 'Error 2';
     private const CONSTRAINT_TEMPLATE_2 = 'error_template_2';
     private const CONSTRAINT_PARAMS_2 = ['parameter2' => '2'];
-    private const CONSTRAINT_PLURAL_1 = 'plural_1';
-    private const CONSTRAINT_PLURAL_2 = 'plural_2';
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
     private $form;
@@ -211,14 +209,12 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
                 new FormError(
                     self::CONSTRAINT_ERROR_1,
                     self::CONSTRAINT_TEMPLATE_1,
-                    self::CONSTRAINT_PARAMS_1,
-                    self::CONSTRAINT_PLURAL_1
+                    self::CONSTRAINT_PARAMS_1
                 ),
                 new FormError(
                     self::CONSTRAINT_ERROR_1,
                     self::CONSTRAINT_TEMPLATE_1,
-                    self::CONSTRAINT_PARAMS_1,
-                    self::CONSTRAINT_PLURAL_1
+                    self::CONSTRAINT_PARAMS_1
                 )
             );
 
@@ -239,8 +235,7 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
                 self::CONSTRAINT_PARAMS_1,
                 null,
                 '',
-                null,
-                self::CONSTRAINT_PLURAL_1
+                null
             ),
             new ConstraintViolation(
                 self::CONSTRAINT_ERROR_2,
@@ -248,8 +243,7 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
                 self::CONSTRAINT_PARAMS_2,
                 null,
                 '',
-                null,
-                self::CONSTRAINT_PLURAL_2
+                null
             ),
         ];
 

@@ -25,7 +25,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
@@ -59,7 +59,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();

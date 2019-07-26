@@ -1,8 +1,18 @@
 services:
     oro_product.importexport.normalizer.product_image.test:
         alias: oro_product.importexport.normalizer.product_image
+        public: true
 
     oro_product.tests.migration_listener:
         class: Oro\Bundle\ProductBundle\Tests\Functional\Environment\TestEntitiesMigrationListener
+        public: true
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }
+
+    oro_product.helper.product_collection_segment.test:
+        class: Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelperStub
+        decorates: 'oro_product.helper.product_collection_segment'
+        parent: 'oro_product.helper.product_collection_segment'
+        public: true
+        arguments:
+            index_1: '@oro_product.helper.product_collection_segment.test.inner'

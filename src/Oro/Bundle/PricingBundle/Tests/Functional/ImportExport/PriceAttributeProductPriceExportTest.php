@@ -185,6 +185,13 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
         );
     }
 
+    /**
+     * @param string $assertedPrice
+     * @param Product $product
+     * @param PriceAttributePriceList $priceList
+     * @param ProductUnit $unit
+     * @param string $currency
+     */
     protected function assertSamePriceByUniqueKey(
         string $assertedPrice,
         Product $product,

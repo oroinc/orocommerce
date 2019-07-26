@@ -22,6 +22,7 @@ services:
 
     oro_payment.datagrid.payment_rule_actions_visibility_provider:
         parent: oro_rule.action.visibility_provider
+        public: true
 
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
@@ -45,6 +46,7 @@ services:
     oro_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
 
@@ -106,6 +108,7 @@ services:
 
     oro_payment.provider.payment_status:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
+        public: true
         arguments:
             - '@oro_payment.provider.payment_transaction'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -198,6 +201,7 @@ services:
 
     oro_payment.formatter.payment_status_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter'
+        public: true
         arguments:
             - "@translator"
 
@@ -224,7 +228,7 @@ services:
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
-        public: false
+        public: true
 
     oro_payment.context.doctrine_line_item_collection_factory:
         class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory'
@@ -277,6 +281,7 @@ services:
 
     oro_payment.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        public: true
         arguments:
             - '@event_dispatcher'
 

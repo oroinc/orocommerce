@@ -7,7 +7,7 @@ use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuantityToOrderValidatorService
 {

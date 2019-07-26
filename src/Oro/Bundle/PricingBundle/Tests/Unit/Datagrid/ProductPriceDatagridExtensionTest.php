@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

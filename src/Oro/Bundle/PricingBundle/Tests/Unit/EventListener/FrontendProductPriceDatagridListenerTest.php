@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {

@@ -331,6 +331,7 @@ services:
 
     oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
         parent: oro_rule.action.visibility_provider
+        public: true
 
     oro_shipping.converter.shipping_context_to_rule_values:
         class: 'Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter'
@@ -402,6 +403,7 @@ services:
 
     oro_shipping.provider.basic_shipping_methods_choices:
         class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        public: true
         arguments:
         - '@oro_shipping.shipping_method_provider'
         - '@translator'
@@ -447,6 +449,7 @@ services:
 
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        public: true
         arguments:
             - '@event_dispatcher'
 

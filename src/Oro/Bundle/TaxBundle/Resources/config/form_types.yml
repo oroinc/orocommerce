@@ -150,5 +150,6 @@ services:
 
     oro_tax.form.data_transformer.tax_base_exclusion_transformer:
         class: 'Oro\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer'
+        public: true
         arguments:
             - "@oro_tax.factory.tax_base_exclusion"

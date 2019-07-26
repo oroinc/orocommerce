@@ -4,7 +4,7 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseFormViewListener
 {

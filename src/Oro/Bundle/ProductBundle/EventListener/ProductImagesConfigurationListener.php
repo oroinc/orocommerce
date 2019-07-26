@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImagesConfigurationListener
 {

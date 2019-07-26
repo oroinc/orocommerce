@@ -8,6 +8,12 @@ services:
         tags:
             - { name: container.service_subscriber }
 
+    Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
     Oro\Bundle\PricingBundle\Controller\AjaxPriceListController:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]

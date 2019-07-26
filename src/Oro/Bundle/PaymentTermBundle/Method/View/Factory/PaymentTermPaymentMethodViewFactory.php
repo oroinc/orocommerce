@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View\Factory;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Factory for a payment term view.

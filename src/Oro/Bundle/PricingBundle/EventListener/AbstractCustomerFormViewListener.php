@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds scroll blocks with price list data on edit page

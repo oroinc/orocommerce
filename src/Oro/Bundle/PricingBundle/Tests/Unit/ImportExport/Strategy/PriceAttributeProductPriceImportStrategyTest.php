@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportStrategyTest extends TestCase
 {

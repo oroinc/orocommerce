@@ -6,7 +6,6 @@ use Oro\Bundle\SearchBundle\Query\Query;
 
 /**
  * Data provider for website search index data, used by ORM engine to filter all HTML tags
- * Should be removed after the implementation of BB-12955
  */
 class TextFilteredIndexDataProvider extends IndexDataProvider
 {
