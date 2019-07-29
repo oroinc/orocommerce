@@ -2,16 +2,35 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PriceListStorageReorganizeCommand extends ContainerAwareCommand
+/**
+ * Change storage strategy for class
+ */
+class PriceListStorageReorganizeCommand extends Command
 {
-    const NAME = 'oro:price-lists:pl-storage-reorganize';
-    const STRATEGY = 'strategy';
-    const ENTITY_ALIAS = 'entity-alias';
+    private const STRATEGY = 'strategy';
+    private const ENTITY_ALIAS = 'entity-alias';
+
+    /** @var string */
+    protected static $defaultName = 'oro:price-lists:pl-storage-reorganize';
+
+    /** @var ShardManager */
+    private $shardManager;
+
+    /**
+     * @param ShardManager $shardManager
+     */
+    public function __construct(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -19,7 +38,6 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName(self::NAME)
             ->addArgument(
                 self::ENTITY_ALIAS
             )
@@ -39,11 +57,10 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
     {
         $alias = $input->getArgument(self::ENTITY_ALIAS);
 
-        $shardManager = $this->getContainer()->get("oro_pricing.shard_manager");
-        $shardList = $shardManager->getShardList();
+        $shardList = $this->shardManager->getShardList();
 
         if (!$alias || !array_key_exists($alias, $shardList)) {
-            $output->writeln("<error>Entity alias requeired. Select one from the list:</error>");
+            $output->writeln("<error>Entity alias required. Select one from the list:</error>");
             foreach ($shardList as $alias => $className) {
                 $output->writeln('<info>' . $alias . ' : ' . $className . '</info>');
             }
@@ -51,13 +68,12 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
         }
 
         $strategy = $input->getOption(self::STRATEGY);
-        $shardManager = $this->getContainer()->get("oro_pricing.shard_manager");
 
         $className = $shardList[$alias];
         if ($strategy === "base") {
-            $shardManager->moveDataFromShardsToBaseTable($className);
+            $this->shardManager->moveDataFromShardsToBaseTable($className);
         } elseif ($strategy === "sharding") {
-            $shardManager->moveDataFromBaseTableToShard($className);
+            $this->shardManager->moveDataFromBaseTableToShard($className);
         } else {
             if (null === $strategy) {
                 $output->writeln("<error>Missing strategy option. Strategy can be \"base\" or \"sharding\"</error>");

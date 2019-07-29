@@ -22,7 +22,7 @@ class GenerateSitemapCommandTest extends WebTestCase
 
     public function testCommand()
     {
-        self::runCommand(GenerateSitemapCommand::NAME, []);
+        self::runCommand(GenerateSitemapCommand::getDefaultName(), []);
 
         $traces = self::getMessageCollector()->getTopicSentMessages(Topics::GENERATE_SITEMAP);
         $this->assertCount(1, $traces);
@@ -34,7 +34,7 @@ class GenerateSitemapCommandTest extends WebTestCase
         /** @var ScheduleRepository $repo */
         $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
         /** @var Schedule $commandSchedule */
-        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::NAME]);
+        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
         $this->assertNotEmpty($commandSchedule);
         $this->assertSame(Configuration::DEFAULT_CRON_DEFINITION, $commandSchedule->getDefinition());
 
@@ -43,7 +43,7 @@ class GenerateSitemapCommandTest extends WebTestCase
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
-        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::NAME]);
+        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
         $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 }

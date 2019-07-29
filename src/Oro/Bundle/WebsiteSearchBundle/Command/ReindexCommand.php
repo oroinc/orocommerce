@@ -3,24 +3,45 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Reindex command for front store search
  */
-class ReindexCommand extends ContainerAwareCommand
+class ReindexCommand extends Command
 {
-    const COMMAND_NAME = 'oro:website-search:reindex';
+    /** @var string */
+    protected static $defaultName = 'oro:website-search:reindex';
+
+    /** @var RegistryInterface */
+    private $doctrine;
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /**
+     * @param RegistryInterface $doctrine
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(RegistryInterface $doctrine, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->doctrine = $doctrine;
+        $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this->setName(self::COMMAND_NAME)
+        $this
             ->addOption(
                 'class',
                 null,
@@ -101,8 +122,7 @@ class ReindexCommand extends ContainerAwareCommand
      */
     private function getFQCN($class)
     {
-        return $this->getContainer()
-            ->get('doctrine')
+        return $this->doctrine
             ->getManagerForClass($class)
             ->getClassMetadata($class)
             ->getName();
@@ -114,8 +134,7 @@ class ReindexCommand extends ContainerAwareCommand
      */
     private function getLastEntityId($className)
     {
-        return $this->getContainer()
-            ->get('doctrine')
+        return $this->doctrine
             ->getManagerForClass($className)
             ->getRepository($className)
             ->createQueryBuilder('a')
@@ -228,8 +247,7 @@ class ReindexCommand extends ContainerAwareCommand
     private function fireReindexationEvents($classes, $websiteIds, array $entityId, $isScheduled)
     {
         $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled);
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
-        $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
     }
 
     /**
