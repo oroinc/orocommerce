@@ -1,8 +1,9 @@
 /* @theme: blank; */
 
 .product-view-media-container {
-    float: $product-view-media-container-float;
+    position: $product-view-media-container-position;
 
+    float: $product-view-media-container-float;
     margin-bottom: $product-view-media-container-margin-bottom;
 }
 

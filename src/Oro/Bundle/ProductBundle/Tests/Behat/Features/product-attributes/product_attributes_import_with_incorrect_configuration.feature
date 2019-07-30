@@ -107,3 +107,17 @@ Feature: Product attributes import with incorrect configuration
       | validationtest2 | text     | validation test 2 | yes                  | yes                  | no                 |
     When I try import file
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
+
+  Scenario: Validation for attribute configuration with reserved words
+    Given I login as administrator
+    And I go to Products / Product Attributes
+    And I fill template with data:
+      | fieldName | type      | entity.label |
+      | image     | multiEnum | image        |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    When I follow "Error log" link from the email
+    Then I should see "Error in row #1. fieldName: The 'image' word is reserved for system purposes."

@@ -92,26 +92,26 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'Extend\Entity\EV_Product_New_Attribute_8fde6396',
                 'new_attribute',
-                'productnewattribute',
-                'productnewattributes',
+                'extproductattributenewattribute',
+                'extproductattributenewattributes',
             ],
             [
                 'Extend\Entity\EV_Product_New_Attribute_8fde6396',
                 'newAttribute',
-                'productnewattribute',
-                'productnewattributes',
+                'extproductattributenewattribute',
+                'extproductattributenewattributes',
             ],
             [
                 'Extend\Entity\EV_Product__My__Test_Attribute_8fde6396',
                 'My_testAttribute',
-                'productmytestattribute',
-                'productmytestattributes',
+                'extproductattributemytestattribute',
+                'extproductattributemytestattributes',
             ],
             [
                 'Extend\Entity\EV_Product_Product_8fde6396',
                 'product',
-                'productproduct',
-                'productproducts',
+                'extproductattributeproduct',
+                'extproductattributeproducts',
             ],
         ];
     }
@@ -207,9 +207,9 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
     {
         $className = 'Extend\Entity\EV_Product_New_Attribute_8fde6396';
         $attributeName = 'new_attribute';
-        $defaultAlias = 'productnewattribute';
-        $defaultPluralAlias = 'productnewattributes';
-        $expectedAlias = 'productnewattribute1';
+        $defaultAlias = 'extproductattributenewattribute';
+        $defaultPluralAlias = 'extproductattributenewattributes';
+        $expectedAlias = 'extproductattributenewattribute1';
         $expectedPluralAlias = $expectedAlias;
 
         $attributeFieldConfig = new Config(
