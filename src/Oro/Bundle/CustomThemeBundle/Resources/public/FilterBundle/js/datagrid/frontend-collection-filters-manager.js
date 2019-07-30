@@ -21,13 +21,13 @@ define(function(require) {
          */
         _updateRenderMode: function() {
             if (viewportManager.isApplicable({
-                screenType: ['tablet', 'tablet-small']
+                screenType: ['strict-tablet', 'strict-tablet-small']
             })) {
                 this.renderMode = 'collapse-mode';
             }
 
             if (viewportManager.isApplicable({
-                screenType: ['mobile-landscape', 'mobile']
+                screenType: 'mobile-landscape'
             })) {
                 this.renderMode = 'toggle-mode';
             }

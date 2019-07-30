@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BackendSortingDropdown;
-    var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var viewportManager = require('oroui/js/viewport-manager');
     var SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
