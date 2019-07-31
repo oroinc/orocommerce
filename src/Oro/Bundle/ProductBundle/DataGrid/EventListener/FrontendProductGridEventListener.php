@@ -375,12 +375,11 @@ class FrontendProductGridEventListener
                 ->getResult()
                 ->getAggregatedData();
 
+            $activeAttributeFamilyIds = [];
             if (!empty($data['familyAttributesCount'])) {
-                $hideAttributes = $this->getDisabledSortAndFilterAttributes(
-                    $attributes,
-                    array_keys($data['familyAttributesCount'])
-                );
+                $activeAttributeFamilyIds = array_keys($data['familyAttributesCount']);
             }
+            $hideAttributes = $this->getDisabledSortAndFilterAttributes($attributes, $activeAttributeFamilyIds);
         }
 
         return $hideAttributes;
