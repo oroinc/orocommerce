@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9989
 @ticket-BB-14989
+@ticket-BB-17055
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute multiselect
   In order to have custom attributes for Product entity
@@ -9,15 +10,24 @@ Feature: Product attribute multiselect
 
   Scenario: Feature Background
     Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
+      | Admin | first_session  |
+      | Buyer | second_session |
 
-  Scenario: Create product attribute
+  Scenario: Login to Admin
     Given I proceed as the Admin
     And I login as administrator
-    And I go to Products/ Product Attributes
+
+  Scenario: Validate product attribute may be created
+    Given I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
+      | Field Name | image        |
+      | Type       | Multi-Select |
+    And I click "Continue"
+    Then I should see "The 'image' word is reserved for system purposes."
+
+  Scenario: Create product attribute
+    When I fill form with:
       | Field Name | MultiSelectField |
       | Type       | Multi-Select     |
     And I click "Continue"
@@ -29,7 +39,7 @@ Feature: Product attribute multiselect
       | Searchable | Yes |
       | Filterable | Yes |
     And I set Options with:
-      | Label          |
+      | Label               |
       | TestMultiValueOne   |
       | TestMultiValueTwo   |
       | TestMultiValueThree |

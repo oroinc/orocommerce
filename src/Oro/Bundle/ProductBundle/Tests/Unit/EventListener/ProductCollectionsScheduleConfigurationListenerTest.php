@@ -54,10 +54,10 @@ class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Frame
         ]);
         $this->deferredScheduler->expects($this->once())
             ->method('removeSchedule')
-            ->with(ProductCollectionsIndexCronCommand::NAME, [], $oldValue);
+            ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $oldValue);
         $this->deferredScheduler->expects($this->once())
             ->method('addSchedule')
-            ->with(ProductCollectionsIndexCronCommand::NAME, [], $newValue);
+            ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $newValue);
         $this->deferredScheduler->expects($this->once())
             ->method('flush');
         $this->listener->onUpdateAfter($event);

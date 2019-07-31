@@ -61,7 +61,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
         $configManager->flush();
 
-        self::runCommand(ProductCollectionsIndexCronCommand::NAME, []);
+        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
 
         $expectedMessage = [
             [
@@ -104,7 +104,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testCommandWhenWebCatalogIsNotUsed()
     {
-        self::runCommand(ProductCollectionsIndexCronCommand::NAME, []);
+        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
 
         $traces = self::getMessageCollector()->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT);
 
@@ -116,7 +116,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         /** @var ScheduleRepository $repo */
         $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
         /** @var Schedule $commandSchedule */
-        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::NAME]);
+        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
         $this->assertNotEmpty($commandSchedule);
         $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
@@ -125,7 +125,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
-        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::NAME]);
+        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
         $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 

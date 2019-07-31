@@ -29,7 +29,7 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
 
     public function testShouldNotClearExpiredVisitorsWithExistShoppingLists()
     {
-        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::NAME);
+        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
         $this->assertContains('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);
@@ -42,10 +42,10 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
 
     public function testShouldClearExpiredVisitorsWithoutShoppingLists()
     {
-        $result = $this->runCommand(ClearExpiredShoppingListsCommand::NAME);
+        $result = $this->runCommand(ClearExpiredShoppingListsCommand::getDefaultName());
         $this->assertContains('Clear expired guest shopping lists completed', $result);
 
-        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::NAME);
+        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
         $this->assertContains('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);

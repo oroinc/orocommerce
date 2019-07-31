@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Command;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
@@ -9,67 +10,54 @@ use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * This command class schedules cron based product collection indexation.
  */
-class ProductCollectionsIndexCronCommand extends ContainerAwareCommand implements CronCommandInterface
+class ProductCollectionsIndexCronCommand extends Command implements CronCommandInterface
 {
-    const NAME = 'oro:cron:product-collections:index';
+    /** @var string */
+    protected static $defaultName = 'oro:cron:product-collections:index';
 
-    /**
-     * @var MessageProducerInterface
-     */
+    /** @var MessageProducerInterface */
     private $messageProducer;
 
-    /**
-     * @var SegmentMessageFactory
-     */
+    /** @var SegmentMessageFactory */
     private $messageFactory;
 
-    /**
-     * @var CronSegmentsProvider
-     */
+    /** @var CronSegmentsProvider */
     private $segmentProvider;
 
-    /**
-     * @var ProductCollectionSegmentHelper
-     */
+    /** @var ProductCollectionSegmentHelper */
     private $productCollectionHelper;
+
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * @param MessageProducerInterface $messageProducer
+     * @param SegmentMessageFactory $segmentMessageFactory
+     * @param CronSegmentsProvider $cronSegmentsProvider
+     * @param ProductCollectionSegmentHelper $productCollectionSegmentHelper
+     * @param ConfigManager $configManager
      */
-    public function setMessageProducer(MessageProducerInterface $messageProducer)
-    {
+    public function __construct(
+        MessageProducerInterface $messageProducer,
+        SegmentMessageFactory $segmentMessageFactory,
+        CronSegmentsProvider $cronSegmentsProvider,
+        ProductCollectionSegmentHelper $productCollectionSegmentHelper,
+        ConfigManager $configManager
+    ) {
         $this->messageProducer = $messageProducer;
-    }
+        $this->messageFactory = $segmentMessageFactory;
+        $this->segmentProvider = $cronSegmentsProvider;
+        $this->productCollectionHelper = $productCollectionSegmentHelper;
+        $this->configManager = $configManager;
 
-    /**
-     * @param SegmentMessageFactory $messageFactory
-     */
-    public function setMessageFactory(SegmentMessageFactory $messageFactory)
-    {
-        $this->messageFactory = $messageFactory;
-    }
-
-    /**
-     * @param CronSegmentsProvider $segmentProvider
-     */
-    public function setSegmentProvider(CronSegmentsProvider $segmentProvider)
-    {
-        $this->segmentProvider = $segmentProvider;
-    }
-
-    /**
-     * @param ProductCollectionSegmentHelper $productCollectionHelper
-     */
-    public function setProductCollectionHelper(ProductCollectionSegmentHelper $productCollectionHelper)
-    {
-        $this->productCollectionHelper = $productCollectionHelper;
+        parent::__construct();
     }
 
     /**
@@ -81,8 +69,7 @@ class ProductCollectionsIndexCronCommand extends ContainerAwareCommand implement
 Add message to queue to index product collections for which filter contains dependencies on other entities.
 DESC;
 
-        $this->setName(self::NAME)
-            ->setDescription($description);
+        $this->setDescription($description);
     }
 
     /**
@@ -123,8 +110,7 @@ DESC;
      */
     public function getDefaultDefinition()
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        return $configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
+        return $this->configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
     }
 
     /**

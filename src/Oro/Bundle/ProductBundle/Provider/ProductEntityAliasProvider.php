@@ -93,7 +93,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      */
     private function buildAlias(string $className): string
     {
-        return 'product' . str_replace('_', '', strtolower($className));
+        return 'extproductattribute' . str_replace('_', '', strtolower($className));
     }
 
     private function ensureInitialized(): void

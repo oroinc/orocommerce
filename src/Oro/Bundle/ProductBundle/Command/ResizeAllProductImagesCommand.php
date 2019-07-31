@@ -3,17 +3,43 @@
 namespace Oro\Bundle\ProductBundle\Command;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ResizeAllProductImagesCommand extends ContainerAwareCommand
+/**
+ * Adds to message queue the jobs for resizing all product images (ensure the oro:message-queue:consume command
+ * is running to get images resized)
+ */
+class ResizeAllProductImagesCommand extends Command
 {
-    const COMMAND_NAME = 'product:image:resize-all';
-    const OPTION_FORCE = 'force';
-    const BATCH_SIZE = 1000;
+    private const OPTION_FORCE = 'force';
+    private const BATCH_SIZE = 1000;
+
+    /** @var string */
+    protected static $defaultName = 'product:image:resize-all';
+
+    /** @var DoctrineHelper */
+    private $doctrineHelper;
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -21,7 +47,6 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName(self::COMMAND_NAME)
             ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
             ->setDescription(
                 <<<DESC
@@ -54,23 +79,21 @@ DESC
     /**
      * @return EventDispatcherInterface
      */
-    protected function getEventDispatcher()
+    protected function getEventDispatcher(): EventDispatcherInterface
     {
-        return $this->getContainer()->get('event_dispatcher');
+        return $this->eventDispatcher;
     }
 
     /**
      * @return BufferedIdentityQueryResultIterator
      */
-    protected function getProductImagesIterator()
+    protected function getProductImagesIterator(): BufferedIdentityQueryResultIterator
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $className = $this->getContainer()->getParameter('oro_product.entity.product_image.class');
-        $queryBuilder =  $doctrineHelper
-            ->getEntityRepositoryForClass($className)
+        $queryBuilder = $this->doctrineHelper
+            ->getEntityRepositoryForClass(ProductImage::class)
             ->createQueryBuilder('productImage');
 
-        $identifierName = $doctrineHelper->getSingleEntityIdentifierFieldName($className);
+        $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName(ProductImage::class);
         $queryBuilder->select("productImage.$identifierName as id");
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
@@ -83,8 +106,8 @@ DESC
      * @param InputInterface $input
      * @return bool
      */
-    protected function getForceOption(InputInterface $input)
+    protected function getForceOption(InputInterface $input): bool
     {
-        return (bool) $input->getOption(self::OPTION_FORCE);
+        return (bool)$input->getOption(self::OPTION_FORCE);
     }
 }

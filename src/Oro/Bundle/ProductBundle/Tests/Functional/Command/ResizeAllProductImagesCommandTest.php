@@ -26,7 +26,7 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
     public function testRun()
     {
         $this->loadFixtures([ProductImageData::class]);
-        $output = self::runCommand(ResizeAllProductImagesCommand::COMMAND_NAME, ['--force' => true]);
+        $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
 
         $messagesQueued = self::getMessageCollector()
             ->getTopicSentMessages(ProductImageResizeListener::IMAGE_RESIZE_TOPIC);
@@ -37,7 +37,7 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
 
     public function testRunNoImagesAvailable()
     {
-        $output = self::runCommand(ResizeAllProductImagesCommand::COMMAND_NAME, ['--force' => true]);
+        $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
 
         $messagesQueued = self::getMessageCollector()
             ->getTopicSentMessages(ProductImageResizeListener::IMAGE_RESIZE_TOPIC);

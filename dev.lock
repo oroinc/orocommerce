@@ -1206,25 +1206,25 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.2.0",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "13a8d67799a4f1c0e6bb0abd788abbe9e95dee8e"
+                "reference": "558f321c52faeb4828c03e7dc0cfe39a09e09a2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/13a8d67799a4f1c0e6bb0abd788abbe9e95dee8e",
-                "reference": "13a8d67799a4f1c0e6bb0abd788abbe9e95dee8e",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/558f321c52faeb4828c03e7dc0cfe39a09e09a2d",
+                "reference": "558f321c52faeb4828c03e7dc0cfe39a09e09a2d",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "ext-pcre": "*",
-                "php": "^5.3.2 || ^7.0 || ^8.0"
+                "php": "^5.3.2 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || 6.5 - 8",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
                 "psr/log": "^1.0",
                 "symfony/process": "^2.5 || ^3.0 || ^4.0"
             },
@@ -1258,7 +1258,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2019-07-30T05:22:27+00:00"
+            "time": "2019-01-28T09:30:10+00:00"
         },
         {
             "name": "composer/composer",
@@ -1404,16 +1404,16 @@
         },
         {
             "name": "composer/spdx-licenses",
-            "version": "1.5.2",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/spdx-licenses.git",
-                "reference": "7ac1e6aec371357df067f8a688c3d6974df68fa5"
+                "reference": "a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/7ac1e6aec371357df067f8a688c3d6974df68fa5",
-                "reference": "7ac1e6aec371357df067f8a688c3d6974df68fa5",
+                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d",
+                "reference": "a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d",
                 "shasum": ""
             },
             "require": {
@@ -1460,7 +1460,7 @@
                 "spdx",
                 "validator"
             ],
-            "time": "2019-07-29T10:31:59+00:00"
+            "time": "2019-03-26T10:23:26+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -5246,18 +5246,6 @@
             ]
         },
         {
-            "name": "npm-asset/css-vars-ponyfill",
-            "version": "2.0.2",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/css-vars-ponyfill/-/css-vars-ponyfill-2.0.2.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
             "name": "npm-asset/jquery",
             "version": "3.4.1",
             "dist": {
@@ -5677,7 +5665,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "09470ae180a9123d2b01fc2f7dab05e96fa0850a"
+                "reference": "2a4f1baf254da6a78367a665fe18e878c6c6bbc6"
             },
             "require": {
                 "akeneo/batch-bundle": "0.4.11",
@@ -5753,7 +5741,6 @@
                 "nesbot/carbon": "1.29.*",
                 "npm-asset/backbone": "1.4.*",
                 "npm-asset/bootstrap": "4.3.1",
-                "npm-asset/css-vars-ponyfill": "^2.0",
                 "npm-asset/jquery": "3.4.*",
                 "npm-asset/jquery-ui": "1.12.*",
                 "npm-asset/jquery.uniform": "4.3.*",
@@ -5782,6 +5769,7 @@
                 "tinymce/tinymce": "4.6.*",
                 "twig/extensions": "1.5.*",
                 "twig/twig": "2.9.*",
+                "xemlock/htmlpurifier-html5": "0.1.*",
                 "zendframework/zend-mail": "2.10.0"
             },
             "require-dev": {
@@ -9427,6 +9415,55 @@
                 "negotiation"
             ],
             "time": "2017-05-14T17:21:12+00:00"
+        },
+        {
+            "name": "xemlock/htmlpurifier-html5",
+            "version": "v0.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xemlock/htmlpurifier-html5.git",
+                "reference": "32cef47500fb77c2be0f160372095bec15bf0052"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xemlock/htmlpurifier-html5/zipball/32cef47500fb77c2be0f160372095bec15bf0052",
+                "reference": "32cef47500fb77c2be0f160372095bec15bf0052",
+                "shasum": ""
+            },
+            "require": {
+                "ezyang/htmlpurifier": "^4.7",
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.1|^2.1",
+                "phpunit/phpunit": ">=4.7 <8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "library/HTMLPurifier/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "xemlock",
+                    "email": "xemlock@gmail.com"
+                }
+            ],
+            "description": "HTML Purifier definitions for HTML5 elements",
+            "keywords": [
+                "HTML5",
+                "Purifier",
+                "html",
+                "htmlpurifier",
+                "security",
+                "xss"
+            ],
+            "time": "2019-04-26T08:53:59+00:00"
         },
         {
             "name": "zendframework/zend-code",
