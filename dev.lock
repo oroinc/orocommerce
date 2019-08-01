@@ -5287,6 +5287,20 @@
             ]
         },
         {
+            "name": "npm-asset/css-vars-ponyfill",
+            "version": "2.0.2",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/css-vars-ponyfill/-/css-vars-ponyfill-2.0.2.tgz",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "npm-asset",
+            "license": [
+                "MIT"
+            ]
+        },
+        {
             "name": "npm-asset/jquery",
             "version": "3.4.1",
             "dist": {
@@ -5727,7 +5741,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "fa6b20bc7b53f39a49cdc36e932485e48d8f1921",
+                "reference": "aade29266261eca3c1220ae7e94dfb8e52aaed42",
                 "shasum": null
             },
             "require": {
@@ -5804,6 +5818,7 @@
                 "nesbot/carbon": "1.29.*",
                 "npm-asset/backbone": "1.4.*",
                 "npm-asset/bootstrap": "4.3.1",
+                "npm-asset/css-vars-ponyfill": "^2.0",
                 "npm-asset/jquery": "3.4.*",
                 "npm-asset/jquery-ui": "1.12.*",
                 "npm-asset/jquery.uniform": "4.3.*",
