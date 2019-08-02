@@ -28,11 +28,13 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
 
         $webCatalog = $this->getReference(LoadProductCollectionContentVariantWithManuallyAddedData::WEB_CATALOG);
         // set WebCatalog for current Website
-        self::getContainer()->get('oro_config.global')->set(
+        $configManager = self::getContainer()->get('oro_config.manager');
+        $configManager->set(
             'oro_web_catalog.web_catalog',
             $webCatalog->getId(),
             self::getContainer()->get('oro_website.manager')->getCurrentWebsite()
         );
+        $configManager->flush();
 
         self::getContainer()->get('event_dispatcher')->dispatch(
             ReindexationRequestEvent::EVENT_NAME,
