@@ -300,6 +300,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $customerUser = $userManager->createUser();
 
             $customerUser
+                ->setOwner($defaultUser)
                 ->setEmail($item['email'])
                 ->setCustomer($this->getReference($item['customer']))
                 ->setFirstName($item['firstname'])

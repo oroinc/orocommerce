@@ -456,7 +456,7 @@ Feature: Commerce smoke e2e
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
     And click "Sign In"
-    Then I should see "User account is locked"
+    Then I should see "Account is locked."
 
   Scenario: Activate customer user
     Given  I proceed as the Admin
@@ -965,7 +965,7 @@ Feature: Commerce smoke e2e
     And click disable "TestUser1@test.com" in grid
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
-    Then should see "User account is locked"
+    Then should see "Account is locked."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
     When click "Account"
     And click "Users"
