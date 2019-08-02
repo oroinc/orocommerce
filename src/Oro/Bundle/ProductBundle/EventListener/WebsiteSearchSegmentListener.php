@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 /**
@@ -13,6 +14,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
  */
 class WebsiteSearchSegmentListener
 {
+    use ContextTrait;
+
     /**
      * @var ContentVariantSegmentProvider
      */
@@ -47,7 +50,13 @@ class WebsiteSearchSegmentListener
             return;
         }
 
-        foreach ($this->contentVariantSegmentProvider->getContentVariantSegments() as $segment) {
+        $websiteId = $this->getContextCurrentWebsiteId($event->getContext());
+        if ($websiteId) {
+            $segments = $this->contentVariantSegmentProvider->getContentVariantSegmentsByWebsiteId($websiteId);
+        } else {
+            $segments = $this->contentVariantSegmentProvider->getContentVariantSegments();
+        }
+        foreach ($segments as $segment) {
             $this->staticSegmentManager->run($segment, $this->getEntityIds($event));
         }
     }

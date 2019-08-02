@@ -5,11 +5,15 @@ namespace Oro\Bundle\WebCatalogBundle;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantProviderCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantTypeCompilerPass;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogDependenciesCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * Web Catalog bundle.
+ */
 class OroWebCatalogBundle extends Bundle
 {
     /**
@@ -31,6 +35,7 @@ class OroWebCatalogBundle extends Bundle
     {
         $container->addCompilerPass(new ContentVariantTypeCompilerPass());
         $container->addCompilerPass(new ContentVariantProviderCompilerPass());
+        $container->addCompilerPass(new WebCatalogDependenciesCompilerPass());
 
         $container
             ->addCompilerPass(
