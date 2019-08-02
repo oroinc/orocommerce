@@ -262,7 +262,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));
-        $userManager->updateUser($user, true);
+        $userManager->updateUser($user);
 
         $organization = $this->registry
             ->getRepository(Organization::class)

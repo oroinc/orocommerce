@@ -195,18 +195,18 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected function loadUsers(ObjectManager $manager)
     {
-        /* @var $userManager UserManager */
-        $userManager    = $this->container->get('oro_user.manager');
+        /* @var UserManager $userManager */
+        $userManager = $this->container->get('oro_user.manager');
 
-        $defaultUser    = $this->getUser($manager);
+        $defaultUser = $this->getUser($manager);
 
-        $businessUnit   = $defaultUser->getOwner();
-        $organization   = $defaultUser->getOrganization();
+        $businessUnit = $defaultUser->getOwner();
+        $organization = $defaultUser->getOrganization();
+        $roles = $defaultUser->getRoles();
 
         foreach ($this->users as $item) {
             /* @var $user User */
             $user = $userManager->createUser();
-
             $user
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
@@ -214,10 +214,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->addRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
+                ->setEnabled(true);
             $userManager->updateUser($user);
 
             $this->setReference($user->getUsername(), $user);

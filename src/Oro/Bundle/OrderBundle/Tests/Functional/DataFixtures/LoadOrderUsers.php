@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\UserBundle\Entity\Role;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,16 +32,20 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
-        $this->createOrderUser(self::ORDER_USER_1);
-        $this->createOrderUser(self::ORDER_USER_2);
+        /** @var Role $role */
+        $role = $manager->getRepository(Role::class)->findOneBy(['role' => User::ROLE_DEFAULT]);
+
+        $this->createOrderUser(self::ORDER_USER_1, $role);
+        $this->createOrderUser(self::ORDER_USER_2, $role);
 
         $manager->flush();
     }
 
     /**
      * @param string $name
+     * @param Role   $role
      */
-    public function createOrderUser($name)
+    private function createOrderUser($name, Role $role)
     {
         $userManager = $this->container->get('oro_user.manager');
 
@@ -49,9 +55,10 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
             ->setFirstName($name . 'first_name')
             ->setLastName($name . 'last_name')
             ->setEmail($name . '@example.com')
+            ->addRole($role)
             ->setEnabled(true);
 
-        $userManager->updateUser($user);
+        $userManager->updateUser($user, false);
 
         $this->setReference($user->getUsername(), $user);
     }
