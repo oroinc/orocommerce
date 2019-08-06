@@ -47,10 +47,7 @@ class AddImagePathToFile implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $filePathFieldName = $context->getResultFieldName('filePath');
         if (!$context->isFieldRequested($filePathFieldName, $data)) {
@@ -70,7 +67,7 @@ class AddImagePathToFile implements ProcessorInterface
         $filePaths = $this->getFilePaths($data[$mimeTypeFieldName], $data[$fileIdFieldName]);
         if (null !== $filePaths) {
             $data[$filePathFieldName] = $filePaths;
-            $context->setResult($data);
+            $context->setData($data);
         }
     }
 

@@ -37,16 +37,13 @@ class ComputeProductLowInventory implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $lowInventoryFieldName = $context->getResultFieldName('lowInventory');
         if ($context->isFieldRequested($lowInventoryFieldName, $data)) {
             $product = $this->doctrineHelper->getEntity(Product::class, $data['id']);
             $data[$lowInventoryFieldName] = $this->lowInventoryProvider->isLowInventoryProduct($product);
-            $context->setResult($data);
+            $context->setData($data);
         }
     }
 }

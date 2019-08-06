@@ -37,10 +37,7 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $discountsFieldName = $context->getResultFieldName('discounts');
         if (!$context->isFieldRequested($discountsFieldName)) {
@@ -49,9 +46,7 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
 
         $orderIdFieldName = $context->getResultFieldName('id');
         if ($orderIdFieldName) {
-            $context->setResult(
-                $this->addPromotionDiscounts($context, $data, $orderIdFieldName, $discountsFieldName)
-            );
+            $context->setData($this->addPromotionDiscounts($context, $data, $orderIdFieldName, $discountsFieldName));
         }
     }
 

@@ -32,10 +32,7 @@ class ComputeCategoryImages implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isFieldRequestedForCollection(self::IMAGES_FIELD, $data)) {
             return;
@@ -60,7 +57,7 @@ class ComputeCategoryImages implements ProcessorInterface
             $data[$key][self::IMAGES_FIELD] = $images;
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**

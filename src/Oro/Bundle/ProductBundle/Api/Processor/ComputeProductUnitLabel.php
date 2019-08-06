@@ -34,10 +34,7 @@ class ComputeProductUnitLabel implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $productUnitCode = $context->getResultFieldValue('code', $data);
 
@@ -61,6 +58,6 @@ class ComputeProductUnitLabel implements ProcessorInterface
             $data[$shortPluralLabelFieldName] = $this->formatter->format($productUnitCode, true, true);
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 }
