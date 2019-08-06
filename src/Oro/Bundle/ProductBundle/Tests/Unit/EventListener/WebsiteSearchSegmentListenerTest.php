@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchSegmentListener;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -101,6 +102,38 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
                 [$firstSegment, $entityIds],
                 [$secondSegment, $entityIds]
             );
+
+        $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
+    }
+
+    public function testOnWebsiteSearchIndexWhenContentVariantSegmentsExistForWebsite()
+    {
+        $entityIds = [1, 5];
+        $entities = [
+            $this->getEntity(Product::class, ['id' => 1]),
+            $this->getEntity(Product::class, ['id' => 5])
+        ];
+        $event = new IndexEntityEvent(
+            Product::class,
+            $entities,
+            [
+                AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => 42,
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [42]
+            ]
+        );
+
+        $segment = $this->getEntity(Segment::class, ['id' => 1]);
+
+        $this->contentVariantSegmentProvider
+            ->expects($this->once())
+            ->method('getContentVariantSegmentsByWebsiteId')
+            ->with(42)
+            ->willReturn([$segment]);
+
+        $this->staticSegmentManager
+            ->expects($this->once())
+            ->method('run')
+            ->with($segment, $entityIds);
 
         $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
     }
