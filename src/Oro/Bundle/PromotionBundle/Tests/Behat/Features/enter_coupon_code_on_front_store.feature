@@ -50,8 +50,7 @@ Feature: Enter coupon code on Front Store
     Then I should see "coupon-2 Second Promotion Name" in the "Coupons List" element
 
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
-    Given I should see "Billing Information" in the "Checkout Step Title" element
-    And I should see "Discount -$1.00" in the "Subtotals" element
+    Given I should see "Discount -$1.00" in the "Subtotals" element
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
