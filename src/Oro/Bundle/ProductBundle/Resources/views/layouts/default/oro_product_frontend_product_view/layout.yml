@@ -2,7 +2,7 @@ layout:
     actions:
         - '@move':
             id: product_sticker_new
-            parentId: product_view_media_container
+            parentId: product_view_media_wrapper
 
         - '@setOption':
             id: product_sticker_new

@@ -6,6 +6,8 @@ layout:
             items:
                 product_view_media_container:
                     blockType: container
+                product_view_media_wrapper:
+                    blockType: container
                 product_view_attribute_group_images:
                     blockType: attribute_group
                     options:
@@ -15,7 +17,8 @@ layout:
             tree:
                 product_view_aside_container:
                     product_view_media_container:
-                        product_view_attribute_group_images: ~
+                        product_view_media_wrapper:
+                            product_view_attribute_group_images: ~
         - '@setOption':
             id: product_view_attribute_group_images_attribute_product_images_images
             optionName: popup_gallery

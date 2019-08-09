@@ -63,13 +63,10 @@ class ComputeProductAttributes implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if ($context->isFieldRequestedForCollection(self::FIELD_NAME, $data)) {
-            $context->setResult($this->applyAttributes($context, $data));
+            $context->setData($this->applyAttributes($context, $data));
         }
     }
 

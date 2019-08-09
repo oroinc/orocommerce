@@ -46,10 +46,7 @@ class ComputeProductAvailability implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $upcomingFieldName = $context->getResultFieldName('upcoming');
         $availabilityDateFieldName = $context->getResultFieldName('availabilityDate');
@@ -78,6 +75,6 @@ class ComputeProductAvailability implements ProcessorInterface
             $data[$availabilityDateFieldName] = $availabilityDate;
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 }

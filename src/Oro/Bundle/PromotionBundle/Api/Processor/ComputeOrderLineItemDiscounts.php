@@ -61,10 +61,7 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isAtLeastOneFieldRequestedForCollection(self::FIELD_NAMES, $data)) {
             return;
@@ -72,7 +69,7 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
 
         $lineItemIdFieldName = $context->getResultFieldName('id');
         if ($lineItemIdFieldName) {
-            $context->setResult($this->applyDiscounts($context, $data, $lineItemIdFieldName));
+            $context->setData($this->applyDiscounts($context, $data, $lineItemIdFieldName));
         }
     }
 

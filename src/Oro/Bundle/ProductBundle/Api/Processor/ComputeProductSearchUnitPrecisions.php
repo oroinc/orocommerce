@@ -20,10 +20,7 @@ class ComputeProductSearchUnitPrecisions implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isFieldRequested(self::UNIT_PRECISIONS_FIELD, $data)) {
             return;
@@ -44,6 +41,6 @@ class ComputeProductSearchUnitPrecisions implements ProcessorInterface
 
         $data[self::UNIT_PRECISIONS_FIELD] = $unitPrecisions;
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 }

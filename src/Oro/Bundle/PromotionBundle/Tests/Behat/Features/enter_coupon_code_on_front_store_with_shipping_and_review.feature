@@ -31,25 +31,19 @@ Feature: Enter coupon code on Front Store with shipping and review
     And I should see "coupon-flat-rate2 Flat rate2 shipping Promotion" in the "Coupons List" element
 
   Scenario: Flat Rate2 Promotion is applied when Flat Rate 2 shipping method is chosen
-    When I click "Continue"
-    Then I should see "Shipping Information" in the "Checkout Step Title" element
-    When I click "Continue"
-    Then I should see "Shipping Method" in the "Checkout Step Title" element
-    When I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
-    Then I should see "Payment" in the "Checkout Step Title" element
-    And I should see "Shipping Discount -$1.00" in the "Subtotals" element
+    When on the "Billing Information" checkout step I press Continue
+    And on the "Shipping Information" checkout step I press Continue
+    And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
+    Then I should see "Shipping Discount -$1.00" in the "Subtotals" element
 
   Scenario: Flat Rate Promotion is applied when Flat Rate shipping method is chosen
     When on the "Payment" checkout step I go back to "Edit Shipping Method"
     And I click "Flat Rate Shipping Method"
-    And I click "Continue"
-    Then I should see "Payment" in the "Checkout Step Title" element
-    And I should see "Shipping Discount -$2.00" in the "Subtotals" element
+    And on the "Shipping Method" checkout step I press Continue
+    Then I should see "Shipping Discount -$2.00" in the "Subtotals" element
 
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
-    Given I should see "Payment" in the "Checkout Step Title" element
-    And I should see "Shipping Discount -$2.00" in the "Subtotals" element
-    When I click "Continue"
+    When on the "Payment" checkout step I press Continue
     Then I should see "Order Review" in the "Checkout Step Title" element
     When I scroll to "Submit Order"
     And I click "Submit Order"

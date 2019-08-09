@@ -48,10 +48,7 @@ class ComputeOrderTaxes implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isAtLeastOneFieldRequestedForCollection(self::FIELD_NAMES, $data)) {
             return;
@@ -59,7 +56,7 @@ class ComputeOrderTaxes implements ProcessorInterface
 
         $orderIdFieldName = $context->getResultFieldName('id');
         if ($orderIdFieldName) {
-            $context->setResult($this->applyTaxes($context, $data, $orderIdFieldName));
+            $context->setData($this->applyTaxes($context, $data, $orderIdFieldName));
         }
     }
 

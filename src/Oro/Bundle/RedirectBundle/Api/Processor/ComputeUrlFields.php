@@ -51,10 +51,7 @@ class ComputeUrlFields implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $isUrlFieldRequested = $context->isFieldRequestedForCollection(self::URL_FIELD, $data);
         $isUrlsFieldRequested = $context->isFieldRequestedForCollection(self::URLS_FIELD, $data);
@@ -98,7 +95,7 @@ class ComputeUrlFields implements ProcessorInterface
             }
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**
