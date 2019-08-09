@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeData;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -297,6 +298,66 @@ class ProductRepositoryTest extends WebTestCase
                 ],
                 'expectedImages' => [
                     'img.product-1',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getListingAndMainImagesFilesByProductIdsDataProvider
+     *
+     * @param array $products
+     * @param array $expectedImages
+     */
+    public function testGetListingAndMainImagesFilesByProductIds(array $products, array $expectedImages): void
+    {
+        $result = $this->repository->getListingAndMainImagesFilesByProductIds($this->referencesToEntities($products));
+
+        $this->assertCount(count($expectedImages), $result);
+
+        foreach ($expectedImages as $images) {
+            $this->assertContains($this->referencesToEntities($images), $result);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getListingAndMainImagesFilesByProductIdsDataProvider(): array
+    {
+        return [
+            [
+                'products' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_5,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8,
+                ],
+                'expectedImages' => [
+                    [
+                        ProductImageType::TYPE_LISTING => 'img.product-1',
+                    ],
+                    [
+                        ProductImageType::TYPE_MAIN => 'img.product-2',
+                    ]
+                ],
+            ],
+            [
+                'products' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                ],
+                'expectedImages' => [
+                    [
+                        ProductImageType::TYPE_LISTING => 'img.product-1',
+                    ],
+                    [
+                        ProductImageType::TYPE_MAIN => 'img.product-2',
+                    ]
                 ],
             ],
         ];

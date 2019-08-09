@@ -41,6 +41,7 @@ class ProductTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                 'columns' => [
                     'taxCode' => [
                         'label' => 'oro.tax.taxcode.label',
+                        'renderable' => false,
                         'inline_editing' => [
                             'enable' => true,
                             'editor' => [
@@ -73,7 +74,8 @@ class ProductTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                         'class' => AbstractTaxCode::class,
                                         'choice_label' => 'code',
                                     ]
-                                ]
+                                ],
+                                'enabled' => false
                             ],
                         ]
                 ],

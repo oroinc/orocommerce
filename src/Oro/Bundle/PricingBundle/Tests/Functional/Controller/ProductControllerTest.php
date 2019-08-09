@@ -372,6 +372,7 @@ class ProductControllerTest extends ProductHelperTestCase
             [
                 'gridName' => 'products-grid',
                 PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
+                PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => ['USD', 'EUR'],
             ],
             $filter,
             true

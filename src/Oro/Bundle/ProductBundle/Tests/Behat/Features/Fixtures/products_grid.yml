@@ -11,6 +11,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
+    localProductAttributeFamilyCustom:
+        string: 'Product Attribute Family Custom'
+
     localCategory{1..4}Title:
         string: 'Category <current()>'
 
@@ -40,6 +43,12 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
         code: 'product_attribute_family_code'
         addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+    productAttributeFamilyCustom:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code_custom'
+        addLabel: ['@localProductAttributeFamilyCustom']
         organization: '@organization'
         owner: '@admin'
 
@@ -138,6 +147,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
     product10:
         newArrival: true
+
+    product19:
+        attributeFamily: '@productAttributeFamilyCustom'
 
 Doctrine\Common\Collections\ArrayCollection(local):
     products1:

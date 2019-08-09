@@ -176,7 +176,7 @@ class ProductType extends AbstractType
                     ]
                 ]
             )
-            ->add('type', HiddenType::class)
+            ->add('type', HiddenType::class, ['label' => 'oro.product.type.label'])
 
             ->add(
                 'slugPrototypesWithRedirect',
