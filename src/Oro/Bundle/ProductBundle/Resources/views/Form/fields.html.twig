@@ -40,17 +40,21 @@
 
 {% block oro_product_unit_precision_widget %}
     {% set name = form.vars.full_name %}
-
+        {% spaceless %}
             <tr data-content="{{ name }}" data-validation-optional-group class="oro-multiselect-holder grid-row">
-                <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
-                <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
-                <td>{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
+                <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
+                <td class="unit-precision">{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
+                <td class="unit-conversion">
+                    <div class="fields-row">
+                        {{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}
+                    </div>
+                </td>
                 <td>{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
                 {% if form.parent.vars.allow_delete %}
-                    <td><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button></td>
+                    <td class="action-cell"><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button></td>
                 {% endif %}
             </tr>
-
+        {% endspaceless %}
 {% endblock %}
 
 {% macro oro_collection_item_prototype(widget) %}
@@ -115,14 +119,16 @@
         {% set id = id ~ '_collection' %}
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
-            <div>
-                <table class="grid table table-condensed table-bordered table-hover">
+            <div class="grid-scrollable-container">
+                <table class="table">
                     <thead>
-                        <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.precision.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.conversion_rate.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.sell.label'|trans }}</th>
-                        <th></th>
+                        <tr>
+                            <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.precision.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.conversion_rate.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.sell.label'|trans }}</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
