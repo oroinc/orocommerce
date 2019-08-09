@@ -29,6 +29,15 @@ Feature: Products Grid
     And records in grid should be 2
     And I reset Name filter
 
+  Scenario: Check Product Family filter
+    Given records in grid should be 20
+    When I choose "Product Attribute Family Custom" in the Product Family filter
+    Then I should see following grid:
+      | Name       |
+      | Product 19 |
+    And records in grid should be 1
+    And I reset Product Family filter
+
   Scenario: Check Inventory Status filter
     Given records in grid should be 20
     When I choose filter for Inventory Status as Is Any Of "In Stock"
@@ -50,8 +59,9 @@ Feature: Products Grid
     And records in grid should be 1
     And I reset "Type: Configurable" filter
 
-  Scenario: Check Created At filter
+  Scenario: Enable & Check Created At filter
     Given records in grid should be 20
+    And I show filter "Created At" in "Products Grid" grid
     When I filter Created At as between "-1 day" and "today"
     Then there are no records in grid
     When I filter Created At as between "today" and "+1 day"
@@ -66,8 +76,9 @@ Feature: Products Grid
     Then records in grid should be 20
     And I reset "Updated At" filter
 
-  Scenario: Check Tax Code filter
+  Scenario: Enable & Check Tax Code filter
     Given records in grid should be 20
+    And I show filter "Tax Code" in "Products Grid" grid
     When I check "ProductTaxCode2" in "Tax Code: All" filter strictly
     Then I should see following grid:
       | Name      |
@@ -87,6 +98,7 @@ Feature: Products Grid
 
   Scenario: Check Price filter
     Given records in grid should be 20
+    And I check "USD"
     When I filter "Price (USD)" as Equals "15"
     Then I should see following grid:
       | Name       |
@@ -167,6 +179,20 @@ Feature: Products Grid
       | Product 8 |
     And I reset "Products Grid" grid
 
+  Scenario: Sort by Product Family
+    Given I should see following grid:
+      | Name       |
+      | Product 20 |
+    When I sort grid by "Product Family"
+    Then I should see following grid:
+      | Name       |
+      | Product 1  |
+    When I sort grid by "Product Family" again
+    Then I should see following grid:
+      | Name      |
+      | Product 19 |
+    And I reset "Products Grid" grid
+
   Scenario: Sort by Status
     Given I should see following grid:
       | Name       |
@@ -184,12 +210,13 @@ Feature: Products Grid
       | Product 19 |
     And I reset "Products Grid" grid
 
-  Scenario: Sort by Created At
+  Scenario: Enable column "Created At" and Sort by it
     Given I should see following grid:
       | Name       |
       | Product 20 |
       | Product 19 |
-    When I sort grid by "Created At"
+    When I show column Created At in grid
+    And I sort grid by "Created At"
     Then I should see following grid:
       | Name      |
       | Product 1 |
@@ -246,12 +273,13 @@ Feature: Products Grid
       | Product 8 |
     And I reset "Products Grid" grid
 
-  Scenario: Sort by Tax Code
+  Scenario: Enable column "Tax Code" and Sort by it
     Given I should see following grid:
       | Name       |
       | Product 20 |
       | Product 19 |
-    When I sort grid by "Tax Code"
+    When I show column Tax Code in grid
+    And I sort grid by "Tax Code"
     Then I should see following grid:
       | Name      |
       | Product 1 |
@@ -375,5 +403,5 @@ Feature: Products Grid
       | PSKU10 | Product 10 | Each $10.00           | $10.00           |
     When I reset "Products Grid" grid
     Then I should see following grid with exact columns order:
-      | SKU    | Name       | Inventory Status |
-      | PSKU20 | Product 20 | In Stock         |
+      | SKU    | Image | Name       | Product Family           | Status  | Inventory Status |
+      | PSKU20 |       | Product 20 | Product Attribute Family | Enabled | In Stock         |

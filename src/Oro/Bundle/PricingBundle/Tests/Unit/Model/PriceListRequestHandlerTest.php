@@ -290,10 +290,10 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     public function getPriceListCurrenciesDataProvider()
     {
         return [
-            'all currencies on initial state' => [
+            'no currencies on initial state' => [
                 'paramValue' => null,
                 'currencies' => ['USD', 'GBP', 'EUR'],
-                'expected' => ['EUR', 'GBP', 'USD']
+                'expected' => []
             ],
             'true returns all price list currencies with cast' => [
                 'paramValue' => 'true',

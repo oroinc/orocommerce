@@ -304,6 +304,10 @@ datagrids:
 
     products-grid:
         extends: products-select-grid-base
+        source:
+            query:
+                select:
+                    - IDENTITY(product.attributeFamily) as attributeFamily
         options:
             entity_pagination: true
         properties:
@@ -324,6 +328,12 @@ datagrids:
             enable: true
             behaviour: enable_selected
         columns:
+            productImage:
+                label:         oro.product.image.label
+                type:          twig
+                frontend_type: html
+                template:      OroProductBundle:Product:Datagrid/image.html.twig
+                order:         2
             productName:
                 inline_editing:
                     enable: true
@@ -335,6 +345,12 @@ datagrids:
                             - id
                     validation_rules:
                         NotBlank: true
+                order:         3
+            attributeFamily:
+                label:         oro.product.attribute_family.label
+                frontend_type: select
+                choices:       "@oro_entity_config.provider.attribute_family_provider->getAvailableAttributeFamilies('%oro_product.entity.product.class%')"
+                order:         4
             inventoryStatusId:
                 inline_editing:
                     enable: true
@@ -344,12 +360,35 @@ datagrids:
                             - id
                     validation_rules:
                         NotBlank: true
+                order:         6
             status:
                 inline_editing:
                     enable: true
+                order:         5
             newArrival:
                 inline_editing:
                     enable: true
+                order:         7
+            createdAt:
+                renderable: false
+                order:         80
+            updatedAt:
+                order:         90
+        sorters:
+            columns:
+                attributeFamily:
+                    data_name: product.attributeFamily
+        filters:
+            columns:
+                attributeFamily:
+                    data_name: product.attributeFamily
+                    type: choice-tree
+                    label: oro.product.attribute_family.label
+                    autocomplete_alias: oro_product_families
+                    renderedPropertyName: 'defaultLabel'
+                    className: 'Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily'
+                createdAt:
+                    enabled: false
 
     product-product-variants-base:
         acl_resource: oro_product_view

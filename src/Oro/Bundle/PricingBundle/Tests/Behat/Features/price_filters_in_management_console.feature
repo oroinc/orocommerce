@@ -20,6 +20,7 @@ Feature: Price filters in management console
 
   Scenario: Product Price filters use formatting according locale setting
     Given I go to Products/ Products
+    And I check "USD"
     When I filter "Price (USD)" as equals "6" use "item" unit
     Then should see filter hints in grid:
       | Price (USD): equals 6,00 / item |

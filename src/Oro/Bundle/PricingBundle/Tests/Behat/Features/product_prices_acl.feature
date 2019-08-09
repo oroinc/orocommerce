@@ -43,6 +43,7 @@ Feature: Product prices ACL
 
   Scenario: Check product prices at the grid, view and edit product page when VIEW forbidden
     Given I go to Products/ Products
+    And I check "USD"
     Then I shouldn't see "Price (USD)" column in grid
     When click view "PSKU1" in grid
     Then I should not see an "ProductPricesGrid" element
@@ -56,6 +57,7 @@ Feature: Product prices ACL
 
     And I proceed as the manager
     And I go to Products/ Products
+    And I check "USD"
     Then I should see "Price (USD)" column in grid
     When I click view "PSKU1" in grid
     Then I should see an "ProductPricesGrid" element
@@ -70,6 +72,7 @@ Feature: Product prices ACL
 
     And I proceed as the manager
     And I go to Products/ Products
+    And I check "USD"
     Then I should see "Price (USD)" column in grid
     When I click view "PSKU1" in grid
     Then I should see an "ProductPricesGrid" element
