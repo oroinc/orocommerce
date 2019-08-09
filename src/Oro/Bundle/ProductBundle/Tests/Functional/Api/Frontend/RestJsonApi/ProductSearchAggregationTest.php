@@ -216,7 +216,6 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
                 'meta' => [
                     'aggregatedData' => [
                         'testAttrIntegerCount' => [
-                            ['value' => 0, 'count' => 1],
                             ['value' => 1, 'count' => 1],
                             ['value' => 12, 'count' => 1],
                             ['value' => 120, 'count' => 1],
@@ -238,16 +237,9 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
                 'fields' => ['productsearch' => 'sku']
             ]
         );
-        $this->assertResponseContains(
-            [
-                'meta' => [
-                    'aggregatedData' => [
-                        'testAttrIntegerCount' => []
-                    ]
-                ]
-            ],
-            $response
-        );
+
+        $content = self::jsonToArray($response->getContent());
+        self::assertNotContains('meta', $content);
     }
 
     public function testCountByEnumForElasticSearchEngine()
@@ -452,7 +444,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrIntegerMin' => 0
+                        'testAttrIntegerMin' => 1
                     ]
                 ]
             ],
@@ -494,7 +486,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrIntegerMin' => 0
+                        'testAttrIntegerMin' => null
                     ]
                 ]
             ],
@@ -515,7 +507,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatMin' => 0
+                        'testAttrFloatMin' => 1.1
                     ]
                 ]
             ],
@@ -557,7 +549,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatMin' => 0
+                        'testAttrFloatMin' => null
                     ]
                 ]
             ],
@@ -620,7 +612,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrIntegerMax' => 0
+                        'testAttrIntegerMax' => null
                     ]
                 ]
             ],
@@ -683,7 +675,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatMax' => 0
+                        'testAttrFloatMax' => null
                     ]
                 ]
             ],
@@ -704,7 +696,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrIntegerAvg' => 51.2
+                        'testAttrIntegerAvg' => 64
                     ]
                 ]
             ],
@@ -746,7 +738,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatAvg' => 1.006
+                        'testAttrFloatAvg' => 1.2575
                     ]
                 ]
             ],

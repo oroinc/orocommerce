@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD)
  */
 class ProductSearchTest extends FrontendRestJsonApiTestCase
 {
@@ -845,8 +845,39 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function testSortByIntegerProductAttribute()
     {
+        $data = [
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product1->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@product3->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product2->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@product1->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product3->id)>'
+            ]
+        ];
+
+        if ($this->isMySqlSearchEngineDriverForEntity(Product::class)) {
+            $elLast = array_pop($data);
+            array_unshift($data, $elLast);
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             ['sort' => 'testAttrInteger']
@@ -854,35 +885,45 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains(
             [
-                'data' => [
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product3->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product1->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@product3->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product2->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@product1->id)>'
-                    ]
-                ]
+                'data' => $data
             ],
             $response
         );
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function testSortByFloatProductAttribute()
     {
+        $data = [
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product2->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@product3->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@product1->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product3->id)>'
+            ],
+            [
+                'type' => 'productsearch',
+                'id'   => '<toString(@configurable_product1->id)>'
+            ]
+        ];
+
+        if ($this->isMySqlSearchEngineDriverForEntity(Product::class)) {
+            $elLast = array_pop($data);
+            array_unshift($data, $elLast);
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             ['sort' => 'testAttrFloat', 'include' => 'product', 'fields[products]' => 'productAttributes']
@@ -890,28 +931,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains(
             [
-                'data'     => [
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product1->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product2->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@product3->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@product1->id)>'
-                    ],
-                    [
-                        'type' => 'productsearch',
-                        'id'   => '<toString(@configurable_product3->id)>'
-                    ]
-                ],
+                'data'     => $data,
                 'included' => [
                     [
                         'type'       => 'products',
@@ -1260,5 +1280,23 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ]
         ]);
         $this->assertResponseContains($expectedLinks, $response);
+    }
+
+    /**
+     * @param string $entity
+     * @return bool
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    private function isMySqlSearchEngineDriverForEntity(string $entity): bool
+    {
+        /** @var EntityManager $em */
+        $em =  $this->doctrineHelper->getEntityManager($entity);
+        $platform = $em->getConnection()->getDatabasePlatform();
+
+        $searchEngine = self::getContainer()->hasParameter('search_engine_name')
+            ? self::getContainer()->getParameter('search_engine_name')
+            : 'orm';
+
+        return $platform instanceof MySqlPlatform && $searchEngine === 'orm';
     }
 }
