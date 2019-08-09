@@ -69,16 +69,16 @@ oro_behat_extension:
           Additional Image: 'oro_product[images][0][additional]'
           Configurable Attributes Color:
             type: 'xpath'
-            locator: '//input[contains(@id,"oro_product_variantFields_Color_is_selected-uid")]'
+            locator: '//*[contains(@id, "oro_product_variantFields_Color") and @data-name="field__is-selected"]'
           Configurable Attributes ColorPro:
             type: 'xpath'
-            locator: '//input[contains(@id,"oro_product_variantFields_ColorPro_is_selected-uid")]'
+            locator: '//*[contains(@id, "oro_product_variantFields_ColorPro") and @data-name="field__is-selected"]'
           Configurable Attributes Size:
             type: 'xpath'
-            locator: '//input[contains(@id,"oro_product_variantFields_Size_is_selected-uid")]'
+            locator: '//*[contains(@id, "oro_product_variantFields_Size") and @data-name="field__is-selected"]'
           Configurable Attributes BooleanField:
             type: 'xpath'
-            locator: '//input[contains(@id,"oro_product_variantFields_BooleanField_is_selected-uid")]'
+            locator: '//*[contains(@id, "oro_product_variantFields_BooleanField") and @data-name="field__is-selected"]'
           Inventory Status: 'oro_product[inventory_status]'
           Description: 'oro_product[descriptions][values][default]'
           Short Description: 'oro_product[shortDescriptions][values][default]'
