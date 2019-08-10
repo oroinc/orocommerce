@@ -118,13 +118,13 @@ api:
                 delete_list: false
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
-            # this entity does not have own Data API resource,
+            # this entity does not have own API resource,
             # but it should be defined to correct work of "discounts" property
             # of the order API resource
             actions: false
 
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
-            # this entity does not have own Data API resource,
+            # this entity does not have own API resource,
             # but it should be defined to correct work of "shippingTrackings" property
             # of the order API resource
             actions: false
