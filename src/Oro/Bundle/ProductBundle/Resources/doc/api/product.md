@@ -77,10 +77,7 @@ default precision unit, and it is mandatory.
 
 There are a few restrictions and situations that the API caller should know:
 
-- not sending the **"primaryUnitPrecision"** will make the first item in the **"unitPrecisions"** list become
-the primary unit precision
-
-- when sending the "primaryUnitPrecision" you need to specify the unit code, but it is mandatory that
+- when sending the **"primaryUnitPrecision"** you need to specify the unit code, but it is mandatory that
 this unit code is found between the items of the **"unitPrecisions"**
 
 #### 4. Specify Category
@@ -1007,23 +1004,13 @@ Delete a collection of product records.
 
 **Required field**
 
-### decrementQuantity
-
-#### create
+#### update
 
 {@inheritdoc}
 
-**Required field**
+**Please note:**
 
-### inventoryThreshold
-
-### lowInventoryThreshold
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
+*This field is **required** and must remain defined.*
 
 ### inventory_status
 
@@ -1033,23 +1020,13 @@ Delete a collection of product records.
 
 **Required field**
 
-### manageInventory
-
-### highlightLowInventory
-
-#### create
+#### update
 
 {@inheritdoc}
 
-**Required field**
+**Please note:**
 
-### backOrder
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
+*This field is **required** and must remain defined.*
 
 ### status
 
@@ -1057,39 +1034,9 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
-
-#### update
-
-{@inheritdoc}
-
 **Please note:**
 
-*This field is **required** and must remain defined.*
-
-### featured
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
-
-#### update
-
-{@inheritdoc}
-
-**Please note:**
-
-*This field is **required** and must remain defined.*
-
-### newArrival
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
+*If a value for this field is not provided, the "disabled" value will be used.*
 
 #### update
 
@@ -1105,7 +1052,9 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**Please note:**
+
+*If a value for this field is not provided, the "simple" value will be used.*
 
 #### update
 
@@ -1123,31 +1072,52 @@ Delete a collection of product records.
 
 **Required field**
 
-### category
+#### update
 
-Specify the category of the product
+{@inheritdoc}
 
-### taxCode
+**Please note:**
 
-Specify a tax code
+*This field is **required** and must remain defined.*
+
+### unitPrecisions
 
 #### create
 
 {@inheritdoc}
 
-### test_variant_field
+**Please note:**
+
+*This field is **required** but when it is not passed, the `primaryUnitPrecision` value is used.*
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### primaryUnitPrecision
 
 #### create
 
 {@inheritdoc}
 
-### pageTemplate
+**Required field**
 
-Specify the page template for the product
+**Please note:**
 
-### images
+*The unit code provided for this field will be automatically added to the `unitPrecisions` list.*
 
-Specify the images for the product
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+- *This field is **required** and must remain defined.*
+- *The unit code provided for this field must exist in the **unitPrecisions** list.*
 
 ## SUBRESOURCES
 
@@ -2285,20 +2255,6 @@ Example:
 }
 ```
 {@/request}
-
-### test_variant_field
-
-#### get_subresource
-
-Retrieve the record for the test_variant_field of a specific product record
-
-#### get_relationship
-
-Retrieve the ID of the test_variant_field of a specific product record.
-
-#### update_relationship
-
-Replace the test_variant_field for a specific product.
 
 ### pageTemplate
 
