@@ -52,7 +52,7 @@
     }
 }
 
-@include breakpoint('strict-mobile') {
+@include breakpoint('mobile') {
     .product-list {
         &--gallery-view {
             margin: $product-list-gallery-view-offset-mobile;
