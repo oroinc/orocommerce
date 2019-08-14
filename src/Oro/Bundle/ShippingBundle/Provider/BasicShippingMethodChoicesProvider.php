@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProviderInterface
 {

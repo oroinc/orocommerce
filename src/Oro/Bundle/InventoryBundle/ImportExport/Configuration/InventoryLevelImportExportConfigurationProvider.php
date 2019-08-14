@@ -8,7 +8,7 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProvide
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InventoryLevelImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {

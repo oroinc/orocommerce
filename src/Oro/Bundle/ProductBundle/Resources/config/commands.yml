@@ -1,17 +1,20 @@
 services:
-    Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand:
+    _defaults:
         public: false
-        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
-        calls:
-            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
-            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
-            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
-            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
+
+    Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand:
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.model.segment_message_factory'
+            - '@oro_product.provider.segment_with_relations_provider'
+            - '@oro_product.helper.product_collection_segment'
+            - '@oro_config.manager'
         tags:
             - { name: console.command }
 
     Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand:
-        public: false
-        class: Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@event_dispatcher'
         tags:
             - { name: console.command }

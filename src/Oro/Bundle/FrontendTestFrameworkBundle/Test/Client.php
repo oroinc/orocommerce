@@ -6,19 +6,22 @@ use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Handle backend prefix for application with front store
+ */
 class Client extends BaseClient
 {
     /**
      * {@inheritdoc}
      */
     public function request(
-        $method,
-        $uri,
+        string $method,
+        string $uri,
         array $parameters = [],
         array $files = [],
         array $server = [],
-        $content = null,
-        $changeHistory = true
+        string $content = null,
+        bool $changeHistory = true
     ) {
         $crawler = parent::request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
 
@@ -48,6 +51,8 @@ class Client extends BaseClient
     }
 
     /**
+     * Response from frontend must not contain backend url prefix
+     *
      * @param $uri string
      * @param $crawler
      */

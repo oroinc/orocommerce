@@ -6,7 +6,7 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\ImportExport\Configuration\InventoryLevelImportExportConfigurationProvider;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InventoryLevelImportExportConfigurationProviderTest extends TestCase
 {

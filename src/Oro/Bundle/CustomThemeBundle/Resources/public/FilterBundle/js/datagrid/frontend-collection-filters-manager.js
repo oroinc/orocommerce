@@ -20,15 +20,16 @@ define(function(require) {
          * @inheritDoc
          */
         _updateRenderMode: function() {
-            switch (viewportManager.getViewport().type) {
-                case 'tablet':
-                case 'tablet-small':
-                    this.renderMode = 'collapse-mode';
-                    break;
-                case 'mobile-landscape':
-                case 'mobile':
-                    this.renderMode = 'toggle-mode';
-                    break;
+            if (viewportManager.isApplicable({
+                screenType: ['strict-tablet', 'strict-tablet-small']
+            })) {
+                this.renderMode = 'collapse-mode';
+            }
+
+            if (viewportManager.isApplicable({
+                screenType: 'mobile-landscape'
+            })) {
+                this.renderMode = 'toggle-mode';
             }
         },
 

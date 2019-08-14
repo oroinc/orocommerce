@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CouponUnassignActionHandler extends AbstractCouponMassActionHandler
 {

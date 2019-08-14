@@ -1153,6 +1153,101 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @param string $content
+     * @return NodeElement
+     */
+    private function getImageCell($content)
+    {
+        /** @var Grid $grid */
+        $grid = $this->elementFactory->createElement('Grid');
+        self::assertTrue($grid->isIsset(), 'Element "Grid" not found on the page');
+
+        return $grid->getRowByContent($content)
+            ->getCellByHeader('image');
+    }
+
+    /**
+     * @param string $imageType
+     * @param string $content
+     * @return NodeElement|mixed|null
+     */
+    private function getImageForProductInGrid($imageType, $content)
+    {
+        $imageId = $this->rememberedData[$imageType] ?? '';
+        self::assertNotEmpty($imageId, sprintf('No remembered image ID for "%s" image type', $imageType));
+
+        return $this->getImageCell($content)
+            ->find(
+                'xpath',
+                sprintf('//img[contains(@class, "thumbnail")][contains(@src, "%s")]', $imageId)
+            );
+    }
+
+    /**
+     * Example: I should not see remembered "listing" image for product with "SKU123"
+     *
+     * @Then /^I should not see remembered "(?P<imageType>[^"]*)" image for product with "(?P<content>[^"]*)"/
+     * @param string $imageType
+     * @param string $content
+     */
+    public function iShouldNotSeeRememberImageIdOnBackendProductsGrid($imageType, $content)
+    {
+        $image = $this->getImageForProductInGrid($imageType, $content);
+
+        self::assertEmpty($image, sprintf('Image "%s" found for product with "%s"', $imageType, $content));
+    }
+
+    /**
+     * Example: I should see remembered "main" image for product with "SKU123"
+     *
+     * @Then /^I should see remembered "(?P<imageType>[^"]*)" image for product with "(?P<content>[^"]*)"/
+     * @param string $imageType
+     * @param string $content
+     */
+    public function iShouldSeeRememberImageIdOnBackendProductsGrid($imageType, $content)
+    {
+        $image = $this->getImageForProductInGrid($imageType, $content);
+
+        self::assertNotEmpty($image, sprintf('No image "%s" found for product with "%s"', $imageType, $content));
+    }
+
+    /**
+     * Example: When I click on Image cell in grid row contains "Charlie"
+     *
+     * @Given /^(?:|I )click on Image cell in grid row contains "(?P<content>(?:[^"]|\\")*)"$/
+     *
+     * @param string $content
+     */
+    public function clickOnCell($content)
+    {
+        $this->getImageCell($content)
+            ->find('xpath', '//a[contains(@class, "view-image")]')
+            ->click();
+    }
+
+    /**
+     * Example: I should see remembered "main" image preview
+     *
+     * @Then /^(?:|I )should see remembered "(?P<imageType>[^"]*)" image preview$/
+     *
+     * @param string $imageType
+     */
+    public function iShouldSeeRememberedProductImagePreview($imageType)
+    {
+        $imageId = $this->rememberedData[$imageType] ?? '';
+        self::assertNotEmpty($imageId, sprintf('No remembered image ID for "%s" image type', $imageType));
+
+        $largeImage = $this->getSession()
+            ->getPage()
+            ->find(
+                'xpath',
+                sprintf('//img[contains(@class, "lg-image")][contains(@src, "%s")]', $imageId)
+            );
+
+        self::assertNotNull($largeImage, 'Large image not visible');
+    }
+
+    /**
      * Example: I should see remembered "listing" image in "Top Selling Items" section
      *
      * @Then /^I should see remembered "(?P<imageType>[^"]*)" image in "(?P<sectionName>[^"]*)" section$/

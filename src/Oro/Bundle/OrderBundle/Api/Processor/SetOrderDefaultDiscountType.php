@@ -18,10 +18,7 @@ class SetOrderDefaultDiscountType implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $discountsFieldName = $context->getResultFieldName('discounts');
         if (!$context->isFieldRequested($discountsFieldName)) {
@@ -34,7 +31,7 @@ class SetOrderDefaultDiscountType implements ProcessorInterface
                     $data[$discountsFieldName][$key]['type'] = 'order';
                 }
             }
-            $context->setResult($data);
+            $context->setData($data);
         }
     }
 }

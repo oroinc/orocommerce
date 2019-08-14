@@ -136,7 +136,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
         $this->assertContains(
             'Please select a category on the left or create new one.',
-            $crawler->filter('[data-role="content"] .tree-empty-content')->html()
+            $crawler->filter('[data-role="content"] .tree-empty-content .no-data')->html()
         );
     }
 

@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This form extension adds payment term association field to the Customer's form.

@@ -6,7 +6,7 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterface;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImageImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {

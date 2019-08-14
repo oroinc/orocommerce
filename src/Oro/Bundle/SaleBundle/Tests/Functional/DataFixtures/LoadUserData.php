@@ -300,11 +300,13 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $customerUser = $userManager->createUser();
 
             $customerUser
+                ->setOwner($defaultUser)
                 ->setEmail($item['email'])
                 ->setCustomer($this->getReference($item['customer']))
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)
+                ->setOwner($this->getReference(self::USER1))
                 ->setOrganization($organization)
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
@@ -328,18 +330,18 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected function loadUsers(ObjectManager $manager)
     {
-        /* @var $userManager UserManager */
-        $userManager    = $this->container->get('oro_user.manager');
+        /* @var UserManager $userManager */
+        $userManager = $this->container->get('oro_user.manager');
 
-        $defaultUser    = $this->getUser($manager);
+        $defaultUser = $this->getUser($manager);
 
-        $businessUnit   = $defaultUser->getOwner();
-        $organization   = $defaultUser->getOrganization();
+        $businessUnit = $defaultUser->getOwner();
+        $organization = $defaultUser->getOrganization();
+        $roles = $defaultUser->getRoles();
 
         foreach ($this->users as $item) {
             /* @var $user User */
             $user = $userManager->createUser();
-
             $user
                 ->setEmail($item['email'])
                 ->setFirstName($item['firstname'])
@@ -348,10 +350,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
+                ->addRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
+                ->setEnabled(true);
             $userManager->updateUser($user);
 
             $this->setReference($user->getUsername(), $user);

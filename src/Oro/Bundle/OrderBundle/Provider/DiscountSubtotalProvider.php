@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {

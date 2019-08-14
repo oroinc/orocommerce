@@ -1,0 +1,15 @@
+{% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+{% set productImageListing = record.getValue('productImageListing')|default(null) %}
+{% set productImageMain = record.getValue('productImageMain')|default(null) %}
+
+<a class="view-image no-hash"
+   tabindex="-1"
+   data-gallery="product-image{{ record.getValue('id') }}"
+   href="{{ Image.url(productImageMain ?: productImageListing, 'product_original') }}"
+>
+    <img class="thumbnail"
+         src="{{ Image.url(productImageListing ?: productImageMain, 'product_small') }}"
+         alt="{{ record.getValue('productName') }}"
+    >
+</a>

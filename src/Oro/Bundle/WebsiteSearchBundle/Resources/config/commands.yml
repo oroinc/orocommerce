@@ -1,6 +1,10 @@
 services:
-    Oro\Bundle\WebsiteSearchBundle\Command\ReindexCommand:
+    _defaults:
         public: false
-        class: Oro\Bundle\WebsiteSearchBundle\Command\ReindexCommand
+
+    Oro\Bundle\WebsiteSearchBundle\Command\ReindexCommand:
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'
         tags:
             - { name: console.command }

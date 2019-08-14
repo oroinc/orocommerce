@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This listener adds promotions table on order view and order edit pages.

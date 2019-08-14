@@ -59,6 +59,11 @@
             }
         }
     }
+
+    input {
+        width: 100%;
+        max-width: $field-width;
+    }
 }
 
 .scope-elements {

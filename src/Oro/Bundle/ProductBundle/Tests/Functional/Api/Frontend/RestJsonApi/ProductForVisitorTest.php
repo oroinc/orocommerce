@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductForVisitorTest extends FrontendRestJsonApiTestCase
 {
@@ -62,15 +63,7 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'not found http exception',
-                'detail' => 'An entity with the requested identifier does not exist.'
-            ],
-            $response,
-            404
-        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
     public function testTryToUpdate()

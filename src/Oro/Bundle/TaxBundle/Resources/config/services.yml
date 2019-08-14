@@ -303,7 +303,7 @@ services:
 
     oro_tax.provider.taxation_settings_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
-        public: false
+        public: true
         arguments:
             - '@oro_config.global'
             - '@oro_tax.factory.tax_base_exclusion'

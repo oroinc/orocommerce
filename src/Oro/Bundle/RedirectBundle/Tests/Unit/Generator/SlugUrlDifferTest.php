@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
 {

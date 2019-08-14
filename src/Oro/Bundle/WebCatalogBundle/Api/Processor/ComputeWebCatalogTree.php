@@ -39,17 +39,14 @@ class ComputeWebCatalogTree implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if ($context->isFieldRequested(self::FIELD_NAME, $data)) {
             $webCatalogId = $context->getResultFieldValue('id', $data);
             $webCatalog = $this->doctrineHelper->getEntityReference(WebCatalog::class, $webCatalogId);
             $root = $this->treeHandler->getTreeRootByWebCatalog($webCatalog);
             $data[self::FIELD_NAME] = $this->treeHandler->createTree($root);
-            $context->setResult($data);
+            $context->setData($data);
         }
     }
 }

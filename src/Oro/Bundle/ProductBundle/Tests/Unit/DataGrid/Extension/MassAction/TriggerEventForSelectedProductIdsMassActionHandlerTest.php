@@ -9,7 +9,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\MassActionInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 {

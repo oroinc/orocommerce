@@ -118,6 +118,7 @@ services:
 
     oro_visibility.visibility.resolver.category_visibility_resolver:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver'
+        public: true
         arguments:
             - "@doctrine"
             - "@oro_config.manager"

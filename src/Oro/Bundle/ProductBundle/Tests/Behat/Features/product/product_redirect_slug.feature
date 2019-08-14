@@ -1,4 +1,6 @@
 @fixture-OroProductBundle:product_slug.yml
+@skip
+
 Feature: Product redirect slug
   In order to have the ability to display a "friendly URL" address for customers
   As an administrator

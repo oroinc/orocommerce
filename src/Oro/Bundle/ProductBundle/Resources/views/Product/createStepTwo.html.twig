@@ -47,6 +47,13 @@
 
 {% block stats %}
     {{ parent() }}
+
+    <li>
+        {{- form.type.vars.label|trans -}}:&nbsp;{{- ('oro.product.type.' ~ form.type.vars.data)|trans|title -}}
+    </li>
+    <li>
+        {{- form.attributeFamily.vars.label|trans -}}:&nbsp;{{- form.attributeFamily.vars.data.defaultLabel|title -}}
+    </li>
     {% placeholder oro_product_step_two_info with {'form' : form} %}
 {% endblock stats %}
 

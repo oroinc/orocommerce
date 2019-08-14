@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 {

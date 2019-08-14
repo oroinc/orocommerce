@@ -371,7 +371,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
     - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
 #### ProductBundle
 * class `BooleanVariantFieldValueHandler`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/ProductBundle/ProductVariant/VariantFieldValueHandler/BooleanVariantFieldValueHandler.php "Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler")</sup>
-    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+    - changed signature of `__construct` method. New dependency on `Symfony\Contracts\Translation\TranslatorInterface` was added.
 * `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
 #### SEOBundle
 * service `oro_seo.event_listener.product_form_view`

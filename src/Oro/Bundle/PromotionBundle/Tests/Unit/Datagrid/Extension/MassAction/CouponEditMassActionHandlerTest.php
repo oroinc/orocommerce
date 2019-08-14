@@ -9,12 +9,12 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
     /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var Translator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
@@ -25,7 +25,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
 
     protected function setUp()
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(Translator::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
         parent::setUp();

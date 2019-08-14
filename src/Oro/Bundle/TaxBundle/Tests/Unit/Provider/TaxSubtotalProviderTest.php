@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,7 +43,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $this->translator->expects($this->any())->method('trans')->willReturnCallback(
             function ($message) {
                 return ucfirst($message);

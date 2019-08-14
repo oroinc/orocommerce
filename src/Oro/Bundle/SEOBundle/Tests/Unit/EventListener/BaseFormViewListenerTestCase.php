@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase

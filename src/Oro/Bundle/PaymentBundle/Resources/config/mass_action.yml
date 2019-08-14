@@ -6,6 +6,7 @@ services:
             - 'oro_payment_methods_configs_massaction'
             - true
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: paymentruleenable }
 
@@ -16,11 +17,13 @@ services:
             - 'oro_payment_methods_configs_massaction'
             - false
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: paymentruledisable }
 
     oro_payment.mass_action.status_handler:
         class: 'Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler'
+        public: true
         arguments:
             - 'oro.payment.datagrid.status.success_message'
             - 'OroPaymentBundle:PaymentMethodsConfigsRule'

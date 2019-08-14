@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
 {

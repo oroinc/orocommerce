@@ -4,31 +4,59 @@ namespace Oro\Bundle\ShoppingListBundle\Command;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Cron command to clear all expired customer visitors
  */
-class ClearExpiredCustomerVisitorsCommand extends ContainerAwareCommand implements CronCommandInterface
+class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommandInterface
 {
-    const NAME = 'oro:cron:customer-visitors:clear-expired';
-    const CHUNK_SIZE = 10000;
+    private const CHUNK_SIZE = 10000;
+
+    /** @var string */
+    protected static $defaultName = 'oro:cron:customer-visitors:clear-expired';
+
+    /** @var RegistryInterface */
+    private $doctrine;
+
+    /** @var ExtendDbIdentifierNameGenerator */
+    private $dbIdentifierNameGenerator;
+
+    /** @var ConfigManager */
+    private $configManager;
+
+    /**
+     * @param RegistryInterface $doctrine
+     * @param ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator
+     * @param ConfigManager $configManager
+     */
+    public function __construct(
+        RegistryInterface $doctrine,
+        ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator,
+        ConfigManager $configManager
+    ) {
+        $this->doctrine = $doctrine;
+        $this->dbIdentifierNameGenerator = $dbIdentifierNameGenerator;
+        $this->configManager = $configManager;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Clear expired customer visitors.');
+        $this->setDescription('Clear expired customer visitors.');
     }
 
     /**
@@ -37,14 +65,9 @@ class ClearExpiredCustomerVisitorsCommand extends ContainerAwareCommand implemen
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get('doctrine.orm.entity_manager')->getConnection();
-        /** @var ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator */
-        $dbIdentifierNameGenerator = $this->getContainer()->get('oro_entity_extend.db_id_name_generator');
-        $customerVisitorToShoppingListRelationTableName = $dbIdentifierNameGenerator->generateManyToManyJoinTableName(
-            CustomerVisitor::class,
-            'shoppingLists',
-            ShoppingList::class
-        );
+        $connection = $this->doctrine->getEntityManager()->getConnection();
+        $customerVisitorToShoppingListRelationTableName = $this->dbIdentifierNameGenerator
+            ->generateManyToManyJoinTableName(CustomerVisitor::class, 'shoppingLists', ShoppingList::class);
 
         $expiredLastVisitDate = $this->getExpiredLastVisitDate();
         do {
@@ -83,9 +106,7 @@ class ClearExpiredCustomerVisitorsCommand extends ContainerAwareCommand implemen
     protected function getExpiredLastVisitDate()
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $cookieLifetime = $this->getContainer()
-            ->get('oro_config.manager')
-            ->get('oro_customer.customer_visitor_cookie_lifetime_days');
+        $cookieLifetime = $this->configManager->get('oro_customer.customer_visitor_cookie_lifetime_days');
 
         $expiredLastVisitDate->modify(
             sprintf(

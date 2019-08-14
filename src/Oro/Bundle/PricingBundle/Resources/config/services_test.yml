@@ -1,0 +1,5 @@
+services:
+    oro_pricing.database_triggers.manager.combined_prices.test:
+        decorates: 'oro_pricing.database_triggers.manager.combined_prices'
+        parent: 'oro_pricing.database_triggers.manager.combined_prices'
+        public: true

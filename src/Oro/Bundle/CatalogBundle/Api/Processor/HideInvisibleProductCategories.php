@@ -38,10 +38,7 @@ class HideInvisibleProductCategories implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         $categoryFieldName = $context->getResultFieldName('category');
         $fieldConfig = $context->getConfig()->getField($categoryFieldName);
@@ -61,7 +58,7 @@ class HideInvisibleProductCategories implements ProcessorInterface
             }
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**

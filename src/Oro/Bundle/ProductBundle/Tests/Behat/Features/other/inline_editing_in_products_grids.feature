@@ -42,6 +42,7 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product2 |
     And I reload the page
+    And I show column Tax Code in grid
 
   Scenario Outline: Inline editing of Product fields in grid
     When I edit "Product2" <field> as "<input>"
@@ -87,10 +88,11 @@ Feature: Inline Editing in Products Grids
     When I edit "Product2" Name as "Product1" without saving
     And I click on empty space
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
-    Then I click "Apply" in modal window
-    Then I should see "Record has been successfully updated" flash message
-    Then I should see following records in grid:
+    And I click "Apply" in modal window
+    And I should see "Record has been successfully updated" flash message
+    And I should see following records in grid:
       | Product1 |
+    And I show column Tax Code in grid
 
   Scenario Outline: Inline editing of Product fields save by clicking on empty space
     When I edit "Product1" <field> as "<value>" with click on empty space
@@ -106,10 +108,11 @@ Feature: Inline Editing in Products Grids
     When I edit "Product1" Name as "Product2" by double click
     And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
-    Then I click "Apply" in modal window
-    Then I should see "Record has been successfully updated" flash message
-    Then I should see following records in grid:
+    And I click "Apply" in modal window
+    And I should see "Record has been successfully updated" flash message
+    And I should see following records in grid:
       | Product2 |
+    And I show column Tax Code in grid
 
   Scenario Outline: Inline editing of Product fields using double click
     When I edit "Product2" <field> as "<value>" by double click

@@ -64,6 +64,7 @@ services:
 
     oro_rfp.form.type.extension.frontend_request_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
+        public: true
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]

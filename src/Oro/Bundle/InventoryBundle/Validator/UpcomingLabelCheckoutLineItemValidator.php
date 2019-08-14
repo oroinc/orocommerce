@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provides upcoming notification message for checkout line item.

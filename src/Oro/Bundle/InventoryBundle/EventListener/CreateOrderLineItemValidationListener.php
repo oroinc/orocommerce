@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds validation errors to LineItemValidateEvent.

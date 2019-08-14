@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {

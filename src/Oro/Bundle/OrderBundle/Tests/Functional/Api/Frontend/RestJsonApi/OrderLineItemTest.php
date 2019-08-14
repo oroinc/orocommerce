@@ -58,7 +58,14 @@ class OrderLineItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToCreate()
@@ -156,9 +163,19 @@ class OrderLineItemTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderlineitems',
                 'id'          => '<toString(@another_order_line_item1->id)>',
                 'association' => 'order'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForOrderForCustomerFromAnotherDepartment()
@@ -168,9 +185,19 @@ class OrderLineItemTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderlineitems',
                 'id'          => '<toString(@another_order_line_item1->id)>',
                 'association' => 'order'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForOrder()

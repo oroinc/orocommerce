@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -40,7 +40,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
-        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
         return [
             new PreloadedExtension(

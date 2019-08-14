@@ -1,3 +1,4 @@
 services:
     oro_tax.tests.alias.transformer.tax_value:
         alias: oro_tax.transformer.tax_value
+        public: true

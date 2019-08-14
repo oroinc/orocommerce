@@ -11,7 +11,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -24,7 +24,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     protected $formatter;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|Translator
      */
     protected $translator;
 
@@ -48,7 +48,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
 
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()

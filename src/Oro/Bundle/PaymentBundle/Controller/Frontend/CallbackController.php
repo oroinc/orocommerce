@@ -21,7 +21,7 @@ class CallbackController extends Controller
      *     name="oro_payment_callback_return",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
-     * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
+     * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
      * @Method({"GET", "POST"})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
@@ -41,7 +41,7 @@ class CallbackController extends Controller
      *     name="oro_payment_callback_error",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
-     * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
+     * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
      * @Method({"GET", "POST"})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
@@ -63,7 +63,7 @@ class CallbackController extends Controller
      * )
      * @ParamConverter(
      *     "paymentTransaction",
-     *     options={"accessIdentifier" = "accessIdentifier", "accessToken" = "accessToken"}
+     *     options={"mapping": {"accessIdentifier": "accessIdentifier", "accessToken": "accessToken"}}
      * )
      * @Method("POST")
      * @param Request $request

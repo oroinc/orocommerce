@@ -65,5 +65,5 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
 - Symfony\Component\HttpKernel\Bundle\Bundle
 - Symfony\Component\HttpKernel\DependencyInjection\Extension
 - Symfony\Component\OptionsResolver\OptionsResolver
-- Symfony\Component\Translation\TranslatorInterface
+- Symfony\Contracts\Translation\TranslatorInterface
 - Symfony\Component\Validator\Validation

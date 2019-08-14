@@ -6,7 +6,7 @@ use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Data converter for promotion data.

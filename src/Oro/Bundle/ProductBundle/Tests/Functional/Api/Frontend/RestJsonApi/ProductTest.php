@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdm
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -536,14 +537,13 @@ class ProductTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
-                'detail' => 'An entity with the requested identifier does not exist.'
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
             ],
             $response,
-            404
+            Response::HTTP_FORBIDDEN
         );
     }
 

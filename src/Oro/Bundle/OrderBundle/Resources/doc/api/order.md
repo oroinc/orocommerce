@@ -47,7 +47,7 @@ Example:
         "data": [
           {
             "type": "orderlineitems",
-            "id": "1"
+            "id": "line_item_1"
           }
         ]
       },
@@ -58,7 +58,35 @@ Example:
         }
       }
     }
-  }
+  },
+  "included": [
+    {
+      "type": "orderlineitems",
+      "id": "line_item_1",
+      "attributes": {
+        "productSku": "4HC51",
+        "quantity": 19,     
+        "value": 23.55,
+        "currency": "USD",
+        "priceType": 10,
+        "shipBy": "2016-04-30"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "23"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "piece"
+          }
+        }      
+      }
+    }
+  ]
 }
 ```
 {@/request}
@@ -134,6 +162,10 @@ Delete a collection of order records.
 {@inheritdoc}
 
 **The required field**
+
+### source
+
+The entity from which this order was created.
 
 ## SUBRESOURCES
 
@@ -549,6 +581,33 @@ Example:
   "data": {
     "type": "paymentterms",
     "id": "2"
+  }
+}
+```
+{@/request}
+
+### source
+
+#### get_subresource
+
+Retrieve the entity from which a specific order was created.
+
+#### get_relationship
+
+Retrieve the ID the entity from which a specific order was created.
+
+#### update_relationship
+
+Retrieve the entity from which a specific order was created.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "shoppinglists",
+    "id": "1"
   }
 }
 ```

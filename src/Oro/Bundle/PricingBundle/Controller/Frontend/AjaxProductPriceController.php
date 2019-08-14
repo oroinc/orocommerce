@@ -3,6 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -34,9 +37,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
+        $matchedPrices = $this->get(MatchingPriceProvider::class)->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()
+            $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria()
         );
 
         return new JsonResponse($matchedPrices);
@@ -53,12 +56,26 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $currency = $request->get('currency');
         $result = false;
-        $userCurrencyManager = $this->get('oro_pricing.user_currency_manager');
+        $userCurrencyManager = $this->get(UserCurrencyManager::class);
         if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
             $userCurrencyManager->saveSelectedCurrency($currency);
             $result = true;
         }
 
         return new JsonResponse(['success' => $result]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                MatchingPriceProvider::class,
+                UserCurrencyManager::class,
+            ]
+        );
     }
 }

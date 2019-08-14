@@ -10,7 +10,7 @@ use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Handles the action of creating or editing a product. Allows to assign related or up-sell items to product.

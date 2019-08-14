@@ -13,7 +13,7 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {

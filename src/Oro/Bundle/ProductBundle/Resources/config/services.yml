@@ -322,6 +322,7 @@ services:
 
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
+        public: true
 
     oro_product.provider.product_inventory_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider'
@@ -330,6 +331,7 @@ services:
 
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
+        public: true
 
     oro_product.product_unit.cache:
         public: false
@@ -339,6 +341,7 @@ services:
 
     oro_product.provider.product_units_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_product.formatter.product_unit_label'
@@ -517,6 +520,14 @@ services:
             - [enableConfigurableProducts]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_all_product_visibility_limited" }
+
+    oro_product.autocomplete.product_families.search_handler:
+        class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductFamilySearchHandler'
+        arguments:
+            - '@doctrine'
+            - '@property_accessor'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_product_families' }
 
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
@@ -1259,6 +1270,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
+    oro_product.datagrid.event_listener.product_grid:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_datagrid.provider.selected_fields'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
         public: false
@@ -1287,6 +1306,7 @@ services:
 
     oro_product.provider.brand_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
+        public: true
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
@@ -1311,6 +1331,7 @@ services:
 
     oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
+        public: true
         arguments:
             - '@oro_config.manager'
             - '@translator'
@@ -1318,6 +1339,7 @@ services:
     oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
 

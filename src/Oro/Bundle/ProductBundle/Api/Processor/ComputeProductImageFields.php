@@ -39,10 +39,7 @@ class ComputeProductImageFields implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isFieldRequestedForCollection(self::TYPES_FIELD, $data)
             && !$context->isFieldRequestedForCollection(self::FILES_FIELD, $data)
@@ -68,7 +65,7 @@ class ComputeProductImageFields implements ProcessorInterface
             }
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**

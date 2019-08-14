@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds price info to records

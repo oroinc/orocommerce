@@ -1,7 +1,9 @@
+{% import 'OroCatalogBundle::macros.html.twig' as category %}
+
 <li>
     {{- form.category.vars.label|trans -}}:&nbsp;
     {%- if form.category.vars.data is not null -%}
-        {{- form.category.vars.data.defaultTitle|title -}}
+        {{- category.getFullPath(form.category.vars.data)|title -}}
     {%- else -%}
         {{- 'N/A'|trans -}}
     {%- endif -%}

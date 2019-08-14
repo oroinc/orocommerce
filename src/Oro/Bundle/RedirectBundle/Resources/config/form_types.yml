@@ -48,3 +48,4 @@ services:
 
     oro_redirect.form.transformer.prefix_with_redirect_to_string:
         class: 'Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer'
+        public: true

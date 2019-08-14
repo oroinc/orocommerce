@@ -20,7 +20,7 @@ class ClearExpiredShoppingListsCommandTest extends WebTestCase
 
     public function testShouldClearExpiredShoppingLists()
     {
-        $result = $this->runCommand(ClearExpiredShoppingListsCommand::NAME);
+        $result = $this->runCommand(ClearExpiredShoppingListsCommand::getDefaultName());
 
         $this->assertContains('Clear expired guest shopping lists completed', $result);
 

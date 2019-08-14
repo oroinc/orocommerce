@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Provider;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class VisibilityChoicesProvider
 {

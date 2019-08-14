@@ -36,5 +36,7 @@ services:
             - { name: console.command }
 
     Oro\Bundle\PricingBundle\Command\PriceListStorageReorganizeCommand:
+        arguments:
+            - '@oro_pricing.shard_manager'
         tags:
             - { name: console.command }

@@ -15,6 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -125,7 +126,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function createTransport(array $settings): PayPalSettings
     {
-        $propertyAccessor = $this->getContainer()->get('property_accessor');
+        $propertyAccessor = new PropertyAccessor();
         $transport = new PayPalSettings();
         foreach ($settings as $key => $value) {
             if ($this->isLocalizedProperty($key)) {

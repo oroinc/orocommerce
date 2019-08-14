@@ -5,18 +5,18 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Datagrid\Extension\MassAction;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponUnassignActionHandler;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
     /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var Translator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
     protected function setUp()
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(Translator::class);
 
         parent::setUp();
     }

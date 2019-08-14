@@ -1,14 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddItemView;
+    var QuickAddItemPriceView;
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
 
-    QuickAddItemView = BaseProductPricesView.extend({
+    QuickAddItemPriceView = BaseProductPricesView.extend({
         /**
          * @property {Object}
          */
@@ -47,8 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddItemView() {
-            QuickAddItemView.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddItemPriceView() {
+            QuickAddItemPriceView.__super__.constructor.apply(this, arguments);
         },
 
         /**
@@ -56,12 +56,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            QuickAddItemView.__super__.initialize.apply(this, arguments);
-        },
-
-        dispose: function() {
-            delete this.templates;
-            QuickAddItemView.__super__.dispose.apply(this, arguments);
+            QuickAddItemPriceView.__super__.initialize.apply(this, arguments);
         },
 
         updateModel: function(data) {
@@ -159,7 +154,7 @@ define(function(require) {
             if (!this.hintInitialized) {
                 this.initHint();
             }
-            return QuickAddItemView.__super__.renderHint.apply(this, arguments);
+            return QuickAddItemPriceView.__super__.renderHint.apply(this, arguments);
         },
 
         updateUI: function() {
@@ -174,5 +169,5 @@ define(function(require) {
         }
     });
 
-    return QuickAddItemView;
+    return QuickAddItemPriceView;
 });

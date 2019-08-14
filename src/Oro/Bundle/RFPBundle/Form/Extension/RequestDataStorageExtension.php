@@ -14,7 +14,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Pre-fills RFQ with requested products taken from product data storage.

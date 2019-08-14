@@ -16,7 +16,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 {

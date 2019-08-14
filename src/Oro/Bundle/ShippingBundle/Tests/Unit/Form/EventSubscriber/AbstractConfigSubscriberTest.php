@@ -37,7 +37,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 {

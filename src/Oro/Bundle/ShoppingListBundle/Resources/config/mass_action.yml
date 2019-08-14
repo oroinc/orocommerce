@@ -5,11 +5,13 @@ services:
             - '@oro_entity_merge.metadata.registry'
             - '@translator'
         shared: false
+        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: addproducts }
 
     oro_shopping_list.mass_action.add_products_handler:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler'
+        public: true
         arguments:
             - '@oro_shopping_list.handler.shopping_list_line_item'
             - '@oro_shopping_list.service.message_generator'

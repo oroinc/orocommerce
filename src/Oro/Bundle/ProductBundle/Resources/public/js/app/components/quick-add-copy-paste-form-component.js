@@ -6,7 +6,6 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
 
     require('jquery.validate');
 
@@ -170,6 +169,8 @@ define(function(require) {
             this.unbindRowEvents();
             this.updateFieldValue();
             this.enableForm();
+
+            mediator.trigger('quick-add-copy-paste-form:process-complete');
         },
 
         /**
@@ -212,7 +213,7 @@ define(function(require) {
                     raw: [parts[0]],
                     sku: parts[1].toUpperCase(),
                     quantity: parseFloat(parts[2]),
-                    unit: parts[3] ? parts[3].toLowerCase() : void 0
+                    unit: parts[3] || void 0
                 };
 
                 var existItem = _.findWhere(this.parsedItems, {sku: product.sku, unit: product.unit});
@@ -234,15 +235,9 @@ define(function(require) {
          * @private
          */
         _rowMatcher: function(productInfo) {
-            var query = {
-                sku: productInfo.sku ? productInfo.sku.toUpperCase() : '',
-                units: [
-                    productInfo.unit ? productInfo.unit.toLowerCase() : '',
-                    productInfo.unit_deferred ? productInfo.unit_deferred.toLowerCase() : ''
-                ]
-            };
-
-            return _.partial(QuickAddCopyPasteFormComponent.matcher, query);
+            return _.partial(function(query, parsedItem) {
+                return query.sku.toUpperCase() === parsedItem.sku && query.unit_raw === parsedItem.unit;
+            }, productInfo);
         },
 
         /**
@@ -299,7 +294,6 @@ define(function(require) {
             }
 
             data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
-            $('.add-list-item').data('row-add-only-one', true).click();
             this._showErrorMessage();
 
             this.errorCount++;
@@ -326,7 +320,6 @@ define(function(require) {
         onUnitError: function(data) {
             if (_.some(this.parsedItems, this._rowMatcher(data.item))) {
                 data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
-                $('.add-list-item').data('row-add-only-one', true).click();
                 this._showErrorMessage();
                 this.errorCount++;
 
@@ -374,16 +367,6 @@ define(function(require) {
             delete this.parsedItems;
 
             QuickAddCopyPasteFormComponent.__super__.dispose.call(this);
-        }
-    }, {
-        matcher: function(query, parsedItem) {
-            if (parsedItem.sku !== query.sku) {
-                return false;
-            } else if (parsedItem.unit === void 0) {
-                return true;
-            } else {
-                return query.units.indexOf(parsedItem.unit) !== -1;
-            }
         }
     });
 

@@ -3,18 +3,18 @@
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
 
-    <div data-page-component-module="oroui/js/app/components/view-component"
-         data-page-component-options="{{ {
-             view: 'oroproduct/js/app/views/quick-add-item-view',
-             changeQuantity: true
-         }|json_encode }}"
-         data-content="{{ name }}"
+    <div data-content="{{ name }}"
          data-validation-optional-group
          data-role="row"
          class="quick-order-add__row fields-row"
          {{ block('widget_container_attributes') }}
     >
-        <div class="quick-order-add__row-content">
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'oroproduct/js/app/views/quick-add-item-view',
+                 changeQuantity: true
+             }|json_encode }}"
+             class="quick-order-add__row-content">
             <div class="quick-order-add__col quick-order-add__product">
                 <label class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</label>
                 {{ form_widget(form.productDisplayName, {attr: {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LowInventoryCheckoutLineItemValidator
 {

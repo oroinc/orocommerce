@@ -55,7 +55,14 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetForCustomerFromAnotherDepartment()
@@ -66,7 +73,14 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToCreate()
@@ -138,17 +152,37 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orderlineitems', 'id' => '<toString(@order3_line_item1->id)>', 'association' => 'order']
+            ['entity' => 'orderlineitems', 'id' => '<toString(@order3_line_item1->id)>', 'association' => 'order'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orderlineitems', 'id' => '<toString(@order3_line_item1->id)>', 'association' => 'order']
+            ['entity' => 'orderlineitems', 'id' => '<toString(@order3_line_item1->id)>', 'association' => 'order'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetSubresourceForOrderForCustomerFromAnotherDepartment()
@@ -158,9 +192,19 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderlineitems',
                 'id'          => '<toString(@another_order_line_item1->id)>',
                 'association' => 'order'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToGetRelationshipForOrderForCustomerFromAnotherDepartment()
@@ -170,9 +214,19 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
                 'entity'      => 'orderlineitems',
                 'id'          => '<toString(@another_order_line_item1->id)>',
                 'association' => 'order'
-            ]
+            ],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdateRelationshipForOrder()

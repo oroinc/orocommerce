@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 {

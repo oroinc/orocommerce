@@ -442,6 +442,7 @@ services:
 
     oro_seo.provider.sitemap_generation_scheduler:
         class: Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler
+        public: true
         arguments:
             - '@oro_message_queue.client.message_producer'
 

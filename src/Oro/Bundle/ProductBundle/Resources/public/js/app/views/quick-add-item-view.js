@@ -58,7 +58,7 @@ define(function(require) {
         listen: {
             'autocomplete:productFound mediator': 'updateModel',
             'autocomplete:productNotFound mediator': 'updateModelNotFound',
-            'quick-add-form:rows-ready mediator': 'updateModelFromData',
+            'quick-add-form-row:update mediator': 'updateRow',
             'quick-add-form:clear mediator': 'clearSku'
         },
 
@@ -142,41 +142,42 @@ define(function(require) {
             }
         },
 
-        updateModelFromData: function(data) {
-            var obj = data.item;
-            if (!obj || !this.checkEl(data.$el)) {
+        updateRow: function(data) {
+            if (!data.item || !this.checkEl(data.$el)) {
                 return;
             }
 
-            var canBeUpdated = this.canBeUpdated(data.item);
+            this.model.set('unit_raw', data.item.unit);
+            this.updateModelFromData(data);
+        },
+
+        updateModelFromData: function(data) {
+            var item = data.item;
+            var canBeUpdated = this.canBeUpdated(item);
+
             if (this.model.get('sku') && !canBeUpdated) {
                 return;
             }
 
-            var resolvedUnitCode = this._resolveUnitCode(obj.unit);
+            var resolvedUnitCode = this._resolveUnitCode(item.unit);
 
             this.model.set({
-                sku: obj.sku,
-                skuHiddenField: obj.sku,
+                sku: item.sku,
+                skuHiddenField: item.sku,
                 quantity_changed_manually: true,
                 quantity: canBeUpdated
-                    ? parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
-                unit_deferred: resolvedUnitCode ? resolvedUnitCode : obj.unit
+                    ? parseFloat(this.model.get('quantity')) + parseFloat(item.quantity) : item.quantity,
+                unit_deferred: resolvedUnitCode ? resolvedUnitCode : item.unit
             });
 
             if (canBeUpdated) {
                 mediator.trigger('quick-add-copy-paste-form:update-product', {
                     $el: this.$el,
-                    item: obj
+                    item: item
                 });
             }
 
-            var triggerBlurEvent = true;
-            if (_.has(data, 'triggerBlurEvent')) {
-                triggerBlurEvent = data.triggerBlurEvent;
-            }
-
-            this.updateUI(triggerBlurEvent);
+            this.updateUI(_.result(data, 'triggerBlurEvent', true));
         },
 
         updateModel: function(data) {
@@ -236,9 +237,8 @@ define(function(require) {
         },
 
         checkEl: function($el) {
-            return $el !== undefined &&
-                (this.$el.attr('id') === $el.attr('id') ||
-                this.$el.attr('id') === $el.parents('.quick-order-add__row').attr('id'));
+            return $el && $el.closest('.quick-order-add__row').attr('id') ===
+                this.$el.closest('.quick-order-add__row').attr('id');
         },
 
         canBeUpdated: function(item) {
@@ -253,37 +253,28 @@ define(function(require) {
             if (this.model.get('unit_deferred')) {
                 var unitDeferred = this.model.get('unit_deferred');
                 this.model.set('unit', this._resolveUnitCode(unitDeferred));
+                this.model.set('unit_deferred', '');
             }
             this.updateUI();
         },
 
         /**
-         * Gets valid unit code by unit label or code case insensitively.
+         * Gets valid unit code by unit label case insensitively.
          *
-         * @param {String} unit
+         * @param {String|undefined} unit
          * @returns {String|undefined}
          * @private
          */
         _resolveUnitCode: function(unit) {
-            var labels = UnitsUtil.getUnitsLabel(this.model);
-            unit = unit ? unit.toLowerCase() : undefined;
-
-            // Finds valid unit code if unit is unit code.
-            var unitCode = _.find(_.keys(labels), function(unitCode) {
-                return unitCode.toLowerCase() === unit;
-            });
-
-            // Finds valid unit label if unit is unit label.
-            var unitLabel = _.find(labels, function(unitLabel) {
-                return unitLabel.toLowerCase() === unit;
-            });
-
-            // If unit label is found, gets unit code by unit label.
-            if (unitLabel !== undefined) {
-                unitCode = _.invert(labels)[unitLabel];
+            if (_.isString(unit)) {
+                unit = unit.toLowerCase();
             }
 
-            return unitCode;
+            var labels = UnitsUtil.getUnitsLabel(this.model);
+
+            return _.findKey(labels, function(unitLabel) {
+                return unitLabel.toLowerCase() === unit;
+            });
         },
 
         publishModelChanges: function() {
@@ -296,7 +287,9 @@ define(function(require) {
         },
 
         showUnitError: function() {
-            this.getValidator().showErrors(this.getUnitError());
+            var unitName = _.escape(this.model.get('unit_raw') || this.model.get('unit') ||
+                this.model.get('unit_deferred'));
+            this.getValidator().showLabel(this.getElement('unit')[0], __(this.options.unitErrorText, {unit: unitName}));
         },
 
         getValidator: function() {
@@ -305,15 +298,6 @@ define(function(require) {
             }
 
             return this.validator;
-        },
-
-        getUnitError: function() {
-            var unitName = _.escape(this.model.get('unit') || this.model.get('unit_deferred'));
-            var error = {};
-
-            error[this.getElement('unit').attr('name')] = __(this.options.unitErrorText, {unit: unitName});
-
-            return error;
         },
 
         unitInvalid: function() {
@@ -328,7 +312,7 @@ define(function(require) {
 
             this.getElement('unit').inputWidget('refresh');
 
-            var eventData = {$el: this.$el, item: this.model.attributes};
+            var eventData = {$el: this.$el, item: this.model.toJSON()};
 
             if (this.model.get('sku') && this.unitInvalid()) {
                 this.showUnitError();

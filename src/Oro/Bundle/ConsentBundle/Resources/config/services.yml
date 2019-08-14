@@ -112,6 +112,7 @@ services:
 
     oro_consent.datagrid.landing_page_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\LandingPageProvider'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_locale.helper.localization'

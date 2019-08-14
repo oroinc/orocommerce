@@ -35,12 +35,12 @@ class ProductCollectionsScheduleConfigurationListener
     {
         if ($event->isChanged(self::CONFIG_FIELD)) {
             $this->deferredScheduler->removeSchedule(
-                ProductCollectionsIndexCronCommand::NAME,
+                ProductCollectionsIndexCronCommand::getDefaultName(),
                 [],
                 $event->getOldValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->addSchedule(
-                ProductCollectionsIndexCronCommand::NAME,
+                ProductCollectionsIndexCronCommand::getDefaultName(),
                 [],
                 $event->getNewValue(self::CONFIG_FIELD)
             );

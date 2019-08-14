@@ -13,8 +13,6 @@ data:
           shippingMethodType: null
           estimatedShippingCostAmount: null
           overriddenShippingCostAmount: null
-          sourceEntityClass: null
-          sourceEntityId: null
           sourceEntityIdentifier: null
           totalDiscountsAmount: null
           createdAt: '@simple_order->createdAt->format("Y-m-d\TH:i:s\Z")'
@@ -34,6 +32,8 @@ data:
               data:
                   type: paymentterms
                   id: '<toString(@payment_term.net_10->id)>'
+          source:
+              data: null
           owner:
               data:
                   type: users

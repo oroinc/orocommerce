@@ -1,0 +1,8 @@
+{%- macro getFullPath(category) -%}
+    {% import _self as categories %}
+
+    {%- if category.parentCategory is not empty -%}
+        {{- categories.getFullPath(category.parentCategory) ~ ' / ' -}}
+    {%- endif -%}
+    {{- category.defaultTitle -}}
+{%- endmacro -%}
