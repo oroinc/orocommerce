@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Config\FilterFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
+use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
@@ -27,18 +27,18 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
     /** @var AttributeTypeRegistry */
     private $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider */
+    /** @var AttributeConfigurationProviderInterface */
     private $configurationProvider;
 
     /**
      * @param AttributeManager               $attributeManager
      * @param AttributeTypeRegistry          $attributeTypeRegistry
-     * @param AttributeConfigurationProvider $configurationProvider
+     * @param AttributeConfigurationProviderInterface $configurationProvider
      */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
-        AttributeConfigurationProvider $configurationProvider
+        AttributeConfigurationProviderInterface $configurationProvider
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
