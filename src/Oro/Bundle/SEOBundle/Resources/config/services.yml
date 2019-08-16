@@ -243,6 +243,7 @@ services:
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
     oro_seo.sitemap.provider.cms_page_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\SwitchableUrlItemsProvider
         parent: oro_seo.sitemap.provider.url_items_provider
         public: false
         calls:
@@ -250,6 +251,7 @@ services:
             - ['setEntityClass', ['%oro_cms.entity.page.class%']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_cms_page']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_cms_page']]
+            - ['setExcludeProviderKey', ['oro_seo.sitemap_exclude_landing_pages']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'page' }
 

@@ -30,7 +30,9 @@ oro:
                         weekly.label: Weekly (0 0 * * 0)
                         daily.label: Daily (0 0 * * *)
                         hourly.label: Hourly (0 * * * *)
-
+                sitemap_exclude_landing_pages:
+                    label: Exclude direct URLs of landing pages
+                    tooltip: Landing pages may be accessed either directly or via the Web Catalog nodes that they are assigned to
 
 oro.product.meta_titles:
     label: Meta title
