@@ -31,6 +31,8 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         $this->client->useHashNavigation(true);
 
         parent::setUp();
+        static::getContainer()->get('request_stack')
+            ->push(Request::create($this->getUrl('oro_promotion_frontend_add_coupon')));
     }
 
     /**

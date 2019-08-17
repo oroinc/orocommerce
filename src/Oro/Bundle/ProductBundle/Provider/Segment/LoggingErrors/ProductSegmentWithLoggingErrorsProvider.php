@@ -4,9 +4,9 @@ namespace Oro\Bundle\ProductBundle\Provider\Segment\LoggingErrors;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -14,34 +14,28 @@ use Psr\Log\LoggerInterface;
  */
 class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderInterface
 {
-    /**
-     * @var SegmentManager
-     */
+    /** @var SegmentManager */
     private $segmentManager;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @var WebsiteManager
-     */
-    private $websiteManager;
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
 
     /**
-     * @param SegmentManager $segmentManager
-     * @param LoggerInterface $logger
-     * @param WebsiteManager $websiteManager
+     * @param SegmentManager         $segmentManager
+     * @param LoggerInterface        $logger
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         SegmentManager $segmentManager,
         LoggerInterface $logger,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->segmentManager = $segmentManager;
         $this->logger = $logger;
-        $this->websiteManager = $websiteManager;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -51,16 +45,19 @@ class ProductSegmentWithLoggingErrorsProvider implements ProductSegmentProviderI
      */
     public function getProductSegmentById($segmentId)
     {
-        $website = $this->websiteManager->getCurrentWebsite();
-        $segment = $this->segmentManager->findById($segmentId);
+        $organization = $this->tokenAccessor->getOrganization();
+        if (null === $organization) {
+            return null;
+        }
 
-        if (!$segment) {
+        $segment = $this->segmentManager->findById($segmentId);
+        if (null === $segment) {
             $this->logger->error('Segment was not found', ['id' => $segmentId]);
 
             return null;
         }
 
-        if ($segment->getOrganization() !== $website->getOrganization()) {
+        if ($segment->getOrganization()->getId() !== $organization->getId()) {
             return null;
         }
 
