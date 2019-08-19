@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Acl\Voter;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,15 +13,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class FrontendQuotePermissionVoter extends Voter
 {
-    /** @var CurrentApplicationProviderInterface */
-    protected $applicationProvider;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
     /**
-     * @param CurrentApplicationProviderInterface $applicationProvider
+     * @param FrontendHelper $frontendHelper
      */
-    public function __construct(CurrentApplicationProviderInterface $applicationProvider)
+    public function __construct(FrontendHelper $frontendHelper)
     {
-        $this->applicationProvider = $applicationProvider;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -30,7 +29,7 @@ class FrontendQuotePermissionVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $subject instanceof Quote && $this->isValidApplication();
+        return $subject instanceof Quote && $this->frontendHelper->isFrontendRequest();
     }
 
     /**
@@ -40,13 +39,5 @@ class FrontendQuotePermissionVoter extends Voter
     {
         /** @var $subject Quote */
         return $subject->isAvailableOnFrontend();
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isValidApplication()
-    {
-        return $this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION;
     }
 }

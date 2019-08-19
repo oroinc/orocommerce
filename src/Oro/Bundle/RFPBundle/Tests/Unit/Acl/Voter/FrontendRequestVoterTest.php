@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Acl\Voter;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
@@ -17,8 +17,8 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var ApplicationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $applicationProvider;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $frontendHelper;
 
     /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $workflowManager;
@@ -39,29 +39,31 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityClass')
             ->willReturnCallback([ClassUtils::class, 'getClass']);
 
-        $this->applicationProvider = $this->createMock(ApplicationProvider::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->token = $this->createMock(TokenInterface::class);
 
         $this->voter = new FrontendRequestVoter(
             $this->doctrineHelper,
-            $this->applicationProvider,
+            $this->frontendHelper,
             $this->workflowManager
         );
         $this->voter->setClassName(Request::class);
     }
 
-    public function testVoteWithActiveFrontoffice()
+    public function testVoteForFrontend()
     {
         $definition = new WorkflowDefinition();
         $definition->setExclusiveRecordGroups(['b2b_rfq_frontoffice_flow']);
 
-        $workflow = $this->getMockBuilder(Workflow::class)->disableOriginalConstructor()->getMock();
-        $workflow->expects($this->once())->method('getDefinition')->willReturn($definition);
+        $workflow = $this->createMock(Workflow::class);
+        $workflow->expects($this->once())
+            ->method('getDefinition')
+            ->willReturn($definition);
 
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
         $this->workflowManager->expects($this->once())
             ->method('getApplicableWorkflows')
@@ -74,11 +76,11 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testVoteWithInactiveFrontoffice()
+    public function testVoteForFrontendAndWithoutApplicableWorkflows()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
         $this->workflowManager->expects($this->once())
             ->method('getApplicableWorkflows')
@@ -91,13 +93,14 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testVoteWithUnknownApplication()
+    public function testVoteForBackend()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn('unknown_application');
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
-        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
+        $this->workflowManager->expects($this->never())
+            ->method('getApplicableWorkflows');
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,
@@ -107,9 +110,11 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
 
     public function testVoteWithUnsupportedAttribute()
     {
-        $this->applicationProvider->expects($this->never())->method('getCurrentApplication');
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
 
-        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
+        $this->workflowManager->expects($this->never())
+            ->method('getApplicableWorkflows');
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,
@@ -119,9 +124,11 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
 
     public function testVoteWithUnsupportedClass()
     {
-        $this->applicationProvider->expects($this->never())->method('getCurrentApplication');
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
 
-        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
+        $this->workflowManager->expects($this->never())
+            ->method('getApplicableWorkflows');
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,

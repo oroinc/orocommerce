@@ -502,14 +502,14 @@ services:
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
-            - "@request_stack"
-            - "@oro_product.product.manager"
-            - "@oro_locale.helper.localization"
+            - '@request_stack'
+            - '@oro_product.product.manager'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_locale.helper.localization'
+            - '@oro_frontend.request.frontend_helper'
         calls:
-            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-            - [setAclHelper,["@oro_security.acl_helper"]]
-            - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
-            - [setSearchRepository,["@oro_product.website_search.repository.product"]]
+            - [initDoctrinePropertiesByManagerRegistry, ['@doctrine']]
+            - [setAclHelper, ['@oro_security.acl_helper']]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 

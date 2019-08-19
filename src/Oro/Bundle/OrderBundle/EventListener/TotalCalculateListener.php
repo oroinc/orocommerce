@@ -2,43 +2,40 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormRegistryInterface;
 
+/**
+ * Recalculates order totals based of request parameters.
+ */
 class TotalCalculateListener
 {
-    /** @var array */
-    protected $forms = [
-        ActionCurrentApplicationProvider::DEFAULT_APPLICATION => OrderType::class
-    ];
-
     /** @var FormFactory */
-    protected $formFactory;
-
-    /** @var CurrentApplicationProviderInterface */
-    protected $applicationProvider;
+    private $formFactory;
 
     /** @var FormRegistryInterface */
-    protected $formRegistry;
+    private $formRegistry;
+
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
     /**
-     * @param FormFactory $formFactory
-     * @param CurrentApplicationProviderInterface $applicationProvider
+     * @param FormFactory           $formFactory
      * @param FormRegistryInterface $formRegistry
+     * @param FrontendHelper        $frontendHelper
      */
     public function __construct(
         FormFactory $formFactory,
-        CurrentApplicationProviderInterface $applicationProvider,
-        FormRegistryInterface $formRegistry
+        FormRegistryInterface $formRegistry,
+        FrontendHelper $frontendHelper
     ) {
         $this->formFactory = $formFactory;
-        $this->applicationProvider = $applicationProvider;
         $this->formRegistry = $formRegistry;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -46,44 +43,25 @@ class TotalCalculateListener
      */
     public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $event)
     {
-        /** @var Order $entity */
         $entity = $event->getEntity();
         $request = $event->getRequest();
 
-        if ($entity instanceof Order) {
-            $currentApplication = $this->applicationProvider->getCurrentApplication();
-            if (!$this->isDefinedForm($currentApplication)) {
-                return;
-            }
-
-            $formName = $this->getFormName($this->forms[$currentApplication]);
-            if (!$request->request->has($formName)) {
-                return;
-            }
-
-            $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
+        if ($entity instanceof Order
+            && !$this->frontendHelper->isFrontendRequest()
+            && $request->request->has($this->getFormName(OrderType::class))
+        ) {
+            $form = $this->formFactory->create(OrderType::class, $entity);
             $form->submit($request->get($form->getName()));
         }
     }
 
     /**
-     * @param string $formClass
+     * @param string $type
+     *
      * @return string
      */
-    private function getFormName($formClass)
+    private function getFormName(string $type): string
     {
-        $type = $this->formRegistry->getType($formClass);
-
-        return $type->getBlockPrefix();
-    }
-
-    /**
-     * @param string $currentApplication - Application Name
-     *
-     * @return bool
-     */
-    protected function isDefinedForm($currentApplication)
-    {
-        return array_key_exists($currentApplication, $this->forms) && $this->forms[$currentApplication];
+        return $this->formRegistry->getType($type)->getBlockPrefix();
     }
 }
