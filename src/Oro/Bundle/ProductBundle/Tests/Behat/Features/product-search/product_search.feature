@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-16057
 @ticket-BB-16275
+@ticket-BB-17352
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
@@ -11,6 +12,10 @@ Feature: Product search
 
   Scenario: Feature Background
     Given I enable the existing localizations
+    And sessions active:
+      | Admin   | first_session  |
+      | User    | second_session |
+    And I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
 
@@ -47,3 +52,25 @@ Feature: Product search
     And click "Search Button"
     Then I should see "All Products"
     And number of records in "Product Frontend Grid" should be 3
+
+  Scenario: Check the search by one symbol
+    Given I type "Z" in "search"
+    When click "Search Button"
+    Then I should see "Search Results for \"Z\""
+    And number of records in "Product Frontend Grid" should be 0
+
+  Scenario: Change translation key
+    Given I proceed as the Admin
+    And I login as administrator
+    And I go to System / Localization / Translations
+    And I filter Key as equal to "oro.product.search.search_title.title"
+    And I edit "oro.product.search.search_title.title" Translated Value as "{0} All Products|]1,Inf] Search Results for %text%"
+    And I click "Update Cache"
+    Then I should see "Translation Cache has been updated" flash message
+
+  Scenario: Check the search by one symbol with incorrect transchoice
+    Given I proceed as the User
+    And I type "Z" in "search"
+    When click "Search Button"
+    Then I should see "{0} All Products|]1,Inf] Search Results for Z 1"
+    And number of records in "Product Frontend Grid" should be 0

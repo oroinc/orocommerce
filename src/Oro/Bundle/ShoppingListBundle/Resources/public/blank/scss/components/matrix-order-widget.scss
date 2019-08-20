@@ -657,7 +657,7 @@
     }
 }
 
-@include breakpoint('strict-desktop') {
+@include breakpoint('desktop') {
     .matrix-order-widget {
         &__form--inline & {
             &__summary--inline {

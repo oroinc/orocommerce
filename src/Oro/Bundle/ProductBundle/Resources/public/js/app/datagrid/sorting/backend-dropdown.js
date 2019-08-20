@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BackendSortingDropdown;
-    var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var viewportManager = require('oroui/js/viewport-manager');
     var SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
@@ -42,10 +41,9 @@ define(function(require) {
         /**
          * Viewports for switch to FullScreen mode
          */
-        fullscreenMode: [
-            'mobile-landscape',
-            'mobile'
-        ],
+        fullscreenMode: {
+            maxScreenType: 'mobile-landscape'
+        },
 
         /**
          * @inheritDoc
@@ -85,9 +83,7 @@ define(function(require) {
          * @inheritDoc
          */
         initSubview: function(vp) {
-            var viewport = vp || viewportManager.getViewport().type;
-
-            if (_.contains(this.fullscreenMode, viewport)) {
+            if (viewportManager.isApplicable(this.fullscreenMode)) {
                 this.subview('sortingView', new FullscreenSorting({
                     el: this.$('select')
                 }));

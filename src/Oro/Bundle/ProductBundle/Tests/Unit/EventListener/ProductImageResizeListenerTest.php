@@ -41,7 +41,8 @@ class ProductImageResizeListenerTest extends \PHPUnit\Framework\TestCase
                 ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
                 [
                     'productImageId' => self::PRODUCT_IMAGE_ID,
-                    'force' => self::FORCE_OPTION
+                    'force' => self::FORCE_OPTION,
+                    'dimensions' => null
                 ]
             );
 
