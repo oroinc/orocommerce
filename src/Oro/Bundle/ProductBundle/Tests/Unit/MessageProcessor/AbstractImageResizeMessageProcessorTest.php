@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\MessageProcessor;
 
 use Doctrine\ORM\EntityRepository;
-use Liip\ImagineBundle\Binary\BinaryInterface;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
@@ -117,19 +116,20 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
     }
 
     /**
+     * @param array|null $dimensions
      * @return DbalMessage
      */
-    protected function prepareValidMessage()
+    protected function prepareValidMessage(array $dimensions = null)
     {
-        return $this->prepareMessage(JSON::encode(self::$validData));
+        $data = self::$validData;
+        if ($dimensions) {
+            $data['dimensions'] = $dimensions;
+        }
+        return $this->prepareMessage(JSON::encode($data));
     }
 
-    protected function prepareDependencies()
+    protected function prepareDependencies($image)
     {
-        $image = $this->prophesize(File::class);
-        $image->getId()->willReturn(self::PRODUCT_IMAGE_ID);
-        $image->getId()->willReturn(null);
-
         $productImage = $this->prophesize(StubProductImage::class);
         $productImage->getImage()->willReturn($image->reveal());
         $productImage->getTypes()->willReturn([
@@ -143,31 +143,23 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
                 [
                     'main' => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
                     'listing' => new ThemeImageTypeDimension(self::LARGE, 100, 100),
-                    'additional' => new ThemeImageTypeDimension(self::ORIGINAL, null, null)
+                    'additional' => new ThemeImageTypeDimension(self::SMALL, 50, 50)
                 ]
             );
 
         $this->filterLoader->load()->shouldBeCalled();
         $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
+    }
 
-        $this->attachmentManager->getFilteredImageUrl($image, self::ORIGINAL)->willReturn(self::PATH_ORIGINAL);
-        $this->attachmentManager->getFilteredImageUrl($image, self::LARGE)->willReturn(self::PATH_LARGE);
-        $this->attachmentManager->getFilteredImageUrl($image, self::SMALL)->willReturn(self::PATH_SMALL);
+    /**
+     * @return \Prophecy\Prophecy\ObjectProphecy
+     */
+    protected function getImage(): \Prophecy\Prophecy\ObjectProphecy
+    {
+        $image = $this->prophesize(File::class);
+        $image->getId()->willReturn(self::PRODUCT_IMAGE_ID);
+        $image->getId()->willReturn(null);
 
-        $this->mediaCacheManager->exists(self::PATH_ORIGINAL)->willReturn(false);
-        $this->mediaCacheManager->exists(self::PATH_LARGE)->willReturn(false);
-        $this->mediaCacheManager->exists(self::PATH_SMALL)->willReturn(true);
-
-        $filteredImageOriginal = $this->prophesize(BinaryInterface::class);
-        $filteredImageOriginal->getContent()->willReturn(self::CONTENT_ORIGINAL);
-        $filteredImageLarge = $this->prophesize(BinaryInterface::class);
-        $filteredImageLarge->getContent()->willReturn(self::CONTENT_LARGE);
-
-        $this->imageResizer->resizeImage($image, self::ORIGINAL)->willReturn($filteredImageOriginal->reveal());
-        $this->imageResizer->resizeImage($image, self::LARGE)->willReturn($filteredImageLarge->reveal());
-        $this->imageResizer->resizeImage($image, self::SMALL)->shouldNotBeCalled();
-
-        $this->mediaCacheManager->store(self::CONTENT_ORIGINAL, self::PATH_ORIGINAL)->shouldBeCalled();
-        $this->mediaCacheManager->store(self::CONTENT_LARGE, self::PATH_LARGE)->shouldBeCalled();
+        return $image;
     }
 }
