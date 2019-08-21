@@ -181,3 +181,10 @@ services:
             - '@oro_entity_config.slug.generator'
         tags:
             - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
+
+    oro_product.importexport.configuration_provider.filtered_products:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\FilteredProductsExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }

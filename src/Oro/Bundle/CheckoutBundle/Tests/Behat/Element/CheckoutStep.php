@@ -7,6 +7,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\SubtotalAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
+/**
+ * CheckoutStep element with getSubtotal, assertTitle and getLineItems methods
+ */
 class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalAwareInterface
 {
     /**
@@ -21,17 +24,41 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
         return $subtotals->getSubtotal($subtotalName);
     }
 
+    /**
+     * @param string $title
+     */
     public function assertTitle($title)
+    {
+        $currentTitleText = $this->getStepTitle();
+        self::assertContains(
+            $title,
+            $currentTitleText,
+            sprintf('Current title "%s" does not contain expected "%s" ', $currentTitleText, $title)
+        );
+    }
+
+    /**
+     * @param string $title
+     */
+    public function assertNotTitle($title)
+    {
+        $currentTitleText = $this->getStepTitle();
+        self::assertNotContains(
+            $title,
+            $currentTitleText,
+            sprintf('Current title "%s" was not expected to contain "%s"', $currentTitleText, $title)
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getStepTitle(): string
     {
         $currentTitle = $this->getElement('CheckoutStepTitle');
         self::assertTrue($currentTitle->isValid(), 'Checkout step title not found, maybe you are on another page?');
 
-        $currentTitleText = $currentTitle->getText();
-        self::assertContains(
-            $title,
-            $currentTitleText,
-            sprintf('Expected title "%s", does not contains in "%s" current title', $title, $currentTitleText)
-        );
+        return trim($currentTitle->getText());
     }
 
     /**

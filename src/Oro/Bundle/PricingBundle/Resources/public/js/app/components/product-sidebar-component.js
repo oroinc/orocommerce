@@ -134,9 +134,9 @@ define(function(require) {
             }
 
             _.each(data, function(value, key) {
-                var checked = 'checked';
-                if (this.currenciesState.hasOwnProperty(key) && !this.currenciesState[key]) {
-                    checked = '';
+                var checked = '';
+                if (this.currenciesState.hasOwnProperty(key) && this.currenciesState[key]) {
+                    checked = 'checked';
                 }
                 html[index] = template({
                     value: key,

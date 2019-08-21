@@ -22,6 +22,14 @@
         .overridden-price {
             padding-#{$start}: 28px;
         }
+
+        .product-tier-prices {
+            opacity: 1;
+
+            &.disabled > * {
+                opacity: 0.25;
+            }
+        }
     }
 }
 

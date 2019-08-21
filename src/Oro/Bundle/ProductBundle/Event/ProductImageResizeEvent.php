@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Event holding data for image resizing
+ */
 class ProductImageResizeEvent extends Event
 {
     const NAME = 'oro_product.product_image.resize';
@@ -18,6 +20,11 @@ class ProductImageResizeEvent extends Event
      * @var bool
      */
     protected $forceOption;
+
+    /**
+     * @var array|null
+     */
+    protected $dimensions;
 
     /**
      * @param int $productImageId
@@ -36,7 +43,16 @@ class ProductImageResizeEvent extends Event
     {
         return [
             'productImageId' => $this->productImageId,
-            'force' => $this->forceOption
+            'force' => $this->forceOption,
+            'dimensions' => $this->dimensions
         ];
+    }
+
+    /**
+     * @param array|null $dimensions
+     */
+    public function setDimensions(array $dimensions = null)
+    {
+        $this->dimensions = $dimensions;
     }
 }

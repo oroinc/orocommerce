@@ -95,11 +95,8 @@ class ProductControllerTest extends WebTestCase
             sprintf('img.product-item__preview-image[alt="%s"]', LoadProductData::PRODUCT_1_DEFAULT_NAME)
         );
 
-        $this->assertContains(
-            sprintf(
-                '%d/product_large/product-1',
-                $images[0]->getImage()->getId()
-            ),
+        $this->assertStringMatchesFormat(
+            '%s/product_large/%s/' . $images[0]->getImage()->getId() . '/product-1',
             $firstProductImage->attr('src')
         );
     }

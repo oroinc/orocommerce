@@ -103,6 +103,9 @@ oro_behat_extension:
       selector:
         locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/b'
         type: 'xpath'
+    PriceListSidebarSelector:
+      selector: 'input[name="oro_pricing_price_list_select"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
     PricingConfigurationForm:
       selector: 'form[name="pricing"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
