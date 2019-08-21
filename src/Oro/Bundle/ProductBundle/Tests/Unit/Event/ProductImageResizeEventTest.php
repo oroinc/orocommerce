@@ -28,7 +28,8 @@ class ProductImageResizeEventTest extends \PHPUnit\Framework\TestCase
     {
         $expectedData = [
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force' => false
+            'force' => false,
+            'dimensions' => null
         ];
 
         $this->assertEquals($expectedData, $this->event->getData());
@@ -36,7 +37,14 @@ class ProductImageResizeEventTest extends \PHPUnit\Framework\TestCase
 
     public function testForceSetCorrect()
     {
-        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, true);
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, true, []);
         $this->assertTrue($this->event->getData()['force']);
+    }
+
+    public function testDimensionsSetCorrect()
+    {
+        $dimensions = ['small', 'large'];
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, false, $dimensions);
+        $this->assertSame($dimensions, $this->event->getData()['dimensions']);
     }
 }

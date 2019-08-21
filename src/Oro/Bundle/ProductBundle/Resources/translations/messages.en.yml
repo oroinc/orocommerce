@@ -587,6 +587,7 @@ oro:
         export:
             inventory_status_only: "Inventory statuses only"
             button.label: 'Export Products'
+            filtered_products.label: 'Export Filtered Products'
         import:
             popup.title: 'Import Products'
             entity.label: 'Products'

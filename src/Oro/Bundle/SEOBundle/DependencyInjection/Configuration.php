@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Configuration Seo bundle
+ */
 class Configuration implements ConfigurationInterface
 {
     const CHANGEFREQ_ALWAYS = 'always';
@@ -38,6 +41,7 @@ class Configuration implements ConfigurationInterface
                 'sitemap_changefreq_cms_page' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_priority_cms_page' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_cron_definition' => ['value' => self::DEFAULT_CRON_DEFINITION],
+                'sitemap_exclude_landing_pages' => ['value' => true],
             ]
         );
 
