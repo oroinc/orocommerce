@@ -261,6 +261,23 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $denormalizedDefaultTitle;
 
     /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @Symfony\Component\Validator\Constraints\All(
+     *     constraints = {
+     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype(allowSlashes=true)
+     *     }
+     * )
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     */
+    protected $slugPrototypes;
+
+    /**
      * Constructor
      */
     public function __construct()
