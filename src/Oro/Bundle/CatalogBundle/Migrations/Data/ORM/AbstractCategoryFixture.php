@@ -82,7 +82,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
 
         $defaultOrganization = $root->getOrganization();
-        $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
 
         foreach ($categories as $title => $nestedCategories) {
             $categoryTitle = new LocalizedFallbackValue();
@@ -92,8 +91,10 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $category->addTitle($categoryTitle);
             $category->setOrganization($defaultOrganization);
 
+            $slugString = $root->getParentCategory() ? $root->getSlugPrototype()->getString() . '/' . $title : $title;
+
             $slugPrototype = new LocalizedFallbackValue();
-            $slugPrototype->setString($slugGenerator->slugify($title));
+            $slugPrototype->setString(str_replace(' ', '-', strtolower($slugString)));
             $category->addSlugPrototype($slugPrototype);
 
             if (!empty($images[$title])) {

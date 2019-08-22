@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Provides functionality to create new Category instances.
+ */
 class CategoryType extends AbstractType
 {
     const NAME = 'oro_catalog_category';
@@ -161,7 +164,8 @@ class CategoryType extends AbstractType
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'titles'
+                    'source_field' => 'titles',
+                    'allow_slashes' => true,
                 ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
@@ -187,7 +191,8 @@ class CategoryType extends AbstractType
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
                     'source_field' => 'names',
-                    'get_changed_slugs_url' => $url
+                    'get_changed_slugs_url' => $url,
+                    'allow_slashes' => true,
                 ]
             );
         }
