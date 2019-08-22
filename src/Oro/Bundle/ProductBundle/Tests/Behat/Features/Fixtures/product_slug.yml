@@ -42,12 +42,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
     type: 'simple'
     organization: '@organization'
     owner: '@businessUnit'
-    primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
     __calls:
         - addName: ['@locvalue']
         - addSlugPrototype: ['@localValueProductSlug']
+        - addUnitPrecision: ['@precision1']
+        - setPrimaryUnitPrecision: ['@precision1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
 
