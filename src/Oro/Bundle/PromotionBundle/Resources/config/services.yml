@@ -344,6 +344,7 @@ services:
             - '@oro_promotion.discount.strategy_provider'
             - '@oro_promotion.provider.promotion_discounts_provider'
             - '@oro_promotion.promotion_executor.cache'
+            - '@oro.cache.generator.object_cache_key'
 
     oro_promotion.promotion_executor.cache:
         public: false

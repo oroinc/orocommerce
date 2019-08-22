@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Manager;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
@@ -33,7 +34,10 @@ class TaxManager
     protected $settingsProvider;
 
     /** @var CacheProvider */
-    private $cacheProvider;
+    protected $cacheProvider;
+
+    /** @var ObjectCacheKeyGenerator */
+    protected $objectCacheKeyGenerator;
 
     /**
      * @param TaxFactory $taxFactory
@@ -41,19 +45,22 @@ class TaxManager
      * @param TaxValueManager $taxValueManager
      * @param TaxationSettingsProvider $settingsProvider
      * @param CacheProvider $cacheProvider
+     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
      */
     public function __construct(
         TaxFactory $taxFactory,
         TaxEventDispatcher $eventDispatcher,
         TaxValueManager $taxValueManager,
         TaxationSettingsProvider $settingsProvider,
-        CacheProvider $cacheProvider
+        CacheProvider $cacheProvider,
+        ObjectCacheKeyGenerator $objectCacheKeyGenerator
     ) {
         $this->taxFactory = $taxFactory;
         $this->eventDispatcher = $eventDispatcher;
         $this->taxValueManager = $taxValueManager;
         $this->settingsProvider = $settingsProvider;
         $this->cacheProvider = $cacheProvider;
+        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
     /**
@@ -271,10 +278,9 @@ class TaxManager
      * @param $object
      * @return Taxable
      */
-    private function getCachedTaxable($object)
+    protected function getCachedTaxable($object)
     {
-        $cacheKey = md5(serialize($object));
-
+        $cacheKey = $this->objectCacheKeyGenerator->generate($object, 'tax');
         if (!$this->cacheProvider->contains($cacheKey)) {
             $taxable = $this->taxFactory->create($object);
             $this->cacheProvider->save($cacheKey, $taxable);
