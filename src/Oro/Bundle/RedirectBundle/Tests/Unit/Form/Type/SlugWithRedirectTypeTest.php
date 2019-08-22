@@ -8,10 +8,10 @@ use Oro\Bundle\RedirectBundle\Form\Type\SlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugWithRedirectTypeTest extends FormIntegrationTestCase
@@ -51,7 +51,8 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
                     SlugType::class => new SlugType($slugifyFormHelper),
                 ],
                 []
-            )
+            ),
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -66,13 +67,19 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
      * @param TextSlugPrototypeWithRedirect $defaultData
      * @param array $submittedData
      * @param TextSlugPrototypeWithRedirect $expectedData
+     * @param array $options
      */
     public function testSubmit(
         TextSlugPrototypeWithRedirect $defaultData,
         $submittedData,
-        TextSlugPrototypeWithRedirect $expectedData
+        TextSlugPrototypeWithRedirect $expectedData,
+        array $options = []
     ) {
-        $form = $this->factory->create(SlugWithRedirectType::class, $defaultData, ['source_field' => 'some_field']);
+        $form = $this->factory->create(
+            SlugWithRedirectType::class,
+            $defaultData,
+            array_merge(['source_field' => 'some_field'], $options)
+        );
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
@@ -91,24 +98,56 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
     {
         return [
             'text slug prototype with redirect' => [
-                'defaultData'   => new TextSlugPrototypeWithRedirect(),
+                'defaultData' => new TextSlugPrototypeWithRedirect(),
                 'submittedData' => [
                     'textSlugPrototype' => 'test-prototype',
                     'createRedirect' => true,
                 ],
-                'expectedData'  => (new TextSlugPrototypeWithRedirect())
+                'expectedData' => (new TextSlugPrototypeWithRedirect())
                     ->setTextSlugPrototype('test-prototype')->setCreateRedirect(true),
             ],
             'update text slug prototype without redirect' => [
-                'defaultData'   => (new TextSlugPrototypeWithRedirect())->setTextSlugPrototype('test-prototype'),
+                'defaultData' => (new TextSlugPrototypeWithRedirect())->setTextSlugPrototype('test-prototype'),
                 'submittedData' => [
                     'textSlugPrototype' => 'test-prototype-new',
                     'createRedirect' => false,
                 ],
-                'expectedData'  => (new TextSlugPrototypeWithRedirect())
+                'expectedData' => (new TextSlugPrototypeWithRedirect())
                     ->setTextSlugPrototype('test-prototype-new')->setCreateRedirect(false),
             ],
+            'text slug prototype with slashes and redirect' => [
+                'defaultData' => new TextSlugPrototypeWithRedirect(),
+                'submittedData' => [
+                    'textSlugPrototype' => 'test-prefix/test-prototype',
+                    'createRedirect' => true,
+                ],
+                'expectedData' => (new TextSlugPrototypeWithRedirect())
+                    ->setTextSlugPrototype('test-prefix/test-prototype')->setCreateRedirect(true),
+                'options' => ['allow_slashes' => true]
+            ]
         ];
+    }
+
+    public function testSubmitError(): void
+    {
+        $defaultData = new TextSlugPrototypeWithRedirect();
+
+        $form = $this->factory->create(
+            SlugWithRedirectType::class,
+            $defaultData,
+            ['source_field' => 'some_field', 'allow_slashes' => false]
+        );
+
+        $form->submit(['textSlugPrototype' => 'test-prefix/test-prototype', 'createRedirect' => true]);
+        $this->assertFalse($form->isValid());
+        $this->assertCount(1, $form->getErrors(true));
+
+        $error = $form->getErrors(true)->current();
+        $this->assertEquals(
+            'This value should contain only latin letters, numbers and symbols "-._~".',
+            $error->getMessage()
+        );
+        $this->assertEquals(['{{ value }}' => '"test-prefix/test-prototype"'], $error->getMessageParameters());
     }
 
     public function testConfigureOptions()
@@ -121,6 +160,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
                     $this->assertEquals(TextSlugPrototypeWithRedirect::class, $options['data_class']);
                     $this->assertTrue($options['slug_suggestion_enabled']);
                     $this->assertTrue($options['create_redirect_enabled']);
+                    $this->assertFalse($options['allow_slashes']);
 
                     return true;
                 }

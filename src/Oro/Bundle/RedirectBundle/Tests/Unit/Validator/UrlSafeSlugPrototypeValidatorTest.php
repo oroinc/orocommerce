@@ -71,4 +71,36 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation(self::ERROR_MESSAGE)->assertRaised();
     }
+
+    public function testValidateWhenValidPrototypeWithSlashes(): void
+    {
+        $this->externalValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('some_value1/some_value2', new UrlSafe(['allowSlashes' => true]))
+            ->willReturn(new ConstraintViolationList());
+
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('some_value1/some_value2');
+        $this->validator->validate($slugPrototype, new UrlSafeSlugPrototype(['allowSlashes' => true]));
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenInvalidPrototypeWithSlashes(): void
+    {
+        $this->externalValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('valid/inval,id', new UrlSafe(['allowSlashes' => true]))
+            ->willReturn(new ConstraintViolationList([
+                new ConstraintViolation(self::ERROR_MESSAGE, '', [], '', '', '')
+            ]));
+
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('valid/inval,id');
+        $this->validator->validate($slugPrototype, new UrlSafeSlugPrototype(['allowSlashes' => true]));
+
+        $this->buildViolation(self::ERROR_MESSAGE)->assertRaised();
+    }
 }
