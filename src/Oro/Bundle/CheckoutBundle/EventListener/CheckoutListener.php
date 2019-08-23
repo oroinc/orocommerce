@@ -9,8 +9,11 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
+/**
+ * Schedules extra update for the completed data of Checkout entity.
+ * Sets the owner and the organization for Checkout entity in case of Guest user.
+ */
 class CheckoutListener
 {
     /** @var DefaultUserProvider */
@@ -19,22 +22,16 @@ class CheckoutListener
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
-
     /**
      * @param DefaultUserProvider $defaultUserProvider
      * @param TokenAccessorInterface $tokenAccessor
-     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
-        TokenAccessorInterface $tokenAccessor,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->defaultUserProvider = $defaultUserProvider;
         $this->tokenAccessor = $tokenAccessor;
-        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -66,9 +63,9 @@ class CheckoutListener
                 Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
             ));
 
-            $website = $this->websiteManager->getCurrentWebsite();
-            if ($website && $website->getOrganization()) {
-                $checkout->setOrganization($website->getOrganization());
+            $organization = $this->tokenAccessor->getOrganization();
+            if (null !== $organization) {
+                $checkout->setOrganization($organization);
             }
         }
     }

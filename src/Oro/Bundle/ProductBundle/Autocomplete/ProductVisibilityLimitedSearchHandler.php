@@ -15,75 +15,50 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Search handler with additional check for product visibility.
+ * The search handler with additional check for product visibility.
  */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $allowConfigurableProducts = false;
 
     /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var ProductRepository */
-    protected $entityRepository;
+    private $requestStack;
 
     /** @var ProductManager */
-    protected $productManager;
+    private $productManager;
 
     /** @var FrontendHelper */
-    protected $frontendHelper;
+    private $frontendHelper;
 
-    /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
-    protected $searchRepository;
+    /** @var ProductSearchRepository */
+    private $searchRepository;
 
     /** @var LocalizationHelper */
     private $localizationHelper;
 
     /**
-     * @param string $entityName
-     * @param RequestStack $requestStack
-     * @param ProductManager $productManager
-     * @param LocalizationHelper $localizationHelper
+     * @param string                  $entityName
+     * @param RequestStack            $requestStack
+     * @param ProductManager          $productManager
+     * @param ProductSearchRepository $searchRepository
+     * @param LocalizationHelper      $localizationHelper
+     * @param FrontendHelper          $frontendHelper
      */
     public function __construct(
         $entityName,
         RequestStack $requestStack,
         ProductManager $productManager,
-        LocalizationHelper $localizationHelper
+        ProductSearchRepository $searchRepository,
+        LocalizationHelper $localizationHelper,
+        FrontendHelper $frontendHelper
     ) {
-        $this->requestStack   = $requestStack;
-        $this->productManager = $productManager;
-        $this->localizationHelper = $localizationHelper;
         parent::__construct($entityName, ['sku', 'defaultName.string']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function checkAllDependenciesInjected()
-    {
-        if (!$this->entityRepository || !$this->idFieldName) {
-            throw new \RuntimeException('Search handler is not fully configured');
-        }
-    }
-
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
-    }
-
-    /**
-     * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
-     */
-    public function setSearchRepository(ProductSearchRepository $searchRepository)
-    {
+        $this->requestStack = $requestStack;
+        $this->productManager = $productManager;
         $this->searchRepository = $searchRepository;
+        $this->localizationHelper = $localizationHelper;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -97,18 +72,18 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        if ($this->isItem($item)) {
+        if (is_object($item) && method_exists($item, 'getSelectedData')) {
             $selectedData = $item->getSelectedData();
             if (isset($selectedData['sku'], $selectedData['name'])) {
                 $result += [
-                    'sku' => $selectedData['sku'],
-                    'defaultName.string' => $selectedData['name'],
+                    'sku'                => $selectedData['sku'],
+                    'defaultName.string' => $selectedData['name']
                 ];
             }
         } elseif ($item instanceof Product) {
             $result += [
-                'sku' => $item->getSku(),
-                'defaultName.string' => (string) $this->localizationHelper->getLocalizedValue($item->getNames()),
+                'sku'                => $item->getSku(),
+                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames())
             ];
         } else {
             throw new InvalidArgumentException('Given item could not be converted');
@@ -130,6 +105,16 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     /**
      * {@inheritdoc}
      */
+    protected function checkAllDependenciesInjected()
+    {
+        if (!$this->entityRepository || !$this->idFieldName) {
+            throw new \RuntimeException('Search handler is not fully configured');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -137,7 +122,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $params = [];
         }
 
-        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
+        if (!$this->frontendHelper->isFrontendUrl($request->getPathInfo())) {
             return $this->searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params);
         }
 
@@ -149,11 +134,12 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $firstResult
      * @param $maxResults
      * @param $params
+     *
      * @return array
      */
-    protected function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
+    private function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
     {
-        $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
+        $queryBuilder = $this->getProductRepository()->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
         if (!$this->allowConfigurableProducts) {
@@ -170,9 +156,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $search
      * @param $firstResult
      * @param $maxResults
+     *
      * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
      */
-    protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
+    private function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();
         $skuList = $request->request->get('sku');
@@ -194,11 +181,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
-     * @param $object
-     * @return bool
+     * @return ProductRepository
      */
-    protected function isItem($object)
+    private function getProductRepository(): ProductRepository
     {
-        return is_object($object) && method_exists($object, 'getSelectedData');
+        return $this->entityRepository;
     }
 }

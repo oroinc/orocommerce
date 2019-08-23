@@ -2,36 +2,31 @@
 
 namespace Oro\Bundle\ConsentBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 /**
- * Provides ConsentAcceptances by the CustomerUser that is retrieved from token storage
+ * Provides consent acceptances for the current customer user.
  */
 class ConsentAcceptanceProvider
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
 
-    /**
-     * @var RegistryInterface
-     */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param RegistryInterface $doctrine
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param ManagerRegistry        $doctrine
      */
-    public function __construct(TokenStorageInterface $tokenStorage, RegistryInterface $doctrine)
+    public function __construct(TokenAccessorInterface $tokenAccessor, ManagerRegistry $doctrine)
     {
-        $this->tokenStorage = $tokenStorage;
+        $this->tokenAccessor = $tokenAccessor;
         $this->doctrine = $doctrine;
     }
 
@@ -74,32 +69,16 @@ class ConsentAcceptanceProvider
      */
     public function getCustomerConsentAcceptances()
     {
-        $token = $this->tokenStorage->getToken();
-        if (!$token || $token instanceof AnonymousCustomerUserToken) {
-            return [];
-        }
-
-        $customerUser = $token->getUser();
-
-        return $this->getAcceptedConsentsByCustomerUser($customerUser);
-    }
-
-    /**
-     * @param CustomerUser|null $customerUser
-     *
-     * @return ConsentAcceptance[]
-     */
-    private function getAcceptedConsentsByCustomerUser(CustomerUser $customerUser = null)
-    {
-        if (null === $customerUser || !$customerUser instanceof CustomerUser) {
+        $user = $this->tokenAccessor->getUser();
+        if (!$user instanceof CustomerUser) {
             return [];
         }
 
         /** @var ConsentAcceptanceRepository $consentAcceptanceRepository */
         $consentAcceptanceRepository = $this->doctrine
-            ->getEntityManagerForClass(ConsentAcceptance::class)
+            ->getManagerForClass(ConsentAcceptance::class)
             ->getRepository(ConsentAcceptance::class);
 
-        return $consentAcceptanceRepository->getAcceptedConsentsByCustomer($customerUser);
+        return $consentAcceptanceRepository->getAcceptedConsentsByCustomer($user);
     }
 }

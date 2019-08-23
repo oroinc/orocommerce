@@ -11,7 +11,7 @@ use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -58,10 +58,10 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $requestProductHandler = $this->createMock(RequestProductHandler::class);
         $categoryRepository    = $this->createMock(CategoryRepository::class);
         $categoryTreeProvider  = $this->createMock(CategoryTreeProvider::class);
-        $websiteManager        = $this->createMock(WebsiteManager::class);
+        $tokenAccessor         = $this->createMock(TokenAccessorInterface::class);
 
         $this->categoryProvider = $this->getMockBuilder(CategoryProvider::class)
-            ->setConstructorArgs([$requestProductHandler, $categoryRepository, $categoryTreeProvider, $websiteManager])
+            ->setConstructorArgs([$requestProductHandler, $categoryRepository, $categoryTreeProvider, $tokenAccessor])
             ->getMock();
 
         $this->categoryProvider

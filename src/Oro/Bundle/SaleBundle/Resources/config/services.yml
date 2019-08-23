@@ -134,9 +134,9 @@ services:
     oro_sale.provider.quote_address_security:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
         arguments:
-            - "@security.authorization_checker"
-            - "@oro_security.token_accessor"
-            - "@oro_sale.provider.quote_address"
+            - '@security.authorization_checker'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_sale.provider.quote_address'
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'
 
@@ -243,7 +243,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter'
         public: false
         arguments:
-            - '@oro_action.provider.current_application'
+            - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: security.voter }
 

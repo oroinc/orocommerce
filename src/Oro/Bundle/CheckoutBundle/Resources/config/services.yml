@@ -444,7 +444,6 @@ services:
         arguments:
             - '@oro_user.provider.default_user'
             - '@oro_security.token_accessor'
-            - '@oro_website.manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: prePersist }
