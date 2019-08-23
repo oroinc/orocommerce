@@ -1,0 +1,9 @@
+data:
+    type: productunits
+    id: '<toString(@day->code)>'
+    attributes:
+        defaultPrecision: 1
+        label: day_upd
+        shortLabel: d
+        pluralLabel: days_upd
+        shortPluralLabel: ds
