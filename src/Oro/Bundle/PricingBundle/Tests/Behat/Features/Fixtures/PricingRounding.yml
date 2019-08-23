@@ -33,36 +33,36 @@ Oro\Bundle\ProductBundle\Entity\Product:
   product1:
     sku: 'SKU123'
     type: 'simple'
-    primaryUnitPrecision: '@precision1'
-    __calls:
-        - addName: ['@locValue1']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
+    __calls:
+      - addName: ['@locValue1']
+      - setPrimaryUnitPrecision: ['@precision1']
   product2:
     sku: 'SKU456'
     type: 'simple'
-    primaryUnitPrecision: '@precision2'
-    __calls:
-        - addName: ['@locValue2']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
+    __calls:
+      - addName: ['@locValue2']
+      - setPrimaryUnitPrecision: ['@precision2']
   product3:
     sku: 'SKU789'
     type: 'simple'
-    primaryUnitPrecision: '@precision3'
-    __calls:
-        - addName: ['@locValue3']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
+    __calls:
+      - addName: ['@locValue3']
+      - setPrimaryUnitPrecision: ['@precision3']
 
 Doctrine\Common\Collections\ArrayCollection:
   products:
