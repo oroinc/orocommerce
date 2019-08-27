@@ -12,13 +12,14 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
+ * Entity that holds category information.
+ *
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
@@ -252,6 +253,23 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * )
      */
     protected $denormalizedDefaultTitle;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @Symfony\Component\Validator\Constraints\All(
+     *     constraints = {
+     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype(allowSlashes=true)
+     *     }
+     * )
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     */
+    protected $slugPrototypes;
 
     /**
      * Constructor

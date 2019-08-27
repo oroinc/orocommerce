@@ -1,7 +1,50 @@
 parameters:
     oro_product.entity.related_product.class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct
+    oro_product.product_unit.translations_mapping:
+        messages:
+            'oro.product_unit.{unit}.label.full': '{full}'
+            'oro.product_unit.{unit}.label.full_plural': '{full_plural}'
+            'oro.product_unit.{unit}.label.short': '{short}'
+            'oro.product_unit.{unit}.label.short_plural': '{short_plural}'
+            'oro.product_unit.{unit}.value.full': '{0} none|{1} %%count%% {full}|]1,Inf] %%count%% {full_plural}'
+            'oro.product_unit.{unit}.value.full_fraction': '%%count%% {full}'
+            'oro.product_unit.{unit}.value.full_fraction_gt_1': '%%count%% {full_plural}'
+            'oro.product_unit.{unit}.value.short': '{0} none|{1} %%count%% {short}|]1,Inf] %%count%% {short_plural}'
+            'oro.product_unit.{unit}.value.short_fraction': '%%count%% {short}'
+            'oro.product_unit.{unit}.value.short_fraction_gt_1': '%%count%% {short_plural}'
+        jsmessages:
+            'oro.product.product_unit.{unit}.label.full': '{full}'
+            'oro.product.product_unit.{unit}.label.full_plural': '{full_plural}'
+            'oro.product.product_unit.{unit}.label.short': '{short}'
+            'oro.product.product_unit.{unit}.label.short_plural': '{short_plural}'
+            'oro.product.product_unit.{unit}.value.full': '{0} none|]0,1] {{ count }} {full}|]1,Inf]{{ count }} {full_plural}'
+            'oro.product.product_unit.{unit}.value.short': '{0} none|]0,1] {{ count }} {short}|]1,Inf]{{ count }} {short_plural}'
+            'oro.product.product_unit.{unit}.value.label': '{0} none|]0,1] {short}|]1,Inf] {short_plural}'
 
 services:
+    oro_product.api.compute_product_unit_label:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductUnitLabel
+        arguments:
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ProductBundle\Entity\ProductUnit }
+
+    oro_product.api.validate_product_unit_label_fields:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ValidateProductUnitLabelFields
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_submit, class: Oro\Bundle\ProductBundle\Entity\ProductUnit }
+
+    oro_product.api.save_product_unit_labels:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SaveProductUnitLabels
+        arguments:
+            - '@oro_translation.manager.translation'
+            - '@translator.default'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_message_queue.client.message_producer'
+            - '%oro_product.product_unit.translations_mapping%'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_submit, class: Oro\Bundle\ProductBundle\Entity\ProductUnit, priority: -100 }
+
     oro_product.api.add_validate_unit_precisions_duplicate_form_listener:
         class: Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener
         tags:

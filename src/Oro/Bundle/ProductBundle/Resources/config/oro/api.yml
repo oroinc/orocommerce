@@ -4,6 +4,19 @@ api:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
         Oro\Bundle\ProductBundle\Entity\ProductUnit:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
+            fields:
+                label:
+                    data_type: string
+                    property_path: _
+                shortLabel:
+                    data_type: string
+                    property_path: _
+                pluralLabel:
+                    data_type: string
+                    property_path: _
+                shortPluralLabel:
+                    data_type: string
+                    property_path: _
         Oro\Bundle\ProductBundle\Entity\ProductImage:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image.md'
         Oro\Bundle\ProductBundle\Entity\ProductImageType:

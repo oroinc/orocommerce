@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Executor;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
@@ -34,6 +35,11 @@ class PromotionExecutor
     private $cache;
 
     /**
+     * @var ObjectCacheKeyGenerator
+     */
+    private $objectCacheKeyGenerator;
+
+    /**
      * @param DiscountContextConverterInterface $discountContextConverter
      * @param StrategyProvider $discountStrategyProvider
      * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
@@ -52,12 +58,20 @@ class PromotionExecutor
     }
 
     /**
+     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
+     */
+    public function setObjectCacheKeyGenerator(ObjectCacheKeyGenerator $objectCacheKeyGenerator)
+    {
+        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
+    }
+
+    /**
      * @param object $sourceEntity
      * @return DiscountContextInterface
      */
     public function execute($sourceEntity): DiscountContextInterface
     {
-        $cacheKey = $this->getCacheKey($sourceEntity);
+        $cacheKey = $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion');
         if ($this->cache->contains($cacheKey)) {
             return $this->cache->fetch($cacheKey);
         }
@@ -82,14 +96,5 @@ class PromotionExecutor
     public function supports($sourceEntity)
     {
         return $this->discountContextConverter->supports($sourceEntity);
-    }
-
-    /**
-     * @param object $sourceEntity
-     * @return string
-     */
-    private function getCacheKey($sourceEntity)
-    {
-        return md5(serialize($sourceEntity));
     }
 }

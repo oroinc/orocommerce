@@ -196,7 +196,7 @@ class SlugEntityGenerator
     }
 
     /**
-     * @param string SluggableInterface $entity
+     * @param SluggableInterface $entity
      * @param string $slugPrototype
      * @return string
      */
@@ -236,14 +236,18 @@ class SlugEntityGenerator
     private function getResolvedSlugUrls(SluggableInterface $entity)
     {
         $slugUrls = $this->prepareSlugUrls($entity);
+        $prefix = sprintf(
+            '~^\%s?(%s\%s)?(.+)~',
+            Slug::DELIMITER,
+            preg_quote(trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER), '~'),
+            Slug::DELIMITER
+        );
 
         foreach ($slugUrls as $slugUrl) {
             $url = $this->slugResolver->resolve($slugUrl, $entity);
 
-            $slugPrototype = substr($url, strrpos($url, Slug::DELIMITER) + 1);
-
             $slugUrl->setUrl($url);
-            $slugUrl->setSlug($slugPrototype);
+            $slugUrl->setSlug(preg_replace($prefix, '$2', $url));
         }
 
         return $slugUrls;

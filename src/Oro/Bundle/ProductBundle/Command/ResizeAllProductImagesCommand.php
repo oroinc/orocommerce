@@ -6,13 +6,19 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command
+ * is running to get images resized)
+ */
 class ResizeAllProductImagesCommand extends ContainerAwareCommand
 {
     const COMMAND_NAME = 'product:image:resize-all';
     const OPTION_FORCE = 'force';
+    const DIMENSION = 'dimension';
     const BATCH_SIZE = 1000;
 
     /**
@@ -23,6 +29,13 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
         $this
             ->setName(self::COMMAND_NAME)
             ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
+            ->addOption(
+                self::DIMENSION,
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'perform resize of given dimension(s)',
+                []
+            )
             ->setDescription(
                 <<<DESC
 Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command 
@@ -41,10 +54,9 @@ DESC
         $forceOption = $this->getForceOption($input);
 
         foreach ($iterator as $productImage) {
-            $this->getEventDispatcher()->dispatch(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage['id'], $forceOption)
-            );
+            $event = new ProductImageResizeEvent($productImage['id'], $forceOption);
+            $event->setDimensions($this->getDimensionsOption($input));
+            $this->getEventDispatcher()->dispatch(ProductImageResizeEvent::NAME, $event);
             $entitiesProcessed++;
         }
 
@@ -66,7 +78,7 @@ DESC
     {
         $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $className = $this->getContainer()->getParameter('oro_product.entity.product_image.class');
-        $queryBuilder =  $doctrineHelper
+        $queryBuilder = $doctrineHelper
             ->getEntityRepositoryForClass($className)
             ->createQueryBuilder('productImage');
 
@@ -85,6 +97,15 @@ DESC
      */
     protected function getForceOption(InputInterface $input)
     {
-        return (bool) $input->getOption(self::OPTION_FORCE);
+        return (bool)$input->getOption(self::OPTION_FORCE);
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return string[]|null
+     */
+    protected function getDimensionsOption(InputInterface $input)
+    {
+        return $input->getOption(self::DIMENSION);
     }
 }
