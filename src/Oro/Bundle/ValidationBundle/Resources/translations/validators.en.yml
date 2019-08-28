@@ -2,6 +2,7 @@
 'This value should contain only latin letters and numbers.': 'This value should contain only latin letters and numbers.'
 'This value should contain only latin letters, numbers and symbols "-" or "_".': 'This value should contain only latin letters, numbers and symbols "-" or "_".'
 'This value should contain only latin letters, numbers and symbols "-._~".': 'This value should contain only latin letters, numbers and symbols "-._~".'
+'This value should not start or end with "/" and should contain only latin letters, numbers and symbols "-._~/".': 'This value should not start or end with "/" and should contain only latin letters, numbers and symbols "-._~/".'
 'This value should be decimal number.': 'This value should be decimal number.'
 'This value should be integer number.': 'This value should be integer number.'
 '{{ later }} date should follow after {{ earlier }}': 'later date should follow after earlier.'

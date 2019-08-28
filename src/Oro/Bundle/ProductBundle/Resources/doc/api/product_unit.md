@@ -29,9 +29,13 @@ Example:
 {
   "data": {
     "type": "productunits",
-    "id": "item",
+    "id": "kilogram",
     "attributes": {
-      "defaultPrecision": 0
+      "defaultPrecision": 0,
+      "label": "kilogram",
+      "shortLabel": "kg",
+      "pluralLabel": "kilograms",
+      "shortPluralLabel": "kgs"
     }
   }
 }
@@ -53,9 +57,10 @@ Example:
 {
   "data": {
     "type": "productunits",
-    "id": "item",
+    "id": "kilogram",
     "attributes": {
-      "defaultPrecision": 10
+      "defaultPrecision": 10,
+      "label": "kilogram"
     }
   }
 }
@@ -76,6 +81,72 @@ Delete a collection of product unit records.
 
 ## FIELDS
 
+## FIELDS
+
+### label
+
+The localized label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+### shortLabel
+
+The localized short label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### pluralLabel
+
+The localized plural label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### shortPluralLabel
+
+The localized short plural label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
 ### defaultPrecision
 
 #### create
@@ -83,6 +154,14 @@ Delete a collection of product unit records.
 {@inheritdoc}
 
 **The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
 
 ### id
 

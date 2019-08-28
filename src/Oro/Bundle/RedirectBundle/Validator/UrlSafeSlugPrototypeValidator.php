@@ -42,7 +42,11 @@ class UrlSafeSlugPrototypeValidator extends ConstraintValidator
             return;
         }
 
-        $violations = $this->validator->validate($slugPrototype->getString(), new UrlSafe());
+        $violations = $this->validator->validate(
+            $slugPrototype->getString(),
+            new UrlSafe(['allowSlashes' => $constraint->allowSlashes])
+        );
+
         if ($violations->count()) {
             $violation = $violations->get(0);
             $this->context->buildViolation($violation->getMessage())

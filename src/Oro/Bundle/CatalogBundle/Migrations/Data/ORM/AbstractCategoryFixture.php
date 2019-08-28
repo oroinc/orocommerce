@@ -12,6 +12,9 @@ use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads categories from predefined list
+ */
 abstract class AbstractCategoryFixture extends AbstractFixture implements ContainerAwareInterface
 {
     /**
@@ -75,8 +78,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             return;
         }
 
-        $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
-
         foreach ($categories as $title => $nestedCategories) {
             $categoryTitle = new LocalizedFallbackValue();
             $categoryTitle->setString($title);
@@ -84,8 +85,10 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $category = new Category();
             $category->addTitle($categoryTitle);
 
+            $slugString = $root->getParentCategory() ? $root->getSlugPrototype()->getString() . '/' . $title : $title;
+
             $slugPrototype = new LocalizedFallbackValue();
-            $slugPrototype->setString($slugGenerator->slugify($title));
+            $slugPrototype->setString(str_replace(' ', '-', strtolower($slugString)));
             $category->addSlugPrototype($slugPrototype);
 
             if (!empty($images[$title])) {
