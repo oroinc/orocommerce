@@ -21,7 +21,7 @@ class CallbackControllerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
     }
 
     public function testNotifyChangeState()
