@@ -3,10 +3,3 @@
 @import './colors';
 @import './typography';
 @import './forms_config';
-
-$custom-breakpoints: (
-    'mobile': '(max-width: 400px)',
-    'mobile-big': '(max-width: 600px)',
-);
-
-$breakpoints: merge-breakpoints($oro_breakpoints, $custom-breakpoints);
