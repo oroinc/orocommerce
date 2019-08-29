@@ -1,6 +1,11 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision:
+        unit: '@item'
+        precision: '1'
+
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
         value: '10'
@@ -57,11 +62,6 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
         product: '@product1'
         pricelist: '@pricelist'
 
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
-        unit: '@item'
-        precision: '1'
-
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locValue:
         string: 'Product 1'
@@ -69,9 +69,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'AA1'
-        primaryUnitPrecision: '@precision'
         __calls:
             - addName: ['@locValue']
+            - addUnitPrecision: ['@precision']
+            - setPrimaryUnitPrecision: ['@precision']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'

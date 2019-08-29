@@ -146,7 +146,8 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     'label' => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'titles'
+                    'source_field' => 'titles',
+                    'allow_slashes' => true,
                 ]
             )->will($this->returnSelf());
 

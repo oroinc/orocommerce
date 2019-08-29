@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Provides functionality to create localized slugs with redirect.
+ */
 class LocalizedSlugWithRedirectType extends AbstractType
 {
     const NAME = 'oro_redirect_localized_slug_with_redirect';
@@ -53,7 +56,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $constraints = [new UrlSafe()];
+        $constraints = [new UrlSafe(['allowSlashes' => $options['allow_slashes']])];
         if (!empty($options['required'])) {
             $constraints[] = new NotBlank();
         }
@@ -91,6 +94,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
             'data_class' => SlugPrototypesWithRedirect::class,
             'get_changed_slugs_url' => null,
             'tooltip' => 'oro.redirect.slug_prototypes.tooltip',
+            'allow_slashes' => false,
         ]);
         $resolver->setRequired('source_field');
 
