@@ -3,17 +3,19 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @SuppressWarnings(PHPMD)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductSearchTest extends FrontendRestJsonApiTestCase
 {
@@ -49,6 +51,28 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $content = str_replace('{baseUrl}', $this->getApiBaseUrl(), $content);
 
         return self::processTemplateData(Yaml::parse($content));
+    }
+
+    /**
+     * @param string $entity
+     *
+     * @return bool
+     */
+    private function isMySqlOrmSearchEngine(): bool
+    {
+        if (\Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME !== $this->getSearchEngine()) {
+            return false;
+        }
+
+        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof MySqlPlatform;
+    }
+
+    /**
+     * @return string
+     */
+    private function getSearchEngine()
+    {
+        return self::getContainer()->getParameter('oro_search.engine');
     }
 
     public function testNoSearchQueryFilter()
@@ -578,7 +602,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testFilterByAttributeWithExistsOperator()
+    public function testFilterByStringAttributeWithExistsOperator()
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -596,11 +620,121 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testFilterByAttributeWithNotExistsOperator()
+    public function testFilterByStringAttributeWithNotExistsOperator()
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
             ['filter' => ['searchQuery' => 'testAttrString notexists']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+    }
+
+    public function testFilterByBooleanAttributeWithExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrBoolean exists']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+    }
+
+    public function testFilterByBooleanAttributeWithNotExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrBoolean notexists']]
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
+    public function testFilterByIntegerAttributeWithExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrInteger exists']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+    }
+
+    public function testFilterByIntegerAttributeWithNotExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrInteger notexists']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+    }
+
+    public function testFilterByMoneyAttributeWithExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrMoney exists']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product1->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+    }
+
+    public function testFilterByMoneyAttributeWithNotExistsOperator()
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'testAttrMoney notexists']]
         );
 
         $this->assertResponseContains(
@@ -838,16 +972,13 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                             'sku'  => 'CPSKU1',
                             'name' => 'Configurable Product 1'
                         ]
-                    ],
+                    ]
                 ]
             ],
             $response
         );
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function testSortByIntegerProductAttribute()
     {
         $data = [
@@ -873,9 +1004,9 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ]
         ];
 
-        if ($this->isMySqlSearchEngineDriverForEntity(Product::class)) {
-            $elLast = array_pop($data);
-            array_unshift($data, $elLast);
+        if ($this->isMySqlOrmSearchEngine()) {
+            // MySql returns NULL values at the top
+            array_unshift($data, array_pop($data));
         }
 
         $response = $this->cget(
@@ -883,17 +1014,9 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ['sort' => 'testAttrInteger']
         );
 
-        $this->assertResponseContains(
-            [
-                'data' => $data
-            ],
-            $response
-        );
+        $this->assertResponseContains(['data' => $data], $response);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function testSortByFloatProductAttribute()
     {
         $data = [
@@ -919,9 +1042,9 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ]
         ];
 
-        if ($this->isMySqlSearchEngineDriverForEntity(Product::class)) {
-            $elLast = array_pop($data);
-            array_unshift($data, $elLast);
+        if ($this->isMySqlOrmSearchEngine()) {
+            // MySql returns NULL values at the top
+            array_unshift($data, array_pop($data));
         }
 
         $response = $this->cget(
@@ -1280,23 +1403,5 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ]
         ]);
         $this->assertResponseContains($expectedLinks, $response);
-    }
-
-    /**
-     * @param string $entity
-     * @return bool
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    private function isMySqlSearchEngineDriverForEntity(string $entity): bool
-    {
-        /** @var EntityManager $em */
-        $em =  $this->doctrineHelper->getEntityManager($entity);
-        $platform = $em->getConnection()->getDatabasePlatform();
-
-        $searchEngine = self::getContainer()->hasParameter('search_engine_name')
-            ? self::getContainer()->getParameter('search_engine_name')
-            : 'orm';
-
-        return $platform instanceof MySqlPlatform && $searchEngine === 'orm';
     }
 }

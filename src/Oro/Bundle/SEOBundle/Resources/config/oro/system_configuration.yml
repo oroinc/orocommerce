@@ -83,6 +83,13 @@ system_configuration:
                     oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label: '0 0 * * 0'
                     oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label: '0 0 * * *'
                     oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label: '0 * * * *'
+        oro_seo.sitemap_exclude_landing_pages:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                required: false
+                tooltip: oro.seo.system_configuration.fields.sitemap_exclude_landing_pages.tooltip
+                label:   oro.seo.system_configuration.fields.sitemap_exclude_landing_pages.label
 
     tree:
         system_configuration:
@@ -107,3 +114,4 @@ system_configuration:
                                         children:
                                             - oro_seo.sitemap_changefreq_cms_page
                                             - oro_seo.sitemap_priority_cms_page
+                                            - oro_seo.sitemap_exclude_landing_pages

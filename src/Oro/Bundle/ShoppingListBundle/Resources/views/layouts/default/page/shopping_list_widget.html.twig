@@ -69,6 +69,7 @@
             'currentClass': currentClass
         },
         'data-scroll': 'true',
+        'data-role': 'tooltip-container',
         '~class': " shopping-list-widget__container"
     }) %}
 
@@ -92,6 +93,10 @@
         <div class="shopping-list-dropdown__radio">
             <label class="custom-radio {{ shoppingList.isCurrent ? currentClass }}"
                    data-toggle="tooltip"
+                   data-trigger="hover"
+                   data-container="[data-role='tooltip-container']"
+                   data-boundary="viewport"
+                   data-offset="2, 2"
                    title="Set as default"
                    data-shopping-list-id="{{ shoppingList.id }}"
                    data-role="shopping-list-current-label">

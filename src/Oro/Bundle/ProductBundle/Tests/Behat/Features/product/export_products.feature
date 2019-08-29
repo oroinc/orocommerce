@@ -18,3 +18,14 @@ Feature: Export Products
       | PSKU3 | Product 3           | enabled  |                          |                                |                            |
       | PSKU4 | Product 4           | enabled  |                          |                                |                            |
       | PSKU5 | Product5(disabled)  | disabled |                          |                                |                            |
+
+  Scenario: Verify administrator is able Export Filtered Products
+    Given I filter SKU as is equal to "PSKU1"
+    And I click on "ExportButtonDropdown"
+    And I click "Export Filtered Products"
+    Then I should see "Export started successfully. You will receive email notification upon completion." flash message
+    And Email should contains the following "Export performed successfully. 1 products were exported. Download" text
+    And take the link from email and download the file from this link
+    And the downloaded file from email contains at least the following data:
+      | sku   | names.default.value | status   | metaTitles.default.value | metaDescriptions.default.value | metaKeywords.default.value |
+      | PSKU1 | Product 1           | enabled  | Meta Title 1             | Meta Description 1             | Meta Keywords 1            |

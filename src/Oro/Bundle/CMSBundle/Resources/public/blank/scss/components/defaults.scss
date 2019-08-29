@@ -85,6 +85,10 @@
         float: left;
         margin-right: $cms-page-figcaption-offset-right;
     }
+
+    iframe[src*=maps] {
+        width: 100%;
+    }
 }
 
 @include breakpoint('tablet-small') {

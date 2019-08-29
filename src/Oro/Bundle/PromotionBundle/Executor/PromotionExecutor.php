@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Executor;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
@@ -34,21 +35,29 @@ class PromotionExecutor
     private $cache;
 
     /**
+     * @var ObjectCacheKeyGenerator
+     */
+    private $objectCacheKeyGenerator;
+
+    /**
      * @param DiscountContextConverterInterface $discountContextConverter
      * @param StrategyProvider $discountStrategyProvider
      * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
      * @param Cache $cache
+     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
      */
     public function __construct(
         DiscountContextConverterInterface $discountContextConverter,
         StrategyProvider $discountStrategyProvider,
         PromotionDiscountsProviderInterface $promotionDiscountsProvider,
-        Cache $cache
+        Cache $cache,
+        ObjectCacheKeyGenerator $objectCacheKeyGenerator
     ) {
         $this->discountContextConverter = $discountContextConverter;
         $this->discountStrategyProvider = $discountStrategyProvider;
         $this->promotionDiscountsProvider = $promotionDiscountsProvider;
         $this->cache = $cache;
+        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
     /**
@@ -57,7 +66,7 @@ class PromotionExecutor
      */
     public function execute($sourceEntity): DiscountContextInterface
     {
-        $cacheKey = $this->getCacheKey($sourceEntity);
+        $cacheKey = $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion');
         if ($this->cache->contains($cacheKey)) {
             return $this->cache->fetch($cacheKey);
         }
@@ -82,14 +91,5 @@ class PromotionExecutor
     public function supports($sourceEntity)
     {
         return $this->discountContextConverter->supports($sourceEntity);
-    }
-
-    /**
-     * @param object $sourceEntity
-     * @return string
-     */
-    private function getCacheKey($sourceEntity)
-    {
-        return md5(serialize($sourceEntity));
     }
 }

@@ -3,11 +3,6 @@ include:
   - '@OroCheckoutBundle:Shipping.yml'
   - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
 
-Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-  businessUnit:
-    name: 'Common Business Unit'
-    organization: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision1:
     unit: '@item'
@@ -18,6 +13,11 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision3:
     unit: '@item'
     precision: '1'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: 'Common Business Unit'
+    organization: '@organization'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue1:
@@ -74,3 +74,13 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         - addTitle: ['@localNewCategory']
         - setParentCategory: ['@root_category']
         - setProducts: ['@products']
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+  inventoryLevel1:
+    product: '@product1'
+    productUnitPrecision: '@precision1'
+    quantity: 100
+  inventoryLevel2:
+    product: '@product2'
+    productUnitPrecision: '@precision2'
+    quantity: 100

@@ -234,6 +234,7 @@ services:
             - '@oro_tax.manager.tax_value_manager'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.taxation_provider.cache'
+            - '@oro.cache.generator.object_cache_key'
         calls:
             - [addTransformer, ['%oro_order.entity.order.class%', "@oro_tax.transformer.tax_value"]]
             - [addTransformer, ['%oro_order.entity.order_line_item.class%', "@oro_tax.transformer.tax_value"]]
