@@ -18,6 +18,9 @@ class LoadProductUnits extends AbstractFixture implements InitialFixtureInterfac
     public function load(ObjectManager $manager)
     {
         $repository = $manager->getRepository(ProductUnit::class);
+        $this->addReference('each', $repository->findOneBy(['code' => 'each']));
+        $this->addReference('hour', $repository->findOneBy(['code' => 'hour']));
+        $this->addReference('kg', $repository->findOneBy(['code' => 'kg']));
         $this->addReference('item', $repository->findOneBy(['code' => 'item']));
         $this->addReference('set', $repository->findOneBy(['code' => 'set']));
         $this->addReference('piece', $repository->findOneBy(['code' => 'piece']));

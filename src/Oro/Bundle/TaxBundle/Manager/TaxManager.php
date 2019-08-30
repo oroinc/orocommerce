@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Manager;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
@@ -33,7 +34,10 @@ class TaxManager
     protected $settingsProvider;
 
     /** @var CacheProvider */
-    private $cacheProvider;
+    protected $cacheProvider;
+
+    /** @var ObjectCacheKeyGenerator */
+    protected $objectCacheKeyGenerator;
 
     /**
      * @param TaxFactory $taxFactory
@@ -54,6 +58,14 @@ class TaxManager
         $this->taxValueManager = $taxValueManager;
         $this->settingsProvider = $settingsProvider;
         $this->cacheProvider = $cacheProvider;
+    }
+
+    /**
+     * @param ObjectCacheKeyGenerator $objectCacheKeyGenerator
+     */
+    public function setObjectCacheKeyGenerator(ObjectCacheKeyGenerator $objectCacheKeyGenerator)
+    {
+        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
     /**
@@ -271,10 +283,9 @@ class TaxManager
      * @param $object
      * @return Taxable
      */
-    private function getCachedTaxable($object)
+    protected function getCachedTaxable($object)
     {
-        $cacheKey = md5(serialize($object));
-
+        $cacheKey = $this->objectCacheKeyGenerator->generate($object, 'tax');
         if (!$this->cacheProvider->contains($cacheKey)) {
             $taxable = $this->taxFactory->create($object);
             $this->cacheProvider->save($cacheKey, $taxable);
