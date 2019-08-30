@@ -5,10 +5,12 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Psr\Log\LoggerInterface;
@@ -64,7 +66,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with(self::SCOPE_TYPE)
-            ->willReturn(new ScopeCriteria($context, []));
+            ->willReturn(new ScopeCriteria($context, new ClassMetadata(Scope::class)));
 
         $repo = $this->createMock(ObjectRepository::class);
         $repo->expects($this->once())
@@ -90,7 +92,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with(self::SCOPE_TYPE)
-            ->willReturn(new ScopeCriteria($context, []));
+            ->willReturn(new ScopeCriteria($context, new ClassMetadata(Scope::class)));
 
         $repo = $this->createMock(ObjectRepository::class);
         $repo->expects($this->once())
