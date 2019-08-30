@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Executor;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -34,6 +35,11 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
     private $cache;
 
     /**
+     * @var ObjectCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $objectCacheKeyGenerator;
+
+    /**
      * @var PromotionExecutor
      */
     private $executor;
@@ -44,12 +50,14 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $this->discountStrategyProvider = $this->createMock(StrategyProvider::class);
         $this->promotionDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
         $this->cache = $this->createMock(Cache::class);
+        $this->objectCacheKeyGenerator = $this->createMock(ObjectCacheKeyGenerator::class);
 
         $this->executor = new PromotionExecutor(
             $this->discountContextConverter,
             $this->discountStrategyProvider,
             $this->promotionDiscountsProvider,
-            $this->cache
+            $this->cache,
+            $this->objectCacheKeyGenerator
         );
     }
 
@@ -80,6 +88,10 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $discountContext = new DiscountContext();
 
         $cacheKey = md5(serialize($sourceEntity));
+        $this->objectCacheKeyGenerator->expects($this->once())
+            ->method('generate')
+            ->with($sourceEntity, 'promotion')
+            ->willReturn($cacheKey);
         $this->cache->expects($this->once())
             ->method('contains')
             ->with($cacheKey)
@@ -123,6 +135,10 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $discountContext = new DiscountContext();
 
         $cacheKey = md5(serialize($sourceEntity));
+        $this->objectCacheKeyGenerator->expects($this->once())
+            ->method('generate')
+            ->with($sourceEntity, 'promotion')
+            ->willReturn($cacheKey);
         $this->cache->expects($this->once())
             ->method('contains')
             ->with($cacheKey)

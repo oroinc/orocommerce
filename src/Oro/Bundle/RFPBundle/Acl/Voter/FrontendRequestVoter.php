@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Acl\Voter;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -16,25 +16,25 @@ class FrontendRequestVoter extends AbstractEntityVoter
     /** @var array */
     protected $supportedAttributes = ['EDIT'];
 
-    /** @var ApplicationProvider */
-    protected $applicationProvider;
+    /** @var FrontendHelper */
+    protected $frontendHelper;
 
     /** @var WorkflowManager */
     protected $workflowManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ApplicationProvider $applicationProvider
+     * @param FrontendHelper $frontendHelper
      * @param WorkflowManager $workflowManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ApplicationProvider $applicationProvider,
+        FrontendHelper $frontendHelper,
         WorkflowManager $workflowManager
     ) {
         parent::__construct($doctrineHelper);
 
-        $this->applicationProvider = $applicationProvider;
+        $this->frontendHelper = $frontendHelper;
         $this->workflowManager = $workflowManager;
     }
 
@@ -52,9 +52,7 @@ class FrontendRequestVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        if ($this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION &&
-            $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')
-        ) {
+        if ($this->frontendHelper->isFrontendRequest() && $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')) {
             return self::ACCESS_DENIED;
         }
 

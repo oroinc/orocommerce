@@ -77,10 +77,9 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
      */
     private function getScope(): Scope
     {
-        $scopeType = $this->container->getParameter('oro_commerce_menu.menu_update.scope_type');
         /** @var ScopeManager $scopeManager */
         $scopeManager = $this->container->get('oro_scope.scope_manager');
 
-        return $scopeManager->findOrCreate($scopeType, []);
+        return $scopeManager->findOrCreate('menu_frontend_visibility', []);
     }
 }

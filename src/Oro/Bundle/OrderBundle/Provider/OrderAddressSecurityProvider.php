@@ -5,46 +5,48 @@ namespace Oro\Bundle\OrderBundle\Provider;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Provide access availability decision for customer and customer user addresses for given order.
+ */
 class OrderAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'oro_order_address_%s_allow_manual';
+    private const MANUAL_EDIT_ACTION = 'oro_order_address_%s_allow_manual';
 
     /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
     /** @var OrderAddressProvider */
-    protected $orderAddressProvider;
+    private $orderAddressProvider;
 
     /** @var string */
-    protected $customerAddressClass;
+    private $customerAddressClass;
 
     /** @var string */
-    protected $customerUserAddressClass;
+    private $customerUserAddressClass;
 
     /**
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface        $tokenAccessor
+     * @param FrontendHelper                $frontendHelper
      * @param OrderAddressProvider          $orderAddressProvider
      * @param string                        $customerAddressClass
      * @param string                        $customerUserAddressClass
      */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenAccessorInterface $tokenAccessor,
+        FrontendHelper $frontendHelper,
         OrderAddressProvider $orderAddressProvider,
         $customerAddressClass,
         $customerUserAddressClass
     ) {
         $this->authorizationChecker = $authorizationChecker;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->frontendHelper = $frontendHelper;
         $this->orderAddressProvider = $orderAddressProvider;
         $this->customerAddressClass = $customerAddressClass;
         $this->customerUserAddressClass = $customerUserAddressClass;
@@ -121,7 +123,7 @@ class OrderAddressSecurityProvider
      *
      * @return string
      */
-    protected function getTypedPermission($type)
+    private function getTypedPermission($type)
     {
         OrderAddressProvider::assertType($type);
 
@@ -137,7 +139,7 @@ class OrderAddressSecurityProvider
      * @param string $className
      * @return string
      */
-    protected function getClassPermission($permission, $className)
+    private function getClassPermission($permission, $className)
     {
         return sprintf('%s;entity:%s', $permission, $className);
     }
@@ -146,11 +148,9 @@ class OrderAddressSecurityProvider
      * @param string $permission
      * @return string
      */
-    protected function getPermission($permission)
+    private function getPermission($permission)
     {
-        if (!$this->tokenAccessor->getUser() instanceof CustomerUser &&
-            !$this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
-        ) {
+        if (!$this->frontendHelper->isFrontendRequest()) {
             $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
         }
 

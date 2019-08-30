@@ -12,23 +12,26 @@
         lineItemsSelector: '.quote-line-items'
     } %}
 
+    <div data-page-component-module="orosale/js/app/components/quote-demand-component"
+         data-page-component-options="{{ componentOptions|json_encode }}">
         {{ form_errors(form) }}
+        <form method="POST"
+              data-nohash="true"
+              data-disable-autofocus="true"
+              id="{{ form.vars.id }}"
+              name="{{ form.vars.name }}"
+              class="quote-choice-form"
+        >
 
-    <form method="POST"
-          data-nohash="true"
-          data-disable-autofocus="true"
-          id="{{ form.vars.id }}"
-          name="{{ form.vars.name }}"
-          data-page-component-module="orosale/js/app/components/quote-demand-component"
-          data-page-component-options="{{ componentOptions|json_encode }}"
-          class="quote-choice-form"
-    >
-        {{ form_widget(form.demandProducts) }}
-        {{ form_rest(form) }}
-        <div class="order-checkout-widget text-right">
-            {{ block_widget(block) }}
-        </div>
-    </form>
+                {{ form_widget(form.demandProducts) }}
+                {{ form_rest(form) }}
+                <div class="order-checkout-widget text-right">
+                    {{ block_widget(block) }}
+                </div>
+
+        </form>
+        {{ oro_form_js_validation(form) }}
+    </div>
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}

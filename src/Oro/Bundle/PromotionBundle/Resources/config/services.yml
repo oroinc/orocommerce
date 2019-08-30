@@ -344,6 +344,7 @@ services:
             - '@oro_promotion.discount.strategy_provider'
             - '@oro_promotion.provider.promotion_discounts_provider'
             - '@oro_promotion.promotion_executor.cache'
+            - '@oro.cache.generator.object_cache_key'
 
     oro_promotion.promotion_executor.cache:
         public: false
@@ -405,16 +406,14 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion }
 
-    oro_promotion.customer_scope_criteria_provider.link:
-        public: false
+    oro_promotion.customer_scope_criteria_provider:
+        parent: oro_customer.customer_scope_criteria_provider
         tags:
-            - { name: oro_service_link, service: oro_customer.customer_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: promotion, priority: 20 }
 
-    oro_promotion.customer_group_scope_criteria_provider.link:
-        public: false
+    oro_promotion.customer_group_scope_criteria_provider:
+        parent: oro_customer.customer_group_scope_criteria_provider
         tags:
-            - { name: oro_service_link, service: oro_customer.customer_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: promotion, priority: 30 }
 
     oro_promotion.form.type.discount_options:

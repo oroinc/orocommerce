@@ -11,8 +11,8 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
@@ -34,9 +34,9 @@ class CategoryProviderTreeTest extends WebTestCase
     protected $categoryProvider;
 
     /**
-     * @var WebsiteManager
+     * @var TokenAccessorInterface
      */
-    private $websiteManager;
+    private $tokenAccessor;
 
     protected function setUp()
     {
@@ -52,7 +52,7 @@ class CategoryProviderTreeTest extends WebTestCase
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->websiteManager = $this->getContainer()->get('oro_website.manager');
+        $this->tokenAccessor = $this->getContainer()->get('oro_security.token_accessor');
     }
 
     /**
@@ -72,7 +72,7 @@ class CategoryProviderTreeTest extends WebTestCase
             $requestProductHandler,
             $this->repository,
             $this->createMock(CategoryTreeProvider::class),
-            $this->websiteManager
+            $this->tokenAccessor
         );
     }
 

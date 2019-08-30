@@ -97,55 +97,5 @@
         margin: $quick-order-import-validation-error-margin;
       }
     }
-
-    thead {
-      tr {
-        background-color: get-color('additional', 'base');
-        text-align: left;
-
-        th {
-          border-top: 1px solid get-color('additional', 'light');
-          border-bottom: 2px solid get-color('additional', 'light');
-        }
-
-        &:first-child {
-          th:first-child {
-            border-top-left-radius: 5px;
-            border-left: 1px solid get-color('additional', 'light');
-          }
-
-          th:last-child {
-            border-top-right-radius: 5px;
-          }
-        }
-      }
-    }
-
-    tbody {
-      tr {
-        td {
-          border-bottom: 1px solid get-color('additional', 'light');
-          border-top: none;
-        }
-
-        td:first-child {
-          border-left: 1px solid get-color('additional', 'light')
-        }
-
-        td:last-child {
-          border-right: 1px solid get-color('additional', 'light')
-        }
-
-        &:last-child {
-          td:first-child {
-            border-bottom-left-radius: 5px;
-          }
-
-          td:last-child {
-            border-bottom-right-radius: 5px;
-          }
-        }
-      }
-    }
   }
 }

@@ -1,0 +1,25 @@
+errors:
+    -
+        status: '400'
+        title: 'not blank constraint'
+        detail: 'This value should not be blank.'
+        source:
+            pointer: /data/attributes/label
+    -
+        status: '400'
+        title: 'not blank constraint'
+        detail: 'This value should not be blank.'
+        source:
+            pointer: /data/attributes/shortLabel
+    -
+        status: '400'
+        title: 'not blank constraint'
+        detail: 'This value should not be blank.'
+        source:
+            pointer: /data/attributes/pluralLabel
+    -
+        status: '400'
+        title: 'not blank constraint'
+        detail: 'This value should not be blank.'
+        source:
+            pointer: /data/attributes/shortPluralLabel

@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Util\QueryModifierInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -24,19 +24,19 @@ class CategoryPerOrganizationQueryModifier implements QueryModifierInterface
     /** @var EntityClassResolver */
     private $entityClassResolver;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
 
     /**
-     * @param EntityClassResolver $entityClassResolver
-     * @param WebsiteManager      $websiteManager
+     * @param EntityClassResolver    $entityClassResolver
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         EntityClassResolver $entityClassResolver,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->entityClassResolver = $entityClassResolver;
-        $this->websiteManager = $websiteManager;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -58,7 +58,7 @@ class CategoryPerOrganizationQueryModifier implements QueryModifierInterface
         }
 
         if ($categoryAlias) {
-            $organizationId = $this->getOrganizationId();
+            $organizationId = $this->tokenAccessor->getOrganizationId();
             if (null !== $organizationId) {
                 $this->applyRootRestriction($qb, $categoryAlias, $organizationId);
             }
@@ -77,23 +77,5 @@ class CategoryPerOrganizationQueryModifier implements QueryModifierInterface
         $qb
             ->andWhere($qb->expr()->eq($rootAlias . '.organization', ':' . $paramName))
             ->setParameter($paramName, $organizationId);
-    }
-
-    /**
-     * @return int|null
-     */
-    private function getOrganizationId(): ?int
-    {
-        $website = $this->websiteManager->getCurrentWebsite();
-        if (!$website) {
-            return null;
-        }
-
-        $organization = $website->getOrganization();
-        if (!$organization) {
-            return null;
-        }
-
-        return $organization->getId();
     }
 }

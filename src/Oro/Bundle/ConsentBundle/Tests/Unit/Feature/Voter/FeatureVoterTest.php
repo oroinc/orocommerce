@@ -47,7 +47,6 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
-            ->with(null)
             ->willReturn(false);
 
         $vote = $this->voter->vote(FeatureVoter::FEATURE_NAME);
@@ -64,7 +63,6 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
-            ->with(null)
             ->willReturn(true);
 
         $vote = $this->voter->vote(FeatureVoter::FEATURE_NAME, $scopeIdentifier);
@@ -81,7 +79,6 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
-            ->with(null)
             ->willReturn(true);
 
         $vote = $this->voter->vote(FeatureVoter::FEATURE_NAME, $scopeIdentifier);

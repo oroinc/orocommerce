@@ -1238,6 +1238,14 @@ services:
     Oro\Bundle\PricingBundle\Handler\ProductPriceHandler:
         alias: 'oro_pricing.handler.product_price_handler'
 
+    oro_pricing.delete_handler.product_price:
+        class: Oro\Bundle\PricingBundle\Handler\ProductPriceDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_pricing.manager.price_manager'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+
     oro_pricing.providers.price_attribute_prices:
         class: Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider
         public: false

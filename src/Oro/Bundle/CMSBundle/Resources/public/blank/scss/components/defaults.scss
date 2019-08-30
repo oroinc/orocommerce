@@ -85,6 +85,10 @@
         float: left;
         margin-right: $cms-page-figcaption-offset-right;
     }
+
+    table {
+        @extend %table;
+    }
 }
 
 @include breakpoint('tablet-small') {

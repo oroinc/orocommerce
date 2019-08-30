@@ -78,7 +78,7 @@ services:
         arguments:
             - "@oro_locale.provider.current_localization"
         tags:
-            - {name: oro_scope.provider, scopeType: cms_content_block, priority: 1}
+            - { name: oro_scope.provider, scopeType: cms_content_block, priority: 1 }
 
     oro_cms.twig.content_security_policy:
         class: 'Twig_Sandbox_SecurityPolicy'

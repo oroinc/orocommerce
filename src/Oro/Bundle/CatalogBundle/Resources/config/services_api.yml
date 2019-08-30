@@ -3,7 +3,7 @@ services:
         class: Oro\Bundle\CatalogBundle\Api\CategoryPerOrganizationQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
-            - '@oro_website.manager'
+            - '@oro_security.token_accessor'
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 

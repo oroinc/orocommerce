@@ -57,9 +57,10 @@ class VisibilityScopeProviderTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')
-            ->with(CustomerProductVisibility::getScopeType(), [
-                ScopeCustomerCriteriaProvider::ACCOUNT => $customer
-            ]);
+            ->with(
+                CustomerProductVisibility::getScopeType(),
+                [ScopeCustomerCriteriaProvider::CUSTOMER => $customer]
+            );
 
         $this->provider->getCustomerProductVisibilityScope($customer, $this->website);
     }
@@ -70,9 +71,10 @@ class VisibilityScopeProviderTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')
-            ->with(CustomerGroupProductVisibility::getScopeType(), [
-                ScopeCustomerGroupCriteriaProvider::FIELD_NAME => $customerGroup
-            ]);
+            ->with(
+                CustomerGroupProductVisibility::getScopeType(),
+                [ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP => $customerGroup]
+            );
 
         $this->provider->getCustomerGroupProductVisibilityScope($customerGroup, $this->website);
     }

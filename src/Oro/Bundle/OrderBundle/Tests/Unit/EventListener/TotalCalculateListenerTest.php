@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -16,44 +15,35 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
-
-    /**
-     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /**
-     * @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $applicationProvider;
-
-    /**
-     * @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formRegistry;
 
-    /**
-     * @var TotalCalculateListener
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
+
+    /** @var TotalCalculateListener */
     private $listener;
 
     protected function setUp()
     {
         $this->formFactory = $this->createMock(FormFactory::class);
-        $this->applicationProvider = $this->createMock(CurrentApplicationProviderInterface::class);
         $this->formRegistry = $this->createMock(FormRegistryInterface::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
+
         $this->listener = new TotalCalculateListener(
             $this->formFactory,
-            $this->applicationProvider,
-            $this->formRegistry
+            $this->formRegistry,
+            $this->frontendHelper
         );
     }
 
     public function testOnBeforeTotalCalculateWhenEntityIsNotOrder()
     {
-        $this->applicationProvider->expects($this->never())
-            ->method('getCurrentApplication');
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
         $this->formFactory->expects($this->never())
             ->method('create');
 
@@ -61,11 +51,11 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testOnBeforeTotalCalculateWhenFormIsNotDefined()
+    public function testOnBeforeTotalCalculateForFrontend()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn('some other application');
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
         $this->formFactory->expects($this->never())
             ->method('create');
 
@@ -75,9 +65,9 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBeforeTotalCalculateWhenRequestNotContainsData()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ActionCurrentApplicationProvider::DEFAULT_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
         $this->formFactory->expects($this->never())
             ->method('create');
 
@@ -89,19 +79,20 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBeforeTotalCalculate()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ActionCurrentApplicationProvider::DEFAULT_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
         $entity = new Order();
-        $request = $this->getRequest([OrderType::NAME => ['some data'], 'formName' => self::FORM_DATA]);
+        $formData = ['field' => 'value'];
+        $request = $this->getRequest([OrderType::NAME => ['some data'], 'formName' => $formData]);
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getName')
             ->willReturn('formName');
         $form->expects($this->once())
             ->method('submit')
-            ->with(self::FORM_DATA);
+            ->with($formData);
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(OrderType::class, $entity)
@@ -120,13 +111,11 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
     private function configureFormRegistry($className, $formName)
     {
         $formType = $this->createMock(FormTypeInterface::class);
-        $formType
-            ->expects($this->any())
+        $formType ->expects($this->any())
             ->method('getBlockPrefix')
             ->willReturn($formName);
 
-        $this->formRegistry
-            ->expects($this->any())
+        $this->formRegistry->expects($this->any())
             ->method('getType')
             ->with($className)
             ->willReturn($formType);

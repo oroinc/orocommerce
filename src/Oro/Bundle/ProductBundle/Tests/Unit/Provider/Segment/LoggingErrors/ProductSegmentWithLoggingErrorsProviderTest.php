@@ -5,11 +5,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider\Segment\LoggingErrors;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\Segment\LoggingErrors\ProductSegmentWithLoggingErrorsProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Psr\Log\LoggerInterface;
 
 class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit\Framework\TestCase
@@ -30,9 +29,9 @@ class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit\Framework\Tes
     private $provider;
 
     /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $websiteManager;
+    private $tokenAccessor;
 
     /**
      * @var Organization
@@ -47,24 +46,19 @@ class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit\Framework\Tes
         $this->organization = (new Organization())->setId(1);
 
         $this->segmentManager = $this->createMock(SegmentManager::class);
-        $website = $this->createMock(Website::class);
-        $website
-            ->expects($this->any())
+
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->tokenAccessor
+            ->expects($this->once())
             ->method('getOrganization')
             ->willReturn($this->organization);
-
-        $this->websiteManager = $this->createMock(WebsiteManager::class);
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
 
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->provider = new ProductSegmentWithLoggingErrorsProvider(
             $this->segmentManager,
             $this->logger,
-            $this->websiteManager
+            $this->tokenAccessor
         );
     }
 

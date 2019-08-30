@@ -142,7 +142,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_frontend.provider.current_application'
+            - '@oro_frontend.request.frontend_helper'
             - '@oro_workflow.manager'
         calls:
             - [setClassName, ['%oro_rfp.entity.request.class%']]

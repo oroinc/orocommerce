@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -12,13 +11,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $token;
+    private $token;
 
-    /** @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $applicationProvider;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
 
     /** @var FrontendQuotePermissionVoter */
-    protected $voter;
+    private $voter;
 
     /**
      * {@inheritdoc}
@@ -26,9 +25,9 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->token = $this->createMock(TokenInterface::class);
-        $this->applicationProvider = $this->createMock(CurrentApplicationProviderInterface::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
-        $this->voter = new FrontendQuotePermissionVoter($this->applicationProvider);
+        $this->voter = new FrontendQuotePermissionVoter($this->frontendHelper);
     }
 
     public function testVoteWithUnsupportedObject()
@@ -39,11 +38,11 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testVoteWithUnsupportedApplication()
+    public function testVoteForBackend()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::DEFAULT_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
         $this->assertEquals(
             FrontendQuotePermissionVoter::ACCESS_ABSTAIN,
@@ -59,9 +58,9 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function testVote(string $internalStatus, int $expectedResult)
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
         $quote = $this->getQuoteWithInternalStatus($internalStatus);
 
@@ -140,7 +139,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
      * @param string $status
      * @return Quote
      */
-    protected function getQuoteWithInternalStatus(string $status) : Quote
+    private function getQuoteWithInternalStatus(string $status): Quote
     {
         $quote = new Quote();
         $quote->setInternalStatus(new StubEnumValue($status, $status));
