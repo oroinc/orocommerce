@@ -14,8 +14,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,9 +39,9 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     protected $localizationHelper;
 
     /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $websiteManager;
+    private $tokenAccessor;
 
     /**
      * @var CategoryProvider
@@ -57,21 +56,19 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
-        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
             $this->categoryRepository,
             $this->categoryTreeProvider,
-            $this->websiteManager
+            $this->tokenAccessor
         );
     }
 
     public function testGetCurrentCategoryUsingMasterCatalogRoot()
     {
         $organization = new Organization();
-        $website = new Website();
-        $website->setOrganization($organization);
         $category = new Category();
 
         $this->requestProductHandler
@@ -79,10 +76,10 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCategoryId')
             ->willReturn(null);
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryRepository
             ->expects($this->once())
@@ -94,22 +91,17 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($category, $result);
     }
 
-    /**
-     * @dataProvider getEmptyCurrentCateDataProvider
-     *
-     * @param Website $website
-     */
-    public function testGetCurrentCategoryNull(Website $website = null)
+    public function testGetCurrentCategoryNull()
     {
         $this->requestProductHandler
             ->expects($this->once())
             ->method('getCategoryId')
             ->willReturn(null);
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn(null);
 
         $this->categoryRepository
             ->expects($this->never())
@@ -117,21 +109,6 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->categoryProvider->getCurrentCategory();
         $this->assertNull($result);
-    }
-
-    /**
-     * @return array
-     */
-    public function getEmptyCurrentCateDataProvider()
-    {
-        return [
-            'without website' => [
-                'website' => null
-            ],
-            'without organization' => [
-                'website' => new Website(),
-            ]
-        ];
     }
 
     public function testGetCurrentCategoryUsingFind()
@@ -157,14 +134,12 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetRootCategory()
     {
         $organization = new Organization();
-        $website = new Website();
-        $website->setOrganization($organization);
         $category = new Category();
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryRepository
             ->expects($this->once())
@@ -198,13 +173,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
         $user = new CustomerUser();
         $organization = new Organization();
-        $website = new Website();
-        $website->setOrganization($organization);
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryRepository
             ->expects($this->once())
@@ -247,13 +220,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
         $user = new CustomerUser();
         $organization = new Organization();
-        $website = new Website();
-        $website->setOrganization($organization);
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->exactly(2))
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryRepository
             ->expects($this->once())

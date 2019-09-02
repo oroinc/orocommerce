@@ -288,20 +288,17 @@ class SlugRepositoryTest extends WebTestCase
     public function testFindMostSuitableUsedScope()
     {
         $scope = $this->getReference(LoadSlugScopesData::SCOPE_KEY);
-        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         /** @var Customer $customer */
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
-        $criteria = $scopeManager->getCriteria('web_content', ['customer' => $customer]);
+        $criteria = $this->scopeManager->getCriteria('web_content', ['customer' => $customer]);
         $this->assertSame($scope, $this->repository->findMostSuitableUsedScope($criteria));
     }
 
     public function testFindMostSuitableUsedScopeEmptyResult()
     {
-        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
-
         /** @var Customer $secondCustomer */
         $secondCustomer = $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1);
-        $nonUsedCriteria = $scopeManager->getCriteria('web_content', ['customer' => $secondCustomer]);
+        $nonUsedCriteria = $this->scopeManager->getCriteria('web_content', ['customer' => $secondCustomer]);
         $this->assertNull($this->repository->findMostSuitableUsedScope($nonUsedCriteria));
     }
 

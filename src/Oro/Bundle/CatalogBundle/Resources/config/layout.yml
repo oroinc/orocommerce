@@ -19,10 +19,10 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
         public: true
         arguments:
-            - "@oro_catalog.handler.request_product"
-            - "@oro_catalog.repository.category"
+            - '@oro_catalog.handler.request_product'
+            - '@oro_catalog.repository.category'
             - '@oro_catalog.provider.category_tree_provider'
-            - '@oro_website.manager'
+            - '@oro_security.token_accessor'
         calls:
             - [setLocalizationHelper, ['@oro_locale.helper.localization']]
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]

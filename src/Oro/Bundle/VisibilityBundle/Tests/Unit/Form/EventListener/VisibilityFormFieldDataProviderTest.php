@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -88,7 +89,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($allForm, ProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([], []));
+            ->willReturn(new ScopeCriteria([], new ClassMetadata(Scope::class)));
 
         // configure database queries results
         $visibility = $this->getEntity(
@@ -136,7 +137,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($customerGroupForm, CustomerGroupProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([], []));
+            ->willReturn(new ScopeCriteria([], new ClassMetadata(Scope::class)));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
@@ -197,7 +198,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($customerForm, CustomerProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([], []));
+            ->willReturn(new ScopeCriteria([], new ClassMetadata(Scope::class)));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
@@ -253,7 +254,10 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager->expects($this->once())
             ->method('getCriteriaByScope')
             ->with($rootScope, 'customer_product_visibility')
-            ->willReturn(new ScopeCriteria(['customer' => $this->getEntity(Customer::class, ['id' => 3])], []));
+            ->willReturn(new ScopeCriteria(
+                ['customer' => $this->getEntity(Customer::class, ['id' => 3])],
+                new ClassMetadata(Scope::class)
+            ));
 
         $fieldData = new Customer();
         $scope = new Scope();

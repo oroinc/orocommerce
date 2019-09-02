@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Context;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -14,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -182,7 +184,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
             'customerGroup' => $customerGroup,
             'website' => $website
         ];
-        $scopeCriteria = new ScopeCriteria([], []);
+        $scopeCriteria = new ScopeCriteria([], new ClassMetadata(Scope::class));
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with('promotion', $scopeContext)

@@ -86,6 +86,10 @@
         margin-right: $cms-page-figcaption-offset-right;
     }
 
+    table {
+        @extend %table;
+    }
+
     iframe[src*=maps] {
         width: 100%;
     }

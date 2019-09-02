@@ -66,7 +66,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
         arguments:
             - '@security.authorization_checker'
-            - '@oro_security.token_accessor'
+            - '@oro_frontend.request.frontend_helper'
             - '@oro_order.order.provider.order_address'
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'
@@ -252,8 +252,8 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
-            - '@oro_action.provider.current_application'
             - '@form.registry'
+            - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 

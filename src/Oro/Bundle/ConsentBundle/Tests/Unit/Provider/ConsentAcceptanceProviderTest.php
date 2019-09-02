@@ -2,36 +2,27 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $tokenStorage;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    /**
-     * @var ConsentAcceptanceRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentAcceptanceRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $consentAcceptanceRepository;
 
-    /**
-     * @var ConsentAcceptanceProvider
-     */
+    /** @var ConsentAcceptanceProvider */
     private $consentAcceptanceProvider;
 
     /**
@@ -39,63 +30,40 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->consentAcceptanceRepository = $this->createMock(ConsentAcceptanceRepository::class);
 
         $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')
+        $em->expects($this->any())
+            ->method('getRepository')
             ->with(ConsentAcceptance::class)
             ->willReturn($this->consentAcceptanceRepository);
 
-        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $doctrine */
-        $doctrine = $this->createMock(RegistryInterface::class);
-        $doctrine->method('getEntityManagerForClass')
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
             ->with(ConsentAcceptance::class)
             ->willReturn($em);
 
         $this->consentAcceptanceProvider = new ConsentAcceptanceProvider(
-            $this->tokenStorage,
+            $this->tokenAccessor,
             $doctrine
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->tokenStorage,
-            $this->consentAcceptanceRepository,
-            $this->consentAcceptanceProvider
         );
     }
 
     public function testGetCustomerConsentAcceptancesWithoutCustomerUser()
     {
-        $this->mockToken();
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->never())
+        $this->consentAcceptanceRepository->expects($this->never())
             ->method('getAcceptedConsentsByCustomer');
 
-        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptances());
-    }
-
-    public function testGetCustomerConsentAcceptancesForAnonymous()
-    {
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $token->expects($this->never())
-            ->method('getUser');
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->consentAcceptanceRepository
-            ->expects($this->never())
-            ->method('getAcceptedConsentsByCustomer');
-
-        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptances());
+        $this->assertSame(
+            [],
+            $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
+        );
     }
 
     /**
@@ -107,38 +75,17 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        $this->mockToken($customerUser);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->once())
+        $this->consentAcceptanceRepository->expects($this->once())
             ->method('getAcceptedConsentsByCustomer')
             ->with($customerUser)
             ->willReturn($consentAcceptances);
 
         $this->assertSame(
             $consentAcceptances,
-            $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
-        );
-    }
-
-    public function testGetGuestCustomerConsentAcceptances()
-    {
-        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
-
-        $visitor = new CustomerVisitor();
-        $visitor->setCustomerUser($customerUser);
-        $token = new AnonymousCustomerUserToken('', [], $visitor);
-
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->consentAcceptanceRepository
-            ->expects($this->never())
-            ->method('getAcceptedConsentsByCustomer');
-
-        $this->assertSame(
-            [],
             $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
         );
     }
@@ -163,10 +110,11 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerConsentAcceptanceByConsentIdWithoutCustomerUser()
     {
-        $this->mockToken();
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->never())
+        $this->consentAcceptanceRepository->expects($this->never())
             ->method('getAcceptedConsentsByCustomer');
 
         $this->assertNull($this->consentAcceptanceProvider->getCustomerConsentAcceptanceByConsentId(1));
@@ -186,10 +134,11 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     ) {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        $this->mockToken($customerUser);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->once())
+        $this->consentAcceptanceRepository->expects($this->once())
             ->method('getAcceptedConsentsByCustomer')
             ->with($customerUser)
             ->willReturn($consentAcceptances);
@@ -247,15 +196,19 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerConsentAcceptancesByConsentsWithoutCustomerUser()
     {
-        $this->mockToken();
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->never())
+        $this->consentAcceptanceRepository->expects($this->never())
             ->method('getAcceptedConsentsByCustomer');
 
         $consents = [$this->getEntity(Consent::class, ['id' => 1])];
 
-        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptancesByConsents($consents));
+        $this->assertSame(
+            [],
+            $this->consentAcceptanceProvider->getCustomerConsentAcceptancesByConsents($consents)
+        );
     }
 
     /**
@@ -272,19 +225,18 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     ) {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        $this->mockToken($customerUser);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
 
-        $this->consentAcceptanceRepository
-            ->expects($this->once())
+        $this->consentAcceptanceRepository->expects($this->once())
             ->method('getAcceptedConsentsByCustomer')
             ->with($customerUser)
             ->willReturn($consentAcceptances);
 
         $this->assertSame(
             $expectedResult,
-            $this->consentAcceptanceProvider->getCustomerConsentAcceptancesByConsents(
-                $consents
-            )
+            $this->consentAcceptanceProvider->getCustomerConsentAcceptancesByConsents($consents)
         );
     }
 
@@ -344,19 +296,5 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => []
             ],
         ];
-    }
-
-    /**
-     * @param CustomerUser|null $customerUser
-     */
-    private function mockToken(CustomerUser $customerUser = null)
-    {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($customerUser);
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
     }
 }

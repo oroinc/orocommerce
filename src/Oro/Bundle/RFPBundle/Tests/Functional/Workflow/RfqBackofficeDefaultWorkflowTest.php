@@ -49,7 +49,8 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->loadFixtures([LoadRequestData::class]);
 
         $this->updateUserSecurityToken(self::AUTH_USER);
-        $this->getContainer()->get('request_stack')->push(new HttpRequest());
+        $this->getContainer()->get('request_stack')
+            ->push(HttpRequest::create($this->getUrl('oro_default')));
 
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
