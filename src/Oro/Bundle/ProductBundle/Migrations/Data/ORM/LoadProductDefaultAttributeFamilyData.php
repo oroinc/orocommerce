@@ -78,21 +78,20 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
 
         /** @var AttributeFamily $attributeFamily */
         $attributeFamily = $manager->getRepository(AttributeFamily::class)
-            ->findOneBy(['organization' => $organization]);
+            ->findOneBy(['owner' => $organization]);
 
         if ($attributeFamily === null) {
             $attributeFamily = new AttributeFamily();
             $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
             $attributeFamily->setEntityClass(Product::class);
             $attributeFamily->setDefaultLabel('Default');
-            $attributeFamily->setOrganization($organization);
         } else {
             $groups = $attributeFamily->getAttributeGroups();
             foreach ($groups as $group) {
                 $attributeFamily->removeAttributeGroup($group);
             }
         }
-        $attributeFamily->setOwner($this->getUser($manager));
+        $attributeFamily->setOwner($organization);
 
         $this->addGroupsWithAttributesToFamily(self::$groups, $attributeFamily, $manager);
         $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);

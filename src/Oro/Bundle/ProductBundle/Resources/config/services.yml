@@ -1641,6 +1641,5 @@ services:
     oro_product.entity.factory.product_family:
         class: Oro\Bundle\ProductBundle\Entity\Factory\ProductFamilyFactory
         arguments:
-            - '@oro_security.token_accessor'
             - '@translator'
         public: true
