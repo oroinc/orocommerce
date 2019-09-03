@@ -99,5 +99,6 @@ oro.cms:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
+oro.entity_extend.form.data_type.wysiwyg: WYSIWYG
 oro.scope.content_block.label: Content Block
 

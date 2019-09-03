@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle;
 
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\WidgetTagPass;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Page;
@@ -9,6 +10,9 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensio
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * The CMSBundle bundle class.
+ */
 class OroCMSBundle extends Bundle
 {
     /**
@@ -20,6 +24,7 @@ class OroCMSBundle extends Bundle
 
         $container
             ->addCompilerPass(new WidgetTagPass())
+            ->addCompilerPass(new EntityExtendFieldTypePass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Page::class => [
                     'slugPrototype' => 'slugPrototypes',
