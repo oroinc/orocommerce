@@ -535,6 +535,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
 
+    Id:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Id")]'
+
     Content Node Form Slug Fallbacks:
       selector:
         type: xpath
