@@ -23,8 +23,6 @@ class ProductShippingOptionsRepository extends EntityRepository
         }
 
         $qb = $this->createQueryBuilder('options');
-        $qb
-            ->join('options.product', 'product');
 
         $expr = $qb->expr();
 
@@ -34,7 +32,7 @@ class ProductShippingOptionsRepository extends EntityRepository
             QueryBuilderUtil::checkIdentifier($productId);
             $productIdParamName = 'product_id_'.$productId;
 
-            $productExpr = $expr->eq('product.id', ':'.$productIdParamName);
+            $productExpr = $expr->eq('options.product', ':'.$productIdParamName);
 
             $qb->setParameter($productIdParamName, $productId);
 
