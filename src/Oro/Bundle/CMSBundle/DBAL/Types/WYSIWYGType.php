@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\DBAL\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
 
 /**
@@ -9,11 +10,17 @@ use Doctrine\DBAL\Types\TextType;
  */
 class WYSIWYGType extends TextType
 {
-    const TYPE = 'wysiwyg';
+    public const TYPE = 'wysiwyg';
 
     /** {@inheritdoc} */
-    public function getName()
+    public function getName(): string
     {
         return self::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return true;
     }
 }

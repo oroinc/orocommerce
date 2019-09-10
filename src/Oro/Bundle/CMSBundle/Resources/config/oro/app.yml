@@ -2,6 +2,7 @@ doctrine:
     dbal:
         types:
             wysiwyg: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType
+            wysiwyg_style: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType
 
 liip_imagine:
     filter_sets:
