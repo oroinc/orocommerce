@@ -9,6 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
+ * Represents Content Variant entity
+ *
  * @ORM\Entity
  * @ORM\Table(name="oro_cms_text_content_variant")
  * @Config
@@ -55,9 +57,16 @@ class TextContentVariant
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="wysiwyg", nullable=true)
      */
     protected $content;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
+     */
+    protected $contentStyle;
 
     /**
      * @var boolean
@@ -162,6 +171,26 @@ class TextContentVariant
     public function setContent($content)
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentStyle()
+    {
+        return $this->contentStyle;
+    }
+
+    /**
+     * @param string $contentStyle
+     *
+     * @return $this
+     */
+    public function setContentStyle($contentStyle)
+    {
+        $this->contentStyle = $contentStyle;
 
         return $this;
     }

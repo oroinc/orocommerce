@@ -390,7 +390,8 @@ class OroCMSBundleInstaller implements
         $table = $schema->createTable('oro_cms_text_content_variant');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('content_block_id', 'integer', ['notnull' => false]);
-        $table->addColumn('content', 'text', ['notnull' => false]);
+        $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
+        $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }
