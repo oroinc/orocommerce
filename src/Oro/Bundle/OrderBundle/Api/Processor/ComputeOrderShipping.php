@@ -33,10 +33,7 @@ class ComputeOrderShipping implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if ($context->isFieldRequested(self::SHIPPING_COST_FIELD_NAME)) {
             $overriddenShippingCost = $context->getResultFieldValue('overriddenShippingCostAmount', $data);
@@ -58,7 +55,7 @@ class ComputeOrderShipping implements ProcessorInterface
             $data[self::SHIPPING_METHOD_FIELD_NAME] = $shippingMethod;
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**

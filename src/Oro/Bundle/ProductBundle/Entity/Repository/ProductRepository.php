@@ -157,9 +157,9 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array $productIds
-     * @return File[]
+     * @return QueryBuilder
      */
-    public function getListingImagesFilesByProductIds(array $productIds)
+    private function getImagesQueryBuilder(array $productIds): QueryBuilder
     {
         $qb = $this->_em->createQueryBuilder()
             ->select('imageFile as image, IDENTITY(pi.product) as product_id')
@@ -174,15 +174,51 @@ class ProductRepository extends EntityRepository
         $qb->where($qb->expr()->in('pi.product', ':products'))
             ->setParameter('products', $productIds);
 
-        $qb->join('pi.types', 'imageTypes')
-            ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
-            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
+        return $qb->join('pi.types', 'imageTypes');
+    }
 
-        $productImages = $qb->getQuery()->execute();
+    /**
+     * @param array $productIds
+     * @return File[]
+     */
+    public function getListingImagesFilesByProductIds(array $productIds)
+    {
+        $qb = $this->getImagesQueryBuilder($productIds);
+
+        $productImages = $qb->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING)
+            ->getQuery()->execute();
+
         $images = [];
-
         foreach ($productImages as $productImage) {
             $images[$productImage['product_id']] = $productImage['image'];
+        }
+
+        return $images;
+    }
+
+    /**
+     * @param array $productIds
+     * @return File[]
+     */
+    public function getListingAndMainImagesFilesByProductIds(array $productIds)
+    {
+        $qb = $this->getImagesQueryBuilder($productIds);
+
+        $productImages = $qb->addSelect('imageTypes.type as type')
+            ->andWhere($qb->expr()->in('imageTypes.type', ':imageTypes'))
+            ->setParameter('imageTypes', [ProductImageType::TYPE_LISTING, ProductImageType::TYPE_MAIN])
+            ->getQuery()->execute();
+
+        $images = [];
+        foreach ($productImages as $productImage) {
+            if ($productImage['type'] === ProductImageType::TYPE_LISTING) {
+                $images[$productImage['product_id']][ProductImageType::TYPE_LISTING] = $productImage['image'];
+            }
+
+            if ($productImage['type'] === ProductImageType::TYPE_MAIN) {
+                $images[$productImage['product_id']][ProductImageType::TYPE_MAIN] = $productImage['image'];
+            }
         }
 
         return $images;

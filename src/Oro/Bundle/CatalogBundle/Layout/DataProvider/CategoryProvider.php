@@ -9,8 +9,7 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
@@ -38,25 +37,25 @@ class CategoryProvider
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
 
     /**
-     * @param RequestProductHandler $requestProductHandler
-     * @param CategoryRepository $categoryRepository
-     * @param CategoryTreeProvider $categoryTreeProvider
-     * @param WebsiteManager $websiteManager
+     * @param RequestProductHandler  $requestProductHandler
+     * @param CategoryRepository     $categoryRepository
+     * @param CategoryTreeProvider   $categoryTreeProvider
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         CategoryRepository $categoryRepository,
         CategoryTreeProvider $categoryTreeProvider,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->categoryRepository = $categoryRepository;
         $this->categoryTreeProvider = $categoryTreeProvider;
-        $this->websiteManager = $websiteManager;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -92,7 +91,7 @@ class CategoryProvider
     {
         $customer = $user ? $user->getCustomer() : null;
         $customerGroup = $customer ? $customer->getGroup() : null;
-        $currentOrganization = $this->getOrganization();
+        $currentOrganization = $this->tokenAccessor->getOrganization();
 
         $this->initCache([
             'category',
@@ -251,27 +250,8 @@ class CategoryProvider
      */
     private function getCurrentMasterCatalogRoot()
     {
-        $organization = $this->getOrganization();
+        $organization = $this->tokenAccessor->getOrganization();
 
         return $organization ? $this->categoryRepository->getMasterCatalogRoot($organization) : null;
-    }
-
-    /**
-     * @return null|Organization
-     */
-    private function getOrganization()
-    {
-        $website = $this->websiteManager->getCurrentWebsite();
-        if (!$website) {
-            return null;
-        }
-
-        /** @var Organization $organization */
-        $organization = $website->getOrganization();
-        if (!$organization) {
-            return null;
-        }
-
-        return $organization;
     }
 }

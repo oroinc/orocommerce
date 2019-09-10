@@ -40,24 +40,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->reindexProductData();
     }
 
-    /**
-     * @return bool
-     */
-    private function isElasticSearchEngine()
-    {
-        return
-            class_exists('Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch')
-            && \Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch::ENGINE_NAME === $this->getSearchEngine();
-    }
-
-    /**
-     * @return string
-     */
-    private function getSearchEngine()
-    {
-        return self::getContainer()->getParameter('oro_search.engine');
-    }
-
     public function testOrderedAt()
     {
         /** @var \DateTime $orderedAt */
@@ -185,12 +167,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testCountByOrderedAt()
     {
-        if ($this->isElasticSearchEngine()) {
-            $this->markTestSkipped(
-                'ElasticSearch search engine returns timestamp in milliseconds instead of in seconds.'
-            );
-        }
-
         /** @var \DateTime $orderedAt1 */
         $orderedAt1 = $this->getReference('order1')->getCreatedAt();
         /** @var \DateTime $orderedAt2 */
@@ -220,12 +196,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMinByOrderedAt()
     {
-        if ($this->isElasticSearchEngine()) {
-            $this->markTestSkipped(
-                'ElasticSearch search engine returns timestamp in milliseconds instead of in seconds.'
-            );
-        }
-
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order1')->getCreatedAt();
 
@@ -250,12 +220,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMaxByOrderedAt()
     {
-        if ($this->isElasticSearchEngine()) {
-            $this->markTestSkipped(
-                'ElasticSearch search engine returns timestamp in milliseconds instead of in seconds.'
-            );
-        }
-
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order2')->getCreatedAt();
 

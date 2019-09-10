@@ -502,14 +502,14 @@ services:
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
-            - "@request_stack"
-            - "@oro_product.product.manager"
-            - "@oro_locale.helper.localization"
+            - '@request_stack'
+            - '@oro_product.product.manager'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_locale.helper.localization'
+            - '@oro_frontend.request.frontend_helper'
         calls:
-            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-            - [setAclHelper,["@oro_security.acl_helper"]]
-            - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
-            - [setSearchRepository,["@oro_product.website_search.repository.product"]]
+            - [initDoctrinePropertiesByManagerRegistry, ['@doctrine']]
+            - [setAclHelper, ['@oro_security.acl_helper']]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
@@ -519,6 +519,14 @@ services:
             - [enableConfigurableProducts]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_all_product_visibility_limited" }
+
+    oro_product.autocomplete.product_families.search_handler:
+        class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductFamilySearchHandler'
+        arguments:
+            - '@doctrine'
+            - '@property_accessor'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_product_families' }
 
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
@@ -1261,6 +1269,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
+    oro_product.datagrid.event_listener.product_grid:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_datagrid.provider.selected_fields'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
         public: false
@@ -1371,7 +1387,7 @@ services:
         arguments:
             - '@oro_segment.segment_manager'
             - '@logger'
-            - '@oro_website.manager'
+            - '@oro_security.token_accessor'
 
     oro_product.doctrine.abstract_cached_provider_decorator:
         class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'

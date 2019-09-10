@@ -35,7 +35,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesOnPriceRuleDelete'
         arguments:
             - '@oro_pricing.hander.price_rule_lexeme_handler'
-            - '@oro_api.delete.delete_data_by_handler'
+            - '@oro_api.delete.delete_entity_by_delete_handler'
         tags:
             - { name: oro.api.processor, action: delete, group: delete_data, priority: 10, class: '%oro_pricing.entity.price_rule.class%' }
 
@@ -43,7 +43,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesOnPriceRuleDeleteList'
         arguments:
             - '@oro_pricing.hander.price_rule_lexeme_handler'
-            - '@oro_api.delete_list.delete_data_by_handler'
+            - '@oro_api.delete_list.delete_entities_by_delete_handler'
         tags:
             - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -15, class: '%oro_pricing.entity.price_rule.class%' }
 
@@ -192,12 +192,6 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: save_data, priority: -5, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: create, group: save_data, priority: -5, class: '%oro_pricing.entity.product_price.class%' }
-
-    oro_pricing.api.price_manager_delete_handler:
-        parent: 'oro_soap.handler.delete'
-        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Delete\PriceManagerDeleteHandler'
-        arguments:
-            - '@oro_pricing.manager.price_manager'
 
     oro_pricing.api.remember_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\RememberProductPrice'

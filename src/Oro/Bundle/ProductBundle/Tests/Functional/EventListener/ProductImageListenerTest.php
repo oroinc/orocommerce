@@ -151,7 +151,8 @@ class ProductImageListenerTest extends WebTestCase
     {
         return [
             'productImageId' => $productImage->getId(),
-            'force' => true
+            'force' => true,
+            'dimensions' => null
         ];
     }
 }

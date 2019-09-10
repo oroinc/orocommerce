@@ -54,8 +54,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $page = $this->getSession()->getPage();
         $page->selectFieldOption(self::$formMapping[$step], $value);
 
+        $this->pressNextButton($button);
+    }
+
+    /**
+     * @param string $button
+     */
+    private function pressNextButton(string $button): void
+    {
+        $page = $this->getSession()->getPage();
+
         /** @var NodeElement $element */
-        $element = $this->spin(function () use ($page, $button) {
+        $element = $this->spin(static function () use ($page, $button) {
             $element = $page->findButton($button);
 
             return $element->isVisible() && null === $element->getAttribute('disabled') ? $element : false;
@@ -63,8 +73,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         self::assertNotNull($element, sprintf('Button "%s" not found', $button));
 
-        $element->press();
-        $this->waitForAjax();
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $oldTitle = $checkoutStep->getStepTitle();
+
+        $spinExecutionResult = $this->spin(function () use ($element, $oldTitle) {
+            $element->press();
+            $this->waitForAjax();
+
+            $this->assertNotTitle($oldTitle);
+            return true;
+        }, 3);
+
+        if ($spinExecutionResult === null) {
+            $this->assertNotTitle($oldTitle);
+        }
     }
 
     /**
@@ -78,19 +101,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->assertTitle($step);
         $this->checkValueOnCheckoutPage($value);
-        $page = $this->getSession()->getPage();
 
-        /** @var NodeElement $element */
-        $element = $this->spin(function () use ($page, $button) {
-            $element = $page->findButton($button);
-
-            return $element->isVisible() && null === $element->getAttribute('disabled') ? $element : false;
-        }, 5);
-
-        self::assertNotNull($element, sprintf('Button "%s" not found', $button));
-
-        $element->press();
-        $this->waitForAjax();
+        $this->pressNextButton($button);
     }
 
     /**
@@ -147,9 +159,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->assertTitle($step);
         $this->uncheckValueOnCheckoutPage($value);
 
-        $page = $this->getSession()->getPage();
-        $page->pressButton($button);
-        $this->waitForAjax();
+        $this->pressNextButton($button);
     }
 
 
@@ -162,9 +172,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function onCheckoutStepAndPressButton($step, $button)
     {
         $this->assertTitle($step);
-        $page = $this->getSession()->getPage();
-        $page->pressButton($button);
-        $this->waitForAjax();
+        $this->pressNextButton($button);
     }
 
     /**
@@ -184,16 +192,44 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function assertTitle($title)
     {
-        /** @var CheckoutStep $checkoutStep */
-        $checkoutStep = $this->createElement('CheckoutStep');
-
-        $spinExecutionResult = $this->spin(function () use ($checkoutStep, $title) {
-            return $checkoutStep->assertTitle($title);
-        }, 3);
-
-        // Try once more if assertions failed in spin and increase chances as well as output Exeption on fail
-        if ($spinExecutionResult === null) {
+        $spinExecutionResult = $this->spin(function () use ($title) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
             $checkoutStep->assertTitle($title);
+
+            return true;
+        }, 5);
+
+        if ($spinExecutionResult === null) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+
+            // Check finally once again to throw proper expectation exception.
+            $checkoutStep->assertTitle($title);
+        }
+    }
+
+    /**
+     * @param string $oldTitle
+     */
+    protected function assertNotTitle(string $oldTitle): void
+    {
+        $spinExecutionResult = $this->spin(function () use ($oldTitle) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+            if ($checkoutStep->getElement('CheckoutStepTitle')->isValid()) {
+                $checkoutStep->assertNotTitle($oldTitle);
+            }
+
+            return true;
+        }, 5);
+
+        if ($spinExecutionResult === null) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+
+            // Check finally once again to throw proper expectation exception.
+            $checkoutStep->assertNotTitle($oldTitle);
         }
     }
 
@@ -282,6 +318,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->assertTitle($step);
 
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $oldTitle = $checkoutStep->getStepTitle();
+
         $goBackButton = null;
         $titleAttribute = 'data-title';
         foreach ($this->findAllElements('CheckoutGoBackButton') as $goBackButton) {
@@ -290,8 +330,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             }
 
             if ($goBackButton->getAttribute($titleAttribute) === $buttonTitle) {
-                $goBackButton->click();
-                $this->waitForAjax();
+                $spinExecutionResult = $this->spin(function () use ($goBackButton, $oldTitle) {
+                    $goBackButton->click();
+                    $this->waitForAjax();
+
+                    $this->assertNotTitle($oldTitle);
+                    return true;
+                }, 3);
+
+                if ($spinExecutionResult === null) {
+                    $this->assertNotTitle($oldTitle);
+                }
 
                 return;
             }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
@@ -35,6 +36,9 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var  \PHPUnit\Framework\MockObject\MockObject|TaxationSettingsProvider */
     protected $settingsProvider;
 
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|ObjectCacheKeyGenerator */
+    protected $objectCacheKeyGenerator;
+
     /** @var bool */
     protected $taxationEnabled = true;
 
@@ -59,13 +63,15 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->objectCacheKeyGenerator = $this->createMock(ObjectCacheKeyGenerator::class);
 
         $this->manager = new TaxManager(
             $this->factory,
             $this->eventDispatcher,
             $this->taxValueManager,
             $this->settingsProvider,
-            $this->cacheProvider
+            $this->cacheProvider,
+            $this->objectCacheKeyGenerator
         );
     }
 
@@ -138,8 +144,11 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $taxable = new Taxable();
 
         $this->factory->expects($this->exactly(1))->method('create')->willReturn($taxable);
-        $cacheKey = md5(serialize($objectToTax));
-
+        $cacheKey = 'someCacheKey';
+        $this->objectCacheKeyGenerator->expects($this->any())
+            ->method('generate')
+            ->with($objectToTax, 'tax')
+            ->willReturn($cacheKey);
         $this->cacheProvider->expects($this->exactly(2))
             ->method('contains')
             ->with($cacheKey)

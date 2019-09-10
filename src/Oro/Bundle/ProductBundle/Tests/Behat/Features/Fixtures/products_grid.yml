@@ -11,6 +11,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
+    localProductAttributeFamilyCustom:
+        string: 'Product Attribute Family Custom'
+
     localCategoryTitle{1..4}:
         string: 'Category <current()>'
 
@@ -41,6 +44,13 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         code: 'product_attribute_family_code'
         __calls:
             - addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+    productAttributeFamilyCustom:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code_custom'
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyCustom']
         organization: '@organization'
         owner: '@admin'
 
@@ -118,84 +128,123 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
         entityConfigFieldId: '@product_attribute_metaKeywords->id'
 
 Oro\Bundle\ProductBundle\Entity\Product:
-    product{1..20}:
+    product{1..5}:
         type: 'simple'
         sku: 'PSKU<current()>'
-        primaryUnitPrecision: '@productUnitPrecision<current()>'
-        __calls:
-            - addName: ['@localProductName<current()>']
-            - addDescription: ['@localProductDescription<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision<current()>']
 
     product6:
         type: 'simple'
         sku: 'PSKU6'
-        primaryUnitPrecision: '@productUnitPrecision6'
-        __calls:
-            - addName: ['@localProductName6']
-            - addDescription: ['@localProductDescription6']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName6']
+            - addDescription: ['@localProductDescription6']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision6']
 
     product7:
         type: 'simple'
         sku: 'PSKU7'
-        primaryUnitPrecision: '@productUnitPrecision7'
-        __calls:
-            - addName: ['@localProductName7']
-            - addDescription: ['@localProductDescription7']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName7']
+            - addDescription: ['@localProductDescription7']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision7']
 
     product8:
         type: 'simple'
         sku: 'PSKU8'
-        primaryUnitPrecision: '@productUnitPrecision8'
-        __calls:
-            -   addName: ['@localProductName8']
-            -   addDescription: ['@localProductDescription8']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode2'
+        __calls:
+            - addName: ['@localProductName8']
+            - addDescription: ['@localProductDescription8']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision8']
 
     product9:
         type: 'configurable'
         sku: 'PSKU9'
-        primaryUnitPrecision: '@productUnitPrecision9'
-        __calls:
-            -   addName: ['@localProductName9']
-            -   addDescription: ['@localProductDescription9']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName9']
+            - addDescription: ['@localProductDescription9']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision9']
 
     product10:
         newArrival: true
         type: 'simple'
         sku: 'PSKU10'
-        primaryUnitPrecision: '@productUnitPrecision10'
-        __calls:
-            -   addName: ['@localProductName10']
-            -   addDescription: ['@localProductDescription10']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
         taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName10']
+            - addDescription: ['@localProductDescription10']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision10']
+
+    product{11..18}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision<current()>']
+
+    product19:
+        type: 'simple'
+        sku: 'PSKU19'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamilyCustom'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName19']
+            - addDescription: ['@localProductDescription19']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision19']
+
+    product20:
+        type: 'simple'
+        sku: 'PSKU20'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName20']
+            - addDescription: ['@localProductDescription20']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision20']
 
 Doctrine\Common\Collections\ArrayCollection:
     products1:

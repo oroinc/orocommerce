@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,7 +107,9 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             Product::class,
             new RequestStack(),
             $this->createMock(ProductManager::class),
-            $this->createMock(LocalizationHelper::class)
+            $this->createMock(ProductSearchRepository::class),
+            $this->createMock(LocalizationHelper::class),
+            $this->createMock(FrontendHelper::class)
         );
         $searchHandler->search('test', 1, 10);
     }

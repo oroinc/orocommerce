@@ -163,6 +163,10 @@ Delete a collection of order records.
 
 **The required field**
 
+### source
+
+The entity from which this order was created.
+
 ## SUBRESOURCES
 
 ### billingAddress
@@ -577,6 +581,33 @@ Example:
   "data": {
     "type": "paymentterms",
     "id": "2"
+  }
+}
+```
+{@/request}
+
+### source
+
+#### get_subresource
+
+Retrieve the entity from which a specific order was created.
+
+#### get_relationship
+
+Retrieve the ID the entity from which a specific order was created.
+
+#### update_relationship
+
+Retrieve the entity from which a specific order was created.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "shoppinglists",
+    "id": "1"
   }
 }
 ```

@@ -39,10 +39,7 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         /** @var Order $order */
         $order = $this->doctrineHelper->getEntityReference(
@@ -62,6 +59,6 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
                 ->getShippingDiscountsAmountByOrder($order);
         }
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 }

@@ -68,7 +68,9 @@ oro:
             description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
-        images.label: Images
+        images:
+            label: Images
+            description: The images for the product.
         is_related.label: Is Related
         related_to_products.label: Related Products
         related_by_products.label: Products that are related to this Product
@@ -585,6 +587,7 @@ oro:
         export:
             inventory_status_only: "Inventory statuses only"
             button.label: 'Export Products'
+            filtered_products.label: 'Export Filtered Products'
         import:
             popup.title: 'Import Products'
             entity.label: 'Products'

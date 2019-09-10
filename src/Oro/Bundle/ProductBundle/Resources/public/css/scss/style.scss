@@ -32,7 +32,6 @@
 
 .oro-item-collection {
     td {
-        white-space: nowrap;
         vertical-align: baseline;
 
         .sell {
@@ -60,19 +59,19 @@
 }
 
 .unit-precisions-collection {
-    .input-widget-select {
-        margin-left: 0 !important;
-    }
-
     .collection-fields-list {
         td {
-            padding-left: 10px;
-            vertical-align: middle;
+            white-space: normal;
         }
+    }
 
-        button {
-            margin-left: 0;
-        }
+    .unit-conversion,
+    .unit-precision {
+        width: 162px;
+    }
+
+    .selector {
+        display: block;
     }
 
     @include selector-width(104px);
@@ -84,15 +83,8 @@
         }
     }
 
-    .table {
-        width: auto;
+    .grid-scrollable-container {
         margin-bottom: $content-padding-small;
-    }
-
-    .grid {
-        display: block;
-        overflow-x: auto;
-        overflow-y: hidden;
     }
 }
 

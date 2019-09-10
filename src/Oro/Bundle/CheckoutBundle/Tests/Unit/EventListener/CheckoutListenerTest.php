@@ -12,8 +12,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,9 +20,6 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
-
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteManager;
 
     /** @var CheckoutListener */
     private $listener;
@@ -36,9 +31,8 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        $this->listener = new CheckoutListener($this->defaultUserProvider, $this->tokenAccessor, $this->websiteManager);
+        $this->listener = new CheckoutListener($this->defaultUserProvider, $this->tokenAccessor);
     }
 
     public function testPostUpdate()
@@ -105,10 +99,9 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $token
      * @param Checkout $checkout
-     * @param Website|null $website
-     * @param Organization|null $expectedOrganization
+     * @param Organization|null $organization
      */
-    public function testPrePersistSetDefaultOwner($token, Checkout $checkout, $website, $expectedOrganization)
+    public function testPrePersistSetDefaultOwner($token, Checkout $checkout, $organization)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -123,14 +116,14 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_checkout', 'default_guest_checkout_owner')
             ->willReturn($newUser);
 
-        $this->websiteManager
+        $this->tokenAccessor
             ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->listener->prePersist($checkout);
         $this->assertSame($newUser, $checkout->getOwner());
-        $this->assertEquals($expectedOrganization, $checkout->getOrganization());
+        $this->assertEquals($organization, $checkout->getOrganization());
     }
 
     /**
@@ -138,28 +131,16 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function persistSetDefaultOwnerDataProvider()
     {
-        $organization = new Organization();
-        $website      = new Website();
-        $website->setOrganization($organization);
-
         return [
-            'with token, without owner, without current website' => [
+            'with token, without owner, without current organization' => [
                 'token' => new AnonymousCustomerUserToken(''),
                 'checkout' => new Checkout(),
-                'website' => null,
                 'expectedOrganization' => null
             ],
-            'with token, without owner, with website, without organization' => [
+            'with token, without owner, with organization' => [
                 'token' => new AnonymousCustomerUserToken(''),
                 'checkout' => new Checkout(),
-                'website' => new Website(),
-                'expectedOrganization' => null
-            ],
-            'with token, without owner, with website, with organization' => [
-                'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => new Checkout(),
-                'website' => $website,
-                'expectedOrganization' => $organization
+                'organization' => new Organization()
             ],
         ];
     }

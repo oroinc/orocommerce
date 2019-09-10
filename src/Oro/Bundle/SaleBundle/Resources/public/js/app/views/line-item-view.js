@@ -227,6 +227,7 @@ define(function(require) {
             }
 
             this.updateValidation();
+            this.$el.trigger('content:initialized');
         },
 
         disableSubmit: function() {

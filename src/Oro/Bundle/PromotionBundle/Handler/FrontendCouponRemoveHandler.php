@@ -6,48 +6,48 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
-use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * The handler to remove applied coupon from entities to which a coupon can be applied.
+ * This handler must be used only on the storefront.
+ */
 class FrontendCouponRemoveHandler
 {
-    /**
-     * @var AuthorizationCheckerInterface
-     */
+    /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     /**
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry               $doctrine
      */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        ManagerRegistry $registry
+        ManagerRegistry $doctrine
     ) {
         $this->authorizationChecker = $authorizationChecker;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
     /**
      * @param AppliedCouponsAwareInterface $entity
-     * @param AppliedCoupon $appliedCoupon
+     * @param AppliedCoupon                $appliedCoupon
      */
     public function handleRemove(AppliedCouponsAwareInterface $entity, AppliedCoupon $appliedCoupon)
     {
         if ($entity instanceof AppliedPromotionsAwareInterface
             || !$this->authorizationChecker->isGranted('EDIT', $entity)
         ) {
-            throw new ForbiddenException('Edit is not allowed for requested entity');
+            throw new AccessDeniedException('Edit is not allowed for requested entity');
         }
 
         if ($entity->getAppliedCoupons()->contains($appliedCoupon)) {
-            $em = $this->registry->getManagerForClass(AppliedCoupon::class);
+            $em = $this->doctrine->getManagerForClass(AppliedCoupon::class);
             $entity->removeAppliedCoupon($appliedCoupon);
             $em->remove($appliedCoupon);
             $em->flush();

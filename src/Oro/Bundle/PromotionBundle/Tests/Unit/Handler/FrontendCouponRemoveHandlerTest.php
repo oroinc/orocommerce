@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -47,7 +47,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->expectException(ForbiddenException::class);
+        $this->expectException(AccessDeniedException::class);
 
         $this->handler->handleRemove($entity, $appliedCoupon);
     }
@@ -64,7 +64,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->expectException(ForbiddenException::class);
+        $this->expectException(AccessDeniedException::class);
 
         $this->handler->handleRemove($entity, $appliedCoupon);
     }

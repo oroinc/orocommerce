@@ -1,6 +1,11 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserFixture.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@each'
+    precision: '1'
+
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
     name: Common Business Unit
@@ -31,23 +36,19 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     organization: '@organization'
     owner: '@admin'
 
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-  precision1:
-    unit: '@each'
-    precision: '1'
-
 Oro\Bundle\ProductBundle\Entity\Product:
   product1:
     sku: 'SKU1'
     type: 'simple'
     organization: '@organization'
     owner: '@businessUnit'
-    primaryUnitPrecision: '@precision1'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
     __calls:
         - addName: ['@locvalue']
         - addSlugPrototype: ['@localValueProductSlug']
+        - addUnitPrecision: ['@precision1']
+        - setPrimaryUnitPrecision: ['@precision1']
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
 

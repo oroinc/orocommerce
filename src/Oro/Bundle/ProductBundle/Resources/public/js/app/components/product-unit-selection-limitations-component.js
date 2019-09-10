@@ -202,10 +202,13 @@ define(function(require) {
             this.options._sourceElement.find(this.options.conversionRateInput).each(function() {
                 var input = $(this);
                 var text = __('oro.product.product_unit.' + value + '.label.short_plural');
-                input.parent('td').find('span').remove();
-                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>' + text.toLowerCase()).addClass(
-                    'conversion-rate-label'
-                ));
+                var conversionClassName = 'conversion-rate-label';
+
+                input.siblings('.' + conversionClassName).remove();
+                input.after($('<span></span>', {
+                    'class': conversionClassName,
+                    'text': text.toLowerCase()
+                }));
             });
         },
 

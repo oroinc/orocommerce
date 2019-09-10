@@ -41,7 +41,7 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider'
         public: false
         arguments:
-            - '@security.token_storage'
+            - '@oro_security.token_accessor'
             - '@doctrine'
 
     oro_consent.layout.data_provider.consent:

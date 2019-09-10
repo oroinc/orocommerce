@@ -13,13 +13,17 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Provides product visibility scopes.
+ */
 class VisibilityScopeProvider
 {
-    /**
-     * @var ScopeManager
-     */
+    /** @var ScopeManager */
     protected $scopeManager;
 
+    /**
+     * @param ScopeManager $scopeManager
+     */
     public function __construct(ScopeManager $scopeManager)
     {
         $this->scopeManager = $scopeManager;
@@ -27,6 +31,7 @@ class VisibilityScopeProvider
 
     /**
      * @param WebsiteInterface $website
+     *
      * @return Scope
      */
     public function getProductVisibilityScope(WebsiteInterface $website)
@@ -35,32 +40,30 @@ class VisibilityScopeProvider
     }
 
     /**
-     * @param Customer $customer
+     * @param Customer         $customer
      * @param WebsiteInterface $website
+     *
      * @return Scope
      */
     public function getCustomerProductVisibilityScope(Customer $customer, WebsiteInterface $website)
     {
         return $this->scopeManager->findOrCreate(
             CustomerProductVisibility::getScopeType(),
-            [
-                ScopeCustomerCriteriaProvider::ACCOUNT => $customer
-            ]
+            [ScopeCustomerCriteriaProvider::CUSTOMER => $customer]
         );
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param CustomerGroup    $customerGroup
      * @param WebsiteInterface $website
+     *
      * @return Scope
      */
     public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, WebsiteInterface $website)
     {
         return $this->scopeManager->findOrCreate(
             CustomerGroupProductVisibility::getScopeType(),
-            [
-                ScopeCustomerGroupCriteriaProvider::FIELD_NAME => $customerGroup
-            ]
+            [ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP => $customerGroup]
         );
     }
 }

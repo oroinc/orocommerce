@@ -956,18 +956,15 @@ class Product extends ExtendProduct implements
      */
     public function getUnitPrecision($unitCode)
     {
-        $result = null;
-
         foreach ($this->unitPrecisions as $unitPrecision) {
-            if ($unit = $unitPrecision->getUnit()) {
-                if ($unit->getCode() === $unitCode) {
-                    $result = $unitPrecision;
-                    break;
-                }
+            $unit = $unitPrecision->getUnit();
+
+            if ($unit && $unit->getCode() === $unitCode) {
+                return $unitPrecision;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -1387,7 +1384,7 @@ class Product extends ExtendProduct implements
      *
      * @return Product
      */
-    public function setPrimaryUnitPrecision($primaryUnitPrecision)
+    public function setPrimaryUnitPrecision(?ProductUnitPrecision $primaryUnitPrecision)
     {
         if ($primaryUnitPrecision) {
             $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);

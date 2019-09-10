@@ -42,10 +42,7 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isFieldRequestedForCollection(self::FIELD_NAME, $data)) {
             return;
@@ -53,7 +50,7 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
 
         $orderIdFieldName = $context->getResultFieldName('id');
         if ($orderIdFieldName) {
-            $context->setResult($this->applyPaymentStatus($context, $data, $orderIdFieldName));
+            $context->setData($this->applyPaymentStatus($context, $data, $orderIdFieldName));
         }
     }
 

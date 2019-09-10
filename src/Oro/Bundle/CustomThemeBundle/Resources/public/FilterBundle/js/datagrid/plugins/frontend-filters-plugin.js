@@ -8,7 +8,9 @@ define(function(require) {
     var viewportManager = require('oroui/js/viewport-manager');
 
     function isApplicableWithViewport() {
-        return !_.contains(['desktop', 'tablet', 'tablet-small'], viewportManager.getViewport().type);
+        return viewportManager.isApplicable({
+            screenType: 'mobile-landscape'
+        });
     }
 
     FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({

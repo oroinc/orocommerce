@@ -5,8 +5,20 @@ Feature: Product with variants import validation
   As an administrator
   I want to be able to get a list of validation errors for imported file
 
-  Scenario: Create product attributes
+  Scenario: Import file with only configurable products
     Given I login as administrator
+    And I go to Products/Products
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And fill template with data:
+      | sku    | names.default.value  | attributeFamily.code | status  | inventory_status.id | type         | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
+      | XXXAAA | Configurable Product | default_family       | enabled | in_stock            | configurable | kg                             | 3                              | 1                                   | 1                         |
+    When I import file
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    When I go to System/ Jobs
+    Then I should see oro:import:oro_product_product.add_or_replace:entity_import_from_csv:1 in grid with following data:
+      | Status | Success |
+
+  Scenario: Create product attributes
     And I go to Products/ Product Attributes
     And click "Create Attribute"
     And fill form with:

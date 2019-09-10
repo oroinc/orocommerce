@@ -14,15 +14,17 @@ use Symfony\Component\HttpFoundation\Request;
 class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
 {
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}Oro\Bundle\CommerceCrmEnterpriseTestBundle\Tests\Functional\BackendQueriesTest
      */
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-
         parent::setUp();
+        static::getContainer()->get('request_stack')
+            ->push(Request::create($this->getUrl('oro_promotion_validate_coupon_applicability')));
+
         $this->loadFixtures([]);
     }
 

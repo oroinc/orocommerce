@@ -39,10 +39,7 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if (!$context->isFieldRequested(self::MINIMAL_PRICES_FIELD, $data)) {
             return;
@@ -77,7 +74,7 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
 
         $data[self::MINIMAL_PRICES_FIELD] = $minimalPrices;
 
-        $context->setResult($data);
+        $context->setData($data);
     }
 
     /**

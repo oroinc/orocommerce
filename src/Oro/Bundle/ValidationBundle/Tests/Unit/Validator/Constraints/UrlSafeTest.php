@@ -43,11 +43,15 @@ class UrlSafeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider validateDataProvider
+     *
+     * @param bool $allowSlashes
      * @param mixed $data
      * @param boolean $correct
      */
-    public function testValidate($data, $correct)
+    public function testValidate(bool $allowSlashes, $data, bool $correct): void
     {
+        $constraint = new UrlSafe(['allowSlashes' => $allowSlashes]);
+
         if ($correct) {
             $this->context->expects($this->never())
                 ->method('buildViolation');
@@ -55,7 +59,7 @@ class UrlSafeTest extends \PHPUnit\Framework\TestCase
             $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
 
             $this->context->expects($this->once())->method('buildViolation')
-                ->with($this->constraint->message)->willReturn($violationBuilder);
+                ->with($constraint->message)->willReturn($violationBuilder);
             $violationBuilder->expects($this->once())->method('setParameter')
                 ->willReturnSelf();
             $violationBuilder->expects($this->once())->method('setCode')
@@ -64,18 +68,38 @@ class UrlSafeTest extends \PHPUnit\Framework\TestCase
                 ->method('addViolation');
         }
 
-        $this->validator->validate($data, $this->constraint);
+        $this->validator->validate($data, $constraint);
     }
 
-    public function validateDataProvider()
+    /**
+     * @return array
+     */
+    public function validateDataProvider(): array
     {
         return [
             'Url safe' => [
+                'allowSlashes' => false,
                 'data' => 'ABC-abs_123~45.test',
                 'correct' => true
             ],
             'Url not safe' => [
+                'allowSlashes' => false,
                 'data' => 'Abc/test',
+                'correct' => false
+            ],
+            'Url safe with slash' => [
+                'allowSlashes' => true,
+                'data' => 'ABC-abs_123~45.test/ABC-abs_123~45.test',
+                'correct' => true
+            ],
+            'Url not safe with slash on start' => [
+                'allowSlashes' => true,
+                'data' => '/Abc/test',
+                'correct' => false
+            ],
+            'Url not safe with slash on end' => [
+                'allowSlashes' => true,
+                'data' => 'Abc/test/',
                 'correct' => false
             ],
         ];

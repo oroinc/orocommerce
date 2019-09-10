@@ -6,11 +6,11 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\ImageResizeManagerInterface;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueueInvalidArgumentException;
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
@@ -32,12 +32,12 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
     const CONTENT_LARGE = 'content_large';
 
     /**
-     * @var EntityRepository
+     * @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imageRepository;
 
     /**
-     * @var ProductImagesDimensionsProvider
+     * @var ProductImagesDimensionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imageDimensionsProvider;
 
@@ -61,14 +61,14 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->imageRepository = $this->prophesize(EntityRepository::class);
-        $this->imageDimensionsProvider = $this->prophesize(ProductImagesDimensionsProvider::class);
-        $this->imageResizeManager = $this->prophesize(ImageResizeManagerInterface::class);
+        $this->imageRepository = $this->createMock(EntityRepository::class);
+        $this->imageDimensionsProvider = $this->createMock(ProductImagesDimensionsProvider::class);
+        $this->imageResizeManager = $this->createMock(ImageResizeManagerInterface::class);
 
         $this->processor = new ImageResizeMessageProcessor(
-            $this->imageRepository->reveal(),
-            $this->imageDimensionsProvider->reveal(),
-            $this->imageResizeManager->reveal()
+            $this->imageRepository,
+            $this->imageDimensionsProvider,
+            $this->imageResizeManager
         );
     }
 
@@ -94,62 +94,42 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param array|null $dimensions
      * @return DbalMessage
      */
-    protected function prepareValidMessage()
+    protected function prepareValidMessage(array $dimensions = null)
     {
-        return $this->prepareMessage(JSON::encode(self::$validData));
-    }
-
-    protected function prepareDependencies()
-    {
-        $image = $this->prophesize(File::class);
-        $image->getId()->willReturn(self::PRODUCT_IMAGE_ID);
-        $image->getId()->willReturn(null);
-
-        $productImage = $this->prophesize(StubProductImage::class);
-        $productImage->getImage()->willReturn($image->reveal());
-        $productImage->getTypes()->willReturn([
-            'main' => new ProductImageType('main'),
-            'listing' => new ProductImageType('listing'),
-        ]);
-        $productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
-
-        $this->imageDimensionsProvider->getDimensionsForProductImage($productImage)
-            ->willReturn(
-                [
-                    'main' => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
-                    'listing' => new ThemeImageTypeDimension(self::LARGE, 100, 100),
-                    'additional' => new ThemeImageTypeDimension(self::ORIGINAL, null, null)
-                ]
-            );
-
-        $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
-
-        $this->imageResizeManager->applyFilter($image, self::ORIGINAL, false);
-        $this->imageResizeManager->applyFilter($image, self::LARGE, false);
-        $this->imageResizeManager->applyFilter($image, self::SMALL, false);
+        $data = self::$validData;
+        if ($dimensions) {
+            $data['dimensions'] = $dimensions;
+        }
+        return $this->prepareMessage(JSON::encode($data));
     }
 
     public function testProcessInvalidJson()
     {
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+        $this->expectException(MessageQueueInvalidArgumentException::class);
+        $this->processor->process(
             $this->prepareMessage('not valid json'),
             $this->prepareSession()
-        ));
+        );
     }
 
     public function testProcessInvalidData()
     {
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+        $this->expectException(MessageQueueInvalidArgumentException::class);
+        $this->processor->process(
             $this->prepareMessage(JSON::encode(['abc'])),
             $this->prepareSession()
-        ));
+        );
     }
 
     public function testProcessProductImageNotFound()
     {
-        $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn(null);
+        $this->imageRepository->expects($this->once())
+            ->method('find')
+            ->with(self::PRODUCT_IMAGE_ID)
+            ->willReturn(null);
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
             $this->prepareValidMessage(),
@@ -157,13 +137,66 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testResizeValidData()
+    public function testResizeValidDataWithoutPassedDimensions()
     {
-        $this->prepareDependencies();
+        $image = $this->prepareImageMock();
+        $this->imageResizeManager->expects($this->exactly(3))
+            ->method('applyFilter')
+            ->withConsecutive(
+                [$image, self::ORIGINAL, false],
+                [$image, self::LARGE, false],
+                [$image, self::SMALL, false]
+            );
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
             $this->prepareValidMessage(),
             $this->prepareSession()
         ));
+    }
+
+    public function testResizeValidDataWithPassedDimensions()
+    {
+        $image = $this->prepareImageMock();
+        $this->imageResizeManager->expects($this->exactly(2))
+            ->method('applyFilter')
+            ->withConsecutive(
+                [$image, self::ORIGINAL, false],
+                [$image, self::SMALL, false]
+            );
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
+            $this->prepareValidMessage([self::ORIGINAL, self::SMALL]),
+            $this->prepareSession()
+        ));
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected function prepareImageMock()
+    {
+        $image = $this->createMock(File::class);
+        $productImage = $this->createMock(StubProductImage::class);
+        $productImage->expects($this->any())
+            ->method('getImage')
+            ->willReturn($image);
+
+        $this->imageDimensionsProvider->expects($this->once())
+            ->method('getDimensionsForProductImage')
+            ->with($productImage)
+            ->willReturn(
+                [
+                    'main' => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
+                    'listing' => new ThemeImageTypeDimension(self::LARGE, 100, 100),
+                    'additional' => new ThemeImageTypeDimension(self::SMALL, 50, 50)
+                ]
+            );
+
+        $this->imageRepository->expects($this->once())
+            ->method('find')
+            ->with(self::PRODUCT_IMAGE_ID)
+            ->willReturn($productImage);
+
+        return $image;
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
@@ -46,5 +47,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $collection = $form->findField($collectionFieldName);
 
         $collection->assertRows($table->getColumnsHash());
+    }
+
+    /**
+     * @Then /^(?:|I )select price list with name "(?P<name>[\w\d\s]+)" on sidebar$/
+     *
+     * @param string $name
+     */
+    public function selectPriceListWithNameOnSidebar($name)
+    {
+        /** @var Select2Entity $input */
+        $input = $this->createElement('PriceListSidebarSelector');
+        $input->setValue($name);
     }
 }

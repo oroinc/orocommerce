@@ -329,13 +329,13 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $routeData = new RouteData('someRoute');
         $this->routingInformationProvider
-            ->expects($this->at(2))
+            ->expects($this->at(3))
             ->method('getRouteData')
             ->with($entity)
             ->willReturn($routeData);
 
         $expectedSlugPrototypes = new ArrayCollection([
-            $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something-1'])
+            $this->getEntity(LocalizedFallbackValue::class, ['string' => 'some-prefix/something-1'])
         ]);
 
         $this->userLocalizationManager

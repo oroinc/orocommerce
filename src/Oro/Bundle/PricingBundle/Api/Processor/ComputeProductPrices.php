@@ -88,14 +88,11 @@ class ComputeProductPrices implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getResult();
-        if (!is_array($data) || empty($data)) {
-            return;
-        }
+        $data = $context->getData();
 
         if ($context->isFieldRequestedForCollection(self::FIELD_NAME, $data)) {
             $productIdFieldName = $context->getResultFieldName('id');
-            $context->setResult($this->applyPrices($context, $data, $productIdFieldName));
+            $context->setData($this->applyPrices($context, $data, $productIdFieldName));
         }
     }
 
