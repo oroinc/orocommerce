@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -238,6 +239,14 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         /** @var SluggableInterface $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
+        $entity->expects($this->once())
+            ->method('getSlugPrototypes')
+            ->willReturn($slugPrototypes = $this->createMock(Collection::class));
+
+        $slugPrototypes->expects($this->once())
+            ->method('count')
+            ->willReturn(0);
+
         $uow->expects($this->any())
             ->method('getScheduledEntityUpdates')
             ->willReturn([
@@ -299,6 +308,16 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $uow = $this->prepareUow($event, $entity);
 
         $prototype = new LocalizedFallbackValue();
+
+        $entity
+            ->expects($this->once())
+            ->method('getSlugPrototypes')
+            ->willReturn($slugPrototypes = $this->createMock(Collection::class));
+
+        $slugPrototypes
+            ->expects($this->once())
+            ->method('count')
+            ->willReturn(1);
 
         $entity->expects($this->once())
             ->method('hasSlugPrototype')
@@ -475,6 +494,16 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $uow  = $this->prepareUow($event, $entity);
 
         $prototype = new LocalizedFallbackValue();
+
+        $entity
+            ->expects($this->once())
+            ->method('getSlugPrototypes')
+            ->willReturn($slugPrototypes = $this->createMock(Collection::class));
+
+        $slugPrototypes
+            ->expects($this->once())
+            ->method('count')
+            ->willReturn(1);
 
         $entity->expects($this->once())
             ->method('hasSlugPrototype')

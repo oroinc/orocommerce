@@ -135,6 +135,7 @@ class ProductStrategyTest extends WebTestCase
     public function testProcessWithDuplicateUnitPrecisionCode()
     {
         $context = new Context([]);
+        $context->setValue('read_offset', 1);
         $context->setValue('itemData', [
             'additionalUnitPrecisions' => [
                 [
@@ -157,7 +158,7 @@ class ProductStrategyTest extends WebTestCase
         $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
         /** @var Product $processedNewProduct */
         $this->strategy->process($newProduct);
-        $this->assertEquals(['Error in row #. Each product unit code should be unique'], $context->getErrors());
+        $this->assertEquals(['Error in row #1. Each product unit code should be unique'], $context->getErrors());
     }
 
     /**

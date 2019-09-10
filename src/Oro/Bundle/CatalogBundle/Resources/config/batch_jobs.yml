@@ -11,6 +11,6 @@ connector:
                     services:
                         reader:    oro_importexport.reader.csv
                         processor: oro_importexport.processor.import_delegate
-                        writer:    oro_importexport.writer.entity
+                        writer:    oro_catalog.importexport.writer.category
                     parameters:
                         batch_size: 100000
