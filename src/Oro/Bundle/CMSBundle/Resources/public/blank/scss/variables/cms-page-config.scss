@@ -1,0 +1,57 @@
+/* @theme: blank; */
+
+// Offsets
+$offset-one: 8px !default;
+$offset-twice: $offset-one * 2 !default;
+$offset-triple: $offset-one * 3 !default;
+
+$offset-half: 8px / 2 !default;
+
+$cms-page-paragraph-offset: 0 0 $offset-twice 0 !default;
+
+// blockquote
+$cms-page-blockquote-offset: 0 0 $offset-triple 0 !default;
+$cms-page-blockquote-font-size: $base-font-size--large + 2px !default;
+$cms-page-blockquote-font-weight: font-weight('semi-bold') !default;
+$cms-page-blockquote-line-height: 1.5 !default;
+$cms-page-blockquote-font-style: normal !default;
+$cms-page-blockquote-background-color: get-color('additional', 'base') !default;
+$cms-page-blockquote-inner-offset: $offset-twice 52px !default;
+$cms-page-blockquote-color: get-color('additional', 'dark') !default;
+
+// list
+$cms-page-list-offset: 0 0 $offset-triple 0 !default;
+$cms-page-list-inner-offset: 0 0 0 35px !default;
+
+// images
+$cms-page-img-max-width: 100% !default;
+$cms-page-img-offset: 0 !default;
+
+$cms-page-figure-offset: 0 auto $offset-one !default;
+$cms-page-figcaption-font-size: 55px !default;
+$cms-page-figcaption-text-align: center !default;
+$cms-page-figcaption-offset: auto !default;
+$cms-page-figcaption-offset-left: 20px !default;
+$cms-page-figcaption-offset-right: 20px !default;
+
+// Heading
+$cms-page-heading-offset: 8px !default;
+
+// Devider
+$cms-page-hr-offset: 0 0 20px !default;
+$cms-page-border-top: 1px solid get-color('additional', 'light') !default;
+
+// Code
+$cms-page-code-border: 3px solid get-color('additional', 'base') !default;
+$cms-page-code-inner-offset: $offset-twice 22px !default;
+$cms-page-code-offset: 0 0 $offset-twice !default;
+$cms-page-code-font-family: $font-family-monospace !default;
+$cms-page-code-line-height: 1.43 !default;
+
+// Sub
+$cms-page-sub-vertical-align: sub !default;
+$cms-page-sub-font-size: smaller !default;
+
+// Sup
+$cms-page-sup-vertical-align: super !default;
+$cms-page-sup-font-size: smaller !default;

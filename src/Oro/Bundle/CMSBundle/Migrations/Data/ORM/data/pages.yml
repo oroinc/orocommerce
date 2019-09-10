@@ -2,31 +2,132 @@ about:
     slug: about
     title: 'About'
     content: >
-        <h3>Lorem ipsum dolor sit amet</h3>
-        <p>consectetur adipiscing elit. Aenean in sollicitudin magna. Duis quis fermentum risus, ac egestas metus. Sed felis nisi, molestie a nisi a, varius lacinia sapien. Integer vehicula metus vitae diam gravida porta. Quisque fringilla tincidunt arcu, eu consectetur ligula finibus a. Curabitur porttitor nunc faucibus augue congue, vitae scelerisque ex ultricies. Suspendisse eleifend felis ut lacus interdum, eu pulvinar sem interdum. Aliquam facilisis ipsum eget tortor finibus, ut dignissim nisl pulvinar.</p>
-        <br />
-        <h3 class="text-uppercase">Vestibulum consequat eu enim nec viverra </h3>
-        <p>Nullam sed elementum metus. Integer quam sem, laoreet eget rutrum a, sagittis tincidunt massa. Aliquam tempus tortor non libero condimentum, id pellentesque libero hendrerit. Sed convallis arcu volutpat enim suscipit feugiat. In efficitur tincidunt massa, nec posuere purus congue vitae. </p>
+        <h1>H1. The &lt;h1&gt; to &lt;h6&gt; tags are used to define HTML headings</h1>
+    
+        <p>Are you considering buying a compatible inkjet cartridge for your printer? There are many reputed companies like Canon, Epson, Dell, and Lexmark that provide the necessary cartridges to replace the empty cartridges. Dell Compatible Inkjet Cartridge</p>
+    
+        <code>The &lt;pre&gt; tag defines preformatted text. Text in a &lt;pre&gt; element is displayed in a fixed-width font (usually Courier), and it preserves both spaces and line breaks.</code>
+    
+        <h2>H2. Where Can You Find Unique Myspace Layouts Nowadays?</h2>
+        
+        <p>Finding the perfect learning tool for Flash is a daunting task to any novice web developer. One can find help in a number of ways through books, friends and private tutors. These methods are great but not often readily available, nor cheap!</p>
+        
+        <figure>
+            <picture>
+                <source srcset="http://via.placeholder.com/304x200"
+                        media="(max-width: 414px)">
+                <source srcset="http://via.placeholder.com/752x200"
+                        media="(max-width: 992px)">
+                <img src="http://via.placeholder.com/1334x200"
+                     alt="Image">
+            </picture>
+            <figcaption>Lorem ipsum</figcaption>
+        </figure>
+        
+        <small>The &lt;small&gt; tag defines smaller text (and other side comments). Audio player software is used to play back sound recordings in one of the many formats available for computers today. It can also play back music CDs.</small>
+        
+        <h3>H3. Myspace Layouts The Missing Element</h3>
+        
+        <p>Many conventional colleges and universities are now offering online DVD repair courses, which are the exact same as those taught on a traditional college campus, to distance learners. Online education is generally taught through the use of several different methods, including online satellite feeds, correspondence or online lessons. This technique permits the student to obtain a DVD repair degree without ever having to step inside of a classroom. </p>
+        
+        <h4>H4. Life Advice Looking Through A Window</h4>
+        
+        <p>Here, I focus on a range of items and features that we use in life without giving them a second thought such as Coca Cola, body muscles and holding ones own breath. Though, most of these notes are not fundamentally necessary, they are such that you can use them for a good laugh, at a drinks party or for picking up women or men.</p>
+        
+        <div class="row">
+            <div class="col-md">
+                <p>
+                    <strong>The &lt;ul&gt; tag defines an unordered (bulleted) list</strong>
+                </p>
+        
+                <ul>
+                    <li>Maecenas elementum, sapien ac rhoncus volutpat</li>
+                    <li>Felis lectus varius nisl</li>
+                    <li>In mattis nibh velit et mauris</li>
+                    <li>Online DVD</li>
+                </ul>
+            </div>
+    
+            <div class="col-md">
+                <p>
+                    <strong>The &lt;ol&gt; tag defines an ordered list</strong>
+                </p>
 
-        <ul>
-        <li>Maecenas elementum, sapien ac rhoncus volutpat</li>
-        <li>Felis lectus varius nisl</li>
-        <li>In mattis nibh velit et mauris</li>
-        </ul>
+                <ol>
+                    <li>Maecenas elementum, sapien ac rhoncus volutpat</li>
+                    <li>Felis lectus varius nisl</li>
+                    <li>In mattis nibh velit et mauris</li>
+                    <li>Online DVD</li>
+                </ol>
+            </div>
+    
+            <div class="col-md">
+                <p>
+                    <strong>A description list (&lt;dl&gt;), with terms (&lt;dt&gt;) and descriptions (&lt;dd&gt;)</strong>
+                </p>
 
-        <p>Aliquam in massa a nibh pharetra ullamcorper. Etiam libero massa, ultricies vitae ligula eu, tincidunt varius nibh. Duis tincidunt justo enim, at mattis felis aliquet eu. <a href="#">Pellentesque vel elit dui</a>. Fusce finibus lectus sed orci finibus, id fringilla mi molestie. Vestibulum viverra vehicula lorem, ac interdum dui tempus eget. Donec nec leo maximus, pretium elit sit amet, venenatis augue. Mauris faucibus lectus id dui aliquet lacinia a id nibh.</p>
+                <dl>
+                    <dt>Coffee</dt>
+                    <dd>Black hot drink</dd>
+                    <dt>Milk</dt>
+                    <dd>White cold drink</dd>
+                </dl>
+            </div>
+        </div>
+        
+        <h5>H5. Where Can You Find Unique Myspace Layouts Nowadays</h5>
 
-        <h3>Donec dictum nisl quis neque fermentum tempor. </h3>
+        <em>Italic style with so many different ways today to find information online, it can sometimes be hard to know where to go to first. I want to look at the major and most effective ways to find information online. The biggest and most commonly used method is to use a search engine such as : Google, Yahoo, or Msn</em>
+        
+        <h6>H6. A Pocket Pc Is Portability At It S Best</h6>
+        
+        <p>Audio player software is used to <sup>play back sound</sup> recordings in one of the many formats available for computers today. It can also play back music CDs. There is audio player software that is native to the computer’s operating system (Windows, Macintosh, and Linux) and there are web-based audio players. This article discusses the local computer audio players. Advantages of computer audio player software</p>
+        
+        <blockquote>The &lt;blockquote&gt; tag specifies a section that is quoted from another source. Browsers usually indent &lt;blockquote&gt;  elements. Photographs are a way of preserving a moment in our lives for the rest of our lives. Many of us have at least been tempted at the flashy array of photo printers which seemingly leap off the shelves at even the least tech-savvy. It surely seems old fashioned to talk about 35mm film and non-digital cameras in today’s day and age. </blockquote>
+        
+        <p>Photographs are a way of preserving a <sub>moment in our</sub> lives for the rest of our lives. Many of us have at least been tempted at the flashy array of photo printers which seemingly leap off the shelves at even the least tech-savvy. It surely seems old fashioned to talk about 35mm film and non-digital cameras in today’s day and age. </p>
 
-        <blockquote>Donec convallis nulla quis tellus feugiat, nec volutpat quam iaculis. Quisque imperdiet id enim sed condimentum. Integer maximus, tellus condimentum facilisis hendrerit, leo nulla aliquam erat, at posuere enim lorem non erat. Mauris dignissim tortor eros, ac scelerisque ligula rhoncus a.</blockquote>
+        <hr>
+        
+        <address>
+            The &lt;address&gt; tag defines the contact information for the author/owner of a document or an article.<br>
+            Written by John Doe<br>
+            Visit us at:<br>
+            Example.com<br>
+            Box 564, Disneyland<br>
+            USA
+        </address>
 
-        <p>Donec maximus vehicula dolor, pharetra egestas justo. Nullam sed venenatis eros. Maecenas malesuada tellus sed eros blandit, a consectetur purus condimentum. Quisque a metus ligula. Praesent et ante elit. Fusce sem nisi, rutrum nec tellus sed, elementum pretium erat. Aliquam dictum commodo sollicitudin. Vestibulum fermentum justo nisi, eget dignissim nibh tempus sed. Vestibulum non condimentum elit.</p>
-        <br />
-        <h3>Ut id dignissim urna</h3>
-        <p>Sed placerat viverra magna, eget suscipit tellus dignissim eget. Sed vel sollicitudin odio, ac aliquam odio. Quisque vel quam viverra, volutpat dui id, laoreet tellus. Nullam lobortis lectus congue, varius neque at, porttitor est. Morbi sit amet neque sed felis elementum efficitur. Cras placerat ex nec magna imperdiet placerat. Pellentesque sit amet facilisis elit. Fusce sed cursus lectus. Vestibulum dignissim neque ante, sit amet porttitor enim faucibus sed. Curabitur placerat, magna sit amet ullamcorper dapibus, ligula tellus sagittis massa, eu commodo nisl purus eu ante. In hac habitasse platea dictumst. Duis tempus feugiat risus, sed tristique justo sagittis in. Etiam vitae nunc porttitor, efficitur quam auctor, luctus erat. Sed placerat non quam semper facilisis. </p>
+        <h2>H2. Guidelines For Inkjet Cartridge Refill</h2>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Screen Size</th>
+                        <th>Resolution</th>
+                        <th>CPU</th>
+                        <th>Internal Memory</th>
+                    </tr>
+                </thead>
 
-        <ol>
-        <li>Mauris a velit aliquam
-        <li>Viverra tortor eget</li>
-        <li>Hendrerit sapien.</li>
-        </ol>
+                <tbody>
+                    <tr>
+                        <td>6.5 inches</td>
+                        <td>1644 x 3840 pixels</td>
+                        <td>Octa-core (1x2.84 GHz)</td>
+                        <td>128GB ROM, 6GB RAM</td>
+                    </tr>
+                    <tr>
+                        <td>6.5 inches</td>
+                        <td>1644 x 3840 pixels</td>
+                        <td>Octa-core (1x2.84 GHz)</td>
+                        <td>128GB ROM, 6GB RAM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <a href="#" class="btn btn--info">Link as Button</a>
+        </div>
