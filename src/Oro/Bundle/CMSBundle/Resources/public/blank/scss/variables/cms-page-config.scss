@@ -8,7 +8,7 @@ $offset-half: 8px / 2 !default;
 
 $cms-page-paragraph-offset: 0 0 $offset-twice 0 !default;
 
-// blockquote
+// Blockquote
 $cms-page-blockquote-offset: 0 0 $offset-triple 0 !default;
 $cms-page-blockquote-font-size: $base-font-size--large + 2px !default;
 $cms-page-blockquote-font-weight: font-weight('semi-bold') !default;
@@ -23,14 +23,14 @@ $cms-page-blockquote-fa-icon-color: get-color('additional', 'middle') !default;
 $cms-page-blockquote-fa-icon-top: 18px !default;
 $cms-page-blockquote-fa-icon-left: 20px !default;
 
-// list
+// List
 $cms-page-list-offset: 0 0 $offset-triple 0 !default;
 $cms-page-list-inner-offset: 0 0 0 35px !default;
 
 $cms-page-ul-list-style-type: disc !default;
 $cms-page-ol-list-style-type: decimal !default;
 
-// images
+// Images
 $cms-page-img-max-width: 100% !default;
 $cms-page-img-offset: 0 !default;
 
@@ -49,7 +49,7 @@ $cms-page-figcaption-offset-right: 18px !default;
 // Heading
 $cms-page-heading-offset: 8px !default;
 
-// Devider
+// Divider
 $cms-page-hr-offset: 0 0 20px !default;
 $cms-page-border-top: 1px solid get-color('additional', 'light') !default;
 
@@ -71,5 +71,5 @@ $cms-page-sup-font-size: smaller !default;
 // Small
 $cms-page-small-font-size: $base-font-size--s - 1px !default;
 
-//Address
+// Address
 $cms-page-address-font-style: italic !default;
