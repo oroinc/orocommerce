@@ -16,11 +16,11 @@
     }
 
     small {
-        font-size: $base-font-size--s - 1px;
+        font-size: $cms-page-small-font-size;
     }
 
     address {
-        font-style: italic;
+        font-style: $cms-page-address-font-style;
     }
 
     blockquote {
@@ -38,12 +38,12 @@
 
         position: relative;
 
-        @include fa-icon($icon: '\f10d', $extra-rules: true) {
+        @include fa-icon($icon: $cms-page-blockquote-fa-icon, $extra-rules: true) {
             position: absolute;
-            top: 18px;
-            left: 20px;
-            font-size: $base-font-size--large;
-            color: get-color('additional', 'middle');
+            top: $cms-page-blockquote-fa-icon-top;
+            left: $cms-page-blockquote-fa-icon-left;
+            font-size: $cms-page-blockquote-fa-icon-font-size;
+            color: $cms-page-blockquote-fa-icon-color;
         }
     }
 
@@ -60,11 +60,11 @@
     }
 
     ul {
-        list-style-type: disc;
+        list-style-type: $cms-page-ul-list-style-type;
     }
 
     ol {
-        list-style-type: decimal;
+        list-style-type: $cms-page-ol-list-style-type;
     }
 
     dl {
@@ -74,8 +74,8 @@
         }
 
         dd {
-            margin-left: $offset-one;
-            margin-bottom: $offset-one;
+            margin-left: $offset-default;
+            margin-bottom: $offset-default;
         }
     }
 
@@ -97,18 +97,18 @@
 
     figcaption {
         display: flex;
-        caption-side: bottom;
         margin: $cms-page-figcaption-offset;
 
         font-size: $cms-page-figcaption-font-size;
         text-align: $cms-page-figcaption-text-align;
+        text-transform: $cms-page-figcaption-text-transform;
 
-        align-items: center;
-        justify-content: center;
+        align-items: $cms-page-figcaption-align-items;
+        justify-content: $cms-page-figcaption-justify-content;
 
-        position: absolute;
+        position: $cms-page-figcaption-position;
 
-        color: get-color('additional', 'ultra');
+        color: $cms-page-figcaption-color;
     }
 
     a {
@@ -156,8 +156,8 @@
         margin: $cms-page-code-offset;
         display: block;
 
-        font-family: $font-family-monospace;
-        line-height: 1.43;
+        font-family: $cms-page-code-font-family;
+        line-height: $cms-page-code-line-height;
     }
 
     sub {

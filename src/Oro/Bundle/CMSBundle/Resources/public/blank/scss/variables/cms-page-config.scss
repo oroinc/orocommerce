@@ -1,10 +1,9 @@
 /* @theme: blank; */
 
 // Offsets
-$offset-one: 8px !default;
-$offset-twice: $offset-one * 2 !default;
-$offset-triple: $offset-one * 3 !default;
-
+$offset-default: 8px !default;
+$offset-twice: $offset-default * 2 !default;
+$offset-triple: $offset-default * 3 !default;
 $offset-half: 8px / 2 !default;
 
 $cms-page-paragraph-offset: 0 0 $offset-twice 0 !default;
@@ -18,21 +17,34 @@ $cms-page-blockquote-font-style: normal !default;
 $cms-page-blockquote-background-color: get-color('additional', 'base') !default;
 $cms-page-blockquote-inner-offset: $offset-twice 52px !default;
 $cms-page-blockquote-color: get-color('additional', 'dark') !default;
+$cms-page-blockquote-fa-icon: $fa-var-quote-left !default;
+$cms-page-blockquote-fa-icon-font-size: $base-font-size--large !default;
+$cms-page-blockquote-fa-icon-color: get-color('additional', 'middle') !default;
+$cms-page-blockquote-fa-icon-top: 18px !default;
+$cms-page-blockquote-fa-icon-left: 20px !default;
 
 // list
 $cms-page-list-offset: 0 0 $offset-triple 0 !default;
 $cms-page-list-inner-offset: 0 0 0 35px !default;
 
+$cms-page-ul-list-style-type: disc !default;
+$cms-page-ol-list-style-type: decimal !default;
+
 // images
 $cms-page-img-max-width: 100% !default;
 $cms-page-img-offset: 0 !default;
 
-$cms-page-figure-offset: 0 auto $offset-one !default;
+$cms-page-figure-offset: 0 auto $offset-default !default;
 $cms-page-figcaption-font-size: 55px !default;
 $cms-page-figcaption-text-align: center !default;
+$cms-page-figcaption-text-transform: uppercase !default;
+$cms-page-figcaption-align-items: center !default;
+$cms-page-figcaption-justify-content: center !default;
+$cms-page-figcaption-position: absolute !default;
+$cms-page-figcaption-color: get-color('additional', 'ultra') !default;
 $cms-page-figcaption-offset: auto !default;
 $cms-page-figcaption-offset-left: 20px !default;
-$cms-page-figcaption-offset-right: 20px !default;
+$cms-page-figcaption-offset-right: 18px !default;
 
 // Heading
 $cms-page-heading-offset: 8px !default;
@@ -45,7 +57,7 @@ $cms-page-border-top: 1px solid get-color('additional', 'light') !default;
 $cms-page-code-border: 3px solid get-color('additional', 'base') !default;
 $cms-page-code-inner-offset: $offset-twice 22px !default;
 $cms-page-code-offset: 0 0 $offset-twice !default;
-$cms-page-code-font-family: $font-family-monospace !default;
+$cms-page-code-font-family: "Courier", "Courier New", monospace !default;
 $cms-page-code-line-height: 1.43 !default;
 
 // Sub
@@ -55,3 +67,9 @@ $cms-page-sub-font-size: smaller !default;
 // Sup
 $cms-page-sup-vertical-align: super !default;
 $cms-page-sup-font-size: smaller !default;
+
+// Small
+$cms-page-small-font-size: $base-font-size--s - 1px !default;
+
+//Address
+$cms-page-address-font-style: italic !default;

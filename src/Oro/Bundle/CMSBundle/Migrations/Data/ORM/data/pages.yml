@@ -18,7 +18,7 @@ about:
                         media="(max-width: 414px)">
                 <source srcset="http://via.placeholder.com/752x200"
                         media="(max-width: 992px)">
-                <img src="http://via.placeholder.com/1334x200"
+                <img src="http://via.placeholder.com/1384x200"
                      alt="Image">
             </picture>
             <figcaption>Lorem ipsum</figcaption>
