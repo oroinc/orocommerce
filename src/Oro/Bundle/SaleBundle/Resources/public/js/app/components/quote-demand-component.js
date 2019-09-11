@@ -6,11 +6,6 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var routing = require('routing');
-    var template = require('tpl!../../../templates/quote-to-order-item-error.html');
-
-    if (typeof template === 'string') {
-        template = _.template(template);
-    }
 
     QuoteDemandComponent = BaseComponent.extend({
         options: {
@@ -45,40 +40,14 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$el = options._sourceElement;
-            this.blockQuantityUpdate = false;
 
             this.subtotalUrl = routing.generate(this.options.subtotalsRoute, {
                 id: this.options.quoteDemandId
             });
 
-            this.$form = this.$el;
-            if (this.options.formSelector) {
-                this.$form = this.$el.find(this.options.formSelector);
-            }
-            this.initFormValidation();
+            this.$form = this.$el.find(this.options.formSelector || 'form');
 
             $(this.options.lineItemsSelector).on('quote-items-changed', $.proxy(this.loadSubtotals, this));
-        },
-
-        initFormValidation: function() {
-            this.$form.validate(
-                {
-                    errorClass: 'error',
-                    showErrors: function(errorMap, errorList) {
-                        var $element = $(this.currentElements[0]);
-                        var $container = $element.closest('td');
-
-                        $container.find('[data-role="error-container"]').remove();
-                        $element.removeClass(this.settings.errorClass);
-                        if (errorList.length) {
-                            $element.addClass(this.settings.errorClass);
-                            _.each(errorMap, function(message) {
-                                $(template({message: message})).appendTo($container);
-                            });
-                        }
-                    }
-                }
-            );
         },
 
         dispose: function() {

@@ -54,18 +54,18 @@
             {{ form_errors(form.quoteProductOffer) }}
         </td>
         <td class="grid-cell qty-cell">
-            <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
-                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
-                {{ form_widget(form.unit) }}
-                <span data-role="unit-view">
+            <div class="fields-row">
+                <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
+                    {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
+                    {{ form_widget(form.unit) }}
                     {% if oro_is_unit_code_visible(defaultUnitCode) %}
-                        {{ defaultUnitCode }}
+                        <span data-role="unit-view">{{ defaultUnitCode }}</span>
                     {% endif %}
-                </span>
-            </div>
-            <div data-role="error-container">
-                {{ form_errors(form.quantity) }}
-                {{ form_errors(form.unit) }}
+                </div>
+                <div class="fields-row-error">
+                    {{ form_errors(form.quantity) }}
+                    {{ form_errors(form.unit) }}
+                </div>
             </div>
         </td>
         <td class="grid-cell grid-cell--offset-l-none-mobile">
