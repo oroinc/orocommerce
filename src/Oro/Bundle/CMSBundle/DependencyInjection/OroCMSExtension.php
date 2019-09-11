@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\DependencyInjection;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -34,6 +35,9 @@ class OroCMSExtension extends Extension
             sprintf('%s.%s.%s', self::ALIAS, Configuration::DIRECT_EDITING, Configuration::LOGIN_PAGE_CSS_FIELD_OPTION),
             $config[Configuration::DIRECT_EDITING][Configuration::LOGIN_PAGE_CSS_FIELD_OPTION]
         );
+
+        $container->registerForAutoconfiguration(ContentWidgetTypeInterface::class)
+            ->addTag('oro_cms.content_widget.type');
     }
 
     /**

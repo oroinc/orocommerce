@@ -152,3 +152,8 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }
+
+    oro_cms.content_widget.type_registry:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
+        arguments:
+            - !tagged oro_cms.content_widget.type
