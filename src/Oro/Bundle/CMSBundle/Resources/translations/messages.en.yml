@@ -61,6 +61,19 @@ oro.cms:
             general.label: General
             use_for.label: Restrictions
 
+    contentwidget:
+        entity_label: Content Widget
+        entity_plural_label: Content Widgets
+        id.label: ID
+        name.label: Name
+        description.label: Description
+        created_at.label: Created At
+        updated_at.label: Updated At
+        organization.label: Organization
+        widget_type.label: Widget Type
+        template.label: Template
+        settings.label: Settings
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
