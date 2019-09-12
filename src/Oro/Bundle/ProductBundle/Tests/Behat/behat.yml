@@ -981,6 +981,12 @@ oro_behat_extension:
         mapping:
           File: 'product_images[oro_product___product_image_watermark_file][value][file]'
 
+    Product Form Images Section:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type:    'xpath'
+        locator: '//h4[contains(.,"Images")]/..'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
