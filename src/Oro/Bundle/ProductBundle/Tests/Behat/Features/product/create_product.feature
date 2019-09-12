@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9207
 @ticket-BB-17327
+@ticket-BB-17630
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
 Feature: Create product
@@ -54,3 +55,24 @@ Feature: Create product
       | Name           | Test Product |
       | Type           | Simple       |
       | Product Family | Default      |
+
+  Scenario: Disable guest access and check product image is still visible on grid and form
+    Given I go to System/Configuration
+    And I follow "Commerce/Guests/Website Access" on configuration sidebar
+    When uncheck "Use default" for "Enable Guest Access" field
+    And I uncheck "Enable Guest Access"
+    And I save form
+    Then I should see "Configuration Saved" flash message
+
+    When I go to Products/ Products
+    And I filter SKU as is equal to "Test123"
+    Then I should see remembered "listing" image for product with "Test123"
+    And I should not see remembered "main" image for product with "Test123"
+
+    When I click on Image cell in grid row contains "Test123"
+    Then I should see remembered "main" image preview
+    And I close large image preview
+
+    When I click edit "Test123" in grid
+    Then I should see remembered "main" image in "Product Form Images Section" element
+    And I should see remembered "listing" image in "Product Form Images Section" element
