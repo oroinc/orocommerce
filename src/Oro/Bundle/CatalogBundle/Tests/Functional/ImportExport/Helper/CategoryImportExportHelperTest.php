@@ -6,9 +6,6 @@ use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryImportExportHelperData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolationPerTest
- */
 class CategoryImportExportHelperTest extends WebTestCase
 {
     /** @var CategoryImportExportHelper */

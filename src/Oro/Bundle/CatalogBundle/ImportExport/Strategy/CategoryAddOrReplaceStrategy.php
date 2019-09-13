@@ -14,13 +14,13 @@ use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStr
 class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
 {
     /** @var CategoryImportExportHelper|null */
-    private $categoryImportExportHelper;
+    protected $categoryImportExportHelper;
 
     /** @var Category|null */
-    private $rootCategory;
+    protected $rootCategory;
 
     /** @var int|null */
-    private $categoriesCount;
+    protected $maxLeft;
 
     /**
      * @param CategoryImportExportHelper $categoryImportExportHelper
@@ -63,7 +63,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
                 $category
                     // We have to set numbers correlating with rows to keep proper ordering. At the same time we should
                     // not interfere with existing ordering - the value should be greater than any of already existing.
-                    ->setLeft($this->getCategoriesCount() + $this->strategyHelper->getCurrentRowNumber($this->context))
+                    ->setLeft($this->getLeftOffset())
                     ->setRight(0)
                     ->setRoot($this->getRootCategory()->getId());
             }
@@ -144,16 +144,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
 
             if (!$parentCategoryId && $parentCategoryPath) {
                 // Postpone row to try import it later.
-                $this->context->addPostponedRow($this->context->getValue('rawItemData'));
-
-                $this->context->addError(
-                    sprintf(
-                        'Row #%d. Postponing category "%s". Cannot find parent category "%s"',
-                        $this->strategyHelper->getCurrentRowNumber($this->context),
-                        (string) $category->getTitle(),
-                        $parentCategoryPath
-                    )
-                );
+                $this->postponeCategory($category);
 
                 return false;
             }
@@ -162,6 +153,44 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         $this->fieldHelper->setObjectValue($category, 'parentCategory', $existingParentCategory);
 
         return true;
+    }
+
+    /**
+     * @param Category $category
+     */
+    protected function postponeCategory(Category $category): void
+    {
+        $this->context->addPostponedRow($this->context->getValue('rawItemData'));
+
+        if (!$this->context->getOption('attempts')) {
+            $this->context->addError(
+                sprintf(
+                    'Row #%d. Postponing category "%s". Cannot find parent category "%s"',
+                    $this->strategyHelper->getCurrentRowNumber($this->context),
+                    (string) $category->getTitle(),
+                    $this->getCurrentParentCategoryPath()
+                )
+            );
+        }
+
+        if ($this->isLastAttempt()) {
+            $this->context->addError(
+                sprintf(
+                    'Giving up on category "%s". Cannot find parent category "%s"',
+                    (string) $category->getTitle(),
+                    $this->getCurrentParentCategoryPath()
+                )
+            );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isLastAttempt(): bool
+    {
+        return $this->context->hasOption('max_attempts') &&
+            (int) $this->context->getOption('attempts') === (int) $this->context->getOption('max_attempts');
     }
 
     /**
@@ -254,12 +283,12 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
     /**
      * @return int
      */
-    private function getCategoriesCount(): int
+    private function getLeftOffset(): int
     {
-        if ($this->categoriesCount === null) {
-            $this->categoriesCount = $this->categoryImportExportHelper->getCategoriesCount();
+        if ($this->maxLeft === null) {
+            $this->maxLeft = $this->categoryImportExportHelper->getMaxLeft();
         }
 
-        return $this->categoriesCount;
+        return $this->maxLeft + $this->strategyHelper->getCurrentRowNumber($this->context);
     }
 }

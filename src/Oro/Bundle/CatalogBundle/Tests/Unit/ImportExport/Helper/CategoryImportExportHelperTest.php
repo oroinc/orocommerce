@@ -139,15 +139,15 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($rootCategory, $this->helper->getRootCategory());
     }
 
-    public function testGetCategoriesCount(): void
+    public function testGetMaxLeft(): void
     {
         $repo = $this->mockGetRepository();
 
         $repo
             ->expects($this->once())
-            ->method('getCategoriesCount')
-            ->willReturn($count = 10);
+            ->method('getMaxLeft')
+            ->willReturn($max = 10);
 
-        $this->assertSame($count, $this->helper->getCategoriesCount());
+        $this->assertSame($max, $this->helper->getMaxLeft());
     }
 }

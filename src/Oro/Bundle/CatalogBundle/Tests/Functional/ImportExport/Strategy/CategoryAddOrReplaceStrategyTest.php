@@ -152,10 +152,10 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $categoryRepo = $this->getCategoryRepository();
 
         $rootCategory = $categoryRepo->getMasterCatalogRoot($this->getReference('organization'));
-        $categoriesCount = $categoryRepo->getCategoriesCount();
+        $maxLeft = $categoryRepo->getMaxLeft();
 
         $this->assertEquals(0, $category->getLevel(), 'Gedmo level field is invalid');
-        $this->assertEquals($categoriesCount, $category->getLeft(), 'Gedmo left field is invalid');
+        $this->assertEquals($maxLeft, $category->getLeft(), 'Gedmo left field is invalid');
         $this->assertEquals(0, $category->getRight(), 'Gedmo right field is invalid');
         $this->assertEquals($rootCategory->getId(), $category->getRoot(), 'Gedmo root is invalid');
     }

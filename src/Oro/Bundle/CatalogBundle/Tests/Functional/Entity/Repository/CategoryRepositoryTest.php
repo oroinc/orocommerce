@@ -198,8 +198,8 @@ class CategoryRepositoryTest extends WebTestCase
         );
     }
 
-    public function testGetCategoriesCount()
+    public function testGetMaxLeft()
     {
-        static::assertEquals(8, $this->repository->getCategoriesCount());
+        static::assertEquals(11, $this->repository->getMaxLeft());
     }
 }

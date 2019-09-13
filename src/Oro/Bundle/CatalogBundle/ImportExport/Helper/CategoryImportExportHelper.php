@@ -113,9 +113,9 @@ class CategoryImportExportHelper
     /**
      * @return int
      */
-    public function getCategoriesCount(): int
+    public function getMaxLeft(): int
     {
-        return $this->getRepository()->getCategoriesCount();
+        return $this->getRepository()->getMaxLeft();
     }
 
     /**

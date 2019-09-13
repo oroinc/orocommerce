@@ -279,16 +279,16 @@ class CategoryRepository extends NestedTreeRepository
     }
 
     /**
-     * Gets categories count.
+     * Gets max value of Gedmo tree "left" field.
      *
      * @return int
      */
-    public function getCategoriesCount(): int
+    public function getMaxLeft(): int
     {
         $qb = $this->createQueryBuilder('category');
 
         return $qb
-            ->select('count(1)')
+            ->select($qb->expr()->max('category.left'))
             ->getQuery()
             ->getSingleScalarResult();
     }
