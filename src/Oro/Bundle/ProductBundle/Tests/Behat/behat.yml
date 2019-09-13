@@ -469,6 +469,11 @@ oro_behat_extension:
         type: xpath
         locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
+    Data audit:
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-data-audit" and contains(., "Data audit")]'
+
     Drop condition here:
       selector: ".condition-container"
 
