@@ -1018,6 +1018,9 @@ oro_behat_extension:
         type:    'xpath'
         locator: '//h4[contains(.,"Images")]/..'
 
+    Add Product Templates Button:
+      selector: 'div[id^="oro_product_productTemplates-uid"] button'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
