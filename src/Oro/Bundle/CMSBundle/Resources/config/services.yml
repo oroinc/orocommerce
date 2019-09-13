@@ -157,3 +157,6 @@ services:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
         arguments:
             - !tagged oro_cms.content_widget.type
+
+    Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
+        alias: oro_cms.content_widget.type_registry

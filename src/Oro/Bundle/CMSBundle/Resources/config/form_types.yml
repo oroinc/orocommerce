@@ -39,3 +39,18 @@ services:
             - '@oro_cms.content_block.default_content_variant_scopes_resolver'
         tags:
             - { name: form.type }
+
+    oro_cms.form.type.content_widget:
+        class: 'Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.handler.content_widget:
+        class: 'Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler'
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler:
+        alias: oro_cms.form.handler.content_widget

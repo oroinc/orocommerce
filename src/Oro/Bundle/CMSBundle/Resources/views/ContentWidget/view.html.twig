@@ -1,0 +1,51 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroScopeBundle::macros.html.twig' as scope %}
+
+{% oro_title_set({params : {'%title%': entity.name} }) %}
+
+{% block stats %}
+    {% if is_granted('VIEW', entity, 'widgetType') %}
+        <li>{{ 'oro.cms.contentwidget.widget_type.label'|trans }}: {{ entity.widgetType|default('N/A') }}</li>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock stats %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_cms_content_widget_index'),
+        'indexLabel': 'oro.cms.contentwidget.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.cms.contentwidget.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data' : [
+                    UI.renderProperty('oro.cms.contentwidget.name.label'|trans, entity.name),
+                    UI.renderHtmlProperty('oro.cms.contentwidget.description.label'|trans, entity.description|escape|nl2br),
+                    UI.renderProperty('oro.cms.contentwidget.template.label'|trans, entity.template),
+                ]
+            }]
+        },
+    ] %}
+
+    {% if additionalBlocks is not empty %}
+        {% set dataBlocks = dataBlocks|merge(additionalBlocks) %}
+    {% endif %}
+
+    {% set id = 'contentwidget-page-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

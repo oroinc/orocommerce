@@ -27,9 +27,9 @@ interface ContentWidgetTypeInterface
     /**
      * @param ContentWidget $contentWidget
      * @param Environment $twig
-     * @return string
+     * @return array
      */
-    public function getBackOfficeViewBlock(ContentWidget $contentWidget, Environment $twig): string;
+    public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array;
 
     /**
      * @param ContentWidget $contentWidget

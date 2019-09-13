@@ -31,9 +31,9 @@ class ContentWidgetTypeStub implements ContentWidgetTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getBackOfficeViewBlock(ContentWidget $contentWidget, Environment $twig): string
+    public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
-        return '';
+        return [];
     }
 
     /**

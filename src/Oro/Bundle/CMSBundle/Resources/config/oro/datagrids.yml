@@ -199,3 +199,76 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_cms_content_block_view
                 rowAction:     true
+
+    cms-content-widget-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - contentWidget.id
+                    - contentWidget.name
+                    - contentWidget.widgetType
+                    - contentWidget.template
+                    - contentWidget.createdAt
+                    - contentWidget.updatedAt
+                from:
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentWidget', alias: contentWidget }
+        columns:
+            name:
+                label: oro.cms.contentwidget.name.label
+            widgetType:
+                label: oro.cms.contentwidget.widget_type.label
+            template:
+                label: oro.cms.contentwidget.template.label
+            createdAt:
+                label: oro.cms.contentwidget.created_at.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.cms.contentwidget.updated_at.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                name:
+                    data_name: contentWidget.name
+                widgetType:
+                    data_name: contentWidget.widgetType
+                template:
+                    data_name: contentWidget.template
+                createdAt:
+                    data_name: contentWidget.createdAt
+                updatedAt:
+                    data_name: contentWidget.updatedAt
+            default:
+                updatedAt: DESC
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: contentWidget.name
+                widgetType:
+                    type: string
+                    data_name: contentWidget.widgetType
+                template:
+                    type: string
+                    data_name: contentWidget.template
+                createdAt:
+                    type: datetime
+                    data_name: contentWidget.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: contentWidget.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_cms_content_widget_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_cms_content_widget_view
+                rowAction:     true

@@ -74,6 +74,10 @@ oro.cms:
         template.label: Template
         settings.label: Settings
 
+        sections:
+            general.label: General
+            additional_information.label: Additional Information
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
@@ -86,6 +90,7 @@ oro.cms:
     controller:
         page.saved.message: 'Page has been saved'
         contentblock.saved.message: 'Content block has been saved'
+        contentwidget.saved.message: 'Content widget has been saved'
 
     menu:
         marketing_tab.label: 'Marketing'

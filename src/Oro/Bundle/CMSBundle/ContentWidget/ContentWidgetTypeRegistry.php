@@ -7,13 +7,13 @@ namespace Oro\Bundle\CMSBundle\ContentWidget;
  */
 class ContentWidgetTypeRegistry
 {
-    /** @var ContentWidgetTypeInterface[] */
+    /** @var \IteratorAggregate|ContentWidgetTypeInterface[] */
     private $types;
 
     /**
-     * @param ContentWidgetTypeInterface[] $types
+     * @param \IteratorAggregate|ContentWidgetTypeInterface[] $types
      */
-    public function __construct(iterable $types)
+    public function __construct(\IteratorAggregate $types)
     {
         $this->types = $types;
     }
@@ -31,5 +31,13 @@ class ContentWidgetTypeRegistry
         }
 
         return null;
+    }
+
+    /**
+     * @return ContentWidgetTypeInterface[]
+     */
+    public function getTypes(): array
+    {
+        return iterator_to_array($this->types->getIterator());
     }
 }
