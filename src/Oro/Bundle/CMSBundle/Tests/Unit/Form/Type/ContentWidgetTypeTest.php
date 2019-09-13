@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
+use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetTypeSelectType;
+use Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -24,6 +28,9 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
+    /** @var ContentWidgetTypeRegistry */
+    private $contentWidgetTypeRegistry;
+
     /** @var ContentWidgetType */
     private $formType;
 
@@ -38,7 +45,13 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType = new ContentWidgetType($this->translator);
+        $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
+
+        $this->formType = new ContentWidgetType(
+            $this->translator,
+            Forms::createFormFactory(),
+            $this->contentWidgetTypeRegistry
+        );
 
         parent::setUp();
     }
@@ -62,11 +75,20 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         ?array $submittedData,
         ContentWidget $expectedData
     ): void {
-        $form = $this->factory->create(
-            ContentWidgetType::class,
-            $defaultData,
-            ['widget_type_form' => $widgetTypeForm]
-        );
+        $contentWidget = $defaultData ?: $this->createContentWidget();
+
+        $contentWidgetType = $this->createMock(ContentWidgetTypeInterface::class);
+        $contentWidgetType->expects($this->any())
+            ->method('getSettingsForm')
+            ->with($contentWidget, Forms::createFormFactory())
+            ->willReturn($widgetTypeForm);
+
+        $this->contentWidgetTypeRegistry->expects($this->any())
+            ->method('getWidgetType')
+            ->with('testType1')
+            ->willReturn($contentWidgetType);
+
+        $form = $this->factory->create(ContentWidgetType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -88,7 +110,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
             ->add('param', TextType::class);
 
         $expected = $this->createContentWidget(['param' => 'value'])
-            ->setWidgetType('test type')
+            ->setWidgetType('testType1')
             ->setName('test name')
             ->setDescription('test description')
             ->setTemplate('test template');
@@ -98,7 +120,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                 'widgetTypeForm' => $formBuilder->getForm(),
                 'defaultData' => null,
                 'submittedData' => null,
-                'expectedData' => $this->createContentWidget(['param' => null]),
+                'expectedData' => $this->createContentWidget(),
             ],
             'inline created form without default data and with submitted data' => [
                 'widgetTypeForm' => $formBuilder->getForm(),
@@ -128,7 +150,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                 'widgetTypeForm' => Forms::createFormFactory()->create(ContentWidgetTypeStub::class),
                 'defaultData' => null,
                 'submittedData' => null,
-                'expectedData' => $this->createContentWidget(['param' => null]),
+                'expectedData' => $this->createContentWidget(),
             ],
             'form based on form type without default data and with submitted data' => [
                 'widgetTypeForm' => Forms::createFormFactory()->create(ContentWidgetTypeStub::class),
@@ -245,7 +267,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
             ->with(
                 [
                     'data_class' => ContentWidget::class,
-                    'widget_type_form' => null,
                     'block_config' => [
                         'general' => [
                             'title' => 'oro.cms.contentwidget.sections.general.label',
@@ -256,9 +277,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     ],
                 ]
             );
-        $resolver->expects($this->once())
-            ->method('setAllowedTypes')
-            ->with('widget_type_form', ['null', FormInterface::class]);
 
         $this->formType->configureOptions($resolver);
     }
@@ -268,12 +286,23 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
+        $contentWidgetTypeProvider = $this->createMock(ContentWidgetTypeProvider::class);
+        $contentWidgetTypeProvider->expects($this->any())
+            ->method('getAvailableContentWidgetTypes')
+            ->willReturn(
+                [
+                    'oro.type1.label' => 'testType1',
+                    'oro.type2.label' => 'testType2',
+                ]
+            );
+
         return array_merge(
             parent::getExtensions(),
             [
                 new PreloadedExtension(
                     [
                         $this->formType,
+                        new ContentWidgetTypeSelectType($contentWidgetTypeProvider),
                     ],
                     []
                 )

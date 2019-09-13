@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -9,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,12 +24,25 @@ class ContentWidgetType extends AbstractType
     /** @var TranslatorInterface */
     private $translator;
 
+    /** @var FormFactoryInterface */
+    private $formFactory;
+
+    /** @var ContentWidgetTypeRegistry */
+    private $contentWidgetTypeRegistry;
+
     /**
      * @param TranslatorInterface $translator
+     * @param FormFactoryInterface $formFactory
+     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
      */
-    public function __construct(TranslatorInterface $translator)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        FormFactoryInterface $formFactory,
+        ContentWidgetTypeRegistry $contentWidgetTypeRegistry
+    ) {
         $this->translator = $translator;
+        $this->formFactory = $formFactory;
+        $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
     }
 
     /**
@@ -38,7 +53,7 @@ class ContentWidgetType extends AbstractType
         $builder
             ->add(
                 'widgetType',
-                TextType::class,
+                ContentWidgetTypeSelectType::class,
                 [
                     'label' => 'oro.cms.contentwidget.widget_type.label',
                     'required' => true,
@@ -75,26 +90,13 @@ class ContentWidgetType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            static function (FormEvent $event) use ($options) {
-                /** @var FormInterface $widgetTypeForm */
-                $widgetTypeForm = $options['widget_type_form'];
-                if (!$widgetTypeForm) {
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!$data instanceof ContentWidget || !$data->getWidgetType()) {
                     return;
                 }
 
-                $config = $widgetTypeForm->getConfig();
-                $type = $config->getType();
-
-                $form = $event->getForm();
-                $form->add('settings', get_class($type->getInnerType()), $config->getOptions());
-
-                // Adds each child separately in case the settings form was built inline.
-                $settings = $form->get('settings');
-                foreach ($widgetTypeForm->all() as $child) {
-                    $settings->add($child);
-                }
-
-                $settings->setData($widgetTypeForm->getData());
+                $this->buildSettingsField($event->getForm(), $data, $data->getWidgetType());
             }
         );
 
@@ -107,13 +109,52 @@ class ContentWidgetType extends AbstractType
                 }
             }
         );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!is_array($data) || !isset($data['widgetType'])) {
+                    return;
+                }
+
+                $form = $event->getForm();
+
+                $this->buildSettingsField($form, $form->getData() ?: new ContentWidget(), $data['widgetType']);
+            }
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
+        if (isset($view->children['widgetType'])) {
+            $view->vars = array_replace_recursive(
+                $view->vars,
+                [
+                    'attr' => [
+                        'data-page-component-view' => 'orocms/js/app/views/content-widget-view',
+                        'data-page-component-options' => \json_encode(
+                            [
+                                'formSelector' => '#' . $view->vars['id'],
+                                'typeSelector' => '#' . $view->children['widgetType']->vars['id'],
+                                'fieldsSets' => array_values(
+                                    array_map(
+                                        static function (FormView $view) {
+                                            return $view->vars['full_name'];
+                                        },
+                                        $view->children
+                                    )
+                                )
+                            ]
+                        ),
+                    ]
+                ]
+            );
+        }
+
         if (isset($view->children['settings'])) {
             foreach ($view->children['settings'] as $child) {
                 if (!isset($child->vars['block'])) {
@@ -125,6 +166,37 @@ class ContentWidgetType extends AbstractType
         }
 
         $this->updateBlockConfig($view);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param ContentWidget $contentWidget
+     * @param string $widgetType
+     */
+    private function buildSettingsField(FormInterface $form, ContentWidget $contentWidget, string $widgetType): void
+    {
+        $contentWidgetType = $this->contentWidgetTypeRegistry->getWidgetType($widgetType);
+        if (!$contentWidgetType) {
+            return;
+        }
+
+        $settingsForm = $contentWidgetType->getSettingsForm($contentWidget, $this->formFactory);
+        if (!$settingsForm) {
+            return;
+        }
+
+        $config = $settingsForm->getConfig();
+        $type = $config->getType();
+
+        $form->add('settings', get_class($type->getInnerType()), $config->getOptions());
+
+        // Adds each child separately in case the settings form was built inline.
+        $settings = $form->get('settings');
+        foreach ($settingsForm->all() as $child) {
+            $settings->add($child);
+        }
+
+        $settings->setData($settingsForm->getData());
     }
 
     /**
@@ -151,7 +223,6 @@ class ContentWidgetType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => ContentWidget::class,
-                'widget_type_form' => null,
                 'block_config' => [
                     'general' => [
                         'title' => 'oro.cms.contentwidget.sections.general.label',
@@ -162,8 +233,6 @@ class ContentWidgetType extends AbstractType
                 ],
             ]
         );
-
-        $resolver->setAllowedTypes('widget_type_form', ['null', FormInterface::class]);
     }
 
     /**

@@ -218,6 +218,8 @@ datagrids:
                 label: oro.cms.contentwidget.name.label
             widgetType:
                 label: oro.cms.contentwidget.widget_type.label
+                frontend_type: select
+                choices:       '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
             template:
                 label: oro.cms.contentwidget.template.label
             createdAt:
@@ -246,8 +248,10 @@ datagrids:
                     type: string
                     data_name: contentWidget.name
                 widgetType:
-                    type: string
+                    type: choice-tree
                     data_name: contentWidget.widgetType
+                    autocomplete_alias: oro_cms_content_widget_types
+                    renderedPropertyName: 'label'
                 template:
                     type: string
                     data_name: contentWidget.template

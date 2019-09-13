@@ -18,11 +18,16 @@ interface ContentWidgetTypeInterface
     public static function getName(): string;
 
     /**
+     * @return string
+     */
+    public function getLabel(): string;
+
+    /**
      * @param ContentWidget $contentWidget
      * @param FormFactoryInterface $formFactory
-     * @return FormInterface
+     * @return null|FormInterface
      */
-    public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): FormInterface;
+    public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface;
 
     /**
      * @param ContentWidget $contentWidget

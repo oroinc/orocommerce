@@ -1,0 +1,5 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType: ~

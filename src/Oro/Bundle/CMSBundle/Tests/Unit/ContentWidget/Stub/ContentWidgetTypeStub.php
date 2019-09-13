@@ -22,6 +22,14 @@ class ContentWidgetTypeStub implements ContentWidgetTypeInterface
     /**
      * {@inheritdoc}
      */
+    public function getLabel(): string
+    {
+        return 'stub type label';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): FormInterface
     {
         return $formFactory->createBuilder(FormType::class, $contentWidget)

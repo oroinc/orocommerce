@@ -160,3 +160,19 @@ services:
 
     Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
         alias: oro_cms.content_widget.type_registry
+
+    oro_cms.autocomplete.content_widget_type.search_handler:
+        class: Oro\Bundle\CMSBundle\Autocomplete\ContentWidgetTypeSearchHandler
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@translator'
+            - '@property_accessor'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_cms_content_widget_types' }
+
+    oro_cms.provider.content_widget_type:
+        class: Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider
+        public: true
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@translator'

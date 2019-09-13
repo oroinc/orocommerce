@@ -3,13 +3,13 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ContentWidgetControllerTest extends WebTestCase
 {
     /** @var string */
     private const WIDGET_NAME = 'test widget';
-    private const WIDGET_TYPE = 'custom widget type';
 
     protected function setUp(): void
     {
@@ -25,7 +25,7 @@ class ContentWidgetControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
         $form['oro_cms_content_widget[name]'] = self::WIDGET_NAME;
-        $form['oro_cms_content_widget[widgetType]'] = self::WIDGET_TYPE;
+        $form['oro_cms_content_widget[widgetType]'] = StubContentWidgetType::getName();
 
         $this->client->followRedirects();
 
@@ -40,7 +40,7 @@ class ContentWidgetControllerTest extends WebTestCase
             ->findOneBy(['name' => self::WIDGET_NAME]);
 
         $this->assertInstanceOf(ContentWidget::class, $contentWidget);
-        $this->assertEquals(self::WIDGET_TYPE, $contentWidget->getWidgetType());
+        $this->assertEquals(StubContentWidgetType::getName(), $contentWidget->getWidgetType());
 
         return $contentWidget;
     }
@@ -74,7 +74,7 @@ class ContentWidgetControllerTest extends WebTestCase
             ->findOneBy(['name' => self::WIDGET_NAME . ' updated']);
 
         $this->assertInstanceOf(ContentWidget::class, $contentWidget);
-        $this->assertEquals(self::WIDGET_TYPE, $contentWidget->getWidgetType());
+        $this->assertEquals(StubContentWidgetType::getName(), $contentWidget->getWidgetType());
 
         return $contentWidget;
     }

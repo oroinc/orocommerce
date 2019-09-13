@@ -74,6 +74,10 @@ oro.cms:
         template.label: Template
         settings.label: Settings
 
+        form:
+            choose_content_widget_type: Choose a content widget type...
+            no_available_content_widget_types: No content widget types available
+
         sections:
             general.label: General
             additional_information.label: Additional Information

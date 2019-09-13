@@ -11,7 +11,9 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -35,7 +37,7 @@ class ContentWidgetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="oro_cms_content_widget_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_cms_content_widget_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
      *      id="oro_cms_content_widget_view",
@@ -64,7 +66,8 @@ class ContentWidgetController extends AbstractController
 
         return [
             'entity' => $contentWidget,
-            'additionalBlocks' => $additionalBlocks
+            'additionalBlocks' => $additionalBlocks,
+            'contentWidgetType' => $contentWidgetType,
         ];
     }
 
@@ -82,10 +85,7 @@ class ContentWidgetController extends AbstractController
      */
     public function createAction()
     {
-        $contentWidget = new ContentWidget();
-        $contentWidget->setWidgetType('copyright'); // @todo get widget type dynamically from the form
-
-        return $this->update($contentWidget);
+        return $this->update(new ContentWidget());
     }
 
     /**
@@ -112,26 +112,28 @@ class ContentWidgetController extends AbstractController
      */
     protected function update(ContentWidget $contentWidget)
     {
-        $contentWidgetType = $this->get(ContentWidgetTypeRegistry::class)
-            ->getWidgetType($contentWidget->getWidgetType());
-
-        $contentWidgetForm = $contentWidgetType
-            ? $contentWidgetType->getSettingsForm($contentWidget, $this->get('form.factory'))
-            : null;
-
-        $form = $this->createForm(
-            ContentWidgetType::class,
-            $contentWidget,
-            ['widget_type_form' => $contentWidgetForm]
-        );
-
         return $this->get(UpdateHandlerFacade::class)
             ->update(
                 $contentWidget,
-                $form,
+                $this->createForm(ContentWidgetType::class, $contentWidget),
                 $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentwidget.saved.message'),
                 null,
-                $this->get(ContentWidgetHandler::class)
+                $this->get(ContentWidgetHandler::class),
+                function (ContentWidget $contentWidget, FormInterface $form, Request $request) {
+                    $updateMarker = $request->get(ContentWidgetHandler::UPDATE_MARKER, false);
+                    if ($updateMarker) {
+                        $form = $this->createForm(ContentWidgetType::class, $contentWidget);
+                    }
+
+                    $contentWidgetType = $contentWidget->getWidgetType()
+                        ? $this->get(ContentWidgetTypeRegistry::class)->getWidgetType($contentWidget->getWidgetType())
+                        : null;
+
+                    return [
+                        'form' => $form->createView(),
+                        'contentWidgetType' => $contentWidgetType,
+                    ];
+                }
             );
     }
 

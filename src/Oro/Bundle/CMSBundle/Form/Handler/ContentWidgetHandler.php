@@ -16,9 +16,10 @@ class ContentWidgetHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var string */
+    public const UPDATE_MARKER = 'formUpdateMarker';
+
+    /** @var ManagerRegistry */
     protected $registry;
 
     /**
@@ -41,8 +42,11 @@ class ContentWidgetHandler implements FormHandlerInterface
         $form->setData($data);
 
         if (\in_array($request->getMethod(), [Request::METHOD_POST, Request::METHOD_PUT], true)) {
-            $this->submitPostPutRequest($form, $request);
-            if ($form->isValid()) {
+            $updateMarker = $request->get(self::UPDATE_MARKER, false);
+
+            $this->submitPostPutRequest($form, $request, !$updateMarker);
+
+            if (!$updateMarker && $form->isValid()) {
                 $this->onSuccess($data);
                 return true;
             }

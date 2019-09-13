@@ -9,8 +9,8 @@
 ) %}
 
 {% block stats %}
-    {% if entity.id is not empty and is_granted('VIEW', entity, 'widgetType') %}
-        <li>{{ 'oro.cms.contentwidget.widget_type.label'|trans }}: {{ entity.widgetType|default('N/A') }}</li>
+    {% if is_granted('VIEW', entity, 'widgetType') and contentWidgetType is not empty %}
+        <li>{{ 'oro.cms.contentwidget.widget_type.label'|trans }}: {{ contentWidgetType.label|trans }}</li>
     {% endif %}
 
     {{ parent() }}

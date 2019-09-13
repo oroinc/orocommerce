@@ -100,6 +100,31 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $method
      */
+    public function testProcessWithUpdateMarker(string $method): void
+    {
+        $this->request->request->set(ContentWidgetHandler::UPDATE_MARKER, true);
+        $this->request->setMethod($method);
+
+        $this->manager->expects($this->never())
+            ->method('persist');
+
+        $this->manager->expects($this->never())
+            ->method('flush');
+
+        $this->assertFalse($this->handler->process($this->data, $this->form, $this->request));
+        $this->assertTrue($this->form->isValid());
+
+        $expected = new ContentWidget();
+        $expected->setSettings(self::FORM_DATA['settings']);
+
+        $this->assertEquals($expected, $this->data);
+    }
+
+    /**
+     * @dataProvider handleDataProvider
+     *
+     * @param string $method
+     */
     public function testProcess(string $method): void
     {
         $this->request->setMethod($method);
@@ -118,6 +143,21 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
         $expected->setSettings(self::FORM_DATA['settings']);
 
         $this->assertEquals($expected, $this->data);
+    }
+
+    /**
+     * @dataProvider handleDataProvider
+     *
+     * @param string $method
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Argument data should be instance of ContentWidget entity
+     */
+    public function testProcessException(string $method): void
+    {
+        $this->request->setMethod($method);
+
+        $this->handler->process(new \stdClass(), $this->form, $this->request);
     }
 
     /**
