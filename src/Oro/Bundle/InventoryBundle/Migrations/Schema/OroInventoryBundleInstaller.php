@@ -809,7 +809,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['full' => true]
+                    'importexport' => ['excluded' => true]
                 ],
             ]
         );
@@ -820,6 +820,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 }

@@ -19,7 +19,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * Represents product categories
+ * Represents product category
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
@@ -95,9 +95,8 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     use OrganizationAwareTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
-
+    const CATEGORY_PATH_DELIMITER = ' / ';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
-    const FIELD_PRODUCTS = 'products';
 
     /**
      * @var integer
@@ -105,6 +104,17 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -129,6 +139,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20,
+     *              "full"=true,
+     *              "fallback_field"="string"
      *          }
      *      }
      * )
@@ -145,6 +160,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=30
      *          }
      *      }
      * )
@@ -160,6 +178,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -187,6 +208,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -214,6 +240,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=60,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -239,6 +270,13 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @var string
      *
      * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $materializedPath;
 
