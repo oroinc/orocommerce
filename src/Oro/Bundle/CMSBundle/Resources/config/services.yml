@@ -104,9 +104,8 @@ services:
 
     oro_cms.twig.widget_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
-        public: false
         arguments:
-            - '@oro_cms.widget_registry'
+            - '@oro_cms.content_widget.renderer'
 
     oro_cms.widget_registry:
         class: 'Oro\Bundle\CMSBundle\Widget\WidgetRegistry'
@@ -176,3 +175,15 @@ services:
         arguments:
             - '@oro_cms.content_widget.type_registry'
             - '@translator'
+
+    oro_cms.content_widget.renderer:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@doctrine'
+            - '@twig'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_cms }

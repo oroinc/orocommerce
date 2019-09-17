@@ -2,25 +2,25 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
-use Oro\Bundle\CMSBundle\Widget\WidgetRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * Provides a Twig function to render a CMS widget:
+ * Provides a Twig function to render a content widget:
  *   - widget
  */
 class WidgetExtension extends AbstractExtension
 {
-    /** @var WidgetRegistry */
-    private $widgetRegistry;
+    /** @var ContentWidgetRenderer */
+    private $contentWidgetRenderer;
 
     /**
-     * @param WidgetRegistry $widgetRegistry
+     * @param ContentWidgetRenderer $contentWidgetRenderer
      */
-    public function __construct(WidgetRegistry $widgetRegistry)
+    public function __construct(ContentWidgetRenderer $contentWidgetRenderer)
     {
-        $this->widgetRegistry = $widgetRegistry;
+        $this->contentWidgetRenderer = $contentWidgetRenderer;
     }
 
     /**
@@ -29,7 +29,7 @@ class WidgetExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('widget', [$this->widgetRegistry, 'getWidget'], ['is_safe' => ['html']]),
+            new TwigFunction('widget', [$this->contentWidgetRenderer, 'render'], ['is_safe' => ['html']]),
         ];
     }
 }

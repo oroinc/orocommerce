@@ -12,7 +12,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 /**
  * Holds content widget information.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository")
  * @ORM\Table(
  *      name="oro_cms_content_widget",
  *      uniqueConstraints={
