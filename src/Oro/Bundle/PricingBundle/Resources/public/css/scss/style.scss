@@ -1,62 +1,10 @@
 /* @theme: admin.oro; */
 
 .product-price-collection {
-    .row {
-        .responsive-cell:not(:only-child) {
-            display: flex;
-            align-items: center;
-        }
-    }
-
-    .small-row {
-        > div {
-            display: flex;
-        }
-    }
-
-    .grouped-fields {
-        width: 100%;
-        display: inline-block;
-    }
-
-    .group-field {
-        display: flex;
-    }
-
-    .group-label {
-        padding-#{$end}: $content-padding;
-
-        label {
-            padding-top: 6px;
-        }
-    }
-
-    .col-widget {
-        width: 100px;
-        margin-#{$end}: $product-price-collection-col-widget-offset;
-    }
-
-    input[type="text"].quantity,
-    input[type="text"].price-value,
-    .entity-create-or-select-container {
-        width: 80px;
-    }
-
-    .price-currency {
-        width: 100px;
-    }
-
-    @include selector-width(137px);
-
-    .entity-create-or-select-container {
-        margin-#{$start}: $product-price-collection-create-or-select-offset;
-        width: 294px;
-    }
-
     .oro-item-collection {
         .row-oro {
             position: relative;
-            padding: $product-price-collection-row-offset;
+            padding: 24px 34px;
             margin-bottom: $content-padding-small;
             background: $primary-900;
             border-radius: 4px;
@@ -65,7 +13,7 @@
         .removeRow {
             position: absolute;
             top: 4px;
-            #{$end}: $product-price-collection-remove-row-end;
+            #{$end}: 4px;
             text-decoration: none;
         }
     }
@@ -83,7 +31,7 @@
 
         .error {
             .select2-container {
-                border-color: $danger;
+                border-color: $input-error-border-color;
             }
         }
     }
@@ -186,45 +134,6 @@
     .group-label {
         label {
             vertical-align: middle;
-        }
-    }
-
-    .responsive-cell:not(:only-child) {
-        .product-price-collection {
-            .row {
-                display: block;
-            }
-
-            .col-widget {
-                width: auto;
-                margin-#{$end}: $product-price-collection-large-col-widget-offset;
-            }
-
-            .group-label {
-                padding-#{$end}: 0;
-
-                > label {
-                    margin-right: $content-padding;
-                    text-align: right;
-                    min-width: 65px;
-                }
-            }
-
-            .grouped-fields {
-                margin-#{$start}: 0;
-            }
-
-            .entity-create-or-select-container {
-                margin-#{$start}: 0;
-            }
-
-            .small-row {
-                &:not(:last-child) {
-                    margin-bottom: $content-padding-medium;
-                }
-            }
-
-            @include selector-width(205px);
         }
     }
 }
