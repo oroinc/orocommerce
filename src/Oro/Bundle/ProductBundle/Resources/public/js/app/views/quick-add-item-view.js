@@ -206,13 +206,12 @@ define(function(require) {
         },
 
         updateModelNotFound: function(data) {
-            var obj = data.item;
-            if (!obj || !this.checkEl(data.$el)) {
+            if (this.disposed || !data.item || !this.checkEl(data.$el)) {
                 return;
             }
 
             this.model.set({
-                skuHiddenField: obj.sku
+                skuHiddenField: data.item.sku
             });
             this.updateUI(true);
         },

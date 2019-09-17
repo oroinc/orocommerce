@@ -11,7 +11,13 @@
         <div class="row-oro tax-zip-code-collection">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
-                <table class="grid table-hover table table-bordered">
+                <table class="table table-fixed">
+                    <colgroup>
+                        <col>
+                        <col class="tax-zip-code-divider">
+                        <col>
+                        <col class="tax-zip-action">
+                    </colgroup>
                     <thead>
                     <tr>
                         <th><span>{{ 'oro.tax.zipcode.zip_range_start.label'|trans }}</span></th>
@@ -51,16 +57,20 @@
     <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="tax-zip-code-list tax-zip-code-list-item">
         {{ form_widget(form) }}
-        <td class="tax-zip-code-list-remove">
+        <td class="tax-zip-action">
             <button type="button" class="removeRow btn btn-icon btn-square-lighter" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </td>
     </tr>
 {% endmacro %}
 
 {% block oro_tax_zip_code_type_widget %}
-    <td>{{ form_widget(form.zipRangeStart) }} {{ form_errors(form.zipRangeStart) }}</td>
-    <td class="tax-zip-code-divider"> - </td>
-    <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
+    <td>{{ form_widget(form.zipRangeStart, {'attr': {
+            'class': 'tax-zip-input full'
+        }}) }} {{ form_errors(form.zipRangeStart) }}</td>
+    <td class="tax-zip-code-divider">-</td>
+    <td class="tax-zip-zip-range">{{ form_widget(form.zipRangeEnd, {'attr': {
+            'class': ' tax-zip-input full'
+        }}) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
 
 {% block _tax_calculation_oro_tax___use_as_base_exclusions_value_entry_country_row %}
