@@ -132,5 +132,5 @@ about:
         </div>
         
         <div class="d-flex justify-content-end">
-            <a href="#" class="btn btn--info" data-toggle="popover" data-placement="bottom" data-content="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+            <a href="#" class="btn btn--info" data-toggle="tooltip" data-placement="bottom" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
         </div>
