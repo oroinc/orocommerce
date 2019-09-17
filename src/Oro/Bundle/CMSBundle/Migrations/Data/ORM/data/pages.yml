@@ -106,8 +106,8 @@ about:
                     <tr>
                         <th>RV Class</th>
                         <th>RV Type</th>
-                        <th>Max Length, <sub>ft</sub></th>
-                        <th>Max Dry Weight, <sup>lbs</sup></th>
+                        <th>Max Length <sub>ft</sub></th>
+                        <th>Max Dry Weight <sup>lbs</sup></th>
                         <th>Max Sleep Number</th>
                     </tr>
                 </thead>
