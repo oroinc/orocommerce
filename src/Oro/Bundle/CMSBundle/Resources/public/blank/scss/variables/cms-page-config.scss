@@ -18,10 +18,14 @@ $cms-page-blockquote-background-color: get-color('additional', 'base') !default;
 $cms-page-blockquote-inner-offset: $offset-twice 52px !default;
 $cms-page-blockquote-color: get-color('additional', 'dark') !default;
 $cms-page-blockquote-fa-icon: $fa-var-quote-left !default;
+$cms-page-blockquote-fa-end-icon: $fa-var-quote-right !default;
 $cms-page-blockquote-fa-icon-font-size: $base-font-size--large !default;
 $cms-page-blockquote-fa-icon-color: get-color('additional', 'middle') !default;
 $cms-page-blockquote-fa-icon-top: 18px !default;
 $cms-page-blockquote-fa-icon-left: 20px !default;
+
+$cms-page-blockquote-fa-icon-right: 20px !default;
+$cms-page-blockquote-fa-icon-bottom: 18px !default;
 
 // List
 $cms-page-list-offset: 0 0 $offset-triple 0 !default;

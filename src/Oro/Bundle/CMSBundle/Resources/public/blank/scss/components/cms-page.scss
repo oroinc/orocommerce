@@ -45,6 +45,14 @@
             font-size: $cms-page-blockquote-fa-icon-font-size;
             color: $cms-page-blockquote-fa-icon-color;
         }
+
+        @include fa-icon($icon: $cms-page-blockquote-fa-end-icon, $state: after, $extra-rules: true) {
+            position: absolute;
+            bottom: $cms-page-blockquote-fa-icon-bottom;
+            right: $cms-page-blockquote-fa-icon-right;
+            font-size: $cms-page-blockquote-fa-icon-font-size;
+            color: $cms-page-blockquote-fa-icon-color;
+        }
     }
 
     hr {
