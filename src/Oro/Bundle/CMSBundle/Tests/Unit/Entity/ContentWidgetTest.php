@@ -15,7 +15,7 @@ class ContentWidgetTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new ContentWidget(),
             [
-                ['id', 1],
+                ['id', 42],
                 ['name', 'test_name'],
                 ['description', 'this is test description'],
                 ['createdAt', new \DateTime('now')],

@@ -117,6 +117,9 @@ datagrids:
                     data_name: title
 
     cms-content-block-grid:
+        acl_resource: oro_cms_content_block_view
+        options:
+            entityHint: oro.cms.contentblock.entity_plural_label
         source:
             type: orm
             query:
@@ -276,3 +279,33 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_cms_content_widget_view
                 rowAction:     true
+
+    cms-content-widget-pages-grid:
+        extends: cms-page-grid
+        source:
+            query:
+                join:
+                    inner:
+                        -
+                            join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
+                            alias: contentWidgetUsage
+                            conditionType: WITH
+                            condition: "contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = '%oro_cms.entity.page.class%' AND contentWidgetUsage.entityId = page.id"
+            bind_parameters:
+                - content_widget_id
+
+    cms-content-widget-content-blocks-grid:
+        extends: cms-content-block-grid
+        source:
+            query:
+                join:
+                    inner:
+                        - { join: contentBlock.contentVariants, alias: contentVariant }
+                        -
+                            join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
+                            alias: contentWidgetUsage
+                            conditionType: WITH
+                            condition: "contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = 'Oro\\Bundle\\CMSBundle\\Entity\\TextContentVariant' AND contentWidgetUsage.entityId = contentVariant.id"
+                groupBy: contentBlock.id
+            bind_parameters:
+                - content_widget_id

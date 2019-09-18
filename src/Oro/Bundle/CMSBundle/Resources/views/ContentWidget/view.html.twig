@@ -1,6 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroScopeBundle::macros.html.twig' as scope %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {'%title%': entity.name} }) %}
 
@@ -38,6 +39,16 @@
                 ]
             }]
         },
+        {
+            'title': 'oro.cms.page.entity_plural_label'|trans,
+            'priority': 100,
+            'subblocks': [{'data' : [dataGrid.renderGrid('cms-content-widget-pages-grid', { content_widget_id: entity.id }, { cssClass: 'inner-grid' })]}]
+        },
+        {
+            'title': 'oro.cms.contentblock.entity_plural_label'|trans,
+            'priority': 200,
+            'subblocks': [{'data' : [dataGrid.renderGrid('cms-content-widget-content-blocks-grid', { content_widget_id: entity.id }, { cssClass: 'inner-grid' })]}]
+        }
     ] %}
 
     {% if additionalBlocks is not empty %}

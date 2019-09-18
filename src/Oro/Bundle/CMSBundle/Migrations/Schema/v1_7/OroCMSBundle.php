@@ -14,7 +14,10 @@ class OroCMSBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroCmsContentWidgetTable($schema);
+        $this->createOroCmsContentWidgetUsageTable($schema);
+
         $this->addOroCmsContentWidgetForeignKeys($schema);
+        $this->addOroCmsContentWidgetUsageForeignKeys($schema);
     }
 
     /**
@@ -39,6 +42,21 @@ class OroCMSBundle implements Migration
     }
 
     /**
+     * Create oro_cms_content_widget_usage table
+     *
+     * @param Schema $schema
+     */
+    private function createOroCmsContentWidgetUsageTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_cms_content_widget_usage');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('content_widget_id', 'integer');
+        $table->addColumn('entity_class', 'string', ['length' => 255]);
+        $table->addColumn('entity_id', 'integer');
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add oro_cms_content_widget foreign keys.
      *
      * @param Schema $schema
@@ -51,6 +69,22 @@ class OroCMSBundle implements Migration
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * Add oro_cms_content_widget_usage foreign keys.
+     *
+     * @param Schema $schema
+     */
+    private function addOroCmsContentWidgetUsageForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_cms_content_widget_usage');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_content_widget'),
+            ['content_widget_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
         );
     }
 }

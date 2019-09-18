@@ -10,21 +10,31 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 class LoadContentWidgetData extends AbstractFixture implements DependentFixtureInterface
 {
-    private const CONTENT_WIDGET_1 = 'content_widget_1';
-    private const CONTENT_WIDGET_TYPE_1 = 'sample_type';
+    public const CONTENT_WIDGET_1 = 'content_widget.1';
+    public const CONTENT_WIDGET_2 = 'content_widget.2';
+    public const CONTENT_WIDGET_3 = 'content_widget.3';
+
+    /** @var array */
+    private static $contentWidgets = [
+        self::CONTENT_WIDGET_1,
+        self::CONTENT_WIDGET_2,
+        self::CONTENT_WIDGET_3,
+    ];
 
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $contentWidget = new ContentWidget();
-        $contentWidget->setWidgetType(self::CONTENT_WIDGET_TYPE_1);
-        $contentWidget->setName(self::CONTENT_WIDGET_1);
-        $contentWidget->setOrganization($this->getReference('organization'));
+        foreach (self::$contentWidgets as $contentWidgetName) {
+            $contentWidget = new ContentWidget();
+            $contentWidget->setWidgetType('test_type');
+            $contentWidget->setName($contentWidgetName);
+            $contentWidget->setOrganization($this->getReference('organization'));
 
-        $this->setReference(self::CONTENT_WIDGET_1, $contentWidget);
-        $manager->persist($contentWidget);
+            $this->setReference($contentWidgetName, $contentWidget);
+            $manager->persist($contentWidget);
+        }
 
         $manager->flush();
     }
