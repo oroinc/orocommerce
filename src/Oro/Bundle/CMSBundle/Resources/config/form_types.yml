@@ -39,3 +39,8 @@ services:
             - '@oro_cms.content_block.default_content_variant_scopes_resolver'
         tags:
             - { name: form.type }
+
+    oro_cms.form.extension.wysiwyg_style:
+        class: Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGStylesExtension
+        tags:
+            - { name: form.type_extension }
