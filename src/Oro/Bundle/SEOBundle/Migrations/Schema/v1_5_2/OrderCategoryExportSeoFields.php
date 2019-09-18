@@ -1,20 +1,20 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11_2;
+namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_5_2;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\SEOBundle\Migrations\Schema\OroSEOBundleInstaller;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Excludes fields from category export.
+ * Changes order of SEO fields for category export.
  */
-class ExcludeFieldsFromExport implements Migration, ContainerAwareInterface
+class OrderCategoryExportSeoFields implements Migration, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -23,24 +23,32 @@ class ExcludeFieldsFromExport implements Migration, ContainerAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table = $schema->getTable(OroSEOBundleInstaller::CATEGORY_TABLE_NAME);
 
-        $excludeFields = [
-            'products',
-            'smallImage',
-            'largeImage',
+        $fields = [
+            'metaTitles',
+            'metaDescriptions',
+            'metaKeywords',
         ];
 
         $extendOptionsManager = $this->container->get('oro_entity_extend.migration.options_manager');
 
-        foreach ($excludeFields as $name) {
+        $order = 70;
+
+        for ($i = 0, $c = count($fields); $i < $c; $i++) {
             // Works in case when the affected relation does not yet exist.
             $extendOptionsManager
-                ->mergeColumnOptions($table->getName(), $name, ['importexport' => ['excluded' => true]]);
+                ->mergeColumnOptions($table->getName(), $fields[$i], ['importexport' => ['order' => $order + $i]]);
 
             // Works in case when the affected field already exists.
             $queries->addPostQuery(
-                new UpdateEntityConfigFieldValueQuery(Category::class, $name, 'importexport', 'excluded', true)
+                new UpdateEntityConfigFieldValueQuery(
+                    Category::class,
+                    $fields[$i],
+                    'importexport',
+                    'order',
+                    $order + $i
+                )
             );
         }
     }

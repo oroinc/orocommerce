@@ -81,6 +81,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface
 {
@@ -308,8 +309,112 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     *
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
+     *              "full"=true,
+     *              "fallback_field"="string"
+     *          }
+     *      }
+     * )
      */
     protected $slugPrototypes;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLeft
+     * @ORM\Column(name="tree_left", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $left;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="tree_level", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $level;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRight
+     * @ORM\Column(name="tree_right", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $right;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRoot
+     * @ORM\Column(name="tree_root", type="integer", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $root;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
 
     /**
      * Constructor

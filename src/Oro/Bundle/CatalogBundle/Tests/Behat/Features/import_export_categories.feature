@@ -10,7 +10,7 @@ Feature: Import Export Categories
     Given I login as administrator
     And I go to Products/ Master Catalog
     When I download "Categories" Data Template file
-    Then I see the following columns in the downloaded csv template:
+    Then I see the following columns in exact order in the downloaded csv template:
       | id                                 |
       | titles.default.fallback            |
       | titles.default.value               |
@@ -18,6 +18,10 @@ Feature: Import Export Categories
       | titles.English.value               |
       | parentCategory.id                  |
       | parentCategory.title               |
+      | slugPrototypes.default.fallback    |
+      | slugPrototypes.default.value       |
+      | slugPrototypes.English.fallback    |
+      | slugPrototypes.English.value       |
       | shortDescriptions.default.fallback |
       | shortDescriptions.default.value    |
       | shortDescriptions.English.fallback |
@@ -26,6 +30,10 @@ Feature: Import Export Categories
       | longDescriptions.default.value     |
       | longDescriptions.English.fallback  |
       | longDescriptions.English.value     |
+      | metaTitles.default.fallback        |
+      | metaTitles.default.value           |
+      | metaTitles.English.fallback        |
+      | metaTitles.English.value           |
       | metaDescriptions.default.fallback  |
       | metaDescriptions.default.value     |
       | metaDescriptions.English.fallback  |
@@ -34,16 +42,8 @@ Feature: Import Export Categories
       | metaKeywords.default.value         |
       | metaKeywords.English.fallback      |
       | metaKeywords.English.value         |
-      | metaTitles.default.fallback        |
-      | metaTitles.default.value           |
-      | metaTitles.English.fallback        |
-      | metaTitles.English.value           |
-      | slugPrototypes.default.fallback    |
-      | slugPrototypes.default.value       |
-      | slugPrototypes.English.fallback    |
-      | slugPrototypes.English.value       |
 
-  Scenario: Import New Categories
+  Scenario: Import Categories
     Given I run export for "Categories"
     And I fill template with data:
       | id                                                                          | titles.default.fallback | titles.default.value                                                              | titles.English.fallback | titles.English.value                          | parentCategory.id                                                           | parentCategory.title                                                                                                                                                                                                                  | shortDescriptions.default.fallback | shortDescriptions.default.value | shortDescriptions.English.fallback | shortDescriptions.English.value          | longDescriptions.default.fallback | longDescriptions.default.value | longDescriptions.English.fallback | longDescriptions.English.value          | metaDescriptions.default.fallback | metaDescriptions.default.value | metaDescriptions.English.fallback | metaDescriptions.English.value          | metaKeywords.default.fallback | metaKeywords.default.value | metaKeywords.English.fallback | metaKeywords.English.value           | metaTitles.default.fallback | metaTitles.default.value | metaTitles.English.fallback | metaTitles.English.value           | slugPrototypes.default.fallback | slugPrototypes.default.value     | slugPrototypes.English.fallback | slugPrototypes.English.value        |
@@ -191,4 +191,3 @@ Feature: Import Export Categories
       |                         | 19 new category + empty parent id + new title of existing parent (postponed)      |                         |                                               | All Products / existing category 20 (updated)                                                                                                                                                                                         |                                    |                                 |                                    |                                          |                                   |                                |                                   |                                         |                                   |                                |                                   |                                         |                               |                            |                               |                                      |                             |                          |                             |                                    |                                 |                                  |                                 |                                     |
       |                         | 6.2 new category + empty parent id + title of new category (postponed)            |                         |                                               | All Products / 6 new category + empty parent id + title of new category (postponed) / 6.1 new category + empty parent id + title of new category (postponed)                                                                          |                                    |                                 |                                    |                                          |                                   |                                |                                   |                                         |                                   |                                |                                   |                                         |                               |                            |                               |                                      |                             |                          |                             |                                    |                                 |                                  |                                 |                                     |
       |                         | 6.3 new category + empty parent id + title of new category (postponed)            |                         |                                               | All Products / 6 new category + empty parent id + title of new category (postponed) / 6.1 new category + empty parent id + title of new category (postponed) / 6.2 new category + empty parent id + title of new category (postponed) |                                    |                                 |                                    |                                          |                                   |                                |                                   |                                         |                                   |                                |                                   |                                         |                               |                            |                               |                                      |                             |                          |                             |                                    |                                 |                                  |                                 |                                     |
-
