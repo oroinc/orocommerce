@@ -130,6 +130,10 @@ class ContentWidgetRenderer implements LoggerAwareInterface
             return '@ACMECopyright/CopyrightContentWidget/widget.html.twig';
         }
 
+        if ($contentWidget->getWidgetType() === 'contact_us_form') {
+            return '@OroContactUsBridge/ContactUsFormContentWidget/widget.html.twig';
+        }
+
         return (string) $contentWidget->getTemplate();
     }
 

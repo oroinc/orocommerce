@@ -107,15 +107,6 @@ services:
         arguments:
             - '@oro_cms.content_widget.renderer'
 
-    oro_cms.widget_registry:
-        class: 'Oro\Bundle\CMSBundle\Widget\WidgetRegistry'
-        public: false
-        arguments:
-            - '@logger'
-            - []
-        tags:
-            - { name: monolog.logger, channel: oro_cms }
-
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'
 

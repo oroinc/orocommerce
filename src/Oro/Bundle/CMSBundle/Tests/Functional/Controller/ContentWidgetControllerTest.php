@@ -121,7 +121,7 @@ class ContentWidgetControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('data', $result);
         $this->assertIsArray($result['data']);
-        $this->assertCount(1, $result['data']);
+        $this->assertCount(2, $result['data']);
 
         $data = reset($result['data']);
 

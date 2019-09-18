@@ -124,10 +124,10 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      * @return ContentWidget
      */
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -162,10 +162,10 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
     }
 
     /**
-     * @param string $template
+     * @param string|null $template
      * @return ContentWidget
      */
-    public function setTemplate(string $template): self
+    public function setTemplate(?string $template): self
     {
         $this->template = $template;
 
