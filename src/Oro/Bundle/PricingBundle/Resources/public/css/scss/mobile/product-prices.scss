@@ -41,32 +41,4 @@
             padding: $content-padding;
         }
     }
-
-    .row {
-        display: block;
-    }
-
-    .small-row > div {
-        display: block;
-    }
-
-    .group-field {
-        display: block;
-    }
-
-    .col-widget {
-        width: auto;
-        margin: side-values(0 0 $content-padding-small 0);
-    }
-
-    .small-row {
-        margin-top: $content-padding-small;
-    }
-
-    input[type="text"].quantity,
-    input[type="text"].price-value,
-    .entity-create-or-select-container {
-        width: 100%;
-        margin: 0;
-    }
 }
