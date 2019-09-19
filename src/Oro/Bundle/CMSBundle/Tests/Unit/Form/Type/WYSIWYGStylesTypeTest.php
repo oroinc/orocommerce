@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class WYSIWYGStylesTypeTest extends FormIntegrationTestCase
@@ -11,7 +11,7 @@ class WYSIWYGStylesTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $type = new WYSIWYGStylesType();
-        $this->assertEquals(TextareaType::class, $type->getParent());
+        $this->assertEquals(HiddenType::class, $type->getParent());
     }
 
     public function testSubmit()

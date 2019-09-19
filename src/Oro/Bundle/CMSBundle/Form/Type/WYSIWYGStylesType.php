@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
  * Provides styles for WYSIWYG editor.
@@ -15,6 +15,6 @@ class WYSIWYGStylesType extends AbstractType
      */
     public function getParent()
     {
-        return TextareaType::class;
+        return HiddenType::class;
     }
 }

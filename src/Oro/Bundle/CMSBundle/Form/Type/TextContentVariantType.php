@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -28,14 +27,10 @@ class TextContentVariantType extends AbstractType
             )
             ->add(
                 'content',
-                OroRichTextType::class,
+                WYSIWYGType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
                     'required' => false,
-                    'wysiwyg_options' => [
-                        'statusbar' => true,
-                        'resize' => true,
-                    ],
                 ]
             )
             ->add(
