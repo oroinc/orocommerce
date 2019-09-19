@@ -86,24 +86,31 @@
 }
 
 .tax-zip-code-collection {
-    .tax-zip-code-divider {
+    .tax-zip-input {
+        display: inline-block;
         vertical-align: middle;
+    }
+
+    .tax-zip-code-divider {
+        width: 24px;
+        text-align: center;
     }
 
     .add-list-item {
         margin-top: $content-padding-small;
     }
-}
 
-.tax-zip-code-list-items {
-    .tax-zip-code-list-item {
-        input[type="text"] {
-            width: 92%;
-        }
+    .tax-zip-zip-range {
+        padding-#{$end}: $table-td-first-child-inner-offset;
     }
 
-    .tax-zip-code-list-remove {
-        text-align: #{$end};
+    .tax-zip-action {
+        width: $btn-icon-width + $table-tbody-td-offset;
+        padding-#{$start}: 0;
+
+        &:last-child {
+            padding-#{$end}: 0;
+        }
     }
 }
 

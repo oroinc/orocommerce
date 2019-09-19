@@ -2,4 +2,8 @@
 
 .oro-payment-rule-add-method-select {
     display: inline-block;
+
+    & + .add-method {
+        vertical-align: top;
+    }
 }

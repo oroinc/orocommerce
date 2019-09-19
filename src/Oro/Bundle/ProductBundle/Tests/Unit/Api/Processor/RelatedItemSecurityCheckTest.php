@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Request\ApiActionGroup;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
@@ -24,7 +25,7 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
         $processor = $this->getProcessor([], ['oro_related_products_edit' => true]);
 
         $processor->process($this->context);
-        self::assertEquals(['security_check'], $this->context->getSkippedGroups());
+        self::assertEquals([ApiActionGroup::SECURITY_CHECK], $this->context->getSkippedGroups());
     }
 
     /**
@@ -50,7 +51,7 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
         $processor = $this->getProcessor(['EDIT', 'VIEW'], $isGrantedMapping);
 
         $processor->process($this->context);
-        self::assertEquals(['security_check'], $this->context->getSkippedGroups());
+        self::assertEquals([ApiActionGroup::SECURITY_CHECK], $this->context->getSkippedGroups());
     }
 
     /**

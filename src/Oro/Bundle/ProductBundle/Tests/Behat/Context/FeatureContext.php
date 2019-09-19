@@ -1209,6 +1209,65 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $image = $this->getImageForProductInGrid($imageType, $content);
 
         self::assertNotEmpty($image, sprintf('No image "%s" found for product with "%s"', $imageType, $content));
+
+        $response = $this->loadImage($image->getAttribute('src'));
+
+        self::assertEquals(
+            200,
+            $response->getStatusCode(),
+            sprintf(
+                'Expected "200" status code, got "%s" when requested the url "%s" of image "%s" for product with "%s"',
+                $response->getStatusCode(),
+                $image->getAttribute('src'),
+                $imageType,
+                $content
+            )
+        );
+    }
+
+    /**
+     * Example: I should see remembered "listing" image in "Product Form Images" element
+     *
+     * @Then /^I should see remembered "(?P<imageType>[^"]*)" image in "(?P<elementName>[^"]*)" element$/
+     * @param string $imageType
+     * @param string $elementName
+     */
+    public function iShouldSeeRememberedImageIdInElement($imageType, $elementName)
+    {
+        $element = $this->createElement($elementName);
+
+        $rememberedImageId = $this->rememberedData[$imageType] ?? '';
+        self::assertNotEmpty($rememberedImageId, sprintf(
+            'No remembered image ID for "%s" image type',
+            $imageType
+        ));
+
+        $image = $element->find(
+            'xpath',
+            sprintf(
+                '//img[contains(@src, "%s")]',
+                $rememberedImageId
+            )
+        );
+        self::assertNotEmpty($image, sprintf(
+            'No image with id "%s" found in "%s"',
+            $rememberedImageId,
+            $elementName
+        ));
+
+        $response = $this->loadImage($image->getAttribute('src'));
+
+        self::assertEquals(
+            200,
+            $response->getStatusCode(),
+            sprintf(
+                'Expected "200" status code, got "%s" when requested the url "%s" of image "%s" in element "%s"',
+                $response->getStatusCode(),
+                $image->getAttribute('src'),
+                $imageType,
+                $elementName
+            )
+        );
     }
 
     /**

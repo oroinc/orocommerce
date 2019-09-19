@@ -72,6 +72,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         // incremented_read option is set during postponed rows processing
         if (!$this->context->hasOption('incremented_read') && $entity->getType() === Product::TYPE_CONFIGURABLE) {
             $this->context->addPostponedRow($this->context->getValue('rawItemData'));
+            $this->context->setValue('postponedRowsDelay', 0);
 
             return null;
         }

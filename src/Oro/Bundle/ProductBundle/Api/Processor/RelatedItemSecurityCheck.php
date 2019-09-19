@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Request\ApiActionGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -47,6 +48,6 @@ class RelatedItemSecurityCheck implements ProcessorInterface
             }
         }
 
-        $context->skipGroup('security_check');
+        $context->skipGroup(ApiActionGroup::SECURITY_CHECK);
     }
 }

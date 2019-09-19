@@ -1,42 +1,60 @@
 {% block oro_pricing_product_price_widget %}
+    {% spaceless %}
     <div data-page-component-view="oropricing/js/app/views/price-list-currency-limitations-view"
          {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}>
-        <div class="row">
-            <div class="small-row">
-                <div>
-                    <div class="group-label">{{ form_label(form.priceList) }}</div>
-                    <div>{{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}</div>
-                    <div>{{ form_errors(form.priceList) }}</div>
+        <div class="form-layout">
+            <div class="form-layout__row">
+                <div class="form-layout__part is-label short">
+                    {{ form_label(form.priceList) }}
                 </div>
-            </div>
-            <div class="small-row">
-                <div class="grouped-fields">
-                    <div class="group-label">{{ form_label(form.quantity) }}</div>
-                    <div class="group-widget">
-                        <div class="group-field fields-row">
-                            <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
-                            <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
-                        </div>
-                        <div>{{ form_errors(form.quantity) }}</div>
-                        <div>{{ form_errors(form.unit) }}</div>
+                <div class="form-layout__part is-fields fields-row">
+                    {{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}
+                    <div class="fields-row-error">
+                        {{ form_errors(form.priceList) }}
                     </div>
                 </div>
             </div>
-            <div class="small-row">
-                <div class="grouped-fields">
-                    <div class="group-label">{{ form_label(form.price.value) }}</div>
-                    <div class="group-widget">
-                        <div class="group-field fields-row">
-                            <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
-                            <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
+            <div class="form-layout__row">
+                <div class="form-layout__part is-label short">
+                    {{ form_label(form.quantity) }}
+                </div>
+                <div class="form-layout__part is-fields fields-row">
+                    <div class="form-layout__part is-group">
+                        <div class="form-layout__part form-layout__part length-28">
+                            {{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}
                         </div>
-                        <div>{{ form_errors(form.price.value) }}</div>
-                        <div>{{ form_errors(form.price.currency) }}</div>
+                        <div class="form-layout__part length-72">
+                            {{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}
+                        </div>
+                    </div>
+                    <div class="fields-row-error">
+                        {{ form_errors(form.quantity) }}
+                        {{ form_errors(form.unit) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-layout__row">
+                <div class="form-layout__part is-label short">
+                    {{ form_label(form.price.value) }}
+                </div>
+                <div class="form-layout__part is-fields fields-row">
+                    <div class="form-layout__part is-group">
+                        <div class="form-layout__part form-layout__part length-28">
+                            {{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}
+                        </div>
+                        <div class="form-layout__part length-72">
+                            {{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}
+                        </div>
+                    </div>
+                    <div class="fields-row-error">
+                        {{ form_errors(form.price.value) }}
+                        {{ form_errors(form.price.currency) }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endspaceless %}
 {% endblock %}
 
 {% block oro_pricing_product_price_collection_widget %}
