@@ -163,10 +163,10 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
 
     /**
      * @param ProductImage $productImage
-     * @param array $dimensions
+     * @param array|null $dimensions
      * @return array|string[]
      */
-    private function getApplicableFilters(ProductImage $productImage, array $dimensions): array
+    private function getApplicableFilters(ProductImage $productImage, ?array $dimensions): array
     {
         $productApplicableDimensions = array_map(
             static function (ThemeImageTypeDimension $dimension) {
