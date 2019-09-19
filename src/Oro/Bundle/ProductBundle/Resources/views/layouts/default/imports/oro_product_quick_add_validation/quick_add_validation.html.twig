@@ -68,7 +68,7 @@
             <td class="text-center">{{ validRow.quantity }}</td>
             <td>{{ validRow.unit|oro_format_product_unit_label }}</td>
             {% do block|merge_context({'validRow': validRow}) %}
-            {{ block('container_widget') }}
+            {{ block('container_widget') }}
             <td class="hidden">{{ validRow.sku }}</td>
         </tr>
         {% endfor %}
@@ -77,7 +77,7 @@
 
 {% block __oro_product_quick_add_validation__quick_add_validation_valid_items_additional_fields_widget %}
     {% do block|merge_context({'additionalFields': validRow.additionalFields}) %}
-    {{ block('container_widget') }}
+    {{ block('container_widget') }}
 {% endblock %}
 
 {% block __oro_product_quick_add_validation__quick_add_validation_additional_fields_widget %}

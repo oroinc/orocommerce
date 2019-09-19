@@ -166,21 +166,6 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
     }
 
     /**
-     * @param SearchAttributeTypeInterface $attributeType
-     *
-     * @return string|null
-     */
-    private function getFilterableFieldType(SearchAttributeTypeInterface $attributeType): ?string
-    {
-        $types = $attributeType->getFilterStorageFieldTypes();
-        if (!isset($types[SearchAttributeTypeInterface::VALUE_MAIN])) {
-            return null;
-        }
-
-        return $types[SearchAttributeTypeInterface::VALUE_MAIN];
-    }
-
-    /**
      * @param FilterFieldConfig $searchFilter
      *
      * @return array

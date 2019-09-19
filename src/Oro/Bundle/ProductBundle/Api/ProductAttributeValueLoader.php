@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Api;
 
-use Oro\Bundle\ApiBundle\Config\DataTransformersConfigExtra;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
+use Oro\Bundle\ApiBundle\Config\Extra\DataTransformersConfigExtra;
+use Oro\Bundle\ApiBundle\Config\Extra\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Processor\ApiContext;
 use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
 use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
-use Oro\Bundle\ApiBundle\Request\ApiActions;
+use Oro\Bundle\ApiBundle\Request\ApiAction;
 use Oro\Bundle\ApiBundle\Request\EntityIdTransformerInterface;
 use Oro\Bundle\ApiBundle\Request\EntityIdTransformerRegistry;
 use Oro\Bundle\ApiBundle\Request\RequestType;
@@ -137,7 +137,7 @@ class ProductAttributeValueLoader
         $configContext->getRequestType()->add(sprintf('product_attributes_%s', $familyId));
         $configContext->setResult($config);
         $configContext->setExtras([
-            new EntityDefinitionConfigExtra(ApiActions::GET_LIST, true),
+            new EntityDefinitionConfigExtra(ApiAction::GET_LIST, true),
             new DataTransformersConfigExtra()
         ]);
         $this->configProcessor->process($configContext);

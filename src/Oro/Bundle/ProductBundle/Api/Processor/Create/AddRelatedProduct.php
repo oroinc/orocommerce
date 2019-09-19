@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\Label;
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
+use Oro\Bundle\ApiBundle\Request\ApiActionGroup;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -55,7 +56,7 @@ class AddRelatedProduct implements ProcessorInterface
 
             $context->setResult($relatedProduct);
             $context->setId($relatedProduct->getId());
-            $context->skipGroup('save_data');
+            $context->skipGroup(ApiActionGroup::SAVE_DATA);
         }
     }
 
