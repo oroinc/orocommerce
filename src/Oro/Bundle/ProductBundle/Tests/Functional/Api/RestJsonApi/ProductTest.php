@@ -54,10 +54,7 @@ class ProductTest extends RestJsonApiTestCase
         /** @var Product $product */
         $product = $this->getEntityManager()->find(Product::class, $productId);
 
-        $localizations = $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass(Localization::class)
-            ->findAll();
+        $localizations = $this->getEntityManager()->getRepository(Localization::class)->findAll();
 
         // + 1 because we also have the default one without localization
         $localizationsNumber = count($localizations) + 1;
