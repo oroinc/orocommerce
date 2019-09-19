@@ -108,8 +108,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceList1->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule())
+                [$this->equalTo($priceList1->getProductAssignmentRule())],
+                [$this->equalTo($priceList2->getProductAssignmentRule())]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -121,8 +121,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [],
@@ -156,8 +156,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceList1->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule())
+                [$this->equalTo($priceList1->getProductAssignmentRule())],
+                [$this->equalTo($priceList2->getProductAssignmentRule())]
             )
             ->willReturnOnConsecutiveCalls(
                 new BinaryNode(
@@ -171,9 +171,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(3))
             ->method('find')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3),
-                $this->equalTo(3)
+                [$this->equalTo(2)],
+                [$this->equalTo(3)],
+                [$this->equalTo(3)]
             )
             ->willReturnOnConsecutiveCalls(
                 $priceList2,
@@ -184,9 +184,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(3))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [],
@@ -209,10 +209,12 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
         $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
 
+        /** @var PriceRule $priceRule1 */
         $priceRule1 = $this->getEntity(
             PriceRule::class,
             ['id' => 1, 'priceList' => $priceList2, 'rule' => 'pricelist[3].productAssignmentRule']
         );
+        /** @var PriceRule $priceRule2 */
         $priceRule2 = $this->getEntity(
             PriceRule::class,
             [
@@ -225,9 +227,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceList1->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule())
+                [$priceList1->getProductAssignmentRule()],
+                [$priceRule1->getRule()],
+                [$priceRule2->getRuleCondition()]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -252,10 +254,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3),
-                $this->equalTo(3),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [$priceRule1, $priceRule2],
@@ -302,8 +302,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(2))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceRule1->getRule()),
-                $this->equalTo($priceRule2->getRuleCondition())
+                [$this->equalTo($priceRule1->getRule())],
+                [$this->equalTo($priceRule2->getRuleCondition())]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -327,8 +327,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [$priceRule2],
@@ -359,9 +359,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceList1->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule()),
-                $this->equalTo($priceList3->getProductAssignmentRule())
+                [$this->equalTo($priceList1->getProductAssignmentRule())],
+                [$this->equalTo($priceList2->getProductAssignmentRule())],
+                [$this->equalTo($priceList3->getProductAssignmentRule())]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -397,9 +397,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceList1->getProductAssignmentRule()),
-                $this->equalTo($priceList2->getProductAssignmentRule()),
-                $this->equalTo($priceList3->getProductAssignmentRule())
+                [$this->equalTo($priceList1->getProductAssignmentRule())],
+                [$this->equalTo($priceList2->getProductAssignmentRule())],
+                [$this->equalTo($priceList3->getProductAssignmentRule())]
             )
             ->willReturnOnConsecutiveCalls(
                 new BinaryNode(
@@ -465,9 +465,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->parser->expects($this->exactly(3))
             ->method('parse')
             ->withConsecutive(
-                $this->equalTo($priceRule1->getRule()),
-                $this->equalTo($priceRule2->getRuleCondition()),
-                $this->equalTo($priceRule3->getRule())
+                [$this->equalTo($priceRule1->getRule())],
+                [$this->equalTo($priceRule2->getRuleCondition())],
+                [$this->equalTo($priceRule3->getRule())]
             )
             ->willReturnOnConsecutiveCalls(
                 new NameNode(PriceList::class, 'productAssignmentRule', 2),
@@ -492,8 +492,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [$priceRule2],
@@ -522,8 +522,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('find')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
+                [$this->equalTo(2)],
+                [$this->equalTo(3)]
             )
             ->willReturnOnConsecutiveCalls(
                 $priceList2,
@@ -539,8 +539,8 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
             ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
+                [['priceList' => 2]],
+                [['priceList' => 3]]
             )
             ->willReturnOnConsecutiveCalls(
                 [],

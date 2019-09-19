@@ -206,16 +206,16 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->form->expects($this->exactly(2))
             ->method('addError')
             ->withConsecutive(
-                new FormError(
+                [new FormError(
                     self::CONSTRAINT_ERROR_1,
                     self::CONSTRAINT_TEMPLATE_1,
                     self::CONSTRAINT_PARAMS_1
-                ),
-                new FormError(
-                    self::CONSTRAINT_ERROR_1,
-                    self::CONSTRAINT_TEMPLATE_1,
-                    self::CONSTRAINT_PARAMS_1
-                )
+                )],
+                [new FormError(
+                    self::CONSTRAINT_ERROR_2,
+                    self::CONSTRAINT_TEMPLATE_2,
+                    self::CONSTRAINT_PARAMS_2
+                )]
             );
 
         $request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);

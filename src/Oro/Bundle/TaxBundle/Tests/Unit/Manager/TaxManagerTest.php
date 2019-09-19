@@ -465,7 +465,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager
             ->expects($this->exactly(2))
             ->method('removeTaxValue')
-            ->withConsecutive($itemTaxValue, $taxValue)
+            ->withConsecutive([$itemTaxValue], [$taxValue])
             ->willReturn(true);
 
         $this->assertTrue($this->manager->removeTax($entity, true));

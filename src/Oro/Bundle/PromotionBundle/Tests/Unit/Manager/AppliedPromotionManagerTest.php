@@ -285,7 +285,7 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $entityManager
             ->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
+            ->withConsecutive([$firstAppliedPromotion], [$secondAppliedPromotion]);
 
         $this->manager->createAppliedPromotions($order, true);
     }
