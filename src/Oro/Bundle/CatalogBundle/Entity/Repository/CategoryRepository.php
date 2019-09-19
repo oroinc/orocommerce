@@ -12,6 +12,8 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * Provides methods to retrieve information about Category entity form the DB
+ *
+ * @method QueryBuilder childrenQueryBuilder()
  */
 class CategoryRepository extends NestedTreeRepository
 {
