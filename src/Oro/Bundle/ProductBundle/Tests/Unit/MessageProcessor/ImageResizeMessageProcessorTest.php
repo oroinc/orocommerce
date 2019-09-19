@@ -154,6 +154,25 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testResizeValidDataWithPassedNullDimensions()
+    {
+        $image = $this->prepareImageMock();
+        $this->imageResizeManager->expects($this->exactly(3))
+            ->method('applyFilter')
+            ->withConsecutive(
+                [$image, self::ORIGINAL, false],
+                [$image, self::LARGE, false],
+                [$image, self::SMALL, false]
+            );
+
+        $data = self::$validData;
+        $data['dimensions'] = null;
+        $this->processor->process(
+            $this->prepareMessage(JSON::encode($data)),
+            $this->prepareSession()
+        );
+    }
+
     public function testResizeValidDataWithPassedDimensions()
     {
         $image = $this->prepareImageMock();
