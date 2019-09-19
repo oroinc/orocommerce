@@ -1,0 +1,40 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    existingCategory{1..20}:
+        __calls:
+            - addTitle: ['@localizedFallbackValueTitle<current()>']
+        parentCategory: '@root_category'
+        organization: '@organization'
+
+    existingCategory21:
+        parentCategory: '@root_category'
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localizedFallbackValueTitle21']
+            - addShortDescription: ['@localizedFallbackValueShortDesc21']
+            - addLongDescription: ['@localizedFallbackValueLongDesc21']
+            - addMetaDescription: ['@localizedFallbackValueMetaDesc21']
+            - addMetaKeywords: ['@localizedFallbackValueMetaKeywords21']
+            - addMetaTitles: ['@localizedFallbackValueMetaTitles21']
+            - addSlugPrototype: ['@localizedFallbackValueSlugPrototype21']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localizedFallbackValueTitle{1..21}:
+        string: 'existing category <current()>'
+
+    localizedFallbackValueShortDesc21:
+        text: 'short description'
+
+    localizedFallbackValueLongDesc21:
+        text: 'long description'
+
+    localizedFallbackValueMetaDesc21:
+        text: 'meta description'
+
+    localizedFallbackValueMetaKeywords21:
+        text: 'meta keywords'
+
+    localizedFallbackValueMetaTitles21:
+        string: 'meta title'
+
+    localizedFallbackValueSlugPrototype21:
+        string: 'existing-category-filled'

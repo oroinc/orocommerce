@@ -38,7 +38,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -46,11 +46,25 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
-        $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
-        $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
-        $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME);
-        $this->addMetaInformation($schema, self::BRAND_TABLE_NAME);
+        $options = [
+            'extend' => [
+                'owner' => ExtendScope::OWNER_CUSTOM,
+                'without_default' => true,
+                'cascade' => ['all'],
+            ],
+            'form' => ['is_enabled' => false],
+            'view' => ['is_displayable' => false],
+            'importexport' => ['excluded' => false],
+        ];
+
+        $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME, $options);
+        $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME, $options);
+        $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME, $options);
+        $this->addMetaInformation($schema, self::BRAND_TABLE_NAME, $options);
+
+        $options['importexport']['order'] = 70;
+        $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME, $options);
+
         $this->createOroWebCatalogProductLimitTable($schema);
     }
 
@@ -59,13 +73,25 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      *
      * @param Schema $schema
      * @param string $ownerTable
+     * @param array $options
      */
-    private function addMetaInformation(Schema $schema, $ownerTable)
+    private function addMetaInformation(Schema $schema, $ownerTable, array $options)
     {
         if ($schema->hasTable($ownerTable)) {
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES, true);
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS);
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS);
+            $options['importexport']['fallback_field'] = 'string';
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES, $options);
+
+            $options['importexport']['fallback_field'] = 'text';
+
+            if (isset($options['importexport']['order'])) {
+                $options['importexport']['order'] += 1;
+            }
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS, $options);
+
+            if (isset($options['importexport']['order'])) {
+                $options['importexport']['order'] += 1;
+            }
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS, $options);
         }
     }
 
@@ -76,11 +102,11 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      * @param Schema $schema
      * @param string $ownerTable
      * @param string $relationName
-     * @param bool $isString
+     * @param array $options
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, $isString = false)
+    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, array $options)
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -99,19 +125,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'without_default' => true,
-                    'cascade' => ['all'],
-                ],
-                'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false],
-                'importexport' => [
-                    'excluded' => false,
-                    'fallback_field' => $isString ? 'string' : 'text',
-                ],
-            ]
+            $options
         );
     }
 
