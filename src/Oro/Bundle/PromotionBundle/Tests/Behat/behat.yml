@@ -158,7 +158,7 @@ oro_behat_extension:
     Close Coupons Selection:
       selector:
         type: xpath
-        locator: '//span[@class="ui-dialog-title" and text()[contains(.,"Select Coupon Code")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
+        locator: '//span[@class="ui-dialog-title" and .//*[contains(text(), "Select Coupon Code")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
 
     Highlighted Suggestion:
       selector: '.select2-highlighted'
@@ -176,7 +176,7 @@ oro_behat_extension:
     Close Line Item Discount Promotion Details:
       selector:
         type: xpath
-        locator: '//span[@class="ui-dialog-title" and text()[contains(.,"Line Item Discount Promotion")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
+        locator: '//span[@class="ui-dialog-title" and .//*[contains(text(), "Line Item Discount Promotion")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
 
     CouponCodeInput:
       selector: 'input[data-role="coupon-code"]'
