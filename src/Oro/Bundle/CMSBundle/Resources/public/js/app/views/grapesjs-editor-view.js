@@ -102,24 +102,7 @@ define(function(require) {
          * Themes list
          * @property {Array}
          */
-        themes: [
-            {
-                name: 'blank',
-                label: 'Blank Theme',
-                stylesheet: '/css/layout/blank/styles.css'
-            },
-            {
-                name: 'default',
-                label: 'Default Theme',
-                stylesheet: '/css/layout/default/styles.css',
-                active: true
-            },
-            {
-                name: 'custom',
-                label: 'Custom Theme',
-                stylesheet: '/css/layout/custom/styles.css'
-            }
-        ],
+        themes: [],
         /**
          * List of grapesjs plugins
          * @property {Object}
@@ -151,6 +134,7 @@ define(function(require) {
          */
         initialize: function(options) {
             GrapesjsEditorView.__super__.initialize.apply(this, arguments);
+            this.themes = options.themes;
         },
 
         /**
