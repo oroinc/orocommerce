@@ -16,10 +16,10 @@
 
 <div data-page-component-module="oropromotion/js/app/components/order-line-item-discounts-tax-component">
     <span data-value-container>
-        <table class="grid table table-condensed table-bordered applied_discounts-result-grid">
+        <table class="grid table table-condensed table-bordered applied_discounts-result-grid unit-table">
             <thead>
                 <tr>
-                    <th class="renderable">&nbsp;</th>
+                    <th class="renderable"></th>
                     <th class="renderable">{{ 'oro.order.edit.order_line_item.short.includingTax.label'|trans }}</th>
                     <th class="renderable">{{ 'oro.order.edit.order_line_item.short.excludingTax.label'|trans }}</th>
                     <th class="renderable">{{ 'oro.order.edit.order_line_item.short.discount_amount.label'|trans }}</th>
@@ -27,7 +27,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="renderable">{{ 'oro.order.edit.order_line_item.row_total'|trans }}</td>
+                    <td class="renderable text-nowrap">{{ 'oro.order.edit.order_line_item.row_total'|trans }}</td>
                     <td class="renderable applied-discount-row-total-after-discount-including-tax">{{ rowTotalAfterDiscountIncludingTax|oro_format_currency({currency: currency}) }}</td>
                     <td class="renderable applied-discount-row-total-after-discount-excluding-tax">{{ rowTotalAfterDiscountExcludingTax|oro_format_currency({currency: currency}) }}</td>
                     <td class="renderable applied-discount-row-total-discount-amount">{{ appliedDiscountsAmount|oro_format_currency({currency: currency}) }}</td>
