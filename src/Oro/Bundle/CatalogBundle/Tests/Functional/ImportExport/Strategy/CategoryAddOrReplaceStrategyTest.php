@@ -209,7 +209,8 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
         $this->assertNull($category);
         $this->assertContains(
-            'Row #0. Postponing category "sample category". Cannot find parent category "All Products / non-existing"',
+            'Row #0. Cannot find parent category "All Products / non-existing". Pushing category' .
+            ' "sample category" to the end of the queue.',
             $this->context->getErrors()
         );
         $this->assertContains($itemData, $this->context->getPostponedRows());

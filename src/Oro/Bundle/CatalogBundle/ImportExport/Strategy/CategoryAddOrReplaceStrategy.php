@@ -165,10 +165,10 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         if (!$this->context->getOption('attempts')) {
             $this->context->addError(
                 sprintf(
-                    'Row #%d. Postponing category "%s". Cannot find parent category "%s"',
+                    'Row #%d. Cannot find parent category "%s". Pushing category "%s" to the end of the queue.',
                     $this->strategyHelper->getCurrentRowNumber($this->context),
-                    (string) $category->getTitle(),
-                    $this->getCurrentParentCategoryPath()
+                    $this->getCurrentParentCategoryPath(),
+                    (string) $category->getTitle()
                 )
             );
         }
@@ -176,9 +176,9 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         if ($this->isLastAttempt()) {
             $this->context->addError(
                 sprintf(
-                    'Giving up on category "%s". Cannot find parent category "%s"',
-                    (string) $category->getTitle(),
-                    $this->getCurrentParentCategoryPath()
+                    'Cannot find parent category "%s". Aborting processing of category "%s".',
+                    $this->getCurrentParentCategoryPath(),
+                    (string) $category->getTitle()
                 )
             );
         }
