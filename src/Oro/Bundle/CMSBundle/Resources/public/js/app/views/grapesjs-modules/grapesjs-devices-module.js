@@ -49,14 +49,11 @@ define(function(require) {
          * @private
          */
         _getCSSBreakpoint: function() {
-            var frameHead = this.$builderIframe.contentDocument.head;
-            var breakpoints = mediator.execute('fetch:head:computedVars', frameHead);
-
-            this.breakpoints = _.filter(viewportManager._collectCSSBreakpoints(breakpoints), function(breakpoint) {
-                return breakpoint.name.indexOf('strict') === -1;
-            });
-
-            this.createButtons();
+            // this.breakpoints = _.filter(viewportManager._collectCSSBreakpoints(breakpoints), function(breakpoint) {
+            //     return breakpoint.name.indexOf('strict') === -1;
+            // });
+            //
+            // this.createButtons();
         },
 
         /**
