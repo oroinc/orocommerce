@@ -309,3 +309,18 @@ datagrids:
                 groupBy: contentBlock.id
             bind_parameters:
                 - content_widget_id
+        columns:
+            enabled:
+                renderable: false
+            createdAt:
+                renderable: false
+            updatedAt:
+                renderable: false
+        filters:
+            columns:
+                enabled:
+                    enabled: false
+                createdAt:
+                    enabled: false
+                updatedAt:
+                    enabled: false
