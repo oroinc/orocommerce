@@ -14,11 +14,15 @@ trusted_data:
         Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository:
             insertByProduct:
                 productVisibility: true
+            getInsertByProductVisibilityQueryBuilder:
+                productVisibility: true
         Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository:
             insertByProduct:
                 productVisibility: true
             getSubQueryOfExistsVisibilities:
                 parentAlias: true
+            getInsertByProductVisibilityQueryBuilder:
+                productVisibility: true
         Oro\Bundle\VisibilityBundle\Driver\OrmCustomerPartialUpdateDriver:
             addCustomerVisibility:
                 customerVisibilityFieldName: true

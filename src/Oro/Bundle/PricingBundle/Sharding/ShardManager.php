@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Sharding;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Constraint;
@@ -17,6 +16,9 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Manage shards for given class.
+ * CRUD operation for shards tables, reorganize existing table to use shards.
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -301,7 +303,7 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @return EntityManager|ObjectManager
+     * @return EntityManager
      */
     public function getEntityManager()
     {

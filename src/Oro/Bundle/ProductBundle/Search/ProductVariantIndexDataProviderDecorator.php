@@ -48,8 +48,8 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
     }
 
     /**
-     * @param $productData array|ProductIndexDataModel[]
-     * @param $variantData array|ProductIndexDataModel[]
+     * @param array|ProductIndexDataModel[] $productData
+     * @param array|ProductIndexDataModel[] $variantData
      * @param FieldConfigModel $attribute
      * @return array|ProductIndexDataModel[]
      */
@@ -82,8 +82,8 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
     }
 
     /**
-     * @param $productData array|ProductIndexDataModel[]
-     * @param $variantData array|ProductIndexDataModel[]
+     * @param array|ProductIndexDataModel[] $productData
+     * @param array|ProductIndexDataModel[] $variantData
      * @return array|ProductIndexDataModel[]
      */
     private function addAllTextVariantData($productData, $variantData)

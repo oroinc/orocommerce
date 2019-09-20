@@ -9,11 +9,16 @@
     }
 
     &__input {
-        max-width: 90px;
+        max-width: 83px;
 
         text-align: right;
 
         border-radius: 3px 0 0 3px;
+    }
+
+    &__label {
+        padding-left: 3px;
+        padding-right: 4px;
     }
 
     &--size {
@@ -24,6 +29,11 @@
         &-m {
             width: 90px;
         }
+
+        &-l {
+            width: 120px;
+            max-width: 120px;
+        }
     }
 
     &--remove {
@@ -33,6 +43,8 @@
     }
 
     &--prices {
+        margin-left: 8px;
+
         white-space: nowrap;
     }
 
@@ -43,6 +55,13 @@
 
             .select2-choice {
                 background: none;
+                padding-left: 3px;
+                padding-right: 0;
+            }
+
+            .select2-chosen {
+                margin-right: 0;
+                padding-right: 0;
             }
 
             .select2-arrow {
@@ -52,7 +71,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-landscape') {
     .request-form-lineitem-unit {
         &__label {
             display: none;
