@@ -1,12 +1,15 @@
 define(function(require) {
     'use strict';
 
+    var TableComponent;
+    var _ = require('underscore');
+
     /**
      * Create table component type for builder
      * @param context
      * @constructor
      */
-    var TableComponent = function(context) {
+    TableComponent = function(context) {
         var ComponentId = 'table';
         var domComps = context.DomComponents;
         var dType = domComps.getType('default');

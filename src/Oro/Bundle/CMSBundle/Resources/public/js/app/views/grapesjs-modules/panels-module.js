@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var ThemeSelectorView = require('orocms/js/app/views/grapesjs-modules/controls/theme-selector-view');
+    var _ = require('underscore');
 
     /**
      * Create panel manager instance

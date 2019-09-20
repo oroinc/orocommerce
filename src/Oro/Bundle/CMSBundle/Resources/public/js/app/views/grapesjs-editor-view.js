@@ -307,7 +307,7 @@ define(function(require) {
          * @private
          */
         _onUpdatedBuilder: function() {
-            this._getCSSBreakpoint()
+            this._getCSSBreakpoint();
             mediator.trigger('grapesjs:updated', this.builder);
         },
 

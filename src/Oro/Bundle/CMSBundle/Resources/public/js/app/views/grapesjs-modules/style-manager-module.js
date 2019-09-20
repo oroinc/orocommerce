@@ -374,7 +374,7 @@ define(function(require) {
                             value: 'column-reverse',
                             name: 'Column reverse',
                             title: 'Column reverse',
-                            className: 'icon-flex-dir-col-rev',
+                            className: 'icon-flex-dir-col-rev'
                         }
                     ]
                 },
@@ -430,12 +430,12 @@ define(function(require) {
                         {
                             value: 'stretch',
                             title: 'Stretch',
-                            className: 'icon-flex-al-str',
+                            className: 'icon-flex-al-str'
                         },
                         {
                             value: 'center',
                             title: 'Center',
-                            className: 'icon-flex-al-center',
+                            className: 'icon-flex-al-center'
                         }
                     ]
                 },

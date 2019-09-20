@@ -69,7 +69,7 @@ define(function(require) {
                 label: 'Table',
                 category: 'Basic',
                 attributes: {
-                    class: 'fa fa-table'
+                    'class': 'fa fa-table'
                 },
                 content: {
                     type: 'table-responsive'
@@ -98,7 +98,7 @@ define(function(require) {
 
                 attributes: {
                     title: 'Text format',
-                    class: 'gjs-rte-action text-format-action'
+                    'class': 'gjs-rte-action text-format-action'
                 },
 
                 priority: 0,

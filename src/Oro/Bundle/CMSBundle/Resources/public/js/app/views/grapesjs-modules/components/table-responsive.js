@@ -1,12 +1,15 @@
 define(function(require) {
     'use strict';
 
+    var TableResponsiveComponent;
+    var _ = require('underscore');
+
     /**
      * Create responsive table component type for builder
      * @param context
      * @constructor
      */
-    var TableResponsiveComponent = function(context) {
+    TableResponsiveComponent = function(context) {
         var ComponentId = 'table-responsive';
         var domComps = context.DomComponents;
         var dType = domComps.getType('default');

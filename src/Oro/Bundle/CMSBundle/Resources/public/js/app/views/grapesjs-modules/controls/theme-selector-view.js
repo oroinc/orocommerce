@@ -90,7 +90,7 @@ define(function(require) {
         },
 
         onInput: function(e) {
-            this.filterItems(e.target.value)
+            this.filterItems(e.target.value);
         }
     });
 
