@@ -93,7 +93,7 @@ Delete a collection of price list customer group fallback records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### fallback
 
@@ -103,7 +103,7 @@ Possible values: 1, 0. 0 - fallback to a website configuration. 1 - fallback to 
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### customerGroup
 
@@ -113,7 +113,21 @@ The customer group this fallback is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### website
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

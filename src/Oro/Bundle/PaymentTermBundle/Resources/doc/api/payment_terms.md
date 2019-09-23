@@ -81,7 +81,7 @@ Delete a collection of payment term records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 

@@ -165,7 +165,7 @@ Delete a collection of price list records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### name
 
@@ -175,7 +175,7 @@ The name of the price list
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### priceListCurrencies
 
@@ -185,8 +185,15 @@ Array of currency codes
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
+### containSchedule
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

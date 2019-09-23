@@ -2,6 +2,7 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
+
         Oro\Bundle\ProductBundle\Entity\ProductUnit:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
             fields:
@@ -17,10 +18,13 @@ api:
                 shortPluralLabel:
                     data_type: string
                     property_path: _
+
         Oro\Bundle\ProductBundle\Entity\ProductImage:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image.md'
+
         Oro\Bundle\ProductBundle\Entity\ProductImageType:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image_type.md'
+
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
             form_options:
@@ -32,10 +36,6 @@ api:
                     - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
                     - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
             fields:
-                createdAt:
-                    exclude: true
-                updatedAt:
-                    exclude: true
                 skuUppercase:
                     exclude: true
                 parentVariantLinks:
@@ -56,13 +56,13 @@ api:
                                 constraints:
                                     - Count:
                                         min: 1
+
         Extend\Entity\EV_Prod_Inventory_Status:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
+
         Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
             actions:
-                update:
-                    exclude: true
                 get:
                     description: 'Get Related Product Relationship'
                 delete:
@@ -82,13 +82,17 @@ api:
                             form_options:
                                 constraints:
                                     - NotBlank: ~
+                update: false
+
         Oro\Bundle\ProductBundle\Entity\Brand:
             documentation_resource: '@OroProductBundle/Resources/doc/api/brand.md'
             fields:
                 defaultTitle:
                     exclude: true
+
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
+
         Oro\Bundle\AttachmentBundle\Entity\File:
             documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'
             fields:

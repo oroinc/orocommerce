@@ -115,7 +115,7 @@ The unit of quantity for the product.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### precision
 
@@ -125,7 +125,7 @@ The precision for the product unit precision.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 

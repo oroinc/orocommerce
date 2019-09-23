@@ -6,19 +6,10 @@ api:
                 discount:
                     data_type: float
                     property_path: _
+                    form_options:
+                        mapped: false
                 shippingDiscount:
                     data_type: float
                     property_path: _
-            actions:
-                create:
-                    fields:
-                        discount:
-                            exclude: true
-                        shippingDiscount:
-                            exclude: true
-                update:
-                    fields:
-                        discount:
-                            exclude: true
-                        shippingDiscount:
-                            exclude: true
+                    form_options:
+                        mapped: false
