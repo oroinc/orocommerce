@@ -22,9 +22,12 @@ define(function(require) {
                     type: ComponentId,
                     tagName: 'div',
                     draggable: ['div'],
-                    droppable: ['table','tbody', 'thead', 'tfoot'],
+                    droppable: ['table', 'tbody', 'thead', 'tfoot'],
                     classes: [ComponentId]
                 }),
+                constructor: function () {
+                    dModel.prototype.constructor.apply(this, arguments);
+                },
                 initialize: function(o, opt) {
                     dModel.prototype.initialize.apply(this, arguments);
                     var components = this.get('components');

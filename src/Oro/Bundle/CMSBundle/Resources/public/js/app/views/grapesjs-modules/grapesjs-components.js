@@ -97,7 +97,7 @@ define(function(require) {
                 event: 'change',
 
                 attributes: {
-                    title: 'Text format',
+                    'title': 'Text format',
                     'class': 'gjs-rte-action text-format-action'
                 },
 
