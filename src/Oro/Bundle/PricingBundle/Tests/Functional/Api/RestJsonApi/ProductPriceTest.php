@@ -377,19 +377,28 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testTryToUpdateWithPriceList()
     {
+        $productPriceId = LoadProductPricesWithRules::PRODUCT_PRICE_1;
+        $priceListId = $this->getReference($productPriceId)->getPriceList()->getId();
         $response = $this->patch(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
-            'product_price/update_with_price_list.yml',
-            [],
-            false
+            [
+                'data' => [
+                    'type'          => 'productprices',
+                    'id'            => $this->getFirstProductPriceApiId(),
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => ['type' => 'pricelists', 'id' => '<toString(@price_list_3->id)>']
+                        ]
+                    ]
+                ]
+            ]
         );
 
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'extra fields constraint',
-                'detail' => 'This form should not contain extra fields: "priceList".'
-            ],
-            $response
+        $data['data']['relationships']['priceList']['data']['id'] = (string)$priceListId;
+        $this->assertResponseContains($data, $response);
+        self::assertSame(
+            $priceListId,
+            $this->getReference($productPriceId)->getPriceList()->getId()
         );
     }
 

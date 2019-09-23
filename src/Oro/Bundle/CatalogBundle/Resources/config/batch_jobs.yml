@@ -1,0 +1,16 @@
+connector:
+    name: oro_importexport
+    jobs:
+        category_import_from_csv:
+            title: "Category Import from CSV"
+            type: import
+            steps:
+                import:
+                    title:     import
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_importexport.reader.csv
+                        processor: oro_importexport.processor.import_delegate
+                        writer:    oro_catalog.importexport.writer.category
+                    parameters:
+                        batch_size: 100000

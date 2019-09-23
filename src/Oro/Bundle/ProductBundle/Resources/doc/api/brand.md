@@ -126,7 +126,7 @@ Delete a collection of brand records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -142,9 +142,9 @@ Delete a collection of brand records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
-*The value is set in included section*
+**The value is set in included section.**
 
 #### update
 
@@ -154,7 +154,7 @@ Delete a collection of brand records.
 
 *This field is **required** and must remain defined.*
 
-*The value is set in included section*
+**The value is set in included section.**
 
 ## SUBRESOURCES
 

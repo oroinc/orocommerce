@@ -67,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**
@@ -129,15 +129,20 @@ class OroCatalogBundleInstaller implements
      */
     protected function createOroCatalogCategoryTable(Schema $schema)
     {
+        $importExportOptions = [
+            OroOptions::KEY => [
+                'importexport' => ['excluded' => true],
+            ],
+        ];
         $table = $schema->createTable('oro_catalog_category');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('tree_left', 'integer', []);
-        $table->addColumn('tree_level', 'integer', []);
-        $table->addColumn('tree_right', 'integer', []);
-        $table->addColumn('tree_root', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('tree_left', 'integer', $importExportOptions);
+        $table->addColumn('tree_level', 'integer', $importExportOptions);
+        $table->addColumn('tree_right', 'integer', $importExportOptions);
+        $table->addColumn('tree_root', 'integer', ['notnull' => false] + $importExportOptions);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)'] + $importExportOptions);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)'] + $importExportOptions);
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255, 'notnull' => true]);
@@ -355,7 +360,8 @@ class OroCatalogBundleInstaller implements
             [
                 'attachment' => [
                     'acl_protected' => false,
-                ]
+                ],
+                'importexport' => ['excluded' => true],
             ],
             self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
@@ -475,7 +481,8 @@ class OroCatalogBundleInstaller implements
                 'datagrid' => ['is_visible' => false],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
-                'merge' => ['display' => false]
+                'merge' => ['display' => false],
+                'importexport' => ['excluded' => true],
             ]
         );
     }

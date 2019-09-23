@@ -7,8 +7,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * View orders on front store
@@ -34,7 +34,7 @@ class OrderController extends AbstractController
             'entity_class' => Order::class,
         ];
     }
-    
+
     /**
      * @Route("/view/{id}", name="oro_order_frontend_view", requirements={"id"="\d+"})
      * @AclAncestor("oro_order_frontend_view")

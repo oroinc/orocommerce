@@ -107,6 +107,9 @@ Oro\Bundle\ProductBundle\Entity\ProductImage:
 Oro\Bundle\ProductBundle\Entity\ProductImageType:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType: ~
+    properties:
+        type:
+            - NotBlank: ~
 
 Oro\Bundle\ProductBundle\Model\ProductRow:
     properties:

@@ -6,11 +6,10 @@ use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Implements the following AJAX actions:
@@ -22,9 +21,9 @@ class AjaxProductController extends Controller
     /**
      * @Route(
      *      "/names-by-skus",
-     *      name="oro_product_frontend_ajax_names_by_skus"
+     *      name="oro_product_frontend_ajax_names_by_skus",
+     *      methods={"POST"}
      * )
-     * @Method("POST")
      *
      * @param Request $request
      * @return JsonResponse
@@ -59,9 +58,9 @@ class AjaxProductController extends Controller
      * @Route(
      *      "/images-by-id/{id}",
      *      name="oro_product_frontend_ajax_images_by_id",
-     *      requirements={"id"="\d+"}
+     *      requirements={"id"="\d+"},
+     *      methods={"GET"}
      * )
-     * @Method("GET")
      * @AclAncestor("oro_product_frontend_view")
      *
      * @param Request $request

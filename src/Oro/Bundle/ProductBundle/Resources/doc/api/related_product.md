@@ -85,7 +85,7 @@ The main product in the relationship.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 ### relatedItem
 
@@ -95,7 +95,7 @@ The product that is related to the main product in the relationship.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 ## SUBRESOURCES
 

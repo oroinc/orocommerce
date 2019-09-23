@@ -9,11 +9,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Intl;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -24,9 +23,8 @@ class AjaxPriceListController extends AbstractController
     /**
      * Set given price list as default.
      *
-     * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"})
+     * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"}, methods={"POST"})
      * @AclAncestor("oro_pricing_price_list_update")
-     * @Method({"POST"})
      * @CsrfProtection()
      *
      * @param PriceList $priceList

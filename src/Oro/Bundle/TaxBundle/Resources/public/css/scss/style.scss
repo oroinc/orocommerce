@@ -75,12 +75,10 @@
     .line-item-taxes-items {
         .tax-result-grid {
             min-width: 325px;
+        }
 
-            td:first-child {
-                white-space: nowrap;
-                font-weight: bold;
-                font-size: 11px;
-            }
+        td:first-child {
+            white-space: nowrap;
         }
     }
 }

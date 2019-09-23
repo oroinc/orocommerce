@@ -6,12 +6,11 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Ajax Coupon Controller
@@ -20,8 +19,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class AjaxCouponController extends Controller
 {
     /**
-     * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon")
-     * @Method({"POST"})
+     * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon", methods={"POST"})
      *
      * @param Request $request
      * @return JsonResponse
@@ -38,9 +36,9 @@ class AjaxCouponController extends Controller
      *     requirements={
      *          "entityId"="\d+",
      *          "id"="\d+"
-     *     }
+     *     },
+     *     methods={"DELETE"}
      * )
-     * @Method({"DELETE"})
      *
      * @param string $entityClass
      * @param int $entityId

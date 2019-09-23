@@ -5,6 +5,10 @@
 {% block navButtons %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
+    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+        'alias': 'oro_category'
+    } %}
+
     {% if is_granted('oro_catalog_category_create') %}
         <div class="btn-group">
             {{ UI.addButton({

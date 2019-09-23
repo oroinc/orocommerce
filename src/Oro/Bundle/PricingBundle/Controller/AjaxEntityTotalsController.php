@@ -3,12 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AjaxEntityTotalsController extends Controller
 {
@@ -43,10 +42,9 @@ class AjaxEntityTotalsController extends Controller
      * @Route(
      *      "/recalculate-totals-for-entity/{entityClassName}/{entityId}",
      *      name="oro_pricing_recalculate_entity_totals",
-     *      defaults={"entityId"=0, "entityClassName"=""}
+     *      defaults={"entityId"=0, "entityClassName"=""},
+     *      methods={"POST"}
      * )
-     *
-     * @Method({"POST"})
      *
      * @param Request $request
      * @param string $entityClassName

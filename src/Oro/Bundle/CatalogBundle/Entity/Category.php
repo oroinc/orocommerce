@@ -12,6 +12,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
@@ -19,7 +20,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * Represents product categories
+ * Represents product category
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
@@ -86,6 +87,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface
 {
@@ -95,9 +97,8 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     use OrganizationAwareTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
-
+    const CATEGORY_PATH_DELIMITER = ' / ';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
-    const FIELD_PRODUCTS = 'products';
 
     /**
      * @var integer
@@ -105,6 +106,17 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -129,6 +141,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20,
+     *              "full"=true,
+     *              "fallback_field"="string"
      *          }
      *      }
      * )
@@ -145,6 +162,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=30
      *          }
      *      }
      * )
@@ -160,6 +180,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -187,6 +210,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -214,6 +242,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=60,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -239,6 +272,13 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @var string
      *
      * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $materializedPath;
 
@@ -274,8 +314,127 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     *
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
+     *              "full"=true,
+     *              "fallback_field"="string"
+     *          }
+     *      }
+     * )
      */
     protected $slugPrototypes;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLeft
+     * @ORM\Column(name="tree_left", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $left;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="tree_level", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $level;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRight
+     * @ORM\Column(name="tree_right", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $right;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRoot
+     * @ORM\Column(name="tree_root", type="integer", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $root;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=80
+     *          }
+     *      }
+     * )
+     */
+    protected $organization;
 
     /**
      * Constructor

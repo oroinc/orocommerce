@@ -113,7 +113,7 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -129,7 +129,7 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -145,7 +145,7 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### productunits
 
@@ -153,7 +153,7 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ## SUBRESOURCES
 

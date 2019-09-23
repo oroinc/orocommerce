@@ -13,13 +13,12 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Provides supportive actions for ajax calls during quote creation and editing.
@@ -29,8 +28,7 @@ class AjaxQuoteController extends Controller
     /**
      * Get order related data
      *
-     * @Route("/related-data", name="oro_quote_related_data")
-     * @Method({"GET"})
+     * @Route("/related-data", name="oro_quote_related_data", methods={"GET"})
      * @AclAncestor("oro_quote_update")
      *
      * @return JsonResponse
@@ -72,9 +70,8 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
+     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0}, methods={"POST"})
      * @AclAncestor("oro_quote_update")
-     * @Method("POST")
      * @CsrfProtection()
      *
      * @param Request    $request

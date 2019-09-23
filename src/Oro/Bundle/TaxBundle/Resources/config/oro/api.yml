@@ -2,17 +2,17 @@ api:
     entities:
         Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
             documentation_resource: '@OroTaxBundle/Resources/doc/api/product_tax_code.md'
-            actions:
-                create: false
-                delete: false
-                delete_list: false
-                update: false
             fields:
                 taxCode:
                     description: Tax code
                     data_type: association:manyToOne
                 organization:
                     exclude: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
             subresources:
                 organization:
                     actions:
