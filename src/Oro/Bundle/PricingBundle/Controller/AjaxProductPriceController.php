@@ -18,13 +18,12 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -33,8 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer")
-     * @Method({"GET"})
+     * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer", methods={"GET"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -86,8 +84,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="oro_pricing_matching_price")
-     * @Method({"GET"})
+     * @Route("/get-matching-price", name="oro_pricing_matching_price", methods={"GET"})
      * @AclAncestor("oro_pricing_product_price_view")
      *
      * {@inheritdoc}
@@ -106,8 +103,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * @Route(
      *     "/delete-product-price/{priceListId}/{productPriceId}",
-     *      name="oro_product_price_delete"
-     *     )
+     *      name="oro_product_price_delete",
+     *      methods={"DELETE"}
+     * )
      * @ParamConverter("priceList", class="OroPricingBundle:PriceList", options={"id" = "priceListId"})
      * @Acl(
      *      id="oro_pricing_product_price_delete",
@@ -115,7 +113,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *      class="OroPricingBundle:ProductPrice",
      *      permission="DELETE"
      * )
-     * @Method({"DELETE"})
      * @CsrfProtection()
      *
      * {@inheritdoc}

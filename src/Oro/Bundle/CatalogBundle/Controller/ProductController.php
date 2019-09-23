@@ -4,10 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Product sidebar controller

@@ -3,11 +3,10 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Ajax Localization Controller
@@ -15,8 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 class AjaxLocalizationController extends Controller
 {
     /**
-     * @Route("/set-current-localization", name="oro_frontend_localization_frontend_set_current_localization")
-     * @Method({"POST"})
+     * @Route(
+     *     "/set-current-localization",
+     *     name="oro_frontend_localization_frontend_set_current_localization",
+     *     methods={"POST"}
+     * )
      * @CsrfProtection()
      *
      * @param Request $request

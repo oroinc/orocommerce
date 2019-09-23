@@ -5,11 +5,10 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Ajax Catalog Controller
@@ -19,9 +18,9 @@ class AjaxCatalogController extends AbstractController
     /**
      * @Route(
      *      "/category-move",
-     *      name="oro_catalog_category_move"
+     *      name="oro_catalog_category_move",
+     *      methods={"PUT"}
      * )
-     * @Method({"PUT"})
      * @CsrfProtection()
      * @AclAncestor("oro_catalog_category_update")
      *

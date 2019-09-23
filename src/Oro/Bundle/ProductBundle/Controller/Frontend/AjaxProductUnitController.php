@@ -4,9 +4,9 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Oro\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Use this class for getting product units on frontend.

@@ -10,12 +10,11 @@ use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValida
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Ajax UPS Controller
@@ -25,9 +24,9 @@ class AjaxUPSController extends Controller
     /**
      * @Route("/get-shipping-services-by-country/{code}",
      *      name="oro_ups_country_shipping_services",
-     *      requirements={"code"="^[A-Z]{2}$"})
+     *      requirements={"code"="^[A-Z]{2}$"},
+     *      methods={"GET"})
      * @ParamConverter("country", options={"id" = "code"})
-     * @Method("GET")
      * @param Country $country
      * @return JsonResponse
      */
@@ -47,9 +46,8 @@ class AjaxUPSController extends Controller
     }
 
     /**
-     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection")
+     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection", methods={"POST"})
      * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
-     * @Method("POST")
      * @CsrfProtection()
      *
      * @param Request      $request

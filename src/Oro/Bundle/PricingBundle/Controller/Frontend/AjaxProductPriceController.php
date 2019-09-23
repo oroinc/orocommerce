@@ -7,10 +7,9 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Adds actions to get prices by customer or matching prices via AJAX
@@ -18,8 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-customer", name="oro_pricing_frontend_price_by_customer")
-     * @Method({"GET"})
+     * @Route("/get-product-prices-by-customer", name="oro_pricing_frontend_price_by_customer", methods={"GET"})
      *
      * {@inheritdoc}
      */
@@ -29,8 +27,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price")
-     * @Method({"GET"})
+     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price", methods={"GET"})
      *
      * {@inheritdoc}
      */
@@ -46,8 +43,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency")
-     * @Method({"POST"})
+     * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency", methods={"POST"})
      * @CsrfProtection()
      *
      * {@inheritdoc}
