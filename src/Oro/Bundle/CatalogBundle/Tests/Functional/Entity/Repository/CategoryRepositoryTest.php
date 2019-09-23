@@ -13,6 +13,9 @@ use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CategoryRepositoryTest extends WebTestCase
 {
     use OrganizationTrait;
@@ -169,5 +172,44 @@ class CategoryRepositoryTest extends WebTestCase
         $this->repository->updateMaterializedPath($category1);
         $category = $this->repository->findOneBy(['id' => $category1->getId(), 'materializedPath' => $path]);
         static::assertNotNull($category);
+    }
+
+    public function testFindOneOrNullByDefaultTitleAndParent()
+    {
+        $category = $this->repository
+            ->findOneOrNullByDefaultTitleAndParent(LoadCategoryData::FIRST_LEVEL, $this->getOrganization());
+
+        static::assertSame($this->getReference(LoadCategoryData::FIRST_LEVEL), $category);
+    }
+
+    public function testFindOneOrNullByDefaultTitleAndParentWhenParent()
+    {
+        $category = $this->repository
+            ->findOneOrNullByDefaultTitleAndParent(
+                LoadCategoryData::THIRD_LEVEL1,
+                $this->getOrganization(),
+                $this->getReference(LoadCategoryData::SECOND_LEVEL1)
+            );
+
+        static::assertSame($this->getReference(LoadCategoryData::THIRD_LEVEL1), $category);
+    }
+
+    public function testFindOneOrNullByDefaultTitleAndParentWhenNotExists()
+    {
+        static::assertNull(
+            $this->repository->findOneOrNullByDefaultTitleAndParent('non-existent', $this->getOrganization())
+        );
+        static::assertNull(
+            $this->repository->findOneOrNullByDefaultTitleAndParent(
+                'non-existent',
+                $this->getOrganization(),
+                $this->getReference(LoadCategoryData::SECOND_LEVEL1)
+            )
+        );
+    }
+
+    public function testGetMaxLeft()
+    {
+        static::assertEquals(11, $this->repository->getMaxLeft());
     }
 }
