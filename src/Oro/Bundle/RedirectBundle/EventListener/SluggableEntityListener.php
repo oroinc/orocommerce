@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -20,6 +21,8 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class SluggableEntityListener implements OptionalListenerInterface
 {
+    private const BATCH_SIZE = 100;
+
     use OptionalListenerTrait;
 
     /**
@@ -86,8 +89,48 @@ class SluggableEntityListener implements OptionalListenerInterface
         }
 
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        foreach ($this->getChangedSluggableEntities($unitOfWork) as $changedSluggableEntity) {
-            $this->scheduleEntitySlugCalculation($changedSluggableEntity);
+        $sluggableEntitiesToCheck = [];
+        foreach ($this->getUpdatedSlugs($unitOfWork) as $sluggableEntity) {
+            $slugPrototypes = $sluggableEntity->getSlugPrototypes();
+            if (!$slugPrototypes->count()) {
+                continue;
+            }
+
+            if ($slugPrototypes instanceof PersistentCollection && $slugPrototypes->isDirty()) {
+                // Slug prototypes collection is obviously changed, schedule slug recalculation.
+                $this->scheduleEntitySlugCalculation($sluggableEntity);
+                continue;
+            }
+
+            // Entity still might have changed slugPrototypes, though collection is not marked as dirty - in case when
+            // an already existing slugPrototype gets updated.
+            // Slug prototypes collections of such entities will be checked against each localizedFallbackValue
+            // in ::checkSluggableEntities().
+            $sluggableEntitiesToCheck[] = $sluggableEntity;
+        }
+
+        if ($sluggableEntitiesToCheck) {
+            // Checks if there are changed slugPrototypes in the remaining sluggable entities.
+            $this->checkSluggableEntities($unitOfWork, $sluggableEntitiesToCheck);
+        }
+    }
+
+    /**
+     * Goes through sluggable entities, checks if their slugPrototypes are changed and schedules for recalculation.
+     *
+     * @param UnitOfWork $unitOfWork
+     * @param array $sluggableEntitiesToCheck
+     */
+    private function checkSluggableEntities(UnitOfWork $unitOfWork, array $sluggableEntitiesToCheck)
+    {
+        foreach ($this->getLocalizedValues($unitOfWork) as $localizedFallbackValue) {
+            foreach ($sluggableEntitiesToCheck as $i => $sluggableEntity) {
+                if ($sluggableEntity->hasSlugPrototype($localizedFallbackValue)) {
+                    $this->scheduleEntitySlugCalculation($sluggableEntity);
+                    unset($sluggableEntitiesToCheck[$i]);
+                    break;
+                }
+            }
         }
     }
 
@@ -95,9 +138,12 @@ class SluggableEntityListener implements OptionalListenerInterface
     {
         foreach ($this->sluggableEntities as $entityClass => $entityInfo) {
             foreach ($entityInfo as $createRedirect => $ids) {
-                $message = $this->messageFactory->createMassMessage($entityClass, $ids, (bool)$createRedirect);
+                while ($ids) {
+                    $idsBatch = array_splice($ids, 0, self::BATCH_SIZE);
+                    $message = $this->messageFactory->createMassMessage($entityClass, $idsBatch, (bool)$createRedirect);
 
-                $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+                    $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+                }
             }
         }
 
@@ -111,7 +157,11 @@ class SluggableEntityListener implements OptionalListenerInterface
     protected function getChangedSluggableEntities(UnitOfWork $unitOfWork)
     {
         $result = [];
-        foreach ($this->getUpdatedSlugs($unitOfWork) as $sluggableEntity) {
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $sluggableEntity) {
+            if (!$sluggableEntity instanceof SluggableInterface) {
+                continue;
+            }
+
             foreach ($this->getLocalizedValues($unitOfWork) as $localizedFallbackValue) {
                 if ($sluggableEntity->hasSlugPrototype($localizedFallbackValue)) {
                     $result[] = $sluggableEntity;
