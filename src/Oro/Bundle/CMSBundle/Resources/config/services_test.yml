@@ -1,5 +1,4 @@
 services:
-    _defaults:
-        autoconfigure: true
-
-    Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType: ~
+    Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType:
+        tags:
+            - {name: 'oro_cms.content_widget.type'}

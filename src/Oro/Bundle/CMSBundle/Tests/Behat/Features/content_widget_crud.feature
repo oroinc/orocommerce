@@ -42,15 +42,16 @@ Feature: Content Widget CRUD
     When go to Marketing/ Content Widgets
     Then there is 2 records in grid
     And I should see following grid:
-      | Name       | Widget Type | Template |
-      | copyright1 | Copyright   | N/A      |
-    And It should be 5 columns in grid
+      | Name       | Description             | Widget Type | Template |
+      | copyright1 | copyright1_description2 | Copyright   | N/A      |
+    And It should be 6 columns in grid
     And I should see "Created At" column in grid
     And I should see "Updated At" column in grid
     When click "Grid Settings"
     And I click "Filters" tab
     Then I should see following filters in the grid settings in exact order:
       | Name        |
+      | Description |
       | Widget Type |
       | Template    |
       | Created At  |

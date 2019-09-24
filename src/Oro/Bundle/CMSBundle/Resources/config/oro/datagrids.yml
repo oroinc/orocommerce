@@ -210,6 +210,7 @@ datagrids:
                 select:
                     - contentWidget.id
                     - contentWidget.name
+                    - contentWidget.description
                     - contentWidget.widgetType
                     - contentWidget.template
                     - contentWidget.createdAt
@@ -219,6 +220,11 @@ datagrids:
         columns:
             name:
                 label: oro.cms.contentwidget.name.label
+            description:
+                label: oro.cms.contentwidget.description.label
+                type: twig
+                frontend_type: html
+                template: OroCMSBundle:ContentWidget:Datagrid/description.html.twig
             widgetType:
                 label: oro.cms.contentwidget.widget_type.label
                 frontend_type: select
@@ -235,6 +241,8 @@ datagrids:
             columns:
                 name:
                     data_name: contentWidget.name
+                description:
+                    data_name: contentWidget.description
                 widgetType:
                     data_name: contentWidget.widgetType
                 template:
@@ -250,6 +258,9 @@ datagrids:
                 name:
                     type: string
                     data_name: contentWidget.name
+                description:
+                    type: string
+                    data_name: contentWidget.description
                 widgetType:
                     type: choice-tree
                     data_name: contentWidget.widgetType

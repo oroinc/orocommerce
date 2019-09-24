@@ -81,6 +81,7 @@ oro.cms:
         sections:
             general.label: General
             additional_information.label: Additional Information
+            usages.label: Usages
 
     textcontentvariant:
         entity_label: Content Variant

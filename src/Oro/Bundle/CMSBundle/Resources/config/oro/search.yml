@@ -32,3 +32,29 @@ search:
                         name: text
                         target_type: text
                         target_fields: [slugs]
+
+    Oro\Bundle\CMSBundle\Entity\ContentWidget:
+        alias:                          oro_cms_content_widget
+        title_fields:                   [name]
+        route:
+            name:                       oro_cms_content_widget_view
+            parameters:
+                id:                     id
+        search_template:                OroCMSBundle:ContentWidget:searchResult.html.twig
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]
+            -
+                name:                   widgetType
+                target_type:            text
+                target_fields:          [widgetType]
+            -
+                name:                   template
+                target_type:            text
+                target_fields:          [template]

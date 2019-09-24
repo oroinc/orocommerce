@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
@@ -35,6 +36,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *     }
  * )
@@ -57,6 +61,13 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $name;
 
@@ -64,6 +75,13 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $description;
 
@@ -78,6 +96,13 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $template;
 
@@ -85,6 +110,13 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
      * @var array
      *
      * @ORM\Column(type = "array")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $settings = [];
 

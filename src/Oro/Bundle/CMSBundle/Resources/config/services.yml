@@ -106,6 +106,12 @@ services:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
         arguments:
             - '@oro_cms.content_widget.renderer'
+
+    oro_cms.twig.content_widget_type_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
+        arguments:
+            - '@translator'
+            - '@oro_cms.content_widget.type_registry'
         tags:
             - { name: twig.extension }
 
@@ -148,7 +154,7 @@ services:
     oro_cms.parser.twig_content_widget:
         class: Oro\Bundle\CMSBundle\Parser\TwigContentWidgetParser
         arguments:
-            - '@twig'
+            - '@oro_cms.twig.renderer'
 
     oro_cms.entity_listener.page_content:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageContentEntityListener
