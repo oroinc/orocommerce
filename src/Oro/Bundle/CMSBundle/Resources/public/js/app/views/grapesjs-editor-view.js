@@ -23,7 +23,7 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'builderOptions', 'storageManager', 'builderPlugins', 'storagePrefix',
-            'currentTheme', 'contextClass', 'canvasConfig'
+            'currentTheme', 'contextClass', 'canvasConfig', 'themes'
         ]),
 
         /**
@@ -136,7 +136,6 @@ define(function(require) {
          */
         initialize: function(options) {
             GrapesjsEditorView.__super__.initialize.apply(this, arguments);
-            this.themes = options.themes;
         },
 
         /**
@@ -330,7 +329,7 @@ define(function(require) {
 
             var style = this.builder.Canvas.getFrameEl().contentDocument.head.querySelector('link');
 
-            style.href = theme.stylesheet;
+            style.href = '/' + theme.stylesheet;
         },
 
         /**
@@ -397,7 +396,7 @@ define(function(require) {
                     '::-webkit-scrollbar-track { background: #f3f3f3 }' +
                     '::-webkit-scrollbar-thumb { background: #e3e3e4 }',
                 canvas: {
-                    styles: [theme.stylesheet]
+                    styles: ['/' + theme.stylesheet]
                 },
                 protectedCss: []
             });
