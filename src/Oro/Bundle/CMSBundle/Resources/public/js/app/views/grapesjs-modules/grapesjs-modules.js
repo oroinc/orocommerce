@@ -5,6 +5,7 @@ define(function(require) {
     var PanelManagerModule = require('orocms/js/app/views/grapesjs-modules/panels-module');
     var ComponentsModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-components');
     var DevicesModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-devices-module');
+    var ExtensionModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-extension');
     var _ = require('underscore');
 
     var GrapesJSModules;
@@ -48,7 +49,8 @@ define(function(require) {
         'style-manager-module': StyleManagerModule,
         'panel-manager-module': PanelManagerModule,
         'components-module': ComponentsModule,
-        'devices-module': DevicesModule
+        'devices-module': DevicesModule,
+        'extension-module': ExtensionModule
     });
 
     return GrapesJSModules;

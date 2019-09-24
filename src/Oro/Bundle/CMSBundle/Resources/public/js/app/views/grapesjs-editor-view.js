@@ -8,6 +8,8 @@ define(function(require) {
     var _ = require('underscore');
     var GrapesJSModules = require('orocms/js/app/views/grapesjs-modules/grapesjs-modules');
     var mediator = require('oroui/js/mediator');
+    var BaseModel = require('oroui/js/app/models/base/model');
+    var Backbone = require('backbone');
 
     require('grapesjs-preset-webpage');
 
@@ -162,7 +164,9 @@ define(function(require) {
          */
         getContainer: function() {
             var $editor = $('<div id="grapesjs" />');
-            $editor.html(this.$el.val());
+            $editor.html(
+                this.$el.val().replace(/(\[component-id-view([\d]*)\])/g, '')
+            );
             this.$el.parent().append($editor);
 
             this.$el.hide();
@@ -189,6 +193,11 @@ define(function(require) {
             this.builderDelegateEvents();
 
             GrapesJSModules.call('components', {
+                builder: this.builder
+            });
+
+            GrapesJSModules.call('extension', {
+                view: this,
                 builder: this.builder
             });
         },
@@ -389,7 +398,8 @@ define(function(require) {
                     '::-webkit-scrollbar-thumb { background: #e3e3e4 }',
                 canvas: {
                     styles: [theme.stylesheet]
-                }
+                },
+                protectedCss: []
             });
         },
 

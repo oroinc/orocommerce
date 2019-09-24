@@ -8,6 +8,7 @@ config:
         'orocms/js/app/views/grapesjs-modules/style-manager-module': 'bundles/orocms/js/app/views/grapesjs-modules/style-manager-module.js'
         'orocms/js/app/views/grapesjs-modules/panels-module': 'bundles/orocms/js/app/views/grapesjs-modules/panels-module.js'
         'orocms/js/app/views/grapesjs-modules/grapesjs-devices-module': 'bundles/orocms/js/app/views/grapesjs-modules/grapesjs-devices-module.js'
+        'orocms/js/app/views/grapesjs-modules/grapesjs-extension': 'bundles/orocms/js/app/views/grapesjs-modules/grapesjs-extension.js'
         'orocms/js/app/views/grapesjs-modules/grapesjs-components': 'bundles/orocms/js/app/views/grapesjs-modules/grapesjs-components.js'
         'orocms/js/app/views/grapesjs-modules/controls/theme-selector-view': 'bundles/orocms/js/app/views/grapesjs-modules/controls/theme-selector-view.js'
         'orocms/js/app/views/grapesjs-modules/components/table': 'bundles/orocms/js/app/views/grapesjs-modules/components/table.js'

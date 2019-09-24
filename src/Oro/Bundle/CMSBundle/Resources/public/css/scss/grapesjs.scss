@@ -491,6 +491,7 @@
 
     &mdl-dialog {
         border-radius: 4px;
+        box-shadow: 1px 1px 9px 3px rgba(0,0,0,.08);
 
         .#{$app-prefix}btn-prim {
             display: inline-flex;
@@ -538,6 +539,10 @@
 
     &mdl-content {
         border-radius: 0 0 4px 4px;
+    }
+
+    &mdl-container {
+        background-color: rgba($primary-inverse, .5);
     }
 
     &rte-toolbar {
