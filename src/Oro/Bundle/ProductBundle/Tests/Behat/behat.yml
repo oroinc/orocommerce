@@ -1100,6 +1100,7 @@ oro_behat_extension:
         - OroEntityExtendBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroWebsiteSearchBundle::SearchIndexContext
+        - OroQueryDesignerBundle::QueryDesignerContext
         - OroEmailBundle::EmailContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
