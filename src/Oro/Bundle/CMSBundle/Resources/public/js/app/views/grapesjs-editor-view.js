@@ -8,8 +8,6 @@ define(function(require) {
     var _ = require('underscore');
     var GrapesJSModules = require('orocms/js/app/views/grapesjs-modules/grapesjs-modules');
     var mediator = require('oroui/js/mediator');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var Backbone = require('backbone');
 
     require('grapesjs-preset-webpage');
 
@@ -23,7 +21,7 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'builderOptions', 'storageManager', 'builderPlugins', 'storagePrefix',
-            'currentTheme', 'contextClass', 'canvasConfig', 'themes'
+            'currentTheme', 'contextClass', 'canvasConfig', 'themes', 'stylesInputSelector'
         ]),
 
         /**
@@ -105,6 +103,19 @@ define(function(require) {
          * @property {Array}
          */
         themes: [],
+
+        /**
+         * Styles input selector
+         * @property {String}
+         */
+        stylesInputSelector: '',
+
+        /**
+         * Styles input element
+         * @property {Object}
+         */
+        $stylesInputElement: null,
+
         /**
          * List of grapesjs plugins
          * @property {Object}
@@ -163,9 +174,12 @@ define(function(require) {
          */
         getContainer: function() {
             var $editor = $('<div id="grapesjs" />');
-            $editor.html(
-                this.$el.val().replace(/(\[component-id-view([\d]*)\])/g, '')
-            );
+            var content = this.$el.val().replace(/(\[component-id-view([\d]*)\])/g, '');
+            if (this.$stylesInputElement) {
+                content += '<style>' + this.$stylesInputElement.val() + '</style>';
+            }
+            $editor.html(content);
+
             this.$el.parent().append($editor);
 
             this.$el.hide();
@@ -179,6 +193,7 @@ define(function(require) {
          * Initialize builder instance
          */
         initBuilder: function() {
+            this.$stylesInputElement = this.$el.closest('form').find(this.stylesInputSelector);
             this.builder = GrapesJS.init(_.extend(
                 {}
                 , {
@@ -264,7 +279,15 @@ define(function(require) {
          * @returns {String}
          */
         getEditorContent: function() {
-            return this.builder.getHtml() + '<style>' + this.builder.getCss() + '</style>';
+            return this.builder.getHtml();
+        },
+
+        /**
+         * Get editor styles
+         * @returns {String}
+         */
+        getEditorStyles: function() {
+            return this.builder.getCss();
         },
 
         /**
@@ -337,7 +360,15 @@ define(function(require) {
          * @private
          */
         _updateInitialField: function() {
-            this.$el.val(this.getEditorContent()).trigger('change');
+            var content = this.getEditorContent();
+            if (this.$stylesInputElement) {
+                this.$stylesInputElement.val(this.getEditorStyles()).trigger('change');
+            } else {
+                content += '<style>' + this.getEditorStyles() + '</style>';
+
+            }
+
+            this.$el.val(content).trigger('change');
         },
 
         /**

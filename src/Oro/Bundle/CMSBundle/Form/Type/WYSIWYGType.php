@@ -18,6 +18,10 @@ class WYSIWYGType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        $options['page-component']['options']['stylesInputSelector'] = sprintf(
+            '[data-grapesjs-styles="%s"]',
+            $form->getName() . WYSIWYGStylesType::TYPE_SUFFIX
+        );
         $view->vars['attr']['data-page-component-module'] = $options['page-component']['module'];
         $view->vars['attr']['data-page-component-options'] = json_encode($options['page-component']['options']);
     }
