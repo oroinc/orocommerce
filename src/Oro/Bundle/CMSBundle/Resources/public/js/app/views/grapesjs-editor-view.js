@@ -365,7 +365,6 @@ define(function(require) {
                 this.$stylesInputElement.val(this.getEditorStyles()).trigger('change');
             } else {
                 content += '<style>' + this.getEditorStyles() + '</style>';
-
             }
 
             this.$el.val(content).trigger('change');
