@@ -17,6 +17,11 @@ layout:
                     blockType: text_with_placeholders
                     options:
                         text: '=data["page"].getContent()'
+                cms_page_style:
+                    blockType: style
+                    options:
+                        content: '=data["page"].getContentStyle()'
             tree:
                 page_content:
+                    cms_page_style: ~
                     cms_page_content: ~

@@ -1,4 +1,9 @@
 {% block content_block_widget %}
+    {% if contentBlock.contentStyle|length -%}
+        {%- spaceless -%}
+            <style type="text/css">{{ contentBlock.contentStyle|raw }}</style>
+        {%- endspaceless -%}
+    {%- endif %}
     <div{{ block('block_attributes') }}>
         <h3>{{ contentBlock.titles|localized_value }}</h3>
         {{ contentBlock.content|raw }}

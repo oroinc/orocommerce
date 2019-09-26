@@ -30,17 +30,20 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
         $variant1 = new TextContentVariant();
         $variant1->setDefault(true);
         $variant1->setContent('variant_1_content');
+        $variant1->setContentStyle('h1 {color: #fff}');
         $block->addContentVariant($variant1);
 
         $variant2 = new TextContentVariant();
         $variant2->setDefault(true);
         $variant2->setContent('variant2_content');
         $variant2->addScope(new ScopeStub(true, true));
+        $variant2->setContentStyle('h1 {color: #000}');
         $block->addContentVariant($variant2);
 
         $view = $this->resolver->getContentBlockView($block, ['field1' => true, 'field2' => true]);
         $this->assertInstanceOf(ContentBlockView::class, $view);
         $this->assertSame('variant2_content', $view->getContent());
+        $this->assertSame('h1 {color: #000}', $view->getContentStyle());
         $this->assertEquals('block_alias', $view->getAlias());
         $this->assertSame($titles, $view->getTitles());
     }
@@ -48,6 +51,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetContentBlockViewNotEnabledContentBlock()
     {
         $block = new ContentBlock();
+        $block->setAlias('block_alias');
         $block->setEnabled(false);
         $this->assertNull($this->resolver->getContentBlockView($block, []));
     }
@@ -55,6 +59,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetContentBlockViewWithoutScopes()
     {
         $block = new ContentBlock();
+        $block->setAlias('block_alias');
         $block->setEnabled(true);
         $variant = new TextContentVariant();
         $variant->setDefault(true);
@@ -68,6 +73,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetContentBlockViewWithoutSuitableScope()
     {
         $block = new ContentBlock();
+        $block->setAlias('block_alias');
         $block->setEnabled(true);
         $block->addScope(new ScopeStub(true, true));
         $this->assertNull($this->resolver->getContentBlockView($block, ['field1' => false, 'field2' => true]));
@@ -76,6 +82,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetContentBlockViewWithoutSuitableVariant()
     {
         $block = new ContentBlock();
+        $block->setAlias('block_alias');
         $block->setEnabled(true);
         $block->addScope(new ScopeStub(true, true));
 
@@ -102,6 +109,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetContentBlockViewWithoutDefaultVariant()
     {
         $block = new ContentBlock();
+        $block->setAlias('block_alias');
         $block->setEnabled(true);
         $block->addScope(new ScopeStub(true, true));
 
