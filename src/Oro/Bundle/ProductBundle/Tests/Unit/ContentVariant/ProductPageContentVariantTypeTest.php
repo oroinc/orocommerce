@@ -66,4 +66,17 @@ class ProductPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
             $this->type->getRouteData($contentVariant)
         );
     }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Product::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.product_page_product)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
+        );
+    }
 }

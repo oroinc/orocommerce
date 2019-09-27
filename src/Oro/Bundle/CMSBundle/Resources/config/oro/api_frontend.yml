@@ -1,0 +1,25 @@
+api:
+    entity_aliases:
+        Oro\Bundle\CMSBundle\Entity\Page:
+            alias:        landingpage
+            plural_alias: landingpages
+
+    entities:
+        Oro\Bundle\CMSBundle\Entity\Page:
+            documentation_resource: '@OroCMSBundle/Resources/doc/api_frontend/page.md'
+            fields:
+                title:
+                    data_type: localizedFallbackValue:titles
+                content:
+                    data_type: string
+                url:
+                    data_type: string
+                    property_path: _
+                urls:
+                    data_type: array
+                    property_path: _
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false

@@ -111,4 +111,17 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
             ]
         ];
     }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Category::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.category_page_category)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
+        );
+    }
 }

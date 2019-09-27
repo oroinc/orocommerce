@@ -2,6 +2,27 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.1.0-beta
+
+### Changed
+
+#### WebCatalog component
+* Methods `getApiResourceClassName()` and `getApiResourceIdentifierDqlExpression()` were added to
+  `Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType`.
+
+#### WebCatalogBundle
+* The `_web_content_scope` request attribute was removed.
+  Use `Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider` to get the current scope.
+  This class loads the scope on demand.
+* The `_content_variant` request attribute was removed.
+  Use `Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider` to get the current content variant.
+  This class loads the content variant on demand.
+
+#### WebCatalogBundle
+* The `current_website` request attribute was removed.
+  To get the current website from HTTP request `Oro\Bundle\WebsiteBundle\Provider\RequestWebsiteProvider` was added.
+  This class loads the website on demand.
+
 ## 4.0.0 (2019-07-31)
 [Show detailed list of changes](incompatibilities-4-0.md)
 

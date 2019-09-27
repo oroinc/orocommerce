@@ -8,39 +8,29 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub;
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $requestStack;
+    /** @var RequestWebContentVariantProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestWebContentVariantProvider;
 
-    /**
-     * @var SeoDataProvider
-     */
+    /** @var SeoDataProvider */
     private $provider;
 
     protected function setUp()
     {
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
+
         $this->provider = new SeoDataProvider(
             $this->localizationHelper,
-            $this->requestStack,
+            $this->requestWebContentVariantProvider,
             PropertyAccess::createPropertyAccessor()
         );
     }
@@ -50,17 +40,14 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
         $node = new ContentNodeStub();
         $node->addMetaDescriptions((new LocalizedFallbackValue())->setString('descr'));
 
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
 
-        $request = Request::create('/');
-        $request->attributes->set('_content_variant', $contentVariant);
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnCallback(
@@ -79,17 +66,14 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $node = new ContentNodeStub();
 
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
 
-        $request = Request::create('/');
-        $request->attributes->set('_content_variant', $contentVariant);
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnCallback(
@@ -106,29 +90,8 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMetaInformationWithoutVariant()
     {
-        $request = Request::create('/');
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-        $this->localizationHelper->expects($this->any())
-            ->method('getLocalizedValue')
-            ->willReturnCallback(
-                function (Collection $values) {
-                    return $values->first();
-                }
-            );
-
-        $data = new ProductStub();
-        $data->addMetaDescriptions((new LocalizedFallbackValue())->setString('product descr'));
-
-        $this->assertEquals('product descr', (string)$this->provider->getMetaInformation($data, 'metaDescriptions'));
-    }
-
-    public function testGetMetaInformationWithoutRequest()
-    {
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
             ->willReturn(null);
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
@@ -149,17 +112,14 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
         $node = new ContentNodeStub();
         $node->addMetaDescriptions((new LocalizedFallbackValue())->setString('descr'));
 
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
 
-        $request = Request::create('/');
-        $request->attributes->set('_content_variant', $contentVariant);
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnCallback(
@@ -174,17 +134,14 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $node = new ContentNodeStub();
 
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
 
-        $request = Request::create('/');
-        $request->attributes->set('_content_variant', $contentVariant);
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnCallback(
@@ -197,11 +154,10 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMetaInformationFromContentNodeWithoutNode()
     {
-        $request = Request::create('/');
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn(null);
 
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
         $this->assertEquals(null, (string)$this->provider->getMetaInformationFromContentNode('metaDescriptions'));
     }
 }

@@ -3,8 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ScopeMatcher;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -28,28 +30,22 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
     /** @var MessageProducerInterface */
     private $producer;
 
-    /** @var ScopeMatcher */
-    private $scopeMatcher;
-
     /** @var ManagerRegistry */
-    private $registry;
+    private $doctrine;
 
     /**
-     * @param JobRunner $jobRunner
+     * @param JobRunner                $jobRunner
      * @param MessageProducerInterface $producer
-     * @param ScopeMatcher $scopeMatcher
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry          $doctrine
      */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
-        ScopeMatcher $scopeMatcher,
-        ManagerRegistry $registry
+        ManagerRegistry $doctrine
     ) {
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
-        $this->scopeMatcher = $scopeMatcher;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -82,8 +78,7 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
      */
     private function scheduleCacheRecalculationForContentNodeTree(JobRunner $jobRunner, ContentNode $contentNode)
     {
-        $scopes = $this->scopeMatcher->getUsedScopes($contentNode->getWebCatalog());
-
+        $scopes = $this->getUsedScopes($contentNode->getWebCatalog());
         foreach ($scopes as $scope) {
             $jobRunner->createDelayed(
                 sprintf(
@@ -113,11 +108,22 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
      */
     private function getContentNode($contentNodeId)
     {
-        $repository = $this->registry
-            ->getManagerForClass(ContentNode::class)
-            ->getRepository(ContentNode::class);
+        $repository = $this->doctrine->getRepository(ContentNode::class);
 
         return $repository->findOneBy(['id' => $contentNodeId]);
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     *
+     * @return Scope[]
+     */
+    private function getUsedScopes(WebCatalog $webCatalog)
+    {
+        /** @var WebCatalogRepository $repository */
+        $repository = $this->doctrine->getRepository(WebCatalog::class);
+
+        return $repository->getUsedScopes($webCatalog);
     }
 
     /**

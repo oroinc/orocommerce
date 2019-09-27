@@ -1,0 +1,104 @@
+data:
+    type: productcollection
+    id: '<toString(@catalog1_node11_variant1->id)>'
+    relationships:
+        products:
+            data:
+                -
+                    type: productsearch
+                    id: '<toString(@product4->id)>'
+                -
+                    type: productsearch
+                    id: '<toString(@product3->id)>'
+                -
+                    type: productsearch
+                    id: '<toString(@product1->id)>'
+included:
+    -
+        type: productsearch
+        id: '<toString(@product4->id)>'
+        attributes:
+            sku: PSKU4
+            name: 'Product 4'
+            shortDescription: 'Product 4 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: false
+            unitPrecisions:
+                - { unit: item, precision: 1, default: true }
+            images: []
+            minimalPrices:
+                - { price: '5.0000', currencyId: USD, unit: item }
+            orderedAt: null
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@out_of_stock->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product4->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@product3->id)>'
+        attributes:
+            sku: PSKU3
+            name: 'Product 3'
+            shortDescription: 'Product 3 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: false
+            unitPrecisions:
+                - { unit: item, precision: 1, default: true }
+            images: []
+            minimalPrices:
+                - { price: '10.0000', currencyId: USD, unit: item }
+            orderedAt: null
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@out_of_stock->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            name: 'Product 1'
+            shortDescription: 'Product 1 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: true
+            unitPrecisions:
+                - { unit: item, precision: 0, default: true }
+                - { unit: set, precision: 1, default: false }
+            images: []
+            minimalPrices:
+                - { price: '11.0000', currencyId: USD, unit: item }
+            orderedAt: null
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
