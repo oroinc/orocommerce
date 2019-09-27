@@ -32,7 +32,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CollectionType::class => new CollectionType(),
-                    ProductRowType::class => new ProductRowType(),
+                    ProductRowType::class => new ProductRowType($unitsProviderMock),
                     ProductAutocompleteType::class => new StubProductAutocompleteType(),
                     ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
                 ],
