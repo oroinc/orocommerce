@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\MessageProcessor;
 
 use Liip\ImagineBundle\Binary\BinaryInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Exception\InvalidArgumentException;
 use Oro\Component\MessageQueue\Util\JSON;
@@ -32,6 +33,17 @@ class ImageResizeMessageProcessorTest extends AbstractImageResizeMessageProcesso
     public function testProcessProductImageNotFound()
     {
         $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn(null);
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+            $this->prepareValidMessage(),
+            $this->prepareSession()
+        ));
+    }
+
+    public function testProcessProductImageFileNotFound()
+    {
+        $this->imageRepository->find(self::PRODUCT_IMAGE_ID)
+            ->willReturn($this->prophesize(ProductImage::class)->reveal());
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
             $this->prepareValidMessage(),

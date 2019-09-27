@@ -92,8 +92,13 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
             return self::REJECT;
         }
 
-        $this->filterLoader->load();
         $image = $productImage->getImage();
+        if (!$image) {
+            return self::REJECT;
+        }
+
+        $this->filterLoader->load();
+
         foreach ($this->getApplicableFilters($productImage, $data['dimensions']) as $filterName) {
             $imagePath = $this->attachmentManager->getFilteredImageUrl($image, $filterName);
 

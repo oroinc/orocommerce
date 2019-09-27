@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
@@ -68,8 +69,12 @@ class ProductImageCollectionValidator extends ConstraintValidator
                 return;
             }
 
-            $product->addImage($value);
-            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($product->getImages());
+            // product state must not be changed
+            $images = new ArrayCollection($product->getImages()->toArray());
+            if (!$images->contains($value)) {
+                $images->add($value);
+            }
+            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($images);
         } else {
             $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
         }
