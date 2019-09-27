@@ -49,7 +49,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
             new PreloadedExtension([
                 $this->formType,
                 ProductRowCollectionType::class => new ProductRowCollectionType(),
-                ProductRowType::class => new ProductRowType(),
+                ProductRowType::class => new ProductRowType($unitsProviderMock),
                 CollectionType::class => new CollectionType(),
                 ProductAutocompleteType::class => new StubProductAutocompleteType(),
                 ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
