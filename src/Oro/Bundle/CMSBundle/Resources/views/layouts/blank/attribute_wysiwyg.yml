@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCMSBundle:layouts:blank/attribute_wysiwyg.html.twig'

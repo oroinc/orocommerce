@@ -159,7 +159,7 @@ services:
             - '@oro_entity_config.config_manager'
             - '@oro_bundle_cms.helper.wysiwygschema'
         tags:
-            - { name: oro_entity_extend.entity_config_dumper_extension }
+            - { name: oro_entity_extend.entity_config_dumper_extension, priority: -257 }
 
     oro_cms.listener.wysiwyg_serialized_config:
         class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGSerializedConfigListener
@@ -172,3 +172,11 @@ services:
         class: Oro\Bundle\CMSBundle\Helper\WYSIWYGSchemaHelper
         arguments:
             - '@oro_entity_config.config_manager'
+
+    oro_cms.attribute_type.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Attribute\Type\WYSIWYGAttributeType
+        public: false
+        arguments:
+            - '@oro_ui.html_tag_helper'
+        tags:
+             - { name: oro_entity_config.attribute_type }

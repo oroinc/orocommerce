@@ -71,7 +71,7 @@ class WYSIWYGEntityConfigDumperExtension extends AbstractEntityConfigDumperExten
                 /** @var FieldConfigId $fieldConfigId */
                 $fieldConfigId = $fieldConfig->getId();
                 $fieldType = $fieldConfigId->getFieldType();
-                if (DBALWYSIWYGType::TYPE === $fieldType && !$fieldConfig->is('is_serialized')) {
+                if (DBALWYSIWYGType::TYPE === $fieldType) {
                     $this->configs[] = ['entityConfig' => $entityConfig, 'fieldConfig' => $fieldConfig];
                 }
             }

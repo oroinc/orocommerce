@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle;
 
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\WidgetTagPass;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
@@ -25,6 +26,7 @@ class OroCMSBundle extends Bundle
         $container
             ->addCompilerPass(new WidgetTagPass())
             ->addCompilerPass(new EntityExtendFieldTypePass())
+            ->addCompilerPass(new AttributeBlockTypeMapperPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Page::class => [
                     'slugPrototype' => 'slugPrototypes',
