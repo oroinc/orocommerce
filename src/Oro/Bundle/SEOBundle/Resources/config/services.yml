@@ -45,7 +45,7 @@ services:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider
         arguments:
             - '@oro_locale.helper.localization'
-            - '@request_stack'
+            - '@oro_web_catalog.request_web_content_variant_provider'
             - '@property_accessor'
         tags:
             - { name: layout.data_provider, alias: seo }

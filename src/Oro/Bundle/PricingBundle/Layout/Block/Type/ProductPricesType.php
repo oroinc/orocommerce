@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Layout\Block\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
@@ -14,6 +15,9 @@ use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Util\BlockUtils;
 
+/**
+ * Product price layout block type.
+ */
 class ProductPricesType extends AbstractContainerType
 {
     const NAME = 'product_prices';
@@ -39,7 +43,7 @@ class ProductPricesType extends AbstractContainerType
 
     /**
      * @param AttributeFamily $attributeFamily
-     * @return mixed
+     * @return FieldConfigModel|null
      */
     private function getAttribute(AttributeFamily $attributeFamily)
     {

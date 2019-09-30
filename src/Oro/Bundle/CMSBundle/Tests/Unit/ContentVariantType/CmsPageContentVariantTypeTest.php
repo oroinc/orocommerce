@@ -67,4 +67,17 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
             $this->type->getRouteData($contentVariant)
         );
     }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Page::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.cms_page)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
+        );
+    }
 }

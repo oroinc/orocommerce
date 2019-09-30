@@ -5,46 +5,43 @@ namespace Oro\Bundle\SEOBundle\Layout\DataProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * The provider for SEO data.
+ */
 class SeoDataProvider
 {
-    /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
+    /** @var LocalizationHelper */
+    private $localizationHelper;
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    /** @var RequestWebContentVariantProvider */
+    private $requestWebContentVariantProvider;
 
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private $propertyAccessor;
 
     /**
-     * @param LocalizationHelper $localizationHelper
-     * @param RequestStack $requestStack
-     * @param PropertyAccessor $propertyAccessor
+     * @param LocalizationHelper               $localizationHelper
+     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
+     * @param PropertyAccessor                 $propertyAccessor
      */
     public function __construct(
         LocalizationHelper $localizationHelper,
-        RequestStack $requestStack,
+        RequestWebContentVariantProvider $requestWebContentVariantProvider,
         PropertyAccessor $propertyAccessor
     ) {
         $this->localizationHelper = $localizationHelper;
-        $this->requestStack = $requestStack;
+        $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;
         $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
      * @param string $metaField
-     * @return null|LocalizedFallbackValue
+     *
+     * @return LocalizedFallbackValue|null
      */
     public function getMetaInformationFromContentNode($metaField)
     {
@@ -59,7 +56,8 @@ class SeoDataProvider
     /**
      * @param object $data
      * @param string $metaField
-     * @return null|LocalizedFallbackValue
+     *
+     * @return LocalizedFallbackValue|null
      */
     public function getMetaInformation($data, $metaField)
     {
@@ -74,25 +72,21 @@ class SeoDataProvider
     }
 
     /**
-     * @return null|ContentNodeInterface
+     * @return ContentNodeInterface|null
      */
     protected function getContentNode()
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request && $request->attributes->has('_content_variant')) {
-            $contentVariant = $request->attributes->get('_content_variant');
+        $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
 
-            if ($contentVariant instanceof ContentNodeAwareInterface) {
-                return $contentVariant->getNode();
-            }
-        }
-
-        return null;
+        return null !== $contentVariant
+            ? $contentVariant->getNode()
+            : null;
     }
 
     /**
      * @param object $data
      * @param string $metaField
+     *
      * @return LocalizedFallbackValue|null
      */
     protected function getLocalizedMetaValue($data, $metaField)
@@ -100,7 +94,7 @@ class SeoDataProvider
         $value = null;
         $metaData = $this->propertyAccessor->getValue($data, $metaField);
         if ($metaData instanceof Collection) {
-            $value =  $this->localizationHelper->getLocalizedValue($metaData);
+            $value = $this->localizationHelper->getLocalizedValue($metaData);
         }
 
         return $value;

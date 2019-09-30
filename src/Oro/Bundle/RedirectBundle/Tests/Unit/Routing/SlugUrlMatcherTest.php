@@ -292,19 +292,30 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     public function testGetContext()
     {
         /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->getMockBuilder(RequestContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(RequestContext::class);
 
         /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
-        $baseMatcher = $this->getMockBuilder(Router::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $baseMatcher = $this->createMock(Router::class);
         $baseMatcher->expects($this->never())
             ->method('getContext');
 
         $this->matcher->setBaseMatcher($baseMatcher);
         $this->matcher->setContext($context);
+        $this->assertEquals($context, $this->matcher->getContext());
+    }
+
+    public function testGetContextWhenItIsNotSet()
+    {
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(RequestContext::class);
+
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
+        $baseMatcher = $this->createMock(Router::class);
+        $baseMatcher->expects($this->once())
+            ->method('getContext')
+            ->willReturn($context);
+
+        $this->matcher->setBaseMatcher($baseMatcher);
         $this->assertEquals($context, $this->matcher->getContext());
     }
 

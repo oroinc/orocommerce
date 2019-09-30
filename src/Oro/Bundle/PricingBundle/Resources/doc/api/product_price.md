@@ -110,7 +110,7 @@ The product price currency
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -127,7 +127,7 @@ The product quantity
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -144,7 +144,7 @@ The product price
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -161,14 +161,13 @@ Price list related to a product price
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**The read-only field. A passed value will be ignored.**
 
 ### product
 
@@ -178,7 +177,7 @@ The product of a product price
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -195,7 +194,7 @@ The unit of a product
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 

@@ -149,7 +149,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -165,7 +165,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -181,7 +181,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -197,7 +197,7 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -206,6 +206,30 @@ Delete a collection of request records.
 **Please note:**
 
 *This field is **required** and must remain defined.*
+
+### customer_status
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### internal_status
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### requestAdditionalNotes
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

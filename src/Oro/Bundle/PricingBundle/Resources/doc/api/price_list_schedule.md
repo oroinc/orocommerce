@@ -91,7 +91,7 @@ Delete a collection of price list schedule records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### activeAt
 
@@ -109,7 +109,15 @@ The price list this schedule is created for.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+### priceList
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantType;
 
+use Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
@@ -43,5 +44,18 @@ class SystemPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn('test_route');
 
         $this->assertEquals(new RouteData('test_route'), $this->type->getRouteData($contentVariant));
+    }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(SystemPage::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'e.systemPageRoute',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
+        );
     }
 }

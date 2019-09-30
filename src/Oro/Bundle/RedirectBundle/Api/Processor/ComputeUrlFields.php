@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\RedirectBundle\Api\Processor;
 
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -17,31 +16,40 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeUrlFields implements ProcessorInterface
 {
-    private const URL_FIELD  = 'url';
-    private const URLS_FIELD = 'urls';
-
     /** @var DoctrineHelper */
-    private $doctrineHelper;
+    protected $doctrineHelper;
 
     /** @var LocalizationHelper */
-    private $localizationHelper;
+    protected $localizationHelper;
 
     /** @var ConfigManager */
-    private $configManager;
+    protected $configManager;
+
+    /** @var string */
+    protected $urlField;
+
+    /** @var string */
+    protected $urlsField;
 
     /**
      * @param DoctrineHelper     $doctrineHelper
      * @param LocalizationHelper $localizationHelper
      * @param ConfigManager      $configManager
+     * @param string             $urlField
+     * @param string             $urlsField
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         LocalizationHelper $localizationHelper,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        string $urlField = 'url',
+        string $urlsField = 'urls'
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->localizationHelper = $localizationHelper;
         $this->configManager = $configManager;
+        $this->urlField = $urlField;
+        $this->urlsField = $urlsField;
     }
 
     /**
@@ -53,27 +61,26 @@ class ComputeUrlFields implements ProcessorInterface
 
         $data = $context->getData();
 
-        $isUrlFieldRequested = $context->isFieldRequestedForCollection(self::URL_FIELD, $data);
-        $isUrlsFieldRequested = $context->isFieldRequestedForCollection(self::URLS_FIELD, $data);
+        $isUrlFieldRequested = $context->isFieldRequestedForCollection($this->urlField, $data);
+        $isUrlsFieldRequested = $context->isFieldRequestedForCollection($this->urlsField, $data);
         if (!$isUrlFieldRequested && !$isUrlsFieldRequested) {
             return;
         }
 
-        $currentLocalizationId = $this->localizationHelper->getCurrentLocalization()->getId();
-        $enabledLocalizationIds = $this->getEnabledLocalizationIds();
-        $ownerEntityClass = $this->doctrineHelper->getManageableEntityClass(
-            $context->getClassName(),
-            $context->getConfig()
-        );
+        $config = $context->getConfig();
+        $ownerEntityClass = $this->doctrineHelper->getManageableEntityClass($context->getClassName(), $config);
         $ownerEntityIdFieldName = $this->doctrineHelper->getSingleEntityIdentifierFieldName($ownerEntityClass);
         $ownerIdFieldName = $context->getResultFieldName($ownerEntityIdFieldName);
 
+        $currentLocalizationId = $this->localizationHelper->getCurrentLocalization()->getId();
+        $enabledLocalizationIds = $this->getEnabledLocalizationIds();
         $urls = $this->loadUrls(
             $ownerEntityClass,
             $ownerEntityIdFieldName,
             $context->getIdentifierValues($data, $ownerIdFieldName),
             $enabledLocalizationIds
         );
+
         foreach ($data as $key => $item) {
             $ownerId = $item[$ownerIdFieldName];
             if (empty($urls[$ownerId])) {
@@ -88,10 +95,10 @@ class ComputeUrlFields implements ProcessorInterface
             }
 
             if ($isUrlFieldRequested) {
-                $data[$key][self::URL_FIELD] = $currentUrl;
+                $data[$key][$this->urlField] = $currentUrl;
             }
             if ($isUrlsFieldRequested) {
-                $data[$key][self::URLS_FIELD] = $otherUrls;
+                $data[$key][$this->urlsField] = $otherUrls;
             }
         }
 
@@ -101,7 +108,7 @@ class ComputeUrlFields implements ProcessorInterface
     /**
      * @return int[]
      */
-    private function getEnabledLocalizationIds(): array
+    protected function getEnabledLocalizationIds(): array
     {
         return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS));
     }
@@ -113,7 +120,7 @@ class ComputeUrlFields implements ProcessorInterface
      *
      * @return array [url for current localization, urls for other localizations]
      */
-    private function getUrlFieldsData(array $urls, array $localizationIds, int $currentLocalizationId): array
+    protected function getUrlFieldsData(array $urls, array $localizationIds, int $currentLocalizationId): array
     {
         $currentUrl = null;
         $otherUrls = [];
@@ -152,10 +159,10 @@ class ComputeUrlFields implements ProcessorInterface
      *
      * @return array
      */
-    private function getUrlData(string $url, int $localizationId): array
+    protected function getUrlData(string $url, int $localizationId): array
     {
         return [
-            'url'    => $url,
+            'url'            => $url,
             'localizationId' => (string)$localizationId
         ];
     }
@@ -168,28 +175,18 @@ class ComputeUrlFields implements ProcessorInterface
      *
      * @return array [owner id => [[url, localization id], ...], ...]
      */
-    private function loadUrls(
+    protected function loadUrls(
         string $ownerEntityClass,
         string $ownerEntityIdFieldName,
         array $ownerIds,
         array $localizationIds
     ): array {
-        $rows = $this->doctrineHelper
-            ->createQueryBuilder(Slug::class, 's')
-            ->select(sprintf(
-                's.url, IDENTITY(s.localization) AS locId, owner.%s AS ownerId',
-                $ownerEntityIdFieldName
-            ))
-            ->innerJoin($ownerEntityClass, 'owner', Join::WITH, 's MEMBER OF owner.slugs')
-            ->where('owner IN (:ownerIds) AND (s.localization IN (:locIds) OR s.localization IS NULL)')
-            ->setParameter('ownerIds', $ownerIds)
-            ->setParameter('locIds', $localizationIds)
-            ->getQuery()
-            ->getArrayResult();
+        $qb = $this->getQueryForLoadUrls($ownerEntityClass, $ownerEntityIdFieldName, $ownerIds, $localizationIds);
 
         $result = [];
+        $rows = $qb->getQuery()->getArrayResult();
         foreach ($rows as $row) {
-            $localizationId = $row['locId'];
+            $localizationId = $row['localizationId'];
             if (null !== $localizationId) {
                 $localizationId = (int)$localizationId;
             }
@@ -197,5 +194,31 @@ class ComputeUrlFields implements ProcessorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $ownerEntityClass
+     * @param string $ownerEntityIdFieldName
+     * @param array  $ownerIds
+     * @param array  $localizationIds
+     *
+     * @return QueryBuilder The query should return 3 fields: url, localizationId and ownerId
+     */
+    protected function getQueryForLoadUrls(
+        string $ownerEntityClass,
+        string $ownerEntityIdFieldName,
+        array $ownerIds,
+        array $localizationIds
+    ): QueryBuilder {
+        return $this->doctrineHelper
+            ->createQueryBuilder($ownerEntityClass, 'owner')
+            ->select(sprintf(
+                's.url, IDENTITY(s.localization) AS localizationId, owner.%s AS ownerId',
+                $ownerEntityIdFieldName
+            ))
+            ->innerJoin('owner.slugs', 's')
+            ->where('owner IN (:ownerIds) AND (s.localization IN (:localizationIds) OR s.localization IS NULL)')
+            ->setParameter('ownerIds', $ownerIds)
+            ->setParameter('localizationIds', $localizationIds);
     }
 }

@@ -5,7 +5,7 @@ data:
         attributes:
             createdAt: '@root_category->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@root_category->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'All Products'
+            title: 'All Products'
             shortDescription: null
             description: null
             metaTitle: null
@@ -23,7 +23,7 @@ data:
         attributes:
             createdAt: '@category1->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@category1->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'Category 1'
+            title: 'Category 1'
             shortDescription: 'Category 1 Short Description'
             description: 'Category 1 Description'
             metaTitle: 'Category 1 Meta Title'
@@ -49,7 +49,7 @@ data:
         attributes:
             createdAt: '@category1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@category1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'Category 1_1'
+            title: 'Category 1_1'
             shortDescription: 'Category 1_1 Short Description'
             description: 'Category 1_1 Description'
             metaTitle: 'Category 1_1 Meta Title'
@@ -76,7 +76,7 @@ data:
         attributes:
             createdAt: '@category1_1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@category1_1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'Category 1_1_1'
+            title: 'Category 1_1_1'
             shortDescription: null
             description: null
             metaTitle: null
@@ -102,7 +102,7 @@ data:
         attributes:
             createdAt: '@category2->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@category2->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'Category 2'
+            title: 'Category 2'
             shortDescription: null
             description: null
             metaTitle: null

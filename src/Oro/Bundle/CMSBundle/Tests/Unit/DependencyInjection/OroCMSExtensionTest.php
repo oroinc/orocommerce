@@ -12,16 +12,6 @@ class OroCMSExtensionTest extends ExtensionTestCase
     public function testLoad()
     {
         $this->loadExtension(new OroCMSExtension());
-
-        $expectedParameters = [
-            'oro_cms.entity.page.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
-        $expectedExtensionConfigs = [
-            'oro_cms',
-        ];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
 
     /**

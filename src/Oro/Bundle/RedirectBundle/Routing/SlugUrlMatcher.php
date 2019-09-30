@@ -212,6 +212,10 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     public function getContext()
     {
+        if (null === $this->context) {
+            return $this->baseMatcher->getContext();
+        }
+
         return $this->context;
     }
 

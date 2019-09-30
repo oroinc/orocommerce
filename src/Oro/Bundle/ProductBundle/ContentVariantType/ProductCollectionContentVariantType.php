@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ContentVariantType;
 
+use Oro\Bundle\ProductBundle\Api\Model\ProductCollection;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
@@ -9,7 +10,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Content variant type for product collection
+ * The content variant type for a product collection.
  */
 class ProductCollectionContentVariantType implements ContentVariantTypeInterface
 {
@@ -73,5 +74,21 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
                 self::OVERRIDE_VARIANT_CONFIGURATION_KEY => $contentVariant->isOverrideVariantConfiguration(),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return ProductCollection::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return $alias . '.id';
     }
 }

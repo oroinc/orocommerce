@@ -91,7 +91,7 @@ The localized label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### shortLabel
 
@@ -101,7 +101,7 @@ The localized short label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -119,7 +119,7 @@ The localized plural label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -137,7 +137,7 @@ The localized short plural label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -153,7 +153,7 @@ The localized short plural label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -169,4 +169,4 @@ The localized short plural label of the product unit.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**

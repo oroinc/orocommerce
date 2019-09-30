@@ -119,7 +119,7 @@ Delete a collection of price rule records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### priceList
 
@@ -127,7 +127,7 @@ Price list that is attached to the price rule
 
 #### create
 
-**The required field**
+**The required field.**
 
 ### currency
 
@@ -135,7 +135,7 @@ Defines which product price currency in a price list would be affected by the ru
 
 #### create, update
 
-**One of the fields: `currency`, `currencyExpression` should be blank**
+**One of the fields: `currency`, `currencyExpression` should be blank.**
 
 ### currencyExpression
 
@@ -143,7 +143,7 @@ Defines an expression to calculate a product price currency value to which the r
 
 #### create, update
 
-**One of the fields: `currency`, `currencyExpression` should be blank**
+**One of the fields: `currency`, `currencyExpression` should be blank.**
 
 ### quantity
 
@@ -151,7 +151,7 @@ Defines a product quantity to which the rule applies
 
 #### create, update
 
-**One of the fields: `quantity`, `quantityExpression` should be blank**
+**One of the fields: `quantity`, `quantityExpression` should be blank.**
 
 ### quantityExpression
 
@@ -159,7 +159,7 @@ Defines an expression to calculate a product quantity value to which the rule ap
 
 #### create, update
 
-**One of the fields: `quantity`, `quantityExpression` should be blank**
+**One of the fields: `quantity`, `quantityExpression` should be blank.**
 
 ### productUnit
 
@@ -167,7 +167,7 @@ Defines a product unit to which the rule applies
 
 #### create, update
 
-**One of the fields: `productUnit`, `productUnitExpression` should be blank**
+**One of the fields: `productUnit`, `productUnitExpression` should be blank.**
 
 ### productUnitExpression
 
@@ -175,7 +175,7 @@ Defines an expression to calculate a product unit code to which the price rule a
 
 #### create, update
 
-**One of the fields: `productUnit`, `productUnitExpression` should be blank**
+**One of the fields: `productUnit`, `productUnitExpression` should be blank.**
 
 ### priority
 
@@ -183,7 +183,7 @@ Price Rule priority in a price list
 
 #### create
 
-**The required field**
+**The required field.**
 
 ### ruleCondition
 

@@ -6,12 +6,11 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CallbackController extends Controller
 {
@@ -19,10 +18,10 @@ class CallbackController extends Controller
      * @Route(
      *     "/return/{accessIdentifier}",
      *     name="oro_payment_callback_return",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"},
+     *     methods={"GET", "POST"}
      * )
      * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
-     * @Method({"GET", "POST"})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
      * @return Response
@@ -39,10 +38,10 @@ class CallbackController extends Controller
      * @Route(
      *     "/error/{accessIdentifier}",
      *     name="oro_payment_callback_error",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"},
+     *     methods={"GET", "POST"}
      * )
      * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
-     * @Method({"GET", "POST"})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
      * @return Response
@@ -59,13 +58,13 @@ class CallbackController extends Controller
      * @Route(
      *     "/notify/{accessIdentifier}/{accessToken}",
      *     name="oro_payment_callback_notify",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"},
+     *     methods={"POST"}
      * )
      * @ParamConverter(
      *     "paymentTransaction",
      *     options={"mapping": {"accessIdentifier": "accessIdentifier", "accessToken": "accessToken"}}
      * )
-     * @Method("POST")
      * @param Request $request
      * @param PaymentTransaction $paymentTransaction
      * @return Response

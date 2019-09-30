@@ -119,7 +119,7 @@ Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### value
 
@@ -127,7 +127,7 @@ Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### priceList
 
@@ -135,7 +135,7 @@ Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### product
 
@@ -143,7 +143,7 @@ Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### unit
 
@@ -151,8 +151,7 @@ Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
-**The required field**
-
+**The required field.**
 
 ## SUBRESOURCES
 

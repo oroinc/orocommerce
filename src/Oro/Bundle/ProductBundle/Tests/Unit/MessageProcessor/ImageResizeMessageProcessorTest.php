@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\ImageResizeManagerInterface;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
@@ -130,6 +131,19 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('find')
             ->with(self::PRODUCT_IMAGE_ID)
             ->willReturn(null);
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+            $this->prepareValidMessage(),
+            $this->prepareSession()
+        ));
+    }
+
+    public function testProcessProductImageFileNotFound()
+    {
+        $this->imageRepository->expects($this->once())
+            ->method('find')
+            ->with(self::PRODUCT_IMAGE_ID)
+            ->willReturn($this->prophesize(ProductImage::class)->reveal());
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
             $this->prepareValidMessage(),

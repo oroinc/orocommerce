@@ -5,6 +5,6 @@ trusted_data:
             getEntityIds:
                 identifierFieldName: true
         Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields:
-            loadUrls:
+            getQueryForLoadUrls:
                 ownerEntityClass: true
                 ownerEntityIdFieldName: true

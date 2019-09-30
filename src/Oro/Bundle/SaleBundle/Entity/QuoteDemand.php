@@ -67,6 +67,7 @@ class QuoteDemand implements
     protected $quote;
 
     /**
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteProductDemand",
      *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)

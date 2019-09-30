@@ -2,31 +2,137 @@ about:
     slug: about
     title: 'About'
     content: >
-        <h3>Lorem ipsum dolor sit amet</h3>
-        <p>consectetur adipiscing elit. Aenean in sollicitudin magna. Duis quis fermentum risus, ac egestas metus. Sed felis nisi, molestie a nisi a, varius lacinia sapien. Integer vehicula metus vitae diam gravida porta. Quisque fringilla tincidunt arcu, eu consectetur ligula finibus a. Curabitur porttitor nunc faucibus augue congue, vitae scelerisque ex ultricies. Suspendisse eleifend felis ut lacus interdum, eu pulvinar sem interdum. Aliquam facilisis ipsum eget tortor finibus, ut dignissim nisl pulvinar.</p>
-        <br />
-        <h3 class="text-uppercase">Vestibulum consequat eu enim nec viverra </h3>
-        <p>Nullam sed elementum metus. Integer quam sem, laoreet eget rutrum a, sagittis tincidunt massa. Aliquam tempus tortor non libero condimentum, id pellentesque libero hendrerit. Sed convallis arcu volutpat enim suscipit feugiat. In efficitur tincidunt massa, nec posuere purus congue vitae. </p>
+        <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
+    
+        <p>&lt;p&gt; Are you considering buying a recreational vehicle (RV) to spend weekends outdoors with your family? We offer you a wide choice of options, from small campers to motorhomes. You can also find all the necessary RV accessories, inside and outside, to make your holiday trips the most enjoyable experience. If you’re happy, we’re happy!</p>
+    
+        <code>&lt;pre&gt; We have the best membership programs that offer worldwide emergency assistance, 24/7 towing, discounts on RV accessories, and many more!</code>
+    
+        <h2>H2. Do You Need an RV?</h2>
+        
+        <p>&lt;p&gt; RVs are a great way to explore the country while enjoying the modern comforts and the company of your family 24/7. If you feel the passion for a nomadic adventure across some breath-taking sites of mother nature, an RV will definitely take you there!</p>
+        
+        <figure>
+            <picture>
+                <source srcset="/bundles/orocms/images/landing-page/320.jpg"
+                        media="(max-width: 414px)">
+                <source srcset="/bundles/orocms/images/landing-page/768.jpg"
+                        media="(max-width: 992px)">
+                <img src="/bundles/orocms/images/landing-page/1384.jpg"
+                     alt="Image">
+            </picture>
+            <figcaption>RV & Gear Seller</figcaption>
+        </figure>
+        
+        <p>
+            <small>&lt;small&gt; There are so many beautiful places in this country that are left unnoticed by most people. Whenever you’re up to having a break from a hectic urban life, take your home with you to the heart of nature.</small>
+        </p>
+        
+        <h3>H3. How Do You Choose an RV?</h3>
+        
+        <p>&lt;p&gt; There are different types of RVs for weekends, travelling, and living. We can <a href="#">help you</a> find your dream RV in minutes. You could also read some of our articles to educate yourself on different aspects of RV as well as email us call our office to ask all the questions you may have.</p>
+    
+        <div class="row">
+            <div class="col-md">
+                <p>
+                    <strong>&lt;ul&gt; Popular RV types</strong>
+                </p>
 
-        <ul>
-        <li>Maecenas elementum, sapien ac rhoncus volutpat</li>
-        <li>Felis lectus varius nisl</li>
-        <li>In mattis nibh velit et mauris</li>
-        </ul>
+                <ul>
+                    <li>Pop up</li>
+                    <li>Small camper</li>
+                    <li>Fifth wheel</li>
+                    <li>Class C</li>
+                </ul>
+            </div>
 
-        <p>Aliquam in massa a nibh pharetra ullamcorper. Etiam libero massa, ultricies vitae ligula eu, tincidunt varius nibh. Duis tincidunt justo enim, at mattis felis aliquet eu. <a href="#">Pellentesque vel elit dui</a>. Fusce finibus lectus sed orci finibus, id fringilla mi molestie. Vestibulum viverra vehicula lorem, ac interdum dui tempus eget. Donec nec leo maximus, pretium elit sit amet, venenatis augue. Mauris faucibus lectus id dui aliquet lacinia a id nibh.</p>
+            <div class="col-md">
+                <p>
+                    <strong>&lt;ol&gt; Our recommended top gear</strong>
+                </p>
 
-        <h3>Donec dictum nisl quis neque fermentum tempor. </h3>
+                <ol>
+                    <li>Camp kitchen</li>
+                    <li>RV cover</li>
+                    <li>GPS accessories</li>
+                    <li>Power generator</li>
+                </ol>
+            </div>
 
-        <blockquote>Donec convallis nulla quis tellus feugiat, nec volutpat quam iaculis. Quisque imperdiet id enim sed condimentum. Integer maximus, tellus condimentum facilisis hendrerit, leo nulla aliquam erat, at posuere enim lorem non erat. Mauris dignissim tortor eros, ac scelerisque ligula rhoncus a.</blockquote>
+            <div class="col-md">
+                <p>
+                    <strong>&lt;dl&gt; Our popular membership programs</strong>
+                </p>
 
-        <p>Donec maximus vehicula dolor, pharetra egestas justo. Nullam sed venenatis eros. Maecenas malesuada tellus sed eros blandit, a consectetur purus condimentum. Quisque a metus ligula. Praesent et ante elit. Fusce sem nisi, rutrum nec tellus sed, elementum pretium erat. Aliquam dictum commodo sollicitudin. Vestibulum fermentum justo nisi, eget dignissim nibh tempus sed. Vestibulum non condimentum elit.</p>
-        <br />
-        <h3>Ut id dignissim urna</h3>
-        <p>Sed placerat viverra magna, eget suscipit tellus dignissim eget. Sed vel sollicitudin odio, ac aliquam odio. Quisque vel quam viverra, volutpat dui id, laoreet tellus. Nullam lobortis lectus congue, varius neque at, porttitor est. Morbi sit amet neque sed felis elementum efficitur. Cras placerat ex nec magna imperdiet placerat. Pellentesque sit amet facilisis elit. Fusce sed cursus lectus. Vestibulum dignissim neque ante, sit amet porttitor enim faucibus sed. Curabitur placerat, magna sit amet ullamcorper dapibus, ligula tellus sagittis massa, eu commodo nisl purus eu ante. In hac habitasse platea dictumst. Duis tempus feugiat risus, sed tristique justo sagittis in. Etiam vitae nunc porttitor, efficitur quam auctor, luctus erat. Sed placerat non quam semper facilisis. </p>
+                <dl>
+                    <dt>&lt;dt&gt; Travel assistance</dt>
+                    <dd>&lt;dd&gt; Emergency medical evacuation and home transportation</dd>
+                    <dt>&lt;dt&gt; Roadside assistance</dt>
+                    <dd>&lt;dd&gt; Emergency fuel delivery, towing, flat tyre and low battery service</dd>
+                </dl>
+            </div>
+        </div>
+        
+        <h4>H4. We Can Help You Finance Your RV</h4>
+        
+        <p>&lt;p&gt; Over decades helping our customers get financing, we’ve developed relationships with most financial institutions—from national banks to local lenders. We know which lenders are RV-friendly. We pitch your specific finance needs to several lenders, and leverage our relationships to make sure you get the best financing terms possible.</p>
+        
+        <h5>H5. Start Your RV Journey Today</h5>
 
-        <ol>
-        <li>Mauris a velit aliquam
-        <li>Viverra tortor eget</li>
-        <li>Hendrerit sapien.</li>
-        </ol>
+        <p>
+            <em>&lt;em&gt; Explore our online store for America’s favorite brands, such as Coleman, Pioneer, Mallard, Freedom Elite, Satellite, or Hymer. Read our blog to learn about your RV maintenance, best camping recipes, tips for family trips, and great destinations for your next holiday. We’d like you to become an expert in a million-star recreational experience amidst the wonders of mother nature, just like in this quote from Forrest Stevens.</em>
+        </p>
+        
+        <h6>H6. I find myself...</h6>
+        
+        <p>&lt;p&gt; “I find myself happier and more enthused about life when I’m outside and in what people would consider wilderness. That feels like home to me, so creating my own space that facilitates that is worth it, and that’s going to be different for everyone.”</p>
+        
+        <blockquote>&lt;blockquote&gt; Whatever your RV, our RV service team will keep you on the road. We offer a variety of services for all types of RVs. Workmanship on installations is guaranteed as long as you own your vehicle. Workmanship on service and collision repair guaranteed for 12 months.</blockquote>
+
+        <p>&lt;p&gt; Photographs are a way of preserving a moment in our lives for the rest of our lives. Many of us have at least been tempted at the flashy array of photo printers which seemingly leap off the shelves at even the least tech-savvy. It surely seems old fashioned to talk about 35mm film and non-digital cameras in today’s day and age.</p>
+
+        <hr>
+        
+        <address>
+            &lt;address&gt; Visit us at:<br>
+            buysellrv.com<br>
+            Box 564, Disneyland<br>
+            USA
+        </address>
+
+        <h2>H2. RV Search Example</h2>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>RV Class</th>
+                        <th>RV Type</th>
+                        <th>Max Length <sub>ft</sub></th>
+                        <th>Max Dry Weight <sup>lbs</sup></th>
+                        <th>Max Sleep Number</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Towable</td>
+                        <td>Travel Trailer</td>
+                        <td>30</td>
+                        <td>3500</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Motorized</td>
+                        <td>Class A</td>
+                        <td>40</td>
+                        <td>2500</td>
+                        <td>6</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <a href="#" class="btn btn--info" data-toggle="tooltip" data-placement="bottom" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+        </div>

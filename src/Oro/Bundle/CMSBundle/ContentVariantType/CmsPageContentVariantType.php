@@ -10,6 +10,9 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * The content variant type for a CMS page.
+ */
 class CmsPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'cms_page';
@@ -73,5 +76,21 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
         $cmsPage = $this->propertyAccessor->getValue($contentVariant, 'cmsPage');
 
         return new RouteData('oro_cms_frontend_page_view', ['id' => $cmsPage->getId()]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return Page::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return sprintf('IDENTITY(%s.cms_page)', $alias);
     }
 }

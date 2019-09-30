@@ -141,7 +141,7 @@ class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
 
         $this->validator->validate($productImage, $this->constraint);
 
-        $this->assertTrue($product->getImages()->contains($productImage));
+        $this->assertFalse($product->getImages()->contains($productImage));
         $this->assertNoViolation();
     }
 
@@ -176,6 +176,8 @@ class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
             ->willReturn('Main');
 
         $this->validator->validate($productImage, $this->constraint);
+
+        $this->assertFalse($product->getImages()->contains($productImage));
 
         $this->buildViolation('oro.product.product_image.type_restriction')
             ->setParameters(

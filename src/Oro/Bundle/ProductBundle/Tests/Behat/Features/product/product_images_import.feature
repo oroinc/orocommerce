@@ -79,14 +79,14 @@ Feature: Product Images Import
     And see Additional column
 
   Scenario: Import new Product Images
-    Given I proceed as the Admin
-    And I upload product images files
+    Given I upload product images files
     And fill template with data:
       |SKU |Name    |Main  |Listing   |Additional|
       |SKU1|dog1.jpg|1     |1         |1         |
       |SKU2|dog1.jpg|0     |0         |1         |
+    And I open "Product Images" import tab
     When import file
-    #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
+    And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page
     And click view "SKU1" in grid
     And should see "dog1.jpg"
@@ -100,14 +100,17 @@ Feature: Product Images Import
     And I open "Product Images" import tab
     And I upload product images files
     And fill template with data:
-      |SKU |Name    |Main  |Listing   |Additional|
-      |SKU1|dog1.jpg|1     |0         |1         |
+      | SKU  | Name        | Main | Listing | Additional |
+      | SKU1 |             | 1    | 0       | 1          |
+      | SKU1 | missing.jpg | 1    | 0       | 1          |
+      | SKU1 | dog1.jpg    | 1    | 0       | 1          |
 
   Scenario: Check import error page from the email
     Given I import file
-    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    Then Email should contains the following "Errors: 5 processed: 0, read: 3, added: 0, updated: 0, replaced: 0" text
     When I follow "Error log" link from the email
     Then I should see "Error in row #1. You cannot choose more than 1 images with type \"Main\""
+    Then I should see "Error in row #2. The file cannot be blank"
     And I proceed as the User
 
   Scenario: Check if there Product Images on frontend

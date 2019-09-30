@@ -105,7 +105,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### productUnit
 
@@ -113,7 +113,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### productSku
 
@@ -121,7 +121,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -137,7 +137,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -153,7 +153,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -169,7 +169,7 @@ Example:
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -178,6 +178,14 @@ Example:
 **Please note:**
 
 *This field is **required** and must remain defined.*
+
+### productUnitCode
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 
