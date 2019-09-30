@@ -77,11 +77,11 @@ define([
                         content: __('oro.cms.change_type.confirmation.body')
                     });
 
-                    confirm.on('ok', _.bind(function () {
+                    confirm.on('ok', _.bind(function() {
                         this.processChange($el);
                     }, this));
 
-                    confirm.on('cancel', _.bind(function () {
+                    confirm.on('cancel', _.bind(function() {
                         $el.data('cancelled', true).val(prevVal).trigger('change');
                         this.memoizeValue($el);
                     }, this));

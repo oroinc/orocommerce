@@ -153,7 +153,7 @@ abstract class ContentAwareEntityListenerTestCase extends \PHPUnit\Framework\Tes
      * @param string $content
      * @return object
      */
-    private function getEntity(string $content)
+    protected function getEntity(string $content)
     {
         $class = $this->getEntityClass();
 

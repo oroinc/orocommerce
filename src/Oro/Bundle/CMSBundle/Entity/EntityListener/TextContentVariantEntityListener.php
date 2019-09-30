@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Entity\EntityListener;
 
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 
 /**
@@ -23,5 +24,18 @@ class TextContentVariantEntityListener extends AbstractContentAwareEntityListene
     protected function getSupportedFieldName(): string
     {
         return 'content';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContentWidget(string $widget, $entity): ?ContentWidget
+    {
+        if (!isset($this->widgets[$widget])) {
+            $this->widgets[$widget] = $this->doctrineHelper->getEntityRepository(ContentWidget::class)
+                ->findOneBy(['name' => $widget, 'organization' => $entity->getContentBlock()->getOrganization()]);
+        }
+
+        return $this->widgets[$widget];
     }
 }
