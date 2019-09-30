@@ -4,7 +4,7 @@
 
 ### get
 
-Retrieve a visible to the customer user specific master catalog category record.
+Retrieve a specific master catalog category record visible to the customer user.
 
 {@inheritdoc}
 
@@ -16,9 +16,9 @@ Retrieve a collection of master catalog categories visible to the customer user.
 
 ## FIELDS
 
-### name
+### title
 
-The localized name of the category.
+The localized title of the category.
 
 ### shortDescription
 

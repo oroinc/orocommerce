@@ -5,54 +5,72 @@ namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Returns breadcrumb items
+ * Returns breadcrumb items.
  */
-class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
+class WebCatalogBreadcrumbProvider
 {
-    /**
-     * @var CategoryBreadcrumbProvider
-     */
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
+    /** @var RequestStack */
+    private $requestStack;
+
+    /** @var RequestWebContentVariantProvider */
+    private $requestWebContentVariantProvider;
+
+    /** @var CategoryBreadcrumbProvider */
     private $categoryBreadcrumbProvider;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param LocalizationHelper $localizationHelper
-     * @param RequestStack $requestStack
-     * @param CategoryBreadcrumbProvider $categoryBreadcrumbProvider
+     * @param ManagerRegistry                  $doctrine
+     * @param LocalizationHelper               $localizationHelper
+     * @param RequestStack                     $requestStack
+     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
+     * @param CategoryBreadcrumbProvider       $categoryBreadcrumbProvider
      */
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         LocalizationHelper $localizationHelper,
         RequestStack $requestStack,
+        RequestWebContentVariantProvider $requestWebContentVariantProvider,
         CategoryBreadcrumbProvider $categoryBreadcrumbProvider
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->localizationHelper = $localizationHelper;
         $this->requestStack = $requestStack;
+        $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;
         $this->categoryBreadcrumbProvider = $categoryBreadcrumbProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function getItems(int $maxNodesNestedLevel = null)
+    public function getItems()
     {
         $request = $this->requestStack->getCurrentRequest();
-
-        if ($request && $contentVariant = $request->attributes->get('_content_variant')) {
-            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
-        } else {
-            $breadcrumbs = $request->query->get('categoryId') ? $this->categoryBreadcrumbProvider->getItems() : [];
+        if (null !== $request) {
+            $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
+            if (null !== $contentVariant) {
+                return $this->getItemsByContentVariant($contentVariant, $request);
+            }
         }
 
-        return $breadcrumbs;
+        return $request->query->get('categoryId')
+            ? $this->categoryBreadcrumbProvider->getItems()
+            : [];
     }
 
     /**
@@ -64,21 +82,24 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
     public function getItemsForProduct($categoryId, $currentPageTitle)
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
+        if (null === $request) {
             return [];
         }
-        if ($request->attributes->get('_content_variant')) {
+
+        $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
+        if (null !== $contentVariant) {
             return $this->getItems();
         }
+
         $contextUrlAttributes = $request->attributes->get('_context_url_attributes');
         if (!$contextUrlAttributes) {
-            return $this->categoryBreadcrumbProvider
-                ->getItemsForProduct($categoryId, $currentPageTitle);
+            return $this->categoryBreadcrumbProvider->getItemsForProduct($categoryId, $currentPageTitle);
         }
+
         $breadcrumbs = [];
-        $slug = isset($contextUrlAttributes[0]['_used_slug']) ? $contextUrlAttributes[0]['_used_slug'] : null;
+        $slug = $contextUrlAttributes[0]['_used_slug'] ?? null;
         if ($slug) {
-            $contentVariant = $this->getRepository()->findVariantBySlug($slug);
+            $contentVariant = $this->getContentVariantRepository()->findVariantBySlug($slug);
             $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
         }
         $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
@@ -95,14 +116,13 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
      *
      * @return array
      */
-    private function getItemsByContentVariant(ContentNodeAwareInterface $contentVariant = null, Request $request)
+    private function getItemsByContentVariant(?ContentNodeAwareInterface $contentVariant, Request $request)
     {
         $breadcrumbs = [];
 
         if ($contentVariant) {
             $contentNode = $contentVariant->getNode();
             $path = $this->getContentNodeRepository()->getPath($contentNode);
-
             if (is_array($path)) {
                 foreach ($path as $breadcrumb) {
                     $breadcrumbs[] = [
@@ -121,10 +141,16 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
     /**
      * @return ContentVariantRepository
      */
-    private function getRepository()
+    private function getContentVariantRepository()
     {
-        return $this->registry
-            ->getManagerForClass(ContentVariant::class)
-            ->getRepository(ContentVariant::class);
+        return $this->doctrine->getRepository(ContentVariant::class);
+    }
+
+    /**
+     * @return ContentNodeRepository
+     */
+    private function getContentNodeRepository()
+    {
+        return $this->doctrine->getRepository(ContentNode::class);
     }
 }

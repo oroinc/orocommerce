@@ -5,89 +5,66 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $webCatalogProvider;
+    /** @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $webCatalogProvider;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestWebContentScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestWebContentScopeProvider;
 
-    /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $contentNodeTreeResolverFacade;
+    /** @var ContentNodeTreeResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentNodeTreeResolver;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var MenuDataProvider
-     */
-    protected $menuDataProvider;
+    /** @var MenuDataProvider */
+    private $menuDataProvider;
 
-    /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $cacheProvider;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->webCatalogProvider = $this->getMockBuilder(WebCatalogProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestStack = $this->createMock(RequestStack::class);
-        $this->contentNodeTreeResolverFacade = $this->createMock(ContentNodeTreeResolverInterface::class);
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->webCatalogProvider = $this->createMock(WebCatalogProvider::class);
+        $this->requestWebContentScopeProvider = $this->createMock(RequestWebContentScopeProvider::class);
+        $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolver::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
 
         $this->menuDataProvider = new MenuDataProvider(
-            $this->registry,
+            $this->doctrine,
             $this->webCatalogProvider,
-            $this->contentNodeTreeResolverFacade,
+            $this->contentNodeTreeResolver,
             $this->localizationHelper,
-            $this->requestStack,
+            $this->requestWebContentScopeProvider,
             $this->websiteManager
         );
 
@@ -97,23 +74,21 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getItemsDataProvider
-     *
-     * @param ResolvedContentNode $resolvedRootNode
-     * @param array               $expectedData
      */
-    public function testGetItems(ResolvedContentNode $resolvedRootNode, array $expectedData)
-    {
+    public function testGetItems(
+        ResolvedContentNode $resolvedRootNode,
+        array $expectedData,
+        int $maxNodesNestedLevel = null
+    ) {
         $webCatalogId = 42;
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => $webCatalogId]);
 
         $rootNode = new ContentNode();
         $scope = new Scope();
 
-        $request = Request::create('/', Request::METHOD_GET);
-        $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentScopeProvider->expects($this->once())
+            ->method('getScope')
+            ->willReturn($scope);
 
         $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
@@ -131,18 +106,12 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($webCatalog)
             ->willReturn($rootNode);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with(ContentNode::class)
             ->willReturn($nodeRepository);
 
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
-
-        $this->contentNodeTreeResolverFacade->expects($this->once())
+        $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
             ->with($rootNode, $scope)
             ->willReturn($resolvedRootNode);
@@ -167,26 +136,24 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('fetch')
             ->willReturn(false);
 
-        $actual = $this->menuDataProvider->getItems();
+        $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
     }
 
     /**
      * @dataProvider getItemsDataProvider
-     *
-     * @param ResolvedContentNode $resolvedRootNode
-     * @param array               $expectedData
      */
-    public function testGetItemsWithNavigationRoot(ResolvedContentNode $resolvedRootNode, array $expectedData)
-    {
+    public function testGetItemsWithNavigationRoot(
+        ResolvedContentNode $resolvedRootNode,
+        array $expectedData,
+        int $maxNodesNestedLevel = null
+    ) {
         $rootNode = new ContentNode();
         $scope = new Scope();
 
-        $request = Request::create('/', Request::METHOD_GET);
-        $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentScopeProvider->expects($this->once())
+            ->method('getScope')
+            ->willReturn($scope);
 
         $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
@@ -199,14 +166,10 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $nodeRepository->expects($this->never())
             ->method('getRootNodeByWebCatalog');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository');
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
-
-        $this->contentNodeTreeResolverFacade->expects($this->once())
+        $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
             ->with($rootNode, $scope)
             ->willReturn($resolvedRootNode);
@@ -231,11 +194,14 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('fetch')
             ->willReturn(false);
 
-        $actual = $this->menuDataProvider->getItems();
+        $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
     }
 
-    public function testGetItemsCached()
+    /**
+     * @dataProvider getItemsCachedDataProvider
+     */
+    public function testGetItemsCached(int $maxNodesNestedLevel = null)
     {
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
 
@@ -246,11 +212,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             MenuDataProvider::CHILDREN => []
         ];
 
-        $request = Request::create('/', Request::METHOD_GET);
-        $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentScopeProvider->expects($this->once())
+            ->method('getScope')
+            ->willReturn($scope);
 
         $localization = $this->getEntity(Localization::class, ['id' => 42]);
         $this->localizationHelper->expects($this->once())
@@ -270,11 +234,27 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->cacheProvider->expects($this->at(0))
             ->method('fetch')
-            ->with('cacheVal_menu_items_1_77_42')
+            ->with(sprintf(
+                'cacheVal_menu_items_%s_1_77_42',
+                null !== $maxNodesNestedLevel ? (string)$maxNodesNestedLevel : ''
+            ))
             ->willReturn([MenuDataProvider::CHILDREN => $expectedData]);
 
-        $actual = $this->menuDataProvider->getItems();
+        $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getItemsCachedDataProvider()
+    {
+        return [
+            'without maxNodesNestedLevel' => [],
+            'with maxNodesNestedLevel' => [
+                'maxNodesNestedLevel' => 2
+            ]
+        ];
     }
 
     /**
@@ -289,7 +269,31 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'root with children' => [
                 'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
-                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2')
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
+                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                    ])
+                ]),
+                'expectedData' => [
+                    [
+                        MenuDataProvider::IDENTIFIER => 'root__node2',
+                        MenuDataProvider::LABEL => 'node2',
+                        MenuDataProvider::URL => '/node2',
+                        MenuDataProvider::CHILDREN => [
+                            [
+                                MenuDataProvider::IDENTIFIER => 'node3',
+                                MenuDataProvider::LABEL => 'node3',
+                                MenuDataProvider::URL => '/node3',
+                                MenuDataProvider::CHILDREN => []
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'with maxNodesNestedLevel' => [
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
+                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                    ])
                 ]),
                 'expectedData' => [
                     [
@@ -298,8 +302,32 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                         MenuDataProvider::URL => '/node2',
                         MenuDataProvider::CHILDREN => []
                     ]
-                ]
+                ],
+                'maxNodesNestedLevel' => 1
             ],
+            'with maxNodesNestedLevel equals to tree nesting level' => [
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
+                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                    ])
+                ]),
+                'expectedData' => [
+                    [
+                        MenuDataProvider::IDENTIFIER => 'root__node2',
+                        MenuDataProvider::LABEL => 'node2',
+                        MenuDataProvider::URL => '/node2',
+                        MenuDataProvider::CHILDREN => [
+                            [
+                                MenuDataProvider::IDENTIFIER => 'node3',
+                                MenuDataProvider::LABEL => 'node3',
+                                MenuDataProvider::URL => '/node3',
+                                MenuDataProvider::CHILDREN => []
+                            ]
+                        ]
+                    ]
+                ],
+                'maxNodesNestedLevel' => 2
+            ]
         ];
     }
 

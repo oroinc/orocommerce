@@ -3,21 +3,22 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 
+/**
+ * The provider for the current web content variant.
+ */
 class ContentVariantDataProvider
 {
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    /** @var RequestWebContentVariantProvider */
+    private $requestWebContentVariantProvider;
 
     /**
-     * @param RequestStack $requestStack
+     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestWebContentVariantProvider $requestWebContentVariantProvider)
     {
-        $this->requestStack = $requestStack;
+        $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;
     }
 
     /**
@@ -25,13 +26,6 @@ class ContentVariantDataProvider
      */
     public function getFromRequest()
     {
-        $contentVariant = null;
-        $request = $this->requestStack->getCurrentRequest();
-
-        if ($request && $request->attributes->has('_content_variant')) {
-            $contentVariant = $request->attributes->get('_content_variant');
-        }
-
-        return $contentVariant;
+        return $this->requestWebContentVariantProvider->getContentVariant();
     }
 }

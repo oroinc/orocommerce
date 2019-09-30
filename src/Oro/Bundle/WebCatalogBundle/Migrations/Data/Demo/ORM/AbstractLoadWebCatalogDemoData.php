@@ -14,11 +14,11 @@ use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantT
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -217,21 +217,8 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
      */
     protected function generateCache(WebCatalog $webCatalog)
     {
-        $registry = $this->container->get('doctrine');
-        $scopeMatcher = $this->container->get('oro_web_catalog.scope_matcher');
-        $dumper = $this->container->get('oro_web_catalog.cache.dumper.content_node_tree_dumper');
-
-        /** @var ContentNodeRepository $contentNodeRepo */
-        $contentNodeRepo = $registry
-            ->getManagerForClass(ContentNode::class)
-            ->getRepository(ContentNode::class);
-
-        $rootContentNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
-
-        $scopes = $scopeMatcher->getUsedScopes($webCatalog);
-
-        foreach ($scopes as $scope) {
-            $dumper->dump($rootContentNode, $scope);
-        }
+        /** @var ContentNodeTreeCacheDumper $dumper */
+        $dumper = $this->container->get('oro_web_catalog.content_node_tree_cache_dumper');
+        $dumper->dumpForAllScopes($webCatalog);
     }
 }

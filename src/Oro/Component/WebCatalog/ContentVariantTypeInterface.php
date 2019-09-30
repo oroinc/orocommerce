@@ -5,45 +5,64 @@ namespace Oro\Component\WebCatalog;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
+/**
+ * Represents a content variant type for web catalog content nodes.
+ */
 interface ContentVariantTypeInterface
 {
     /**
-     * Get type name.
+     * Gets the name of this content variant type.
      *
      * @return string
      */
     public function getName();
 
     /**
-     * Get title.
-     *
-     * Rendered on "Add ..." variant button
+     * Gets the translatable label for this content variant type title.
+     * Rendered on "Add ..." variant button.
      *
      * @return string
      */
     public function getTitle();
 
     /**
-     * Get form type class for supported type.
+     * Gets the form type class responsible to edit the content variant details.
      *
      * @return string
      */
     public function getFormType();
 
     /**
-     * Is current variant allowed to be added.
-     *
-     * Here some ACL checks may be performed
+     * Checks whether this content variant type is allowed to be added to web catalog content nodes.
+     * Here some ACL checks may be performed.
      *
      * @return bool
      */
     public function isAllowed();
 
     /**
-     * Get routing data based on configured variant.
+     * Gets routing data for the given content variant instance.
      *
      * @param ContentVariantInterface $contentVariant
+     *
      * @return RouteData
      */
     public function getRouteData(ContentVariantInterface $contentVariant);
+
+    /**
+     * Gets the class name of an entity for API resource for this content variant type.
+     *
+     * @return string
+     */
+    public function getApiResourceClassName();
+
+    /**
+     * Gets DQL expression that should be added to SELECT part of ORM query
+     * to get the identifier of an entity for API resource for this content variant type.
+     *
+     * @param string $alias The alias for ContentVariant entity in ORM query
+     *
+     * @return string
+     */
+    public function getApiResourceIdentifierDqlExpression($alias);
 }

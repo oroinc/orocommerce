@@ -26,6 +26,12 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected $validator;
 
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
+     */
+    protected $productUnitsProvider;
+
     /**
      * {@inheritDoc}
      */
@@ -35,6 +41,12 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             ->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->productUnitsProvider
+            ->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         parent::setUp();
     }
@@ -88,7 +100,8 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductAutocompleteType::class => new StubProductAutocompleteType(),
-                    ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
+                    ProductUnitsType::class => new ProductUnitsType($unitsProviderMock),
+                    ProductRowType::class => new ProductRowType($this->productUnitsProvider)
                 ],
                 []
             ),
@@ -185,7 +198,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 
-        $formType = new ProductRowType();
+        $formType = new ProductRowType($this->productUnitsProvider);
         $formType->buildView($view, $form, []);
 
         $this->assertEquals($product, $view->vars['product']);
@@ -235,7 +248,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             ->with(ProductDataStorage::PRODUCT_SKU_KEY)
             ->willReturn($skuField);
 
-        $formType = new ProductRowType();
+        $formType = new ProductRowType($this->productUnitsProvider);
         $formType->buildView($view, $form, []);
 
         $this->assertEquals($product, $view->vars['product']);

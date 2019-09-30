@@ -38,7 +38,7 @@
             </div>
             <div class="quick-order-add__col quick-order-add__unit">
                 <label class="quick-order-add__label">{{ 'oro.product.productunitprecision.unit.label'|trans }}</label>
-                {{ form_widget(form.productUnit, {attr: {placeholder: "oro.product.unit.placeholder"}}) }}
+                {{ form_widget(form.productUnit, {'disabled': 'disabled'}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields %}
             {% if allow_delete %}

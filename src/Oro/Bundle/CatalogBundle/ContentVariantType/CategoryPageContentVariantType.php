@@ -12,7 +12,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Content variant type for category
+ * The content variant type for a master catalog category.
  */
 class CategoryPageContentVariantType implements ContentVariantTypeInterface
 {
@@ -85,5 +85,21 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
                     $contentVariant->isOverrideVariantConfiguration(),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return Category::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return sprintf('IDENTITY(%s.category_page_category)', $alias);
     }
 }

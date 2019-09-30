@@ -22,6 +22,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 
 /**
+ * Represents a node in the web catalog tree.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
  * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
@@ -174,7 +176,6 @@ class ContentNode extends ExtendContentNode implements
      *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
      *     mappedBy="node",
      *     cascade={"ALL"},
-     *     fetch="EAGER",
      *     orphanRemoval=true
      * )
      */
