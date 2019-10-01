@@ -2,6 +2,12 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.1.0-beta
+
+### Added
+#### CMSBundle
+* Added *WYSIWYG* field to Entity Manager. Read more in documentation [how to change TextArea field to WYSIWYG field](./src/Oro/Bundle/CMSBundle/Resources/doc/wysiwyg.md#how-to-change-textarea-field-to-wysiwyg-field)
+
 ## 4.0.0 (2019-07-31)
 [Show detailed list of changes](incompatibilities-4-0.md)
 
