@@ -131,16 +131,16 @@ oro_behat_extension:
         mapping:
           Attributes_1:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_1]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_1")]'
           Attributes_2:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_2]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_2")]'
           Attributes_3:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
           Color:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Color]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Color")]'
 
     LineItemQuantity:
       selector:

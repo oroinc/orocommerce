@@ -44,15 +44,13 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         code: 'product_attribute_family_code'
         __calls:
             - addLabel: ['@localProductAttributeFamily']
-        organization: '@organization'
-        owner: '@admin'
+        owner: '@organization'
     productAttributeFamilyCustom:
         entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
         code: 'product_attribute_family_code_custom'
         __calls:
             - addLabel: ['@localProductAttributeFamilyCustom']
-        organization: '@organization'
-        owner: '@admin'
+        owner: '@organization'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
     attributeGroupGeneral:

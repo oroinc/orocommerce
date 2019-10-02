@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
@@ -20,14 +21,19 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param ManagerRegistry $registry
      * @param PropertyAccessor $propertyAccessor
+     * @param AclHelper $aclHelper
      */
-    public function __construct(ManagerRegistry $registry, PropertyAccessor $propertyAccessor)
+    public function __construct(ManagerRegistry $registry, PropertyAccessor $propertyAccessor, AclHelper $aclHelper)
     {
         $this->registry = $registry;
         $this->propertyAccessor = $propertyAccessor;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -58,7 +64,7 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
                 function (AttributeFamily $attributeFamily) {
                     return $this->convertItem($attributeFamily);
                 },
-                $qb->getQuery()->getResult()
+                $this->aclHelper->apply($qb)->getResult()
             ),
             'more' => false
         ];

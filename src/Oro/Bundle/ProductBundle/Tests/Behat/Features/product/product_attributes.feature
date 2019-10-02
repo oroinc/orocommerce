@@ -3,12 +3,15 @@ Feature: Product attributes
 
   Scenario: Create product attributes
     Given I login as administrator
-    And I go to Products/ Product Attributes
-    And click "Create Attribute"
+    When I go to Products/ Product Attributes
+    Then shouldn't see "Organization" column in grid
+    When click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
+    And I click "Backoffice options"
+    Then I should not see "Applicable Organizations"
     And set Options with:
       | Label  |
       | Black  |
@@ -23,23 +26,27 @@ Feature: Product attributes
       | Label  |
       | L      |
       | M      |
-    When I save and close form
+    And I save and close form
     And click update schema
     Then I should see Schema updated flash message
 
   Scenario: Create extend field from entity management
     Given I go to System/ Entities/ Entity Management
-    And I filter Name as is equal to "Product"
+    When I filter Name as is equal to "Product"
     And I click view "Product" in grid
-    And I click "Create Field"
+    And I click "Fields"
+    Then should see "Organization" column in grid
+    When I click "Create Field"
     And I fill form with:
       | Field Name   | us_size      |
       | Storage Type | Table column |
       | Type         | Select       |
     And click "Continue"
+    And I click "Other"
+    Then I should see "Applicable Organizations"
     When I save and close form
     Then I should see "Field saved" flash message
-    And I click update schema
+    When I click update schema
     Then I should see Schema updated flash message
 
   Scenario: Create product family with new attributes

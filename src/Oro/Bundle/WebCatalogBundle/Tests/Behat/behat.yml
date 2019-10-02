@@ -69,6 +69,9 @@ oro_behat_extension:
         Content Node Remove First Restriction:
             selector: '[data-content="oro_web_catalog_content_node[scopes][0]"] .removeRow'
 
+        Override Product Variant Configuration:
+            selector: '[name="oro_web_catalog_content_node[contentVariants][0][overrideVariantConfiguration]"]'
+
         Headlamps category:
             selector:
                 type: xpath

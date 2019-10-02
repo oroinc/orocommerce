@@ -452,6 +452,7 @@ services:
         arguments:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.config_manager'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
@@ -525,6 +526,7 @@ services:
         arguments:
             - '@doctrine'
             - '@property_accessor'
+            - '@oro_security.acl_helper'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: 'oro_product_families' }
 
@@ -1636,3 +1638,10 @@ services:
             - '%oro_product.sku.regex_pattern%'
         tags:
             - { name: validator.constraint_validator, alias: oro_product.validator_constraints.sku_regex_validator }
+
+    oro_product.entity.builder.product_family:
+        class: Oro\Bundle\ProductBundle\Entity\Builder\ProductFamilyBuilder
+        arguments:
+            - '@translator'
+            - '@oro_entity_config.manager.attribute_group_manager'
+        public: true
