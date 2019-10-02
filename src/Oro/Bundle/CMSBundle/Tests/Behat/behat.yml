@@ -23,6 +23,13 @@ oro_behat_extension:
         PageTitle:
             selector: "title"
 
+        CMS Page Form:
+            selector: 'form[name="oro_cms_page"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Content: 'oro_cms_page[content]'
+
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -43,6 +50,24 @@ oro_behat_extension:
         Content Field Data:
             selector: 'div.control-group:contains("Content") .controls>.control-label'
 
+        Homepage Slider:
+            selector: 'div.promo-slider'
+
+        CMS Page:
+            selector: 'div.cms-page'
+
+        Content Widget Form:
+            selector: 'form[name="oro_cms_content_widget"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+        Content Blocks Content Widget Usages Grid:
+            selector: 'div[data-page-component-name="cms-content-widget-content-blocks-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        CMS Pages Content Widget Usages Grid:
+            selector: 'div[data-page-component-name="cms-content-widget-pages-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     suites:
         OroCMSBundle:
             contexts:
@@ -53,5 +78,6 @@ oro_behat_extension:
                 - OroWebCatalogBundle::FeatureContext
                 - OroApplicationBundle::CommerceMainContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - OroNavigationBundle::TabContext
             paths:
                 - '@OroCMSBundle/Tests/Behat/Features'

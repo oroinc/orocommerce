@@ -61,6 +61,28 @@ oro.cms:
             general.label: General
             use_for.label: Restrictions
 
+    contentwidget:
+        entity_label: Content Widget
+        entity_plural_label: Content Widgets
+        id.label: ID
+        name.label: Name
+        description.label: Description
+        created_at.label: Created At
+        updated_at.label: Updated At
+        organization.label: Organization
+        widget_type.label: Widget Type
+        template.label: Template
+        settings.label: Settings
+
+        form:
+            choose_content_widget_type: Choose a content widget type...
+            no_available_content_widget_types: No content widget types available
+
+        sections:
+            general.label: General
+            additional_information.label: Additional Information
+            usages.label: Usages
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
@@ -73,6 +95,7 @@ oro.cms:
     controller:
         page.saved.message: 'Page has been saved'
         contentblock.saved.message: 'Content block has been saved'
+        contentwidget.saved.message: 'Content widget has been saved'
 
     menu:
         marketing_tab.label: 'Marketing'

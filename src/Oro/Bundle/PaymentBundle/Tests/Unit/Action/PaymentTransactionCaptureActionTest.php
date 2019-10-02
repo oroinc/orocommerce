@@ -62,8 +62,8 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ->expects(static::exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
-                $capturePaymentTransaction,
-                $authorizationPaymentTransaction
+                [$capturePaymentTransaction],
+                [$authorizationPaymentTransaction]
             );
 
         $this->contextAccessor

@@ -13,7 +13,5 @@
         '~class': ' promo-slider'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ contentBlock.content|raw }}
-    </div>
+    {{ block_widget(block, { attr: attr }) }}
 {% endblock %}

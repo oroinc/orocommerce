@@ -1,6 +1,7 @@
 @ticket-BB-17074
 @fixture-OroProductBundle:products_grid.yml
 @regression
+@skip
 Feature: Filter float attribute with null value
   In order to filter float attribute with null value
   As customer
