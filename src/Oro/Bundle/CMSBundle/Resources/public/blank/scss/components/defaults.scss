@@ -89,10 +89,6 @@
     table {
         @extend %table;
     }
-
-    iframe[src*=maps] {
-        width: 100%;
-    }
 }
 
 @include breakpoint('tablet-small') {

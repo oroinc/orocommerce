@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
@@ -51,10 +52,14 @@ class PageType extends AbstractType
             )
             ->add(
                 'content',
-                WYSIWYGType::class,
+                OroRichTextType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
                     'required' => false,
+                    'wysiwyg_options' => [
+                        'statusbar' => true,
+                        'resize' => true,
+                    ]
                 ]
             )
             ->add(

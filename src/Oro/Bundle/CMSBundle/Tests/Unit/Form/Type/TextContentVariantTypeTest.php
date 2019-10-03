@@ -5,11 +5,12 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
-use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase
 {
@@ -18,11 +19,25 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /**
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
+         */
+        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $htmlTagProvider = $this->createMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
+        $htmlTagProvider->expects($this->any())
+            ->method('getAllowedElements')
+            ->willReturn(['br', 'a']);
+
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    WYSIWYGType::class => new WYSIWYGType(),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 []
             )

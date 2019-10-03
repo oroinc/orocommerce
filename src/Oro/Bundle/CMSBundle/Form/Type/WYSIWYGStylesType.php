@@ -2,32 +2,19 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
-use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Provides styles for WYSIWYG editor.
  */
 class WYSIWYGStylesType extends AbstractType
 {
-    public const TYPE_SUFFIX = WYSIWYGStyleType::TYPE_SUFFIX;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['attr']['data-grapesjs-styles'] = $form->getName();
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getParent()
     {
-        return HiddenType::class;
+        return TextareaType::class;
     }
 }

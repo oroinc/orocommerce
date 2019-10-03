@@ -8,8 +8,10 @@ use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
-use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -18,6 +20,7 @@ use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
@@ -33,6 +36,19 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $htmlTagProvider->expects($this->any())
+            ->method('getAllowedElements')
+            ->willReturn(['br', 'a']);
+
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -41,7 +57,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => new WYSIWYGType(),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 []
             ),
