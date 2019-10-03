@@ -1,0 +1,4 @@
+oro.cms:
+    wysiwyg:
+        theme_selector:
+            placeholder: 'Type theme name'
