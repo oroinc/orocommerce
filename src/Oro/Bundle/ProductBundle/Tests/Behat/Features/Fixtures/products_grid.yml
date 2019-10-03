@@ -35,7 +35,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..20}:
-        unit: '@item'
+        unit: '@each'
         precision: '1'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
