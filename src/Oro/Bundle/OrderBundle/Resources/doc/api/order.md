@@ -564,33 +564,6 @@ Example:
 ```
 {@/request}
 
-### warehouse
-
-#### get_subresource
-
-Retrieve a record of warehouse assigned to a specific order record.
-
-#### get_relationship
-
-Retrieve ID of warehouse record assigned to a specific order record.
-
-#### update_relationship
-
-Replace warehouse assigned to a specific order record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "warehouses",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
 ### paymentTerm
 
 #### get_subresource

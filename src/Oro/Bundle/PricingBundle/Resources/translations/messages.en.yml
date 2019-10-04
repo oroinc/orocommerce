@@ -125,16 +125,37 @@ oro.pricing:
     pricerule:
         entity_label: Price Calculation Rule
         entity_plural_label: Price Calculation Rules
-        currency.label: Currency
-        currency_expression.label: Currency Expression
-        quantity.label: Quantity
-        quantity_expression.label: Quantity Expression
-        product_unit.label: Product Unit
-        product_unit_expression.label: Product Unit Expression
-        rule_condition.label: Condition
-        rule.label: Rule
-        priority.label: Priority
-        calculate_as.label: Calculate As
+        entity_description: Represents a price calculation rule and conditions when it is applicable.
+        currency:
+            label: Currency
+            description: The product price currency in a price list would be affected by the price rule.
+        currency_expression:
+            label: Currency Expression
+            description: An expression to calculate a product price currency value to which the price rule applies.
+        quantity:
+            label: Quantity
+            description: The product quantity to which the price rule applies.
+        quantity_expression:
+            label: Quantity Expression
+            description: An expression to calculate a product quantity value to which the price rule applies.
+        product_unit:
+            label: Product Unit
+            description: The product unit to which the price rule applies.
+        product_unit_expression:
+            label: Product Unit Expression
+            description: An expression to calculate a product unit code to which the price rule applies.
+        rule_condition:
+            label: Condition
+            description: A condition that should match for the price rule to apply.
+        rule:
+            label: Calculate As
+            description: An expression that is used for calculating product price.
+        price_list:
+            label: Price List
+            description: The price list to which the price rule applies.
+        priority:
+            label: Priority
+            description: The priority of the price rule in a price list.
         price_for_quantity.label: Price for quantity
         show_expression_fields.label: Enter expression
         show_unit_fields.label: Select unit

@@ -1,8 +1,28 @@
 api:
     entities:
         Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-            documentation_resource: '@OroInventoryBundle/Resources/doc/api/inventory-level.md'
+            documentation_resource: '@OroInventoryBundle/Resources/doc/api/inventory_level.md'
+            fields:
+                product:
+                    form_options:
+                        mapped: false
+                productUnitPrecision:
+                    form_options:
+                        mapped: false
+                organization:
+                    form_options:
+                        mapped: false
             actions:
                 create: false
                 delete: false
                 delete_list: false
+            subresources:
+                product:
+                    actions:
+                        update_relationship: false
+                productUnitPrecision:
+                    actions:
+                        update_relationship: false
+                organization:
+                    actions:
+                        update_relationship: false

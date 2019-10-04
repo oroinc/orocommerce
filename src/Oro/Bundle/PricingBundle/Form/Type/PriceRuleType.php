@@ -40,7 +40,7 @@ class PriceRuleType extends AbstractType
                 PriceRuleEditorType::class,
                 [
                     'numericOnly' => true,
-                    'label' => 'oro.pricing.pricerule.calculate_as.label'
+                    'label' => 'oro.pricing.pricerule.rule.label'
                 ]
             )
             ->add(
