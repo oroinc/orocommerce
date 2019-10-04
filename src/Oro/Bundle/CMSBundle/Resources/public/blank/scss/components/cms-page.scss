@@ -156,6 +156,10 @@
         margin-bottom: $offset-twice;
     }
 
+    iframe[src*=maps] {
+        width: 100%;
+    }
+
     code,
     samp {
         border-top: $cms-page-code-border;
