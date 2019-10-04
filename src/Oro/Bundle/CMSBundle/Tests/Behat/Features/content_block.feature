@@ -27,7 +27,7 @@ Feature: Content Block
 
   Scenario: Block for authenticated non authenticated users
     Given I go to Marketing/ Content Blocks
-    And I click edit "home-page-slider" in grid
+    And I click "edit" on row "home-page-slider" in grid
     And fill "Content Block Form" with:
       | Customer Group | All Customers |
     And I save and close form
@@ -41,11 +41,11 @@ Feature: Content Block
     Given I proceed as the Admin
     And I am on dashboard
     And I go to Marketing/ Content Blocks
-    And I click edit "home-page-slider" in grid
+    And I click "edit" on row "home-page-slider" in grid
     And click "Add Content"
     And I fill "Content Variant 1 form" with:
-      | Content  | Test block |
       | Customer | Company B  |
+    And I fill in WYSIWYG "Content Variant 1 Content" with "Test block"
     When I save and close form
     Then I should see "Content block has been saved" flash message
     And click logout in user menu

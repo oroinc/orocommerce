@@ -19,9 +19,8 @@ Feature: Content Widget in Content Block
     Given I proceed as the Admin
     And I login as administrator
     And I go to Marketing/ Content Blocks
-    And I click edit "home-page-slider" in grid
-    And fill "Content Block Form" with:
-      | Content | {{ widget('copyright') }} |
+    And I click "edit" on row "home-page-slider" in grid
+    And I fill in WYSIWYG "Content Variant Content" with "{{ widget('copyright') }}"
     When I save and close form
     Then I should see "Content block has been saved" flash message
 
@@ -33,7 +32,7 @@ Feature: Content Widget in Content Block
     Then I should not see "Delete"
 
   Scenario: Check content widget usages grid
-    When I click View "copyright" in grid
+    When I click "view" on row "copyright" in grid
     Then number of records in "Content Blocks Content Widget Usages Grid" should be 1
     And I should see following "Content Blocks Content Widget Usages Grid" grid:
       | Alias            | Title            |
@@ -56,9 +55,8 @@ Feature: Content Widget in Content Block
   Scenario: Ensure content widget can be deleted when there are no usages
     Given I proceed as the Admin
     And I go to Marketing/ Content Blocks
-    And I click edit "home-page-slider" in grid
-    And fill "Content Block Form" with:
-      | Content | another content |
+    And I click "edit" on row "home-page-slider" in grid
+    And I fill in WYSIWYG "Content Variant Content" with "another content"
     When I save and close form
     Then I should see "Content block has been saved" flash message
     And I go to Marketing/ Content Widgets

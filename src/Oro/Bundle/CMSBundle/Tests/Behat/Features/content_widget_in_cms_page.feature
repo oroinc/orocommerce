@@ -22,8 +22,7 @@ Feature: Content Widget in CMS Page
     And I login as administrator
     And I go to Marketing/Landing Pages
     And I click Edit "Test CMS Page" in grid
-    And fill "CMS Page Form" with:
-      | Content | {{ widget('copyright') }} |
+    And I fill in WYSIWYG "CMS Page Content" with "{{ widget('copyright') }}"
     When I save and close form
     Then I should see "Page has been saved" flash message
 
@@ -59,8 +58,7 @@ Feature: Content Widget in CMS Page
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
     And I click edit "Test CMS Page" in grid
-    And fill "CMS Page Form" with:
-      | Content | another content |
+    And I fill in WYSIWYG "CMS Page Content" with "another content"
     When I save and close form
     Then I should see "Page has been saved" flash message
     And I go to Marketing/ Content Widgets
