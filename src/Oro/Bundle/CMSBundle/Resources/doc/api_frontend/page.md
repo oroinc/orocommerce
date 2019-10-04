@@ -24,6 +24,10 @@ The localized title of the landing page.
 
 The content of the landing page.
 
+### content_style
+
+The styles of the landing page.
+
 ### url
 
 The relative URL of the landing page for the current localization.
