@@ -986,7 +986,7 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 #### update
 
@@ -1002,7 +1002,7 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 #### update
 
@@ -1018,7 +1018,7 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 #### update
 
@@ -1070,7 +1070,7 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 #### update
 
@@ -1104,7 +1104,7 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 **Please note:**
 

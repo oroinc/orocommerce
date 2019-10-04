@@ -11,14 +11,13 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -87,8 +86,7 @@ class ContentNodeController extends AbstractController
     }
 
     /**
-     * @Route("/move", name="oro_content_node_move")
-     * @Method({"PUT"})
+     * @Route("/move", name="oro_content_node_move", methods={"PUT"})
      * @CsrfProtection()
      * @AclAncestor("oro_web_catalog_update")
      *
@@ -101,7 +99,7 @@ class ContentNodeController extends AbstractController
         $parentId = (int)$request->get('parent');
         $position = (int)$request->get('position');
         $createRedirect = (bool)$request->get('createRedirect', false);
-        
+
         $handler = $this->getTreeHandler();
         $handler->setCreateRedirect($createRedirect);
 

@@ -12,6 +12,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
+/**
+ * Update all products with default product family
+ */
 class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -73,12 +76,22 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         $user = $this->getFirstUser($manager);
         $organization = $user->getOrganization();
 
-        $attributeFamily = new AttributeFamily();
-        $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
-        $attributeFamily->setEntityClass(Product::class);
-        $attributeFamily->setOwner($this->getUser($manager));
-        $attributeFamily->setDefaultLabel('Default');
-        $attributeFamily->setOrganization($organization);
+        /** @var AttributeFamily $attributeFamily */
+        $attributeFamily = $manager->getRepository(AttributeFamily::class)
+            ->findOneBy(['owner' => $organization]);
+
+        if ($attributeFamily === null) {
+            $attributeFamily = new AttributeFamily();
+            $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
+            $attributeFamily->setEntityClass(Product::class);
+            $attributeFamily->setDefaultLabel('Default');
+        } else {
+            $groups = $attributeFamily->getAttributeGroups();
+            foreach ($groups as $group) {
+                $attributeFamily->removeAttributeGroup($group);
+            }
+        }
+        $attributeFamily->setOwner($organization);
 
         $this->addGroupsWithAttributesToFamily(self::$groups, $attributeFamily, $manager);
         $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);

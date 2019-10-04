@@ -102,7 +102,7 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### orderDiscountType
 
@@ -110,7 +110,7 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -126,7 +126,7 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -142,7 +142,7 @@ Delete a collection of discount records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 

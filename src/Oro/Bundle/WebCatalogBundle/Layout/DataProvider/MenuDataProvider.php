@@ -8,16 +8,17 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Layout data provider that helps to build main navigation menu on the front store
- * Cashes resolved webcatalog root items
+ * Layout data provider that helps to build main navigation menu on the front store.
+ * Cashes resolved web catalog root items.
  */
-class MenuDataProvider extends AbstractWebCatalogDataProvider
+class MenuDataProvider
 {
     use DataProviderCacheTrait;
 
@@ -26,62 +27,62 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
     const URL = 'url';
     const CHILDREN = 'children';
 
-    /**
-     * @var WebCatalogProvider
-     */
-    protected $webCatalogProvider;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /**
-     * @var ContentNodeTreeResolverInterface
-     */
-    protected $contentNodeTreeResolverFacade;
+    /** @var LocalizationHelper */
+    private $localizationHelper;
 
-    /**
-     * @var WebsiteManager
-     */
+    /** @var RequestWebContentScopeProvider */
+    private $requestWebContentScopeProvider;
+
+    /** @var WebCatalogProvider */
+    private $webCatalogProvider;
+
+    /** @var ContentNodeTreeResolverInterface */
+    private $contentNodeTreeResolver;
+
+    /** @var WebsiteManager */
     private $websiteManager;
 
-    /**
-     * @var ContentNode
-     */
+    /** @var ContentNode */
     private $rootNode = false;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $doctrine
      * @param WebCatalogProvider $webCatalogProvider
-     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolverFacade
+     * @param ContentNodeTreeResolverInterface $contentNodeTreeResolver
      * @param LocalizationHelper $localizationHelper
-     * @param RequestStack $requestStack
+     * @param RequestWebContentScopeProvider $requestWebContentScopeProvider
      * @param WebsiteManager $websiteManager
      */
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         WebCatalogProvider $webCatalogProvider,
-        ContentNodeTreeResolverInterface $contentNodeTreeResolverFacade,
+        ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         LocalizationHelper $localizationHelper,
-        RequestStack $requestStack,
+        RequestWebContentScopeProvider $requestWebContentScopeProvider,
         WebsiteManager $websiteManager
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->webCatalogProvider = $webCatalogProvider;
-        $this->contentNodeTreeResolverFacade = $contentNodeTreeResolverFacade;
+        $this->contentNodeTreeResolver = $contentNodeTreeResolver;
         $this->localizationHelper = $localizationHelper;
-        $this->requestStack = $requestStack;
+        $this->requestWebContentScopeProvider = $requestWebContentScopeProvider;
         $this->websiteManager = $websiteManager;
     }
 
     /**
-     * {@inheritdoc}
+     * @param int|null $maxNodesNestedLevel
+     *
+     * @return array
      */
     public function getItems(int $maxNodesNestedLevel = null)
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        /** @var Scope $scope */
-        if ($request && $scope = $request->attributes->get('_web_content_scope')) {
-            $rootItem = $this->getCachedRootItem($scope);
-
-            if ($rootItem === false) {
+        $scope = $this->requestWebContentScopeProvider->getScope();
+        if (null !== $scope) {
+            $rootItem = $this->getCachedRootItem($scope, $maxNodesNestedLevel);
+            if (false === $rootItem) {
                 $rootItem = $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
                 if ($this->isCacheUsed()) {
                     $this->saveToCache($rootItem);
@@ -113,14 +114,9 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
         }
 
         if ($rootNode) {
-            $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode(
-                $rootNode,
-                $scope,
-                $maxNodesNestedLevel
-            );
-
+            $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
             if ($resolvedNode) {
-                $rootItem = $this->prepareItemsData($resolvedNode);
+                $rootItem = $this->prepareItemsData($resolvedNode, $maxNodesNestedLevel);
             }
         }
 
@@ -129,15 +125,18 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
 
     /**
      * @param Scope $scope
+     * @param int|null $maxNodesNestedLevel
+     *
      * @return array|bool|false
      */
-    private function getCachedRootItem(Scope $scope)
+    private function getCachedRootItem(Scope $scope, int $maxNodesNestedLevel = null)
     {
         if ($this->isCacheUsed()) {
             $rootNode = $this->getRootNode();
             $localization = $this->localizationHelper->getCurrentLocalization();
             $this->initCache([
                 'menu_items',
+                (string)$maxNodesNestedLevel,
                 $scope ? $scope->getId() : 0,
                 $rootNode ? $rootNode->getId() : 0,
                 $localization ? $localization->getId() : 0
@@ -151,9 +150,11 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
 
     /**
      * @param ResolvedContentNode $node
+     * @param int|null $remainingNestedLevel
+     *
      * @return array
      */
-    protected function prepareItemsData(ResolvedContentNode $node)
+    private function prepareItemsData(ResolvedContentNode $node, int $remainingNestedLevel = null)
     {
         $result = [];
 
@@ -163,8 +164,14 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
             ->getLocalizedValue($node->getResolvedContentVariant()->getLocalizedUrls());
 
         $result[self::CHILDREN] = [];
-        foreach ($node->getChildNodes() as $child) {
-            $result[self::CHILDREN][] = $this->prepareItemsData($child);
+        if (null === $remainingNestedLevel || $remainingNestedLevel > 0) {
+            $childrenRemainingNestedLevel = null !== $remainingNestedLevel ? $remainingNestedLevel - 1 : null;
+            foreach ($node->getChildNodes() as $child) {
+                $result[self::CHILDREN][] = $this->prepareItemsData(
+                    $child,
+                    $childrenRemainingNestedLevel
+                );
+            }
         }
 
         return $result;
@@ -181,5 +188,13 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
         }
 
         return $this->rootNode;
+    }
+
+    /**
+     * @return ContentNodeRepository
+     */
+    private function getContentNodeRepository()
+    {
+        return $this->doctrine->getRepository(ContentNode::class);
     }
 }

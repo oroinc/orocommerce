@@ -6,11 +6,11 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AjaxOrderController extends Controller
 {

@@ -44,7 +44,7 @@ included:
         attributes:
             createdAt: '@category1->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@category1->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            name: 'Category 1'
+            title: 'Category 1'
             shortDescription: 'Category 1 Short Description'
             description: 'Category 1 Description'
             url: '/category1_slug_default'

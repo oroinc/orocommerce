@@ -1,6 +1,14 @@
 /* @theme: default; */
 
 .quick-order-add {
+  &__unit {
+    .select {
+        color: $select-color;
+        height: 40px;
+        line-height: 1;
+    }
+  }
+
   &__subtotal {
     width: $quick-order-add-subtotal-width;
   }

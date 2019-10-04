@@ -19,7 +19,7 @@ included:
         type: mastercatalogcategories
         id: '<toString(@category1->id)>'
         attributes:
-            name: 'Category 1'
+            title: 'Category 1'
     -
         type: products
         id: '<toString(@configurable_product1_variant1->id)>'

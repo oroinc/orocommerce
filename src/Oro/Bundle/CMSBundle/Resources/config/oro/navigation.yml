@@ -32,6 +32,13 @@ navigation:
                     routes:      ['/^oro_cms_loginpage/']
                     description: 'oro.cms.menu.loginpage_list.description'
 
+            content_widget_list:
+                label:           'oro.cms.contentwidget.entity_plural_label'
+                route:           'oro_cms_content_widget_index'
+                position:        103
+                extras:
+                    routes:      ['/^oro_cms_content_widget/']
+
             shortcut_page_list:
                 label:           'oro.cms.page.entity_plural_label'
                 route:           'oro_cms_page_index'
@@ -44,6 +51,7 @@ navigation:
                         children:
                             page_list: ~
                             content_block_list: ~
+                            content_widget_list: ~
                             login_page_list: ~
             shortcuts:
                 children:
@@ -66,3 +74,8 @@ navigation:
         oro_cms_content_block_view: '%title%'
         oro_cms_content_block_update: '%title% - oro.ui.edit'
         oro_cms_content_block_create: 'oro.ui.create'
+
+        oro_cms_content_widget_index:  ~
+        oro_cms_content_widget_view: '%title%'
+        oro_cms_content_widget_update: '%title% - oro.ui.edit'
+        oro_cms_content_widget_create: 'oro.ui.create'

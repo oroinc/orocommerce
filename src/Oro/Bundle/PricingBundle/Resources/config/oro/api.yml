@@ -2,28 +2,14 @@ api:
     entities:
         Oro\Bundle\PricingBundle\Entity\PriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list.md'
-            actions:
-                create:
-                    fields:
-                        createdAt:
-                            exclude: true
-                        updatedAt:
-                            exclude: true
-                        containSchedule:
-                            exclude: true
-                update:
-                    fields:
-                        createdAt:
-                            exclude: true
-                        updatedAt:
-                            exclude: true
-                        containSchedule:
-                            exclude: true
             fields:
                 prices:
                     exclude: true
                 priceListCurrencies:
                     data_type: array
+                containSchedule:
+                    form_options:
+                        mapped: false
             subresources:
                 priceRules:
                     actions:
@@ -33,6 +19,7 @@ api:
                     actions:
                         update_relationship: false
                         add_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
             form_event_subscriber: oro_pricing.api_form_subscriber.add_schedules_to_price_list
@@ -40,17 +27,20 @@ api:
                 update:
                     fields:
                         priceList:
-                            exclude: true
+                            form_options:
+                                mapped: false
             subresources:
                 priceList:
                     actions:
                         update_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceRule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_rule.md'
             subresources:
                 priceList:
                     actions:
                         update_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_product_price.md'
             fields:
@@ -64,24 +54,22 @@ api:
                 currency:
                     form_options:
                         mapped: false
+
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
             fields:
                 prices:
                     exclude: true
             actions:
-                create:
-                    exclude: true
-                update:
-                    exclude: true
-                delete:
-                    exclude: true
-                delete_list:
-                    exclude: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
             subresources:
                 organization:
                     actions:
                         update_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer_group.md'
             form_event_subscriber:
@@ -90,9 +78,11 @@ api:
                 update:
                     fields:
                         website:
-                            exclude: true
+                            form_options:
+                                mapped: false
                         customerGroup:
-                            exclude: true
+                            form_options:
+                                mapped: false
             subresources:
                 website:
                     actions:
@@ -103,6 +93,7 @@ api:
                 customerGroup:
                     actions:
                         update_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_customer_group_fallback.md'
             form_event_subscriber:
@@ -111,9 +102,11 @@ api:
                 update:
                     fields:
                         website:
-                            exclude: true
+                            form_options:
+                                mapped: false
                         customerGroup:
-                            exclude: true
+                            form_options:
+                                mapped: false
             subresources:
                 website:
                     actions:
@@ -121,6 +114,7 @@ api:
                 customerGroup:
                     actions:
                         update_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer.md'
             form_event_subscriber:
@@ -129,9 +123,11 @@ api:
                 update:
                     fields:
                         website:
-                            exclude: true
+                            form_options:
+                                mapped: false
                         customer:
-                            exclude: true
+                            form_options:
+                                mapped: false
             subresources:
                 website:
                     actions:
@@ -151,9 +147,11 @@ api:
                 update:
                     fields:
                         website:
-                            exclude: true
+                            form_options:
+                                mapped: false
                         customer:
-                            exclude: true
+                            form_options:
+                                mapped: false
             subresources:
                 website:
                     actions:
@@ -164,11 +162,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\ProductPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
-            filters:
-                fields:
-                    priceList:
-                        operators: ['=']
-                        allow_array: false
             fields:
                 value:
                     form_options:
@@ -180,18 +173,19 @@ api:
                     exclude: true
                 priceRule:
                     exclude: true
+            filters:
+                fields:
+                    priceList:
+                        operators: ['=']
+                        allow_array: false
             actions:
-                update_relationship:
-                    exclude: true
-                get_subresource:
-                    exclude: true
-                get_relationship:
-                    exclude: true
-                delete_relationship:
-                    exclude: true
-                add_relationship:
-                    exclude: true
+                update_relationship: false
+                get_subresource: false
+                get_relationship: false
+                delete_relationship: false
+                add_relationship: false
                 update:
                     fields:
                         priceList:
-                            exclude: true
+                            form_options:
+                                mapped: false

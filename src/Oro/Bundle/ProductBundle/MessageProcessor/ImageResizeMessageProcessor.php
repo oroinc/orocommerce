@@ -65,8 +65,13 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
             return self::REJECT;
         }
 
+        $image = $productImage->getImage();
+        if (!$image) {
+            return self::REJECT;
+        }
+
         foreach ($this->getApplicableFilters($productImage, $data['dimensions']) as $filterName) {
-            $this->imageResizeManager->applyFilter($productImage->getImage(), $filterName, $data['force']);
+            $this->imageResizeManager->applyFilter($image, $filterName, $data['force']);
         }
 
         return self::ACK;

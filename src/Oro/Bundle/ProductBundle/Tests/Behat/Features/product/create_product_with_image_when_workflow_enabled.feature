@@ -53,6 +53,7 @@ Feature: Create product with image when workflow enabled
       | SKU   | Name     | Main | Listing | Additional |
       | PSKU2 | dog1.jpg | 1    | 1       | 1          |
       | PSKU3 | dog1.jpg | 0    | 0       | 1          |
+    And I open "Product Images" import tab
     And import file
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And I click view "PSKU2" in grid

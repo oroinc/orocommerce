@@ -13,12 +13,5 @@
         '~class': ' promo-slider'
     }) %}
 
-    {% if contentBlock.contentStyle|length -%}
-        {%- spaceless -%}
-            <style type="text/css">{{ contentBlock.contentStyle|raw }}</style>
-        {%- endspaceless -%}
-    {%- endif %}
-    <div {{ block('block_attributes') }}>
-        {{ contentBlock.content|raw }}
-    </div>
+    {{ block_widget(block, { attr: attr }) }}
 {% endblock %}

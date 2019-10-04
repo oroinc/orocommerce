@@ -15,30 +15,21 @@ api:
                             property_path: sourceEntityClass
                         id:
                             property_path: sourceEntityId
+                subtotalValue:
+                    form_options:
+                        mapped: false
+                totalValue:
+                    form_options:
+                        mapped: false
+                totalDiscountsAmount:
+                    form_options:
+                        mapped: false
             actions:
-                create:
-                    fields:
-                        subtotalValue:
-                            exclude: true
-                        totalValue:
-                            exclude: true
-                        totalDiscountsAmount:
-                            exclude: true
-                        internalStatus:
-                            exclude: true
-
                 update:
                     fields:
-                        subtotalValue:
-                            exclude: true
-                        totalValue:
-                            exclude: true
-                        totalDiscountsAmount:
-                            exclude: true
                         currency:
-                            exclude: true
-                        internalStatus:
-                            exclude: true
+                            form_options:
+                                mapped: false
 
         Extend\Entity\EV_Order_Internal_Status:
             actions: false
@@ -52,15 +43,10 @@ api:
                 currency:
                     form_options:
                         mapped: false
+                productUnitCode:
+                    form_options:
+                        mapped: false
             actions:
-                create:
-                    fields:
-                        productUnitCode:
-                            exclude: true
-                update:
-                    fields:
-                        productUnitCode:
-                            exclude: true
                 delete: false
                 delete_list: false
             subresources:

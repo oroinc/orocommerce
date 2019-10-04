@@ -1,4 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/orocms/default/scss/variables/defaults-config.scss'
-        - 'bundles/orocms/default/scss/styles.scss'

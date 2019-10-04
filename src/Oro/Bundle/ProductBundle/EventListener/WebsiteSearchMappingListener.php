@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
+use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
@@ -22,7 +22,7 @@ class WebsiteSearchMappingListener
     /** @var AttributeTypeRegistry */
     protected $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider */
+    /** @var AttributeConfigurationProviderInterface */
     protected $configurationProvider;
 
     /** @var ProductIndexFieldsProvider */
@@ -31,13 +31,13 @@ class WebsiteSearchMappingListener
     /**
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProvider $configurationProvider
+     * @param AttributeConfigurationProviderInterface $configurationProvider
      * @param ProductIndexFieldsProvider $fieldsProvider
      */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
-        AttributeConfigurationProvider $configurationProvider,
+        AttributeConfigurationProviderInterface $configurationProvider,
         ProductIndexFieldsProvider $fieldsProvider
     ) {
         $this->attributeManager = $attributeManager;

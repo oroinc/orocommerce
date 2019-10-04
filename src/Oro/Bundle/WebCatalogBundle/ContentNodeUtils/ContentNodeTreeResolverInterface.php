@@ -13,16 +13,9 @@ interface ContentNodeTreeResolverInterface
 {
     /**
      * @param ContentNode $node
-     * @param Scope $scope
-     * @param int|null $maxNodesNestedLevel
-     * @return null|ResolvedContentNode
+     * @param Scope       $scope
+     *
+     * @return ResolvedContentNode|null
      */
-    public function getResolvedContentNode(ContentNode $node, Scope $scope, int $maxNodesNestedLevel = null);
-
-    /**
-     * @param ContentNode $node
-     * @param Scope $scope
-     * @return bool
-     */
-    public function supports(ContentNode $node, Scope $scope);
+    public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode;
 }

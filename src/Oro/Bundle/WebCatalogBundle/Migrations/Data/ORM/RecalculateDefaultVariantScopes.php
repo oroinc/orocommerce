@@ -24,11 +24,12 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
      */
     public function load(ObjectManager $manager)
     {
-        /** @var ContentNodeRepository $webCatalogRepository */
+        /** @var ContentNodeRepository $contentNodeRepo */
         $contentNodeRepo = $manager->getRepository(ContentNode::class);
         $slugGenerator = $this->container->get('oro_web_catalog.generator.slug_generator');
         $messageProducer = $this->container->get('oro_message_queue.client.message_producer');
 
+        /** @var WebCatalog[] $webCatalogs */
         $webCatalogs = $manager->getRepository(WebCatalog::class)->findAll();
         foreach ($webCatalogs as $webCatalog) {
             $rootNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);

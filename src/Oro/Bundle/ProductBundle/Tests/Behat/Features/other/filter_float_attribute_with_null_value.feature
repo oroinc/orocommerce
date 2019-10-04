@@ -1,6 +1,7 @@
 @ticket-BB-17074
 @fixture-OroProductBundle:products_grid.yml
 @regression
+@skip
 Feature: Filter float attribute with null value
   In order to filter float attribute with null value
   As customer
@@ -47,8 +48,8 @@ Feature: Filter float attribute with null value
     And I go to Products/ Products
     And I click edit "PSKU20" in grid
     And fill "ProductForm" with:
-      | test6        | 5.5  |
-      | Price Unit 1 | item |
+      | test6            | 5.5 |
+      | PrimaryPrecision |  1  |
     When I save and close form
     Then I should see "Product has been saved" flash message
     When I proceed as the User

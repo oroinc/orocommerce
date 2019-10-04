@@ -243,41 +243,70 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
             element: Configurable Attributes
-          Color: 'oro_product[Color]'
-          Size: 'oro_product[Size]'
           Name Default Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Name First Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           Name First Slug Use Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
         # for testing product attributes
-          StringField: 'oro_product[StringField]'
-          IntegerField: 'oro_product[IntegerField]'
-          BigIntField: 'oro_product[BigIntField]'
-          SmallIntField: 'oro_product[SmallIntField]'
-          BooleanField: 'oro_product[BooleanField]'
-          DecimalField: 'oro_product[DecimalField]'
-          FloatField: 'oro_product[FloatField]'
-          PercentField: 'oro_product[PercentField]'
-          CurrencyField: 'oro_product[CurrencyField]'
+          Color:
+            type: 'css'
+            locator: '[id^="oro_product_Color"]'
+          Size:
+            type: 'css'
+            locator: '[id^="oro_product_Size"]'
+          StringField:
+            type: 'css'
+            locator: '[id^="oro_product_StringField"]'
+          BigIntField:
+            type: 'css'
+            locator: '[id^="oro_product_BigIntField"]'
+          SmallIntField:
+            type: 'css'
+            locator: '[id^="oro_product_SmallIntField"]'
+          BooleanField:
+            type: 'css'
+            locator: '[id^="oro_product_BooleanField"]'
+          DecimalField:
+            type: 'css'
+            locator: '[id^="oro_product_DecimalField"]'
+          FloatField:
+            type: 'css'
+            locator: '[id^="oro_product_FloatField"]'
+          PercentField:
+            type: 'css'
+            locator: '[id^="oro_product_PercentField"]'
+          CurrencyField:
+            type: 'css'
+            locator: '[id^="oro_product_CurrencyField"]'
           DateField:
             type: 'css'
             locator: 'input[name^="date_selector_oro_product_DateField"]'
-          DateTimeField: 'oro_product[DateTimeField]'
-          SelectField: 'oro_product[SelectField]'
-          TextField: 'oro_product[TextField]'
+          DateTimeField:
+            type: 'css'
+            locator: '[id^="oro_product_DateTimeField"]'
+          SelectField:
+            type: 'css'
+            locator: '[id^="oro_product_SelectField"]'
+          TextField:
+            type: 'css'
+            locator: '[id^="oro_product_TextField"]'
+          ColorField:
+            type: 'css'
+            locator: '[id^="oro_product_ColorField"]'
+          BooleanAttr:
+            type: 'css'
+            locator: '[id^="oro_product_BooleanAttr"]'
           ManyToOneField:
             type: 'css'
-            locator: 'input[name="oro_product[ManyToOneField]"]'
+            locator: '[id^="oro_product_ManyToOneField"]'
             element: Select2Entity
-          ColorField: 'oro_product[ColorField]'
           TagField:
             type: 'css'
-            locator: 'input[name="oro_product[TagField]"]'
+            locator: '[id^="oro_product_TagField"]'
             element: Select2Entity
           MultiColor:
             type: 'css'
-            locator: 'div[data-ftid="oro_product_MultiColor"]'
+            locator: '[id^="oro_product_MultiColor"]'
             element: GroupChoiceField
-          BooleanAttr: 'oro_product[BooleanAttr]'
           Owner:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
@@ -440,6 +469,11 @@ oro_behat_extension:
         type: xpath
         locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
+    Data audit:
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-data-audit" and contains(., "Data audit")]'
+
     Drop condition here:
       selector: ".condition-container"
 
@@ -505,6 +539,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
+
+    Id:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Id")]'
 
     Content Node Form Slug Fallbacks:
       selector:
@@ -693,6 +732,9 @@ oro_behat_extension:
     T_shirt attribute group:
       selector: "select[name='oro_attribute_family[attributeGroups][t_shirt_group][attributeRelations][]']"
 
+    General Group Attributes:
+      selector: "select[name='oro_attribute_family[attributeGroups][general][attributeRelations][]']"
+
     ImageCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
 
@@ -740,10 +782,14 @@ oro_behat_extension:
       selector: '.product-view__content .product-price'
 
     Color Product Attribute:
-      selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
+      selector:
+        type: 'xpath'
+        locator: '//*[contains(@id, "oro_product_variantFields_Color") and @data-name="field__is-selected"]'
 
     Size Product Attribute:
-      selector: 'input[name="oro_product[variantFields][Size][is_selected]"]'
+      selector:
+        type: 'xpath'
+        locator: '//*[contains(@id, "oro_product_variantFields_Size") and @data-name="field__is-selected"]'
 
     Promotions Form:
       selector: 'form[name="product_promotions"]'
@@ -1021,6 +1067,10 @@ oro_behat_extension:
     Add Product Templates Button:
       selector: 'div[id^="oro_product_productTemplates-uid"] button'
 
+    Product Families Grid:
+      selector: 'div[data-page-component-name="attribute-family-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1100,6 +1150,8 @@ oro_behat_extension:
         - OroEntityExtendBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroWebsiteSearchBundle::SearchIndexContext
+        - OroQueryDesignerBundle::QueryDesignerContext
+        - OroEmailBundle::EmailContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'

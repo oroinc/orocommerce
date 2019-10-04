@@ -4,36 +4,31 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider;
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestWebContentVariantProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestWebContentVariantProvider;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var TitleDataProvider
-     */
-    protected $titleDataProvider;
+    /** @var TitleDataProvider */
+    private $titleDataProvider;
 
     protected function setUp()
     {
-        $this->requestStack = $this->createMock(RequestStack::class);
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->titleDataProvider = new TitleDataProvider($this->requestStack, $this->localizationHelper);
+        $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+
+        $this->titleDataProvider = new TitleDataProvider(
+            $this->requestWebContentVariantProvider,
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitleFromNode()
@@ -43,7 +38,6 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $contentNodeTitles = new ArrayCollection();
 
-        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->once())
             ->method('getTitles')
@@ -52,16 +46,14 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(true);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->once())
             ->method('getNode')
             ->willReturn($contentNode);
 
-        $request = new Request([], [], ['_content_variant' => $contentVariant]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
 
         $this->localizationHelper->expects($this->once())
             ->method('getLocalizedValue')
@@ -77,7 +69,6 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $contentNodeTitles = new ArrayCollection();
 
-        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->once())
             ->method('getTitles')
@@ -86,16 +77,14 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(true);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->once())
             ->method('getNode')
             ->willReturn($contentNode);
 
-        $request = new Request([], [], ['_content_variant' => $contentVariant]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
 
         $this->localizationHelper->expects($this->once())
             ->method('getLocalizedValue')
@@ -109,7 +98,6 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $default = 'default';
 
-        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->never())
             ->method('getTitles');
@@ -117,16 +105,14 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(false);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->once())
             ->method('getNode')
             ->willReturn($contentNode);
 
-        $request = new Request([], [], ['_content_variant' => $contentVariant]);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
 
         $this->localizationHelper->expects($this->never())
             ->method('getLocalizedValue');
@@ -138,10 +124,9 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $default = 'default';
 
-        $request = new Request([], [], []);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn(null);
 
         $this->localizationHelper->expects($this->never())
             ->method('getLocalizedValue');

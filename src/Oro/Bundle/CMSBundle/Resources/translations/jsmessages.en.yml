@@ -1,0 +1,5 @@
+oro.cms:
+    change_type:
+        confirmation:
+            title: Change Type
+            body: Are you sure you want to change content widget type?

@@ -8,6 +8,25 @@ The current file describes significant changes in the code that may affect the u
 #### CMSBundle
 * Added *WYSIWYG* field to Entity Manager. Read more in documentation [how to change TextArea field to WYSIWYG field](./src/Oro/Bundle/CMSBundle/Resources/doc/wysiwyg.md#how-to-change-textarea-field-to-wysiwyg-field)
 
+
+### Changed
+#### WebCatalog component
+* Methods `getApiResourceClassName()` and `getApiResourceIdentifierDqlExpression()` were added to
+  `Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType`.
+
+#### WebCatalogBundle
+* The `_web_content_scope` request attribute was removed.
+  Use `Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider` to get the current scope.
+  This class loads the scope on demand.
+* The `_content_variant` request attribute was removed.
+  Use `Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider` to get the current content variant.
+  This class loads the content variant on demand.
+
+#### WebCatalogBundle
+* The `current_website` request attribute was removed.
+  To get the current website from HTTP request `Oro\Bundle\WebsiteBundle\Provider\RequestWebsiteProvider` was added.
+  This class loads the website on demand.
+
 ## 4.0.0 (2019-07-31)
 [Show detailed list of changes](incompatibilities-4-0.md)
 

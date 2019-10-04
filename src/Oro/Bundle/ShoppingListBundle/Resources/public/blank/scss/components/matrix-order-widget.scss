@@ -159,7 +159,7 @@
                 background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background;
             }
         }
-        
+
         &__grid-head-label {
             &:before,
             &:after {
@@ -178,7 +178,7 @@
         &__grid-footer-wrapper {
             display: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display;
             position: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position;
-            
+
             .matrix-order-widget__form__col {
                 background: $matrix-order-widget-form-colored-background;
 
@@ -700,7 +700,7 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('tablet-small') {
     .matrix-order-widget {
         &__item {
             &-content {
@@ -714,7 +714,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-landscape') {
     .matrix-order-widget {
         &__item {
             &-content {

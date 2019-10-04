@@ -61,19 +61,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if ($value instanceof EntityProductImage) {
-            $product = $value->getProduct();
-
-            if (null === $product) {
-                return;
-            }
-
-            $product->addImage($value);
-            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($product->getImages());
-        } else {
-            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
-        }
-
+        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
         $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
 
         foreach ($maxNumberByType as $name => $maxTypeValues) {

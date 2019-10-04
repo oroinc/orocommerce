@@ -104,18 +104,16 @@ services:
 
     oro_cms.twig.widget_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
-        public: false
         arguments:
-            - '@oro_cms.widget_registry'
+            - '@oro_cms.content_widget.renderer'
 
-    oro_cms.widget_registry:
-        class: 'Oro\Bundle\CMSBundle\Widget\WidgetRegistry'
-        public: false
+    oro_cms.twig.content_widget_type_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
         arguments:
-            - '@logger'
-            - []
+            - '@translator'
+            - '@oro_cms.content_widget.type_registry'
         tags:
-            - { name: monolog.logger, channel: oro_cms }
+            - { name: twig.extension }
 
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'
@@ -152,6 +150,76 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }
+
+    oro_cms.parser.twig_content_widget:
+        class: Oro\Bundle\CMSBundle\Parser\TwigContentWidgetParser
+        arguments:
+            - '@oro_cms.twig.renderer'
+
+    oro_cms.entity_listener.page_content:
+        class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageContentEntityListener
+        arguments:
+            - '@oro_cms.parser.twig_content_widget'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: preRemove }
+
+    oro_cms.entity_listener.text_content_variant_content:
+        class: Oro\Bundle\CMSBundle\Entity\EntityListener\TextContentVariantEntityListener
+        arguments:
+            - '@oro_cms.parser.twig_content_widget'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preRemove }
+
+    oro_cms.content_widget.type_registry:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
+        arguments:
+            - !tagged oro_cms.content_widget.type
+
+    Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
+        alias: oro_cms.content_widget.type_registry
+
+    oro_cms.autocomplete.content_widget_type.search_handler:
+        class: Oro\Bundle\CMSBundle\Autocomplete\ContentWidgetTypeSearchHandler
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@translator'
+            - '@property_accessor'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_cms_content_widget_types' }
+
+    oro_cms.provider.content_widget_type:
+        class: Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider
+        public: true
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@translator'
+
+    oro_cms.acl.voter.frontend_quote_permission_voter:
+        class: Oro\Bundle\CMSBundle\Acl\Voter\ContentWidgetVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: security.voter }
+
+    oro_cms.content_widget.renderer:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@doctrine'
+            - '@twig'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.entity_config_dumper.extension.wysiwyg:
         class: Oro\Bundle\CMSBundle\Tools\DumperExtensions\WYSIWYGEntityConfigDumperExtension

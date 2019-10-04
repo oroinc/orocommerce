@@ -165,32 +165,32 @@ Feature: Product attributes import
     Then Email should contains the following "Errors: 11 processed: 0, read: 11, added: 0, updated: 0, replaced: 0" text
     When I reload the page
     Then there are 22 records in grid
-    And I sort grid by ORGANIZATION
-    And I sort grid by NAME
+    And I sort grid by "TYPE"
+    And I sort grid by "NAME"
     And I should see following grid:
-      | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE     | ORGANIZATION | VISIBLE | AUDITABLE | PRODUCT FAMILIES |
-      | bigIntSerialized             | BigInt          | FieldText Label   | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | All          | Yes     | No        |                  |
-      | brand                        | System relation | Brand             | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | correct_field_name           | BigInt          | label value 1     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | descriptions                 | System relation | Description       | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | featured                     | Boolean         | Is Featured       | System | Active        | Table column     | All          | No      | No        | Default          |
-      | images                       | System relation | Images            | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | inventory_status             | Select          | Inventory Status  | System | Active        | Table column     | All          | No      | Yes       | Default          |
-      | koko                         | String          | label value 5     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | LOREM                        | String          | label value 6     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | metaDescriptions             | Many to many    | Meta description  | System | Active        | Table column     | All          | No      | No        | Default          |
-      | metaKeywords                 | Many to many    | Meta keywords     | System | Active        | Table column     | All          | No      | No        | Default          |
-      | metaTitles                   | Many to many    | Meta title        | System | Active        | Table column     | All          | No      | No        | Default          |
-      | Myand4                       | String          | label value 4     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | names                        | System relation | Name              | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | newArrival                   | Boolean         | New Arrival       | System | Active        | Table column     | All          | No      | No        | Default          |
-      | productPriceAttributesPrices | System relation | Product prices    | System | Active        | Table column     | All          | Yes     | No        | Default          |
-      | shortDescriptions            | System relation | Short Description | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | sku                          | String          | SKU               | System | Active        | Table column     | All          | Yes     | Yes       | Default          |
-      | SunSet                       | String          | label value 7     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | Text_underscore_text         | String          | label value 3     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
-      | Tv                           | String          | label value 2     | Custom | Active        | Serialized field | All          | Yes     | No        |                  |
+      | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE     | VISIBLE | AUDITABLE | PRODUCT FAMILIES |
+      | bigIntSerialized             | BigInt          | FieldText Label   | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | Yes     | No        |                  |
+      | brand                        | System relation | Brand             | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | correct_field_name           | BigInt          | label value 1     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | descriptions                 | System relation | Description       | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | featured                     | Boolean         | Is Featured       | System | Active        | Table column     | No      | No        | Default          |
+      | images                       | System relation | Images            | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | inventory_status             | Select          | Inventory Status  | System | Active        | Table column     | No      | Yes       | Default          |
+      | koko                         | String          | label value 5     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | LOREM                        | String          | label value 6     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | metaDescriptions             | Many to many    | Meta description  | System | Active        | Table column     | No      | No        | Default          |
+      | metaKeywords                 | Many to many    | Meta keywords     | System | Active        | Table column     | No      | No        | Default          |
+      | metaTitles                   | Many to many    | Meta title        | System | Active        | Table column     | No      | No        | Default          |
+      | Myand4                       | String          | label value 4     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | names                        | System relation | Name              | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | newArrival                   | Boolean         | New Arrival       | System | Active        | Table column     | No      | No        | Default          |
+      | productPriceAttributesPrices | System relation | Product prices    | System | Active        | Table column     | Yes     | No        | Default          |
+      | shortDescriptions            | System relation | Short Description | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | sku                          | String          | SKU               | System | Active        | Table column     | Yes     | Yes       | Default          |
+      | SunSet                       | String          | label value 7     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | Text_underscore_text         | String          | label value 3     | Custom | Active        | Serialized field | Yes     | No        |                  |
+      | Tv                           | String          | label value 2     | Custom | Active        | Serialized field | Yes     | No        |                  |
     And I should not see "Update schema"
 
   Scenario: It should be impossible to updated columns with similar names
@@ -220,19 +220,18 @@ Feature: Product attributes import
     And I should not see "correctFieldName"
     And I should not see "Update schema"
 
-  Scenario: It should be possible to update columns with the same name from Entity Management
+  Scenario: It should not be possible to update attributes with the same name(there may be more than one) from any organizations
     Given I go to System/Entities/Entity Management
     And I filter Name as is equal to "Product"
     And I click View Product in grid
     And I fill template with data:
       | fieldName          | type   | entity.label                   | datagrid.show_filter | datagrid.is_visible |
       | correct_field_name | bigint | FieldText Label second updated | no                   | 0                   |
-      | correctFieldName   | bigint | FieldText Label                | no                   | 0                   |
+      | correctFieldName   | bigint | FieldText Label invalid        | no                   | 0                   |
     When I import file
-    Then Email should contains the following "Errors: 1 processed: 1, read: 2, added: 0, updated: 1, replaced: 0" text
+    Then Email should contains the following "Errors: 2 processed: 0, read: 2, added: 0, updated: 0, replaced: 0" text
     When I reload the page
-    Then I should see correct_field_name in grid
-    And I should see "FieldText Label second updated" in grid
+    Then I should see "FieldText Label updated" in grid
     And I should not see "correctFieldName"
     And I should not see "Update schema"
 

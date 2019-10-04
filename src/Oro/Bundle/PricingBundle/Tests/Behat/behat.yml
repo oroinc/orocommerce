@@ -132,6 +132,11 @@ oro_behat_extension:
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
 
+    Price Product hamburger:
+      selector:
+        locator: '//label[text()="Product"]/../..//button[contains(@class,"entity-select-btn")]'
+        type: xpath
+
     Price List Form:
       selector: 'form[name="oro_pricing_price_list"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

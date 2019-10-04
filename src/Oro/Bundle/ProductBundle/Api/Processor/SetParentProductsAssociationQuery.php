@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
+use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;

@@ -101,7 +101,7 @@ Delete a collection of price list to customer group relation records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### mergeAllowed
 
@@ -115,7 +115,7 @@ The priority of the current price list in a scope of the current customer group.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### customerGroup
 
@@ -125,7 +125,13 @@ The customer group this relation is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ### priceList
 
@@ -135,7 +141,15 @@ The price list this relation is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+### website
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

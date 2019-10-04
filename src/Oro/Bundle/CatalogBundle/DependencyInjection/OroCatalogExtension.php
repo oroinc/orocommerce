@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * Container extension of OroCatalogBundle.
+ */
 class OroCatalogExtension extends Extension
 {
     const ALIAS = 'oro_catalog';
@@ -28,6 +31,7 @@ class OroCatalogExtension extends Extension
         $loader->load('fallbacks.yml');
         $loader->load('image_placeholder.yml');
         $loader->load('controllers.yml');
+        $loader->load('importexport.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

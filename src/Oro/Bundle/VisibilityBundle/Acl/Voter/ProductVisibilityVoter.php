@@ -104,7 +104,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter
             }
         }
 
-        /** @var $repository ProductRepository */
+        /** @var ProductRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository($class);
 
         $qb = $repository->getProductsQueryBuilder([$identifier]);

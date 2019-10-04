@@ -18,11 +18,10 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -39,11 +38,11 @@ class AjaxLineItemController extends AbstractLineItemController
      * @Route(
      *      "/add-product-from-view/{productId}",
      *      name="oro_shopping_list_frontend_add_product",
-     *      requirements={"productId"="\d+"}
+     *      requirements={"productId"="\d+"},
+     *      methods={"POST"}
      * )
      * @AclAncestor("oro_product_frontend_view")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
-     * @Method("POST")
      *
      * @param Request $request
      * @param Product $product
@@ -98,11 +97,11 @@ class AjaxLineItemController extends AbstractLineItemController
      * @Route(
      *      "/remove-line-item/{lineItemId}",
      *      name="oro_shopping_list_frontend_remove_line_item",
-     *      requirements={"lineItemId"="\d+"}
+     *      requirements={"lineItemId"="\d+"},
+     *      methods={"DELETE"}
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("lineItem", class="OroShoppingListBundle:LineItem", options={"id" = "lineItemId"})
-     * @Method("DELETE")
      *
      * @param LineItem $lineItem
      *
@@ -135,11 +134,11 @@ class AjaxLineItemController extends AbstractLineItemController
      * @Route(
      *      "/remove-product-from-view/{productId}",
      *      name="oro_shopping_list_frontend_remove_product",
-     *      requirements={"productId"="\d+"}
+     *      requirements={"productId"="\d+"},
+     *      methods={"DELETE"}
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
-     * @Method("DELETE")
      *
      * @param Request $request
      * @param Product $product
@@ -174,9 +173,8 @@ class AjaxLineItemController extends AbstractLineItemController
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
+     * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction", methods={"POST"})
      * @AclAncestor("oro_shopping_list_frontend_update")
-     * @Method("POST")
      *
      * @param Request $request
      * @param string $gridName

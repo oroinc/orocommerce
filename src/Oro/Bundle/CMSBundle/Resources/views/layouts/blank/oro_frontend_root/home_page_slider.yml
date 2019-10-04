@@ -9,6 +9,8 @@ layout:
                     prepend: true
                     options:
                         alias: home-page-slider
+                        vars:
+                            hideTitle: true
             tree:
                 page_content:
                     hero_promo: ~

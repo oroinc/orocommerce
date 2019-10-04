@@ -36,8 +36,7 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     code: 'family'
     __calls:
         - addLabel: ['@attribute_family_label']
-    organization: '@second_organization'
-    owner: '@admin'
+    owner: '@second_organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
   product_org_oro_pro:

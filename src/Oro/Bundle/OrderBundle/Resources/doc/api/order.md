@@ -153,7 +153,7 @@ Delete a collection of order records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### lineItems
 
@@ -161,11 +161,43 @@ Delete a collection of order records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### source
 
 The entity from which this order was created.
+
+### currency
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### subtotalValue
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### totalValue
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### totalDiscountsAmount
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

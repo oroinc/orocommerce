@@ -46,14 +46,14 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         'type'       => 'mastercatalogcategories',
                         'id'         => '<toString(@category1->id)>',
                         'attributes' => [
-                            'name' => 'Category 1'
+                            'title' => 'Category 1'
                         ]
                     ],
                     [
                         'type'       => 'mastercatalogcategories',
                         'id'         => '<toString(@category2->id)>',
                         'attributes' => [
-                            'name' => 'Category 2'
+                            'title' => 'Category 2'
                         ]
                     ]
                 ]
@@ -188,7 +188,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1_1_1->id)>'],
-            ['fields[mastercatalogcategories]' => 'name,categoryPath', 'include' => 'categoryPath']
+            ['fields[mastercatalogcategories]' => 'title,categoryPath', 'include' => 'categoryPath']
         );
 
         $this->assertResponseContains(
@@ -197,7 +197,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                     'type'          => 'mastercatalogcategories',
                     'id'            => '<toString(@category1_1_1->id)>',
                     'attributes'    => [
-                        'name' => 'Category 1_1_1'
+                        'title' => 'Category 1_1_1'
                     ],
                     'relationships' => [
                         'categoryPath' => [
@@ -214,7 +214,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         'type'          => 'mastercatalogcategories',
                         'id'            => '<toString(@root_category->id)>',
                         'attributes'    => [
-                            'name' => 'All Products'
+                            'title' => 'All Products'
                         ],
                         'relationships' => [
                             'categoryPath' => [
@@ -226,7 +226,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         'type'          => 'mastercatalogcategories',
                         'id'            => '<toString(@category1->id)>',
                         'attributes'    => [
-                            'name' => 'Category 1'
+                            'title' => 'Category 1'
                         ],
                         'relationships' => [
                             'categoryPath' => [
@@ -240,7 +240,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         'type'          => 'mastercatalogcategories',
                         'id'            => '<toString(@category1_1->id)>',
                         'attributes'    => [
-                            'name' => 'Category 1_1'
+                            'title' => 'Category 1_1'
                         ],
                         'relationships' => [
                             'categoryPath' => [
@@ -250,7 +250,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                                 ]
                             ]
                         ]
-                    ],
+                    ]
                 ]
             ],
             $response
@@ -264,7 +264,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                 'type'       => 'mastercatalogcategories',
                 'id'         => '<toString(@category1->id)>',
                 'attributes' => [
-                    'name' => 'Updated Product Name'
+                    'title' => 'Updated Category'
                 ]
             ]
         ];
@@ -285,7 +285,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
             'data' => [
                 'type'       => 'mastercatalogcategories',
                 'attributes' => [
-                    'name' => 'New Product'
+                    'title' => 'New Category'
                 ]
             ]
         ];
@@ -395,23 +395,23 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         'type'       => 'mastercatalogcategories',
                         'id'         => '<toString(@root_category->id)>',
                         'attributes' => [
-                            'name' => 'All Products'
+                            'title' => 'All Products'
                         ]
                     ],
                     [
                         'type'       => 'mastercatalogcategories',
                         'id'         => '<toString(@category1->id)>',
                         'attributes' => [
-                            'name' => 'Category 1'
+                            'title' => 'Category 1'
                         ]
                     ],
                     [
                         'type'       => 'mastercatalogcategories',
                         'id'         => '<toString(@category1_1->id)>',
                         'attributes' => [
-                            'name' => 'Category 1_1'
+                            'title' => 'Category 1_1'
                         ]
-                    ],
+                    ]
                 ]
             ],
             $response

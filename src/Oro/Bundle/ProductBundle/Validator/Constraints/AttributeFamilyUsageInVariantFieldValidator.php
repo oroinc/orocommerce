@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeGroupRelationRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -26,14 +27,22 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param AttributeManager $attributeManager
      * @param DoctrineHelper $doctrineHelper
+     * @param ConfigManager $configManager
      */
-    public function __construct(AttributeManager $attributeManager, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        AttributeManager $attributeManager,
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager
+    ) {
         $this->attributeManager = $attributeManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -128,6 +137,7 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
      */
     private function validateConfigProducts(array $entityConfigNames, AttributeFamily $attributeFamily)
     {
+        $attributeConfigProvider = $this->configManager->getProvider('attribute');
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
         $products = $productRepository->findBy([
             'type' => Product::TYPE_CONFIGURABLE,
@@ -135,13 +145,15 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
         ]);
 
         $errors = [];
-
         /** @var Product $product */
         foreach ($products as $product) {
+            $className = get_class($product);
             foreach ($entityConfigNames as $name) {
+                $attributeConfig = $attributeConfigProvider->getConfig($className, $name);
+                $fieldName = $attributeConfig->get('field_name', false, $name);
                 if (in_array($name, $product->getVariantFields())) {
                     $errors['products'][] = $product->getSku();
-                    $errors['names'][] = $name;
+                    $errors['names'][] = $fieldName;
                 }
             }
         }

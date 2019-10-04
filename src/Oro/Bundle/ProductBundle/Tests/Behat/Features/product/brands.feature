@@ -1,4 +1,5 @@
 @fixture-OroProductBundle:highlighting_new_products.yml
+@fixture-OroOrganizationProBundle:GlobalOrganizationFixture.yml
 Feature: Brands
   In order to add sort products by brands
   As an Administrator
@@ -155,6 +156,7 @@ Feature: Brands
 
   Scenario: Hide brand label
     Given I proceed as the Admin
+    And I am logged in under Globe ORO Pro organization
     And go to Products/ Product Attributes
     And I click on Brand in grid
     When fill form with:

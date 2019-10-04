@@ -4,12 +4,10 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -17,9 +15,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\WebCatalogBreadcrumbProvider;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -31,58 +29,43 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $webCatalogProvider;
+    /** @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $webCatalogProvider;
 
-    /**
-     * @var WebCatalog
-     */
-    protected $webCatalog;
+    /** @var WebCatalog */
+    private $webCatalog;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    /** @var RequestWebContentVariantProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestWebContentVariantProvider;
 
-    /**
-     * @var CategoryBreadcrumbProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryBreadcrumbProvider;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var WebCatalogBreadcrumbProvider
-     */
-    protected $breadcrumbDataProvider;
+    /** @var CategoryBreadcrumbProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $categoryBreadcrumbProvider;
+
+    /** @var WebCatalogBreadcrumbProvider */
+    private $breadcrumbDataProvider;
 
     protected function setUp()
     {
-        $this->registry     = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->requestStack = $this->createMock(RequestStack::class);
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->categoryBreadcrumbProvider = $this->getMockBuilder(CategoryBreadcrumbProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->categoryBreadcrumbProvider = $this->createMock(CategoryBreadcrumbProvider::class);
 
         $this->breadcrumbDataProvider = new WebCatalogBreadcrumbProvider(
-            $this->registry,
+            $this->doctrine,
             $this->localizationHelper,
             $this->requestStack,
+            $this->requestWebContentVariantProvider,
             $this->categoryBreadcrumbProvider
         );
 
@@ -98,22 +81,20 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetItems(ContentNode $rootNode, array $expectedData)
     {
         $currentNode = $this->findLastNode($rootNode);
-        $scope       = new Scope();
 
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($currentNode);
 
-        $request             = Request::create('/', Request::METHOD_GET);
-        $request->attributes = new ParameterBag([
-            '_web_content_scope' => $scope,
-            '_content_variant'   => $contentVariant
-        ]);
+        $request = Request::create('/', Request::METHOD_GET);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
 
         $nodeRepository = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
@@ -126,16 +107,10 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->with($currentNode)
             ->willReturn($path);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with(ContentNode::class)
             ->willReturn($nodeRepository);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
 
         $actual = $this->breadcrumbDataProvider->getItems();
         $this->assertCount($expectedData['crumbs'], $actual);
@@ -249,18 +224,19 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $nodeTitle      = 'node1';
         $nodeUrl        = '/';
         $currentNode    = $this->getContentNode(1, 'root', $nodeTitle, $nodeUrl);
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($currentNode);
 
-        $request             = Request::create('/', Request::METHOD_GET);
-        $request->attributes = new ParameterBag([
-            '_content_variant' => $contentVariant
-        ]);
+        $request = Request::create('/', Request::METHOD_GET);
+
         $this->requestStack->expects($this->exactly(2))
             ->method('getCurrentRequest')
             ->willReturn($request);
+        $this->requestWebContentVariantProvider->expects($this->any())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
 
         $nodeRepository = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
@@ -273,16 +249,10 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->with($currentNode)
             ->willReturn($path);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with(ContentNode::class)
             ->willReturn($nodeRepository);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
 
         $this->localizationHelper
             ->expects($this->exactly(2))
@@ -310,7 +280,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $nodeTitle      = 'node1';
         $nodeUrl        = '/';
         $currentNode    = $this->getContentNode(1, 'root', $nodeTitle, $nodeUrl);
-        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($currentNode);
@@ -346,23 +316,13 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->with($currentNode)
             ->willReturn($path);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->exactly(2))
+        $this->doctrine->expects($this->exactly(2))
             ->method('getRepository')
             ->withConsecutive(
                 [ContentVariant::class],
                 [ContentNode::class]
             )
             ->willReturnOnConsecutiveCalls($variantRepository, $nodeRepository);
-
-        $this->registry
-            ->expects($this->any())
-            ->method('getManagerForClass')
-            ->withConsecutive(
-                [ContentVariant::class],
-                [ContentNode::class]
-            )
-            ->willReturnOnConsecutiveCalls($em, $em);
 
         $this->localizationHelper
             ->expects($this->exactly(2))

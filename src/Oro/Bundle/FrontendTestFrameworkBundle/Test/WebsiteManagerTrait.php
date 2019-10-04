@@ -29,14 +29,15 @@ trait WebsiteManagerTrait
     protected function setCurrentWebsite($websiteReference = null)
     {
         $websiteManagerStub = $this->getWebsiteManagerStub();
-        $websiteManagerStub->resetStub();
+
+        $websiteManagerStub->disableStub();
         $defaultWebsite = $websiteManagerStub->getDefaultWebsite();
         if (!$websiteReference || $websiteReference === 'default') {
             $website = $defaultWebsite;
         } else {
             if (!$this->hasReference($websiteReference)) {
                 throw new \RuntimeException(
-                    sprintf('WebsiteScope scope reference "%s" was not found', $websiteReference)
+                    sprintf('The website reference "%s" was not found.', $websiteReference)
                 );
             }
             $website = $this->getReference($websiteReference);
