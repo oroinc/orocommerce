@@ -278,7 +278,7 @@ class QuoteControllerTest extends WebTestCase
             $label = $translator->trans($column['label']);
             $property = $accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
             if ($property instanceof \DateTime) {
-                $property = $property->format('n/j/y');
+                $property = $property->format('n/j/Y');
             } elseif ($property instanceof Price) {
                 $property = round($property->getValue());
             }

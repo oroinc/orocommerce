@@ -41,19 +41,17 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDatePatternFrontendRequest(): void
     {
-        $expected = "M/d/yy, h:mm a";
-
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
         $this->formatter->expects($this->once())
             ->method('getPattern')
             ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::LONG, self::US_LOCALE)
-            ->willReturn($expected);
+            ->willReturn('M/d/yy, h:mm a');
 
         $this->assertEquals(
-            $expected,
+            'M/d/yyyy, h:mm a',
             $this->formatterDecorator
                 ->getPattern(null, \IntlDateFormatter::LONG, self::US_LOCALE)
         );
@@ -83,7 +81,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05 00:00:00');
         $expected = '5/5/20, 12:00:00 AM GMT+2';
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -127,7 +125,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05');
         $expected = '5/5/20';
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -166,7 +164,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05');
         $expected = "20";
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -205,7 +203,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05');
         $expected = "Q2/20";
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -244,7 +242,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05');
         $expected = "5/2020";
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -283,7 +281,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTime('2020-05-05');
         $expected = "05";
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 

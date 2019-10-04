@@ -39,7 +39,18 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function getPattern($dateType, $timeType, $locale = null, $value = null)
     {
-        return $this->dateTimeFormatter->getPattern($this->getDateType($dateType), $timeType, $locale, $value);
+        $dateType = $this->getDateType($dateType);
+        $pattern = $this->dateTimeFormatter->getPattern($dateType, $timeType, $locale, $value);
+        // For store front replace 2 digit year with 4 digit to correctly support dates before 1970
+        if ($dateType === self::DEFAULT_FRONTEND_DATE_TYPE
+            && $this->frontendHelper->isFrontendRequest()
+            && strpos($pattern, 'yyyy') === false
+        ) {
+            $pattern = str_replace('yy', 'yyyy', $pattern);
+            $this->dateTimeFormatter->updatePattern($dateType, $timeType, $locale, $pattern);
+        }
+
+        return $pattern;
     }
 
     /**
@@ -53,6 +64,10 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
         $timeZone = null,
         $pattern = null
     ) {
+        if (!$pattern) {
+            $pattern = $this->getPattern($dateType, $timeType, $locale);
+        }
+
         return $this->dateTimeFormatter
             ->format($date, $this->getDateType($dateType), $timeType, $locale, $timeZone, $pattern);
     }
@@ -62,6 +77,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatDate($date, $dateType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern($dateType, \IntlDateFormatter::NONE, $locale);
+
         return $this->dateTimeFormatter->formatDate($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
@@ -70,6 +88,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatYear($date, $dateType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern($dateType, \IntlDateFormatter::NONE, $locale);
+
         return $this->dateTimeFormatter->formatYear($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
@@ -78,6 +99,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatQuarter($date, $dateType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern($dateType, \IntlDateFormatter::NONE, $locale);
+
         return $this->dateTimeFormatter->formatQuarter($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
@@ -86,6 +110,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatMonth($date, $dateType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern($dateType, \IntlDateFormatter::NONE, $locale);
+
         return $this->dateTimeFormatter->formatMonth($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
@@ -94,6 +121,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatDay($date, $dateType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern($dateType, \IntlDateFormatter::NONE, $locale);
+
         return $this->dateTimeFormatter->formatDay($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
@@ -102,6 +132,9 @@ class DateTimeFormatterDecorator extends DateTimeFormatter
      */
     public function formatTime($date, $timeType = null, $locale = null, $timeZone = null)
     {
+        // Trigger pattern update
+        $this->getPattern(\IntlDateFormatter::NONE, $timeType, $locale);
+
         return $this->dateTimeFormatter->formatTime($date, $timeType, $locale, $timeZone);
     }
 
