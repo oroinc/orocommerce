@@ -5,8 +5,8 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -16,7 +16,6 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Form;
@@ -94,24 +93,10 @@ class PageTypeTest extends FormIntegrationTestCase
 
         $entityIdentifierType = new EntityIdentifierType($registry);
 
-        /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
-         */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $htmlTagProvider = $this->createMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
-        $htmlTagProvider->expects($this->any())
-            ->method('getAllowedElements')
-            ->willReturn(['br', 'a']);
-
         /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
         $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $context = $this->createMock(ContextInterface::class);
 
         return [
             new PreloadedExtension(
@@ -119,7 +104,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    WYSIWYGType::class => new WYSIWYGType(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class

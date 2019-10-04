@@ -1,4 +1,7 @@
 oro.cms:
+    wysiwyg:
+        theme_selector:
+            placeholder: 'Type theme name'
     change_type:
         confirmation:
             title: Change Type
