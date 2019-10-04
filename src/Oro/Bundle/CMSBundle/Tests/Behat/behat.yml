@@ -74,6 +74,9 @@ oro_behat_extension:
             selector: 'div[data-page-component-name="cms-content-widget-pages-grid"]'
             class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+        CMS Page Content:
+            selector: "textarea[name='oro_cms_page[content]']"
+
     suites:
         OroCMSBundle:
             contexts:

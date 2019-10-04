@@ -16,10 +16,11 @@ Feature: Landing page open on frontend
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Other page"
     Then I should see URL Slug field filled with "other-page"
+    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content"
     When I save and close form
     Then I should see "Page has been saved" flash message
     When I go to System/Frontend Menus
-    And click view commerce_main_menu in grid
+    And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
       | Title | Other page |
@@ -31,3 +32,4 @@ Feature: Landing page open on frontend
     Then I should see "Other page"
     When I click "Other page"
     Then Page title equals to "Other page"
+    And I should see "GrapesJS content"

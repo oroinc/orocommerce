@@ -651,7 +651,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         static::assertTrue(
             is_null($result),
-            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+            sprintf('Tag "%s" inside element "%s" is found', $tag, $element)
         );
     }
 
