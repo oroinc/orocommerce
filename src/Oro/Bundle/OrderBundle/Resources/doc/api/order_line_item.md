@@ -280,30 +280,3 @@ Example:
 ```
 {@/request}
 
-### warehouse
-
-#### get_subresource
-
-Retrieve the warehouse record a specific line item record is assigned to.
-
-#### get_relationship
-
-Retrieve the ID of the warehouse record which a specific line item record is assigned to.
-
-#### update_relationship
-
-Replace warehouse a specific line item record is assigned to.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "warehouses",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
