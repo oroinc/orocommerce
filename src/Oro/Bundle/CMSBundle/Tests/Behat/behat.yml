@@ -50,6 +50,12 @@ oro_behat_extension:
         Content Field Data:
             selector: 'div.control-group:contains("Content") .controls>.control-label'
 
+        Content Variant Content:
+            selector: "textarea[name='oro_cms_content_block[contentVariants][0][content]']"
+
+        Content Variant 1 Content:
+            selector: "textarea[name='oro_cms_content_block[contentVariants][1][content]']"
+
         Homepage Slider:
             selector: 'div.promo-slider'
 

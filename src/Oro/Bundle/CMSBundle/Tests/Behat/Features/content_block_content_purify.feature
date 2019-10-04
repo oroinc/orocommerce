@@ -17,7 +17,7 @@ Feature: Content Block content purify
       |Localization  |English                    |
       |Website       |Default                    |
       |Customer Group|Non-Authenticated Visitors |
-      |Content       |<style>div {display: none;}</style><div onclick=\"alert('test');\">Some Content <script>alert('test')</script></div> |
+    And I fill in WYSIWYG "Content Variant Content" with "<style>div {display: none;}</style><div onclick=\"alert('test');\">Some Content <script>alert('test')</script></div>"
     When I save and close form
     Then I should see "Content block has been saved" flash message
     And I should not see alert
