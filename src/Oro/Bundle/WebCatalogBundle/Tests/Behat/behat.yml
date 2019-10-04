@@ -38,6 +38,8 @@ oro_behat_extension:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
+                    Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
+                    Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
                     Restriction1 Customer:
                         type: 'css'
                         locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customer-"]'
