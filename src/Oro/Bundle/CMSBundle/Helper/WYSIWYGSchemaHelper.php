@@ -71,7 +71,7 @@ class WYSIWYGSchemaHelper
     private function generateTableFieldSchema(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): array
     {
         $schema = $entityConfig->get('schema', false, []);
-        $className = $this->getExtendClassName($entityConfig);
+        $className = $schema['entity'];
         $styleFieldName = $this->getStyleFieldName($fieldConfig->getId());
         if ($fieldConfig->in('state', [ExtendScope::STATE_DELETE])) {
             $schema['property'][$styleFieldName]['private'] = true;
@@ -99,21 +99,5 @@ class WYSIWYGSchemaHelper
     private function getStyleFieldName(FieldConfigId $config): string
     {
         return $config->getFieldName() . DBALWYSIWYGTypeStyle::TYPE_SUFFIX;
-    }
-
-    /**
-     * @param ConfigInterface $config
-     *
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    private function getExtendClassName(ConfigInterface $config): string
-    {
-        $extendClass = $config->get('extend_class', false, false);
-        if (!$extendClass) {
-            throw new \InvalidArgumentException('Option "extend_class" cannot be empty or null');
-        }
-
-        return $extendClass;
     }
 }

@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestActivityTarget;
 
 class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -137,11 +138,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnCallback(function ($arg1) {
                 if ('schema' === $arg1) {
-                    return [];
-                }
-
-                if ('extend_class' === $arg1) {
-                    return 'TestActivityTarget';
+                    return ['entity' => TestActivityTarget::class];
                 }
             });
         $entityConfig
@@ -183,94 +180,47 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
      */
     public function tableFieldStates(): array
     {
+        $defaultState = [
+            'entity' => TestActivityTarget::class,
+            'property' => ['field_name_style' => []],
+            'doctrine' => [
+                TestActivityTarget::class => [
+                    'fields' => [
+                        'field_name_style' => [
+                            'column' => 'field_name_style',
+                            'type' => 'wysiwyg_style',
+                            'nullable' => true,
+                            'length' => null,
+                            'precision' => null,
+                            'scale' => null,
+                            'default' => null,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
         return [
             'Active field' => [
                 'state' => ExtendScope::STATE_ACTIVE,
-                'expected' => [
-                    'property' => ['field_name_style' => []],
-                    'doctrine' => [
-                        'TestActivityTarget' => [
-                            'fields' => [
-                                'field_name_style' => [
-                                    'column' => 'field_name_style',
-                                    'type' => 'wysiwyg_style',
-                                    'nullable' => true,
-                                    'length' => null,
-                                    'precision' => null,
-                                    'scale' => null,
-                                    'default' => null,
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'expected' => $defaultState
             ],
             'Updated field' => [
                 'state' => ExtendScope::STATE_UPDATE,
-                'expected' => [
-                    'property' => ['field_name_style' => []],
-                    'doctrine' => [
-                        'TestActivityTarget' => [
-                            'fields' => [
-                                'field_name_style' => [
-                                    'column' => 'field_name_style',
-                                    'type' => 'wysiwyg_style',
-                                    'nullable' => true,
-                                    'length' => null,
-                                    'precision' => null,
-                                    'scale' => null,
-                                    'default' => null,
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'expected' => $defaultState
             ],
             'New field' => [
                 'state' => ExtendScope::STATE_NEW,
-                'expected' => [
-                    'property' => ['field_name_style' => []],
-                    'doctrine' => [
-                        'TestActivityTarget' => [
-                            'fields' => [
-                                'field_name_style' => [
-                                    'column' => 'field_name_style',
-                                    'type' => 'wysiwyg_style',
-                                    'nullable' => true,
-                                    'length' => null,
-                                    'precision' => null,
-                                    'scale' => null,
-                                    'default' => null,
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'expected' => $defaultState
             ],
             'Restored field' => [
                 'state' => ExtendScope::STATE_RESTORE,
-                'expected' => [
-                    'property' => ['field_name_style' => []],
-                    'doctrine' => [
-                        'TestActivityTarget' => [
-                            'fields' => [
-                                'field_name_style' => [
-                                    'column' => 'field_name_style',
-                                    'type' => 'wysiwyg_style',
-                                    'nullable' => true,
-                                    'length' => null,
-                                    'precision' => null,
-                                    'scale' => null,
-                                    'default' => null,
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'expected' => $defaultState
             ],
             'Field deleted' => [
                 'state' => ExtendScope::STATE_DELETE,
                 'expected' => [
+                    'entity' => TestActivityTarget::class,
                     'property' => ['field_name_style' => ['private' => true]],
                 ]
             ]
