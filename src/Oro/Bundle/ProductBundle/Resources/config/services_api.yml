@@ -107,14 +107,14 @@ services:
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&definition', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
 
     oro_product.api.set_parent_products_association_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\SetParentProductsAssociationQuery
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&definition', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -35 }
 
     oro_product.api.build_variant_products_subresource_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\BuildVariantProductsSubresourceQuery

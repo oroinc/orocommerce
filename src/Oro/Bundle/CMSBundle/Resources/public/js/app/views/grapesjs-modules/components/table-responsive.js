@@ -38,7 +38,7 @@ define(function(require) {
                     constructor: function TableResponsiveComponentModel() {
                         dModel.prototype.constructor.apply(this, arguments);
                     },
-                    initialize: function (o, opt) {
+                    initialize: function(o, opt) {
                         dModel.prototype.initialize.apply(this, arguments);
                         var components = this.get('components');
                         if (!components.length) {
@@ -48,7 +48,7 @@ define(function(require) {
                         }
                     }
                 }, {
-                    isComponent: function (el) {
+                    isComponent: function(el) {
                         var result = '';
                         if (el.tagName === 'DIV' && el.className.indexOf(ComponentId) !== -1) {
                             result = {
