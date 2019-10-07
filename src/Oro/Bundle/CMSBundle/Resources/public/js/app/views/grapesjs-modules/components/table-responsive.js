@@ -35,7 +35,7 @@ define(function(require) {
                         droppable: ['table', 'tbody', 'thead', 'tfoot'],
                         classes: [ComponentId]
                     }),
-                    constructor: function () {
+                    constructor: function TableResponsiveComponentModel() {
                         dModel.prototype.constructor.apply(this, arguments);
                     },
                     initialize: function (o, opt) {
