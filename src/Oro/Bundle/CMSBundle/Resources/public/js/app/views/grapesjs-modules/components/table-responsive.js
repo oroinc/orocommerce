@@ -61,6 +61,8 @@ define(function(require) {
                 }),
                 view: dView
             });
+
+            TableResponsiveComponent.__super__.initialize.apply(this, arguments);
         }
     });
 

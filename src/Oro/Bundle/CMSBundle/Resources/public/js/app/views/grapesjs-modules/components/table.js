@@ -68,6 +68,8 @@ define(function(require) {
                 }),
                 view: dView
             });
+
+            TableComponent.__super__.initialize.apply(this, arguments);
         }
     });
 
