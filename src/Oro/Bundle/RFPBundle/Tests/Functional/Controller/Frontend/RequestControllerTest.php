@@ -183,7 +183,7 @@ class RequestControllerTest extends WebTestCase
             $request->getPoNumber(),
         ];
         if ($request->getShipUntil()) {
-            $shouldContainText[] = $request->getShipUntil()->format('n/j/y');
+            $shouldContainText[] = $request->getShipUntil()->format('n/j/Y');
         }
 
         foreach ($shouldContainText as $expectedText) {
