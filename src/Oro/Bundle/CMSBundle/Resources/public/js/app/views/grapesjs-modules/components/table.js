@@ -35,7 +35,7 @@ define(function(require) {
                         droppable: ['tbody', 'thead', 'tfoot'],
                         classes: ['table']
                     }),
-                    constructor: function () {
+                    constructor: function() {
                         dModel.prototype.constructor.apply(this, arguments);
                     },
                     initialize: function(o, opt) {
