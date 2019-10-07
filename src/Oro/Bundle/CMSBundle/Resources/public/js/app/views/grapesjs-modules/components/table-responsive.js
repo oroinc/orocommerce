@@ -9,7 +9,7 @@ define(function(require) {
      * @param context
      * @constructor
      */
-    TableResponsiveComponent = function(context) {
+    TableResponsiveComponent = function TableResponsiveComponent(context) {
         var ComponentId = 'table-responsive';
         var domComps = context.DomComponents;
         var dType = domComps.getType('default');

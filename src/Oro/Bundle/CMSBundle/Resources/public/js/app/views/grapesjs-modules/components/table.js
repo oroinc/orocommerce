@@ -9,7 +9,7 @@ define(function(require) {
      * @param context
      * @constructor
      */
-    TableComponent = function(context) {
+    TableComponent = function TableComponent(context) {
         var ComponentId = 'table';
         var domComps = context.DomComponents;
         var dType = domComps.getType('default');

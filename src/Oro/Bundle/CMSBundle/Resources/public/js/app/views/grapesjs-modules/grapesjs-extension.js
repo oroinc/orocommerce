@@ -1,6 +1,9 @@
 define(function(require) {
     'use strict';
 
+    var $ = require('jquery');
+    var _ = require('underscore');
+
     var ExtensionModule = function(options) {
         _.extend(this, _.pick(options, ['view', 'builder']));
 
