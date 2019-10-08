@@ -31,7 +31,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $inventoryDecrementValue = $crawler->filterXPath(self::VIEW_DECREMENT_INVENTORY_XPATH)->html();
-        $this->assertEquals('On Order Submission', $inventoryDecrementValue);
+        $this->assertEquals('On order submission in the default checkout flow', $inventoryDecrementValue);
     }
 
     public function testProductDecrementQuantityUpdate()
@@ -41,7 +41,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $crawler = $this->setProductDecrementQuantityField($product, $newValue, null);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $value = $crawler->filterXPath(self::VIEW_DECREMENT_INVENTORY_XPATH)->html();
-        $this->assertEquals('Defined by Workflow', $value);
+        $this->assertEquals('No (custom)', $value);
     }
 
     /**

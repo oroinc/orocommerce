@@ -59,7 +59,7 @@ oro:
             error:
                 inventory_status: Multiple products found having different Inventory Status
                 not_found_entity: The specified %entity% has not been found in the system
-                general_error: General error:
+                general_error: 'General error:'
 
         product:
             error:
@@ -94,7 +94,7 @@ oro:
                 backorders.label: Backorders
                 decrement_inventory:
                     label: Decrement Inventory
-                    tooltip: Decrement inventory when order is created
+                    tooltip: Enable this option to automatically decrement (reserve) inventory on order submission at the end of the default checkout flow, or disable it if inventory allocation is handled in a different manner via API or by a customized checkout, order management or order fulfillment workflow.
                 minimum_quantity_to_order.label: Minimum Quantity To Order
                 maximum_quantity_to_order.label: Maximum Quantity To Order
                 hide_labels_past_availability_date:
@@ -129,8 +129,8 @@ oro:
                 not_allowed: 'There is not enough quantity for this product'
             label: Decrement Inventory
             choice:
-                'true': On Order Submission
-                'false': Defined by Workflow
+                'true': On order submission in the default checkout flow
+                'false': No (custom)
         backorders:
             label: Backorders
             choice:
