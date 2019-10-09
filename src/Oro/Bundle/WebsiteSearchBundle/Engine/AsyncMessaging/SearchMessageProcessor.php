@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -15,12 +16,15 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Performs actual indexation operations requested via Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
  */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
+    protected const TOPIC_REINDEX_GRANULIZED = 'oro.website.search.indexer.reindex_granulized';
+
     /**
      * @var IndexerInterface $indexer
      */
@@ -47,6 +51,11 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $logger;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @param IndexerInterface $indexer
      * @param MessageProducerInterface $messageProducer
      * @param IndexerInputValidator $indexerInputValidator
@@ -65,6 +74,14 @@ class SearchMessageProcessor implements MessageProcessorInterface
         $this->inputValidator             = $indexerInputValidator;
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
         $this->logger                     = $logger;
+    }
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -120,6 +137,16 @@ class SearchMessageProcessor implements MessageProcessorInterface
                 break;
 
             case AsyncIndexer::TOPIC_REINDEX:
+                $this->eventDispatcher->dispatch(
+                    BeforeReindexEvent::EVENT_NAME,
+                    new BeforeReindexEvent($data['class'], $data['context'])
+                );
+                $this->processReindex($data);
+
+                $result = static::ACK;
+                break;
+
+            case self::TOPIC_REINDEX_GRANULIZED:
                 $this->processReindex($data);
 
                 $result = static::ACK;
@@ -168,7 +195,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
                     // Send buffered messages and clear the buffer as data should be processed asynchronously
                     foreach ($buffer as $bufferMsgData) {
                         $this->messageProducer->send(
-                            AsyncIndexer::TOPIC_REINDEX,
+                            self::TOPIC_REINDEX_GRANULIZED,
                             $bufferMsgData
                         );
                     }
@@ -176,17 +203,23 @@ class SearchMessageProcessor implements MessageProcessorInterface
                     $enableBuffer = false;
                 }
                 $this->messageProducer->send(
-                    AsyncIndexer::TOPIC_REINDEX,
+                    self::TOPIC_REINDEX_GRANULIZED,
                     $msgData
                 );
             }
 
             // Process data without triggering new messages if the buffer isn't empty
             foreach ($buffer as $msgData) {
-                $this->indexer->reindex($msgData['class'], $msgData['context']);
+                $this->indexer->reindex(
+                    $msgData['class'],
+                    array_merge($msgData['context'], ['skip_pre_processing' => true])
+                );
             }
         } else {
-            $this->indexer->reindex($data['class'], $data['context']);
+            $this->indexer->reindex(
+                $data['class'],
+                array_merge($data['context'], ['skip_pre_processing' => true])
+            );
         }
     }
 }

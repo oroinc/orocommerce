@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -136,5 +137,73 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
             ->with($segment, $entityIds);
 
         $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
+    }
+
+    /**
+     * @dataProvider processWithoutProductEntityProvider
+     * @param mixed $classOrClasses
+     */
+    public function testProcessWithoutProductEntity($classOrClasses)
+    {
+        $this->contentVariantSegmentProvider->expects($this->never())
+            ->method('getContentVariantSegments');
+        $this->staticSegmentManager->expects($this->never())
+            ->method('run');
+
+        $event = new BeforeReindexEvent($classOrClasses);
+        $this->websiteSearchSegmentListener->process($event);
+    }
+
+    public function processWithoutProductEntityProvider()
+    {
+        return [
+            'without product in array' => [
+                [\stdClass::class],
+            ],
+            'not a product in string' => [
+                \stdClass::class,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider processProvider
+     * @param mixed $classOrClasses
+     * @param array $context
+     */
+    public function testProcess($classOrClasses, array $context)
+    {
+        $segment1 = new Segment();
+        $segment2 = new Segment();
+        $this->contentVariantSegmentProvider->expects($this->once())
+            ->method('getContentVariantSegments')
+            ->willReturn([$segment1, $segment2]);
+        $this->staticSegmentManager->expects($this->exactly(2))
+            ->method('run')
+            ->withConsecutive(
+                [$segment1, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]],
+                [$segment2, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]]
+            );
+
+        $event = new BeforeReindexEvent($classOrClasses, $context);
+        $this->websiteSearchSegmentListener->process($event);
+    }
+
+    public function processProvider()
+    {
+        return [
+            'with empty classes and empty ids' => [
+                [],
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => []],
+            ],
+            'with product class in array and filled ids' => [
+                [Product::class],
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777]],
+            ],
+            'with product class and filled ids' => [
+                Product::class,
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777]],
+            ]
+        ];
     }
 }

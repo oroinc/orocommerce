@@ -694,10 +694,7 @@ services:
             - '@oro_product.provider.content_variant_segment_provider'
             - '@oro_segment.static_segment_manager'
         tags:
-            # this listener is intentionally listens to common event instead of product specific event
-            # to make sure that this listener will be executed before the
-            # Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: 255 }
+            - { name: kernel.event_listener, event: oro_website_search.before_reindex, method: process }
 
     oro_product.provider.website_search_index_data:
         class: 'Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider'
