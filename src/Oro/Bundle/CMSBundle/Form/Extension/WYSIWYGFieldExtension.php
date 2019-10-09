@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Extension;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType as DBALWYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType as DBALWYSIWYGStyleType;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -11,9 +13,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 /**
- * This extension add WYSIWYGStyleType
+ * This extension add WYSIWYGStyleType and WYSIWYGPropertiesType
  */
-class WYSIWYGStylesExtension extends AbstractTypeExtension
+class WYSIWYGFieldExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}
@@ -31,7 +33,13 @@ class WYSIWYGStylesExtension extends AbstractTypeExtension
         $form = $event->getForm();
         $parentForm = $form->getParent();
         if ($parentForm) {
-            $parentForm->add($form->getName() . DBALWYSIWYGStyleType::TYPE_SUFFIX, WYSIWYGStylesType::class);
+            $formName = $form->getName();
+            $parentForm->add($formName . DBALWYSIWYGStyleType::TYPE_SUFFIX, WYSIWYGStylesType::class);
+            $parentForm->add(
+                $formName . DBALWYSIWYGPropertiesType::TYPE_SUFFIX,
+                WYSIWYGPropertiesType::class,
+                ['mapped' => false]
+            );
         }
     }
 

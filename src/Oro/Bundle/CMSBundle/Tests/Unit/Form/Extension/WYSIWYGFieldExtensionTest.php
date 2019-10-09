@@ -2,28 +2,29 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGStylesExtension;
+use Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGFieldExtension;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-class WYSIWYGStylesExtensionTest extends \PHPUnit\Framework\TestCase
+class WYSIWYGFieldExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var WYSIWYGStylesExtension
+     * @var WYSIWYGFieldExtension
      */
     private $extension;
 
     protected function setUp(): void
     {
-        $this->extension = new WYSIWYGStylesExtension();
+        $this->extension = new WYSIWYGFieldExtension();
     }
 
     public function testGetExtendedTypes(): void
     {
-        $this->assertEquals([WYSIWYGType::class], WYSIWYGStylesExtension::getExtendedTypes());
+        $this->assertEquals([WYSIWYGType::class], WYSIWYGFieldExtension::getExtendedTypes());
     }
 
     public function testBuildForm(): void
@@ -41,9 +42,12 @@ class WYSIWYGStylesExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $parentForm = $this->createMock(FormInterface::class);
         $parentForm
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with('form_name_style', WYSIWYGStylesType::class);
+            ->withConsecutive(
+                ['form_name_style', WYSIWYGStylesType::class],
+                ['form_name_properties', WYSIWYGPropertiesType::class]
+            );
 
         $form = $this->createMock(FormInterface::class);
         $form
