@@ -8,6 +8,8 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ConfigurableProductTableRowAwareInterface;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList as ShoppingListElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
@@ -18,6 +20,8 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
  * The context for testing Shopping List related features.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -108,27 +112,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldSeeFollowingLineItemsIn($shoppingList, TableNode $table)
     {
         /** @var Table $shoppingListItemsTableElement */
-        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
-        self::assertTrue(
-            $shoppingListItemsTableElement->isValid(),
-            sprintf('Element "%s" was not found', $shoppingList)
-        );
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($shoppingList);
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
+        $tableRows = $table->getRows();
+        $columnHeaders = reset($tableRows);
 
+        $actualRows = [];
         foreach ($rows as $rowElement) {
-            self::assertTrue(
-                $this->currentLineItemRowAppearsInExpectedLineItems($rowElement, $table),
-                vsprintf(
-                    'Row "%s, %s, %s" isn\'t expected',
-                    [
-                        $this->getLineItemSKU($rowElement),
-                        $this->getLineItemUnit($rowElement),
-                        $this->getLineItemQuantity($rowElement),
-                    ]
-                )
-            );
+            $actualRows[] = $this->getLineItemRowColumnsValues($rowElement, $columnHeaders);
         }
+
+        self::assertEquals($table->getHash(), $actualRows);
     }
 
     /**
@@ -191,6 +186,47 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
     }
 
+    //@codingStandardsIgnoreStart
+    /**
+     * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)" with the following attributes:$/
+     *
+     * @param string $sku
+     * @param string $tableName
+     * @param TableNode $table
+     */
+    //@codingStandardsIgnoreEnd
+    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table)
+    {
+        $attributeLabels = [];
+        foreach ($table->getRows() as $row) {
+            [$attribute, $value] = $row;
+            $attributeLabels[] = sprintf('%s: %s', $attribute, $value);
+        }
+
+        /** @var ProductTable $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($tableName);
+        /** @var ConfigurableProductTableRowAwareInterface[] $rows */
+        $rows = $shoppingListItemsTableElement->getProductRows();
+
+        foreach ($rows as $rowElement) {
+            if ($rowElement->getProductSku() !== $sku) {
+                continue;
+            }
+
+            if ($rowElement->isRowContainingAttributes($attributeLabels)) {
+                $rowElement->clickProductLink();
+
+                return;
+            }
+        }
+
+        self::fail(sprintf(
+            'Could not find product with the given "%s" sku and attributes "%s"',
+            $sku,
+            implode(',', $attributeLabels)
+        ));
+    }
+
     /**
      * @param string $label
      * @return null|ShoppingList
@@ -213,6 +249,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $this->getContainer()
             ->get('router')
             ->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+    }
+
+    /**
+     * @param string $shoppingList
+     * @return Table
+     */
+    private function createValidShoppingListTableElement(string $shoppingList)
+    {
+        /** @var Table $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
+
+        return $shoppingListItemsTableElement;
     }
 
     /**
@@ -263,51 +316,52 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param TableRow  $rowElement
-     * @param TableNode $expectedLineItemsTable
+     * @param TableRow $tableRowElement
      *
-     * @return bool
+     * @return string
      */
-    private function currentLineItemRowAppearsInExpectedLineItems(
-        TableRow $rowElement,
-        TableNode $expectedLineItemsTable
-    ) {
-        $sku = $this->getLineItemSKU($rowElement);
-        $quantity = $this->getLineItemQuantity($rowElement);
-        $unit = $this->getLineItemUnit($rowElement);
-        $allElementAppear = false;
-        foreach ($expectedLineItemsTable as $index => $row) {
-            $skuAppear = false;
-            $quantityAppear = false;
-            $unitAppear = false;
-            foreach ($row as $columnTitle => $value) {
-                switch (strtolower($columnTitle)) {
-                    case 'sku':
-                        $skuAppear = $value === $sku;
-                        break;
-                    case 'quantity':
-                        $quantityAppear = $value === $quantity;
-                        break;
-                    case 'unit':
-                        $unitAppear = $value === $unit;
-                        break;
-                    default:
-                        throw new \InvalidArgumentException(
-                            sprintf(
-                                '%s column is not supported, supported columns is %s',
-                                $columnTitle,
-                                implode(', ', ['Sku', 'Quantity', 'Unit'])
-                            )
-                        );
-                        break;
-                }
+    private function getLineItemPrice(TableRow $tableRowElement)
+    {
+        return $this->createElement('Shopping List Line Item Product Price', $tableRowElement)->getText();
+    }
+
+    /**
+     * @param TableRow $rowElement
+     * @param array $columns
+     * @return array
+     */
+    private function getLineItemRowColumnsValues(TableRow $rowElement, array $columns): array
+    {
+        $values = [];
+        foreach ($columns as $columnTitle) {
+            switch (strtolower($columnTitle)) {
+                case 'sku':
+                    $currentValue = $this->getLineItemSKU($rowElement);
+                    break;
+                case 'quantity':
+                    $currentValue = $this->getLineItemQuantity($rowElement);
+                    break;
+                case 'unit':
+                    $currentValue = $this->getLineItemUnit($rowElement);
+                    break;
+                case 'price':
+                    $currentValue = $this->getLineItemPrice($rowElement);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            '%s column is not supported, supported columns is %s',
+                            $columnTitle,
+                            implode(', ', ['Sku', 'Quantity', 'Unit', 'Price'])
+                        )
+                    );
+                    break;
             }
-            if ($quantityAppear && $unitAppear && $skuAppear) {
-                $allElementAppear = true;
-            }
+
+            $values[$columnTitle] = $currentValue;
         }
 
-        return $allElementAppear;
+        return $values;
     }
 
     /**

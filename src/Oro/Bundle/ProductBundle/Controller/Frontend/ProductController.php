@@ -83,6 +83,7 @@ class ProductController extends Controller
         $data = [
             'product' => $product,
             'parentProduct' => null,
+            'chosenProductVariant' => null
         ];
 
         $ignoreProductVariants = $request->get('ignoreProductVariant', false);
@@ -93,6 +94,7 @@ class ProductController extends Controller
         if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
             $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
+            $data['chosenProductVariant'] = $this->getChosenProductVariantFromRequest($request, $product);
             if ($simpleProduct) {
                 $data['productVariant'] = $simpleProduct;
                 $data['parentProduct'] = $product;
@@ -118,11 +120,33 @@ class ProductController extends Controller
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
         );
 
-        return  [
+        return [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
             'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @param Product $product
+     * @return Product|null
+     */
+    private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
+    {
+        $variantProductId = $request->get('variantProductId');
+        if ($variantProductId) {
+            $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+            $simpleProducts = $productAvailabilityProvider->getSimpleProductsByConfigurable([$product]);
+
+            foreach ($simpleProducts as $simpleProduct) {
+                if ($simpleProduct->getId() === (int)$variantProductId) {
+                    return $simpleProduct;
+                }
+            }
+        }
+
+        return null;
     }
 }
