@@ -124,5 +124,12 @@ oro.cms:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
 oro.entity_extend.form.data_type.wysiwyg: WYSIWYG
+oro.entity_extend.form.data_type.wysiwyg_style: WYSIWYG Style
 oro.scope.content_block.label: Content Block
-
+oro.locale.localizedfallbackvalue:
+    wysiwyg:
+        label: 'WYSIWYG value'
+        description: The text value for the curent localization, can contain html tags
+    wysiwyg_style:
+        label: 'WYSIWYG Style value'
+        description: The text value for the curent localization, can contain css dataa
