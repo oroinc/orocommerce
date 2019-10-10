@@ -84,7 +84,7 @@ class WYSIWYGEntityConfigDumperExtension extends AbstractEntityConfigDumperExten
     public function postUpdate(): void
     {
         foreach ($this->configs as $config) {
-            $this->wysiwygSchemaHelper->createStyleField($config['entityConfig'], $config['fieldConfig']);
+            $this->wysiwygSchemaHelper->createAdditionalFields($config['entityConfig'], $config['fieldConfig']);
         }
     }
 }

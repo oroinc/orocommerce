@@ -112,7 +112,7 @@ class WYSIWYGEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->wysiwygSchemaHelper
             ->expects($this->exactly(2))
-            ->method('createStyleField')
+            ->method('createAdditionalFields')
             ->with($entityConfig, $fieldConfig);
 
         $this->extension->postUpdate();

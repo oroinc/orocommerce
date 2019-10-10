@@ -42,7 +42,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -109,6 +109,7 @@ class OroCMSBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
         $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('content_properties', 'wysiwyg_properties', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
@@ -464,6 +465,7 @@ class OroCMSBundleInstaller implements
         $table->addColumn('content_block_id', 'integer', ['notnull' => false]);
         $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
         $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('content_properties', 'wysiwyg_properties', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }

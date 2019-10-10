@@ -88,6 +88,7 @@ oro.cms:
         entity_plural_label: Content Variants
         content.label: Content
         content_style.label: Content
+        content_properties.label: Content Properties
         default.label: Default
         id.label: Id
         content_block.label: Content Block
@@ -123,6 +124,9 @@ oro.cms:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
-oro.entity_extend.form.data_type.wysiwyg: WYSIWYG
+oro.entity_extend.form.data_type:
+    wysiwyg: WYSIWYG
+    wysiwyg_style: WYSIWYG Style
+    wysiwyg_properties: WYSIWYG Properties
 oro.scope.content_block.label: Content Block
 

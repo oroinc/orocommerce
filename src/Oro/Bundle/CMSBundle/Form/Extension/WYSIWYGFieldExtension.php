@@ -35,11 +35,7 @@ class WYSIWYGFieldExtension extends AbstractTypeExtension
         if ($parentForm) {
             $formName = $form->getName();
             $parentForm->add($formName . DBALWYSIWYGStyleType::TYPE_SUFFIX, WYSIWYGStylesType::class);
-            $parentForm->add(
-                $formName . DBALWYSIWYGPropertiesType::TYPE_SUFFIX,
-                WYSIWYGPropertiesType::class,
-                ['mapped' => false]
-            );
+            $parentForm->add($formName . DBALWYSIWYGPropertiesType::TYPE_SUFFIX, WYSIWYGPropertiesType::class);
         }
     }
 
