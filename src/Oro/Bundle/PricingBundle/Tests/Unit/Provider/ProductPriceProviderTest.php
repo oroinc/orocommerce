@@ -315,7 +315,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
                 'expectedResult' => [
-                    '1-item-10-USD' => Price::create(1, 'USD'),
+                    '1-item-10-USD' => Price::create(10, 'USD'),
                 ]
             ],
             'no matched prices' => [
@@ -406,12 +406,17 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
      * @param string $unitCode
      * @param int $quantity
      * @param string $currency
+     * @param int $unitDefaultPrecision
      *
      * @return ProductPriceCriteria
      */
-    private function getProductPriceCriteria(int $productId, string $unitCode, int $quantity, string $currency)
-    {
-        $unitDefaultPrecision = 1;
+    private function getProductPriceCriteria(
+        int $productId,
+        string $unitCode,
+        int $quantity,
+        string $currency,
+        int $unitDefaultPrecision = 1
+    ) {
         $productUnit = new ProductUnit();
         $productUnit
             ->setCode($unitCode)

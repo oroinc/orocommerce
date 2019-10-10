@@ -21,7 +21,7 @@ Feature: Product with fractional prices view
     And I click "Search Button"
     Then I should see "Product 1"
     And I should see "12,99 $" in the "Product Price Main" element
-    And I should see "12,99 $" in the "Product Price Listed" element
+    And I should see "15,99 $" in the "Product Price Listed" element
 
   Scenario: Filter product by fractional price
     When I filter Price as equals or more than "10,55"
@@ -29,12 +29,13 @@ Feature: Product with fractional prices view
       | Price: equals or more than 10,55 / ea |
     And I should see "Product 1"
     And I should see "12,99 $" in the "Product Price Main" element
-    And I should see "12,99 $" in the "Product Price Listed" element
+    And I should see "15,99 $" in the "Product Price Listed" element
 
   Scenario: Prices on product view page formatted according locale settings
     When I click "Product 1"
     Then I should see "Product 1"
     And I should see an "Default Page Prices" element
+    And I should see "0.5 15,99 $" in the "Default Page Prices" element
     And I should see "1 12,99 $" in the "Default Page Prices" element
     And I should see "100 10,99 $" in the "Default Page Prices" element
 
@@ -45,6 +46,7 @@ Feature: Product with fractional prices view
     And I sort "ProductPricesGrid" by "Quantity"
     Then I should see following "ProductPricesGrid" grid:
       | Price List          | Quantity | Unit | Value | Currency |
+      | priceListForWebsite | 0.5      | each | 15.99 | USD      |
       | priceListForWebsite | 1        | each | 12.99 | USD      |
       | priceListForWebsite | 100      | each | 10.99 | USD      |
 
@@ -61,6 +63,7 @@ Feature: Product with fractional prices view
     And I sort "ProductPricesGrid" by "Quantity"
     Then I should see following "ProductPricesGrid" grid:
       | Price List          | Quantity | Unit | Value | Currency |
+      | priceListForWebsite | 0.5      | each | 15,99 | USD      |
       | priceListForWebsite | 1        | each | 12,99 | USD      |
       | priceListForWebsite | 100      | each | 10,99 | USD      |
 
