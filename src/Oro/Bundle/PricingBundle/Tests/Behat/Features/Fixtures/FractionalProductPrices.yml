@@ -8,7 +8,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@each'
-        precision: '1'
+        precision: 2
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -28,6 +28,13 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         addCurrencyByCode: ['USD']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price0_5:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+        currency: 'USD'
+        quantity: 0.5
+        unit: '@each'
+        value: 15.99
     price1:
         product: '@product1'
         priceList: '@priceListForWebsite'
@@ -55,6 +62,14 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
         website: '@website1'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProduct0_5Price:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 0.5
+        unit: '@each'
+        value: 15.99
+        currency: 'USD'
     combinedProduct1Price:
         pricelist: '@combinedPriceList'
         product: '@product1'

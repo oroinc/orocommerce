@@ -28,10 +28,11 @@ Feature: RFQ with fractional price
     And click "Edit RFQ Line Item"
     And fill "Frontstore RFQ Line Item Form1" with:
       | SKU          | PSKU1  |
-      | Quantity     | 20     |
-      | Target Price | 10,99  |
+      | Quantity     | 101    |
+      | Target Price | 10,59  |
     And click "Update Line Item"
-    Then I should see "Product 1 QTY: 20 each Target Price 10,99 $ Listed Price: 12,99 $"
+    And I wait for action
+    Then I should see "Product 1 QTY: 101 each Target Price 10,59 $ Listed Price: 10,99 $"
 
     When I click "Submit Request"
     Then I should see RFQ with data:
