@@ -93,7 +93,7 @@ services:
             # properties
             - []
             # functions
-            - ['widget']
+            - ['widget', 'content_block']
 
     oro_cms.twig.sandbox_extension:
         class: 'Twig_Extension_Sandbox'
@@ -115,6 +115,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_cms.twig.content_block_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\ContentBlockExtension'
+        arguments:
+            - '@oro_cms.content_block.renderer'
+        tags:
+            - { name: twig.extension }
+
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'
 
@@ -124,6 +131,7 @@ services:
             - '@oro_cms.twig.array_loader'
         calls:
             - [addExtension, ['@oro_cms.twig.widget_extension']]
+            - [addExtension, ['@oro_cms.twig.content_block_extension']]
             - [addExtension, ['@oro_cms.twig.sandbox_extension']]
 
     oro_crm.twig.twig_in_variables_extension:
@@ -208,6 +216,16 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: security.voter }
+
+    oro_cms.content_block.renderer:
+        class: Oro\Bundle\CMSBundle\ContentBlock\ContentBlockRenderer
+        arguments:
+            - '@oro_cms.provider.content_block_provider'
+            - '@twig'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.content_widget.renderer:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer

@@ -25,10 +25,10 @@ class TwigContentWidgetParser
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      * @return array
      */
-    public function parseNames(string $content): array
+    public function parseNames(?string $content): array
     {
         if (!$content) {
             return [];
