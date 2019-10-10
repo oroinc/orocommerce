@@ -88,6 +88,7 @@ class ProductController extends AbstractController
         $data = [
             'product' => $product,
             'parentProduct' => null,
+            'chosenProductVariant' => null
         ];
 
         $ignoreProductVariants = $request->get('ignoreProductVariant', false);
@@ -98,6 +99,7 @@ class ProductController extends AbstractController
         if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
             $productAvailabilityProvider = $this->get(ProductVariantAvailabilityProvider::class);
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
+            $data['chosenProductVariant'] = $this->getChosenProductVariantFromRequest($request, $product);
             if ($simpleProduct) {
                 $data['productVariant'] = $simpleProduct;
                 $data['parentProduct'] = $product;
@@ -123,7 +125,7 @@ class ProductController extends AbstractController
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
         );
 
-        return  [
+        return [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
@@ -144,5 +146,28 @@ class ProductController extends AbstractController
             'oro_product.layout.data_provider.product_view_form_availability_provider'
                 => ProductFormAvailabilityProvider::class,
         ]);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param Product $product
+     * @return Product|null
+     */
+    private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
+    {
+        $variantProductId = $request->get('variantProductId');
+        if ($variantProductId) {
+            $simpleProducts = $this->get(ProductVariantAvailabilityProvider::class)
+                ->getSimpleProductsByConfigurable([$product]);
+
+            foreach ($simpleProducts as $simpleProduct) {
+                if ($simpleProduct->getId() === (int)$variantProductId) {
+                    return $simpleProduct;
+                }
+            }
+        }
+
+        return null;
     }
 }
