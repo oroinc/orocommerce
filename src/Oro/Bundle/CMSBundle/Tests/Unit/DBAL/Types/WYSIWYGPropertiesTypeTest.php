@@ -38,4 +38,70 @@ class WYSIWYGPropertiesTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }
+
+    /**
+     * @param mixed $value
+     * @param mixed $expectedValue
+     * @dataProvider getConvertToDatabaseValueDataProvider
+     * @depends testGetName
+     */
+    public function testConvertToDatabaseValue($value, $expectedValue): void
+    {
+        $typeName = 'wysiwyg_properties';
+        $type = Type::getType($typeName);
+        $platform = new DatabasePlatformMock();
+
+        $this->assertEquals($expectedValue, $type->convertToDatabaseValue($value, $platform));
+    }
+
+    public function getConvertToDatabaseValueDataProvider()
+    {
+        return [
+            'string' => [
+                'value' => 'text value',
+                'expectedValue' => 'text value'
+            ],
+            'object' => [
+                'value' => new \stdClass(),
+                'expectedValue' => json_encode(new \stdClass())
+            ],
+            'null' => [
+                'value' => null,
+                'expectedValue' => null
+            ],
+        ];
+    }
+
+    /**
+     * @param mixed $value
+     * @param mixed $expectedValue
+     * @dataProvider getConvertToPHPValueDataProvider
+     * @depends testGetName
+     */
+    public function testConvertToPHPValue($value, $expectedValue): void
+    {
+        $typeName = 'wysiwyg_properties';
+        $type = Type::getType($typeName);
+        $platform = new DatabasePlatformMock();
+
+        $this->assertEquals($expectedValue, $type->convertToPHPValue($value, $platform));
+    }
+
+    public function getConvertToPHPValueDataProvider()
+    {
+        return [
+            'string' => [
+                'value' => 'text value',
+                'expectedValue' => 'text value'
+            ],
+            'object' => [
+                'value' => '{}',
+                'expectedValue' => '{}'
+            ],
+            'null' => [
+                'value' => null,
+                'expectedValue' => null
+            ],
+        ];
+    }
 }

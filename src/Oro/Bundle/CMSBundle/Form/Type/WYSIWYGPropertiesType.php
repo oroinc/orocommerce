@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType as DBALWYSIWYGPropertiesType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
@@ -12,6 +13,8 @@ use Symfony\Component\Form\FormView;
  */
 class WYSIWYGPropertiesType extends AbstractType
 {
+    public const TYPE_SUFFIX = DBALWYSIWYGPropertiesType::TYPE_SUFFIX;
+
     /**
      * {@inheritdoc}
      */

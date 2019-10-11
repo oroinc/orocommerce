@@ -21,7 +21,7 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'builderOptions', 'storageManager', 'builderPlugins', 'storagePrefix',
-            'currentTheme', 'contextClass', 'canvasConfig', 'themes', 'stylesInputSelector'
+            'currentTheme', 'contextClass', 'canvasConfig', 'themes', 'stylesInputSelector', 'propertiesInputSelector'
         ]),
 
         /**
@@ -117,6 +117,18 @@ define(function(require) {
         $stylesInputElement: null,
 
         /**
+         * Properties input selector
+         * @property {String}
+         */
+        propertiesInputSelector: '',
+
+        /**
+         * Properties input element
+         * @property {Object}
+         */
+        $propertiesInputElement: null,
+
+        /**
          * List of grapesjs plugins
          * @property {Object}
          */
@@ -194,6 +206,7 @@ define(function(require) {
          */
         initBuilder: function() {
             this.$stylesInputElement = this.$el.closest('form').find(this.stylesInputSelector);
+            this.$propertiesInputElement = this.$el.closest('form').find(this.propertiesInputSelector);
             this.builder = GrapesJS.init(_.extend(
                 {}
                 , {
@@ -291,6 +304,14 @@ define(function(require) {
         },
 
         /**
+         * Get editor components
+         * @returns {Object}
+         */
+        getEditorComponents: function() {
+            return this.builder.getComponents();
+        },
+
+        /**
          * Add wrapper classes for iframe with content
          */
         _addClassForFrameWrapper: function() {
@@ -366,6 +387,8 @@ define(function(require) {
             } else {
                 content += '<style>' + this.getEditorStyles() + '</style>';
             }
+            var components = JSON.stringify(this.getEditorComponents());
+            this.$propertiesInputElement.val(components).trigger('change');
 
             this.$el.val(content).trigger('change');
         },
