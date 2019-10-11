@@ -82,8 +82,9 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, $isString = false)
     {
-        $targetTable = $schema->getTable($ownerTable);
-
+        $ownerTable = $schema->getTable($ownerTable);
+        $targetTable = $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME);
+        
         // Column names are used to show a title of target entity
         $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
         // Column names are used to show detailed info about target entity
@@ -93,9 +94,9 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
 
         $this->extendExtension->addManyToManyRelation(
             $schema,
-            $targetTable,
+            $ownerTable,
             $relationName,
-            self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            $targetTable,
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,
