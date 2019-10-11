@@ -266,3 +266,10 @@ services:
             - '@oro_ui.html_tag_helper'
         tags:
              - { name: oro_entity_config.attribute_type }
+
+    oro_cms.form.type.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
+        arguments:
+            - '@oro_form.provider.html_tag_provider'
+        tags:
+            - { name: form.type }

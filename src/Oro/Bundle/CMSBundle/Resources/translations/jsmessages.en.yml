@@ -1,8 +1,30 @@
 oro.cms:
     wysiwyg:
+        option_panel:
+            show_borders: 'Show Borders'
+            preview: 'Preview'
+            fullscreen: 'Fullscreen'
+            export: 'Export'
+            import: 'Import'
+            undo: 'Undo'
+            redo: 'Redo'
+            clear_canvas: 'Clear Canvas'
         theme_selector:
             placeholder: 'Type theme name'
+        exclude_content_block: 'You are trying to add current content block inside itself. Please choose another one'
+        content_block:
+            title: 'Select content block'
+            type: 'Content Block'
+        content_widget:
+            title: 'Select content widget'
+            type: 'Content Widget'
+        component:
+            content_block: 'Content Block'
+            content_widget: 'Content Widget'
+            code: 'Code'
+            link_button: 'Link Button'
+            table: 'Table'
     change_type:
         confirmation:
-            title: Change Type
-            body: Are you sure you want to change content widget type?
+            title: 'Change Type'
+            body: 'Are you sure you want to change content widget type?'

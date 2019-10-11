@@ -3,12 +3,22 @@
 @import "oroui/css/scss/variables";
 @import "oroui/css/scss/oro/variables/form-variables";
 
+@import "./pages";
+@import "./loginPage";
+
+// GrapesJs styles
 @import "../../fonts/grapsejs/style";
 @import "variables/grapesjs-variables";
 
 @import "bundles/npmassets/grapesjs/src/styles/scss/main.scss";
-@import "grapesjs";
-@import "grapesjs/grapesjs-devices";
 
-@import "./pages";
-@import "./loginPage";
+@import "grapesjs";
+@import "grapesjs/grapesjs-buttons";
+@import "grapesjs/grapesjs-devices";
+@import "grapesjs/grapesjs-editor";
+@import "grapesjs/grapesjs-field";
+@import "grapesjs/grapesjs-field-radio";
+@import "grapesjs/grapesjs-layer";
+@import "grapesjs/grapesjs-views";
+@import "grapesjs/grapesjs-tag";
+

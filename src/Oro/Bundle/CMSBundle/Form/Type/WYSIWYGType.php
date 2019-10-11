@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormInterface;
@@ -13,6 +14,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WYSIWYGType extends AbstractType
 {
+    /** @var HtmlTagProvider */
+    private $htmlTagProvider;
+
+    /**
+     * @param HtmlTagProvider $htmlTagProvider
+     */
+    public function __construct(HtmlTagProvider $htmlTagProvider)
+    {
+        $this->htmlTagProvider = $htmlTagProvider;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -35,7 +47,8 @@ class WYSIWYGType extends AbstractType
             'page-component' => [
                 'module' => 'oroui/js/app/components/view-component',
                 'options' => [
-                    'view' => 'orocms/js/app/views/grapesjs-editor-view'
+                    'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
+                    'allow_tags' => $this->htmlTagProvider->getAllowedElements()
                 ]
             ]
         ]);
