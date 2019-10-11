@@ -1654,14 +1654,14 @@ workflows:
                                 - [$checkout.completedData.subtotal, $order.subtotalObject.value]
                                 - [$checkout.completedData.total, $order.totalObject.value]
 
-                    - '@remove_entity':
+                    - '@remove_checkout_source_entity':
                         conditions:
                             '@or':
                                 - '@equal': [$auto_remove_source, true]
                                 - '@and':
                                     - '@equal': [$allow_manual_source_remove, true]
                                     - '@equal': [$remove_source, true]
-                        parameters: [$checkout.sourceEntity]
+                        parameters: [$checkout]
 
             recalculate_state_definition:
                 preconditions:

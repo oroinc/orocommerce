@@ -727,3 +727,9 @@ services:
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false
+
+    oro_checkout.action.remove_checkout_source_entity:
+        class: 'Oro\Bundle\CheckoutBundle\Action\RemoveCheckoutSourceEntity'
+        parent: oro_action.action.remove_entity
+        tags:
+            - { name: oro_action.action, alias: remove_checkout_source_entity }
