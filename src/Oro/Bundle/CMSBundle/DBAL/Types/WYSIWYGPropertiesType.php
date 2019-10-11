@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\DBAL\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonType;
 
 /**
@@ -17,5 +18,11 @@ class WYSIWYGPropertiesType extends JsonType
     public function getName()
     {
         return self::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return true;
     }
 }
