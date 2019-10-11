@@ -1,29 +1,29 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Api\Processor;
+namespace Oro\Bundle\CatalogBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Subresource\Shared\ValidateParentEntityAccess;
 use Oro\Bundle\ApiBundle\Processor\Subresource\SubresourceContext;
-use Oro\Bundle\WebCatalogBundle\Api\Repository\ContentNodeRepository;
+use Oro\Bundle\CatalogBundle\Api\Repository\CategoryNodeRepository;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Checks whether an access to the parent web catalog content node is granted.
+ * Checks whether an VIEW access to the parent master catalog tree node is granted.
  */
-class ValidateParentContentNodeAccess implements ProcessorInterface
+class ValidateParentCategoryNodeAccess implements ProcessorInterface
 {
-    /** @var ContentNodeRepository */
-    private $contentNodeRepository;
+    /** @var CategoryNodeRepository */
+    private $categoryNodeRepository;
 
     /**
-     * @param ContentNodeRepository $contentNodeRepository
+     * @param CategoryNodeRepository $categoryNodeRepository
      */
-    public function __construct(ContentNodeRepository $contentNodeRepository)
+    public function __construct(CategoryNodeRepository $categoryNodeRepository)
     {
-        $this->contentNodeRepository = $contentNodeRepository;
+        $this->categoryNodeRepository = $categoryNodeRepository;
     }
 
     /**
@@ -34,7 +34,11 @@ class ValidateParentContentNodeAccess implements ProcessorInterface
         /** @var SubresourceContext $context */
 
         try {
-            $parentNode = $this->contentNodeRepository->getContentNodeEntity($context->getParentId());
+            $parentNode = $this->categoryNodeRepository->getCategoryNodeEntity(
+                $context->getParentId(),
+                $context->getParentConfig(),
+                $context->getRequestType()
+            );
         } catch (AccessDeniedException $e) {
             throw new AccessDeniedException('No access to the parent entity.', $e);
         }
