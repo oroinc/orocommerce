@@ -20,3 +20,24 @@ liip_imagine:
             quality:          95
             filters:
                 strip:        ~
+
+oro_form:
+    html_purifier_modes:
+        lax:
+            extends: default
+            html_purifier_iframe_domains:
+                - 'youtube.com/embed/'
+                - 'player.vimeo.com/video/'
+            html_allowed_elements:
+                iframe:
+                    attributes:
+                        - id
+                        - allowfullscreen
+                        - frameborder
+                        - height
+                        - marginheight
+                        - marginwidth
+                        - name
+                        - scrolling
+                        - src
+                        - width

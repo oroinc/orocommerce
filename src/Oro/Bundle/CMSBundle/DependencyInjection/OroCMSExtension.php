@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -15,12 +16,23 @@ class OroCMSExtension extends Extension
 {
     const ALIAS = 'oro_cms';
 
+    /** @var array */
+    private $contentRestrictionModes = ['secure', 'selective', 'unsecure'];
+
+    /**
+     * @param string $value
+     */
+    public function addContentRestrictionMode($value)
+    {
+        $this->contentRestrictionModes[] = $value;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
+        $configuration = new Configuration($this->contentRestrictionModes);
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -43,6 +55,20 @@ class OroCMSExtension extends Extension
 
         $container->registerForAutoconfiguration(ContentWidgetTypeInterface::class)
             ->addTag('oro_cms.content_widget.type');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return Configuration
+     */
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        $rc = new \ReflectionClass(Configuration::class);
+
+        $container->addResource(new FileResource($rc->getFileName()));
+
+        return new Configuration($this->contentRestrictionModes);
     }
 
     /**
