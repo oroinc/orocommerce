@@ -1088,6 +1088,7 @@ oro_behat_extension:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
+        - OroCheckoutBundle::FeatureContext
         - OroCustomerBundle::FrontendGridContext
         - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
@@ -1109,7 +1110,10 @@ oro_behat_extension:
         - OroLocaleBundle::LocalizationContext
         - OroWorkflowBundle::FeatureContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::SingleCurrencyContext
+        - OroOrderBundle::OrderContext
         - OroProductBundle::FrontendProductGridContext
         - OroCMSBundle::FeatureContext
       paths:

@@ -289,6 +289,38 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($formView, $data);
     }
 
+    public function testGetVariantFieldsFormViewByVariantProduct()
+    {
+        $formView = $this->createMock(FormView::class);
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1001]);
+
+        /** @var Product $variantProduct */
+        $variantProduct = $this->getEntity(Product::class, ['id' => 1003]);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(
+                FrontendVariantFiledType::class,
+                $variantProduct,
+                $this->getProductVariantExpectedOptions($product, 2)
+            )
+            ->willReturn($form);
+
+        $data = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
+        $this->assertSame($formView, $data);
+
+        //check local cache
+        $data = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
+        $this->assertSame($formView, $data);
+    }
+
     public function testGetVariantFieldsForm()
     {
         /** @var Product $product */

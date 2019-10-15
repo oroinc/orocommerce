@@ -30,4 +30,10 @@ class TwigContentWidgetParserTest extends \PHPUnit\Framework\TestCase
             )
         );
     }
+
+    public function testParseNamesWithEmptyContent(): void
+    {
+        $this->assertEquals([], $this->parser->parseNames(null));
+        $this->assertEquals([], $this->parser->parseNames(''));
+    }
 }

@@ -146,9 +146,26 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * @param Product $product
+     * @param Product $variantProduct
      * @return FormView
      */
-    public function getVariantFieldsFormView(Product $product)
+    public function getVariantFieldsFormViewByVariantProduct(Product $product, Product $variantProduct): FormView
+    {
+        $options = $this->getVariantFieldsFormOptions($product);
+
+        return $this->getFormView(
+            FrontendVariantFiledType::class,
+            $variantProduct,
+            $options,
+            ['parentProduct' => $product->getId()]
+        );
+    }
+
+    /**
+     * @param Product $product
+     * @return FormView
+     */
+    public function getVariantFieldsFormView(Product $product): FormView
     {
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);

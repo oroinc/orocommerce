@@ -119,3 +119,24 @@ data:
                     -
                         type: mastercatalogcategories
                         id: '<toString(@root_category->id)>'
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category3_1_1->id)>'
+        attributes:
+            createdAt: '@category3_1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category3_1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 3_1_1'
+            shortDescription: null
+            description: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            url: null
+            urls: []
+            images: []
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'

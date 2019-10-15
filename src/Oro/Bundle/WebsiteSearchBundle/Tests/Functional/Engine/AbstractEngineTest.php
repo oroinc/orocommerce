@@ -128,6 +128,7 @@ abstract class AbstractEngineTest extends WebTestCase
     {
         $query = new Query();
         $query->from('*');
+        $query->getCriteria()->andWhere(new Comparison('text.stringValue', 'STARTS WITH', 'item'));
         $items = $this->getSearchItems($query);
 
         $this->assertCount(LoadSearchItemData::COUNT, $items);

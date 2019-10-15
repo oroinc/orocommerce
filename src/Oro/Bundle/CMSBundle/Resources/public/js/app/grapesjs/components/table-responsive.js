@@ -4,11 +4,15 @@ define(function(require) {
     var TableResponsiveComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var tableResponsiveTemplate = require('tpl!orocms/templates/grapesjs-table-responsive.html');
 
     /**
      * Create responsive table component type for builder
      */
     TableResponsiveComponent = BaseComponent.extend({
+
+        editor: null,
+
         /**
          * @inheritDoc
          */
@@ -20,6 +24,8 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.editor = options;
+
             var ComponentId = 'table-responsive';
             var domComps = options.DomComponents;
             var dType = domComps.getType('default');
@@ -61,6 +67,24 @@ define(function(require) {
                 }),
                 view: dView
             });
+
+            this.createComponentButton();
+        },
+
+        createComponentButton: function() {
+            if (this.editor.ComponentRestriction.isAllow([
+                'div', 'table', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th'
+            ])) {
+                this.editor.BlockManager.add('responsive-table', {
+                    id: 'table-responsive',
+                    label: _.__('oro.cms.wysiwyg.component.table'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-table'
+                    },
+                    content: tableResponsiveTemplate()
+                });
+            }
         }
     });
 
