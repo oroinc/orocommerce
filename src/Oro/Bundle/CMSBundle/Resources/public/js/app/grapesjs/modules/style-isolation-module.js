@@ -4,17 +4,17 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    var ExtensionModule = function(options) {
+    var StyleIsolationModule = function(options) {
         _.extend(this, _.pick(options, ['view', 'builder']));
 
-        this.componentCssIdRegexp = /(\[component-id-view([\d]*)\])/g;
-        this.componentHtmlIdRegexp = /(<div component-id-view([\d]*))/g;
+        this.componentCssIdRegexp = /(\[id="component-id-view([\d]*)"\])/g;
+        this.componentHtmlIdRegexp = /(<div id="component-id-view([\d]*))/g;
         this.cssSelectorRegexp = /([(.|#)?\w-*]*?(\s)?{)/g;
 
         this.init();
     };
 
-    ExtensionModule.prototype = {
+    StyleIsolationModule.prototype = {
         init: function() {
             this.wrapMethods();
 
@@ -22,7 +22,7 @@ define(function(require) {
         },
 
         wrapMethods: function() {
-            var uniqId = 'component-id-' + _.uniqueId('view');
+            var uniqId = 'id="component-id-' + _.uniqueId('view') + '"';
 
             this.builder.getHtml = _.wrap(this.builder.getHtml, _.bind(function(func) {
                 var html = func();
@@ -45,5 +45,5 @@ define(function(require) {
         }
     };
 
-    return ExtensionModule;
+    return StyleIsolationModule;
 });

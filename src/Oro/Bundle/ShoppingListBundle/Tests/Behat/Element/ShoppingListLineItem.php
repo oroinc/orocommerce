@@ -9,7 +9,7 @@ class ShoppingListLineItem extends Element implements LineItemInterface
     /**
      * {@inheritdoc}
      */
-    public function getProductSKU()
+    public function getProductSKU(): string
     {
         return $this->getElement('ShoppingListLineItemProductSku')->getText();
     }

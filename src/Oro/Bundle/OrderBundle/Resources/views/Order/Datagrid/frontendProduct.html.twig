@@ -8,7 +8,11 @@
         {% if record.getValue('parentProduct') %}
             {% set product = record.getValue('parentProduct') %}
         {% endif %}
-        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.names|localized_value|e }}</a>
+        {% set routeOptions = {'id': product.id} %}
+        {% if product.isConfigurable %}
+            {% set routeOptions = routeOptions|merge({'variantProductId': record.getRootEntity().product.id}) %}
+        {% endif %}
+        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ product.names|localized_value|e }}</a>
     {% else %}
         {{ record.getValue('productName') }}
     {% endif %}

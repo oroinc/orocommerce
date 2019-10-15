@@ -3,8 +3,9 @@
 namespace Oro\Bundle\CatalogBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
-use Oro\Bundle\ApiBundle\Util\AclProtectedQueryFactory;
+use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ApiBundle\Util\QueryAclHelper;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -15,19 +16,19 @@ use Oro\Component\EntitySerializer\EntityConfig;
  */
 class HideInvisibleProductCategories implements ProcessorInterface
 {
-    /** @var AclProtectedQueryFactory */
-    private $queryFactory;
+    /** @var QueryAclHelper */
+    private $queryAclHelper;
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
     /**
-     * @param AclProtectedQueryFactory $queryFactory
+     * @param QueryAclHelper $queryAclHelper
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(AclProtectedQueryFactory $queryFactory, DoctrineHelper $doctrineHelper)
+    public function __construct(QueryAclHelper $queryAclHelper, DoctrineHelper $doctrineHelper)
     {
-        $this->queryFactory = $queryFactory;
+        $this->queryAclHelper = $queryAclHelper;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -49,7 +50,8 @@ class HideInvisibleProductCategories implements ProcessorInterface
 
         $availableCategoriesIds = $this->getAvailableCategoriesIds(
             $this->getCategoriesIds($data, $categoryFieldName),
-            $fieldConfig->getTargetEntity()
+            $fieldConfig->getTargetEntity(),
+            $context->getRequestType()
         );
 
         foreach ($data as $key => $item) {
@@ -65,7 +67,7 @@ class HideInvisibleProductCategories implements ProcessorInterface
      * @param array  $data
      * @param string $categoryFieldName
      *
-     * @return array [category1Id, catergory2Id, ...]
+     * @return array [category id, ...]
      */
     private function getCategoriesIds(array $data, string $categoryFieldName): array
     {
@@ -82,16 +84,20 @@ class HideInvisibleProductCategories implements ProcessorInterface
     /**
      * @param array        $categoryIds
      * @param EntityConfig $entityConfig
+     * @param RequestType  $requestType
      *
-     * @return array [availableCategoryId => true, ...]
+     * @return array [available category id => true, ...]
      */
-    private function getAvailableCategoriesIds(array $categoryIds, EntityConfig $entityConfig): array
-    {
+    private function getAvailableCategoriesIds(
+        array $categoryIds,
+        EntityConfig $entityConfig,
+        RequestType $requestType
+    ): array {
         $qb = $this->doctrineHelper->createQueryBuilder(Category::class, 'e')
             ->select('e.id')
             ->where('e.id in (:ids)')
             ->setParameter('ids', $categoryIds);
-        $query = $this->queryFactory->getQuery($qb, $entityConfig);
+        $query = $this->queryAclHelper->protectQuery($qb, $entityConfig, $requestType);
         $resultCategories = $query->getArrayResult();
 
         $result = [];

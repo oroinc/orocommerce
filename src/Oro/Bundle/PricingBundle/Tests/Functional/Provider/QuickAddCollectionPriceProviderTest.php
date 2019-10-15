@@ -92,7 +92,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
             $event
         );
 
-        $this->assertEquals('36.47', $collection->getAdditionalField('price')->getValue()['value']);
+        $this->assertEquals('184.7', $collection->getAdditionalField('price')->getValue()['value']);
         $this->assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 

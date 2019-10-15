@@ -18,6 +18,7 @@ use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,6 +58,11 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
     private $logger;
 
     /**
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $eventDispatcher;
+
+    /**
      * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
@@ -73,6 +79,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->reindexMessageGranularizer = $this->createMock(ReindexMessageGranularizer::class);
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->processor = new SearchMessageProcessor(
             $this->indexer,
@@ -80,7 +87,8 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             $this->indexerInputValidator,
             $this->reindexMessageGranularizer,
             $this->jobRunner,
-            $this->logger
+            $this->logger,
+            $this->eventDispatcher
         );
 
         $this->session = $this->createMock(SessionInterface::class);

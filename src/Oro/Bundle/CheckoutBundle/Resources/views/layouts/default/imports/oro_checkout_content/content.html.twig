@@ -263,7 +263,11 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_name_widget %}
     {% if mainProduct is not null %}
-        <a class="checkout-order-summary__lineitem-name" href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
+        {% set routeOptions = {'id': mainProduct.id} %}
+        {% if mainProduct.isConfigurable %}
+            {% set routeOptions = routeOptions|merge({'variantProductId': lineItem.product.id}) %}
+        {% endif %}
+        <a class="checkout-order-summary__lineitem-name" href="{{ path('oro_product_frontend_product_view', routeOptions) }}" tabindex="-1">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
     {% else %}
         {{ lineItem.freeFormProduct|oro_html_strip_tags }}
     {% endif %}

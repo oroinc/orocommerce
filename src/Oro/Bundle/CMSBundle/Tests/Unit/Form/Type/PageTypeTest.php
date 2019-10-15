@@ -7,6 +7,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -98,13 +99,15 @@ class PageTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
         return [
             new PreloadedExtension(
                 [
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    WYSIWYGType::class => new WYSIWYGType(),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class

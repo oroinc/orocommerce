@@ -10,6 +10,7 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -33,6 +34,8 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -41,7 +44,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => new WYSIWYGType(),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
                 ],
                 []
             ),

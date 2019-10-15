@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,12 +14,19 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 {
     public function testGetParent()
     {
-        $type = new WYSIWYGType();
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
+        $type = new WYSIWYGType($htmlTagProvider);
         $this->assertEquals(TextareaType::class, $type->getParent());
     }
 
     public function testConfigureOptions()
     {
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $htmlTagProvider->expects($this->once())
+            ->method('getAllowedElements')
+            ->willReturn(['h1', 'h2', 'h3']);
+
         /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -26,13 +35,14 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'page-component' => [
                     'module' => 'oroui/js/app/components/view-component',
                     'options' => [
-                        'view' => 'orocms/js/app/views/grapesjs-editor-view'
+                        'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
+                        'allow_tags' => ['h1', 'h2', 'h3']
                     ]
                 ]
             ])
             ->will($this->returnSelf());
 
-        $type = new WYSIWYGType();
+        $type = new WYSIWYGType($htmlTagProvider);
         $type->configureOptions($resolver);
     }
 
@@ -45,9 +55,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class);
-        $type = new WYSIWYGType();
+        $type = new WYSIWYGType($htmlTagProvider);
         $type->finishView($view, $form, ['page-component' => [
             'module' => 'component/module',
             'options' => ['view' => 'app/view']
@@ -59,5 +71,22 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
+        return [
+            new PreloadedExtension(
+                [
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
+                ],
+                []
+            )
+        ];
     }
 }

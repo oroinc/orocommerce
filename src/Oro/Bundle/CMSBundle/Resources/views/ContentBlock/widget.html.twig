@@ -1,0 +1,6 @@
+{%- if contentBlock.contentStyle|length -%}
+    {%- spaceless -%}
+        <style type="text/css">{{- contentBlock.contentStyle|raw -}}</style>
+    {%- endspaceless -%}
+{%- endif -%}
+<div>{{- contentBlock.content|oro_html_sanitize|render_content -}}</div>

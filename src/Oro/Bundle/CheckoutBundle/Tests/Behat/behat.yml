@@ -59,6 +59,13 @@ oro_behat_extension:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'
 
+    CheckoutProductTableRow:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTableRow
+      selector: 'tbody.checkout-order-summary__grid-body tr.checkout-order-summary__grid-tr'
+
+    CheckoutProductViewLink:
+      selector: 'a.checkout-order-summary__lineitem-name'
+
     Single Page Checkout Step:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[class=" checkout-order-summary__totals"]'
@@ -127,12 +134,19 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="order-line-items-grid-frontend"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Checkout Line Items Table:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTable
+      selector: 'table.checkout-order-summary__grid'
+
     CheckoutStepLineItem:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem
       selector: 'table[data-scrollable-inner-content] tr'
 
     CheckoutStepLineItemProductSku:
       selector: 'td.checkout-order-summary__grid-td--sku div'
+
+    Checkout Line Item Product Attribute:
+      selector: 'td.checkout-order-summary__grid-td--info > div'
 
     Ship to This Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox

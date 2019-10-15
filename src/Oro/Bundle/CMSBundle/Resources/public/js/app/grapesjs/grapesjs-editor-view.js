@@ -2,14 +2,17 @@ define(function(require) {
     'use strict';
 
     var GrapesjsEditorView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var GrapesJS = require('grapesjs');
     var $ = require('jquery');
     var _ = require('underscore');
-    var GrapesJSModules = require('orocms/js/app/views/grapesjs-modules/grapesjs-modules');
+    var GrapesJS = require('grapesjs');
+
+    var BaseView = require('oroui/js/app/views/base/view');
+    var ModuleManager = require('orocms/js/app/grapesjs/modules/module-manager');
     var mediator = require('oroui/js/mediator');
+    var canvasStyle = require('text!orocms/css/grapesjs/grapesjs-canvas.css');
 
     require('grapesjs-preset-webpage');
+    require('orocms/js/app/grapesjs/plugins/components/grapesjs-components');
 
     /**
      * Create GrapesJS content builder
@@ -20,8 +23,8 @@ define(function(require) {
          * @inheritDoc
          */
         optionNames: BaseView.prototype.optionNames.concat([
-            'builderOptions', 'storageManager', 'builderPlugins', 'storagePrefix',
-            'currentTheme', 'contextClass', 'canvasConfig', 'themes', 'stylesInputSelector', 'propertiesInputSelector'
+            'autoRender', 'allow_tags', 'builderOptions', 'builderPlugins', 'currentTheme', 'canvasConfig',
+            'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
         ]),
 
         /**
@@ -35,6 +38,8 @@ define(function(require) {
         builder: null,
 
         $builderIframe: null,
+
+        allow_tags: null,
 
         /**
          * Page context class
@@ -80,7 +85,9 @@ define(function(require) {
          * Canvas options
          * @property {Object}
          */
-        canvasConfig: {},
+        canvasConfig: {
+            canvasCss: canvasStyle
+        },
 
         /**
          * Style manager options
@@ -139,12 +146,17 @@ define(function(require) {
                 blocksBasicOpts: {
                     flexGrid: 1
                 },
-                customStyleManager: GrapesJSModules.getModule('style-manager'),
+                navbarOpts: false,
+                countdownOpts: false,
+                customStyleManager: ModuleManager.getModule('style-manager'),
                 modalImportContent: function(editor) {
                     return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
                 }
-            }
+            },
+            'grapesjs-components': {}
         },
+
+        initialValue: '',
 
         /**
          * @inheritDoc
@@ -158,6 +170,19 @@ define(function(require) {
          * @param options
          */
         initialize: function(options) {
+            this.setCurrentContentAlias();
+            this.styleField = this.$el.parent().siblings(('[data-grapesjs-styles="content_style"]'));
+            this.$propertiesInputElement = this.$el.parent().siblings(this.propertiesInputSelector);
+
+            if (this.allow_tags) {
+                this.builderPlugins['grapesjs-components'] = _.extend({},
+                    this.builderPlugins['grapesjs-components'],
+                    {
+                        allowTags: this.allow_tags
+                    }
+                );
+            }
+
             GrapesjsEditorView.__super__.initialize.apply(this, arguments);
         },
 
@@ -165,6 +190,10 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
+            this.initialValue = this.applyComponentsJSON(
+                this.$el.val().replace(/(\[id="component-id-view([\d]*)\])/g, '')
+            );
+
             this.initBuilder();
         },
 
@@ -186,12 +215,7 @@ define(function(require) {
          */
         getContainer: function() {
             var $editor = $('<div id="grapesjs" />');
-            var content = this.$el.val().replace(/(\[component-id-view([\d]*)\])/g, '');
-            if (this.$stylesInputElement) {
-                content += '<style>' + this.$stylesInputElement.val() + '</style>';
-            }
-            $editor.html(content);
-
+            $editor.html(this.initialValue);
             this.$el.parent().append($editor);
 
             this.$el.hide();
@@ -201,12 +225,23 @@ define(function(require) {
             return $editor.get(0);
         },
 
+        applyComponentsJSON: function(content) {
+            // var temp = $('<div />').html(content);
+            // var json = temp.find('json');
+            //
+            // if (json.text()) {
+            //     this.JSONcomponents = JSON.parse(json.text());
+            // }
+            //
+            // json.remove();
+            // return temp.html();
+            return content;
+        },
+
         /**
          * Initialize builder instance
          */
         initBuilder: function() {
-            this.$stylesInputElement = this.$el.closest('form').find(this.stylesInputSelector);
-            this.$propertiesInputElement = this.$el.closest('form').find(this.propertiesInputSelector);
             this.builder = GrapesJS.init(_.extend(
                 {}
                 , {
@@ -215,15 +250,17 @@ define(function(require) {
                 }
                 , this._prepareBuilderOptions()));
 
+            this.builder.setStyle(this.styleField.val());
+
             mediator.trigger('grapesjs:created', this.builder);
+
+            if (this.JSONcomponents) {
+                this.builder.setComponents(this.JSONcomponents);
+            }
 
             this.builderDelegateEvents();
 
-            GrapesJSModules.call('components', {
-                builder: this.builder
-            });
-
-            GrapesJSModules.call('extension', {
+            ModuleManager.call('style-isolation', {
                 view: this,
                 builder: this.builder
             });
@@ -287,6 +324,14 @@ define(function(require) {
             button.set('active', true);
         },
 
+        setCurrentContentAlias: function() {
+            this.form = this.$el.closest('form');
+            var contentBlockAliasField = this.form.find('[name="oro_cms_content_block[alias]"]');
+            if (contentBlockAliasField.length && contentBlockAliasField.val()) {
+                this.builderOptions.contentBlockAlias = contentBlockAliasField.val();
+            }
+        },
+
         /**
          * Get editor content
          * @returns {String}
@@ -323,12 +368,12 @@ define(function(require) {
          * @private
          */
         _onLoadBuilder: function() {
-            GrapesJSModules.call('panel-manager', {
+            ModuleManager.call('panel-manager', {
                 builder: this.builder,
                 themes: this.themes
             });
 
-            GrapesJSModules.call('devices', {
+            ModuleManager.call('devices', {
                 builder: this.builder
             });
 
@@ -363,34 +408,32 @@ define(function(require) {
          * @private
          */
         _updateTheme: function(selected) {
+            if (!_.isUndefined(this.activeTheme) && this.activeTheme.name === selected) {
+                return false;
+            }
+
             _.each(this.themes, function(theme) {
                 theme.active = theme.name === selected;
             });
 
-            var theme = _.find(this.themes, function(theme) {
+            this.activeTheme = _.find(this.themes, function(theme) {
                 return theme.active;
             });
 
             var style = this.builder.Canvas.getFrameEl().contentDocument.head.querySelector('link');
 
-            style.href = '/' + theme.stylesheet;
+            style.href = this.activeTheme.stylesheet;
         },
 
         /**
-         * Update source textarea
+         * Update source textarea and styles
          * @private
          */
         _updateInitialField: function() {
-            var content = this.getEditorContent();
-            if (this.$stylesInputElement) {
-                this.$stylesInputElement.val(this.getEditorStyles()).trigger('change');
-            } else {
-                content += '<style>' + this.getEditorStyles() + '</style>';
-            }
+            this.$el.val(this.getEditorContent()).trigger('change');
+            this.styleField.val(this.getEditorStyles()).trigger('change');
             var components = JSON.stringify(this.getEditorComponents());
             this.$propertiesInputElement.val(components).trigger('change');
-
-            this.$el.val(content).trigger('change');
         },
 
         /**
@@ -442,14 +485,8 @@ define(function(require) {
         _getCanvasConfig: function() {
             var theme = this.getCurrentTheme();
             return _.extend({}, this.canvasConfig, {
-                canvasCss: '.gjs-comp-selected { outline: 3px solid #0c809e !important; ' +
-                    'outline-offset: 0 !important; }' +
-                    '#wrapper { padding: 3px; }' +
-                    '* ::-webkit-scrollbar { width: 5px}' +
-                    '::-webkit-scrollbar-track { background: #f3f3f3 }' +
-                    '::-webkit-scrollbar-thumb { background: #e3e3e4 }',
                 canvas: {
-                    styles: ['/' + theme.stylesheet]
+                    styles: [theme.stylesheet]
                 },
                 protectedCss: []
             });

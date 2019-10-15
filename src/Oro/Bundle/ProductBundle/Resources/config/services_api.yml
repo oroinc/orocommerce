@@ -319,7 +319,7 @@ services:
     oro_product.api.create.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@oro_api.security.authorization_checker'
+            - '@security.authorization_checker'
             - ['VIEW', 'EDIT']
         tags:
             - { name: oro.api.processor, action: create, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
@@ -327,7 +327,7 @@ services:
     oro_product.api.delete.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@oro_api.security.authorization_checker'
+            - '@security.authorization_checker'
             - ['EDIT']
         tags:
             - { name: oro.api.processor, action: delete, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
@@ -336,7 +336,7 @@ services:
     oro_product.api.get.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@oro_api.security.authorization_checker'
+            - '@security.authorization_checker'
             - ['VIEW']
         tags:
             - { name: oro.api.processor, action: get, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
