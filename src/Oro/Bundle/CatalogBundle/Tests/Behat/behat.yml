@@ -132,5 +132,9 @@ oro_behat_extension:
         - OroCatalogBundle::FeatureContext
         - OroProductBundle::FeatureContext
         - OroWebCatalogBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'

@@ -25,6 +25,8 @@ services:
             - '@oro_website_search.engine.text_filtered_index_data'
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.indexer.input_validator'
+        calls:
+            - [setEventDispatcher, ['@event_dispatcher']]
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry'
@@ -199,11 +201,14 @@ services:
             - '@oro_website_search.indexer.input_validator'
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
             - '@logger'
+        calls:
+            - [setEventDispatcher, ['@event_dispatcher']]
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reset_index' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex_granulized' }
 
     oro_website_search.async_messaging.search_message.processor.job_runner:
         class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
@@ -215,6 +220,7 @@ services:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reset_index' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex_granulized' }
 
     oro_website_search.reindex_request.listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'

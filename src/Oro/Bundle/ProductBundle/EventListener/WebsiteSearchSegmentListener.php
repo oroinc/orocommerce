@@ -5,7 +5,9 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 /**
@@ -39,6 +41,7 @@ class WebsiteSearchSegmentListener
     }
 
     /**
+     * @deprecated since 3.1, will be removed in 4.0
      * @param IndexEntityEvent $event
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
@@ -58,6 +61,24 @@ class WebsiteSearchSegmentListener
         }
         foreach ($segments as $segment) {
             $this->staticSegmentManager->run($segment, $this->getEntityIds($event));
+        }
+    }
+
+    /**
+     * @param BeforeReindexEvent $event
+     */
+    public function process(BeforeReindexEvent $event)
+    {
+        $classes = \is_array($event->getClassOrClasses())
+            ? $event->getClassOrClasses()
+            : (array) $event->getClassOrClasses();
+        if ($classes && !\in_array(Product::class, $classes, true)) {
+            return;
+        }
+
+        $ids = $event->getContext()[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] ?? [];
+        foreach ($this->contentVariantSegmentProvider->getContentVariantSegments() as $segment) {
+            $this->staticSegmentManager->run($segment, $ids);
         }
     }
 

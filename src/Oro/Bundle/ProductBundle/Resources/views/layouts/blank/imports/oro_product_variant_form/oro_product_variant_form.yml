@@ -11,15 +11,15 @@ layout:
                 __variant_field_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
                 __variant_field_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
                 __variant_field_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
             tree:
                 __root:
                     __variant_field_form:

@@ -146,10 +146,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     protected function recalculatePricePerUnit($price, $quantityPerAmount, $precision)
     {
-        if ($precision > 0 && $quantityPerAmount !== 0.0) {
-            return $price / $quantityPerAmount;
-        }
-
         return $price;
     }
 

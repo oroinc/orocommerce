@@ -38,10 +38,10 @@
         }) }}
     {% endset %}
     {% set productDescription %}
-        {{ UI.renderCollapsibleHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less') }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription|oro_html_sanitize_wysiwyg, entity, 'defaultDescription', 'More', 'Less') }}
     {% endset %}
     {% set productShortDescription %}
-        {{ UI.renderCollapsibleHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less') }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription|oro_html_sanitize_wysiwyg, entity, 'defaultShortDescription', 'More', 'Less') }}
     {% endset %}
 
     {% set productInfo %}

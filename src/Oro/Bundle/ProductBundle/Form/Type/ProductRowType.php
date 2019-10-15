@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -19,6 +20,19 @@ class ProductRowType extends AbstractProductAwareType
     const NAME = 'oro_product_row';
 
     /**
+     * @var  ProductUnitsProvider
+     */
+    protected $productUnitsProvider;
+
+    /**
+     * @param ProductUnitsProvider $productUnitsProvider
+     */
+    public function __construct(ProductUnitsProvider $productUnitsProvider)
+    {
+        $this->productUnitsProvider = $productUnitsProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -27,6 +41,9 @@ class ProductRowType extends AbstractProductAwareType
         if ($options['validation_required']) {
             $productSkuOptions['constraints'][] = new ProductBySku();
         }
+
+        // To keep select consistent with Select2 after page JS initialization have to add first empty option
+        $unitChoices = array_merge(['--' => ''], $this->productUnitsProvider->getAvailableProductUnits());
 
         $builder
             ->add(
@@ -48,7 +65,8 @@ class ProductRowType extends AbstractProductAwareType
                 ProductUnitsType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.product.productunitprecision.unit.label'
+                    'label' => 'oro.product.productunitprecision.unit.label',
+                    'choices' => $unitChoices
                 ]
             )
             ->add(

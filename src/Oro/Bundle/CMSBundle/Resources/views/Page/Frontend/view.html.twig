@@ -17,6 +17,6 @@
 
 {% block content_data %}
     <div class="frontend-page-container">
-        {{ entity.content|raw }}
+        {{ entity.content|oro_html_sanitize_wysiwyg }}
     </div>
 {% endblock content_data %}

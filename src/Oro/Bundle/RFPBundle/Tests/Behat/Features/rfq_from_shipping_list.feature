@@ -34,7 +34,7 @@ Feature: RFQ from Shipping List
       | Role                   | Sauce cook                                                            |
       | PO Number              | PO Test 01                                                            |
       | Assigned To            | Marlene Bradley                                                       |
-      | Do Not Ship Later Than | 7/1/18                                                                |
+      | Do Not Ship Later Than | 7/1/2018                                                                |
 
     When I click "Submit Request"
     Then I should see RFQ with data:
@@ -47,7 +47,7 @@ Feature: RFQ from Shipping List
       | Notes                  | Parish so enable innate in formed missed. Hand two was eat busy fail. |
       | PO Number              | PO Test 01                                                            |
       | Assigned To            | Marlene Bradley                                                       |
-      | Do Not Ship Later Than | 7/1/18                                                                |
+      | Do Not Ship Later Than | 7/1/2018                                                                |
 
     And I should see "Notes: This item was missed in the previous request"
 

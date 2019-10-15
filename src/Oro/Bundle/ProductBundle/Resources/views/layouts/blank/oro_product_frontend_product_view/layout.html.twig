@@ -89,7 +89,7 @@
             'data-role': 'layout-subtree-loading-container'
         }) %}
         {% set children = block_widget(block) %}
-    
+
         {% if children|trim|length %}
             <div {{ block('block_attributes') }}>
                 {{ children|raw }}
@@ -110,7 +110,7 @@
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
-    {% set description = translated_value|oro_html_sanitize|trim %}
+    {% set description = translated_value|oro_html_sanitize_wysiwyg|trim %}
     {% if description %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' collapse-view collapse-view--overflow',

@@ -79,6 +79,10 @@ oro:
                 label:                              'Minimum quantity to order'
                 description:                        The minimum quantity that the user can order by default for the products in the category. This option applies only when the category settings apply to the product.
 
+            importexport:
+                export:
+                    label: 'Export Categories'
+
         all_products:
             label: All Products
 

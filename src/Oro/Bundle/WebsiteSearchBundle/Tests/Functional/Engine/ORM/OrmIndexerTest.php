@@ -101,6 +101,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_website_search.placeholder_decorator'),
             $inputValidator
         );
+        $this->indexer->setEventDispatcher($this->getContainer()->get('event_dispatcher'));
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
         $this->doctrine = $this->getContainer()->get('doctrine');

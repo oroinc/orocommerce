@@ -27,7 +27,7 @@ The created record is returned in the response.
 | Attribute| Options | Description |
 |----------|---------|-------------|
 | decrementQuantity | 1 / 0 | Yes / No |
-| manageInventory | 1 / 0 | On Order Submission / Defined by Workflow |
+| manageInventory | 1 / 0 | On order submission in the default checkout flow / No (custom) |
 | backOrder | 1 / 0 | Yes / No |
 | productType | "simple" / "configurable" | |
 | status | "enabled" / "disabled" |  |

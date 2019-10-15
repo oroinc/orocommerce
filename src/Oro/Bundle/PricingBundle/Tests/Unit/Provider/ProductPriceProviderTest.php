@@ -315,7 +315,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
                 'expectedResult' => [
-                    '1-item-10-USD' => Price::create(1, 'USD'),
+                    '1-item-10-USD' => Price::create(10, 'USD'),
                 ]
             ],
             'no matched prices' => [

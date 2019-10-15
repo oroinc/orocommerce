@@ -19,6 +19,7 @@ use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -83,6 +84,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             $this->reindexMessageGranularizer,
             $this->logger
         );
+        $this->processor->setEventDispatcher($this->createMock(EventDispatcherInterface::class));
 
         $this->session = $this->createMock(SessionInterface::class);
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -10,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
- * Provides methods to retrieve information about Catalog entity form the DB
+ * Provides methods to retrieve information about Category entity form the DB
  */
 class CategoryRepository extends NestedTreeRepository
 {
@@ -105,6 +106,51 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $title
+     * @param Category|null $parentCategory
+     *
+     * @return Category|null
+     */
+    public function findOneOrNullByDefaultTitleAndParent(
+        string $title,
+        ?Category $parentCategory = null
+    ): ?Category {
+        $qb = $this->createQueryBuilder('category');
+
+        try {
+            $qb
+                ->select('partial category.{id}')
+                ->andWhere('category.denormalizedDefaultTitle = :title')
+                ->setParameter('title', $title);
+
+            if ($parentCategory !== null) {
+                $qb
+                    ->andWhere('category.parentCategory = :category')
+                    ->setParameter('category', $parentCategory);
+            }
+
+            $category = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
+            $category = null;
+        }
+
+        return $category;
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return string[]
+     */
+    public function getCategoryPath(Category $category): array
+    {
+        $qb = $this->getPathQueryBuilder($category);
+        $qb->select('node.denormalizedDefaultTitle as title');
+
+        return array_column($qb->getQuery()->getScalarResult(), 'title');
     }
 
     /**
@@ -230,5 +276,20 @@ class CategoryRepository extends NestedTreeRepository
             ->setParameter('newPath', $category->getMaterializedPath())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * Gets max value of Gedmo tree "left" field.
+     *
+     * @return int
+     */
+    public function getMaxLeft(): int
+    {
+        $qb = $this->createQueryBuilder('category');
+
+        return $qb
+            ->select($qb->expr()->max('category.left'))
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

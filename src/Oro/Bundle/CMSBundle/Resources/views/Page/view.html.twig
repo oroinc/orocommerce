@@ -24,7 +24,7 @@
     {% set pageContent %}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ entity.content|oro_html_sanitize }}
+                {{ entity.content|oro_html_sanitize_wysiwyg }}
             </div>
         </div>
     {% endset %}

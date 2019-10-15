@@ -16,7 +16,7 @@
 
 {% macro renderItems(result) %}
     {% if result is defined and result|length %}
-        <table class="grid table table-condensed table-bordered tax-result-grid">
+        <table class="grid table table-condensed table-bordered tax-result-grid unit-table">
             {{ _self._renderItemsHead() }}
             <tbody>
             {% for type, data in result if data.includingTax is defined %}
@@ -50,7 +50,7 @@
         {% set MAX_FRACTION_DIGITS = constant('\\NumberFormatter::MAX_FRACTION_DIGITS') %}
         {% set CALCULATION_SCALE_AS_PERCENT = constant('Oro\\Bundle\\TaxBundle\\Provider\\TaxationSettingsProvider::CALCULATION_SCALE_AS_PERCENT') %}
 
-        <table class="grid table table-condensed table-bordered tax-result-grid">
+        <table class="grid table table-condensed table-bordered tax-result-grid unit-table">
             {{ _self._renderTaxesHead() }}
             <tbody>
             {% for tax in result.taxes %}
@@ -86,7 +86,7 @@
     <% var object = {unit: unit, row: row, shipping: shipping, total: total}; %>
     <% var data = _.pick(object, _.identity); %>
     <% if (data) { %>
-    <table class="grid table table-condensed table-bordered tax-result-grid">
+    <table class="grid table table-condensed table-bordered tax-result-grid unit-table">
         {{ _self._renderItemsHead() }}
         <tbody>
         <% _.each(data, function(item, key) { %>
@@ -105,7 +105,7 @@
 {% macro renderJsTaxes() %}
     <% var taxes = taxes; %>
     <% if (!_.isEmpty(taxes)) { %>
-    <table class="grid table table-condensed table-bordered tax-result-grid">
+    <table class="grid table table-condensed table-bordered tax-result-grid unit-table">
         {{ _self._renderTaxesHead() }}
         <tbody>
         <% _.each(taxes, function(tax) { %>

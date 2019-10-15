@@ -129,14 +129,14 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
                 'quantity' => 15,
-                'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1456.25],
+                'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1624.0],
             ],
             [
                 'lineItem' => static::LINE_ITEM_3,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 10,
-                'expectedSubtotals' => ['EUR' => 122, 'USD' => 131],
+                'expectedSubtotals' => ['EUR' => 122, 'USD' => 131.0],
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
             ],
             [
@@ -144,7 +144,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.liter',
                 'quantity' => 10,
-                'expectedSubtotals' => ['EUR' => 122, 'USD' => 143.2],
+                'expectedSubtotals' => ['EUR' => 122, 'USD' => 253.0],
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
             ],
         ];

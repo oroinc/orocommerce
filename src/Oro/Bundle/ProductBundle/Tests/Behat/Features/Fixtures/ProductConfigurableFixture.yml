@@ -1,5 +1,5 @@
 include:
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_name:
