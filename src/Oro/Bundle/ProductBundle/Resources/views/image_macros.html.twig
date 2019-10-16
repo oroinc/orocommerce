@@ -19,7 +19,7 @@
 {% macro image(file, filter) -%}
     {% import _self as imageMacros %}
 
-    <img src="{{ imageMacros.url(file, filter) }}"/>
+    <img src="{{ imageMacros.url(file, filter) }}" title="{{ oro_file_title(file) }}"/>
 {%- endmacro -%}
 
 {% macro renderProductImages(productImages, imageTypes) %}
