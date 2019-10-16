@@ -1,10 +1,84 @@
 api:
     entity_aliases:
+        Oro\Bundle\CatalogBundle\Api\Model\CategoryNode:
+            alias:        mastercatalogtree
+            plural_alias: mastercatalogtree
         Oro\Bundle\CatalogBundle\Entity\Category:
             alias:        mastercatalogcategory
             plural_alias: mastercatalogcategories
 
     entities:
+        Oro\Bundle\CatalogBundle\Api\Model\CategoryNode:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/category_node.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: integer
+                order:
+                    data_type: integer
+                    property_path: category.left
+                parent:
+                    target_class: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode
+                    target_type: to-one
+                    property_path: _
+                    depends_on: [ category.materializedPath ]
+                path:
+                    target_class: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode
+                    target_type: to-many
+                    property_path: _
+                    depends_on: [ category.materializedPath ]
+                # declare excluded "materializedPath" field as it is required to compute the value of
+                # "parent" and "path" fields
+                materializedPath:
+                    data_type: string
+                    property_path: category.materializedPath
+                    exclude: true
+                category:
+                    target_class: Oro\Bundle\CatalogBundle\Entity\Category
+                    target_type: to-one
+                    property_path: _
+            filters:
+                fields:
+                    id:
+                        data_type: integer
+                        allow_array: true
+                    parent:
+                        data_type: integer
+                        allow_array: true
+                        operators: [ '=', '!=', '*', '!*' ]
+                        property_path: parentCategory
+                    root:
+                        data_type: integer
+                        type: nestedTree
+                    category:
+                        data_type: integer
+                        operators: [ '=', '!=' ]
+                        property_path: id
+            actions:
+                get:
+                    description: Get Master Catalog Tree Node
+                get_list:
+                    description: Get Master Catalog Tree Nodes
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            subresources:
+                path:
+                    filters:
+                        # disable all filters
+                        exclusion_policy: all
+                    actions:
+                        get_relationship:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+                        get_subresource:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+
         Oro\Bundle\CatalogBundle\Entity\Category:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/category.md'
             fields:

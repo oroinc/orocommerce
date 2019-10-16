@@ -171,7 +171,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -193,7 +193,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -215,7 +215,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -237,7 +237,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -304,7 +304,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -326,7 +326,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -348,7 +348,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -370,7 +370,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -437,7 +437,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -459,7 +459,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -481,7 +481,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -503,7 +503,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -570,7 +570,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -592,7 +592,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -614,7 +614,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -636,7 +636,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
-                'detail' => 'No access to the entity.'
+                'detail' => 'No access to the parent entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN

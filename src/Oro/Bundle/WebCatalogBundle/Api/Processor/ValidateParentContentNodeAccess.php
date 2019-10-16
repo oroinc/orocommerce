@@ -11,8 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Loads the parent web catalog content node from the database
- * and checks whether an access to it is granted.
+ * Checks whether an access to the parent web catalog content node is granted.
  */
 class ValidateParentContentNodeAccess implements ProcessorInterface
 {

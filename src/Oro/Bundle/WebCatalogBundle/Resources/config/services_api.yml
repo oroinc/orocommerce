@@ -120,5 +120,5 @@ services:
         arguments:
             - '@oro_web_catalog.api.content_node_repository'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 95 }
-            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 95 }
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 105 }
+            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 105 }

@@ -1,7 +1,8 @@
 define(function(require) {
     'use strict';
 
-    var ThemeSelectorView = require('orocms/js/app/views/grapesjs-modules/controls/theme-selector-view');
+    var ThemeSelectorView = require('orocms/js/app/grapesjs/controls/theme-selector-view');
+    var $ = require('jquery');
     var _ = require('underscore');
 
     /**
@@ -24,12 +25,24 @@ define(function(require) {
 
         themes: [],
 
+        optionButtonTooltips: {
+            'sw-visibility': _.__('oro.cms.wysiwyg.option_panel.show_borders'),
+            'preview': _.__('oro.cms.wysiwyg.option_panel.preview'),
+            'fullscreen': _.__('oro.cms.wysiwyg.option_panel.fullscreen'),
+            'export-template': _.__('oro.cms.wysiwyg.option_panel.export'),
+            'undo': _.__('oro.cms.wysiwyg.option_panel.undo'),
+            'redo': _.__('oro.cms.wysiwyg.option_panel.redo'),
+            'gjs-open-import-webpage': _.__('oro.cms.wysiwyg.option_panel.import'),
+            'canvas-clear': _.__('oro.cms.wysiwyg.option_panel.export')
+        },
+
         /**
          * Run panels reformat
          * @initialize
          */
         init: function() {
             this._moveSettings();
+            this._addOptionButtonTooltips();
             this.createThemeSelector();
         },
 
@@ -44,6 +57,19 @@ define(function(require) {
             pn.view.$el.prepend(
                 themeSelector.$el
             );
+        },
+
+        _addOptionButtonTooltips: function() {
+            var pn = this.builder.Panels.getPanel('options');
+
+            pn.buttons.each(function(button) {
+                button.set('attributes', {
+                    'data-toggle': 'tooltip',
+                    'title': this.optionButtonTooltips[button.id]
+                });
+            }, this);
+
+            $(pn.view.$el.find('[data-toggle="tooltip"]')).tooltip();
         },
 
         /**
@@ -79,6 +105,10 @@ define(function(require) {
             });
 
             Panels.removeButton('views', 'open-tm');
+
+            this.builder.$('#gjs-clm-tags-field').on('click', '[data-tag-status]', function(e) {
+                e.stopPropagation();
+            });
         }
     };
 

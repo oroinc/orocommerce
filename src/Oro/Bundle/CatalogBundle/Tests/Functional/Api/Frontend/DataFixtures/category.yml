@@ -47,6 +47,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Category 3'
     category3_1_title:
         string: 'Category 3_1'
+    category3_1_1_title:
+        string: 'Category 3_1_1'
     product1_name:
         string: 'Product 1'
     product2_name:
@@ -142,6 +144,11 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@category3_1_title']
         organization: '@organization'
         parentCategory: '@category3'
+    category3_1_1:
+        __calls:
+            - addTitle: ['@category3_1_1_title']
+        organization: '@organization'
+        parentCategory: '@category3_1'
 
 Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved:
     category3_visibility_resolved:

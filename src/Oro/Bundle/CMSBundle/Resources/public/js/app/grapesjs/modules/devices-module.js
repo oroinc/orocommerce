@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var _ = require('underscore');
+    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var viewportManager = require('oroui/js/viewport-manager');
 
@@ -39,9 +40,14 @@ define(function(require) {
             this.$builderIframe = this.builder.Canvas.getFrameEl();
             this.canvasEl = this.builder.Canvas.getElement();
 
-            _.delay(_.bind(this._getCSSBreakpoint, this), 300);
+            this.initButtons();
+            this.builder.on('changeTheme', _.bind(this.initButtons, this));
+        },
 
-            this.builder.on('changeTheme', _.debounce(_.bind(this._getCSSBreakpoint, this), 300));
+        initButtons: function() {
+            this.getBreakpoints().then(_.bind(function() {
+                this.createButtons();
+            }, this));
         },
 
         /**
@@ -50,14 +56,25 @@ define(function(require) {
          */
         _getCSSBreakpoint: function() {
             var frameHead = this.$builderIframe.contentDocument.head;
-
             var breakpoints = mediator.execute('fetch:head:computedVars', frameHead);
 
             this.breakpoints = _.filter(viewportManager._collectCSSBreakpoints(breakpoints), function(breakpoint) {
                 return breakpoint.name.indexOf('strict') === -1;
             });
+        },
 
-            this.createButtons();
+        getBreakpoints: function() {
+            var defer = $.Deferred();
+            var inter = setInterval(_.bind(function() {
+                this._getCSSBreakpoint();
+
+                if (this.breakpoints.length) {
+                    clearInterval(inter);
+                    defer.resolve();
+                }
+            }, this), 50);
+
+            return defer.promise();
         },
 
         /**
@@ -109,12 +126,16 @@ define(function(require) {
                 deviceButton.add({
                     id: breakpoint.name,
                     command: 'setDevice',
+                    togglable: false,
                     className: breakpoint.name,
                     active: breakpoint.name === 'desktop',
                     attributes: {
-                        title: this.concatTitle(breakpoint, options)
+                        'data-toggle': 'tooltip',
+                        'title': this.concatTitle(breakpoint, options)
                     }
                 });
+
+                $(devicePanel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
             }, this);
         },
 

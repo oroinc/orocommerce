@@ -1,14 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var StyleManagerModule = require('orocms/js/app/views/grapesjs-modules/style-manager-module');
-    var PanelManagerModule = require('orocms/js/app/views/grapesjs-modules/panels-module');
-    var ComponentsModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-components');
-    var DevicesModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-devices-module');
-    var ExtensionModule = require('orocms/js/app/views/grapesjs-modules/grapesjs-extension');
-    var _ = require('underscore');
-
     var GrapesJSModules;
+    var StyleManagerModule = require('orocms/js/app/grapesjs/modules/style-manager-module');
+    var PanelManagerModule = require('orocms/js/app/grapesjs/modules/panels-module');
+    var DevicesModule = require('orocms/js/app/grapesjs/modules/devices-module');
+    var StyleIsolationModule = require('orocms/js/app/grapesjs/modules/style-isolation-module');
+    var _ = require('underscore');
 
     /**
      * Create GrapesJS module manager
@@ -16,7 +14,7 @@ define(function(require) {
      */
     GrapesJSModules = _.extend({
         /**
-         * Nodule namespace
+         * Module namespace
          * @property {String}
          */
         namespace: '-module',
@@ -48,9 +46,8 @@ define(function(require) {
     }, {
         'style-manager-module': StyleManagerModule,
         'panel-manager-module': PanelManagerModule,
-        'components-module': ComponentsModule,
         'devices-module': DevicesModule,
-        'extension-module': ExtensionModule
+        'style-isolation-module': StyleIsolationModule
     });
 
     return GrapesJSModules;

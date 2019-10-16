@@ -1,6 +1,11 @@
 @regression
 @ticket-BB-13580
 @ticket-BB-16438
+@ticket-BB-17585
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroProductBundle:ProductConfigurableFixture.yml
 
 Feature: Product view page for configurable product
@@ -98,12 +103,109 @@ Feature: Product view page for configurable product
     And I type "tpc" in "search"
     And I click "Search Button"
     And I click "View Details" for "tpc" product
+    When I fill "Configurable Product Form" with:
+      | Color       | White |
+      | Refurbished | No    |
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
+    When I fill "Configurable Product Form" with:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    And I click "Add to Shopping List"
+    Then I should see "Product has been added to" flash message
+    And I should see "In shopping list"
+
+  Scenario: Check that product links from Shopping List navigates to product view page with preselected attributes
+    Given I open page with shopping list "Shopping List"
+    And I should see following line items in "Shopping List Line Items Table":
+      | SKU | Quantity | Unit | Price     |
+      | tpc | 1        | item | $1,100.00 |
+      | tpc | 1        | item | $800.00   |
+    When I click on "tpc" configurable product in "Shopping List Line Items Table" with the following attributes:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    Then "Configurable Product Form" must contains values:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    When I open page with shopping list "Shopping List"
+    When I click on "tpc" configurable product in "Shopping List Line Items Table" with the following attributes:
+      | Color       | White |
+      | Refurbished | No    |
+    Then "Configurable Product Form" must contains values:
+      | Color       | White |
+      | Refurbished | No    |
+
+  Scenario: Create order with configurable product and check product view pages for product variants
+    Given I open page with shopping list "Shopping List"
+    When I click "Create Order"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And "Order Review" checkout step "Order Summary Products Grid" contains products
+      | Tablet PC | 1 | item | $1,100.00 |
+      | Tablet PC | 1 | item | $800.00   |
+    And I click on "tpc" configurable product in "Checkout Line Items Table" with the following attributes:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    Then "Configurable Product Form" must contains values:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    When I open page with shopping list "Shopping List"
+    And I click "Create Order"
+    And I click on "tpc" configurable product in "Checkout Line Items Table" with the following attributes:
+      | Color       | White |
+      | Refurbished | No    |
+    Then "Configurable Product Form" must contains values:
+      | Color       | White |
+      | Refurbished | No    |
+    When I open page with shopping list "Shopping List"
+    And I click "Create Order"
+    When I uncheck "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    When I click "click here to review"
+    And I click on "tpc_w" configurable product in "Order Line Items Table" with the following attributes:
+      | Color       | White |
+      | Refurbished | No    |
+    Then "Configurable Product Form" must contains values:
+      | Color       | White |
+      | Refurbished | No    |
+    When I open Order History page on the store frontend
+    And I click "view" on first row in "Past Orders Grid"
+    And I click on "tpc_b_r" configurable product in "Order Line Items Table" with the following attributes:
+      | Color       | Black |
+      | Refurbished | Yes   |
+    Then "Configurable Product Form" must contains values:
+      | Color       | Black |
+      | Refurbished | Yes   |
 
   Scenario: Configurable Product View Details link is accessible for featured products
     Given I am on homepage
     Then I should see "tpc" featured product
     When I click "View Details" for "tpc" product
     Then the url should match "/tablet_pc"
+
+  Scenario: Restore system configuration default values
+    Given I proceed as the Admin
+    When check "Use default" for "Product Views" field
+    And check "Use default" for "Product Listings" field
+    And check "Use default" for "Shopping Lists" field
+    And I save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Update configurable product variants when resuming product page from Shopping list
+    Given I proceed as the Buyer
+    When I open page with shopping list "Shopping List"
+    And click "Tablet PC"
+    And I fill "Matrix Grid Form" with:
+      |       | No | Yes |
+      | Black | -  | 2   |
+      | White | 1  | -   |
+    And click "Update Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | No  | Yes |
+      | N/A | 2   |
+      | 1   | N/A |
