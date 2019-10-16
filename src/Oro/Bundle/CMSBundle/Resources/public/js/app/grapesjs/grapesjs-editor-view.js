@@ -24,7 +24,8 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'autoRender', 'allow_tags', 'builderOptions', 'builderPlugins', 'currentTheme', 'canvasConfig',
-            'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
+            'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
+            'propertiesInputSelector'
         ]),
 
         /**
@@ -172,7 +173,7 @@ define(function(require) {
         initialize: function(options) {
             this.setCurrentContentAlias();
             this.styleField = this.$el.parent().siblings(('[data-grapesjs-styles="content_style"]'));
-            this.$propertiesInputElement = this.$el.parent().siblings(this.propertiesInputSelector);
+            this.$propertiesInputElement = this.$el.closest('form').find(this.propertiesInputSelector);
 
             if (this.allow_tags) {
                 this.builderPlugins['grapesjs-components'] = _.extend({},

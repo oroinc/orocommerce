@@ -25,13 +25,14 @@ class WYSIWYGPropertiesTypeTest extends FormIntegrationTestCase
     public function testSubmit(): void
     {
         $form = $this->factory->create(WYSIWYGPropertiesType::class);
-        $properties = \json_encode([
+        $expected = [
             'property1' => ['value' => 'value 1'],
             'property2' => ['value' => 'value 2'],
-        ]);
+        ];
+        $properties = \json_encode($expected);
         $form->submit($properties);
 
-        $this->assertJsonStringEqualsJsonString($properties, $form->getData());
+        $this->assertEquals($expected, $form->getData());
     }
 
     public function testFinishView(): void

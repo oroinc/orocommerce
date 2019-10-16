@@ -87,7 +87,7 @@ oro.cms:
         entity_label: Content Variant
         entity_plural_label: Content Variants
         content.label: Content
-        content_style.label: Content
+        content_style.label: Content Style
         content_properties.label: Content Properties
         default.label: Default
         id.label: Id
