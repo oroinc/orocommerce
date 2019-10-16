@@ -49,7 +49,7 @@ class OroInventoryExtensionTest extends ExtensionTestCase
     {
         return $this
             ->getMockBuilder(ContainerBuilder::class)
-            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter'])
+            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter', 'setAlias'])
             ->getMock();
     }
 }

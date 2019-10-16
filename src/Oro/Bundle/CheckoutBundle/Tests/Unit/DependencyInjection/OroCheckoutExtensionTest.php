@@ -16,7 +16,7 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
     protected function buildContainerMock()
     {
         $mockBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter'])
+            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter', 'setAlias'])
             ->getMock();
 
         $mockBuilder
