@@ -5,4 +5,5 @@ OroCMSBundle adds content management features to the Oro application. The bundle
 ## Table of Contents
 
 * [Content Blocks](./Resources/doc/reference/content_blocks.md)
+* [WYSIWYG Field](./Resources/doc/wysiwyg.md)
 * [Widgets on a CMS Content Page](./Resources/doc/widgets.md)

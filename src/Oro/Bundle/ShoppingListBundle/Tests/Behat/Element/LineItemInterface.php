@@ -7,5 +7,5 @@ interface LineItemInterface
     /**
      * @return string
      */
-    public function getProductSKU();
+    public function getProductSKU(): string;
 }

@@ -1,0 +1,44 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node11->id)>'
+    attributes:
+        title: 'Web Catalog 1 Node 1.1'
+    relationships:
+        parent:
+            data:
+                type: webcatalogtree
+                id: '<toString(@catalog1_node1->id)>'
+        path:
+            data:
+                -
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_rootNode->id)>'
+                -
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_node1->id)>'
+included:
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node1->id)>'
+        attributes:
+            title: 'Web Catalog 1 Node 1'
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_rootNode->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_rootNode->id)>'
+        attributes:
+            title: 'Web Catalog 1 Root Node'
+        relationships:
+            parent:
+                data: null
+            path:
+                data: []

@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
@@ -114,68 +113,6 @@ class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
             ->willReturn('Main');
 
         $this->validator->validate($collection, $this->constraint);
-
-        $this->buildViolation('oro.product.product_image.type_restriction')
-            ->setParameters(
-                [
-                    '%type%' => 'Main',
-                    '%maxNumber%' => 1
-                ]
-            )
-            ->assertRaised();
-    }
-
-    public function testValidateValidProductImage()
-    {
-        $product = new Product();
-        $productImage = $this->prepareProductImage(['main']);
-        $productImage->setProduct($product);
-
-        $this->productImageHelper->expects($this->once())
-            ->method('countImagesByType')
-            ->willReturn(
-                [
-                    'main' => 1
-                ]
-            );
-
-        $this->validator->validate($productImage, $this->constraint);
-
-        $this->assertTrue($product->getImages()->contains($productImage));
-        $this->assertNoViolation();
-    }
-
-    public function testValidateProductImageWithoutProduct()
-    {
-        $productImage = $this->prepareProductImage(['main']);
-
-        $this->productImageHelper->expects($this->never())
-            ->method('countImagesByType');
-
-        $this->validator->validate($productImage, $this->constraint);
-
-        $this->assertNoViolation();
-    }
-
-    public function testValidateInvalidProductImage()
-    {
-        $product = new Product();
-        $productImage = $this->prepareProductImage(['main']);
-        $productImage->setProduct($product);
-
-        $this->productImageHelper->expects($this->once())
-            ->method('countImagesByType')
-            ->willReturn(
-                [
-                    'main' => 2
-                ]
-            );
-
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('Main');
-
-        $this->validator->validate($productImage, $this->constraint);
 
         $this->buildViolation('oro.product.product_image.type_restriction')
             ->setParameters(

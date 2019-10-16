@@ -1,0 +1,12 @@
+include:
+    - '@OroCMSBundle:CMSPageFixture.yml'
+    - '@OroCMSBundle:copyright_content_widget_fixture.yml'
+
+Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate:
+    testCMSPageMenuItem:
+        __calls:
+            - addTitle: ['@testCMSPageTitle']
+        uri: 'test-cms-page'
+        menu: 'commerce_main_menu'
+        scope: '@default_scope'
+        custom: true

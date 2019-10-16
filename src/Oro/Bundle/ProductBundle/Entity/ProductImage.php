@@ -10,6 +10,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
 
 /**
+ * Represents different types of product image, such as a image is used in the product details view,
+ * a image is shown in the catalog listing, an additional product picture, etc.
+ *
  * @ORM\Entity()
  * @ORM\Table(name="oro_product_image")
  * @ORM\HasLifecycleCallbacks
@@ -47,8 +50,7 @@ class ProductImage extends ExtendProductImage
      *     mappedBy="productImage",
      *     indexBy="type",
      *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EAGER"
+     *     orphanRemoval=true
      * )
      * @ConfigField(
      *      defaultValues={

@@ -8,19 +8,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeTreeCacheProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
-use Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
-     * @var ContentNodeTreeDumper|\PHPUnit\Framework\MockObject\MockObject
+     * @var ContentNodeTreeCacheDumper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dumper;
 
@@ -51,12 +54,8 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dumper = $this->getMockBuilder(ContentNodeTreeDumper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->dumper = $this->createMock(ContentNodeTreeCacheDumper::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
@@ -92,12 +91,9 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $this->logger
-            ->expects($this->once())
+        $this->logger->expects($this->once())
             ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing'
-            );
+            ->with('Unexpected exception occurred during queue message processing');
 
         /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
@@ -108,8 +104,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->jobRunner
-            ->expects($this->never())
+        $this->jobRunner->expects($this->never())
             ->method('runDelayed');
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
@@ -165,6 +160,9 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldProcessMessageIfAllRequiredInfoAvailable()
     {
+        $nodeId = 2;
+        $scopeId = 5;
+
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
@@ -172,15 +170,14 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(
                 JSON::encode([
                     'jobId' => 1,
-                    'scope' => 2,
-                    'contentNode' => 3
+                    'scope' => $scopeId,
+                    'contentNode' => $nodeId
                 ])
             );
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $this->logger
-            ->expects($this->never())
+        $this->logger->expects($this->never())
             ->method('error');
 
         $this->jobRunner->expects($this->once())
@@ -190,13 +187,11 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
                 return $callback($this->jobRunner);
             });
 
-        $scope = new Scope();
-        $node = new ContentNode();
-        $this->configureEntityManager($scope, 2, $node, 3);
+        list($scope, $node) = $this->configureEntityManager($scopeId, $nodeId);
 
         $this->dumper->expects($this->once())
             ->method('dump')
-            ->with($node, $scope);
+            ->with($this->identicalTo($node), $this->identicalTo($scope));
 
         $this->layoutCacheProvider->expects($this->once())
             ->method('deleteAll');
@@ -206,6 +201,9 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCatchAndLogException()
     {
+        $nodeId = 2;
+        $scopeId = 5;
+
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
@@ -213,8 +211,8 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(
                 JSON::encode([
                     'jobId' => 1,
-                    'scope' => 2,
-                    'contentNode' => 3
+                    'scope' => $scopeId,
+                    'contentNode' => $nodeId
                 ])
             );
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
@@ -227,9 +225,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
                 return $callback($this->jobRunner);
             });
 
-        $scope = new Scope();
-        $node = new ContentNode();
-        $this->configureEntityManager($scope, 2, $node, 3);
+        $this->configureEntityManager($scopeId, $nodeId);
 
         $this->dumper->expects($this->once())
             ->method('dump')
@@ -239,21 +235,22 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing'
-            );
+            ->with('Unexpected exception occurred during queue message processing');
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
 
     /**
-     * @param Scope $scope
      * @param int $scopeId
-     * @param ContentNode $node
      * @param int $nodeId
+     *
+     * @return array [scope, $node]
      */
-    protected function configureEntityManager(Scope $scope, $scopeId, ContentNode $node, $nodeId)
+    protected function configureEntityManager(int $scopeId, int $nodeId): array
     {
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
+        $node = $this->getEntity(ContentNode::class, ['id' => $nodeId]);
+
         /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $scopeObjectManager */
         $scopeObjectManager = $this->createMock(EntityManagerInterface::class);
         $scopeObjectManager->expects($this->any())
@@ -278,5 +275,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
                 $scopeObjectManager,
                 $nodeObjectManager
             );
+
+        return [$scope, $node];
     }
 }

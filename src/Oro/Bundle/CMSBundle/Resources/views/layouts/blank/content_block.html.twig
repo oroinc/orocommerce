@@ -1,6 +1,13 @@
 {% block content_block_widget %}
+    {% if contentBlock.contentStyle|length -%}
+        {%- spaceless -%}
+            <style type="text/css">{{ contentBlock.contentStyle|raw }}</style>
+        {%- endspaceless -%}
+    {%- endif %}
     <div{{ block('block_attributes') }}>
-        <h3>{{ contentBlock.titles|localized_value }}</h3>
-        {{ contentBlock.content|raw }}
+        {%- if not hideTitle|default(false) -%}
+            <h3>{{ contentBlock.titles|localized_value }}</h3>
+        {%- endif -%}
+        {{ contentBlock.content|oro_html_sanitize|render_content }}
     </div>
 {% endblock %}

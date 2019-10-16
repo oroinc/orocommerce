@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Component\Layout\DataAccessor;
 
+/**
+ * Provides information of currently available product variant.
+ */
 class ProductVariantProvider
 {
     /** @var ProductVariantAvailabilityProvider */
@@ -38,9 +41,15 @@ class ProductVariantProvider
      */
     public function getProductVariantOrProduct(DataAccessor $data)
     {
+        if ($data->offsetExists('chosenProductVariant') && $data->offsetGet('chosenProductVariant')) {
+            return $data['chosenProductVariant'];
+        }
+
         if ($data->offsetExists('productVariant')) {
             return $data['productVariant'];
-        } elseif ($data->offsetExists('product')) {
+        }
+
+        if ($data->offsetExists('product')) {
             return $data['product'];
         }
 

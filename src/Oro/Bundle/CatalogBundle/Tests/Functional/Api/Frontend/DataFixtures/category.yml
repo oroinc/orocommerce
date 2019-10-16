@@ -15,7 +15,7 @@ Oro\Bundle\OrganizationBundle\Entity\Organization:
         enabled: true
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    category1_name:
+    category1_title:
         string: 'Category 1'
     category1_short_description:
         string: 'Category 1 Short Description'
@@ -27,7 +27,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Category 1 Meta Description'
     category1_meta_keywords:
         string: 'Category 1 Meta Keywords'
-    category1_1_name:
+    category1_1_title:
         string: 'Category 1_1'
     category1_1_short_description:
         string: 'Category 1_1 Short Description'
@@ -39,14 +39,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Category 1_1 Meta Description'
     category1_1_meta_keywords:
         string: 'Category 1_1 Meta Keywords'
-    category1_1_1_name:
+    category1_1_1_title:
         string: 'Category 1_1_1'
-    category2_name:
+    category2_title:
         string: 'Category 2'
-    category3_name:
+    category3_title:
         string: 'Category 3'
-    category3_1_name:
+    category3_1_title:
         string: 'Category 3_1'
+    category3_1_1_title:
+        string: 'Category 3_1_1'
     product1_name:
         string: 'Product 1'
     product2_name:
@@ -98,7 +100,7 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
         __calls:
-            - addTitle: ['@category1_name']
+            - addTitle: ['@category1_title']
             - addShortDescription: ['@category1_short_description']
             - addLongDescription: ['@category1_description']
             - addMetaTitl: ['@category1_meta_title']
@@ -111,7 +113,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         largeImage: '@file_category1_large_image'
     category1_1:
         __calls:
-            - addTitle: ['@category1_1_name']
+            - addTitle: ['@category1_1_title']
             - addShortDescription: ['@category1_1_short_description']
             - addLongDescription: ['@category1_1_description']
             - addMetaTitl: ['@category1_1_meta_title']
@@ -122,26 +124,31 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         slugs: ['@category1_1_slug_default']
     category1_1_1:
         __calls:
-            - addTitle: ['@category1_1_1_name']
+            - addTitle: ['@category1_1_1_title']
         organization: '@organization'
         parentCategory: '@category1_1'
     category2:
         __calls:
-            - addTitle: ['@category2_name']
+            - addTitle: ['@category2_title']
         organization: '@organization'
         parentCategory: '@root_category'
         smallImage: '@file_category2_small_image'
         largeImage: '@file_category2_large_image'
     category3:
         __calls:
-            - addTitle: ['@category3_name']
+            - addTitle: ['@category3_title']
         organization: '@organization'
         parentCategory: '@root_category'
     category3_1:
         __calls:
-            - addTitle: ['@category3_1_name']
+            - addTitle: ['@category3_1_title']
         organization: '@organization'
         parentCategory: '@category3'
+    category3_1_1:
+        __calls:
+            - addTitle: ['@category3_1_1_title']
+        organization: '@organization'
+        parentCategory: '@category3_1'
 
 Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved:
     category3_visibility_resolved:

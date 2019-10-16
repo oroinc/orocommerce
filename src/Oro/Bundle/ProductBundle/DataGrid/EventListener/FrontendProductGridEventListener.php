@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
+use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -37,7 +37,7 @@ class FrontendProductGridEventListener
     /** @var AttributeTypeRegistry */
     private $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider */
+    /** @var AttributeConfigurationProviderInterface */
     private $configurationProvider;
 
     /** @var DoctrineHelper */
@@ -64,7 +64,7 @@ class FrontendProductGridEventListener
     /**
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProvider $configurationProvider
+     * @param AttributeConfigurationProviderInterface $configurationProvider
      * @param ProductRepository $productRepository
      * @param DoctrineHelper $doctrineHelper
      * @param ServiceLink $datagridManagerLink
@@ -75,7 +75,7 @@ class FrontendProductGridEventListener
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
-        AttributeConfigurationProvider $configurationProvider,
+        AttributeConfigurationProviderInterface $configurationProvider,
         ProductRepository $productRepository,
         DoctrineHelper $doctrineHelper,
         ServiceLink $datagridManagerLink,

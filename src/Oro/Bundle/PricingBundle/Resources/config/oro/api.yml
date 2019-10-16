@@ -36,6 +36,12 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceRule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_rule.md'
+            actions:
+                update:
+                    fields:
+                        priceList:
+                            form_options:
+                                mapped: false
             subresources:
                 priceList:
                     actions:

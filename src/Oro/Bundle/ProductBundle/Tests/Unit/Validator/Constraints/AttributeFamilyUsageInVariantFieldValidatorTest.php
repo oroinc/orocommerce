@@ -6,8 +6,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeGroupRelationRepository;
+use Oro\Bundle\EntityConfigBundle\Layout\DataProvider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -38,6 +41,9 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     /**
      * {@inheritdoc}
      */
@@ -51,9 +57,30 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->configManager = $this->createMock(ConfigManager::class);
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config
+            ->expects($this->any())
+            ->method('get')
+            ->withAnyParameters()
+            ->will($this->returnArgument(2));
+
+        $attributeProvider = $this->createMock(ConfigProvider::class);
+        $attributeProvider
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+
+        $this->configManager
+            ->expects($this->any())
+            ->method('getProvider')
+            ->willReturn($attributeProvider);
+
         $this->validator = new AttributeFamilyUsageInVariantFieldValidator(
             $this->attributeManager,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->configManager
         );
 
         $this->context = $this->createMock(ExecutionContextInterface::class);

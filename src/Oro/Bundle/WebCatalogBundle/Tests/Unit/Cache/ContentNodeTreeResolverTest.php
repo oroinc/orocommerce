@@ -2,16 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
-use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -19,160 +15,114 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $innerResolver;
 
-    /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentNodeTreeCache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
-    /**
-     * @var ContentNodeTreeResolver
-     */
+    /** @var ContentNodeTreeResolver */
     private $resolver;
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->cache = $this->createMock(Cache::class);
+        $this->innerResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
+        $this->cache = $this->createMock(ContentNodeTreeCache::class);
 
-        $this->resolver = new ContentNodeTreeResolver($this->doctrineHelper, $this->cache);
+        $this->resolver = new ContentNodeTreeResolver($this->innerResolver, $this->cache);
     }
 
-    public function testGetCacheKey()
+    public function testGetResolvedContentNodeWhenCachedDataExist()
     {
+        $nodeId = 2;
+        $scopeId = 5;
         /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
+        $node = $this->getEntity(ContentNode::class, ['id' => $nodeId]);
         /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
-        $this->assertEquals('node_2_scope_5', ContentNodeTreeResolver::getCacheKey($node, $scope));
-    }
-
-    public function testSupports()
-    {
-        /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
-        /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
+        $resolvedNode = $this->createMock(ResolvedContentNode::class);
 
         $this->cache->expects($this->once())
-            ->method('contains')
-            ->with('node_2_scope_5')
-            ->willReturn(true);
+            ->method('fetch')
+            ->with($nodeId, $scopeId)
+            ->willReturn($resolvedNode);
+        $this->innerResolver->expects($this->never())
+            ->method('getResolvedContentNode');
+        $this->cache->expects($this->never())
+            ->method('save');
 
-        $this->assertTrue($this->resolver->supports($node, $scope));
+        $this->assertSame($resolvedNode, $this->resolver->getResolvedContentNode($node, $scope));
+    }
+
+    public function testGetResolvedContentNodeWhenNoCachedData()
+    {
+        $nodeId = 2;
+        $scopeId = 5;
+        /** @var ContentNode $node */
+        $node = $this->getEntity(ContentNode::class, ['id' => $nodeId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
+
+        $resolvedNode = $this->createMock(ResolvedContentNode::class);
+
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($nodeId, $scopeId)
+            ->willReturn(false);
+        $this->innerResolver->expects($this->once())
+            ->method('getResolvedContentNode')
+            ->with($this->identicalTo($node), $this->identicalTo($scope))
+            ->willReturn($resolvedNode);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with($nodeId, $scopeId, $this->identicalTo($resolvedNode));
+
+        $this->assertSame($resolvedNode, $this->resolver->getResolvedContentNode($node, $scope));
     }
 
     public function testGetResolvedContentNodeWhenCacheIsEmpty()
     {
+        $nodeId = 2;
+        $scopeId = 5;
         /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
+        $node = $this->getEntity(ContentNode::class, ['id' => $nodeId]);
         /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $this->cache->expects($this->once())
             ->method('fetch')
-            ->with('node_2_scope_5')
-            ->willReturn([]);
+            ->with($nodeId, $scopeId)
+            ->willReturn(null);
+        $this->innerResolver->expects($this->never())
+            ->method('getResolvedContentNode');
+        $this->cache->expects($this->never())
+            ->method('save');
 
         $this->assertNull($this->resolver->getResolvedContentNode($node, $scope));
     }
 
-    public function testGetResolvedContentNode()
+    public function testGetResolvedContentNodeWhenCacheIsEmptyAndInnerResolverReturnsNull()
     {
+        $nodeId = 2;
+        $scopeId = 5;
         /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
+        $node = $this->getEntity(ContentNode::class, ['id' => $nodeId]);
         /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
-
-        $cacheData = [
-            'id' => 1,
-            'identifier' => 'root',
-            'resolveVariantTitle' => true,
-            'titles' => [
-                ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                [
-                    'string' => 'Title 1 EN',
-                    'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                    'fallback' => FallbackType::PARENT_LOCALIZATION
-                ]
-            ],
-            'contentVariant' => [
-                'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                'localizedUrls' => [
-                    ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE]
-                ]
-            ],
-            'childNodes' => [
-                [
-                    'id' => 2,
-                    'identifier' => 'root__second',
-                    'resolveVariantTitle' => false,
-                    'titles' => [
-                        ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE]
-                    ],
-                    'contentVariant' => [
-                        'data' => ['id' => 7, 'type' => 'test_type', 'test' => 2],
-                        'localizedUrls' => [
-                            ['string' => '/test/content', 'localization' => null, 'fallback' => FallbackType::NONE]
-                        ]
-                    ],
-                    'childNodes' => []
-                ]
-            ]
-        ];
-        $expected = new ResolvedContentNode(
-            1,
-            'root',
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Title 1'),
-                    (new LocalizedFallbackValue())
-                        ->setString('Title 1 EN')
-                        ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                        ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                ]
-            ),
-            (new ResolvedContentVariant())
-                ->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
-            true
-        );
-        $expected->addChildNode(
-            new ResolvedContentNode(
-                2,
-                'root__second',
-                new ArrayCollection(
-                    [
-                        (new LocalizedFallbackValue())->setString('Child Title 1')
-                    ]
-                ),
-                (new ResolvedContentVariant())
-                    ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
-                false
-            )
-        );
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $this->cache->expects($this->once())
             ->method('fetch')
-            ->with('node_2_scope_5')
-            ->willReturn($cacheData);
+            ->with($nodeId, $scopeId)
+            ->willReturn(false);
+        $this->innerResolver->expects($this->once())
+            ->method('getResolvedContentNode')
+            ->with($this->identicalTo($node), $this->identicalTo($scope))
+            ->willReturn(null);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with($nodeId, $scopeId, $this->isNull());
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback(
-                function ($className, $id) {
-                    return $this->getEntity($className, ['id' => $id]);
-                }
-            );
-
-        $this->assertEquals($expected, $this->resolver->getResolvedContentNode($node, $scope));
+        $this->assertNull($this->resolver->getResolvedContentNode($node, $scope));
     }
 }

@@ -25,6 +25,13 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $this->setProductUnitReferences($doctrine, $referenceRepository);
         $this->setProductUnitTranslationKeysReferences($doctrine, $referenceRepository);
         $this->setProductAttributesReferences($doctrine, $referenceRepository);
+
+        $fieldConfigModelRepository = $doctrine->getManagerForClass(FieldConfigModel::class)
+            ->getRepository(FieldConfigModel::class);
+        $attributes = $fieldConfigModelRepository->getAttributesByClassAndIsSystem(Product::class, true);
+        foreach ($attributes as $attribute) {
+            $referenceRepository->set('attribute_' . $attribute->getFieldName(), $attribute);
+        }
     }
 
     /**

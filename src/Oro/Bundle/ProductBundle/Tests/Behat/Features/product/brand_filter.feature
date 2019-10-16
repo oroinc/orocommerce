@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-12736
 @fixture-OroProductBundle:ProductBrandFilterFixture.yml
+@fixture-OroOrganizationProBundle:GlobalOrganizationFixture.yml
 
 Feature: Brand Filter
   In order to have ability to filter product by brands
@@ -15,6 +16,7 @@ Feature: Brand Filter
   Scenario: Enable custom localization
     Given I proceed as the Admin
     And I login as administrator
+    And I am logged in under Globe ORO Pro organization
     And I go to System / Websites
     When I click "Configuration" on row "Default" in grid
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar

@@ -10,6 +10,9 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * The content variant type for a product.
+ */
 class ProductPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'product_page';
@@ -73,5 +76,21 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
         $product = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
 
         return new RouteData('oro_product_frontend_product_view', ['id' => $product->getId()]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return Product::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return sprintf('IDENTITY(%s.product_page_product)', $alias);
     }
 }

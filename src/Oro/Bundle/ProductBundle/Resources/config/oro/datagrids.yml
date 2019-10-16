@@ -306,8 +306,9 @@ datagrids:
         extends: products-select-grid-base
         source:
             query:
-                select:
-                    - IDENTITY(product.attributeFamily) as attributeFamily
+                join:
+                    left:
+                        - { join: product.attributeFamily, alias: af }
         options:
             entity_pagination: true
         properties:
@@ -316,6 +317,10 @@ datagrids:
                 route: oro_product_view
                 params:
                     - id
+            attribute_family_localized:
+                type: localized_value
+                data_name: af.labels
+                allow_empty: true
         actions:
             view:
                 type:          navigate
@@ -348,8 +353,7 @@ datagrids:
                 order:         3
             attributeFamily:
                 label:         oro.product.attribute_family.label
-                frontend_type: select
-                choices:       "@oro_entity_config.provider.attribute_family_provider->getAvailableAttributeFamilies('%oro_product.entity.product.class%')"
+                data_name:     attribute_family_localized
                 order:         4
             inventoryStatusId:
                 inline_editing:

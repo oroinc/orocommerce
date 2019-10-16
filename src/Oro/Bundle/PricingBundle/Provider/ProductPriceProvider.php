@@ -113,7 +113,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
             $code = $productPriceCriterion->getProductUnit()->getCode();
             $quantity = $productPriceCriterion->getQuantity();
             $currency = $productPriceCriterion->getCurrency();
-            $precision = $productPriceCriterion->getProductUnit()->getDefaultPrecision();
 
             $productPrices = array_filter(
                 $prices,
@@ -124,10 +123,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
                 }
             );
 
-            list($price, $matchedQuantity) = $this->matchPriceByQuantity($productPrices, $quantity);
+            $price = $this->matchPriceByQuantity($productPrices, $quantity);
             if ($price !== null) {
                 $result[$productPriceCriterion->getIdentifier()] = Price::create(
-                    $this->recalculatePricePerUnit($price, $matchedQuantity, $precision),
+                    $price,
                     $currency
                 );
             } else {
@@ -139,39 +138,22 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * @param float $price
-     * @param float $quantityPerAmount
-     * @param int $precision
-     * @return float
-     */
-    protected function recalculatePricePerUnit($price, $quantityPerAmount, $precision)
-    {
-        if ($precision > 0 && $quantityPerAmount !== 0.0) {
-            return $price / $quantityPerAmount;
-        }
-
-        return $price;
-    }
-
-    /**
      * @param array|ProductPriceInterface[] $pricesData
      * @param float $expectedQuantity
-     * @return array
+     * @return float|null
      */
-    protected function matchPriceByQuantity(array $pricesData, $expectedQuantity)
+    protected function matchPriceByQuantity(array $pricesData, $expectedQuantity): ?float
     {
         $price = null;
-        $matchedQuantity = null;
         foreach ($pricesData as $priceData) {
             $quantity = $priceData->getQuantity();
 
             if ($expectedQuantity >= $quantity) {
                 $price = $priceData->getPrice()->getValue();
-                $matchedQuantity = $quantity;
             }
         }
 
-        return [$price, $matchedQuantity];
+        return $price;
     }
 
     /**

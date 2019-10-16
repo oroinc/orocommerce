@@ -1,5 +1,31 @@
 config:
     paths:
+        'grapesjs': 'bundles/npmassets/grapesjs/dist/grapes.js'
+        'grapesjs-preset-webpage': 'bundles/npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js'
+        'orocms/js/app/grapesjs/grapesjs-editor-view': 'bundles/orocms/js/app/grapesjs/grapesjs-editor-view.js'
+
+        # Grapesjs Modules
+        'orocms/js/app/grapesjs/modules/module-manager': 'bundles/orocms/js/app/grapesjs/modules/module-manager.js'
+        'orocms/js/app/grapesjs/modules/style-manager-module': 'bundles/orocms/js/app/grapesjs/modules/style-manager-module.js'
+        'orocms/js/app/grapesjs/modules/panels-module': 'bundles/orocms/js/app/grapesjs/modules/panels-module.js'
+        'orocms/js/app/grapesjs/modules/devices-module': 'bundles/orocms/js/app/grapesjs/modules/devices-module.js'
+        'orocms/js/app/grapesjs/modules/style-isolation-module': 'bundles/orocms/js/app/grapesjs/modules/style-isolation-module.js'
+
+        # Grapesjs Components
+        'orocms/js/app/grapesjs/components/component-manager': 'bundles/orocms/js/app/grapesjs/components/component-manager.js'
+        'orocms/js/app/grapesjs/components/content-block': 'bundles/orocms/js/app/grapesjs/components/content-block.js'
+        'orocms/js/app/grapesjs/components/table': 'bundles/orocms/js/app/grapesjs/components/table.js'
+        'orocms/js/app/grapesjs/components/table-responsive': 'bundles/orocms/js/app/grapesjs/components/table-responsive.js'
+        'orocms/js/app/grapesjs/components/link-button': 'bundles/orocms/js/app/grapesjs/components/link-button.js'
+        'orocms/js/app/grapesjs/components/code': 'bundles/orocms/js/app/grapesjs/components/code.js'
+
+        # Grapesjs Plugins
+        'orocms/js/app/grapesjs/plugins/components/grapesjs-components': 'bundles/orocms/js/app/grapesjs/plugins/components/grapesjs-components.js'
+        'orocms/js/app/grapesjs/plugins/components/component-restriction': 'bundles/orocms/js/app/grapesjs/plugins/components/component-restriction.js'
+
+        'orocms/js/app/grapesjs/controls/theme-selector-view': 'bundles/orocms/js/app/grapesjs/controls/theme-selector-view.js'
+
         'orocms/js/app/components/content-variant-collection-component': 'bundles/orocms/js/app/components/content-variant-collection-component.js'
         'orocms/js/app/views/variants-collection-view': 'bundles/orocms/js/app/views/variants-collection-view.js'
         'orocms/js/app/views/default-variant-collection-view': 'bundles/orocms/js/app/views/default-variant-collection-view.js'
+        'orocms/js/app/views/content-widget-view': 'bundles/orocms/js/app/views/content-widget-view.js'

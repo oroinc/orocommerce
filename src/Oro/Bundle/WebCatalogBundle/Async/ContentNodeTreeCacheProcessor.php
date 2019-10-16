@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -29,7 +29,7 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
     const SCOPE = 'scope';
 
     /**
-     * @var ContentNodeTreeDumper
+     * @var ContentNodeTreeCacheDumper
      */
     private $dumper;
 
@@ -60,14 +60,14 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
 
     /**
      * @param JobRunner $jobRunner
-     * @param ContentNodeTreeDumper $dumper
+     * @param ContentNodeTreeCacheDumper $dumper
      * @param ManagerRegistry $registry
      * @param LoggerInterface $logger
      * @param CacheProvider $layoutCacheProvider
      */
     public function __construct(
         JobRunner $jobRunner,
-        ContentNodeTreeDumper $dumper,
+        ContentNodeTreeCacheDumper $dumper,
         ManagerRegistry $registry,
         LoggerInterface $logger,
         CacheProvider $layoutCacheProvider
@@ -86,7 +86,7 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
     {
         try {
             $data = $this->getOptionsResolver()->resolve(JSON::decode($message->getBody()));
-            $result = $this->jobRunner->runDelayed($data[self::JOB_ID], function () use ($data, $message) {
+            $result = $this->jobRunner->runDelayed($data[self::JOB_ID], function () use ($data) {
                 $this->dumper->dump($data[self::CONTENT_NODE], $data[self::SCOPE]);
                 //Remove all cached layout data provider web catalog node items
                 $this->layoutCacheProvider->deleteAll();

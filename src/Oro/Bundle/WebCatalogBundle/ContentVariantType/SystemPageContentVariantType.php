@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
 
+use Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
+/**
+ * The content variant type for a system page.
+ */
 class SystemPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'system_page';
@@ -52,5 +56,21 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         return new RouteData($contentVariant->getSystemPageRoute());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return SystemPage::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return $alias . '.systemPageRoute';
     }
 }

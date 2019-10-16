@@ -14,6 +14,16 @@ oro_behat_extension:
     Order Shipping Address Select:
       selector: '[name="oro_order_type[shippingAddress][customerAddress]"]'
 
+    FrontendOrderLineItem:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\OrderLineItem
+      selector: 'tbody.grid-body tr.grid-row'
+
+    Frontend Order Line Item Product View Link:
+      selector: 'h3.product-item__title a'
+
+    Frontend Order Line Item Product Attribute:
+      selector: 'td.grid-body-cell-product > div'
+
     BackendOrderLineItem:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
       selector: 'tbody > tr.order-line-item'
@@ -46,6 +56,10 @@ oro_behat_extension:
     Order:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'
+
+    Order Line Items Table:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\ProductTable
+      selector: 'table.grid'
 
     OrderLineItemProductSku:
       selector: 'div:contains("Item #:") > span'

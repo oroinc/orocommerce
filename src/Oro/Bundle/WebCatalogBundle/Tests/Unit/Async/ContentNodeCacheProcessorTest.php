@@ -3,14 +3,13 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ScopeMatcher;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -30,11 +29,11 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $producer;
 
-    /** @var ScopeMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    private $scopeMatcher;
+    /** @var ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentNodeRepository;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $webCatalogRepository;
 
     /** @var ContentNodeCacheProcessor */
     private $processor;
@@ -46,14 +45,21 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->scopeMatcher = $this->createMock(ScopeMatcher::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->contentNodeRepository = $this->createMock(ContentNodeRepository::class);
+        $this->webCatalogRepository = $this->createMock(WebCatalogRepository::class);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [ContentNode::class, null, $this->contentNodeRepository],
+                [WebCatalog::class, null, $this->webCatalogRepository]
+            ]);
 
         $this->processor = new ContentNodeCacheProcessor(
             $this->jobRunner,
             $this->producer,
-            $this->scopeMatcher,
-            $this->registry
+            $doctrine
         );
     }
 
@@ -70,20 +76,11 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
         $node = $this->getEntity(ContentNode::class, ['id' => 3, 'webCatalog' => $webCatalog]);
-        $contentNodeRepo = $this->createMock(ContentNodeRepository::class);
-        $contentNodeRepo->expects($this->once())
+
+        $this->contentNodeRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['id' => 3])
             ->willReturn($node);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with(ContentNode::class)
-            ->willReturn($contentNodeRepo);
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
 
         $this->assertProcessCalled($webCatalog, $node);
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
@@ -113,7 +110,7 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 21]);
         $scopes = [$scope];
-        $this->scopeMatcher->expects($this->once())
+        $this->webCatalogRepository->expects($this->once())
             ->method('getUsedScopes')
             ->with($webCatalog)
             ->willReturn($scopes);

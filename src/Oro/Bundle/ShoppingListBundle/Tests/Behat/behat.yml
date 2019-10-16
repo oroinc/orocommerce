@@ -48,12 +48,19 @@ oro_behat_extension:
         locator: '//button[@data-title="Edit Shopping List Label"]'
         type: xpath
 
+    ShoppingListProductTableRow:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow
+      selector: '.shopping-list-line-items .shopping-list-line-items__item-wrapper'
+
     Shopping List Label Input:
       selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
 
     Shopping List Line Items Table:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
+
+    Shopping List Line Item Product Attribute:
+      selector: 'div.shopping-list-line-items__description > div'
 
     ShoppingListLineItemsTableHeaderLabel:
       selector: 'div.shopping-list-line-items__header-label'
@@ -97,6 +104,12 @@ oro_behat_extension:
           type: 'xpath'
           locator: '//span[@class="product-item__sku-value"]'
 
+    Shopping List Line Item Product View Link:
+      selector: 'h3.product-item__title a'
+
+    Shopping List Line Item Product Price:
+      selector: 'div.line-item-price span[data-name="price-value"]'
+
     Shopping List Dropdown:
       selector:
         type: 'xpath'
@@ -124,23 +137,23 @@ oro_behat_extension:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
 
-    ConfigurableProductForm:
+    Configurable Product Form:
       selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       options:
         mapping:
           Attributes_1:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_1]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_1")]'
           Attributes_2:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_2]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_2")]'
           Attributes_3:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
           Color:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Color]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Color")]'
 
     LineItemQuantity:
       selector:
@@ -251,7 +264,6 @@ oro_behat_extension:
         - OroCustomerBundle::RegistrationInstructionFeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroConfigBundle::FeatureContext
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
       paths:

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Search;
 
-use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
+use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -20,7 +20,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     /** @var AttributeTypeRegistry */
     protected $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider */
+    /** @var AttributeConfigurationProviderInterface */
     protected $configurationProvider;
 
     /** @var ProductIndexFieldsProvider */
@@ -31,13 +31,13 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
     /**
      * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProvider $configurationProvider
+     * @param AttributeConfigurationProviderInterface $configurationProvider
      * @param ProductIndexFieldsProvider $indexFieldsProvider
      * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         AttributeTypeRegistry $attributeTypeRegistry,
-        AttributeConfigurationProvider $configurationProvider,
+        AttributeConfigurationProviderInterface $configurationProvider,
         ProductIndexFieldsProvider $indexFieldsProvider,
         PropertyAccessor $propertyAccessor
     ) {

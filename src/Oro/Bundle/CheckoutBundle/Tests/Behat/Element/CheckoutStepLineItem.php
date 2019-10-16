@@ -10,7 +10,7 @@ class CheckoutStepLineItem extends Element implements LineItemInterface
     /**
      * {@inheritdoc}
      */
-    public function getProductSKU()
+    public function getProductSKU(): string
     {
         return $this->getElement('CheckoutStepLineItemProductSku')->getText();
     }

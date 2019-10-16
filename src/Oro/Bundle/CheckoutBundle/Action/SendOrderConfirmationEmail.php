@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
 use Oro\Bundle\EmailBundle\Workflow\Action\SendEmailTemplate;
 use Twig\Error\Error;
 
@@ -16,18 +17,18 @@ class SendOrderConfirmationEmail extends SendEmailTemplate
     /**
      * {@inheritdoc}
      */
-    protected function executeAction($context)
+    protected function executeAction($context): void
     {
         try {
             parent::executeAction($context);
-        } catch (Error $exception) {
+        } catch (Error | EmailTemplateCompilationException $exception) {
             $this->logger->error(
                 'Twig exception in @send_order_confirmation_email action',
                 ['exception' => $exception]
             );
         } catch (EntityNotFoundException $exception) {
             $this->logger->error(
-                'Cannot find the specified email template in  @send_order_confirmation_email action',
+                'Cannot find the specified email template in @send_order_confirmation_email action',
                 ['exception' => $exception]
             );
         }

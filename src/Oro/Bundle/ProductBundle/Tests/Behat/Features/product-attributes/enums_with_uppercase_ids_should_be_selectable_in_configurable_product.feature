@@ -2,7 +2,6 @@
 @ticket-BB-14591
 @fixture-OroProductBundle:related_items_customer_users.yml
 @fixture-OroProductBundle:configurable_products.yml
-
 Feature: Enums with uppercase IDs should be selectable in configurable product
   In order to use configurable products
   As a Buyer
@@ -24,8 +23,8 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And I click "Continue"
     And I set Options with:
       | Label |
-      | Black |
-      | White |
+      | black |
+      | white |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -41,8 +40,15 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And I save form
     Then I should see "Successfully updated" flash message
 
-    And I change "Color" attribute enum ID from "black" to "Black"
-    And I change "Color" attribute enum ID from "white" to "White"
+    Scenario: Change "Color" attribute enum ID
+    When I go to Products / Product Attributes
+    And I click Edit Color in grid
+    And I set Options with:
+      | Label |
+      | Black |
+      | White |
+    And I save and close form
+    Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Prepare configurable product
     Given I go to Products / Products
@@ -80,10 +86,10 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And type "CNFA" in "search"
     And click "Search Button"
     And click "View Details" for "CNFA" product
-    Then I should see an "ConfigurableProductForm" element
-    And "ConfigurableProductForm" must contains values:
+    Then I should see an "Configurable Product Form" element
+    And "Configurable Product Form" must contains values:
       | Color | Black |
-    When I fill "ConfigurableProductForm" with:
+    When I fill "Configurable Product Form" with:
       | Color | White |
     And I click "Add to Shopping List"
     Then I should see 'Product has been added to "Shopping List"' flash message

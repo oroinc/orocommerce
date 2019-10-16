@@ -8,10 +8,12 @@ use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Abstract indexer for website search engine
@@ -45,6 +47,9 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var IndexerInputValidator */
     protected $inputValidator;
 
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
+
     /** @var int */
     private $batchSize = 100;
 
@@ -55,6 +60,7 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param IndexDataProvider $indexDataProvider
      * @param PlaceholderInterface $placeholder
      * @param IndexerInputValidator $indexerInputValidator
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -62,7 +68,8 @@ abstract class AbstractIndexer implements IndexerInterface
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
         PlaceholderInterface $placeholder,
-        IndexerInputValidator $indexerInputValidator
+        IndexerInputValidator $indexerInputValidator,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
@@ -70,6 +77,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->indexDataProvider = $indexDataProvider;
         $this->placeholder = $placeholder;
         $this->inputValidator = $indexerInputValidator;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -114,6 +122,12 @@ abstract class AbstractIndexer implements IndexerInterface
             );
 
         $entityClassesToIndex = $this->getClassesForReindex($entityClassesToIndex);
+        if (empty($context['skip_pre_processing'])) {
+            $this->eventDispatcher->dispatch(
+                BeforeReindexEvent::EVENT_NAME,
+                new BeforeReindexEvent($classOrClasses, $context)
+            );
+        }
 
         $handledItems = 0;
 

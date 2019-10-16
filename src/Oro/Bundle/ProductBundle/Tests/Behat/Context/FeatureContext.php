@@ -10,13 +10,11 @@ use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
@@ -653,7 +651,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         static::assertTrue(
             is_null($result),
-            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+            sprintf('Tag "%s" inside element "%s" is found', $tag, $element)
         );
     }
 
@@ -1509,7 +1507,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $value = $form->normalizeValue($value);
 
         $form
-            ->find('css', sprintf('[name="oro_product[%s]"]', $field))
+            ->find('css', sprintf('[id^="oro_product_%s"]', $field))
             ->setValue($value);
     }
 
@@ -1679,38 +1677,5 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
 
         return $productItem;
-    }
-
-    //@codingStandardsIgnoreStart
-    /**
-     * Example: Given I change "Color" attribute enum ID from "black" to "Black"
-     *
-     * @param $attribute
-     * @param $existingId
-     * @param $newId
-     *
-     * @Then /^(?:|I )change "(?P<attribute>(?:[^"]|\\")*)" attribute enum ID from "(?P<existingId>(?:[^"]|\\")*)" to "(?P<newId>(?:[^"]|\\")*)"$/
-     */
-    //@codingStandardsIgnoreEnd
-    public function changeEnumId($attribute, $existingId, $newId)
-    {
-        /** @var ConfigProvider $configProvider */
-        $configProvider = $this->getContainer()->get('oro_entity_config.provider.extend');
-
-        $enumEntity = $configProvider->getConfig(Product::class, $attribute)->get('target_entity');
-
-        /** @var QueryBuilder $qb */
-        $qb = $this->getContainer()->get('doctrine')->getManagerForClass($enumEntity)->createQueryBuilder();
-
-        $qb
-            ->update($enumEntity, 'enum')
-            ->set('enum.id', ':newId')
-            ->where($qb->expr()->eq('enum.id', ':existingId'))
-            ->setParameters([
-                'existingId' => $existingId,
-                'newId' => $newId,
-            ])
-            ->getQuery()
-            ->execute();
     }
 }

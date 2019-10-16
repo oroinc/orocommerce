@@ -58,7 +58,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $oldForm->expects($this->exactly(2))
             ->method('has')
-            ->withConsecutive($this->equalTo($billingAddressField), $this->equalTo($shippingAddressField))
+            ->withConsecutive([$this->equalTo($billingAddressField)], [$this->equalTo($shippingAddressField)])
             ->willReturnOnConsecutiveCalls(true, false);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */

@@ -84,4 +84,76 @@ class InventoryLevelTest extends RestJsonApiTestCase
             ->find(InventoryLevel::class, $inventoryLevelId);
         self::assertEquals(17, $inventoryLevel->getQuantity());
     }
+
+    public function testTryToUpdateReadOnlyFields()
+    {
+        /** @var InventoryLevel $inventoryLevel */
+        $inventoryLevel = $this->getReference('inventory_level.product_unit_precision.product-1.liter');
+        $inventoryLevelId = $inventoryLevel->getId();
+        $productId = $inventoryLevel->getProduct()->getId();
+        $productUnitPrecisionId = $inventoryLevel->getProductUnitPrecision()->getId();
+        $organizationId = $inventoryLevel->getOrganization()->getId();
+
+        $data = [
+            'data' => [
+                'type'          => 'inventorylevels',
+                'id'            => (string)$inventoryLevelId,
+                'relationships' => [
+                    'product'              => [
+                        'data' => [
+                            'type' => 'products',
+                            'id'   => '<toString(@product-2->id)>'
+                        ]
+                    ],
+                    'productUnitPrecision' => [
+                        'data' => [
+                            'type' => 'productunitprecisions',
+                            'id'   => '<toString(@product_unit_precision.product-1.bottle->id)>'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->patch(
+            ['entity' => 'inventorylevels', 'id' => (string)$inventoryLevelId],
+            $data
+        );
+
+        $inventoryLevel = $this->getEntityManager()
+            ->find(InventoryLevel::class, $inventoryLevelId);
+        self::assertEquals($productId, $inventoryLevel->getProduct()->getId());
+        self::assertEquals($productUnitPrecisionId, $inventoryLevel->getProductUnitPrecision()->getId());
+        self::assertEquals($organizationId, $inventoryLevel->getOrganization()->getId());
+    }
+
+    public function testTryToUpdateRelationshipProduct()
+    {
+        $response = $this->patchRelationship(
+            [
+                'entity'      => 'inventorylevels',
+                'id'          => '<toString(inventory_level.product_unit_precision.product-1.liter->id)>',
+                'association' => 'product'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToUpdateRelationshipProductUnitPrecision()
+    {
+        $response = $this->patchRelationship(
+            [
+                'entity'      => 'inventorylevels',
+                'id'          => '<toString(inventory_level.product_unit_precision.product-1.liter->id)>',
+                'association' => 'productUnitPrecision'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
 }

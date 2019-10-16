@@ -1,0 +1,4 @@
+services:
+    Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType:
+        tags:
+            - {name: 'oro_cms.content_widget.type'}

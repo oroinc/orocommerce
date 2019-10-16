@@ -125,7 +125,7 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax:
                 groups: [Default, NotCircularReference]
             - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
-                fieldLabel: 'oro.pricing.pricerule.calculate_as.label'
+                fieldLabel: 'oro.pricing.pricerule.rule.label'
                 numericOnly: true
                 withRelations: true
                 groups: [Default, NotCircularReference]

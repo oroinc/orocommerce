@@ -15,3 +15,6 @@ trusted_data:
             buildSearchQuery:
                 selectFieldNames: true
                 searchCriteria: true
+        Oro\Bundle\ProductBundle\Api\Processor\ExpandProductCollectionContentVariant:
+            addContentVariantFieldsToProductSearchQueryAndConfig:
+                searchFieldName: true

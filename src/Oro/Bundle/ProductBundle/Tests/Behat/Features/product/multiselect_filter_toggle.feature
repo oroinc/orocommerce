@@ -1,4 +1,5 @@
 @fixture-OroProductBundle:ProductBrandFilterFixture.yml
+@fixture-OroOrganizationProBundle:GlobalOrganizationFixture.yml
 
 Feature: Multiselect Filter Toggle
     Check the multisect filter so that it opens and closes correctly
@@ -11,6 +12,7 @@ Feature: Multiselect Filter Toggle
     Scenario: Enable Filter by Brand
         Given I proceed as the Admin
         And I login as administrator
+        And I am logged in under Globe ORO Pro organization
         And I go to Products/Product Attributes
         And I click edit "brand" in grid
         When I fill form with:

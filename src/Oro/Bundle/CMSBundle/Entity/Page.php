@@ -17,6 +17,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
+ * Represents CMS Page
+ *
  * @ORM\Table(name="oro_cms_page")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @ORM\AssociationOverrides({
@@ -122,7 +124,7 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="wysiwyg", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

@@ -1,5 +1,4 @@
 @fixture-OroProductBundle:product_slug.yml
-@skip
 
 Feature: Product redirect slug
   In order to have the ability to display a "friendly URL" address for customers
@@ -21,6 +20,7 @@ Feature: Product redirect slug
     And fill "Product Form" with:
       | Name First Slug Use Default | false      |
       | Name First Slug             | acme-rp-17 |
+      | PrimaryPrecision            | 1          |
     Then I save form
     And should see "Product has been saved" flash message
 
@@ -60,7 +60,8 @@ Feature: Product redirect slug
     And click Edit "SKU1" in grid
     And click on "Product Form Slug Fallbacks"
     And fill "Product Form" with:
-      | Name First Slug | acme-rp-18 |
+      | Name First Slug  | acme-rp-18 |
+      | PrimaryPrecision | 1          |
     And save and close form
     And check "Create 301 Redirect from old to new URLs"
     And click "Apply" in modal window

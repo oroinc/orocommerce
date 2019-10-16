@@ -41,7 +41,7 @@ class CategoryForBuyerTest extends FrontendRestJsonApiTestCase
                 'type'       => 'mastercatalogcategories',
                 'id'         => '<toString(@category1->id)>',
                 'attributes' => [
-                    'name' => 'Updated Product Name'
+                    'title' => 'Updated Category'
                 ]
             ]
         ];
@@ -62,7 +62,7 @@ class CategoryForBuyerTest extends FrontendRestJsonApiTestCase
             'data' => [
                 'type'       => 'mastercatalogcategories',
                 'attributes' => [
-                    'name' => 'New Product'
+                    'title' => 'New Category'
                 ]
             ]
         ];

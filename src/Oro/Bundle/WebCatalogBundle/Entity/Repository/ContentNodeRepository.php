@@ -10,6 +10,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 /**
+ * The repository for ContentNode entity.
+ *
  * @method $this persistAsFirstChild($node)
  * @method $this persistAsFirstChildOf($node, $parent)
  * @method $this persistAsLastChild($node)
@@ -28,7 +30,7 @@ class ContentNodeRepository extends NestedTreeRepository
     public function getRootNodeByWebCatalog(WebCatalog $webCatalog)
     {
         // Root node fetches without children because
-        // in Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface implementations
+        // in Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver implementations
         // they will be fetched from cache
 
         $qb = $this->getRootNodesQueryBuilder();

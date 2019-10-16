@@ -9,6 +9,10 @@ use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Provide `Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView\ContentBlockView`
+ * based on most suitable Content Variant for Content Block.
+ */
 class ContentBlockResolver
 {
     /** @var PropertyAccessor */
@@ -46,7 +50,8 @@ class ContentBlockResolver
             $contentBlock->getAlias(),
             $contentBlock->getTitles(),
             $contentBlock->isEnabled(),
-            $mostSuitableContentVariant->getContent()
+            (string) $mostSuitableContentVariant->getContent(),
+            (string) $mostSuitableContentVariant->getContentStyle()
         );
     }
 

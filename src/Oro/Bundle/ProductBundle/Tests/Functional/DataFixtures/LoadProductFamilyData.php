@@ -5,9 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 
 class LoadProductFamilyData extends AbstractFixture
 {
@@ -28,7 +27,7 @@ class LoadProductFamilyData extends AbstractFixture
         foreach ($this->families as $familyName => $groups) {
             $family = new AttributeFamily();
             $family->setDefaultLabel($familyName);
-            $family->setOwner($this->getAdminUser($manager));
+            $family->setOwner($this->getOrganization($manager));
             $family->setCode($familyName);
             $family->setEntityClass(Product::class);
 
@@ -41,12 +40,10 @@ class LoadProductFamilyData extends AbstractFixture
 
     /**
      * @param ObjectManager $manager
-     * @return User
+     * @return Organization
      */
-    private function getAdminUser(ObjectManager $manager): User
+    private function getOrganization(ObjectManager $manager): Organization
     {
-        $repository = $manager->getRepository(User::class);
-
-        return $repository->findOneBy(['username' => LoadAdminUserData::DEFAULT_ADMIN_USERNAME]);
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 }

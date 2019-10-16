@@ -3,133 +3,212 @@
 namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider;
 
 /**
  * Service that collect content nodes tree by scope, including content variants.
  */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
-    const ROOT_NODE_IDENTIFIER = 'root';
-    const IDENTIFIER_GLUE = '__';
+    private const ROOT_NODE_IDENTIFIER = 'root';
+    private const IDENTIFIER_GLUE      = '__';
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @var ScopeMatcher
-     */
-    private $scopeMatcher;
+    /** @var ContentNodeProvider */
+    private $contentNodeProvider;
+
+    /** @var ScopeManager */
+    private $scopeManager;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ScopeMatcher $scopeMatcher
+     * @param DoctrineHelper      $doctrineHelper
+     * @param ContentNodeProvider $contentNodeProvider
+     * @param ScopeManager        $scopeManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ScopeMatcher $scopeMatcher)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ContentNodeProvider $contentNodeProvider,
+        ScopeManager $scopeManager
+    ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->scopeMatcher = $scopeMatcher;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResolvedContentNode(ContentNode $node, Scope $scope, int $maxNodesNestedLevel = null)
-    {
-        $this->resolveScope($scope);
-
-        return $this->getResolvedTree($node, $scope, $maxNodesNestedLevel);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports(ContentNode $node, Scope $scope)
-    {
-        return true;
+        $this->contentNodeProvider = $contentNodeProvider;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
      * @param ContentNode $node
-     * @param Scope $scope
-     * @param int|null $maxNodesNestedLevel
-     * @param int $currentNestingLevel
-     * @return null|ResolvedContentNode
+     * @param Scope       $scope
+     *
+     * @return ResolvedContentNode|null
      */
-    protected function getResolvedTree(
-        ContentNode $node,
-        Scope $scope,
-        int $maxNodesNestedLevel = null,
-        int $currentNestingLevel = 0
-    ) {
-        if (false === $this->scopeMatcher->getMatchingScopePriority($node->getScopesConsideringParent(), $scope)) {
+    public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode
+    {
+        $criteria = $this->getCriteriaByScope($scope);
+        $nodeIds = $this->loadContentNodeIds($node, $criteria);
+        if (!$nodeIds) {
             return null;
         }
 
-        $resolvedContentVariant = $this->getResolvedContentVariant($node->getContentVariants(), $scope);
-        if (!$resolvedContentVariant) {
+        $nodes = $this->loadContentNodes($nodeIds);
+        $variants = $this->loadContentVariants($nodeIds, $criteria);
+        $variantMetadata = $this->doctrineHelper->getEntityMetadataForClass(ContentVariant::class);
+
+        $rootNodeId = array_shift($nodeIds);
+        $resolvedRootNode = $this->createResolvedContentNode($rootNodeId, $nodes, $variants, $variantMetadata);
+        if (null === $resolvedRootNode) {
             return null;
         }
 
-        $resolvedNode = new ResolvedContentNode(
-            $node->getId(),
-            $this->getIdentifier($node),
-            $node->getTitles(),
-            $resolvedContentVariant,
-            $node->isRewriteVariantTitle()
-        );
-
-        //Increase current nodes nesting level
-        $currentNestingLevel++;
-
-        if (!$maxNodesNestedLevel || $currentNestingLevel <= $maxNodesNestedLevel) {
-            foreach ($node->getChildNodes() as $childNode) {
-                $resolvedChildNode = $this->getResolvedTree(
-                    $childNode,
-                    $scope,
-                    $maxNodesNestedLevel,
-                    $currentNestingLevel
-                );
-                if ($resolvedChildNode) {
-                    $resolvedNode->addChildNode($resolvedChildNode);
+        /** @var ResolvedContentNode[] $resolvedNodes */
+        $resolvedNodes = [];
+        $resolvedNodes[$resolvedRootNode->getId()] = $resolvedRootNode;
+        foreach ($nodeIds as $nodeId) {
+            $parentNodeId = $nodes[$nodeId]->getParentNode()->getId();
+            if (isset($resolvedNodes[$parentNodeId])) {
+                $resolvedNode = $this->createResolvedContentNode($nodeId, $nodes, $variants, $variantMetadata);
+                if (null !== $resolvedNode) {
+                    $resolvedNodes[$resolvedNode->getId()] = $resolvedNode;
+                    $resolvedNodes[$parentNodeId]->addChildNode($resolvedNode);
                 }
             }
         }
 
-        return $resolvedNode;
+        return $resolvedRootNode;
     }
 
     /**
-     * @param Collection|ContentVariant[] $contentVariants
-     * @param Scope $scope
-     * @return ResolvedContentVariant|null
+     * @param ContentNode   $node
+     * @param ScopeCriteria $criteria
+     *
+     * @return int[]
      */
-    protected function getResolvedContentVariant(Collection $contentVariants, Scope $scope)
+    private function loadContentNodeIds(ContentNode $node, ScopeCriteria $criteria): array
     {
-        /** @var ContentVariant $filteredVariant */
-        $filteredVariant = $this->scopeMatcher->getBestMatchByScope($contentVariants, $scope);
-        if (!$filteredVariant) {
+        $qb = $this->doctrineHelper
+            ->createQueryBuilder(ContentNode::class, 'node')
+            ->where('node.left >= :left AND node.right <= :right')
+            ->setParameter('left', $node->getLeft())
+            ->setParameter('right', $node->getRight());
+
+        return $this->contentNodeProvider->getContentNodeIds($qb, $criteria);
+    }
+
+    /**
+     * @param int[] $nodeIds
+     *
+     * @return ContentNode[] [node id => content node, ...]
+     */
+    private function loadContentNodes(array $nodeIds): array
+    {
+        /** @var ContentNode[] $nodes */
+        $nodes = $this->doctrineHelper
+            ->createQueryBuilder(ContentNode::class, 'node')
+            ->where('node.id IN (:ids)')
+            ->setParameter('ids', $nodeIds)
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($nodes as $node) {
+            $result[$node->getId()] = $node;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int[]         $nodeIds
+     * @param ScopeCriteria $criteria
+     *
+     * @return ContentVariant[] [node id => content variant id, ...]
+     */
+    private function loadContentVariants(array $nodeIds, ScopeCriteria $criteria): array
+    {
+        $variantIds = $this->contentNodeProvider->getContentVariantIds($nodeIds, $criteria);
+
+        /** @var ContentVariant[] $variants */
+        $variants = $this->doctrineHelper
+            ->createQueryBuilder(ContentVariant::class, 'variant')
+            ->where('variant.id IN (:ids)')
+            ->setParameter('ids', array_values($variantIds))
+            ->getQuery()
+            ->getResult();
+
+        $variantMap = [];
+        foreach ($variants as $variant) {
+            $variantMap[$variant->getId()] = $variant;
+        }
+
+        $result = [];
+        foreach ($variantIds as $nodeId => $variantId) {
+            if (isset($variantMap[$variantId])) {
+                $result[$nodeId] = $variantMap[$variantId];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int              $nodeId
+     * @param ContentNode[]    $nodes    [node id => content node, ...]
+     * @param ContentVariant[] $variants [node id => content variant, ...]
+     * @param ClassMetadata    $variantMetadata
+     *
+     * @return ResolvedContentNode|null
+     */
+    private function createResolvedContentNode(
+        int $nodeId,
+        array $nodes,
+        array $variants,
+        ClassMetadata $variantMetadata
+    ): ?ResolvedContentNode {
+        if (!isset($nodes[$nodeId], $variants[$nodeId])) {
             return null;
         }
 
+        $node = $nodes[$nodeId];
+
+        return new ResolvedContentNode(
+            $nodeId,
+            $this->getIdentifier($node),
+            $node->getTitles(),
+            $this->createResolvedContentVariant($variants[$nodeId], $variantMetadata),
+            $node->isRewriteVariantTitle()
+        );
+    }
+
+    /**
+     * @param ContentVariant $variant
+     * @param ClassMetadata  $metadata
+     *
+     * @return ResolvedContentVariant
+     */
+    private function createResolvedContentVariant(
+        ContentVariant $variant,
+        ClassMetadata $metadata
+    ): ResolvedContentVariant {
         $resolvedVariant = new ResolvedContentVariant();
-        $metadata = $this->doctrineHelper->getEntityMetadata($filteredVariant);
         foreach ($metadata->getFieldNames() as $fieldName) {
-            $resolvedVariant->{$fieldName} = $metadata->getFieldValue($filteredVariant, $fieldName);
+            $resolvedVariant->{$fieldName} = $metadata->getFieldValue($variant, $fieldName);
         }
 
         foreach ($metadata->getAssociationNames() as $associationName) {
-            $associatedValue = $metadata->getFieldValue($filteredVariant, $associationName);
-
+            $associatedValue = $metadata->getFieldValue($variant, $associationName);
             if ($associationName === 'slugs') {
                 $this->fillSlugs($associatedValue, $resolvedVariant);
             }
@@ -146,23 +225,20 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
     /**
      * @param ContentNode $node
+     *
      * @return string
      */
-    protected function getIdentifier(ContentNode $node)
+    private function getIdentifier(ContentNode $node): string
     {
         /** @var LocalizedFallbackValue $localizedUrl */
         $localizedUrl = $node->getLocalizedUrls()
-            ->filter(
-                function (LocalizedFallbackValue $localizedUrl) {
-                    return $localizedUrl->getLocalization() === null;
-                }
-            )
+            ->filter(function (LocalizedFallbackValue $localizedUrl) {
+                return $localizedUrl->getLocalization() === null;
+            })
             ->first();
-
         if (!$localizedUrl) {
             $localizedUrl = $node->getLocalizedUrls()->first();
         }
-
         if (!$localizedUrl) {
             return '';
         }
@@ -181,10 +257,10 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     }
 
     /**
-     * @param Collection|Slug[] $slugs
+     * @param Collection|Slug[]      $slugs
      * @param ResolvedContentVariant $resolvedVariant
      */
-    protected function fillSlugs(Collection $slugs, ResolvedContentVariant $resolvedVariant)
+    private function fillSlugs(Collection $slugs, ResolvedContentVariant $resolvedVariant): void
     {
         foreach ($slugs as $slug) {
             $localizedUrl = new LocalizedFallbackValue();
@@ -197,16 +273,24 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
     /**
      * @param Scope $scope
+     *
+     * @return ScopeCriteria
      */
-    protected function resolveScope(Scope $scope)
+    private function getCriteriaByScope(Scope $scope): ScopeCriteria
     {
-        // In order to find content nodes with customer group restrictions to build the tree,
-        // we need to manually set customer's group to scope entity.
-        if (method_exists($scope, 'getCustomer')
-            && method_exists($scope, 'setCustomerGroup')
-            && $scope->getCustomer()
-        ) {
-            $scope->setCustomerGroup($scope->getCustomer()->getGroup());
+        $context = [];
+        // We need to use the customer group from the customer stored in the scope,
+        // because the customer group may not exist in the scope (actually in the most cases the scope
+        // does not contain the full information about the context - the context is represented
+        // by the scope criteria object that is filled by scope criteria providers),
+        // as we do not know how this scope was retrieved (e.g. it may be retrieved for a slug,
+        // a consent or other object).
+        // We need the customer group to be sure that content nodes that have a restriction
+        // by a customer group will be filtered correctly.
+        if (method_exists($scope, 'getCustomer') && $scope->getCustomer()) {
+            $context[ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP] = $scope->getCustomer()->getGroup();
         }
+
+        return $this->scopeManager->getCriteriaByScope($scope, 'web_content', $context);
     }
 }

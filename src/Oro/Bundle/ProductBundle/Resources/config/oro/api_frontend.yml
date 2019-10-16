@@ -9,6 +9,9 @@ api:
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
             alias:        productsearch
             plural_alias: productsearch
+        Oro\Bundle\ProductBundle\Api\Model\ProductCollection:
+            alias:        productcollection
+            plural_alias: productcollection
 
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
@@ -314,6 +317,40 @@ api:
                     minimalPrice:
                         property_path: decimal.minimal_price_CPL_ID_CURRENCY
             actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false
+                get_relationship: false
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductCollection:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_collection.md'
+            identifier_field_names: [id]
+            disable_meta_properties: true
+            fields:
+                id:
+                    data_type: integer
+                products:
+                    data_type: integer
+                    target_class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch
+                    target_type: to-many
+                    exclusion_policy: all
+                    fields:
+                        id:
+                            data_type: integer
+            filters:
+                fields:
+                    searchQuery:
+                        data_type: string
+                        operators: ['=']
+                    aggregations:
+                        data_type: string
+                        operators: ['=']
+            actions:
+                get:
+                    description: Get Product Collection
+                get_list: false
                 create: false
                 update: false
                 delete: false

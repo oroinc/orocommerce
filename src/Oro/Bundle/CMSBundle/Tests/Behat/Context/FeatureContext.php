@@ -24,4 +24,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $productNameField->blur();
         $this->waitForAjax();
     }
+
+    /**
+     * Example: When I fill in WYSIWYG "CMS Page Content" with "Content"
+     *
+     * @When /^(?:|I )fill in WYSIWYG "(?P<wysiwygElementName>[^"]+)" with "(?P<text>(?:[^"]|\\")*)"$/
+     * @param string $wysiwygElementName
+     * @param string $text
+     */
+    public function fillWysiwygContentField($wysiwygElementName, $text)
+    {
+        $wysiwygContentElement = $this->createElement($wysiwygElementName);
+        self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
+            'WYSIWYG element "%s" not found on page',
+            $wysiwygElementName
+        ));
+
+        $function = <<<JS
+(function(){
+    $("#{$wysiwygContentElement->getAttribute('id')}").val("{$text}");
+})()
+JS;
+        $this->getSession()->executeScript($function);
+    }
 }

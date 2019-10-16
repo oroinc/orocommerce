@@ -1,0 +1,244 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &frame {
+        width: calc(100% - 16px);
+        height: calc(100% - 16px);
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: auto;
+        box-sizing: content-box;
+        transition: width 1s, height 1s;
+    }
+
+    &cv-canvas {
+        border: $canvas-border;
+        background-color: $canvas-bg-color;
+        padding: 8px;
+        width: calc(77% - 14px);
+    }
+
+    &pn-commands {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    &pn-panel {
+        padding: 0;
+
+        &.#{$pn-prefix}options {
+            padding-#{$end}: 7px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-content {
+            padding: 2px 16px 10px;
+            input {
+                height: 32px;
+            }
+        }
+    }
+
+    &select-control {
+        margin-#{$end}: 5px;
+    }
+
+    &pn-views-container {
+        box-shadow: none;
+        padding-top: 40px;
+    }
+
+    &pn-commands,
+    &pn-options,
+    &pn-devices-c {
+        .#{$pn-prefix}btn {
+            background-color: $button-bg-color;
+            border-radius: 30px;
+            margin-#{$end}: 7px;
+
+            &.#{$pn-prefix}active {
+                background-color: $additional-extra-light;
+                box-shadow: inset 0 2px 3px 2px rgba(0, 0, 0, 0.21);
+            }
+        }
+    }
+
+    &sm-properties {
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+        font-size: $base-font-size--sm;
+    }
+
+    &sm-label {
+        font-size: $base-font-size;
+        color: $primary-600;
+
+        &.#{$app-prefix}color-warn {
+            color: $primary-100;
+        }
+
+        &.#{$app-prefix}four-color {
+            color: $warning-darken;
+        }
+    }
+
+    &sm-clear {
+        font-size: $base-font-size--xl;
+    }
+
+    &sm-sector {
+        ##{$app-prefix}sm-caret {
+            font-size: $base-font-size--m;
+        }
+
+        .#{$app-prefix}sm-title {
+            .fa {
+                min-width: 18px;
+            }
+        }
+    }
+
+    &sm-sector,
+    &block-category {
+        margin-bottom: 8px;
+        border-bottom: none;
+
+        &.#{$app-prefix}sm-open,
+        &.#{$app-prefix}open {
+            border-bottom: none;
+        }
+
+        .#{$app-prefix}sm-title,
+        .#{$app-prefix}title {
+            border-bottom: none;
+            font-weight: 700;
+            padding: 6px 14px 5px;
+            letter-spacing: normal;
+            font-size: $base-font-size;
+            color: $primary-100;
+            background-color: $primary-860;
+            border-radius: 4px;
+        }
+
+        .#{$sm-prefix}field.#{$sm-prefix}composite {
+            border: none;
+            background: $primary-900;
+            border-radius: 4px;
+        }
+
+        .#{$sm-prefix}btn {
+            background-color: $secondary;
+            color: $primary-inverse;
+
+            text-shadow: none;
+        }
+
+        .#{$sm-prefix}property {
+            .#{$sm-prefix}layer {
+                ##{$sm-prefix}close-layer,
+                ##{$sm-prefix}close-layer {
+                    line-height: 0;
+                    top: 10px;
+                }
+            }
+        }
+    }
+
+    &toolbar-item {
+        background-color: $secondary;
+    }
+
+    &toolbar {
+        margin-#{$start}: 1px;
+        margin-top: -2px;
+    }
+
+    &am-assets-cont {
+        background: none;
+    }
+
+    &mdl-dialog {
+        border-radius: 4px;
+        box-shadow: 1px 1px 9px 3px rgba(0,0,0,.08);
+
+        .#{$app-prefix}btn-prim {
+            display: inline-flex;
+            padding: 0 16px;
+            font-size: 0.875rem;
+            line-height: 32px;
+            border-radius: 16px;
+            margin-top: 10px;
+        }
+    }
+
+    &mdl-header {
+        background: $primary-200;
+        padding: 10px 18px 10px 18px;
+        border-radius: 4px 4px 0 0;
+    }
+
+    &mdl-title {
+        color: $primary-inverse;
+        font-size: $base-font-size--l;
+        font-weight: bold;
+    }
+
+    &mdl-content {
+        border-radius: 0 0 4px 4px;
+    }
+
+    &mdl-container {
+        background-color: rgba($primary-inverse, .5);
+    }
+
+    &rte-toolbar {
+        margin-#{$start}: -2px;
+    }
+
+    &rte-actionbar {
+        flex-direction: row;
+
+        .#{$rte-prefix}action {
+            order: 1;
+
+            &:hover {
+                color: $primary-inverse;
+            }
+
+            &.text-format-action {
+                order: 0;
+                border-#{$end}: 1px solid $mainDkColor;
+            }
+
+            select {
+                padding-#{$end}: 15px;
+            }
+        }
+    }
+
+    &am-highlight {
+        color: $primary-inverse;
+
+        .#{$app-prefix}am-close {
+            top: -10px;
+        }
+    }
+}
+
+.#{$app-prefix}dashed {
+    *[data-highlightable] {
+        padding: 10px;
+
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+// Additional styles for fullscreen mode
+.page-content-editor {
+    margin: -12px;
+}

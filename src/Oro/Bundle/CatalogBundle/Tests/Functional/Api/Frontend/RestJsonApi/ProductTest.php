@@ -151,7 +151,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
                     'type'       => 'mastercatalogcategories',
                     'id'         => '<toString(@category1->id)>',
                     'attributes' => [
-                        'name' => 'Category 1'
+                        'title' => 'Category 1'
                     ]
                 ]
             ],

@@ -4,36 +4,55 @@ namespace Oro\Bundle\CMSBundle\ContentBlock\Model;
 
 use Doctrine\Common\Collections\Collection;
 
+/**
+ * Model for Content Block
+ */
 class ContentBlockView
 {
-    /** @var string */
-    protected $alias;
-
-    /** @var Collection */
-    protected $titles;
-
-    /** @var bool */
-    protected $enabled;
-
-    /** @var string */
-    protected $content;
+    /**
+     * @var string
+     */
+    private $alias;
 
     /**
-     * @param string     $alias
+     * @var Collection
+     */
+    private $titles;
+
+    /**
+     * @var bool
+     */
+    private $enabled;
+
+    /**
+     * @var string
+     */
+    private $content;
+
+    /**
+     * @var string
+     */
+    private $contentStyle;
+
+    /**
+     * @param string $alias
      * @param Collection $titles
-     * @param bool       $enabled
-     * @param string     $content
+     * @param bool $enabled
+     * @param string $content
+     * @param string $contentStyle
      */
     public function __construct(
-        $alias,
+        string $alias,
         Collection $titles,
-        $enabled,
-        $content
+        bool $enabled,
+        string $content,
+        string $contentStyle
     ) {
         $this->alias = $alias;
         $this->titles = $titles;
         $this->enabled = $enabled;
         $this->content = $content;
+        $this->contentStyle = $contentStyle;
     }
 
     /**
@@ -66,5 +85,13 @@ class ContentBlockView
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentStyle()
+    {
+        return $this->contentStyle;
     }
 }

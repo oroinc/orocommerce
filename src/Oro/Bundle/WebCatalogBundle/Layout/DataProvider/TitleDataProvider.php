@@ -3,9 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Layout data provider. Returns web catalog node title and page title based on current content node.
@@ -13,25 +12,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class TitleDataProvider implements TitleDataProviderInterface
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    /** @var RequestWebContentVariantProvider */
+    private $requestWebContentVariantProvider;
+
+    /** @var LocalizationHelper */
+    private $localizationHelper;
 
     /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
-
-    /**
-     * @param RequestStack $requestStack
-     * @param LocalizationHelper $localizationHelper
+     * @param RequestWebContentVariantProvider $requestWebContentVariantProvider
+     * @param LocalizationHelper               $localizationHelper
      */
     public function __construct(
-        RequestStack $requestStack,
+        RequestWebContentVariantProvider $requestWebContentVariantProvider,
         LocalizationHelper $localizationHelper
     ) {
-        $this->requestStack = $requestStack;
+        $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;
         $this->localizationHelper = $localizationHelper;
     }
 
@@ -60,19 +55,14 @@ class TitleDataProvider implements TitleDataProviderInterface
     }
 
     /**
-     * @return null|ContentNodeInterface
+     * @return ContentNodeInterface|null
      */
-    protected function getContentNode()
+    private function getContentNode()
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request && $request->attributes->has('_content_variant')) {
-            $contentVariant = $request->attributes->get('_content_variant');
+        $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
 
-            if ($contentVariant instanceof ContentNodeAwareInterface) {
-                return $contentVariant->getNode();
-            }
-        }
-
-        return null;
+        return null !== $contentVariant
+            ? $contentVariant->getNode()
+            : null;
     }
 }

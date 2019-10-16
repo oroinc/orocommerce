@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Oro\Bundle\CMSBundle\Twig\WidgetExtension;
-use Oro\Bundle\CMSBundle\Widget\WidgetRegistry;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class WidgetExtensionTest extends \PHPUnit\Framework\TestCase
@@ -13,27 +13,26 @@ class WidgetExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var WidgetExtension */
     private $extension;
 
-    /** @var WidgetRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $widgetRegistry;
+    /** @var ContentWidgetRenderer|\PHPUnit\Framework\MockObject\MockObject */
+    private $renderer;
 
     protected function setUp()
     {
-        $this->widgetRegistry = $this->createMock(WidgetRegistry::class);
-        $this->extension = new WidgetExtension($this->widgetRegistry);
+        $this->renderer = $this->createMock(ContentWidgetRenderer::class);
+        $this->extension = new WidgetExtension($this->renderer);
     }
 
-    public function testWidgetFunction()
+    public function testWidgetFunction(): void
     {
         $renderedWidget = '<div>rendered widget</div>';
-        $widgetOptions = ['foo' => 'bar'];
-        $this->widgetRegistry->expects($this->once())
-            ->method('getWidget')
-            ->with('widget_name', $widgetOptions)
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with($name = 'widget_name')
             ->willReturn($renderedWidget);
 
         $this->assertEquals(
             $renderedWidget,
-            self::callTwigFunction($this->extension, 'widget', ['widget_name', $widgetOptions])
+            self::callTwigFunction($this->extension, 'widget', [$name])
         );
     }
 }
