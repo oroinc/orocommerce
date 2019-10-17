@@ -95,7 +95,6 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->flush();
 
         $this->sendScheduledMessages();
-        $a = self::getMessageCollector()->getSentMessages();
 
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         self::assertMessageSent(
