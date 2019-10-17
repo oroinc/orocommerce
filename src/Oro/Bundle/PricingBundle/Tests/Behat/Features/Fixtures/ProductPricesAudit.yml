@@ -1,0 +1,44 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        unitPrecisions: ['@precision1', '@precision2']
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products:
+        __construct: [['@product1']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        setProducts: ['@products']
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListForWebsite:
+        name: 'Second Price List'
+        setPriceListCurrencies: [['USD', 'EUR']]

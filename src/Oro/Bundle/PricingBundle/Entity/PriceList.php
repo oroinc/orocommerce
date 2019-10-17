@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
 
 /**
+ * Entity holds price list data.
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @ORM\Table(name="oro_price_list")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
@@ -65,6 +68,13 @@ class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterfa
      *      targetEntity="Oro\Bundle\PricingBundle\Entity\ProductPrice",
      *      mappedBy="priceList",
      *      fetch="EXTRA_LAZY"
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          }
+     *      }
      * )
      **/
     protected $prices;

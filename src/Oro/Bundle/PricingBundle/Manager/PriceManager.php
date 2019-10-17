@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
@@ -15,6 +16,9 @@ use Oro\Bundle\PricingBundle\Event\ProductPricesUpdated;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Manages product prices.
+ */
 class PriceManager
 {
     /**
@@ -84,9 +88,10 @@ class PriceManager
             if (array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0]) {
                 $newPriceList = $price->getPriceList();
                 $price->setPriceList($changeSet['priceList'][0]);
-                $repository->remove($this->shardManager, $price);
-                $price->setId(null);
+                $this->doRemove($price);
+                $price = clone $price;
                 $price->setPriceList($newPriceList);
+                $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
             }
             $repository->save($this->shardManager, $price);
 
@@ -115,6 +120,8 @@ class PriceManager
         $repository->remove($this->shardManager, $price);
 
         $event = new ProductPriceRemove($price);
+        $event->setEntityManager($em);
+
         $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
 
         $em->detach($price);
@@ -133,7 +140,10 @@ class PriceManager
             $this->doSave($price);
         }
         if ($pricesToRemove || $pricesToSave) {
-            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME);
+            $event = new ProductPricesUpdated();
+            $event->setEntityManager($this->shardManager->getEntityManager());
+
+            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME, $event);
         }
     }
 
@@ -146,6 +156,14 @@ class PriceManager
     private function getChangeSet(UnitOfWork $uow, ClassMetadata $classMetadata, ProductPrice $price)
     {
         if ($price->getId()) {
+            $originalData = $uow->getOriginalEntityData($price);
+            //small workaround to tell Doctrine that the price value didn't change
+            if (!empty($originalData['value'])) {
+                $originalData['value'] = (float) $originalData['value'];
+
+                $uow->setOriginalEntityData($price, $originalData);
+            }
+
             $uow->computeChangeSet($classMetadata, $price);
         }
 
