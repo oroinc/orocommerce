@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CMSBundle\Model\ExtendPage;
+use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
+use Oro\Bundle\DraftBundle\Entity\DraftableTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -75,15 +77,19 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          "form"={
  *              "form_type"="Oro\Bundle\CMSBundle\Form\Type\PageSelectType",
  *              "grid_name"="cms-page-select-grid"
+ *          },
+ *          "draft"={
+ *              "draftable"=true
  *          }
  *      }
  * )
  */
-class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
+class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface, DraftableInterface
 {
     use AuditableOrganizationAwareTrait;
     use DatesAwareTrait;
     use SluggableTrait;
+    use DraftableTrait;
 
     /**
      * @var integer
@@ -115,6 +121,9 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "draft"={
+     *              "draftable"=true
      *          }
      *      }
      * )
@@ -129,6 +138,9 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "draft"={
+     *              "draftable"=true
      *          }
      *      }
      * )

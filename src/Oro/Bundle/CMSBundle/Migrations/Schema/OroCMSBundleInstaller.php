@@ -15,6 +15,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
+/**
+ * Creates all tables required for CMSBundle.
+ */
 class OroCMSBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
@@ -111,7 +114,12 @@ class OroCMSBundleInstaller implements
         $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('draft_project_id', 'integer', ['notnull' => false]);
+        $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('draft_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['draft_project_id'], 'IDX_BCE4CB4A2E26AC0B');
+        $table->addIndex(['draft_source_id'], 'IDX_BCE4CB4A953C1C61');
     }
 
     /**
@@ -127,6 +135,18 @@ class OroCMSBundleInstaller implements
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_draft_project'),
+            ['draft_project_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_page'),
+            ['draft_source_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
         );
     }
 

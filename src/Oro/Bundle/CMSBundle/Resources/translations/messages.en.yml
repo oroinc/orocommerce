@@ -20,6 +20,9 @@ oro.cms:
         alias.label:            'Alias'
         text_content_variants.label: 'Text Content Variants'
         default.label: Default
+        draft_project.label:    'Draft Project'
+        draft_source.label:     'Draft Source'
+        draft_uuid.label:       'Draft ID'
 
     contentblock:
         entity_label: Content Block
