@@ -273,3 +273,11 @@ services:
             - '@oro_form.provider.html_tag_provider'
         tags:
             - { name: form.type }
+
+    oro_cms.validator.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator
+        arguments:
+            - '@oro_ui.html_tag_helper'
+            - '@logger'
+        tags:
+            - { name: validator.constraint_validator, alias: wysiwyg_validator }

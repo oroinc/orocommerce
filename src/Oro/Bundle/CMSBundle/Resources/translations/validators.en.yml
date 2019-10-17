@@ -2,3 +2,4 @@ oro.cms:
     contentblock:
         alias:
             regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
+    wysiwyg.not_permitted_content.message: "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."

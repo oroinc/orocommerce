@@ -9,6 +9,8 @@ use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
+use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -16,8 +18,10 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
@@ -49,6 +53,21 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                 []
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $wysiwygConstraint = new WYSIWYG();
+
+        return [
+            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $logger)
         ];
     }
 
