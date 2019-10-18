@@ -1,3 +1,4 @@
+@skip
 @fixture-OroProductBundle:product_slug.yml
 
 Feature: Product redirect slug

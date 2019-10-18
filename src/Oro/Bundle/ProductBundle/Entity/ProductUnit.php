@@ -7,12 +7,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Product unit entity.
+ *
  * @ORM\Table(name="oro_product_unit")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-briefcase"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )

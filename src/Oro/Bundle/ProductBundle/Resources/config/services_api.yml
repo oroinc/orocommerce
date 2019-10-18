@@ -1,5 +1,4 @@
 parameters:
-    oro_product.entity.related_product.class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct
     oro_product.product_unit.translations_mapping:
         messages:
             'oro.product_unit.{unit}.label.full': '{full}'
@@ -20,6 +19,7 @@ parameters:
             'oro.product.product_unit.{unit}.value.full': '{0} none|]0,1] {{ count }} {full}|]1,Inf]{{ count }} {full_plural}'
             'oro.product.product_unit.{unit}.value.short': '{0} none|]0,1] {{ count }} {short}|]1,Inf]{{ count }} {short_plural}'
             'oro.product.product_unit.{unit}.value.label': '{0} none|]0,1] {short}|]1,Inf] {short_plural}'
+
 services:
     oro_product.api.rest.remove_product_search_single_item_routes:
         parent: oro_frontend.api.rest.routing_options_resolver.remove_single_item_routes
@@ -322,7 +322,7 @@ services:
             - '@security.authorization_checker'
             - ['VIEW', 'EDIT']
         tags:
-            - { name: oro.api.processor, action: create, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
+            - { name: oro.api.processor, action: create, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
     oro_product.api.delete.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
@@ -330,8 +330,8 @@ services:
             - '@security.authorization_checker'
             - ['EDIT']
         tags:
-            - { name: oro.api.processor, action: delete, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
-            - { name: oro.api.processor, action: delete_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
+            - { name: oro.api.processor, action: delete, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
+            - { name: oro.api.processor, action: delete_list, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
     oro_product.api.get.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
@@ -339,8 +339,8 @@ services:
             - '@security.authorization_checker'
             - ['VIEW']
         tags:
-            - { name: oro.api.processor, action: get, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
-            - { name: oro.api.processor, action: get_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
+            - { name: oro.api.processor, action: get, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
+            - { name: oro.api.processor, action: get_list, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
     oro_product.api.create.add_related_product:
         class: Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct
@@ -348,14 +348,14 @@ services:
             - '@oro_product.related_item.related_product.assigner_database_strategy'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: '%oro_product.entity.related_product.class%', priority: 100}
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
     oro_product.api.get.related_product.acl_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemAclCheck
         arguments: ['@oro_api.entity_serializer.doctrine_helper']
         tags:
-            - { name: oro.api.processor, action: get, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
-            - { name: oro.api.processor, action: get_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
+            - { name: oro.api.processor, action: get, group: build_query, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: -200}
+            - { name: oro.api.processor, action: get_list, group: build_query, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: -200}
 
     oro_product.api.delete.related_product.build_single_item_query:
         class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
@@ -363,14 +363,14 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_api.entity_id_helper'
         tags:
-            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 10 }
+            - { name: oro.api.processor, action: delete, group: load_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 10 }
 
     oro_product.api.delete.related_product.load_entity_by_orm_query:
         class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
         arguments:
             - '@oro_entity.query_hint_resolver'
         tags:
-            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 0 }
+            - { name: oro.api.processor, action: delete, group: load_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct }
 
     oro_product.api.delete.related_product.acl_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\Delete\RelatedItemAclCheck
@@ -378,8 +378,8 @@ services:
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
         tags:
-            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 5}
-            - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
+            - { name: oro.api.processor, action: delete, group: load_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 5}
+            - { name: oro.api.processor, action: delete_list, group: build_query, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: -200}
 
     oro_product.api.add_image_path_to_file:
         class: Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile

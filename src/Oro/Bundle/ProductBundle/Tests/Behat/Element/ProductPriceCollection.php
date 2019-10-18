@@ -105,5 +105,9 @@ class ProductPriceCollection extends CollectionField
         $row->find('xpath', '//input[contains(@id,"quantity")]')->setValue($value['Quantity value']);
         $row->find('xpath', '//select[contains(@id,"unit")]')->setValue($value['Quantity Unit']);
         $row->find('xpath', '//input[contains(@id,"price_value")]')->setValue($value['Value']);
+
+        if (isset($value['Currency'])) {
+            $row->find('xpath', '//select[contains(@id,"price_currency")]')->setValue($value['Currency']);
+        }
     }
 }
