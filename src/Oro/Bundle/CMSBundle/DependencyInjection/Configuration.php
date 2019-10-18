@@ -68,7 +68,7 @@ class Configuration implements ConfigurationInterface
                                 ' with edit permission on that WYSIWYG field'
                             )
                         ->end()
-                        ->arrayNode('restrictions')
+                        ->arrayNode('lax_restrictions')
                             ->info(
                                 'List of user roles that has edit permission on entity field with selected secure level'
                             )

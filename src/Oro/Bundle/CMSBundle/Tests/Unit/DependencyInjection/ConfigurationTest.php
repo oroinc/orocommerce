@@ -89,7 +89,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'oro_cms' => [
                         Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false],
                         'content_restrictions' => [
-                            'restrictions' => [
+                            'lax_restrictions' => [
                                 'ROLE' => [
                                     \stdClass::class => ['content']
                                 ]
@@ -108,7 +108,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false],
                     'content_restrictions' => [
                         'mode' => 'secure',
-                        'restrictions' => [
+                        'lax_restrictions' => [
                             'ROLE' => [
                                 \stdClass::class => ['content']
                             ]

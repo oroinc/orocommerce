@@ -15,6 +15,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class OroCMSExtension extends Extension
 {
     const ALIAS = 'oro_cms';
+    const CONTENT_RESTRICTIONS_MODE = 'mode';
+    const LAX_CONTENT_RESTRICTIONS = 'lax_restrictions';
 
     /** @var array */
     private $contentRestrictionModes = ['secure', 'selective', 'unsecure'];
@@ -52,6 +54,19 @@ class OroCMSExtension extends Extension
             sprintf('%s.%s.%s', self::ALIAS, Configuration::DIRECT_EDITING, Configuration::LOGIN_PAGE_CSS_FIELD_OPTION),
             $config[Configuration::DIRECT_EDITING][Configuration::LOGIN_PAGE_CSS_FIELD_OPTION]
         );
+
+        $contentRestrictions = isset($config['content_restrictions']) ? $config['content_restrictions'] : [];
+        $contentRestrictionsMode = 'default';
+        $laxContentRestrictions = [];
+        if (array_key_exists(self::CONTENT_RESTRICTIONS_MODE, $contentRestrictions)) {
+            $contentRestrictionsMode = $contentRestrictions[self::CONTENT_RESTRICTIONS_MODE];
+        }
+        if (array_key_exists(self::LAX_CONTENT_RESTRICTIONS, $contentRestrictions)) {
+            $laxContentRestrictions = $contentRestrictions[self::LAX_CONTENT_RESTRICTIONS];
+        }
+
+        $container->setParameter('oro_cms.content_restrictions_mode', $contentRestrictionsMode);
+        $container->setParameter('oro_cms.lax_content_restrictions', $laxContentRestrictions);
 
         $container->registerForAutoconfiguration(ContentWidgetTypeInterface::class)
             ->addTag('oro_cms.content_widget.type');

@@ -281,3 +281,15 @@ services:
             - '@logger'
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }
+
+    oro_cms.provider.html_purifier_scope_provider:
+        class: Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider
+        public: false
+        arguments:
+            - '@oro_security.token_accessor'
+            - '%oro_cms.content_restrictions_mode%'
+            - '%oro_cms.lax_content_restrictions%'
+        calls:
+            - [addScopeMapping, ['secure', 'default']]
+            - [addScopeMapping, ['selective', 'lax']]
+            - [addScopeMapping, ['unsecure', null]]
