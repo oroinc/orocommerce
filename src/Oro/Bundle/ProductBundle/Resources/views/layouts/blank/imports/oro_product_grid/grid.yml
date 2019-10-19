@@ -43,8 +43,8 @@ layout:
                         product_grid_container: ~
 
         - '@add':
-            id: product_require_js_config
-            parentId: require_js
+            id: product_grid_js_modules_config
+            parentId: layout_js_modules_config
             blockType: block
 
         - '@changeBlockType':

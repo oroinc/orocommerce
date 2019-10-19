@@ -1,0 +1,10 @@
+dynamic-imports:
+    oropromotion:
+        - oropromotion/js/app/components/order-line-item-discounts-no-tax-component
+        - oropromotion/js/app/components/order-line-item-discounts-tax-component
+        - oropromotion/js/app/views/applied-coupon-collection-view
+        - oropromotion/js/app/views/applied-promotion-collection-view
+        - oropromotion/js/app/views/coupon-add-view
+        - oropromotion/js/app/views/coupon-generation-preview-view
+        - oropromotion/js/app/views/discount-options-view
+        - oropromotion/js/app/views/type-value-switcher

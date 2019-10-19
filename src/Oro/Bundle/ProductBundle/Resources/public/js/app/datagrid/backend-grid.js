@@ -1,4 +1,4 @@
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
     var BackendGrid;
@@ -13,7 +13,7 @@ define(function(require) {
     var BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
     var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
 
-    var config = require('module').config();
+    var config = require('module-config').default(module.id);
     config = _.extend({
         massActionsInSticky: _.isMobile(),
         massActionsContainer: $('[data-mass-actions-container]'),

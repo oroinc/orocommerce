@@ -1,0 +1,3 @@
+dynamic-imports:
+    oropaymentterm:
+        - oropaymentterm/js/app/views/payment-term-view

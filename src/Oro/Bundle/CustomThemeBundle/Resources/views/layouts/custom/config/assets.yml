@@ -28,4 +28,4 @@ styles:
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-box-collapse-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/styles.scss'
 
-    output: 'css/layout/custom/styles.css'
+    output: 'css/styles.css'

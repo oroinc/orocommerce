@@ -9,7 +9,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ModuleManager = require('orocms/js/app/grapesjs/modules/module-manager');
     var mediator = require('oroui/js/mediator');
-    var canvasStyle = require('text!orocms/css/grapesjs/grapesjs-canvas.css');
+    var canvasStyle = require('text-loader!orocms/css/grapesjs/grapesjs-canvas.css');
 
     require('grapesjs-preset-webpage');
     require('orocms/js/app/grapesjs/plugins/components/grapesjs-components');

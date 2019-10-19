@@ -1,0 +1,10 @@
+aliases:
+    grapesjs$: npmassets/grapesjs/dist/grapes
+    grapesjs-preset-webpage$: npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+dynamic-imports:
+    orocms:
+        - orocms/js/app/components/content-variant-collection-component
+        - orocms/js/app/grapesjs/grapesjs-editor-view
+        - orocms/js/app/views/content-widget-view
+        - orocms/js/app/views/default-variant-collection-view
+        - orocms/js/app/views/variants-collection-view

@@ -1,7 +1,0 @@
-config:
-    paths:
-        'orotax/js/formatter/tax': 'bundles/orotax/js/formatter/tax.js'
-        'orotax/js/app/components/order-line-item-taxes-component': 'bundles/orotax/js/app/components/order-line-item-taxes-component.js'
-        'orotax/js/app/components/order-line-item-item-component': 'bundles/orotax/js/app/components/order-line-item-item-component.js'
-        'orotax/js/app/components/order-taxes-component': 'bundles/orotax/js/app/components/order-taxes-component.js'
-        'orotax/js/app/views/editor/product-tax-code-editor-view': 'bundles/orotax/js/app/views/editor/product-tax-code-editor-view.js'

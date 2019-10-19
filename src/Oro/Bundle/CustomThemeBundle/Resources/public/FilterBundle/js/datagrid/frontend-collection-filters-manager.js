@@ -1,11 +1,11 @@
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
     var FrontendCollectionFiltersManager;
     var _ = require('underscore');
     var CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
     var viewportManager = require('oroui/js/viewport-manager');
-    var config = require('module').config();
+    var config = require('module-config').default(module.id);
     config = _.extend({
         enableMultiselectWidget: true
     }, config);

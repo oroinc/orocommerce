@@ -97,8 +97,8 @@ layout:
             optionName: popup_gallery
             optionValue: '=data["system_config_provider"].getValue("oro_product.popup_gallery_on_product_view")'
         - '@add':
-            id: product_require_js_config
-            parentId: require_js
+            id: product_js_modules_config
+            parentId: layout_js_modules_config
             blockType: block
         - '@add':
             id: product_view_variant_field_container

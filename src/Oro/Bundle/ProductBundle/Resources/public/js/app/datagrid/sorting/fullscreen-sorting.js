@@ -4,7 +4,7 @@ define(function(require) {
     var FullscreenSorting;
     var $ = require('jquery');
     var _ = require('underscore');
-    var template = require('tpl!oroproduct/templates/datagrid/fullscreen-sorting.html');
+    var template = require('tpl-loader!oroproduct/templates/datagrid/fullscreen-sorting.html');
     var BaseView = require('oroui/js/app/views/base/view');
     var FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
 

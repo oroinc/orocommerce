@@ -4,7 +4,7 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
-    var headerTemplate = require('tpl!oroproduct/templates/product-popup-header.html');
+    var headerTemplate = require('tpl-loader!oroproduct/templates/product-popup-header.html');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
