@@ -990,6 +990,14 @@ oro_behat_extension:
     Add Product Templates Button:
       selector: 'div[id^="oro_product_productTemplates-uid"] button'
 
+    Product Images Table:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
+      selector: 'div.image-collection > table'
+
+    Active Slide:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.slick-slide.slick-current.slick-active'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

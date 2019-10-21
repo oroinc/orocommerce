@@ -30,6 +30,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
@@ -125,6 +126,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->type = new ProductType($this->defaultProductUnitProvider, $this->urlGenerator);
         $this->type->setDataClass(self::DATA_CLASS);
+        $this->type->setProductImageHelper(new ProductImageHelper());
 
         $image1 = new StubProductImage();
         $image1->setImage(new File());

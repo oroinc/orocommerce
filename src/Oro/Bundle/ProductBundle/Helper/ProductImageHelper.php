@@ -37,6 +37,34 @@ class ProductImageHelper
     }
 
     /**
+     * Sorts product images in next order:
+     *     - first element is the main image
+     *     - second element is the listing image
+     *     - other elements are sorted by id ascending
+     *
+     * @param ProductImage[]
+     * @return ProductImage[]
+     */
+    public function sortImages(array $productImages): array
+    {
+        uasort($productImages, function (ProductImage $image1, ProductImage $image2) {
+            if ($image1->hasType(ProductImageType::TYPE_MAIN)) {
+                return -1;
+            } elseif ($image2->hasType(ProductImageType::TYPE_MAIN)) {
+                return 1;
+            } elseif ($image1->hasType(ProductImageType::TYPE_LISTING)) {
+                return -1;
+            } elseif ($image2->hasType(ProductImageType::TYPE_LISTING)) {
+                return 1;
+            } else {
+                return ($image1->getId() > $image2->getId()) ? 1 : -1;
+            }
+        });
+
+        return $productImages;
+    }
+
+    /**
      * @param string $productImageImportDir
      */
     public function setProductImageImportDir(string $productImageImportDir)

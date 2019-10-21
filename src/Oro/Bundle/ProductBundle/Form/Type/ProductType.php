@@ -13,6 +13,7 @@ use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
@@ -51,6 +52,11 @@ class ProductType extends AbstractType
     private $urlGenerator;
 
     /**
+     * @var ProductImageHelper
+     */
+    private $productImageHelper;
+
+    /**
      * @param DefaultProductUnitProviderInterface $provider
      * @param UrlGeneratorInterface $urlGenerator
      */
@@ -68,6 +74,14 @@ class ProductType extends AbstractType
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param ProductImageHelper $productImageHelper
+     */
+    public function setProductImageHelper($productImageHelper)
+    {
+        $this->productImageHelper = $productImageHelper;
     }
 
     /**
@@ -268,6 +282,16 @@ class ProductType extends AbstractType
                     ProductVariantLinksType::class,
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
+        }
+
+        if (!$product->getImages()->isEmpty()) {
+            $productImagesCollection = $product->getImages();
+            $sortedProductImages = $this->productImageHelper->sortImages($productImagesCollection->toArray());
+            $productImagesCollection->clear();
+
+            foreach ($sortedProductImages as $image) {
+                $productImagesCollection->add($image);
+            }
         }
     }
 

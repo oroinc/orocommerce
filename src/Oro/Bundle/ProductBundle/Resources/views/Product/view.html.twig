@@ -96,7 +96,7 @@
     {% if entity.images.count %}
         {% set imagesData = UI.renderHtmlProperty(
                 'oro.product.images.label'|trans,
-                Image.renderProductImages(entity.images, imageTypes),
+                Image.renderProductImages(sort_product_images(entity.images), imageTypes),
                 null,
                 null,
                 {

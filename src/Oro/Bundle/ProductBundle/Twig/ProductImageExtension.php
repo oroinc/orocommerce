@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,6 +31,14 @@ class ProductImageExtension extends \Twig_Extension
     }
 
     /**
+     * @return ProductImageHelper
+     */
+    protected function getProductImageHelper()
+    {
+        return $this->container->get('oro_product.helper.product_image_helper');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getFunctions()
@@ -38,7 +48,8 @@ class ProductImageExtension extends \Twig_Extension
                 'collect_product_images_by_types',
                 [$this, 'collectProductImagesByTypes']
             ),
-            new \Twig_SimpleFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder'])
+            new \Twig_SimpleFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder']),
+            new \Twig_SimpleFunction('sort_product_images', [$this, 'sortProductImages'])
         ];
     }
 
@@ -60,7 +71,16 @@ class ProductImageExtension extends \Twig_Extension
             $result = array_merge($result, $product->getImagesByType($imageType)->toArray());
         }
 
-        return array_unique($result, SORT_REGULAR);
+        return $this->getProductImageHelper()->sortImages(array_unique($result));
+    }
+
+    /**
+     * @param Collection $productImages
+     * @return ProductImage[]
+     */
+    public function sortProductImages(Collection $productImages): array
+    {
+        return $this->getProductImageHelper()->sortImages($productImages->toArray());
     }
 
     /**
