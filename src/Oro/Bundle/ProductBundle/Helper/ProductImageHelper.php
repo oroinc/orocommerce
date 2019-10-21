@@ -11,14 +11,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
  */
 class ProductImageHelper
 {
-    /** @var  string $productImageImportDir */
-    protected $productImageImportDir;
-
     /**
      * @param ProductImage[]|Collection $productImages
      * @return array
      */
-    public function countImagesByType(Collection $productImages)
+    public function countImagesByType(Collection $productImages): array
     {
         $imagesByTypeCounter = [];
 
@@ -37,18 +34,30 @@ class ProductImageHelper
     }
 
     /**
-     * @param string $productImageImportDir
+     * Sorts product images in next order:
+     *     - first element is the main image
+     *     - second element is the listing image
+     *     - other elements are sorted by id ascending
+     *
+     * @param ProductImage[]
+     * @return ProductImage[]
      */
-    public function setProductImageImportDir(string $productImageImportDir)
+    public function sortImages(array $productImages): array
     {
-        $this->productImageImportDir = $productImageImportDir;
-    }
+        uasort($productImages, function (ProductImage $image1, ProductImage $image2) {
+            if ($image1->hasType(ProductImageType::TYPE_MAIN)) {
+                return -1;
+            } elseif ($image2->hasType(ProductImageType::TYPE_MAIN)) {
+                return 1;
+            } elseif ($image1->hasType(ProductImageType::TYPE_LISTING)) {
+                return -1;
+            } elseif ($image2->hasType(ProductImageType::TYPE_LISTING)) {
+                return 1;
+            } else {
+                return ($image1->getId() > $image2->getId()) ? 1 : -1;
+            }
+        });
 
-    /**
-     * @return string
-     */
-    public function getProductImageImportDir()
-    {
-        return $this->productImageImportDir;
+        return $productImages;
     }
 }

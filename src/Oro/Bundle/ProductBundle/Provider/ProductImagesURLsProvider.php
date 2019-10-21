@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
+/**
+ * Provides product images urls.
+ */
 class ProductImagesURLsProvider
 {
     /**
@@ -21,60 +25,76 @@ class ProductImagesURLsProvider
     protected $attachmentManager;
 
     /**
-     * @param DoctrineHelper    $doctrineHelper
-     * @param AttachmentManager $attachmentManager
+     * @var ProductImageHelper
      */
-    public function __construct(DoctrineHelper $doctrineHelper, AttachmentManager $attachmentManager)
-    {
+    protected $productImageHelper;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param AttachmentManager $attachmentManager
+     * @param ProductImageHelper $productImageHelper
+     */
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AttachmentManager $attachmentManager,
+        ProductImageHelper $productImageHelper
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->attachmentManager = $attachmentManager;
+        $this->productImageHelper = $productImageHelper;
     }
 
     /**
-     * @param int   $productId
+     * @param int $productId
      * @param array $filtersNames
+     * @param string $initialImageType
      *
      * @return array
      */
-    public function getFilteredImagesByProductId($productId, array $filtersNames)
-    {
+    public function getFilteredImagesByProductId(
+        $productId,
+        array $filtersNames,
+        $initialImageType = ProductImageType::TYPE_LISTING
+    ) {
         if (!$filtersNames) {
             return [];
         }
 
+        /** @var Product $product */
+        $product = $this->doctrineHelper->getEntityRepositoryForClass(Product::class)->find($productId);
+
+        if (!$product) {
+            return [];
+        }
+        /** @var ProductImage[] $productImages */
+        $productImages = $this->productImageHelper->sortImages($product->getImages()->toArray());
         $images = [];
-        foreach ($this->getImageFiles($productId) as $imageFile) {
-            $images[] = $this->getFilteredImageUrls($imageFile, $filtersNames);
+        foreach ($productImages as $productImage) {
+            if ($productImage->getImage()) {
+                $images[] = $this->getFilteredImageUrls($productImage, $filtersNames, $initialImageType);
+            }
         }
 
         return $images;
     }
 
     /**
-     * @param int $productId
-     *
-     * @return array|\Oro\Bundle\AttachmentBundle\Entity\File[]
-     */
-    private function getImageFiles($productId)
-    {
-        /** @var ProductRepository $productRepo */
-        $productRepo = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-
-        return $productRepo->getImagesFilesByProductId($productId);
-    }
-
-    /**
-     * @param File  $imageFile
+     * @param ProductImage $productImage
      * @param array $filtersNames
+     * @param string $initialImageType
      *
      * @return array
      */
-    private function getFilteredImageUrls(File $imageFile, array $filtersNames)
-    {
+    private function getFilteredImageUrls(
+        ProductImage $productImage,
+        array $filtersNames,
+        string $initialImageType
+    ): array {
         $image = [];
         foreach ($filtersNames as $filterName) {
-            $image[$filterName] = $this->attachmentManager->getFilteredImageUrl($imageFile, $filterName);
+            $image[$filterName] = $this->attachmentManager->getFilteredImageUrl($productImage->getImage(), $filterName);
         }
+        $image['isInitial'] = $productImage->hasType($initialImageType);
 
         return $image;
     }
