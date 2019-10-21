@@ -46,7 +46,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
 
         $fieldConfigId = $this->createMock(FieldConfigId::class);
         $fieldConfigId
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getFieldName')
             ->willReturn('field_name');
 
@@ -69,7 +69,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn($fieldConfigId);
 
-        $this->wysiwygSchemaHelper->createStyleField($entityConfig, $fieldConfig);
+        $this->wysiwygSchemaHelper->createAdditionalFields($entityConfig, $fieldConfig);
     }
 
     /**
@@ -82,7 +82,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                 'state' => ExtendScope::STATE_ACTIVE,
                 'expected' => [
                     'serialized_property' => [
-                        'field_name_style' => []
+                        'field_name_style' => [],
+                        'field_name_properties' => [],
                     ]
                 ]
             ],
@@ -90,7 +91,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                 'state' => ExtendScope::STATE_UPDATE,
                 'expected' => [
                     'serialized_property' => [
-                        'field_name_style' => []
+                        'field_name_style' => [],
+                        'field_name_properties' => [],
                     ]
                 ]
             ],
@@ -98,7 +100,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                 'state' => ExtendScope::STATE_NEW,
                 'expected' => [
                     'serialized_property' => [
-                        'field_name_style' => []
+                        'field_name_style' => [],
+                        'field_name_properties' => [],
                     ]
                 ]
             ],
@@ -106,7 +109,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                 'state' => ExtendScope::STATE_RESTORE,
                 'expected' => [
                     'serialized_property' => [
-                        'field_name_style' => []
+                        'field_name_style' => [],
+                        'field_name_properties' => [],
                     ]
                 ]
             ],
@@ -116,7 +120,10 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                     'serialized_property' => [
                         'field_name_style' => [
                             'private' => true
-                        ]
+                        ],
+                        'field_name_properties' => [
+                            'private' => true
+                        ],
                     ]
                 ]
             ]
@@ -149,7 +156,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
 
         $fieldConfigId = $this->createMock(FieldConfigId::class);
         $fieldConfigId
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getFieldName')
             ->willReturn('field_name');
 
@@ -172,7 +179,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn($fieldConfigId);
 
-        $this->wysiwygSchemaHelper->createStyleField($entityConfig, $fieldConfig);
+        $this->wysiwygSchemaHelper->createAdditionalFields($entityConfig, $fieldConfig);
     }
 
     /**
@@ -182,7 +189,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
     {
         $defaultState = [
             'entity' => TestActivityTarget::class,
-            'property' => ['field_name_style' => []],
+            'property' => ['field_name_style' => [], 'field_name_properties' => []],
             'doctrine' => [
                 TestActivityTarget::class => [
                     'fields' => [
@@ -194,7 +201,16 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                             'precision' => null,
                             'scale' => null,
                             'default' => null,
-                        ]
+                        ],
+                        'field_name_properties' => [
+                            'column' => 'field_name_properties',
+                            'type' => 'wysiwyg_properties',
+                            'nullable' => true,
+                            'length' => null,
+                            'precision' => null,
+                            'scale' => null,
+                            'default' => null,
+                        ],
                     ]
                 ]
             ]
@@ -221,7 +237,10 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                 'state' => ExtendScope::STATE_DELETE,
                 'expected' => [
                     'entity' => TestActivityTarget::class,
-                    'property' => ['field_name_style' => ['private' => true]],
+                    'property' => [
+                        'field_name_style' => ['private' => true],
+                        'field_name_properties' => ['private' => true],
+                    ],
                 ]
             ]
         ];

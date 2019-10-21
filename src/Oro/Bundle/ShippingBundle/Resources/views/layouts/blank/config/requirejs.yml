@@ -1,3 +1,0 @@
-config:
-    paths:
-        'oroshipping/js/app/views/shipping-methods-view': 'bundles/oroshipping/js/app/views/shipping-methods-view.js'

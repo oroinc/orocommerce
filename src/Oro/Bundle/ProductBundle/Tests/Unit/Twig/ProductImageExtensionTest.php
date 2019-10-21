@@ -4,7 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 use Oro\Bundle\ProductBundle\Twig\ProductImageExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -25,6 +26,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
         $container = self::getContainerBuilder()
             ->add('oro_product.provider.product_image_placeholder', $this->imagePlaceholderProvider)
+            ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
             ->getContainer($this);
 
         $this->extension = new ProductImageExtension($container);
@@ -56,23 +58,25 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function collectProductImageByTypesProvider()
+    public function collectProductImageByTypesProvider(): array
     {
         $product = new Product();
-        $productImage1 = $this->createProductImage(['additional']);
-        $productImage2 = $this->createProductImage(['additional', 'main']);
-        $productImage3 = $this->createProductImage(['listing']);
+        $productImage1 = $this->createProductImage(1, ['additional']);
+        $productImage2 = $this->createProductImage(2, ['additional']);
+        $productImage3 = $this->createProductImage(3, ['additional', 'main']);
+        $productImage4 = $this->createProductImage(4, ['listing']);
 
         $product
             ->addImage($productImage1)
             ->addImage($productImage2)
-            ->addImage($productImage3);
+            ->addImage($productImage3)
+            ->addImage($productImage4);
 
         return [
             'with images' => [
                 'product' => $product,
-                'imageTypes' => ['main', 'additional'],
-                'expectedResult' => [$productImage2, $productImage1]
+                'imageTypes' => ['main', 'additional', 'listing'],
+                'expectedResult' => [$productImage3, $productImage4, $productImage1, $productImage2]
             ],
             'empty images' => [
                 'product' => new Product(),
@@ -104,12 +108,14 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param int $id
      * @param array $imageTypes
-     * @return ProductImage
+     * @return StubProductImage
      */
-    protected function createProductImage(array $imageTypes = [])
+    protected function createProductImage(int $id, array $imageTypes = []): StubProductImage
     {
-        $productImage = new ProductImage();
+        $productImage = new StubProductImage();
+        $productImage->setId($id);
 
         foreach ($imageTypes as $imageType) {
             $productImage->addType($imageType);

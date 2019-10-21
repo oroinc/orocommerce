@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var SubcategoryFilter;
-    var template = require('tpl!orocatalog/templates/filter/subcategory-filter.html');
+    var template = require('tpl-loader!orocatalog/templates/filter/subcategory-filter.html');
     var MultiselectFilter = require('oro/filter/multiselect-filter');
 
     SubcategoryFilter = MultiselectFilter.extend({

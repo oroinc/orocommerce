@@ -1399,6 +1399,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_attachment.manager'
+            - '@oro_product.helper.product_image_helper'
 
     oro_product.provider.product_images_dimensions:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'

@@ -41,7 +41,7 @@ class WYSIWYGSerializedConfigListener
             /** @var FieldConfigId $fieldConfigId */
             $fieldConfigId = $fieldConfig->getId();
             if (DBALWYSIWYGType::TYPE === $fieldConfigId->getFieldType() && $fieldConfig->is('is_serialized')) {
-                $this->wysiwygSchemaHelper->createStyleField($entityConfig, $fieldConfig);
+                $this->wysiwygSchemaHelper->createAdditionalFields($entityConfig, $fieldConfig);
             }
         }
     }

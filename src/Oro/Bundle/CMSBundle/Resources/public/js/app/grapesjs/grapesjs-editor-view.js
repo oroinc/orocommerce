@@ -9,7 +9,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ModuleManager = require('orocms/js/app/grapesjs/modules/module-manager');
     var mediator = require('oroui/js/mediator');
-    var canvasStyle = require('text!orocms/css/grapesjs/grapesjs-canvas.css');
+    var canvasStyle = require('text-loader!orocms/css/grapesjs/grapesjs-canvas.css');
 
     require('grapesjs-preset-webpage');
     require('orocms/js/app/grapesjs/plugins/components/grapesjs-components');
@@ -24,7 +24,8 @@ define(function(require) {
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'autoRender', 'allow_tags', 'builderOptions', 'builderPlugins', 'currentTheme', 'canvasConfig',
-            'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
+            'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
+            'propertiesInputSelector'
         ]),
 
         /**
@@ -124,6 +125,18 @@ define(function(require) {
         $stylesInputElement: null,
 
         /**
+         * Properties input selector
+         * @property {String}
+         */
+        propertiesInputSelector: '',
+
+        /**
+         * Properties input element
+         * @property {Object}
+         */
+        $propertiesInputElement: null,
+
+        /**
          * List of grapesjs plugins
          * @property {Object}
          */
@@ -160,6 +173,7 @@ define(function(require) {
         initialize: function(options) {
             this.setCurrentContentAlias();
             this.styleField = this.$el.parent().siblings(('[data-grapesjs-styles="content_style"]'));
+            this.$propertiesInputElement = this.$el.closest('form').find(this.propertiesInputSelector);
 
             if (this.allow_tags) {
                 this.builderPlugins['grapesjs-components'] = _.extend({},
@@ -336,6 +350,14 @@ define(function(require) {
         },
 
         /**
+         * Get editor components
+         * @returns {Object}
+         */
+        getEditorComponents: function() {
+            return this.builder.getComponents();
+        },
+
+        /**
          * Add wrapper classes for iframe with content
          */
         _addClassForFrameWrapper: function() {
@@ -411,6 +433,8 @@ define(function(require) {
         _updateInitialField: function() {
             this.$el.val(this.getEditorContent()).trigger('change');
             this.styleField.val(this.getEditorStyles()).trigger('change');
+            var components = JSON.stringify(this.getEditorComponents());
+            this.$propertiesInputElement.val(components).trigger('change');
         },
 
         /**

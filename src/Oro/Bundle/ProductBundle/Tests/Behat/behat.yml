@@ -1071,6 +1071,14 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="attribute-family-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Product Images Table:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
+      selector: 'div.image-collection > table'
+
+    Active Slide:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.slick-slide.slick-current.slick-active'
+
     Product WYSIWYGField Attribute Content:
       selector: "textarea[id^='oro_product_WYSIWYGField']"
 

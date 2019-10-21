@@ -8,19 +8,29 @@ use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
 class WYSIWYGTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetName(): void
+    /** @var Type */
+    private $type;
+
+    public static function setUpBeforeClass()
     {
         Type::addType('wysiwyg', WYSIWYGType::class);
-        $type = Type::getType('wysiwyg');
-        $this->assertEquals('wysiwyg', $type->getName());
+    }
+
+    protected function setUp()
+    {
+        $this->type = Type::getType('wysiwyg');
+    }
+
+    public function testGetName(): void
+    {
+        $this->assertEquals('wysiwyg', $this->type->getName());
     }
 
     public function testRequiresSQLCommentHint(): void
     {
-        $type = Type::getType('wysiwyg');
         /** @var DatabasePlatformMock $platform */
         $platform = $this->createMock(DatabasePlatformMock::class);
 
-        $this->assertTrue($type->requiresSQLCommentHint($platform));
+        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }
 }

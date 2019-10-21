@@ -16,7 +16,7 @@
                 {% if product.images.count %}
                     {{ UI.renderHtmlProperty(
                     'oro.product.images.label'|trans,
-                    Image.renderProductImages(product.images, imageTypes)
+                    Image.renderProductImages(sort_product_images(product.images), imageTypes)
                     ) }}
                 {% endif %}
             {% endblock %}

@@ -16,8 +16,8 @@ define(function(require) {
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
-        priceTemplate: require('tpl!oropricing/templates/product/price.html'),
-        unitTemplate: require('tpl!oropricing/templates/product/unit.html'),
+        priceTemplate: require('tpl-loader!oropricing/templates/product/price.html'),
+        unitTemplate: require('tpl-loader!oropricing/templates/product/unit.html'),
 
         keepElement: true,
 

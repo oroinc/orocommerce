@@ -8,7 +8,7 @@ define(function(require) {
     var TableResponsiveComponent = require('orocms/js/app/grapesjs/components/table-responsive');
     var LinkButtonComponent = require('orocms/js/app/grapesjs/components/link-button');
     var CodeComponent = require('orocms/js/app/grapesjs/components/code');
-    var selectTemplate = require('tpl!orocms/templates/grapesjs-select-action.html');
+    var selectTemplate = require('tpl-loader!orocms/templates/grapesjs-select-action.html');
 
     /**
      * Create component manager

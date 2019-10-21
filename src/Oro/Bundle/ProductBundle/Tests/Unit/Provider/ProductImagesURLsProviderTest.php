@@ -7,10 +7,15 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @internal
      */
@@ -39,17 +44,19 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->productImagesURLsProvider =
-            new ProductImagesURLsProvider($this->doctrineHelper, $this->attachmentManager);
+            new ProductImagesURLsProvider($this->doctrineHelper, $this->attachmentManager, new ProductImageHelper());
     }
 
     /**
      * @dataProvider getFilteredImagesByProductIdDataProvider
      *
+     * @param Product $product
      * @param array $imageFiles
      * @param array $filtersNames
      * @param array $expectedImages
      */
     public function testGetFilteredImagesByProductId(
+        Product $product,
         array $imageFiles,
         array $filtersNames,
         array $expectedImages
@@ -62,9 +69,9 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 
         $productRepository
             ->expects(static::once())
-            ->method('getImagesFilesByProductId')
+            ->method('find')
             ->with(self::PRODUCT_ID)
-            ->willReturn(array_values($imageFiles));
+            ->willReturn($product);
 
         $this->attachmentManager
             ->expects(static::any())
@@ -93,23 +100,39 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
         $filterName1 = 'filter_name_1';
         $filterName2 = 'filter_name_2';
 
+        $productImage1 = new StubProductImage();
+        $productImage1->setImage($imageFile1)
+            ->addType('listing');
+
+        $productImage2 = (new StubProductImage())
+            ->setImage($imageFile2);
+        $productWithImages = $this->getEntity(Product::class, [
+            'id' => self::PRODUCT_ID,
+        ]);
+        $productWithoutImages = clone $productWithImages;
+        $productWithImages->addImage($productImage1)->addImage($productImage2);
+
         return [
             'normal behavior' => [
+                'product' => $productWithImages,
                 'imageFiles' => [$imageUrl1 => $imageFile1, $imageUrl2 => $imageFile2],
                 'filtersNames' => [$filterName1, $filterName2],
                 'expectedImages' => [
                     [
                         'filter_name_1' => '/filter_name_1/image-url-1.jpg',
                         'filter_name_2' => '/filter_name_2/image-url-1.jpg',
+                        'isInitial'     => true
                     ],
                     [
                         'filter_name_1' => '/filter_name_1/image-url-2.jpg',
                         'filter_name_2' => '/filter_name_2/image-url-2.jpg',
+                        'isInitial'     => false
                     ],
                 ],
             ],
 
             'no image files' => [
+                'product' => $productWithoutImages,
                 'imageFiles' => [],
                 'filtersNames' => [$filterName1, $filterName2],
                 'expectedImages' => [],

@@ -2,9 +2,9 @@ define(function(require) {
     'use strict';
 
     var ProductPricesEditableView;
-    var pricesHint = require('tpl!oropricing/templates/product/prices-tier-button.html');
-    var pricesHintContent = require('tpl!oropricing/templates/product/prices-tier-table.html');
-    var priceOverridden = require('tpl!oropricing/templates/product/prices-price-overridden.html');
+    var pricesHint = require('tpl-loader!oropricing/templates/product/prices-tier-button.html');
+    var pricesHintContent = require('tpl-loader!oropricing/templates/product/prices-tier-table.html');
+    var priceOverridden = require('tpl-loader!oropricing/templates/product/prices-price-overridden.html');
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var Popover = require('bootstrap-popover');

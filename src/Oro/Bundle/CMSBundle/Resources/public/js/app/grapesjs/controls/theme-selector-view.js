@@ -5,7 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
-    var template = require('tpl!orocms/templates/grapesjs-dropdown-action.html');
+    var template = require('tpl-loader!orocms/templates/grapesjs-dropdown-action.html');
 
     ThemeSelector = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([

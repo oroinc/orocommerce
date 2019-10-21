@@ -55,12 +55,16 @@ Feature: Localized email notification for RFQ
       | Content | English RFQ Create Notification Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject | French RFQ Create Notification Subject |
-      | Content | French RFQ Create Notification Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | French RFQ Create Notification Subject |
+      | Content          | French RFQ Create Notification Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject | German RFQ Create Notification Subject |
-      | Content | German RFQ Create Notification Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | German RFQ Create Notification Subject |
+      | Content          | German RFQ Create Notification Body    |
     And I submit form
     Then I should see "Template saved" flash message
 
@@ -138,12 +142,16 @@ Feature: Localized email notification for RFQ
       | Content | English RFQ Create Confirmation Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject | French RFQ Create Confirmation Subject |
-      | Content | French RFQ Create Confirmation Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | French RFQ Create Confirmation Subject |
+      | Content          | French RFQ Create Confirmation Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject | German RFQ Create Confirmation Subject |
-      | Content | German RFQ Create Confirmation Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | German RFQ Create Confirmation Subject |
+      | Content          | German RFQ Create Confirmation Body    |
     And I submit form
     Then I should see "Template saved" flash message
 

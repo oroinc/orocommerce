@@ -13,7 +13,7 @@ define(function(require) {
     var ListItemProductPricesSubView = require('oropricing/js/app/views/list-item-product-prices-subview');
 
     ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
-        pricesHintContent: require('tpl!oropricing/templates/product/list-item-prices-tier-table.html'),
+        pricesHintContent: require('tpl-loader!oropricing/templates/product/list-item-prices-tier-table.html'),
 
         elements: {
             prices: '[data-name="prices"]',
