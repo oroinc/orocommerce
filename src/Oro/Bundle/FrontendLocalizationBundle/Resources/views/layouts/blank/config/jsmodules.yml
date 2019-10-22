@@ -1,0 +1,3 @@
+dynamic-imports:
+    orofrontendlocalization:
+        - orofrontendlocalization/js/app/components/localization-switcher-component

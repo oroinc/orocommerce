@@ -1,0 +1,21 @@
+aliases:
+    oro/filter/product-price-filter$: oropricing/js/filter/product-price-filter
+app-modules:
+    - oropricing/js/app/modules/validator-constraints-module
+dynamic-imports:
+    orofilter:
+        - oro/filter/price-attribute-product-price-filter
+        - oro/filter/product-price-filter
+    oropricing:
+        - oropricing/js/app/components/price-lists-errors-handler
+        - oropricing/js/app/components/product-sidebar-component
+        - oropricing/js/app/components/product-unit-precision-limitations-component
+        - oropricing/js/app/components/totals-component
+        - oropricing/js/app/views/expression-field-switcher
+        - oropricing/js/app/views/line-item-product-prices-view
+        - oropricing/js/app/views/price-list-currency-limitations-view
+        - oropricing/js/app/views/quantity-switcher
+        - oropricing/js/validator/unique-product-prices
+map:
+    "*":
+        oro/filter/price-attribute-product-price-filter: oro/filter/product-price-filter

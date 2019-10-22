@@ -5,11 +5,12 @@ An administrator can add WYSIWYG field to any entity in the Entity Management. L
 
 ## Structure
 
-WYSIWYG field consists of two parts:
+WYSIWYG field consists of three parts:
  * `content` - field to save HTML;
  * `styles` - field to save CSS;
+ * `properties` - field to save JSON;
  
-For example, if you add a field with type WYSIWYG to an entity and provide a`description`, field `description_styles` is created automatically.
+For example, if you add a field with type WYSIWYG to an entity and provide a`description`, fields `description_styles` and `description_properties` are created automatically.
 
 ## How to add WYSIWYG field
 
@@ -32,6 +33,7 @@ class AddContentField implements Migration
         $table = $schema->getTable('acme_demo_node');
         $table->addColumn('content', 'wysiwyg', ['notnull' => false]);
         $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('content_properties', 'wysiwyg_properties', ['notnull' => false]);
     }
 }
 
@@ -62,6 +64,7 @@ class ChangeContentField implements Migration
             ['type' => WYSIWYGType::getType('wysiwyg'), 'comment' => '(DC2Type:wysiwyg)']
         );
         $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('content_properties', 'wysiwyg_properties', ['notnull' => false]);
     }
 }
 

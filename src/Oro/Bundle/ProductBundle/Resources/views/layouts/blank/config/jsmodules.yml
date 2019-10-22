@@ -1,0 +1,41 @@
+aliases:
+    jquery-elevatezoom$: bowerassets/elevatezoom3/jquery.elevatezoom
+    oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
+configs:
+    oroproduct/js/app/datagrid/backend-grid: {}
+    oroproduct/js/app/datagrid/header-cell/backend-action-header-cell: {}
+dynamic-imports:
+    commons:
+        - oro/quick-add-import-widget
+    oroproduct:
+        - oroproduct/js/app/components/breadcrumbs-navigation-block
+        - oroproduct/js/app/components/catalog-switch-component
+        - oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component
+        - oroproduct/js/app/components/product-autocomplete-component
+        - oroproduct/js/app/components/product-unit-component
+        - oroproduct/js/app/components/product-unit-select-component
+        - oroproduct/js/app/components/product-variant-field-component
+        - oroproduct/js/app/components/quick-add-component
+        - oroproduct/js/app/components/quick-add-copy-paste-form-component
+        - oroproduct/js/app/components/quick-add-form-button-component
+        - oroproduct/js/app/components/quick-add-import-validation-component
+        - oroproduct/js/app/components/redirect-component
+        - oroproduct/js/app/datagrid/backend-datagrid-component
+        - oroproduct/js/app/datagrid/backend-grid
+        - oroproduct/js/app/datagrid/backend-pageable-collection
+        - oroproduct/js/app/datagrid/cell/backend-select-row-cell
+        - oroproduct/js/app/datagrid/datagrid-product-lazy-init-view
+        - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+        - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+        - oroproduct/js/app/views/base-product-variants-view
+        - oroproduct/js/app/views/base-product-view
+        - oroproduct/js/app/views/product-quantity-editable-view
+        - oroproduct/js/app/views/quick-add-import-form-view
+        - oroproduct/js/app/views/quick-add-item-view
+        - oroproduct/js/app/views/quick-add-view
+        - oroproduct/js/content-processor/product-add-to-dropdown-button
+        - oroproduct/js/widget/zoom-widget
+shim:
+    jquery-elevatezoom:
+        imports:
+            - jQuery=jquery

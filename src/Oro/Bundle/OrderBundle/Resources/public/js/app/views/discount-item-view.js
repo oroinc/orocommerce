@@ -14,7 +14,7 @@ define(function(require) {
      * @class oroorder.app.views.DiscountItemView
      */
     DiscountItemView = BaseView.extend({
-        discountItemHint: require('tpl!./../templates/discount-item-hint.html'),
+        discountItemHint: require('tpl-loader!./../templates/discount-item-hint.html'),
 
         /**
          * @property {Object}

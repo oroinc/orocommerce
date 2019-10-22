@@ -1,0 +1,5 @@
+dynamic-imports:
+    orocatalog:
+        - orocatalog/js/app/views/category-unit-limitations-view
+        - orocatalog/js/app/views/product-sidebar-view
+        - orocatalog/js/app/views/tree-manage-view

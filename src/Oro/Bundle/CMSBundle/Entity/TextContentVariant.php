@@ -69,6 +69,13 @@ class TextContentVariant
     protected $contentStyle;
 
     /**
+     * @var mixed
+     *
+     * @ORM\Column(type="wysiwyg_properties", name="content_properties", nullable=true)
+     */
+    protected $contentProperties;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="is_default", type="boolean", options={"default"=false})
@@ -191,6 +198,26 @@ class TextContentVariant
     public function setContentStyle($contentStyle)
     {
         $this->contentStyle = $contentStyle;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContentProperties()
+    {
+        return $this->contentProperties;
+    }
+
+    /**
+     * @param mixed $contentProperties
+     *
+     * @return $this
+     */
+    public function setContentProperties($contentProperties)
+    {
+        $this->contentProperties = $contentProperties;
 
         return $this;
     }

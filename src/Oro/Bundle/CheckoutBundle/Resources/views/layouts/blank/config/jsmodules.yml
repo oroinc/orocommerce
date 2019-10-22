@@ -1,0 +1,13 @@
+dynamic-imports:
+    orocheckout:
+        - orocheckout/js/app/components/payment-additional-data-component
+        - orocheckout/js/app/components/payment-save-for-later-component
+        - orocheckout/js/app/components/payment-transition-button-component
+        - orocheckout/js/app/components/payment-validate-component
+        - orocheckout/js/app/components/shipping-transition-button-component
+        - orocheckout/js/app/components/single-page-checkout-component
+        - orocheckout/js/app/components/transition-button-component
+        - orocheckout/js/app/views/address-view
+        - orocheckout/js/app/views/checkout-content-view
+        - orocheckout/js/app/views/checkout-inner-content-view
+        - orocheckout/js/app/views/late-checkout-registration-view

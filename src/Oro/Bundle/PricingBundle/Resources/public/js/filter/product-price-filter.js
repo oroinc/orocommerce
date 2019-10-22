@@ -1,5 +1,5 @@
 define([
-    'tpl!oropricing/templates/product/pricing-filter.html',
+    'tpl-loader!oropricing/templates/product/pricing-filter.html',
     'jquery',
     'underscore',
     'orotranslation/js/translator',

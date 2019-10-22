@@ -1,3 +1,0 @@
-config:
-    paths:
-        'oropaymentterm/js/app/views/payment-term-view': 'bundles/oropaymentterm/js/app/views/payment-term-view.js'

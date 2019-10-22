@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Helper;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType as DBALWYSIWYGPropertiesType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType as DBALWYSIWYGTypeStyle;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
@@ -10,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
 /**
- * Helps create an additional style field for the wysiwyg field
+ * Helps create an additional fields for the wysiwyg field
  */
 class WYSIWYGSchemaHelper
 {
@@ -31,7 +32,7 @@ class WYSIWYGSchemaHelper
      * @param ConfigInterface $entityConfig
      * @param ConfigInterface $fieldConfig
      */
-    public function createStyleField(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): void
+    public function createAdditionalFields(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): void
     {
         if ($fieldConfig->is('is_serialized')) {
             $schema = $this->generateSerializedSchema($entityConfig, $fieldConfig);
@@ -52,11 +53,15 @@ class WYSIWYGSchemaHelper
     private function generateSerializedSchema(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): array
     {
         $schema = $entityConfig->get('schema', false, []);
-        $styleFieldName = $this->getStyleFieldName($fieldConfig->getId());
+        $fieldConfigId = $fieldConfig->getId();
+        $styleFieldName = $this->getStyleFieldName($fieldConfigId);
+        $propertiesFieldName = $this->getPropertiesFieldName($fieldConfigId);
         if ($fieldConfig->in('state', [ExtendScope::STATE_DELETE])) {
             $schema['serialized_property'][$styleFieldName]['private'] = true;
+            $schema['serialized_property'][$propertiesFieldName]['private'] = true;
         } else {
             $schema['serialized_property'][$styleFieldName] = [];
+            $schema['serialized_property'][$propertiesFieldName] = [];
         }
 
         return $schema;
@@ -72,14 +77,27 @@ class WYSIWYGSchemaHelper
     {
         $schema = $entityConfig->get('schema', false, []);
         $className = $schema['entity'];
-        $styleFieldName = $this->getStyleFieldName($fieldConfig->getId());
+        $fieldConfigId = $fieldConfig->getId();
+        $styleFieldName = $this->getStyleFieldName($fieldConfigId);
+        $propertiesFieldName = $this->getPropertiesFieldName($fieldConfigId);
         if ($fieldConfig->in('state', [ExtendScope::STATE_DELETE])) {
             $schema['property'][$styleFieldName]['private'] = true;
+            $schema['property'][$propertiesFieldName]['private'] = true;
         } else {
             $schema['property'][$styleFieldName] = [];
+            $schema['property'][$propertiesFieldName] = [];
             $schema['doctrine'][$className]['fields'][$styleFieldName] = [
                 'column' => $styleFieldName,
                 'type' => DBALWYSIWYGTypeStyle::TYPE,
+                'nullable' => true,
+                'length' => null,
+                'precision' => null,
+                'scale' => null,
+                'default' => null
+            ];
+            $schema['doctrine'][$className]['fields'][$propertiesFieldName] = [
+                'column' => $propertiesFieldName,
+                'type' => DBALWYSIWYGPropertiesType::TYPE,
                 'nullable' => true,
                 'length' => null,
                 'precision' => null,
@@ -99,5 +117,15 @@ class WYSIWYGSchemaHelper
     private function getStyleFieldName(FieldConfigId $config): string
     {
         return $config->getFieldName() . DBALWYSIWYGTypeStyle::TYPE_SUFFIX;
+    }
+
+    /**
+     * @param FieldConfigId|ConfigIdInterface $config
+     *
+     * @return string
+     */
+    private function getPropertiesFieldName(FieldConfigId $config): string
+    {
+        return $config->getFieldName() . DBALWYSIWYGPropertiesType::TYPE_SUFFIX;
     }
 }
