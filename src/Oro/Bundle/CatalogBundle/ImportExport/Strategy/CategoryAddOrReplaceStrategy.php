@@ -345,7 +345,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function getRootCategory(Organization $organization): Category
     {
-        if (!$this->rootCategories[$organization->getId()]) {
+        if (!isset($this->rootCategories[$organization->getId()])) {
             $this->rootCategories[$organization->getId()] = $this->categoryImportExportHelper
                 ->getRootCategory($organization);
         }
