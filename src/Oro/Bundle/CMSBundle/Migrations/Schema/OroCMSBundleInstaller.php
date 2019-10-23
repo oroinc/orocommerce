@@ -5,7 +5,6 @@ namespace Oro\Bundle\CMSBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -539,7 +538,6 @@ class OroCMSBundleInstaller implements
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
-                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                     'dataaudit' => ['auditable' => false],
                     'importexport' => ['excluded' => false],
                 ],
@@ -553,7 +551,6 @@ class OroCMSBundleInstaller implements
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
-                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                     'dataaudit' => ['auditable' => false],
                     'importexport' => ['excluded' => false],
                 ],

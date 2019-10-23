@@ -71,21 +71,7 @@
         }]
     %}
 
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set additionalData = additionalData|merge([form_row(child)]) %}
-    {% endfor %}
-
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.catalog.sections.additional'|trans,
-            'subblocks': [{
-                'title': '',
-                'useSpan': false,
-                'data' : additionalData
-            }]
-        }] ) %}
-    {% endif %}
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.catalog.sections.additional'|trans)) %}
 
     {% if is_granted('oro_product_update') %}
         {% set dataBlocks = dataBlocks|merge([{

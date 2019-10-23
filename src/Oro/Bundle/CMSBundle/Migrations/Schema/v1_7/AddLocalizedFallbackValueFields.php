@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -32,7 +31,6 @@ class AddLocalizedFallbackValueFields implements Migration
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                         'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
-                        'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
                         'importexport' => ['excluded' => false],
                     ],
@@ -49,7 +47,6 @@ class AddLocalizedFallbackValueFields implements Migration
                     OroOptions::KEY => [
                         ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                         'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
-                        'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                         'dataaudit' => ['auditable' => false],
                         'importexport' => ['excluded' => false],
                     ],
