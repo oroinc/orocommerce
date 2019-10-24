@@ -69,4 +69,12 @@ abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
     {
         return $contentWidget->getSettings();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isInline(): bool
+    {
+        return false;
+    }
 }
