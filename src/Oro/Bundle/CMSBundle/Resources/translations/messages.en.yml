@@ -83,6 +83,22 @@ oro.cms:
             additional_information.label: Additional Information
             usages.label: Usages
 
+    imageslide:
+        entity_label: Image Slide
+        entity_plural_label: Image Slides
+        id.label: ID
+        content_widget.label: Content Widget
+        order.label: Order
+        url.label: URL
+        display_in_same_window.label: Display in Same Window
+        title.label: Title
+        text.label: Text
+        text_alignment.label: Text Alignment
+        main_image.label: Main Image
+        medium_image.label: Medium Image
+        small_image.label: Small Image
+        organization.label: Organization
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants

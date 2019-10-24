@@ -39,6 +39,32 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
         template:
             - Length:
                   max: 255
+        organization:
+            - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    properties:
+        contentWidget:
+            - NotBlank: ~
+        order:
+            - NotBlank: ~
+        url:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+        displayInSameWindow:
+            - NotBlank: ~
+        title:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+        text:
+            - Length:
+                  max: 255
+        mainImage:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:
