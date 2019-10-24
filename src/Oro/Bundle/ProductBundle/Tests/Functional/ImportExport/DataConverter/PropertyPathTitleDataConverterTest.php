@@ -98,6 +98,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                     'localization' => ['name' => 'English'],
                     'wysiwyg_style' => '',
                     'wysiwyg' => '',
+                    'wysiwyg_properties' => '',
                 ],
                 [
                     'string' => 'string value',
@@ -105,6 +106,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                     'localization.name' => 'English',
                     'wysiwyg_style' => '',
                     'wysiwyg' => '',
+                    'wysiwyg_properties' => '',
                 ],
             ],
         ];

@@ -72,21 +72,24 @@
             </div>
         {% endset %}
         {% set generalData = generalData|merge([
-        productsVariantSelector
+            productsVariantSelector
         ]) %}
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.status),
         form_row(form.slugPrototypesWithRedirect),
+        form_row(form.status),
         form_row(form.featured),
-        form_row(form.newArrival),
-        form_row(form.brand),
-        form_row(form.primaryUnitPrecision),
+        form_row(form.newArrival)
     ]) %}
 
+    {% set additionalGeneralData = [
+        form_row(form.brand),
+        form_row(form.primaryUnitPrecision)
+    ] %}
+
     {% if oro_is_product_primary_unit_visible() %}
-        {% set generalData = generalData|merge([
+        {% set additionalGeneralData = additionalGeneralData|merge([
             form_row(form.additionalUnitPrecisions)
         ]) %}
     {% endif %}
@@ -100,16 +103,27 @@
         },
         {
             'title': '',
-            'data': {
-                'descriptions': form_row(form.descriptions),
-                'shortDescriptions': form_row(form.shortDescriptions),
-            },
+            'data': additionalGeneralData,
             'spanClass': 'responsive-cell'
-        }]
-    } %}
+        }
+    ]} %}
 
     {% set dataBlocks = {
-        'general': generalBlock
+        'general': generalBlock,
+        'short_description': {
+            'title': 'oro.product.short_descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.shortDescriptions)],
+            }]
+        },
+        'description': {
+            'title': 'oro.product.descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.descriptions)],
+            }]
+        }
     } %}
 
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.product.sections.additional'|trans)) %}
@@ -147,7 +161,7 @@
             'subblocks': [{
                 'title': '',
                 'data': {
-                'pageTemplate': form_row(form.pageTemplate)
+                    'pageTemplate': form_row(form.pageTemplate)
                 }
             }]
         }
@@ -170,9 +184,9 @@
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
             'subblocks': [{
-            'title' : null,
-            'useSpan': false,
-            'data' : [
+                'title' : null,
+                'useSpan': false,
+                'data' : [
                     form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })

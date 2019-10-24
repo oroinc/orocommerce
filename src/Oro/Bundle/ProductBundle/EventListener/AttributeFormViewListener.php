@@ -23,6 +23,8 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         'inventory_status',
         'images',
         'productPriceAttributesPrices',
+        'shortDescriptions',
+        'descriptions',
     ];
 
     /**

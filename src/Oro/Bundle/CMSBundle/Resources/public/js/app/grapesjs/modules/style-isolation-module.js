@@ -25,10 +25,8 @@ define(function(require) {
             var uniqId = 'id="component-id-' + _.uniqueId('view') + '"';
 
             this.builder.getHtml = _.wrap(this.builder.getHtml, _.bind(function(func) {
-                var html = func();
-                if (this.componentHtmlIdRegexp.test(html)) {
-                    html = $(html).unwrap().html();
-                }
+                var html = this.removeHTMLContainer(func());
+
                 html = !html ? html : '<div ' + uniqId + '>' + html + '</div>';
                 return html;
             }, this));
@@ -42,6 +40,15 @@ define(function(require) {
 
         removeCSSContainerId: function(cssText) {
             return cssText.replace(this.componentCssIdRegexp, '');
+        },
+
+        removeHTMLContainer: function(html) {
+            if (this.componentHtmlIdRegexp.test(html)) {
+                html = $(html).html();
+                html = this.removeHTMLContainer(html);
+            }
+
+            return html;
         }
     };
 

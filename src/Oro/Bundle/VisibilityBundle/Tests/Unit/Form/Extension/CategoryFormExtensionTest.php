@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -17,6 +18,7 @@ use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
@@ -95,6 +97,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         /** @var RouterInterface $router */
         $router = $this->createMock(RouterInterface::class);
 
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -122,6 +126,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
                 ],
                 [
                     CategoryType::class => [$this->categoryFormExtension],

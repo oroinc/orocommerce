@@ -108,6 +108,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
         $images = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'images']);
         $productPriceAttributesPrices =
             $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'productPriceAttributesPrices']);
+        $shortDescription = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'shortDescriptions']);
+        $descriptions = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'descriptions']);
 
         return [
             'move attribute field to other group not allowed (inventory_status)' => [
@@ -216,6 +218,82 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 [
                                     'data' => [
                                         'productPriceAttributesPrices' => 'field template',
+                                        'otherField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'move attribute field to other group not allowed (shortDescriptions)' => [
+                'groupsData' => [
+                    ['group' => $group1, 'attributes' => [$shortDescription]],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'shortDescriptions' => 'field template',
+                                        'otherField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'templateHtml' => false,
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'shortDescriptions' => 'field template',
+                                        'otherField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'move attribute field to other group not allowed (descriptions)' => [
+                'groupsData' => [
+                    ['group' => $group1, 'attributes' => [$descriptions]],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'descriptions' => 'field template',
+                                        'otherField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'templateHtml' => false,
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'descriptions' => 'field template',
                                         'otherField' => 'field template',
                                     ],
                                 ],

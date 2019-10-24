@@ -6,7 +6,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product <current()>'
 
     localProductDescription{1..20}:
-        string: 'Product Description<current()>'
+        wysiwyg: 'Product Description<current()>'
 
     localProductAttributeFamily:
         string: 'Product Attribute Family'

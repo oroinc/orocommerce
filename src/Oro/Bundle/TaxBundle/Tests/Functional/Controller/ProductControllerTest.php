@@ -56,7 +56,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
-        $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['descriptions']['values']['default']['wysiwyg'] = self::DEFAULT_DESCRIPTION;
         $formValues['oro_product']['taxCode'] = $productTaxCode->getId();
         $formValues['oro_product']['primaryUnitPrecision'] = [
             'unit' => self::FIRST_UNIT_CODE,

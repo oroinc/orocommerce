@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -89,12 +90,14 @@ class CategoryType extends AbstractType
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
+                            'autoRender' => false,
                             'statusbar' => true,
                             'resize' => true,
                             'width' => 500,
                             'height' => 200,
                         ],
                     ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -103,16 +106,9 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
-                    'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 200,
-                        ],
-                    ],
+                    'field' => ['wysiwyg', 'wysiwyg_style'],
+                    'entry_type' => WYSIWYGValueType::class,
+                    'use_tabs' => true,
                 ]
             )
             ->add(

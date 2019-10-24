@@ -75,7 +75,6 @@ class WYSIWYGBlockListener
                 );
 
                 $scrollData->moveFieldToBlock($fieldName, $newBlockKey);
-
             }
         }
 

@@ -464,7 +464,7 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $form['oro_catalog_category[titles][values][default]'] = $title;
         $form['oro_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
-        $form['oro_catalog_category[longDescriptions][values][default]'] = $longDescription;
+        $form['oro_catalog_category[longDescriptions][values][default][wysiwyg]'] = $longDescription;
         $form['oro_catalog_category[smallImage][file]'] = $smallImage;
         $form['oro_catalog_category[largeImage][file]'] = $largeImage;
         $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
@@ -547,7 +547,7 @@ class CategoryControllerTest extends WebTestCase
             $appendProduct = $testProductFour;
         };
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
-        $parameters = [
+        $params = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [
                 '_token' => $crfToken,
@@ -556,31 +556,31 @@ class CategoryControllerTest extends WebTestCase
             ]
         ];
 
-        $parameters['oro_catalog_category']['titles']['values']['default'] = $newTitle;
-        $parameters['oro_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
-        $parameters['oro_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
-        $parameters['oro_catalog_category']['largeImage']['emptyFile'] = true;
-        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
-        $parameters['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
-        $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
+        $params['oro_catalog_category']['titles']['values']['default'] = $newTitle;
+        $params['oro_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
+        $params['oro_catalog_category']['longDescriptions']['values']['default']['wysiwyg'] = $newLongDescription;
+        $params['oro_catalog_category']['largeImage']['emptyFile'] = true;
+        $params['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
+        $params['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
+        $params['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
             $newUnitPrecision['code']
         ;
-        $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
+        $params['oro_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
             $newUnitPrecision['precision']
         ;
 
         foreach ($this->localizations as $localization) {
             $locId = $localization->getId();
 
-            $parameters['oro_catalog_category']['titles']['values']['localizations'][$locId]['value']
+            $params['oro_catalog_category']['titles']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newTitle;
-            $parameters['oro_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
+            $params['oro_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newShortDescription;
-            $parameters['oro_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']
+            $params['oro_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']['wysiwyg']
                 = $localization->getLanguageCode() . $newLongDescription;
         }
         $this->client->followRedirects(true);
-        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $params);
         $html = $crawler->html();
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -653,7 +653,7 @@ class CategoryControllerTest extends WebTestCase
         );
         $this->assertEquals(
             $longDescription,
-            $formValues['oro_catalog_category[longDescriptions][values][default]']
+            $formValues['oro_catalog_category[longDescriptions][values][default][wysiwyg]']
         );
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
@@ -709,7 +709,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertEquals(
             $longDescription,
-            $formValues['oro_catalog_category[longDescriptions][values][default]']
+            $formValues['oro_catalog_category[longDescriptions][values][default][wysiwyg]']
         );
     }
 
@@ -736,7 +736,7 @@ class CategoryControllerTest extends WebTestCase
 
             $this->assertEquals(
                 $localization->getLanguageCode().$longDescription,
-                $formValues['oro_catalog_category[longDescriptions][values][localizations]['.$locId.'][value]']
+                $formValues['oro_catalog_category[longDescriptions][values][localizations]['.$locId.'][value][wysiwyg]']
             );
         }
     }

@@ -66,6 +66,13 @@
     {{ form_errors(form.content_style) }}
 {% endblock %}
 
+{% block wysiwyg_value_widget %}
+    {% for child in form.children %}
+        {{ form_widget(child) }}
+        {{ form_errors(child) }}
+    {% endfor %}
+{% endblock %}
+
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
     {% spaceless %}
         {% set scopes %}

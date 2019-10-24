@@ -556,5 +556,18 @@ class OroCMSBundleInstaller implements
                 ],
             ]
         );
+        $table->addColumn(
+            'wysiwyg_properties',
+            'wysiwyg_properties',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false],
+                    'importexport' => ['excluded' => false],
+                ],
+            ]
+        );
     }
 }

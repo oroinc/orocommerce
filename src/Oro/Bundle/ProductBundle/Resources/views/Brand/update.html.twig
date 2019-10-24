@@ -55,10 +55,22 @@
             'data': [
                 form_row(form.names),
                 form_row(form.slugPrototypesWithRedirect),
-                form_row(form.status),
-                form_row(form.descriptions),
-                form_row(form.shortDescriptions)
+                form_row(form.status)
             ]
+            }]
+        },
+        {
+            'title': 'oro.product.brand.short_descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.shortDescriptions)],
+            }]
+        },
+        {
+            'title': 'oro.product.brand.descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.descriptions)],
             }]
         }
     ] %}

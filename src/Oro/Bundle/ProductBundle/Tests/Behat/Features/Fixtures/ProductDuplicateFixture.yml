@@ -9,7 +9,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     slug1:
         string: 'product1'
     description1:
-        text: 'Product1 Description'
+        wysiwyg: 'Product1 Description'
     shortDescription1:
         text: 'Product1 Short Description'
     categoryTitle{1..2}:

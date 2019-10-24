@@ -137,4 +137,7 @@ oro.locale.localizedfallbackvalue:
         description: The text value for the curent localization, can contain html tags
     wysiwyg_style:
         label: 'WYSIWYG Style value'
-        description: The text value for the curent localization, can contain css dataa
+        description: The text value for the curent localization, can contain css data
+    wysiwyg_properties:
+        label: 'WYSIWYG Properties'
+        description: The text value for the curent localization, can contain additional WYSIWYG data

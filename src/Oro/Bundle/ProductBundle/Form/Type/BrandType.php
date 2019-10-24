@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * The form type for Brand entity
+ */
 class BrandType extends AbstractType
 {
     const NAME = 'oro_product_brand';
@@ -67,7 +70,8 @@ class BrandType extends AbstractType
                             'width' => 500,
                             'height' => 300,
                         ]
-                    ]
+                    ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -85,7 +89,8 @@ class BrandType extends AbstractType
                             'width' => 500,
                             'height' => 300,
                         ]
-                    ]
+                    ],
+                    'use_tabs' => true,
                 ]
             )
         ;
