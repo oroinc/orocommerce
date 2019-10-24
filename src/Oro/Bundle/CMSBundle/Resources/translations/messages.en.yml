@@ -36,6 +36,8 @@ oro.cms:
                 label: Default Variant
                 yes.label: Yes
                 no.label: No
+            make_default:
+                label: Make Default
         organization.label: Organization
         owner.label: Owner
         titles:

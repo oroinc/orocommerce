@@ -59,6 +59,13 @@
     {% endspaceless %}
 {% endblock %}
 
+{% block text_content_variant_widget %}
+    {{ form_widget(form.content) }}
+    {{ form_errors(form.content) }}
+    {{ form_widget(form.content_style) }}
+    {{ form_errors(form.content_style) }}
+{% endblock %}
+
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
     {% spaceless %}
         {% set scopes %}
@@ -84,6 +91,7 @@
             <h5 class="content-variant-item-title">
                 {{ form_widget(form.default) }}
                 <span class="label label-info content-variant-item-default-label">{{ "oro.cms.contentblock.content_variants.default.label"|trans }}</span>
+                <span class="label content-variant-item-make-default-label">{{ "oro.cms.contentblock.content_variants.make_default.label"|trans }}</span>
             </h5>
 
             {{ form_widget(form, {disabled: disabled}) }}
