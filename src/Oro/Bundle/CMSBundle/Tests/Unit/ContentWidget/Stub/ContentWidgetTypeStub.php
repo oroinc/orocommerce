@@ -51,4 +51,12 @@ class ContentWidgetTypeStub implements ContentWidgetTypeInterface
     {
         return [];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isInline(): bool
+    {
+        return true;
+    }
 }
