@@ -11,7 +11,7 @@ define(function(require) {
     var Translator = require('orotranslation/lib/translator');
 
     // fixtures
-    var html = require('text!./Fixture/units-select-template.html');
+    var html = require('text-loader!./Fixture/units-select-template.html');
 
     Translator.fromJSON({
         locale: 'en',

@@ -254,6 +254,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: preFlush, priority: 255 }
 
+    oro_cms.event_listener.content_widget_datagrid:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.cms-content-widget-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.cms-content-widget-grid, method: onResultAfter }
+
     oro_bundle_cms.helper.wysiwygschema:
         class: Oro\Bundle\CMSBundle\Helper\WYSIWYGSchemaHelper
         arguments:

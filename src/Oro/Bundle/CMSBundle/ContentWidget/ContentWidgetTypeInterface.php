@@ -41,4 +41,9 @@ interface ContentWidgetTypeInterface
      * @return array
      */
     public function getWidgetData(ContentWidget $contentWidget): array;
+
+    /**
+     * @return bool
+     */
+    public function isInline(): bool;
 }
