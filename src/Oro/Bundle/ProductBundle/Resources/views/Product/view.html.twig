@@ -141,7 +141,6 @@
     {% if entity.isConfigurable %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
-            'priority': 100,
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,
@@ -179,7 +178,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
-            'priority': 200,
+            'priority': 100,
             'subblocks': [{
                 'data': {'images': imagesData}
             }]
@@ -189,7 +188,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
-            'priority': 400,
+            'priority': 1400,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -288,7 +287,7 @@
             'relatedItems': {
                 'title': get_related_items_translation_key()|trans,
                 'headerLinkContent': headerLinkContent,
-                'priority': 450,
+                'priority': 1500,
                 'subblocks': [{
                     'data': [relatedItemsTabs]|merge(relatedItemsSubblocks)
                 }]
@@ -312,7 +311,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
-            'priority': 700,
+            'priority': 200,
             'subblocks': [{
                 'data': {'pageTemplate': pageTemplatesData }
             }]

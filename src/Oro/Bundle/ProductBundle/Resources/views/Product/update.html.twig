@@ -122,7 +122,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
-            'priority': 5,
+            'priority': 1400,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -135,7 +135,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
-            'priority': 0,
+            'priority': 100,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -148,7 +148,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
-            'priority': 0,
+            'priority': 200,
             'subblocks': [{
                 'title': '',
                 'data': {
