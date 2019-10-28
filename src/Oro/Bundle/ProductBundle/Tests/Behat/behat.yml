@@ -79,6 +79,9 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
+    RelatedProductsGridSettings:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.datagrid-settings > a.dropdown-toggle'
+
     SelectRelatedProductsGridFilters:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
