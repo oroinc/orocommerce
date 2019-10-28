@@ -68,7 +68,7 @@ The following is the list of the modified files:
             <li>A new template for FilterManager that is rendered depending on a renderMode parameter.</li>
          </ol>
     </dd>
-    <dt>CustomThemeBundle/Resources/views/layouts/custom/config/requirejs.yml</dt>
+    <dt>CustomThemeBundle/Resources/views/layouts/custom/config/jsmodules.yml</dt>
     <dd>
          <ol>
             <li>New *.js files are included and orofilter/js/plugins/filters-toggle-plugin is overriden from a default theme.</li>
