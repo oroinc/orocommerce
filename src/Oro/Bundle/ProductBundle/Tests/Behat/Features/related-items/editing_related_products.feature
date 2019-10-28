@@ -246,7 +246,7 @@ Feature: Editing related products
     And I click "Select products"
     And I save and close form
     And I should see "Product has been saved" flash message
-    And I should see following grid:
+    And I should see following "RelatedProductsViewGrid" grid:
       | SKU    | NAME              |
       | PSKU4  | Product 4         |
       | PSKU3  | Product 3         |
