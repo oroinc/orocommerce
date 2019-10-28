@@ -678,7 +678,7 @@ datagrids:
         acl_resource: oro_product_update
         extends: products-related-items-base
         options:
-            requireJSModules:
+            jsmodules:
                 - orodatagrid/js/datagrid/listener/action-form-listener
                 - oroproduct/js/app/datagrid/listener/related-product-listener
         source:
@@ -789,7 +789,7 @@ datagrids:
             entityHint: oro.product.entity_plural_label
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
-            requireJSModules:
+            jsmodules:
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
             frontend: true

@@ -1,9 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'OroCustomThemeBundle:layouts:custom/imports/oro_product_grid/require_js_config.html.twig'
-
-        - '@add':
-            id: require_js_filters_config
-            parentId: require_js
-            blockType: block

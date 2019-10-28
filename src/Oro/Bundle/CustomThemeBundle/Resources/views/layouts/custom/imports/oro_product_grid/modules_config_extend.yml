@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'js_modules_config.html.twig'
+
+        - '@add':
+            id: filters_js_modules_config
+            parentId: layout_js_modules_config
+            blockType: block

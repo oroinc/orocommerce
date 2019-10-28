@@ -1,0 +1,29 @@
+aliases:
+    oro/datagrid/action/add-products-mass-action$: oroshoppinglist/js/datagrid/action/add-products-mass-action
+    oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
+    oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
+    oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
+dynamic-imports:
+    orodatagrid:
+        - oro/datagrid/action/add-products-mass-action
+    oroshoppinglist:
+        - oro/matrix-grid-order-widget
+        - oro/product-shopping-lists-widget
+        - oro/shopping-list-create-widget
+        - oroshoppinglist/js/app/components/shopping-list-create-component
+        - oroshoppinglist/js/app/components/shoppinglist-collection-component
+        - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
+        - oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component
+        - oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component
+        - oroshoppinglist/js/app/components/shoppinglist-widget-view-component
+        - oroshoppinglist/js/app/views/line-item-form-submit-view
+        - oroshoppinglist/js/app/views/line-item-view
+        - oroshoppinglist/js/app/views/line-items-view
+        - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
+        - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/product-shopping-lists-view
+        - oroshoppinglist/js/app/views/shoppinglist-widget-view
+        - oroshoppinglist/js/shopping-list-item-errors-handler
+        - oroshoppinglist/js/shoppinglist-request-quote-confirmation

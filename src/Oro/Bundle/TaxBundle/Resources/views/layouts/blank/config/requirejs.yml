@@ -1,4 +1,0 @@
-config:
-    paths:
-        'orotax/js/formatter/tax': 'bundles/orotax/js/formatter/tax.js'
-        'orotax/js/app/components/order-taxes-component': 'bundles/orotax/js/app/components/order-taxes-component.js'

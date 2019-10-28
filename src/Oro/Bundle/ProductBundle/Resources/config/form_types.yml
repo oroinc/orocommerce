@@ -5,6 +5,7 @@ services:
         arguments:
             - "@oro_product.provider.default_product_unit_provider.chain"
             - "@router"
+            - "@oro_product.helper.product_image_helper"
         calls:
             - [setDataClass, ['%oro_product.entity.product.class%']]
         tags:

@@ -64,7 +64,7 @@ class WYSIWYGSerializedConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->wysiwygSchemaHelper
             ->expects($this->once())
-            ->method('createStyleField')
+            ->method('createAdditionalFields')
             ->with($entityConfig, $fieldConfig);
 
         $preFlushConfigEvent = new PreFlushConfigEvent(['extend' => $fieldConfig], $configManager);

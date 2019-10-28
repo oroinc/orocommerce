@@ -8,12 +8,12 @@ define(function(require) {
     var BaseModel = require('oroui/js/app/models/base/model');
     var _ = require('underscore');
     var $ = require('jquery');
-    var translator = require('translator');
+    var Translator = require('orotranslation/lib/translator');
 
     // fixtures
-    var html = require('text!./Fixture/units-select-template.html');
+    var html = require('text-loader!./Fixture/units-select-template.html');
 
-    translator.fromJSON({
+    Translator.fromJSON({
         locale: 'en',
         defaultDomain: 'jsmessages',
         translations: {

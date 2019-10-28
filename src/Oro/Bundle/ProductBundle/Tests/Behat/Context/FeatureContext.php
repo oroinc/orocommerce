@@ -45,6 +45,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     const PRODUCT_SKU = 'SKU123';
     const PRODUCT_INVENTORY_QUANTITY = 100;
+    const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
 
     /**
      * @var OroMainContext
@@ -1150,6 +1151,72 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" image', $imageType));
 
         $this->rememberedData[$imageType] = $matches[1];
+    }
+
+    /**
+     * Example: I remember images order in "Product Images" element
+     *
+     * @Then /^I remember images order in "(?P<elementName>[^"]*)" element$/
+     * @param string $elementName
+     */
+    public function iRememberImagesOrderInElement($elementName)
+    {
+        $this->rememberedData[self::IMAGES_ORDER_REMEMBER_KEY] = $this->getImagesOrderInElement($elementName);
+    }
+
+    /**
+     * Example: I should see images in "Product Images" element in remembered order
+     *
+     * @Then /^I should see images in "(?P<elementName>[^"]*)" element in remembered order$/
+     * @param string $elementName
+     */
+    public function iShouldSeeImagesInElementInRememberedOrder($elementName)
+    {
+        $rememberedOrder = $this->rememberedData[self::IMAGES_ORDER_REMEMBER_KEY];
+        self::assertNotEmpty($rememberedOrder, 'No remembered images order');
+        $currentOrder = $this->getImagesOrderInElement($elementName);
+        $rememberedOrder = array_values(array_intersect($rememberedOrder, $currentOrder));
+        self::assertSame($currentOrder, $rememberedOrder, 'Images order differs from remembered');
+    }
+
+    /**
+     * @param string $elementName
+     * @return array
+     */
+    private function getImagesOrderInElement($elementName): array
+    {
+        $element = $this->createElement($elementName);
+        $images = $element->findAll('xpath', '//img');
+        $pattern = '/\/media\/cache\/attachment[\/\w]+\/(.+)\.\w+/';
+        $attributeToParse = 'src';
+
+        if (!$images) {
+            $images = $element->findAll('xpath', '//a');
+            $pattern = '/\/attachment\/download\/\d+\/(.+)\.\w+/';
+            $attributeToParse = 'href';
+        }
+
+        $imagesOrder = [];
+        /** @var NodeElement $image */
+        foreach ($images as $image) {
+            $imageSrc = $image->getAttribute($attributeToParse);
+            $matches = [];
+            preg_match($pattern, $imageSrc, $matches);
+
+            $imagesOrder[] = $matches[1];
+        }
+
+        self::assertNotEmpty($imagesOrder, sprintf('Images not found in the "%s" element', $elementName));
+
+        return $imagesOrder;
+    }
+
+    /**
+     * @Given /^(?:|I )wait popup widget is initialized$/
+     */
+    public function iWaitPopupWidgetIsInitialized()
+    {
+        $this->getSession()->getDriver()->wait(5000, 0 != "$('div.slick-track').length");
     }
 
     /**

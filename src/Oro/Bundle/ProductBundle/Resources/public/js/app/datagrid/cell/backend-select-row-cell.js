@@ -5,7 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var template = require('tpl!oroproduct/templates/datagrid/backend-select-row-cell.html');
+    var template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
     var SelectRowCell = require('oro/datagrid/cell/select-row-cell');
 
     /**

@@ -1,0 +1,14 @@
+{% block _filters_js_modules_config_widget %}
+    {% import '@OroAsset/Asset.html.twig' as Asset %}
+    {{ Asset.js_modules_config({
+        'orofilter/js/datafilter-builder': {
+            FiltersManager: 'orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager'
+        },
+        'orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager': {
+            enableMultiselectWidget: false
+        },
+        'orofrontend/js/app/datafilter/frontend-multiselect-decorator': {
+            additionalClass: true
+        }
+    }) }}
+{% endblock %}

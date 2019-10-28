@@ -35,6 +35,10 @@ class WYSIWYGType extends AbstractType
             '[data-grapesjs-styles="%s"]',
             $form->getName() . WYSIWYGStylesType::TYPE_SUFFIX
         );
+        $options['page-component']['options']['propertiesInputSelector'] = sprintf(
+            '[data-grapesjs-properties="%s"]',
+            $form->getName() . WYSIWYGPropertiesType::TYPE_SUFFIX
+        );
         $view->vars['attr']['data-page-component-module'] = $options['page-component']['module'];
         $view->vars['attr']['data-page-component-options'] = json_encode($options['page-component']['options']);
     }

@@ -44,7 +44,7 @@
     {% set options  = {
         el: '#' ~ gridId,
         gridName: oro_datagrid_build_fullname(datagrid.name, datagrid.scope),
-        builders: datagridMetaData.requireJSModules,
+        builders: datagridMetaData.jsmodules,
         metadata: datagridMetaData,
         data: datagridData,
         enableFilters: enableFilters,

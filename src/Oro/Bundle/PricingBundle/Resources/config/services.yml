@@ -74,7 +74,6 @@ services:
 
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@session'
@@ -329,7 +328,6 @@ services:
 
     oro_pricing.price_list_relation_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -711,6 +709,22 @@ services:
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
 
+    oro_pricing.entity_listener.send_changed_product_prices_to_message_queue:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\SendChangedProductPricesToMessageQueueListener'
+        arguments:
+            - '@oro_message_queue.message_producer'
+            - '@security.token_storage'
+            - '@oro_dataaudit.converter.entity_to_entity_change_array'
+            - '@oro_dataaudit.audit_config_provider'
+            - '@oro_entity.entity_name_resolver'
+            - '@oro_dataaudit.provider.audit_message_body_provider'
+            - '@property_accessor'
+            - '@logger'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
+            - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: onUpdated }
+
     oro_pricing.entity_listener.price_list_to_product:
         class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener
         arguments:
@@ -735,13 +749,13 @@ services:
             - [disableListener, ['oro_pricing.entity_listener.product_price_cpl']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_to_product']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_currency']]
+            - [disableListener, ['oro_pricing.entity_listener.send_changed_product_prices_to_message_queue']]
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
 
     oro_pricing.provider.matching_price:
         class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_pricing.provider.product_price'
@@ -836,7 +850,6 @@ services:
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -855,12 +868,10 @@ services:
 
     oro_pricing.duplicator.schedule:
         class: 'Oro\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
 
     oro_pricing.duplicator.product_price_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -977,7 +988,6 @@ services:
 
     oro_pricing.duplicator.price_list_to_product_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -1204,7 +1214,6 @@ services:
 
     oro_pricing.manager.price_manager:
         class: Oro\Bundle\PricingBundle\Manager\PriceManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_pricing.shard_manager'
@@ -1329,3 +1338,9 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_importexport.entity.import_export_result.class%', event: postPersist }
+
+    oro_pricing.provider.product_price_entity_name:
+        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

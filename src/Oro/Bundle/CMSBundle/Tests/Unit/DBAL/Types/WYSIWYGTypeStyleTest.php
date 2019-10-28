@@ -1,13 +1,26 @@
 <?php
 
-
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DBAL\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
+use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
 class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var Type */
+    private $type;
+
+    public static function setUpBeforeClass()
+    {
+        Type::addType('wysiwyg_style', WYSIWYGStyleType::class);
+    }
+
+    protected function setUp()
+    {
+        $this->type = Type::getType('wysiwyg_style');
+    }
+
     public function testPrefixConst(): void
     {
         $this->assertEquals('_style', WYSIWYGStyleType::TYPE_SUFFIX);
@@ -15,8 +28,14 @@ class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
 
     public function testGetName(): void
     {
-        Type::addType('wysiwyg_style', WYSIWYGStyleType::class);
-        $type = Type::getType('wysiwyg_style');
-        $this->assertEquals('wysiwyg_style', $type->getName());
+        $this->assertEquals('wysiwyg_style', $this->type->getName());
+    }
+
+    public function testRequiresSQLCommentHint(): void
+    {
+        /** @var DatabasePlatformMock $platform */
+        $platform = $this->createMock(DatabasePlatformMock::class);
+
+        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }
 }

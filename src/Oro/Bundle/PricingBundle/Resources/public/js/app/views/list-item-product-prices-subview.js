@@ -10,7 +10,7 @@ define(function(require) {
     var _ = require('underscore');
 
     ListItemProductPricesSubview = BaseView.extend({
-        template: require('tpl!oropricing/templates/product/list-item-product-prices.html'),
+        template: require('tpl-loader!oropricing/templates/product/list-item-product-prices.html'),
 
         modelAttr: {
             listedPrice: null

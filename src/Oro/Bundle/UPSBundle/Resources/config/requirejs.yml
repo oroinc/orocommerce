@@ -1,3 +1,0 @@
-config:
-    paths:
-        'oroups/js/app/components/ups-transport-settings-component': 'bundles/oroups/js/app/components/ups-transport-settings-component.js'

@@ -3,6 +3,7 @@ doctrine:
         types:
             wysiwyg: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType
             wysiwyg_style: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType
+            wysiwyg_properties: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType
 
 liip_imagine:
     filter_sets:

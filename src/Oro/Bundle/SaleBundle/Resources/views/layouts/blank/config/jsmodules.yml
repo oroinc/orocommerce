@@ -1,0 +1,8 @@
+app-modules:
+    - orosale/js/app/modules/validator-constraints-module
+dynamic-imports:
+    orosale:
+        - orosale/js/app/components/quote-demand-component
+        - orosale/js/app/components/quote-product-to-order-component
+        - orosale/js/app/views/product-add-to-rfq-view
+        - orosale/js/validator/quote-product-offer-quantity
