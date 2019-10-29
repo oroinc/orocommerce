@@ -11,18 +11,52 @@ Feature: Product images order
     And I go to Products / Products
     And I click Edit "PSKU1" in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg |       |         | 1          |
-      | cat2.jpg |       |         | 1          |
-      | cat3.jpg |       | 1       | 1          |
-      | cat1.jpg | 1     |         | 1          |
-      | cat2.jpg |       |         | 1          |
-      | cat3.jpg |       |         | 1          |
+      | Main  | Listing | Additional |
+      |       |         | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       |         | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And click on cat2.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat3.jpg |
+      | Title | cat3.jpg |
+    And I click "Upload"
+    And click on cat3.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      | 1     |         | 1          |
+    And I click on "Digital Asset Choose"
+    And click on cat1.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       |         | 1          |
+    And I click on "Digital Asset Choose"
+    And click on cat2.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       |         | 1          |
+    And I click on "Digital Asset Choose"
+    And click on cat3.jpg in grid
     And I save form
     And I should see "Product has been saved" flash message
     And I remember images order in "Product Images Table" element
-    And I remember "listing" image resized ID
-    And I remember "main" image resized ID
+    And I remember "listing" image filtered ID
+    And I remember "main" image filtered ID
     When I save and close form
     Then I should see "Product has been saved" flash message
     And I should see images in "Product Images Table" element in remembered order
