@@ -21,8 +21,14 @@ Feature: Create product with image when workflow enabled
       | Name   | Product1 |
       | Status | Enabled  |
     And I set Images with:
-      | File     | Main | Listing | Additional |
-      | cat1.jpg | 1    | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     When I save and close form
     Then I should see "Product has been saved" flash message
     And I should see "Product Workflow"

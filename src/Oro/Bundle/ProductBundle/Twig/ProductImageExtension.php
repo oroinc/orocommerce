@@ -74,10 +74,12 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
 
         /** @var ProductImage[] $result */
         foreach ($imageTypes as $imageType) {
-            $result = array_merge($result, $product->getImagesByType($imageType)->toArray());
+            foreach ($product->getImagesByType($imageType) as $productImage) {
+                $result[$productImage->getId()] = $productImage;
+            }
         }
 
-        return $this->getProductImageHelper()->sortImages(array_unique($result));
+        return $this->getProductImageHelper()->sortImages($result);
     }
 
     /**

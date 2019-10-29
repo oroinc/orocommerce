@@ -1137,20 +1137,49 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iRememberResizedImageId($imageType)
     {
-        $form = $this->createElement('OroForm');
-        // @codingStandardsIgnoreStart
-        $image = $form->find('xpath', sprintf(
-            '//input[@type="radio"][contains(@name, "images")][contains(@name, "%s")][@checked="checked"]/ancestor::tr/descendant::img',
-            $imageType
-        ));
-        // @codingStandardsIgnoreEnd
-        self::assertNotEmpty($image, sprintf('Image with type "%s" not found on page', $imageType));
-        $imageSrc = $image->getAttribute('src');
-        $matches = [];
+        $imageSrc = $this->getProductImageSrc($imageType);
+
         preg_match('/\/media\/cache\/attachment\/resize\/\d+\/\d+\/\d+\/(.+)\.\w+/', $imageSrc, $matches);
         self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" image', $imageType));
 
         $this->rememberedData[$imageType] = $matches[1];
+    }
+
+    /**
+     * Example: I remember "listed" image filtered ID
+     *
+     * @Then /^I remember "(?P<imageType>[^"]*)" image filtered ID$/
+     * @param string $imageType
+     */
+    public function iRememberFilteredImageId($imageType)
+    {
+        $imageSrc = $this->getProductImageSrc($imageType);
+
+        preg_match('/\/media\/cache\/attachment\/resize\/[^\/]+\/[^\/]+\/\d+\/(.+)\.\w+/', $imageSrc, $matches);
+        self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" image', $imageType));
+
+        $this->rememberedData[$imageType] = $matches[1];
+    }
+
+    /**
+     * Gets image src from product image collection on product edit form.
+     *
+     * @param string $imageType Product image type, e.g. main, listing, additional
+     */
+    private function getProductImageSrc(string $imageType): string
+    {
+        $form = $this->createElement('OroForm');
+        $image = $form->find(
+            'xpath',
+            sprintf(
+                '//input[@type="radio"][contains(@name, "images")][contains(@name, "%s")][@checked="checked"]'
+                . '/ancestor::tr/descendant::img',
+                $imageType
+            )
+        );
+        self::assertNotEmpty($image, sprintf('Image with type "%s" not found on page', $imageType));
+
+        return $image->getAttribute('src');
     }
 
     /**
