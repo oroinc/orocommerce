@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
@@ -61,16 +62,8 @@ class BrandType extends AbstractType
                 [
                     'label' => 'oro.product.brand.descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
-                    'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                        ]
-                    ],
+                    'field' => ['wysiwyg', 'wysiwyg_style'],
+                    'entry_type' => WYSIWYGValueType::class,
                     'use_tabs' => true,
                 ]
             )
