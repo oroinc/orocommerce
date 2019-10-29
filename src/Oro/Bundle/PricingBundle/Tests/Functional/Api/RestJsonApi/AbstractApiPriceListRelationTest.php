@@ -43,6 +43,22 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
     abstract protected function assertFirstRelationMessageSent();
 
     /**
+     * {@inheritdoc}
+     */
+    protected function getRequestDataFolderName()
+    {
+        return parent::getRequestDataFolderName() . DIRECTORY_SEPARATOR . $this->getAliceFilesFolderName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getResponseDataFolderName()
+    {
+        return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . $this->getAliceFilesFolderName();
+    }
+
+    /**
      * @param string $entityId
      * @param string $associationName
      * @param string $associationId
@@ -130,20 +146,20 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
             ]
         );
 
-        $this->assertResponseContains($this->getAliceFilesFolderName().'/get.yml', $response);
+        $this->assertResponseContains('get.yml', $response);
     }
 
     public function testGetList()
     {
         $response = $this->cget(['entity' => $this->getApiEntityName()]);
 
-        $this->assertResponseContains($this->getAliceFilesFolderName().'/get_list.yml', $response);
+        $this->assertResponseContains('get_list.yml', $response);
     }
 
     public function testCreateDuplicate()
     {
         $routeParameters = self::processTemplateData(['entity' => $this->getApiEntityName()]);
-        $parameters = $this->getRequestData($this->getAliceFilesFolderName().'/create.yml');
+        $parameters = $this->getRequestData('create.yml');
         $this->post($routeParameters, $parameters);
         $response = $this->post($routeParameters, $parameters, [], false);
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);

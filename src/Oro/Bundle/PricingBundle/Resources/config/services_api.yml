@@ -1,111 +1,123 @@
 services:
+    oro_pricing.api.collect_price_list_initial_statuses:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListInitialStatuses
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, priority: 20 }
+            - { name: oro.api.processor, action: update, group: save_data, priority: 20 }
+
     oro_pricing.api.handle_price_list_status_change:
-        class: Oro\Bundle\PricingBundle\Api\PriceList\Processor\HandlePriceListStatusChange
+        class: Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChange
         arguments:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: oro.api.processor, action: update, group: load_data, class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -100 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -40 }
+            - { name: oro.api.processor, action: create, group: save_data, initial_statuses_for_price_lists: exists, priority: -100 }
+            - { name: oro.api.processor, action: update, group: save_data, initial_statuses_for_price_lists: exists, priority: -100 }
 
-    oro_pricing.api.update_price_list_lexemes:
-        class: Oro\Bundle\PricingBundle\Api\PriceList\Processor\UpdatePriceListLexemes
-        arguments:
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
+    oro_pricing.api.collect_price_lists_to_update_combined_price_lists:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdateCombinedPriceLists
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -40 }
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceList, priority: -40 }
+            - { name: oro.api.processor, action: create, group: save_data, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -50 }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
 
-    oro_pricing.api.build_combined_price_list:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceList
+    oro_pricing.api.update_combined_price_lists:
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdateCombinedPriceLists
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -40 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -40 }
+            - { name: oro.api.processor, action: create, group: save_data, combined_price_lists_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: update, group: save_data, combined_price_lists_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete, group: delete_data, combined_price_lists_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, combined_price_lists_to_update: exists, priority: -100 }
 
-    oro_pricing.api.update_lexemes_price_rule:
-        class: Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesPriceRule
-        arguments:
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
-        tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -20 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -20 }
-
-    oro_pricing.api.update_lexemes_on_price_rule_delete:
-        class: Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesOnPriceRuleDelete
-        arguments:
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
-            - '@oro_api.delete.delete_entity_by_delete_handler'
-        tags:
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: 10 }
-
-    oro_pricing.api.update_lexemes_on_price_rule_delete_list:
-        class: Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesOnPriceRuleDeleteList
-        arguments:
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
-            - '@oro_api.delete_list.delete_entities_by_delete_handler'
-        tags:
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -15 }
-
-    oro_pricing.api_form_subscriber.add_schedules_to_price_list:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Form\AddSchedulesToPriceListApiFormSubscriber
-        public: true
-
-    oro_pricing.api.save_price_list_schedules_to_context:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\SavePriceListSchedulesToContext
+    oro_pricing.api.collect_price_lists_to_update_price_lists_contain_schedule:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdatePriceListsContainSchedule
         tags:
             - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
             - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
 
-    oro_pricing.api.build_combined_price_lists:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceLists
-        arguments:
-            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
-        tags:
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -40 }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -40 }
-
     oro_pricing.api.update_price_lists_contain_schedule:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListsContainSchedule
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListsContainSchedule
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -45 }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -45 }
+            - { name: oro.api.processor, action: delete, group: delete_data, price_lists_to_update_contain_schedule: exists, priority: -105 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, price_lists_to_update_contain_schedule: exists, priority: -105 }
 
-    oro_pricing.api.remove_price_list_schedules_from_context:
-        class: Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\RemovePriceListSchedulesFromContext
+    oro_pricing.api.collect_price_lists_to_update_lexemes:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListsToUpdateLexemes
         tags:
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -50 }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule, priority: -50 }
+            - { name: oro.api.processor, action: create, group: save_data, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -50 }
 
-    oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group:
-        class: Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup
+    oro_pricing.api.collect_rule_price_price_lists_to_update_lexemes:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceRulePriceListsToUpdateLexemes
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule, priority: -50 }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceRule }
+
+    oro_pricing.api.update_price_list_lexemes:
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemes
         arguments:
-            - '@oro_pricing.price_list_relation_trigger_handler'
+            - '@oro_pricing.hander.price_rule_lexeme_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -40 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -40 }
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -40 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -40 }
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
+            - { name: oro.api.processor, action: create, group: save_data, price_lists_to_update_lexemes: exists, priority: -100 }
+            - { name: oro.api.processor, action: update, group: save_data, price_lists_to_update_lexemes: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete, group: delete_data, price_lists_to_update_lexemes: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, price_lists_to_update_lexemes: exists, priority: -100 }
 
-    oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer:
-        class: Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomer
-        arguments:
-            - '@oro_pricing.price_list_relation_trigger_handler'
+    oro_pricing.api.collect_price_list_customers_to_update:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListCustomersToUpdate
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -40 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -40 }
-            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -40 }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -40 }
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer, priority: -50 }
             - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer }
             - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer }
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback, priority: -50 }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback }
+
+    oro_pricing.api.update_price_list_customers:
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListCustomers
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, price_list_customers_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: update, group: save_data, price_list_customers_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete, group: delete_data, price_list_customers_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, price_list_customers_to_update: exists, priority: -100 }
+
+    oro_pricing.api.collect_price_list_customer_groups_to_update:
+        class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListCustomerGroupsToUpdate
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup, priority: -50 }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup }
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -50 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback, priority: -50 }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback }
+
+    oro_pricing.api.update_price_list_customer_groups:
+        class: Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListCustomerGroups
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, price_list_customer_groups_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: update, group: save_data, price_list_customer_groups_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete, group: delete_data, price_list_customer_groups_to_update: exists, priority: -100 }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, price_list_customer_groups_to_update: exists, priority: -100 }
+
+    oro_pricing.api_form_subscriber.add_schedules_to_price_list:
+        class: Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber
+        public: true
 
     oro_pricing.api.update_price_by_value_and_currency:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
@@ -114,7 +126,7 @@ services:
             - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice }
 
     oro_pricing.api.normalize_product_price_id:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeInputProductPriceId
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\NormalizeInputProductPriceId
         arguments:
             - '@oro_api.doctrine_helper'
             - '@validator'
@@ -124,19 +136,19 @@ services:
             - { name: oro.api.processor, action: update, group: normalize_input, requestType: rest, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
 
     oro_pricing.api.normalize_product_price:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeOutputProductPriceId
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\NormalizeOutputProductPriceId
         tags:
             - { name: oro.api.processor, action: get, group: finalize, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
             - { name: oro.api.processor, action: get_list, group: finalize, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.set_price_list_in_context_by_product_price:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByProductPrice
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\StorePriceListInContextByProductPrice
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
     oro_pricing.update.load_normalized_entity:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\LoadNormalizedProductPriceWithNormalizedId
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\LoadNormalizedProductPriceWithNormalizedId
         arguments:
             - '@oro_api.action_processor_bag'
         tags:
@@ -144,7 +156,7 @@ services:
             - { name: oro.api.processor, action: create, group: normalize_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice}
 
     oro_pricing.api.handle_price_list_filter:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\HandlePriceListFilter
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\HandlePriceListFilter
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
@@ -169,7 +181,7 @@ services:
             - { name: oro.api.processor, action: delete, group: load_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.enabled_price_sharding_on_query:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnQuery
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\EnableShardingOnQuery
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
@@ -178,7 +190,7 @@ services:
             - { name: oro.api.processor, action: delete_list, group: build_query, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
 
     oro_pricing.api.enable_price_sharding_on_config:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnConfig
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\EnableShardingOnConfig
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
@@ -186,22 +198,22 @@ services:
             - { name: oro.api.processor, action: get, group: build_query, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
 
     oro_pricing.api.save_product_price:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\SaveProductPrice
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\SaveProductPrice
         arguments:
             - '@oro_pricing.manager.price_manager'
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -5 }
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -5 }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.remember_product_price:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\RememberProductPrice
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\RememberProductPrice
         tags:
             - { name: oro.api.processor, action: update, group: load_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -45 }
 
     oro_pricing.api.reset_price_rule_field:
-        class: Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleField
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ResetPriceRuleField
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 20 }
 
     oro_pricing.api.compute_product_prices:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductPrices
