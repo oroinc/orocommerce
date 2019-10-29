@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var InlineEditableViewComponent = require('oroform/js/app/components/inline-editable-view-component');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
-    var mediator = require('oroui/js/mediator');
-    var ShoppingListTitleInlineEditableViewComponent;
+    const InlineEditableViewComponent = require('oroform/js/app/components/inline-editable-view-component');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const mediator = require('oroui/js/mediator');
 
-    ShoppingListTitleInlineEditableViewComponent = InlineEditableViewComponent.extend({
+    const ShoppingListTitleInlineEditableViewComponent = InlineEditableViewComponent.extend({
 
         eventChannelId: null,
 
@@ -15,8 +14,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListTitleInlineEditableViewComponent() {
-            ShoppingListTitleInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListTitleInlineEditableViewComponent(options) {
+            ShoppingListTitleInlineEditableViewComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -26,7 +25,7 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.shoppingListId = options.metadata.broadcast_parameters.id;
             this.eventChannelId = options.eventChannelId;
-            ShoppingListTitleInlineEditableViewComponent.__super__.initialize.apply(this, arguments);
+            ShoppingListTitleInlineEditableViewComponent.__super__.initialize.call(this, options);
 
             // listening to generic inline editor's events and repackaging them
             // into specific shopping list events
@@ -38,7 +37,7 @@ define(function(require) {
         },
 
         getViewOptions: function() {
-            var options = ShoppingListTitleInlineEditableViewComponent.__super__.getViewOptions.apply(this);
+            const options = ShoppingListTitleInlineEditableViewComponent.__super__.getViewOptions.call(this);
 
             if (!this.inlineEditingOptions.enable) {
                 options.autoRender = false;
@@ -52,7 +51,7 @@ define(function(require) {
          * @param data
          */
         repackageEvent: function(data) {
-            var shoppingListId = this.shoppingListId;
+            const shoppingListId = this.shoppingListId;
             this.shoppingListCollection.each(function(model) {
                 if (model.get('id') === shoppingListId) {
                     model.set('label', data.label);

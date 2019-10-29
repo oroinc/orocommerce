@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var MatrixGridOrderWidget;
-    var routing = require('routing');
-    var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
-    var headerTemplate = require('tpl-loader!oroproduct/templates/product-popup-header.html');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const routing = require('routing');
+    const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const headerTemplate = require('tpl-loader!oroproduct/templates/product-popup-header.html');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
 
-    MatrixGridOrderWidget = FrontendDialogWidget.extend({
+    const MatrixGridOrderWidget = FrontendDialogWidget.extend({
         optionNames: FrontendDialogWidget.prototype.optionNames.concat([
             'shoppingListId'
         ]),
@@ -18,8 +17,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function MatrixGridOrderWidget() {
-            MatrixGridOrderWidget.__super__.constructor.apply(this, arguments);
+        constructor: function MatrixGridOrderWidget(options) {
+            MatrixGridOrderWidget.__super__.constructor.call(this, options);
         },
 
         /**
@@ -28,7 +27,7 @@ define(function(require) {
         initialize: function(options) {
             this.model = this.model || options.productModel;
 
-            var urlOptions = {
+            const urlOptions = {
                 productId: this.model.get('id'),
                 shoppingListId: this.shoppingListId
             };
@@ -56,24 +55,24 @@ define(function(require) {
                 product: this.model.attributes
             });
 
-            MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
+            MatrixGridOrderWidget.__super__.initialize.call(this, options);
         },
 
-        _onAdoptedFormSubmitClick: function($form) {
-            var emptyMatrixAllowed = $form.data('empty-matrix-allowed');
+        _onAdoptedFormSubmitClick: function($form, widget) {
+            const emptyMatrixAllowed = $form.data('empty-matrix-allowed');
 
-            var isQuantity = $form.find('[data-name="field__quantity"]').filter(function() {
+            const isQuantity = $form.find('[data-name="field__quantity"]').filter(function() {
                 return this.value.length > 0;
             }).length > 0;
 
             if (!emptyMatrixAllowed && !isQuantity) {
-                var validator = $form.validate();
+                const validator = $form.validate();
                 validator.errorsFor($form[0]).remove();
                 validator.showLabel($form[0], _.__('oro.product.validation.configurable.required'));
                 return false;
             }
 
-            return MatrixGridOrderWidget.__super__._onAdoptedFormSubmitClick.apply(this, arguments);
+            return MatrixGridOrderWidget.__super__._onAdoptedFormSubmitClick.call(this, $form, widget);
         },
 
         _onContentLoad: function(content) {
@@ -81,7 +80,7 @@ define(function(require) {
                 mediator.trigger('shopping-list:line-items:update-response', this.model, content);
                 this.remove();
             } else {
-                return MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
+                return MatrixGridOrderWidget.__super__._onContentLoad.call(this, content);
             }
         }
     });

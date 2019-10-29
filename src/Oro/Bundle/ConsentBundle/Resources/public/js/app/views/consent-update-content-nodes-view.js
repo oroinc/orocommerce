@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ConsentUpdateContentNodesView;
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * Unification and networking between fields
      */
-    ConsentUpdateContentNodesView = BaseView.extend({
+    const ConsentUpdateContentNodesView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
             'listenedFieldName', 'triggeredFieldName',
             'listenedElement', 'triggeredElement'
@@ -37,8 +36,8 @@ define(function(require) {
         /**
          * @constructor
          */
-        constructor: function ConsentUpdateContentNodesView() {
-            ConsentUpdateContentNodesView.__super__.constructor.apply(this, arguments);
+        constructor: function ConsentUpdateContentNodesView(options) {
+            ConsentUpdateContentNodesView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -47,7 +46,7 @@ define(function(require) {
          * @param options
          */
         initialize: function(options) {
-            ConsentUpdateContentNodesView.__super__.initialize.apply(this, arguments);
+            ConsentUpdateContentNodesView.__super__.initialize.call(this, options);
             this._initElements();
             this._bindEvents();
             this._triggerUpdateAction();
@@ -78,7 +77,7 @@ define(function(require) {
          * @private
          */
         _triggerUpdateAction: function() {
-            var select2Instance = this.listenedElement.select2('data');
+            const select2Instance = this.listenedElement.select2('data');
             this.triggeredElement.trigger({
                 type: 'update:field',
                 updatedData: {

@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orosale/js/app/views/address-view
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.AddressView
      */
-    AddressView = BaseView.extend({
+    const AddressView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -58,8 +57,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -80,18 +79,18 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
+            const self = this;
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
                 }
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
 
@@ -107,7 +106,7 @@ define(function(require) {
                 this.setAddress(this.$el.find(this.options.selectors.address));
 
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
                     if ($field.data('select2')) {
                         $field.data('selected-data', $field.select2('val'));
                     }
@@ -120,10 +119,10 @@ define(function(require) {
          * Loading form after on select address click
          */
         addressFormChange: function() {
-            var self = this;
+            const self = this;
             this.$fields.each(function() {
-                var $field = $(this);
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const $field = $(this);
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
         },
@@ -137,7 +136,7 @@ define(function(require) {
          */
         normalizeName: function(name) {
             name = name.split('_');
-            for (var i = 1, iMax = name.length; i < iMax; i++) {
+            for (let i = 1, iMax = name.length; i < iMax; i++) {
                 name[i] = name[i][0].toUpperCase() + name[i].substr(1);
             }
             return name.join('');
@@ -151,7 +150,7 @@ define(function(require) {
         setAddress: function($address) {
             this.$address = $address;
 
-            var self = this;
+            const self = this;
             this.$address.change(function(e) {
                 self.customerAddressChange(e);
             });
@@ -163,20 +162,20 @@ define(function(require) {
         customerAddressChange: function() {
             if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
 
                     $field.prop('readonly', true).inputWidget('refresh');
                 });
 
-                var address = this.$address.data('addresses')[this.$address.val()] || null;
+                const address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
-                    var self = this;
+                    const self = this;
 
                     _.each(address, function(value, name) {
                         if (_.isObject(value)) {
                             value = _.first(_.values(value));
                         }
-                        var $field = self.fieldsByName[self.normalizeName(name)] || null;
+                        const $field = self.fieldsByName[self.normalizeName(name)] || null;
                         if ($field) {
                             $field.val(value);
                             if ($field.data('select2')) {
@@ -187,11 +186,11 @@ define(function(require) {
                 }
             } else {
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
 
                     $field.prop('readonly', false).inputWidget('refresh');
                 });
-                var $country = this.fieldsByName.country;
+                const $country = this.fieldsByName.country;
                 if ($country) {
                     $country.trigger('redraw');
                 }
@@ -217,7 +216,7 @@ define(function(require) {
          */
         resetAddressForm: function() {
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 $field.val('');
                 $field.prop('readonly', true).inputWidget('refresh');
                 if ($field.data('select2')) {
@@ -243,7 +242,7 @@ define(function(require) {
          * @param {Object} response
          */
         loadedRelatedData: function(response) {
-            var address = response[this.options.type + 'Address'] || null;
+            const address = response[this.options.type + 'Address'] || null;
             if (!address) {
                 this.resetAddressSelector();
                 this.resetAddressForm();
@@ -251,7 +250,7 @@ define(function(require) {
                 return;
             }
 
-            var $oldAddress = this.$address;
+            const $oldAddress = this.$address;
             this.setAddress($(address));
             this.resetAddressForm();
             $oldAddress.parent().trigger('content:remove');

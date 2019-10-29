@@ -1,10 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var shoppingListCollectionService;
-    var $ = require('jquery');
+    const $ = require('jquery');
 
-    shoppingListCollectionService = {
+    const shoppingListCollectionService = {
         shoppingListCollection: $.Deferred()
     };
 

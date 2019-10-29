@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ProductTotalPriceView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var PricesHelper = require('oropricing/js/app/prices-helper');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const PricesHelper = require('oropricing/js/app/prices-helper');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const _ = require('underscore');
 
-    ProductTotalPriceView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ProductTotalPriceView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: false,
 
         elements: {
@@ -22,15 +21,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductTotalPriceView() {
-            ProductTotalPriceView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductTotalPriceView(options) {
+            ProductTotalPriceView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductTotalPriceView.__super__.initialize.apply(this, arguments);
+            ProductTotalPriceView.__super__.initialize.call(this, options);
             this.initModel(options);
             this.setPrices();
             this.initializeElements(options);
@@ -48,7 +47,7 @@ define(function(require) {
         },
 
         render: function() {
-            var totals = this._calcTotals();
+            const totals = this._calcTotals();
 
             this.$el.toggleClass('hide', totals.quantity === 0);
             this.getElement('totalQty').text(totals.quantity);
@@ -62,7 +61,7 @@ define(function(require) {
          */
         setPrices: function() {
             this.prices = {};
-            var prices = this.model.get('prices');
+            const prices = this.model.get('prices');
 
             _.each(prices, function(unitPrices, productId) {
                 this.prices[productId] = PricesHelper.preparePrices(unitPrices);
@@ -74,7 +73,7 @@ define(function(require) {
         },
 
         _getCurrentLineItems: function() {
-            var currentShoppingList = this._getCurrentShoppingList();
+            const currentShoppingList = this._getCurrentShoppingList();
             if (!currentShoppingList) {
                 return null;
             }
@@ -82,18 +81,18 @@ define(function(require) {
         },
 
         _calcTotals: function() {
-            var totals = {
+            let totals = {
                 price: 0,
                 quantity: 0
             };
 
-            var lineItems = this._getCurrentLineItems();
+            const lineItems = this._getCurrentLineItems();
             if (_.isNull(lineItems)) {
                 return totals;
             }
 
             totals = _.reduce(lineItems.line_items, function(memo, lineItem) {
-                var quantity = lineItem.quantity > 0 ? lineItem.quantity.toString() : '';
+                const quantity = lineItem.quantity > 0 ? lineItem.quantity.toString() : '';
 
                 memo.price += PricesHelper.calcTotalPrice(this.prices[lineItem.productId], lineItem.unit, quantity);
                 memo.quantity += lineItem.quantity;

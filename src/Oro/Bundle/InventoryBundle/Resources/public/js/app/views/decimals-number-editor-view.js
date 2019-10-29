@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var DecimalsNumberEditorView;
-    var NumberEditorView = require('oroform/js/app/views/editor/number-editor-view');
+    const NumberEditorView = require('oroform/js/app/views/editor/number-editor-view');
 
-    DecimalsNumberEditorView = NumberEditorView.extend(/** @lends DecimalsNumberEditorView.prototype */{
+    const DecimalsNumberEditorView = NumberEditorView.extend(/** @lends DecimalsNumberEditorView.prototype */{
         className: 'decimals-number-editor',
 
         /**
          * @inheritDoc
          */
-        constructor: function DecimalsNumberEditorView() {
-            DecimalsNumberEditorView.__super__.constructor.apply(this, arguments);
+        constructor: function DecimalsNumberEditorView(options) {
+            DecimalsNumberEditorView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -22,15 +21,15 @@ define(function(require) {
                 options.decimals = parseInt(options.model.get(options.decimalsField));
             }
 
-            var decimalsNumberValidator = options.validationRules.DecimalsNumber;
+            const decimalsNumberValidator = options.validationRules.DecimalsNumber;
             if (typeof decimalsNumberValidator !== 'undefined') {
                 if (typeof decimalsNumberValidator.decimalsField !== 'undefined') {
-                    var numberOfDecimals = parseInt(options.model.get(decimalsNumberValidator.decimalsField));
+                    const numberOfDecimals = parseInt(options.model.get(decimalsNumberValidator.decimalsField));
                     decimalsNumberValidator.decimals = numberOfDecimals;
                 }
             }
 
-            DecimalsNumberEditorView.__super__.initialize.apply(this, arguments);
+            DecimalsNumberEditorView.__super__.initialize.call(this, options);
         }
     });
 

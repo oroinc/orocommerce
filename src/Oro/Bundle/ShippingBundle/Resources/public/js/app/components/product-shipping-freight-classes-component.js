@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var ProductShippingFreightClassesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
-    var __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
 
     /**
      * @export oroshipping/js/app/components/product-shipping-freight-classes-component
      * @extends oroui.app.components.base.Component
      * @class oroshipping.app.components.ProductShippingFreightClassesComponent
      */
-    ProductShippingFreightClassesComponent = BaseComponent.extend({
+    const ProductShippingFreightClassesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -51,8 +50,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductShippingFreightClassesComponent() {
-            ProductShippingFreightClassesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductShippingFreightClassesComponent(options) {
+            ProductShippingFreightClassesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -75,9 +74,9 @@ define(function(require) {
         },
 
         listenerOn: function() {
-            var callback = _.bind(this.callEntryPoint, this);
+            const callback = _.bind(this.callEntryPoint, this);
 
-            var changeCallback = _.bind(function(e) {
+            const changeCallback = _.bind(function(e) {
                 if (this.timeoutId || $(e.target).is('select')) {
                     callback.call(this, e);
                 }
@@ -85,7 +84,7 @@ define(function(require) {
                 this.clearTimeout();
             }, this);
 
-            var keyUpCallback = _.bind(function(e) {
+            const keyUpCallback = _.bind(function(e) {
                 this.clearTimeout();
 
                 this.timeoutId = setTimeout(_.bind(callback, this, e), this.options.triggerTimeout);
@@ -108,15 +107,15 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         callEntryPoint: function(e) {
-            var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
+            const $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
 
-            var inputsSelector = ':input[data-ftid]';
+            let inputsSelector = ':input[data-ftid]';
             _.each(this.options.excludeFields, function(field) {
                 inputsSelector += this.options.excludeFilter.replace('{{name}}', field);
             }, this);
-            var $formInputs = $itemContainer.closest('form').find(inputsSelector);
+            const $formInputs = $itemContainer.closest('form').find(inputsSelector);
 
-            var formData = $formInputs.serialize();
+            let formData = $formInputs.serialize();
 
             this.listenerOff();
             this.$freightClassesSelect = $itemContainer.find(this.options.selectors.freightClassSelector);
@@ -168,10 +167,10 @@ define(function(require) {
          * @private
          */
         _success: function(data) {
-            var self = this;
-            var units = data.units;
-            var disabled = _.isEmpty(units);
-            var value = this.$freightClassesSelect.val();
+            const self = this;
+            const units = data.units;
+            const disabled = _.isEmpty(units);
+            const value = this.$freightClassesSelect.val();
             this._dropValues(disabled);
             if (!_.isEmpty(units)) {
                 $.each(units, function(code, label) {

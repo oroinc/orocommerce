@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddItemPriceView;
-    var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
+    const BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
 
-    QuickAddItemPriceView = BaseProductPricesView.extend({
+    const QuickAddItemPriceView = BaseProductPricesView.extend({
         /**
          * @property {Object}
          */
@@ -47,8 +46,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddItemPriceView() {
-            QuickAddItemPriceView.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddItemPriceView(options) {
+            QuickAddItemPriceView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -56,7 +55,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            QuickAddItemPriceView.__super__.initialize.apply(this, arguments);
+            QuickAddItemPriceView.__super__.initialize.call(this, options);
         },
 
         updateModel: function(data) {
@@ -64,10 +63,10 @@ define(function(require) {
                 return;
             }
 
-            var prices = {};
+            const prices = {};
             _.each(data.item.prices, function(unitPrices, unit) {
                 _.each(unitPrices, function(priceObject) {
-                    var index = [unit, priceObject.quantity].join('_');
+                    const index = [unit, priceObject.quantity].join('_');
                     prices[index] = priceObject;
                 }, this);
             }, this);
@@ -112,8 +111,8 @@ define(function(require) {
         },
 
         getSubtotal: function() {
-            var priceObj = this.model.get('price');
-            var quantity = this.model.get('quantity');
+            const priceObj = this.model.get('price');
+            const quantity = this.model.get('quantity');
 
             if (priceObj && quantity) {
                 return NumberFormatter.formatCurrency(
@@ -131,7 +130,7 @@ define(function(require) {
             this.hintInitialized = true;
             this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').text());
 
-            var $pricesHint = $(_.template(this.getElement('pricesHint').text())());
+            const $pricesHint = $(_.template(this.getElement('pricesHint').text())());
             this.$elements.pricesHint = $pricesHint;
             this.getElement('subtotal').after($pricesHint);
         },
@@ -154,13 +153,13 @@ define(function(require) {
             if (!this.hintInitialized) {
                 this.initHint();
             }
-            return QuickAddItemPriceView.__super__.renderHint.apply(this, arguments);
+            return QuickAddItemPriceView.__super__.renderHint.call(this);
         },
 
         updateUI: function() {
             this.renderHint();
 
-            var $pricesHintEl = this.getElement('pricesHintContentRendered');
+            const $pricesHintEl = this.getElement('pricesHintContentRendered');
             if (this.model.get('subtotal')) {
                 $pricesHintEl.show();
             } else {

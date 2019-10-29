@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var LineItemsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
 
-    LineItemsView = BaseView.extend({
+    const LineItemsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -28,8 +27,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -68,7 +67,7 @@ define(function(require) {
          * @param {Object} e
          */
         _reindexLineItems: function(e) {
-            var i = 1;
+            let i = 1;
             this.$el.find(this.options.selectors.lineItem).each(_.bind(function(index, element) {
                 $(element).find(this.options.selectors.lineItemIndex).text(i);
                 if (!e || !(e.type === 'content:remove' && element === e.target)) {
@@ -85,7 +84,7 @@ define(function(require) {
          * @param {jQuery.Element} $lineItem
          */
         _setNextSortOrder: function($lineItem) {
-            var $sortOrder = $lineItem.find(this.options.selectors.sortOrder);
+            const $sortOrder = $lineItem.find(this.options.selectors.sortOrder);
             if (!$sortOrder.val()) {
                 $sortOrder.val(this.options.nextSortOrder);
                 this.options.nextSortOrder++;
@@ -97,10 +96,10 @@ define(function(require) {
          */
         _setPrototypeCurrency: function(val) {
             this.options.currency = val;
-            var prototype = $(this.options.selectors.prototypeHolder).attr('data-prototype');
-            var $prototype = $('<div></div>').html(prototype);
+            const prototype = $(this.options.selectors.prototypeHolder).attr('data-prototype');
+            const $prototype = $('<div></div>').html(prototype);
             $prototype.find(this.options.selectors.prototypeCurrency).val(val);
-            var options = JSON.parse($prototype.find('tr').attr('data-page-component-options'));
+            const options = JSON.parse($prototype.find('tr').attr('data-page-component-options'));
             options.currency = val;
             $prototype.find('tr').attr('data-page-component-options', JSON.stringify(options));
             $(this.options.selectors.prototypeHolder).attr('data-prototype', $prototype.html());

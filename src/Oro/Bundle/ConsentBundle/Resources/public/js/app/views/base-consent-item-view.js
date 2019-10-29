@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var BaseConsentItemView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
 
-    BaseConsentItemView = BaseView.extend({
+    const BaseConsentItemView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
             'consentId', 'consentTitle', 'consentCheckboxSelector',
             'consentsFieldSelector', 'cmsPageData', 'required'
@@ -66,8 +65,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BaseConsentItemView() {
-            return BaseConsentItemView.__super__.constructor.apply(this, arguments);
+        constructor: function BaseConsentItemView(options) {
+            return BaseConsentItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -76,7 +75,7 @@ define(function(require) {
         initialize: function(options) {
             this.$form = this.$el.closest('form');
             this.$valueField = this.$form.find(this.consentsFieldSelector);
-            BaseConsentItemView.__super__.initialize.apply(this, arguments);
+            BaseConsentItemView.__super__.initialize.call(this, options);
 
             this._updateFromFieldToElement();
         },
@@ -151,12 +150,12 @@ define(function(require) {
          * @private
          */
         _updateFormElementToField: function(state) {
-            var oldValue = this.$valueField.val();
+            let oldValue = this.$valueField.val();
             if (_.isEmpty(oldValue)) {
                 oldValue = '[]';
             }
 
-            var value = _.indexBy(JSON.parse(oldValue), 'consentId');
+            const value = _.indexBy(JSON.parse(oldValue), 'consentId');
 
             if (state) {
                 value[this.consentId] = {
@@ -179,7 +178,7 @@ define(function(require) {
          * @private
          */
         _updateFromFieldToElement: function() {
-            var values = this.$valueField.val();
+            const values = this.$valueField.val();
             if (_.isEmpty(values)) {
                 return;
             }
@@ -202,8 +201,8 @@ define(function(require) {
          * Disable submit button when text height is bigger than widget height
          */
         disableSubmitElement: function() {
-            var popup = this.subview('popup');
-            var disable = $(popup.el).height() > popup.widget.height();
+            const popup = this.subview('popup');
+            const disable = $(popup.el).height() > popup.widget.height();
 
             this.updateSubmitElementState(disable);
         },
@@ -212,9 +211,9 @@ define(function(require) {
          * Submit element should be active when text was scrolled to the down
          */
         onScroll: function() {
-            var consentTextHeight = $(this.subview('popup').el).height();
-            var widget = this.subview('popup').widget;
-            var disable = consentTextHeight > (widget.height() + widget.scrollTop());
+            const consentTextHeight = $(this.subview('popup').el).height();
+            const widget = this.subview('popup').widget;
+            const disable = consentTextHeight > (widget.height() + widget.scrollTop());
 
             this.updateSubmitElementState(disable);
         },
@@ -225,7 +224,7 @@ define(function(require) {
          * @param {Boolean} state
          */
         updateSubmitElementState: function(state) {
-            var element = this.subview('popup').actionsEl
+            const element = this.subview('popup').actionsEl
                 .find('[type=submit]');
 
             if (element.length) {

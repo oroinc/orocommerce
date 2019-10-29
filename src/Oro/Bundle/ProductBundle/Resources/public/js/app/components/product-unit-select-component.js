@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var ProductUnitSelectComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const _ = require('underscore');
 
-    ProductUnitSelectComponent = BaseComponent.extend({
+    const ProductUnitSelectComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -20,8 +19,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductUnitSelectComponent() {
-            ProductUnitSelectComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductUnitSelectComponent(options) {
+            ProductUnitSelectComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -34,15 +33,15 @@ define(function(require) {
         },
 
         initSelect: function() {
-            var model = this.options.productModel || null;
+            const model = this.options.productModel || null;
             if (!model) {
                 return;
             }
 
-            var $select = this.options._sourceElement.find('select');
+            const $select = this.options._sourceElement.find('select');
             UnitsUtil.updateSelect(model, $select);
 
-            var productUnits = _.keys(model.get('product_units'));
+            const productUnits = _.keys(model.get('product_units'));
             if (this.isProductApplySingleUnitMode(productUnits)) {
                 if (this.options.singleUnitModeCodeVisible) {
                     $select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');

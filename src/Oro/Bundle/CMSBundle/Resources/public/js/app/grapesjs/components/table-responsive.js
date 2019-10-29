@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var TableResponsiveComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var tableResponsiveTemplate = require('tpl-loader!orocms/templates/grapesjs-table-responsive.html');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const tableResponsiveTemplate = require('tpl-loader!orocms/templates/grapesjs-table-responsive.html');
 
     /**
      * Create responsive table component type for builder
      */
-    TableResponsiveComponent = BaseComponent.extend({
+    const TableResponsiveComponent = BaseComponent.extend({
 
         editor: null,
 
         /**
          * @inheritDoc
          */
-        constructor: function TableResponsiveComponent() {
-            TableResponsiveComponent.__super__.constructor.apply(this, arguments);
+        constructor: function TableResponsiveComponent(options) {
+            TableResponsiveComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -26,11 +25,11 @@ define(function(require) {
         initialize: function(options) {
             this.editor = options;
 
-            var ComponentId = 'table-responsive';
-            var domComps = options.DomComponents;
-            var dType = domComps.getType('default');
-            var dModel = dType.model;
-            var dView = dType.view;
+            const ComponentId = 'table-responsive';
+            const domComps = options.DomComponents;
+            const dType = domComps.getType('default');
+            const dModel = dType.model;
+            const dView = dType.view;
 
             domComps.addType(ComponentId, {
                 model: dModel.extend({
@@ -41,12 +40,12 @@ define(function(require) {
                         droppable: ['table', 'tbody', 'thead', 'tfoot'],
                         classes: [ComponentId]
                     }),
-                    constructor: function TableResponsiveComponentModel() {
-                        dModel.prototype.constructor.apply(this, arguments);
+                    constructor: function TableResponsiveComponentModel(...args) {
+                        dModel.prototype.constructor.apply(this, args);
                     },
                     initialize: function(o, opt) {
-                        dModel.prototype.initialize.apply(this, arguments);
-                        var components = this.get('components');
+                        dModel.prototype.initialize.call(this, o, opt);
+                        const components = this.get('components');
                         if (!components.length) {
                             components.add({
                                 type: 'table'
@@ -55,7 +54,7 @@ define(function(require) {
                     }
                 }, {
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
                         if (el.tagName === 'DIV' && el.className.indexOf(ComponentId) !== -1) {
                             result = {
                                 type: ComponentId

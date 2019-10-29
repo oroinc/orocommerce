@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var OrderLineItemTaxesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var TaxFormatter = require('orotax/js/formatter/tax');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const TaxFormatter = require('orotax/js/formatter/tax');
 
     /**
      * @export orotax/js/app/components/order-line-item-taxes-component
      * @extends oroui.app.components.base.Component
      * @class orotax.app.components.OrderLineItemTaxesComponent
      */
-    OrderLineItemTaxesComponent = BaseComponent.extend({
+    const OrderLineItemTaxesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -55,8 +54,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function OrderLineItemTaxesComponent() {
-            OrderLineItemTaxesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function OrderLineItemTaxesComponent(options) {
+            OrderLineItemTaxesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -85,7 +84,7 @@ define(function(require) {
         },
 
         initializeAttribute: function() {
-            var self = this;
+            const self = this;
             $(this.options.selectors.lineItemDataAttrSelector).each(function(index) {
                 $(this).attr(self.options.selectors.lineItemDataAttr, index);
             });
@@ -112,14 +111,14 @@ define(function(require) {
          * @param {Object} response
          */
         setOrderTaxes: function(response) {
-            var result = _.defaults(response, {taxItems: {}});
-            var itemId = this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
+            const result = _.defaults(response, {taxItems: {}});
+            const itemId = this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
 
             if (!_.has(result.taxItems, itemId)) {
                 return;
             }
 
-            var itemData = _.defaults(response.taxItems[itemId], this.emptyData);
+            const itemData = _.defaults(response.taxItems[itemId], this.emptyData);
 
             this.render(itemData);
         },

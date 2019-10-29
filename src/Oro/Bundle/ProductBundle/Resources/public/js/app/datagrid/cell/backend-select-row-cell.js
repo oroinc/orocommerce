@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var BackendSelectRowCell;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
-    var SelectRowCell = require('oro/datagrid/cell/select-row-cell');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
+    const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
 
     /**
      * Renders a checkbox for row selection.
@@ -15,7 +14,7 @@ define(function(require) {
      * @class   oro.datagrid.cell.SelectRowCell
      * @extends BaseView
      */
-    BackendSelectRowCell = SelectRowCell.extend({
+    const BackendSelectRowCell = SelectRowCell.extend({
         /** @property */
         autoRender: true,
 
@@ -34,15 +33,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BackendSelectRowCell() {
-            BackendSelectRowCell.__super__.constructor.apply(this, arguments);
+        constructor: function BackendSelectRowCell(options) {
+            BackendSelectRowCell.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var o = {};
+            const o = {};
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -71,9 +70,9 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            var visibleState = {};
-            var hide = !_.isMobile();
-            var state = {selected: false};
+            const visibleState = {};
+            let hide = !_.isMobile();
+            const state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
             this.model.trigger('backgrid:getVisibleState', visibleState);
@@ -110,7 +109,7 @@ define(function(require) {
             if (this.model) {
                 this.model.off(null, null, this);
             }
-            BackendSelectRowCell.__super__.dispose.apply(this, arguments);
+            BackendSelectRowCell.__super__.dispose.call(this);
         }
     });
 

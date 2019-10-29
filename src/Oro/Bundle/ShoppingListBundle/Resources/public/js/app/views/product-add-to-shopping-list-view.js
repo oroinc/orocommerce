@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var ProductAddToShoppingListView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
-    var ApiAccessor = require('oroui/js/tools/api-accessor');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             emptyMatrixAllowed: false,
             buttonTemplate: '',
@@ -45,15 +44,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductAddToShoppingListView() {
-            ProductAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductAddToShoppingListView(options) {
+            ProductAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
+            ProductAddToShoppingListView.__super__.initialize.call(this, options);
             this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
         },
 
@@ -92,7 +91,7 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            var modelAttr = _.each(options.modelAttr, function(value, attribute) {
+            const modelAttr = _.each(options.modelAttr, function(value, attribute) {
                 options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
             }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
@@ -118,18 +117,18 @@ define(function(require) {
         render: function() {
             this._setEditLineItem(null, true);
 
-            var buttons = this._collectAllButtons();
+            const buttons = this._collectAllButtons();
 
             this._getContainer().html(buttons);
         },
 
-        _onCollectionChange: function() {
-            if (arguments.length > 0 && arguments[0].shoppingListCreateEnabled !== undefined) {
-                this.options.shoppingListCreateEnabled = arguments[0].shoppingListCreateEnabled;
+        _onCollectionChange: function(...args) {
+            if (args.length > 0 && args[0].shoppingListCreateEnabled !== undefined) {
+                this.options.shoppingListCreateEnabled = args[0].shoppingListCreateEnabled;
             }
             this._setEditLineItem();
 
-            var buttons = this._collectAllButtons();
+            const buttons = this._collectAllButtons();
 
             this._clearButtons();
             this._getContainer().prepend(buttons);
@@ -148,14 +147,14 @@ define(function(require) {
         },
 
         _collectAllButtons: function() {
-            var buttons = [];
+            let buttons = [];
 
             if (!this.shoppingListCollection.length) {
                 if (!this.options.showSingleAddToShoppingListButton) {
                     return [];
                 }
 
-                var $addNewButton = $(this.options.buttonTemplate({
+                const $addNewButton = $(this.options.buttonTemplate({
                     id: null,
                     label: _.__('oro.shoppinglist.entity_label')
                 })).find(this.options.buttonsSelector);
@@ -163,12 +162,12 @@ define(function(require) {
                 return [$addNewButton];
             }
 
-            var currentShoppingList = this.findCurrentShoppingList();
+            const currentShoppingList = this.findCurrentShoppingList();
             this._addShippingListButtons(buttons, currentShoppingList);
 
             this.shoppingListCollection.sort();
             this.shoppingListCollection.each(function(model) {
-                var shoppingList = model.toJSON();
+                const shoppingList = model.toJSON();
                 if (shoppingList.id === currentShoppingList.id) {
                     return;
                 }
@@ -177,13 +176,13 @@ define(function(require) {
             }, this);
 
             if (this.options.shoppingListCreateEnabled) {
-                var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
+                let $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
                 $createNewButton = this.updateLabel($createNewButton, null);
                 buttons.push($createNewButton);
             }
 
             if (buttons.length === 1) {
-                var decoreClass = this.dropdownWidget.options.decoreClass || '';
+                const decoreClass = this.dropdownWidget.options.decoreClass || '';
                 buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
             }
 
@@ -191,19 +190,19 @@ define(function(require) {
         },
 
         _addShippingListButtons: function(buttons, shoppingList) {
-            var $button = $(this.options.buttonTemplate(shoppingList));
+            let $button = $(this.options.buttonTemplate(shoppingList));
             if (!this.model) {
                 buttons.push($button);
                 return;
             }
-            var hasLineItems = this.findShoppingListByIdAndUnit(shoppingList, this.model.get('unit'));
+            const hasLineItems = this.findShoppingListByIdAndUnit(shoppingList, this.model.get('unit'));
             if (hasLineItems) {
                 $button = this.updateLabel($button, shoppingList, hasLineItems);
             }
             buttons.push($button);
 
             if (hasLineItems) {
-                var $removeButton = $(this.options.removeButtonTemplate(shoppingList));
+                const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
                 $removeButton.find('a').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
@@ -221,8 +220,8 @@ define(function(require) {
         },
 
         findDropdownButtons: function(filter) {
-            var $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
-            var $buttons = $el.find(this.options.buttonsSelector);
+            const $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
+            let $buttons = $el.find(this.options.buttonsSelector);
             if (filter) {
                 $buttons = $buttons.filter(filter);
             }
@@ -237,7 +236,7 @@ define(function(require) {
         },
 
         findAllButtons: function(filter) {
-            var $buttons = this.findMainButton().add(this.findDropdownButtons());
+            let $buttons = this.findMainButton().add(this.findDropdownButtons());
             if (filter) {
                 $buttons = $buttons.filter(filter);
             }
@@ -252,16 +251,16 @@ define(function(require) {
         },
 
         findShoppingListByIdAndUnit: function(shoppingList, unit) {
-            var foundShoppingList = this.findShoppingListById(shoppingList);
+            const foundShoppingList = this.findShoppingListById(shoppingList);
             if (!foundShoppingList) {
                 return null;
             }
-            var hasUnits = _.find(foundShoppingList.line_items, {unit: unit});
+            const hasUnits = _.find(foundShoppingList.line_items, {unit: unit});
             return hasUnits ? foundShoppingList : null;
         },
 
         findShoppingListLineItemByUnit: function(shoppingList, unit) {
-            var foundShoppingList = this.findShoppingListById(shoppingList);
+            const foundShoppingList = this.findShoppingListById(shoppingList);
             if (!foundShoppingList) {
                 return null;
             }
@@ -269,14 +268,14 @@ define(function(require) {
         },
 
         _onQuantityEnter: function(e) {
-            var ENTER_KEY_CODE = 13;
+            const ENTER_KEY_CODE = 13;
 
             if (e.keyCode === ENTER_KEY_CODE) {
                 this.model.set({
                     quantity: parseInt($(e.target).val(), 10)
                 });
 
-                var mainButton = this.findMainButton();
+                let mainButton = this.findMainButton();
 
                 if (!mainButton.length) {
                     mainButton = this.findAllButtons();
@@ -300,15 +299,15 @@ define(function(require) {
         },
 
         onClick: function(e) {
-            var $button = $(e.currentTarget);
+            const $button = $(e.currentTarget);
             if ($button.data('disabled')) {
                 return false;
             }
-            var url = $button.data('url');
-            var intention = $button.data('intention');
-            var formData = this.$form.serialize();
+            const url = $button.data('url');
+            const intention = $button.data('intention');
+            const formData = this.$form.serialize();
 
-            var urlOptions = {
+            const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
             };
             if (this.model) {
@@ -334,8 +333,8 @@ define(function(require) {
         },
 
         updateLabel: function($button, shoppingList, hasLineItems) {
-            var label;
-            var intention;
+            let label;
+            let intention;
 
             if (shoppingList && hasLineItems) {
                 label = _.__('oro.shoppinglist.actions.update_shopping_list', {
@@ -367,8 +366,8 @@ define(function(require) {
                 return;
             }
 
-            var currentShoppingListInCollection = this.findCurrentShoppingList();
-            var currentShoppingListInModel = this.findShoppingListById(currentShoppingListInCollection);
+            const currentShoppingListInCollection = this.findCurrentShoppingList();
+            const currentShoppingListInModel = this.findShoppingListById(currentShoppingListInCollection);
 
             if (!currentShoppingListInModel) {
                 return;
@@ -396,7 +395,7 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            var dialog = new ShoppingListCreateWidget({});
+            const dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response.savedId;
                 this._addLineItem(url, urlOptions, formData);
@@ -408,7 +407,7 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            var self = this;
+            const self = this;
 
             mediator.execute('showLoading');
             $.ajax({
@@ -428,7 +427,7 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            var self = this;
+            const self = this;
 
             mediator.execute('showLoading');
             $.ajax({
@@ -470,10 +469,10 @@ define(function(require) {
             }
             mediator.execute('showLoading');
 
-            var shoppingList = this.findShoppingList(urlOptions.shoppingListId);
-            var lineItem = this.findShoppingListLineItemByUnit(shoppingList, this.model.get('unit'));
+            const shoppingList = this.findShoppingList(urlOptions.shoppingListId);
+            const lineItem = this.findShoppingListLineItemByUnit(shoppingList, this.model.get('unit'));
 
-            var savePromise = this.saveApiAccessor.send({
+            const savePromise = this.saveApiAccessor.send({
                 id: lineItem.id
             }, {
                 quantity: this.model.get('quantity'),
@@ -506,7 +505,7 @@ define(function(require) {
                 this.model.off(null, null, this);
             }
 
-            ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
+            ProductAddToShoppingListView.__super__.dispose.call(this);
         }
     }));
 

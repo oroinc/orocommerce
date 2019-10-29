@@ -1,22 +1,21 @@
 define(function(require) {
     'use strict';
 
-    var TreeManageView;
-    var _ = require('underscore');
-    var messenger = require('oroui/js/messenger');
-    var BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
+    const _ = require('underscore');
+    const messenger = require('oroui/js/messenger');
+    const BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
 
     /**
      * @export orocatalog/js/app/views/tree-manage-view
      * @extends oroui.app.components.BaseTreeManageView
      * @class orocatalog.app.components.TreeManageView
      */
-    TreeManageView = BaseTreeManageView.extend({
+    const TreeManageView = BaseTreeManageView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function TreeManageView() {
-            TreeManageView.__super__.constructor.apply(this, arguments);
+        constructor: function TreeManageView(options) {
+            TreeManageView.__super__.constructor.call(this, options);
         },
 
         /**

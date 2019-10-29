@@ -1,25 +1,24 @@
 define(function(require) {
     'use strict';
 
-    var CodeComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    CodeComponent = BaseComponent.extend({
+    const CodeComponent = BaseComponent.extend({
 
         editor: null,
 
-        constructor: function CodeComponent() {
-            CodeComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CodeComponent(options) {
+            CodeComponent.__super__.constructor.call(this, options);
         },
 
         initialize: function(options) {
             this.editor = options;
-            var ComponentId = 'code';
-            var domComps = options.DomComponents;
-            var parentType = domComps.getType('text');
-            var parentModel = parentType.model;
-            var parentView = parentType.view;
+            const ComponentId = 'code';
+            const domComps = options.DomComponents;
+            const parentType = domComps.getType('text');
+            const parentModel = parentType.model;
+            const parentView = parentType.view;
 
             domComps.addType(ComponentId, {
                 model: parentModel.extend({
@@ -27,12 +26,12 @@ define(function(require) {
                         tagName: 'code',
                         content: 'Type code here'
                     }),
-                    constructor: function CodeComponentModel() {
-                        parentModel.prototype.constructor.apply(this, arguments);
+                    constructor: function CodeComponentModel(...args) {
+                        parentModel.prototype.constructor.apply(this, args);
                     }
                 }, {
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
                         if (el.tagName === 'CODE') {
                             result = {
                                 type: ComponentId

@@ -1,17 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var viewportManager = require('oroui/js/viewport-manager');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const viewportManager = require('oroui/js/viewport-manager');
 
     /**
      * Create panel manager instance
      * @param options
      * @constructor
      */
-    var DevicesModule = function(options) {
+    const DevicesModule = function(options) {
         _.extend(this, _.pick(options, ['builder']));
 
         this.init();
@@ -55,8 +55,8 @@ define(function(require) {
          * @private
          */
         _getCSSBreakpoint: function() {
-            var frameHead = this.$builderIframe.contentDocument.head;
-            var breakpoints = mediator.execute('fetch:head:computedVars', frameHead);
+            const frameHead = this.$builderIframe.contentDocument.head;
+            const breakpoints = mediator.execute('fetch:head:computedVars', frameHead);
 
             this.breakpoints = _.filter(viewportManager._collectCSSBreakpoints(breakpoints), function(breakpoint) {
                 return breakpoint.name.indexOf('strict') === -1;
@@ -64,8 +64,8 @@ define(function(require) {
         },
 
         getBreakpoints: function() {
-            var defer = $.Deferred();
-            var inter = setInterval(_.bind(function() {
+            const defer = $.Deferred();
+            const inter = setInterval(_.bind(function() {
                 this._getCSSBreakpoint();
 
                 if (this.breakpoints.length) {
@@ -81,10 +81,10 @@ define(function(require) {
          * Create buttons controls via breakpoints
          */
         createButtons: function() {
-            var devicePanel = this.builder.Panels.getPanel('devices-c');
-            var deviceButton = devicePanel.get('buttons');
-            var DeviceManager = this.builder.DeviceManager;
-            var Commands = this.builder.Commands;
+            const devicePanel = this.builder.Panels.getPanel('devices-c');
+            const deviceButton = devicePanel.get('buttons');
+            const DeviceManager = this.builder.DeviceManager;
+            const Commands = this.builder.Commands;
 
             deviceButton.reset();
             DeviceManager.getAll().reset();
@@ -92,12 +92,12 @@ define(function(require) {
             Commands.add('setDevice', {
                 run: function(editor, sender) {
                     editor.setDevice(sender.id);
-                    var canvas = editor.Canvas.getElement();
+                    const canvas = editor.Canvas.getElement();
 
                     canvas.classList.add(sender.id);
                 },
                 stop: function(editor, sender) {
-                    var canvas = editor.Canvas.getElement();
+                    const canvas = editor.Canvas.getElement();
 
                     canvas.classList.remove(sender.id);
                 }
@@ -108,9 +108,9 @@ define(function(require) {
                     this.canvasEl.classList.add(breakpoint.name);
                 }
 
-                var width = breakpoint.max ? breakpoint.max + 'px' : false;
+                let width = breakpoint.max ? breakpoint.max + 'px' : false;
                 width = this.calculateDeviceWidth(width);
-                var options = {
+                let options = {
                     height: this.calculateDeviceHeight(width)
                 };
 
@@ -155,8 +155,8 @@ define(function(require) {
             if (!invert) {
                 invert = false;
             }
-            var ratio = width <= 640 ? 1.7 : 1.3;
-            var height = invert ? width / ratio : width * ratio;
+            const ratio = width <= 640 ? 1.7 : 1.3;
+            let height = invert ? width / ratio : width * ratio;
             if (height > this.canvasEl.offsetHeight) {
                 height = this.canvasEl.offsetHeight;
             }
@@ -182,7 +182,7 @@ define(function(require) {
          * @returns {string}
          */
         concatTitle: function(breakpoint, options) {
-            var str = breakpoint.name + ' view';
+            let str = breakpoint.name + ' view';
 
             if (breakpoint.max) {
                 str += ': ' + breakpoint.max;

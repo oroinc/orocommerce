@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var DisplayOptions;
-    var $ = require('jquery');
-    var UrlHelper = require('orodatagrid/js/url-helper');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const UrlHelper = require('orodatagrid/js/url-helper');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    DisplayOptions = BaseComponent.extend({
-        constructor: function DisplayOptions() {
-            DisplayOptions.__super__.constructor.apply(this, arguments);
+    const DisplayOptions = BaseComponent.extend({
+        constructor: function DisplayOptions(options) {
+            DisplayOptions.__super__.constructor.call(this, options);
         },
         /**
          * @property {Grid}
@@ -31,16 +30,16 @@ define(function(require) {
             this.listenTo(this.datagrid.collection, 'reset', this._addDatagridStateTo);
             this._addDatagridStateTo();
 
-            DisplayOptions.__super__.initialize.apply(this, arguments);
+            DisplayOptions.__super__.initialize.call(this, options);
         },
 
         _addDatagridStateTo: function() {
-            var self = this;
+            const self = this;
             $(this.displaySelector).find('a').each(function(index, aTagElement) {
-                var aTag = $(aTagElement);
-                var url = aTag.attr('href');
-                var key = self.datagrid.collection.stateHashKey();
-                var value = self.datagrid.collection.stateHashValue();
+                const aTag = $(aTagElement);
+                const url = aTag.attr('href');
+                const key = self.datagrid.collection.stateHashKey();
+                const value = self.datagrid.collection.stateHashValue();
                 aTag.attr('href', UrlHelper.addUrlParameter(url, key, value));
             });
         }
@@ -53,7 +52,7 @@ define(function(require) {
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new DisplayOptions({
+                const validation = new DisplayOptions({
                     grid: grid,
                     options: options
                 });

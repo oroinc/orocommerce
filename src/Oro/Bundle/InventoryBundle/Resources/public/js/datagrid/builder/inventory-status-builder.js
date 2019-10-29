@@ -1,8 +1,8 @@
 define(['jquery', 'underscore'], function($, _) {
     'use strict';
 
-    var InventoryStatus = function() {
-        this.initialize.apply(this, arguments);
+    const InventoryStatus = function(options) {
+        this.initialize(options);
     };
 
     _.extend(InventoryStatus.prototype, {
@@ -29,7 +29,7 @@ define(['jquery', 'underscore'], function($, _) {
          * @param {Object} [options.options] grid initialization options
          */
         initialize: function(options) {
-            var self = this;
+            const self = this;
 
             self.datagrid = options.grid;
             self.statusMetadata = _.find(options.options.metadata.columns, function(column) {
@@ -45,8 +45,8 @@ define(['jquery', 'underscore'], function($, _) {
          * Reload inventory statuses when one of them changes.
          */
         _reloadInventoryStatus: function() {
-            var self = this;
-            var statusColumn = self.options.statusColumnName;
+            const self = this;
+            const statusColumn = self.options.statusColumnName;
 
             _.each(this.datagrid.collection.models, function(model) {
                 self._initializeInventoryStatus(model, statusColumn);
@@ -63,13 +63,13 @@ define(['jquery', 'underscore'], function($, _) {
          * @param {string} statusColumn
          */
         _initializeInventoryStatus: function(model, statusColumn) {
-            var self = this;
-            var value = model.get(statusColumn);
+            const self = this;
+            let value = model.get(statusColumn);
 
             if (typeof value === 'string') {
                 value = value.trim();
             }
-            var columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+            const columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
                 return choiceValue === value;
             });
             if (typeof columnValue !== 'undefined') {
@@ -83,8 +83,8 @@ define(['jquery', 'underscore'], function($, _) {
          * @param {string} value
          */
         _updateInventoryStatus: function(model, value) {
-            var self = this;
-            var columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+            const self = this;
+            const columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
                 return choiceValue === value;
             });
 
@@ -108,7 +108,7 @@ define(['jquery', 'underscore'], function($, _) {
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var update = new InventoryStatus({
+                const update = new InventoryStatus({
                     grid: grid,
                     options: options
                 });

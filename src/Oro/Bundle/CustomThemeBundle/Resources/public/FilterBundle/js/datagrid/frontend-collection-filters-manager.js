@@ -1,16 +1,15 @@
 define(function(require, exports, module) {
     'use strict';
 
-    var FrontendCollectionFiltersManager;
-    var _ = require('underscore');
-    var CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
-    var viewportManager = require('oroui/js/viewport-manager');
-    var config = require('module-config').default(module.id);
+    const _ = require('underscore');
+    const CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
+    const viewportManager = require('oroui/js/viewport-manager');
+    let config = require('module-config').default(module.id);
     config = _.extend({
         enableMultiselectWidget: true
     }, config);
 
-    FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
+    const FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
         /**
          * @property {Boolean}
          */
@@ -41,7 +40,7 @@ define(function(require, exports, module) {
                 this.$(this.filterSelector).hide();
                 return;
             }
-            FrontendCollectionFiltersManager.__super__._initializeSelectWidget.apply(this, arguments);
+            FrontendCollectionFiltersManager.__super__._initializeSelectWidget.call(this);
         },
 
         /**
@@ -49,16 +48,16 @@ define(function(require, exports, module) {
          */
         _refreshSelectWidget: function() {
             if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._refreshSelectWidget.apply(this, arguments);
+                FrontendCollectionFiltersManager.__super__._refreshSelectWidget.call(this);
             }
         },
 
         /**
          * @inheritDoc
          */
-        _onChangeFilterSelect: function() {
+        _onChangeFilterSelect: function(filters) {
             if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.apply(this, arguments);
+                FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.call(this, filters);
             }
         },
 

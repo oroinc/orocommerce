@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var TransitionButtonComponent = require('orocheckout/js/app/components/transition-button-component');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
+    const TransitionButtonComponent = require('orocheckout/js/app/components/transition-button-component');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
-    var PaymentTransitionButtonComponent;
-    PaymentTransitionButtonComponent = TransitionButtonComponent.extend({
+    const PaymentTransitionButtonComponent = TransitionButtonComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function PaymentTransitionButtonComponent() {
-            PaymentTransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentTransitionButtonComponent(options) {
+            PaymentTransitionButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -48,8 +47,8 @@ define(function(require) {
         },
 
         initPaymentMethod: function() {
-            var filledForm = this.getContent().next(this.options.selectors.paymentForm);
-            var selectedValue = this.getPaymentMethodElement().val();
+            const filledForm = this.getContent().next(this.options.selectors.paymentForm);
+            const selectedValue = this.getPaymentMethodElement().val();
             if (filledForm.length > 0) {
                 if (selectedValue) {
                     mediator.trigger('checkout:payment:before-restore-filled-form', filledForm);
@@ -63,7 +62,7 @@ define(function(require) {
             }
 
             if (selectedValue) {
-                var selectedEl = this.getPaymentMethodSelector().filter('[value="' + selectedValue + '"]');
+                const selectedEl = this.getPaymentMethodSelector().filter('[value="' + selectedValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
             } else {
@@ -80,8 +79,8 @@ define(function(require) {
                 return;
             }
 
-            var paymentMethod = this.getPaymentMethodElement().val();
-            var eventData = {
+            const paymentMethod = this.getPaymentMethodElement().val();
+            const eventData = {
                 stopped: false,
                 resume: this.continueTransit.bind(this, e, data),
                 data: {paymentMethod: paymentMethod}
@@ -96,7 +95,7 @@ define(function(require) {
         },
 
         continueTransit: function(e, data) {
-            var filledForm = this.getPaymentForm();
+            const filledForm = this.getPaymentForm();
             mediator.trigger('checkout:payment:before-hide-filled-form', filledForm);
             filledForm
                 .addClass('hidden')
@@ -122,7 +121,7 @@ define(function(require) {
          * @param {Event} event
          */
         onPaymentMethodChange: function(event) {
-            var target = $(event.target);
+            const target = $(event.target);
             this.getPaymentMethodElement().val(target.val());
         },
 
@@ -130,8 +129,8 @@ define(function(require) {
          * @param {Event} event
          */
         onSubmit: function(event) {
-            var paymentMethod = this.getPaymentMethodElement().val();
-            var eventData = {paymentMethod: paymentMethod};
+            const paymentMethod = this.getPaymentMethodElement().val();
+            const eventData = {paymentMethod: paymentMethod};
             mediator.trigger('checkout:payment:before-form-serialization', eventData);
 
             PaymentTransitionButtonComponent.__super__.onSubmit.call(this, event);

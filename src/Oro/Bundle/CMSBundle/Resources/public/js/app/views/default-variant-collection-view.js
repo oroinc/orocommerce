@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var DefaultVariantCollectionView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    DefaultVariantCollectionView = BaseView.extend({
+    const DefaultVariantCollectionView = BaseView.extend({
         $collection: null,
 
         options: {
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function DefaultVariantCollectionView() {
-            DefaultVariantCollectionView.__super__.constructor.apply(this, arguments);
+        constructor: function DefaultVariantCollectionView(options) {
+            DefaultVariantCollectionView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -61,7 +60,7 @@ define(function(require) {
         },
 
         checkDefaultVariant: function() {
-            var $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
+            const $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
             $default.prop('checked', true).trigger('change');
 
             this.onDefaultChange($default);

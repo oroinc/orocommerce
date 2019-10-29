@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ProductUnitSelectionLimitationsComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var DeleteConfirmation = require('oroui/js/delete-confirmation');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const DeleteConfirmation = require('oroui/js/delete-confirmation');
+    const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
 
-    ProductUnitSelectionLimitationsComponent = BaseComponent.extend({
+    const ProductUnitSelectionLimitationsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -39,8 +38,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductUnitSelectionLimitationsComponent() {
-            ProductUnitSelectionLimitationsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductUnitSelectionLimitationsComponent(options) {
+            ProductUnitSelectionLimitationsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -74,11 +73,11 @@ define(function(require) {
          */
         onRemoveRow: function(e) {
             e.stopPropagation();
-            var option = $(e.target).closest(this.options.selectParent).find(
+            const option = $(e.target).closest(this.options.selectParent).find(
                 this.options.unitSelect + ' option:selected'
             );
-            var unitsWithPrices = this.getUnitsWithPrices();
-            var val = option.val();
+            const unitsWithPrices = this.getUnitsWithPrices();
+            const val = option.val();
             if (unitsWithPrices[val] !== undefined) {
                 this.showError();
             } else {
@@ -90,8 +89,8 @@ define(function(require) {
          * Handle change select
          */
         onChange: function() {
-            var selects = this.options._sourceElement.find(this.options.unitSelect);
-            var primary = _.first(_.values(this.getPrimaryData()));
+            const selects = this.options._sourceElement.find(this.options.unitSelect);
+            const primary = _.first(_.values(this.getPrimaryData()));
 
             this.toggleTableVisibility();
 
@@ -101,7 +100,7 @@ define(function(require) {
                     select.find('option[value="' + primary + '"]').remove();
                 }
 
-                var option = select.find('option:selected');
+                const option = select.find('option:selected');
                 selects.not(select).find('option[value="' + option.val() + '"]').remove();
 
                 if (select.find('option').length <= 1) {
@@ -109,7 +108,7 @@ define(function(require) {
                 }
 
                 if (option.val() !== select.data('prevValue') && !select.hasClass(this.options.hiddenUnitClass)) {
-                    var value = this.options.precisions[option.val()];
+                    const value = this.options.precisions[option.val()];
 
                     if (!_.isUndefined(value)) {
                         select.parents(this.options.selectParent).find('input[class="precision"]').val(value);
@@ -132,9 +131,9 @@ define(function(require) {
          *  Handle changes in primary precision
          */
         onPrimaryPrecisionChange: function(e) {
-            var removed = e.removed;
-            var added = e.added;
-            var self = this;
+            const removed = e.removed;
+            const added = e.added;
+            const self = this;
             if (!_.isEmpty(removed)) {
                 _.each(removed, function(text, val) {
                     self.addOptionToAllSelects(val, text);
@@ -154,7 +153,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onRemoveItem: function(e) {
-            var option = $(e.target).find('select:enabled option:selected');
+            const option = $(e.target).find('select:enabled option:selected');
 
             if (option) {
                 this.removeData({value: option.val(), text: option.text()});
@@ -171,7 +170,7 @@ define(function(require) {
          * @param {jQuery.Event}  e
          */
         onSelectChange: function(e) {
-            var select = $(e.target);
+            const select = $(e.target);
             this.removeData({value: select.data('prevValue'), text: select.data('prevText')});
             this.addOptionToAllSelects(select.data('prevValue'), select.data('prevText'));
             this.onChange();
@@ -185,7 +184,7 @@ define(function(require) {
          */
         addOptionToAllSelects: function(value, text) {
             this.options._sourceElement.find(this.options.unitSelect).each(function() {
-                var select = $(this);
+                const select = $(this);
 
                 if (select.data('prevValue') !== value) {
                     select.append($('<option></option>').val(value).text(text));
@@ -200,9 +199,9 @@ define(function(require) {
          */
         addConversionRateLabels: function(value) {
             this.options._sourceElement.find(this.options.conversionRateInput).each(function() {
-                var input = $(this);
-                var text = __('oro.product.product_unit.' + value + '.label.short_plural');
-                var conversionClassName = 'conversion-rate-label';
+                const input = $(this);
+                const text = __('oro.product.product_unit.' + value + '.label.short_plural');
+                const conversionClassName = 'conversion-rate-label';
 
                 input.siblings('.' + conversionClassName).remove();
                 input.after($('<span></span>', {
@@ -220,8 +219,8 @@ define(function(require) {
          */
         removeOptionFromAllSelects: function(value, text) {
             this.options._sourceElement.find(this.options.unitSelect).each(function() {
-                var select = $(this);
-                var option = select.find('option[value="' + value + '"]');
+                const select = $(this);
+                const option = select.find('option[value="' + value + '"]');
                 if (option.length) {
                     option.remove();
                 }
@@ -234,7 +233,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         askConfirmation: function(e) {
-            var confirmModal = new DeleteConfirmation({
+            const confirmModal = new DeleteConfirmation({
                 content: __(this.options.deleteMessage)
             });
 
@@ -247,7 +246,7 @@ define(function(require) {
          *
          */
         showError: function() {
-            var confirmModal = new DeleteConfirmation({
+            const confirmModal = new DeleteConfirmation({
                 title: __(this.options.errorTitle),
                 content: __(this.options.errorMessage),
                 allowOk: false
@@ -260,8 +259,8 @@ define(function(require) {
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function(data) {
-            var storedData = this.getData();
-            var primaryData = this.getPrimaryData();
+            const storedData = this.getData();
+            const primaryData = this.getPrimaryData();
             if (storedData.hasOwnProperty(data.value) || primaryData.hasOwnProperty(data.value)) {
                 return;
             }
@@ -276,7 +275,7 @@ define(function(require) {
          * @param {Object} data with structure {value: value, text: text}
          */
         removeData: function(data) {
-            var storedData = this.getData();
+            const storedData = this.getData();
             delete storedData[data.value];
 
             this.saveData(storedData);
@@ -297,10 +296,10 @@ define(function(require) {
         },
 
         getUnitsWithPrices: function() {
-            var selects = $(this.options.pricesUnitsSelector);
-            var unitsWithPrice = {};
+            const selects = $(this.options.pricesUnitsSelector);
+            const unitsWithPrice = {};
             _.each(selects, function(select) {
-                var selected = $(select).find('option:selected');
+                const selected = $(select).find('option:selected');
                 unitsWithPrice[selected.val()] = selected.text();
             });
 
@@ -320,8 +319,8 @@ define(function(require) {
          * Toggle Table visibility
          */
         toggleTableVisibility: function() {
-            var selects = this.options._sourceElement.find(this.options.unitSelect);
-            var table = this.options._sourceElement.find('table');
+            const selects = this.options._sourceElement.find(this.options.unitSelect);
+            const table = this.options._sourceElement.find('table');
 
             if (selects.length < 1) {
                 table.hide();

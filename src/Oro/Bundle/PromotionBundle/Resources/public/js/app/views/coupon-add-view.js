@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var __ = require('orotranslation/js/translator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var widgetManager = require('oroui/js/widget-manager');
-    var errorsTemplate = require('tpl-loader!oropromotion/templates/field-errors.html');
-    var CouponAddView;
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const widgetManager = require('oroui/js/widget-manager');
+    const errorsTemplate = require('tpl-loader!oropromotion/templates/field-errors.html');
 
-    CouponAddView = BaseView.extend({
+    const CouponAddView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -60,7 +59,7 @@ define(function(require) {
          * @inheritDoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['change ' + this.options.selectors.addedIdsSelector] = 'refreshAddedCouponsTable';
             events['change ' + this.options.selectors.couponAutocompleteSelector] = 'clearErrors';
             events['click ' + this.options.selectors.couponAddButtonSelector] = 'addCoupon';
@@ -72,15 +71,15 @@ define(function(require) {
         addCoupon: function(e) {
             e.preventDefault();
 
-            var $couponAutocomplete = this.$(this.options.selectors.couponAutocompleteSelector);
-            var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
-            var couponId = $couponAutocomplete.val();
+            const $couponAutocomplete = this.$(this.options.selectors.couponAutocompleteSelector);
+            const $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
+            const couponId = $couponAutocomplete.val();
             if (!couponId) {
                 return;
             }
 
-            var $form = $(this.options.selectors.formSelector);
-            var data = $form.find(':input[data-ftid]').serializeArray();
+            const $form = $(this.options.selectors.formSelector);
+            const data = $form.find(':input[data-ftid]').serializeArray();
             _.each({
                 couponId: couponId,
                 addedCouponIds: $addedIdsField.val(),
@@ -91,7 +90,7 @@ define(function(require) {
             });
 
             this._showLoadingMask();
-            var self = this;
+            const self = this;
             $.ajax({
                 url: routing.generate(this.options.validateCouponApplicabilityRoute),
                 type: 'POST',
@@ -100,7 +99,7 @@ define(function(require) {
                 success: function(response) {
                     self.clearErrors();
                     if (response.success) {
-                        var currentState = $addedIdsField.val().split(self.options.delimiter).concat([couponId]);
+                        let currentState = $addedIdsField.val().split(self.options.delimiter).concat([couponId]);
                         currentState = _.filter(currentState, function(value) {
                             return value !== '';
                         });
@@ -109,7 +108,7 @@ define(function(require) {
                         $couponAutocomplete.val(null).trigger('change');
                     } else {
                         self._hideLoadingMask();
-                        var errors = _.map(response.errors, function(message) {
+                        const errors = _.map(response.errors, function(message) {
                             return __(message);
                         });
                         self.$(self.options.selectors.selectCouponValidationContainerSelector)
@@ -120,9 +119,9 @@ define(function(require) {
         },
 
         removeCoupon: function(e) {
-            var couponId = $(e.target).data('remove-coupon-id');
+            const couponId = $(e.target).data('remove-coupon-id');
 
-            var currentState = this.$(this.options.selectors.addedIdsSelector).val()
+            let currentState = this.$(this.options.selectors.addedIdsSelector).val()
                 .split(this.options.delimiter);
             currentState = _.filter(currentState, function(value) {
                 return value !== '' && couponId !== parseInt(value);
@@ -132,7 +131,7 @@ define(function(require) {
         },
 
         refreshAddedCouponsTable: function() {
-            var $addedCouponsContainer = this.$(this.options.selectors.addedCouponsContainerSelector);
+            const $addedCouponsContainer = this.$(this.options.selectors.addedCouponsContainerSelector);
             this._showLoadingMask();
             $.ajax({
                 url: routing.generate(
@@ -154,8 +153,8 @@ define(function(require) {
          * @private
          */
         _updateState: function(currentState) {
-            var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
-            var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
+            const $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
+            const newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
             if ($addedIdsField.val() !== newVal) {
                 $addedIdsField.val(newVal).trigger('change');
                 this._updateApplyButtonState();
@@ -166,10 +165,10 @@ define(function(require) {
          * @private
          */
         _updateApplyButtonState: function() {
-            var $widgetContainer = this.$el.closest('[data-wid]');
-            var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
+            const $widgetContainer = this.$el.closest('[data-wid]');
+            const $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
             if ($widgetContainer.length) {
-                var wid = $widgetContainer.data('wid');
+                const wid = $widgetContainer.data('wid');
                 widgetManager.getWidgetInstance(wid, function(widget) {
                     widget.getAction('form_submit', 'adopted', function(submitAction) {
                         if ($addedIdsField.val()) {
@@ -221,14 +220,14 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]) && !this.options[option];
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);

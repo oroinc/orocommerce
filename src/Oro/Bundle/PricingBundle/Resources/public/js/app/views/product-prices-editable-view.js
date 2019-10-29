@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var ProductPricesEditableView;
-    var pricesHint = require('tpl-loader!oropricing/templates/product/prices-tier-button.html');
-    var pricesHintContent = require('tpl-loader!oropricing/templates/product/prices-tier-table.html');
-    var priceOverridden = require('tpl-loader!oropricing/templates/product/prices-price-overridden.html');
-    var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var Popover = require('bootstrap-popover');
-    var layout = require('oroui/js/layout');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const pricesHint = require('tpl-loader!oropricing/templates/product/prices-tier-button.html');
+    const pricesHintContent = require('tpl-loader!oropricing/templates/product/prices-tier-table.html');
+    const priceOverridden = require('tpl-loader!oropricing/templates/product/prices-price-overridden.html');
+    const BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const Popover = require('bootstrap-popover');
+    const layout = require('oroui/js/layout');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    ProductPricesEditableView = BaseProductPricesView.extend({
+    const ProductPricesEditableView = BaseProductPricesView.extend({
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
             pricesHint: null,
             pricesHintContent: null,
@@ -45,11 +44,11 @@ define(function(require) {
         },
 
         events: function() {
-            var events = {};
+            const events = {};
 
-            var eventNamespace = this.eventNamespace();
-            var onShow = function(clickHandler, event) {
-                var popover = $(event.target).data(Popover.DATA_KEY);
+            const eventNamespace = this.eventNamespace();
+            const onShow = function(clickHandler, event) {
+                const popover = $(event.target).data(Popover.DATA_KEY);
                 $(popover.getTipElement())
                     .off(eventNamespace)
                     .on('click' + eventNamespace, 'a', function(e) {
@@ -62,7 +61,7 @@ define(function(require) {
             events[Popover.Event.SHOWN + ' .product-price-overridden'] = _.wrap(this.useFoundPrice.bind(this), onShow);
             events[Popover.Event.SHOWN + ' .product-tier-prices'] = _.wrap(this.setPriceFromHint.bind(this), onShow);
             events[Popover.Event.HIDDEN + ' [data-toggle=popover]'] = function(e) {
-                var tip = $(e.target).data(Popover.DATA_KEY).getTipElement();
+                const tip = $(e.target).data(Popover.DATA_KEY).getTipElement();
                 $(tip).off(eventNamespace);
             };
 
@@ -72,8 +71,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductPricesEditableView() {
-            ProductPricesEditableView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductPricesEditableView(options) {
+            ProductPricesEditableView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -83,14 +82,14 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
-            ProductPricesEditableView.__super__.initialize.apply(this, arguments);
+            ProductPricesEditableView.__super__.initialize.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         deferredInitialize: function(options) {
-            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
+            ProductPricesEditableView.__super__.deferredInitialize.call(this, options);
         },
 
         /**
@@ -98,14 +97,14 @@ define(function(require) {
          */
         dispose: function(options) {
             delete this.templates;
-            ProductPricesEditableView.__super__.dispose.apply(this, arguments);
+            ProductPricesEditableView.__super__.dispose.call(this);
         },
 
         /**
          * @inheritDoc
          */
-        findPrice: function() {
-            var price = ProductPricesEditableView.__super__.findPrice.apply(this, arguments);
+        findPrice: function(...args) {
+            const price = ProductPricesEditableView.__super__.findPrice.apply(this, args);
             this.model.set('found_price', price);
             this.getElement('priceValue').data('found_price', price);
             return price;
@@ -139,14 +138,14 @@ define(function(require) {
                 return;
             }
 
-            var priceValueSetByUser = this.getElement('priceValue').val();
+            const priceValueSetByUser = this.getElement('priceValue').val();
 
             // Do not show default price if user did not set price. 0 (zero) price is considered as set price
             if (!priceValueSetByUser && !this.getElement('priceValue').data('match-price-on-null')) {
                 return;
             }
 
-            var $priceOverridden = this.createElementByTemplate('priceOverridden');
+            const $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);
             $priceOverridden.insertAfter(this.getElement('priceValue'));
@@ -163,7 +162,7 @@ define(function(require) {
                 this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').html());
             }
 
-            var $pricesHint = this.createElementByTemplate('pricesHint');
+            const $pricesHint = this.createElementByTemplate('pricesHint');
 
             this.getElement('priceValue').after($pricesHint);
         },
@@ -186,7 +185,7 @@ define(function(require) {
             if (!this.hintInitialized) {
                 this.initHint();
             }
-            return ProductPricesEditableView.__super__.renderHint.apply(this, arguments);
+            return ProductPricesEditableView.__super__.renderHint.call(this);
         },
 
         onPriceSetManually: function(e, options) {
@@ -197,7 +196,7 @@ define(function(require) {
 
         setPriceFromHint: function(elem) {
             this.getElement('priceValue').removeClass('matched-price');
-            var $elem = $(elem);
+            const $elem = $(elem);
             this.model.set('unit', $elem.data('unit'));
             this.setPriceValue($elem.data('price'));
         },
@@ -211,8 +210,8 @@ define(function(require) {
                 this.initPriceOverridden();
             }
 
-            var priceValue = NumberFormatter.unformatStrict(this.model.get('price'));
-            var price = this.findPriceValue();
+            const priceValue = NumberFormatter.unformatStrict(this.model.get('price'));
+            const price = this.findPriceValue();
 
             if (price !== null && this.calcTotalPrice(price) !== this.calcTotalPrice(priceValue)) {
                 this.getElement('priceOverridden').show();

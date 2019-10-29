@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var CheckoutContentView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     require('jquery.cookie');
 
-    CheckoutContentView = BaseView.extend({
+    const CheckoutContentView = BaseView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function CheckoutContentView() {
-            CheckoutContentView.__super__.constructor.apply(this, arguments);
+        constructor: function CheckoutContentView(options) {
+            CheckoutContentView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -36,8 +35,8 @@ define(function(require) {
         },
 
         initTabs: function() {
-            var cookieName = 'order-tab:state';
-            var $container = this.$el;
+            const cookieName = 'order-tab:state';
+            const $container = this.$el;
 
             $container.on('collapse:toggle', '[data-collapse-trigger]', function(event, params) {
                 mediator.trigger('scrollable-table:reload');

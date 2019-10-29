@@ -5,7 +5,7 @@ define([
 ], function(_, __, creditCardValidator) {
     'use strict';
 
-    var defaultParam = {
+    const defaultParam = {
         message: 'oro.payment.validation.credit_card'
     };
 

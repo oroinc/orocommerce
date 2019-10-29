@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ProductUnitComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const routing = require('routing');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
 
-    ProductUnitComponent = BaseComponent.extend({
+    const ProductUnitComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -50,8 +49,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductUnitComponent() {
-            ProductUnitComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductUnitComponent(options) {
+            ProductUnitComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -88,7 +87,7 @@ define(function(require) {
          */
         onProductChange: function(e) {
             this.unitSelector.trigger('value:changing');
-            var value = e.target.value;
+            const value = e.target.value;
 
             if (!value) {
                 this._dropValues();
@@ -96,7 +95,7 @@ define(function(require) {
                 return;
             }
 
-            var routeParams = $.extend({}, this.options.routingParams, {id: value});
+            const routeParams = $.extend({}, this.options.routingParams, {id: value});
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),
                 beforeSend: this._beforeSend.bind(this),

@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var PaymentTermView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oropaymentterm/js/app/views/payment-term-view
      * @extends oroui.app.views.base.View
      * @class oropayment.app.views.PaymentTermView
      */
-    PaymentTermView = BaseView.extend({
+    const PaymentTermView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -42,8 +41,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PaymentTermView() {
-            PaymentTermView.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentTermView(options) {
+            PaymentTermView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -64,7 +63,7 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
+            const self = this;
 
             this.$input.change(function() {
                 self.inputChanged = true;
@@ -72,7 +71,7 @@ define(function(require) {
         },
 
         configureInput: function() {
-            var self = this;
+            const self = this;
 
             this.customerPaymentTerm = this.parseInt(this.$input.data('customer-payment-term'));
             this.customerGroupPaymentTerm = this.parseInt(this.$input.data('customer-group-payment-term'));
@@ -81,7 +80,7 @@ define(function(require) {
                 return;
             }
 
-            var configs = this.$input.data('pageComponentOptions').configs;
+            const configs = this.$input.data('pageComponentOptions').configs;
             configs.selection_template = configs.result_template = function(data) {
                 data.isCustomerDefault = data.id === self.customerPaymentTerm;
                 data.isCustomerGroupDefault = data.id === self.customerGroupPaymentTerm;
@@ -103,9 +102,9 @@ define(function(require) {
             this.customerPaymentTerm = this.parseInt(response.customerPaymentTerm || null);
             this.customerGroupPaymentTerm = this.parseInt(response.customerGroupPaymentTerm || null);
 
-            var paymentTermKeys = ['customerPaymentTerm', 'customerGroupPaymentTerm'];
-            var paymentTerm;
-            for (var i = 0, iMax = paymentTermKeys.length; i < iMax; i++) {
+            const paymentTermKeys = ['customerPaymentTerm', 'customerGroupPaymentTerm'];
+            let paymentTerm;
+            for (let i = 0, iMax = paymentTermKeys.length; i < iMax; i++) {
                 paymentTerm = response[paymentTermKeys[i]] || null;
                 if (paymentTerm) {
                     break;

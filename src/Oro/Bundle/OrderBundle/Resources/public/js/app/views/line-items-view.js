@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var LineItemsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var ProductsPricesComponent = require('oroorder/js/app/components/products-prices-component');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const ProductsPricesComponent = require('oroorder/js/app/components/products-prices-component');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    const LineItemsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -39,8 +38,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -72,12 +71,12 @@ define(function(require) {
         },
 
         updateValidators: function(subtotals) {
-            var $subtotal = this.$el.closest('form').find(this.options.subtotalValidationSelector);
-            var $total = this.$el.closest('form').find(this.options.totalValidationSelector);
-            var subtotalAmount = 0;
-            var totalAmount = subtotals.total.amount;
+            const $subtotal = this.$el.closest('form').find(this.options.subtotalValidationSelector);
+            const $total = this.$el.closest('form').find(this.options.totalValidationSelector);
+            let subtotalAmount = 0;
+            const totalAmount = subtotals.total.amount;
 
-            var self = this;
+            const self = this;
             _.each(subtotals.subtotals, function(subtotal) {
                 if (subtotal.type === self.options.subtotalType) {
                     subtotalAmount = subtotal.amount;
@@ -87,7 +86,7 @@ define(function(require) {
             $subtotal.val(subtotalAmount);
             $total.val(totalAmount);
 
-            var validator = $subtotal.closest('form').validate();
+            const validator = $subtotal.closest('form').validate();
 
             if (validator) {
                 validator.element($subtotal);

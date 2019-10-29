@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var SinglePageCheckoutComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var SinglePageCheckoutFormView = require('orocheckout/js/app/views/single-page-checkout-form-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const SinglePageCheckoutFormView = require('orocheckout/js/app/views/single-page-checkout-form-view');
 
-    SinglePageCheckoutComponent = BaseComponent.extend({
+    const SinglePageCheckoutComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -69,7 +68,7 @@ define(function(require) {
          * @param {jQuery} $field
          */
         onAfterCheckForm: function(serializedData, $field) {
-            var parameters = this._getRequestParameters($field);
+            const parameters = this._getRequestParameters($field);
 
             this._saveStateDeferred({
                 dataType: 'json',
@@ -85,7 +84,7 @@ define(function(require) {
         onSubmit: function(data) {
             mediator.execute('showLoading');
 
-            var url = this.options.transitionUrl +
+            const url = this.options.transitionUrl +
                 (-1 !== _.indexOf(this.options.transitionUrl, '?') ? '&' : '?') +
                 $.param({_widgetContainer: 'ajax', _wid: 'ajax_checkout'});
 
@@ -103,7 +102,7 @@ define(function(require) {
 
         onSuccess: function(response) {
             if (response.hasOwnProperty('responseData')) {
-                var eventData = {stopped: false, responseData: response.responseData};
+                const eventData = {stopped: false, responseData: response.responseData};
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) {
                     return;
@@ -113,18 +112,18 @@ define(function(require) {
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
-                var $response = $('<div/>').html(response);
+                const $response = $('<div/>').html(response);
 
                 mediator.trigger('checkout-content:before-update');
 
-                var $content = $(this.options.checkoutContentSelector);
+                const $content = $(this.options.checkoutContentSelector);
                 $content.html($response.find(this.options.checkoutContentSelector).html());
 
-                var $flashNotifications = $response.find(this.options.checkoutFlashNotifications);
+                const $flashNotifications = $response.find(this.options.checkoutFlashNotifications);
                 _.each($flashNotifications, function(element) {
-                    var $element = $(element);
-                    var type = $element.data('type');
-                    var message = $element.data('message');
+                    const $element = $(element);
+                    const type = $element.data('type');
+                    let message = $element.data('message');
                     message = message.replace(/\n/g, '<br>');
                     _.delay(function() {
                         mediator.execute('showFlashMessage', type, message);
@@ -142,8 +141,8 @@ define(function(require) {
          * @param {jQuery} $field
          */
         _getRequestParameters: function($field) {
-            var targetLayoutBlocks = this.options.targetLayoutBlocks || {};
-            var parameters = $.extend(true, {}, this.options.defaultParameters);
+            const targetLayoutBlocks = this.options.targetLayoutBlocks || {};
+            const parameters = $.extend(true, {}, this.options.defaultParameters);
             $.each(targetLayoutBlocks, function(selector, layoutBlocks) {
                 if ($field.is(selector)) {
                     parameters.layout_block_ids = $.merge(parameters.layout_block_ids, layoutBlocks);
@@ -158,9 +157,9 @@ define(function(require) {
          * @param {Object} parameters
          */
         _saveStateDeferred: function(ajaxOpts, parameters) {
-            var dfd = $.Deferred();
-            var promise = dfd.promise();
-            var self = this;
+            const dfd = $.Deferred();
+            const promise = dfd.promise();
+            const self = this;
 
             self.queue.queue(function(next) {
                 self._doRequest(next, dfd, ajaxOpts, parameters);
@@ -171,8 +170,8 @@ define(function(require) {
                     return self.jqXHR.abort(statusText);
                 }
 
-                var queue = self.queue.queue();
-                var index = $.inArray(function(next) {
+                const queue = self.queue.queue();
+                const index = $.inArray(function(next) {
                     self._doRequest(next, dfd, ajaxOpts, parameters);
                 }, queue);
 
@@ -197,7 +196,7 @@ define(function(require) {
         _doRequest: function(next, dfd, ajaxOpts, parameters) {
             this.formView.trigger('before-save-state');
 
-            var layoutBlockIds = parameters.layout_block_ids || [];
+            const layoutBlockIds = parameters.layout_block_ids || [];
 
             this._prepareLayoutSubTreeViews(layoutBlockIds);
             this._beforeLayoutSubTreeViewContentLoading();

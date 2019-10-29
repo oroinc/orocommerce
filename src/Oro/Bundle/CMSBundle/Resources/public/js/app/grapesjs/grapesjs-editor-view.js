@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var GrapesjsEditorView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var GrapesJS = require('grapesjs');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const GrapesJS = require('grapesjs');
 
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ModuleManager = require('orocms/js/app/grapesjs/modules/module-manager');
-    var mediator = require('oroui/js/mediator');
-    var canvasStyle = require('text-loader!orocms/css/grapesjs/grapesjs-canvas.css');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ModuleManager = require('orocms/js/app/grapesjs/modules/module-manager');
+    const mediator = require('oroui/js/mediator');
+    const canvasStyle = require('text-loader!orocms/css/grapesjs/grapesjs-canvas.css');
 
     require('grapesjs-preset-webpage');
     require('orocms/js/app/grapesjs/plugins/components/grapesjs-components');
@@ -18,7 +17,7 @@ define(function(require) {
      * Create GrapesJS content builder
      * @type {*|void}
      */
-    GrapesjsEditorView = BaseView.extend({
+    const GrapesjsEditorView = BaseView.extend({
         /**
          * @inheritDoc
          */
@@ -162,8 +161,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function GrapesjsEditorView() {
-            GrapesjsEditorView.__super__.constructor.apply(this, arguments);
+        constructor: function GrapesjsEditorView(options) {
+            GrapesjsEditorView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -184,7 +183,7 @@ define(function(require) {
                 );
             }
 
-            GrapesjsEditorView.__super__.initialize.apply(this, arguments);
+            GrapesjsEditorView.__super__.initialize.call(this, options);
         },
 
         /**
@@ -215,7 +214,7 @@ define(function(require) {
          * @TODO Should refactored
          */
         getContainer: function() {
-            var $editor = $('<div id="grapesjs" />');
+            const $editor = $('<div id="grapesjs" />');
             $editor.html(this.initialValue);
             this.$el.parent().append($editor);
 
@@ -274,7 +273,7 @@ define(function(require) {
             this.$el.closest('form').on(
                 'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
                 , _.bind(function(e) {
-                    var keyCode = e.keyCode || e.which;
+                    const keyCode = e.keyCode || e.which;
                     if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
                         e.preventDefault();
                         return false;
@@ -320,14 +319,14 @@ define(function(require) {
          */
         setActiveButton: function(panel, name) {
             this.builder.Commands.run(name);
-            var button = this.builder.Panels.getButton(panel, name);
+            const button = this.builder.Panels.getButton(panel, name);
 
             button.set('active', true);
         },
 
         setCurrentContentAlias: function() {
             this.form = this.$el.closest('form');
-            var contentBlockAliasField = this.form.find('[name="oro_cms_content_block[alias]"]');
+            const contentBlockAliasField = this.form.find('[name="oro_cms_content_block[alias]"]');
             if (contentBlockAliasField.length && contentBlockAliasField.val()) {
                 this.builderOptions.contentBlockAlias = contentBlockAliasField.val();
             }
@@ -421,7 +420,7 @@ define(function(require) {
                 return theme.active;
             });
 
-            var style = this.builder.Canvas.getFrameEl().contentDocument.head.querySelector('link');
+            const style = this.builder.Canvas.getFrameEl().contentDocument.head.querySelector('link');
 
             style.href = this.activeTheme.stylesheet;
         },
@@ -433,7 +432,7 @@ define(function(require) {
         _updateInitialField: function() {
             this.$el.val(this.getEditorContent()).trigger('change');
             this.styleField.val(this.getEditorStyles()).trigger('change');
-            var components = JSON.stringify(this.getEditorComponents());
+            const components = JSON.stringify(this.getEditorComponents());
             this.$propertiesInputElement.val(components).trigger('change');
         },
 
@@ -484,7 +483,7 @@ define(function(require) {
          * @private
          */
         _getCanvasConfig: function() {
-            var theme = this.getCurrentTheme();
+            const theme = this.getCurrentTheme();
             return _.extend({}, this.canvasConfig, {
                 canvas: {
                     styles: [theme.stylesheet]

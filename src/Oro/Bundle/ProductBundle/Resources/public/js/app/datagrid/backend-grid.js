@@ -1,26 +1,25 @@
 define(function(require, exports, module) {
     'use strict';
 
-    var BackendGrid;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var pageStateChecker = require('oronavigation/js/app/services/page-state-checker');
-    var Grid = require('orodatagrid/js/datagrid/grid');
-    var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
-    var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
-    var BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
-    var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
+    const pageStateChecker = require('oronavigation/js/app/services/page-state-checker');
+    const Grid = require('orodatagrid/js/datagrid/grid');
+    const BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
+    const BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
+    const BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
+    const SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
 
-    var config = require('module-config').default(module.id);
+    let config = require('module-config').default(module.id);
     config = _.extend({
         massActionsInSticky: _.isMobile(),
         massActionsContainer: $('[data-mass-actions-container]'),
         massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
     }, config);
 
-    BackendGrid = Grid.extend({
+    const BackendGrid = Grid.extend({
         /** @property */
         toolbar: BackendToolbar,
 
@@ -46,8 +45,8 @@ define(function(require, exports, module) {
         /**
          * @inheritDoc
          */
-        constructor: function BackendGrid() {
-            BackendGrid.__super__.constructor.apply(this, arguments);
+        constructor: function BackendGrid(options) {
+            BackendGrid.__super__.constructor.call(this, options);
         },
 
         /**
@@ -63,7 +62,7 @@ define(function(require, exports, module) {
                 this.updateGridContent(params);
             }, this);
 
-            BackendGrid.__super__.initialize.apply(this, arguments);
+            BackendGrid.__super__.initialize.call(this, options);
 
             mediator.on('widget:notFound', function() {
                 $(window).off('beforeunload');
@@ -157,7 +156,7 @@ define(function(require, exports, module) {
             }, this));
 
             this.rendered = true;
-            var self = this;
+            const self = this;
 
             this.switchAppearanceClass(_.result(this.metadata.state, 'appearanceType'));
 
@@ -174,7 +173,7 @@ define(function(require, exports, module) {
             if (this.requestsCount === 1) {
                 this.initLayout({collection: this.collection});
             }
-            BackendGrid.__super__._afterRequest.apply(this, arguments);
+            BackendGrid.__super__._afterRequest.call(this, jqXHR);
         },
 
         /**
@@ -184,7 +183,7 @@ define(function(require, exports, module) {
             this.collection.off('gridContentUpdate');
             mediator.off('grid-content-loaded');
 
-            BackendGrid.__super__.undelegateEvents.apply(this, arguments);
+            BackendGrid.__super__.undelegateEvents.call(this);
         },
 
         renderActionsArea: function() {
@@ -265,12 +264,12 @@ define(function(require, exports, module) {
         },
 
         checkUnSavedData: function(obj) {
-            var live = true;
-            var self = this;
+            let live = true;
+            const self = this;
 
             if (!this.selectState.isEmpty()) {
-                var confirm = function() {
-                    var answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
+                const confirm = function() {
+                    const answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
                     if (answer) {
                         // Clear Selected State
                         self.collection.trigger('backgrid:selectNone');
@@ -291,7 +290,7 @@ define(function(require, exports, module) {
          */
         dispose: function() {
             pageStateChecker.removeChecker(this.hasSelections);
-            BackendGrid.__super__.dispose.apply(this, arguments);
+            BackendGrid.__super__.dispose.call(this);
             $(window).off('.' + this.cid);
         }
     });

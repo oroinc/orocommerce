@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/views/base/view');
 
-    AddressView = BaseComponent.extend({
+    const AddressView = BaseComponent.extend({
         options: {
             addedAddressOptionClass: 'option_added_address',
             hideNewAddressForm: false,
@@ -23,8 +22,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -49,7 +48,7 @@ define(function(require) {
                 this.$shipToBillingCheckbox.on('change', _.bind(this._handleShipToBillingAddressCheckbox, this));
                 if (this.options.selectors.externalShipToBillingCheckbox) {
                     this.$externalShipToBillingCheckbox = $(this.options.selectors.externalShipToBillingCheckbox);
-                    var $externalShipToBillingCheckboxContainer = this.$externalShipToBillingCheckbox.parent();
+                    const $externalShipToBillingCheckboxContainer = this.$externalShipToBillingCheckbox.parent();
                     $externalShipToBillingCheckboxContainer.on('changeHiddenClass',
                         _.bind(this._handleExternalShipToBillingAddressCheckboxContainer,
                             this,
@@ -69,16 +68,16 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
-            var disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
-            var isFormVisible = this._isFormVisible();
-            var showNewAddressForm = !disabled && isFormVisible;
+            const disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
+            const isFormVisible = this._isFormVisible();
+            const showNewAddressForm = !disabled && isFormVisible;
             this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
                 this.$addressSelector.focus();
             }
 
-            var isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();
+            const isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();
 
             this.$addressSelector.prop('disabled', disabled || isSelectorNotAvailable).inputWidget('refresh');
 
@@ -141,12 +140,12 @@ define(function(require) {
                 return;
             }
             if (this.$addressSelector.prop('disabled') && this.$shipToBillingCheckbox.prop('checked')) {
-                var addressValue = $addressSelector.val();
-                var addressTitle = $addressSelector.find('option:selected').text();
+                const addressValue = $addressSelector.val();
+                const addressTitle = $addressSelector.find('option:selected').text();
                 this.$addressSelector.val(addressValue);
                 // if no value - add needed value
                 if (this.$addressSelector.val() !== addressValue) {
-                    var $addedAddress = this.$addressSelector.find('.' + this.options.addedAddressOptionClass);
+                    let $addedAddress = this.$addressSelector.find('.' + this.options.addedAddressOptionClass);
                     if (!$addedAddress.length) {
                         $addedAddress = $('<option/>').addClass(this.options.addedAddressOptionClass);
                         this.$addressSelector.append($addedAddress);

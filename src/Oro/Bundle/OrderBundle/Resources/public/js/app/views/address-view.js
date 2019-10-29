@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/address-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.AddressView
      */
-    AddressView = BaseView.extend({
+    const AddressView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -59,8 +58,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -81,7 +80,7 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
+            const self = this;
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
@@ -89,11 +88,11 @@ define(function(require) {
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
                 }
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
 
@@ -109,7 +108,7 @@ define(function(require) {
                 this.setAddress(this.$el.find(this.options.selectors.address));
 
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
                     if ($field.data('select2')) {
                         $field.data('selected-data', $field.select2('val'));
                     }
@@ -129,7 +128,7 @@ define(function(require) {
          */
         normalizeName: function(name) {
             name = name.split('_');
-            for (var i = 1, iMax = name.length; i < iMax; i++) {
+            for (let i = 1, iMax = name.length; i < iMax; i++) {
                 if (name[i]) {
                     name[i] = name[i][0].toUpperCase() + name[i].substr(1);
                 }
@@ -145,7 +144,7 @@ define(function(require) {
         setAddress: function($address) {
             this.$address = $address;
 
-            var self = this;
+            const self = this;
             this.$address.change(function(e) {
                 self.useDefaultAddress = false;
                 self.customerAddressChange(e);
@@ -159,15 +158,15 @@ define(function(require) {
             if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this._setReadOnlyMode(true);
 
-                var address = this.$address.data('addresses')[this.$address.val()] || null;
+                const address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
-                    var self = this;
+                    const self = this;
 
                     _.each(address, function(value, name) {
                         if (_.isObject(value)) {
                             value = _.first(_.values(value));
                         }
-                        var $field = self.fieldsByName[self.normalizeName(name)] || null;
+                        const $field = self.fieldsByName[self.normalizeName(name)] || null;
                         if ($field) {
                             $field.val(value);
                             if ($field.data('select2')) {
@@ -178,7 +177,7 @@ define(function(require) {
                 }
             } else {
                 this._setReadOnlyMode(false);
-                var $country = this.fieldsByName.country;
+                const $country = this.fieldsByName.country;
                 if ($country) {
                     $country.trigger('redraw');
                 }
@@ -211,13 +210,13 @@ define(function(require) {
          * @param {Object} response
          */
         loadedRelatedData: function(response) {
-            var address = response[this.options.type + 'Address'] || null;
+            const address = response[this.options.type + 'Address'] || null;
             if (!address) {
                 this.loadingEnd();
                 return;
             }
 
-            var $oldAddress = this.$address;
+            const $oldAddress = this.$address;
             this.setAddress($(address));
 
             $oldAddress.parent().trigger('content:remove');

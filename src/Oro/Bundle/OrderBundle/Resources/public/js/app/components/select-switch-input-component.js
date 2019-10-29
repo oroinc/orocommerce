@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var SelectSwitchInputComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    SelectSwitchInputComponent = BaseComponent.extend({
+    const SelectSwitchInputComponent = BaseComponent.extend({
         MODE_SELECT: 'select',
         MODE_INPUT: 'input',
 
@@ -28,15 +27,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SelectSwitchInputComponent() {
-            SelectSwitchInputComponent.__super__.constructor.apply(this, arguments);
+        constructor: function SelectSwitchInputComponent(options) {
+            SelectSwitchInputComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @param options
          */
         initialize: function(options) {
-            var missingProperties = _.filter(this.requiredOptions, _.negate(_.bind(options.hasOwnProperty, options)));
+            const missingProperties = _.filter(this.requiredOptions, _.negate(_.bind(options.hasOwnProperty, options)));
             if (missingProperties.length) {
                 throw new Error(
                     'Following properties are required but weren\'t passed: ' +
@@ -49,9 +48,9 @@ define(function(require) {
             this.$mode = options.mode;
             this.$choices = options.choices;
             this.$select = this.$el.find('.selector');
-            var name = this.$el.find('select').attr('name');
-            var id = this.$el.find('select').attr('id');
-            var validation = this.$el.find('select').attr('data-validation');
+            const name = this.$el.find('select').attr('name');
+            const id = this.$el.find('select').attr('id');
+            const validation = this.$el.find('select').attr('data-validation');
             this.$input = $('<input type="text" style="width: 100px; margin-left: 5px;">')
                 .attr('id', id)
                 .attr('name', name);

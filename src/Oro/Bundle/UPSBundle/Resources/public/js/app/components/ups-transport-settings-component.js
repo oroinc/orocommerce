@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var UPSTransportSettingsComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    UPSTransportSettingsComponent = BaseComponent.extend({
+    const UPSTransportSettingsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -43,8 +42,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function UPSTransportSettingsComponent() {
-            UPSTransportSettingsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function UPSTransportSettingsComponent(options) {
+            UPSTransportSettingsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -69,8 +68,8 @@ define(function(require) {
         },
 
         onCountryChange: function() {
-            var country = this.country.val();
-            var self = this;
+            const country = this.country.val();
+            const self = this;
 
             this.hideShippingServiceIfCountryNotSelected();
 
@@ -99,7 +98,7 @@ define(function(require) {
         },
 
         hideShippingServiceIfCountryNotSelected: function() {
-            var country = this.country.val();
+            const country = this.country.val();
             if (!country) {
                 this.shippingServicesHolder.hide();
             }
