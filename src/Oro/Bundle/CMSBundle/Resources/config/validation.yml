@@ -6,6 +6,8 @@ Oro\Bundle\CMSBundle\Entity\Page:
             - Valid: ~
         slugPrototypes:
             - Valid: ~
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
 
 Oro\Bundle\CMSBundle\Entity\ContentBlock:
     constraints:
@@ -44,3 +46,5 @@ Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

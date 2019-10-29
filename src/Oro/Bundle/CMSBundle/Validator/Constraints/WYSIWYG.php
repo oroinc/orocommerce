@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraint;
  */
 class WYSIWYG extends Constraint
 {
-    public const HTML_PURIFIER_SCOPE = 'default';
-
     /** @var string */
     public $message = 'oro.cms.wysiwyg.not_permitted_content.message';
 }

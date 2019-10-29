@@ -9,6 +9,7 @@ use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -24,6 +25,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\CollectionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
@@ -39,6 +41,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
 
         return [
             new PreloadedExtension(
@@ -48,7 +51,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
                 ],
                 []
             ),
@@ -62,12 +65,13 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     protected function getValidators()
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $wysiwygConstraint = new WYSIWYG();
 
         return [
-            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $logger)
+            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $purifierScopeProvider, $logger)
         ];
     }
 

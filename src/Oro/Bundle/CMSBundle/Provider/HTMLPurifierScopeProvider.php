@@ -60,7 +60,7 @@ class HTMLPurifierScopeProvider
     /**
      * @param string $entityName
      * @param string $fieldName
-     * @return string
+     * @return string|null
      */
     public function getScope(string $entityName, string $fieldName): ?string
     {

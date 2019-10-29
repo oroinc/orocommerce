@@ -279,6 +279,7 @@ services:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
         arguments:
             - '@oro_form.provider.html_tag_provider'
+            - '@oro_cms.provider.html_purifier_scope_provider'
         tags:
             - { name: form.type }
 
@@ -286,6 +287,7 @@ services:
         class: Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator
         arguments:
             - '@oro_ui.html_tag_helper'
+            - '@oro_cms.provider.html_purifier_scope_provider'
             - '@logger'
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }

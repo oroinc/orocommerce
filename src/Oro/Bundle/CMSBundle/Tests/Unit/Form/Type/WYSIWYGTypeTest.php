@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
@@ -19,28 +21,27 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $htmlTagProvider;
 
+    /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $purifierScopeProvider;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         parent::setUp();
     }
 
     public function testGetParent(): void
     {
-        $type = new WYSIWYGType($this->htmlTagProvider);
+        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
         $this->assertEquals(TextareaType::class, $type->getParent());
     }
 
     public function testConfigureOptions(): void
     {
-        $this->htmlTagProvider
-            ->expects($this->once())
-            ->method('getAllowedElements')
-            ->willReturn(['h1', 'h2', 'h3']);
-
         /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -50,15 +51,14 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'module' => 'oroui/js/app/components/view-component',
                     'options' => [
                         'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
-                        'allow_tags' => ['h1', 'h2', 'h3']
+                        'allow_tags' => []
                     ]
                 ],
-                'constraints' => [new WYSIWYG()],
                 'error_bubbling' => true
             ])
             ->will($this->returnSelf());
 
-        $type = new WYSIWYGType($this->htmlTagProvider);
+        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
         $type->configureOptions($resolver);
     }
 
@@ -71,13 +71,22 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(string $htmlValue, array $allowedElements, bool $isValid): void
     {
+        $this->purifierScopeProvider
+            ->expects($this->once())
+            ->method('getScope')
+            ->willReturn('default');
+
         $this->htmlTagProvider
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn($allowedElements);
 
-        $form = $this->factory->create(WYSIWYGType::class);
+        $form = $this->factory->create(WYSIWYGType::class, null, [
+            'data_class' => Page::class,
+            'constraints' => new WYSIWYG()
+        ]);
+
         $form->submit($htmlValue);
         $this->assertEquals($htmlValue, $form->getData());
         $this->assertEquals($isValid, $form->isValid());
@@ -85,9 +94,50 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishView(): void
     {
+        $this->purifierScopeProvider
+            ->expects($this->once())
+            ->method('getScope')
+            ->with(Page::class, 'wysiwyg')
+            ->willReturn('default');
+
+        $this->htmlTagProvider
+            ->expects($this->once())
+            ->method('getAllowedElements')
+            ->with('default')
+            ->willReturn(['h1', 'h2', 'h3']);
+
         $view = new FormView();
-        $form = $this->factory->create(WYSIWYGType::class);
-        $type = new WYSIWYGType($this->htmlTagProvider);
+        $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
+        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
+        $type->finishView($view, $form, ['page-component' => [
+            'module' => 'component/module',
+            'options' => ['view' => 'app/view']
+        ]]);
+
+        $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
+        $this->assertEquals(
+            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
+            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
+            $view->vars['attr']['data-page-component-options']
+        );
+    }
+
+    public function testFinishViewForEmptyScope(): void
+    {
+        $this->purifierScopeProvider
+            ->expects($this->once())
+            ->method('getScope')
+            ->with(Page::class, 'wysiwyg')
+            ->willReturn(null);
+
+        $this->htmlTagProvider
+            ->expects($this->never())
+            ->method('getAllowedElements');
+
+        $view = new FormView();
+        $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
+        $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
         $type->finishView($view, $form, ['page-component' => [
             'module' => 'component/module',
             'options' => ['view' => 'app/view']
@@ -128,7 +178,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WYSIWYGType::class => new WYSIWYGType($this->htmlTagProvider),
+                    WYSIWYGType::class => new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider),
                 ],
                 []
             ),
@@ -148,7 +198,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $wysiwygConstraint = new WYSIWYG();
 
         return [
-            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $logger)
+            $wysiwygConstraint->validatedBy() =>
+                new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $logger)
         ];
     }
 }
