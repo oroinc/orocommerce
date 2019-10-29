@@ -1088,6 +1088,12 @@ oro_behat_extension:
     Product WYSIWYG_video Attribute Content:
       selector: "textarea[id^='oro_product_WYSIWYG_video']"
 
+    Digital Asset Choose:
+      selector: 'a[data-role="digital-asset-choose"]:not([class*="hide"])'
+
+    Digital Asset Choose Another:
+      selector: 'a[data-role="digital-asset-update"]:not([class*="hide"])'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

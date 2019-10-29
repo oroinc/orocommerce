@@ -236,6 +236,8 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $priceList = $this->getReference('price_list_1');
+        $product1Id = $this->getReference('product-1')->getId();
+        $product2Id = $this->getReference('product-2')->getId();
 
         $this->cdelete(
             ['entity' => 'productprices'],
@@ -252,22 +254,13 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $priceListId = $this->getReference('price_list_1')->getId();
 
-        self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            [
-                PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [$this->getReference('product-1')->getId()]
-                ]
-            ]
-        );
-        self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            [
-                PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [$this->getReference('product-2')->getId()]
-                ]
-            ]
-        );
+        $message = self::getSentMessage(Topics::RESOLVE_COMBINED_PRICES);
+        self::assertIsArray($message);
+        self::assertArrayHasKey('product', $message);
+        self::assertArrayHasKey($priceListId, $message['product']);
+        $productIds = $message['product'][$priceListId];
+        sort($productIds);
+        self::assertEquals([$product1Id, $product2Id], $productIds);
     }
 
     public function testTryToDeleteListWithoutPriceListFilter()

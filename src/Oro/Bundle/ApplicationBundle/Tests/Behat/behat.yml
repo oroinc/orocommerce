@@ -64,7 +64,9 @@ oro_behat_extension:
           Name: 'oro_product[names][values][default]'
           Status: 'oro_product[status]'
           Unit Of Quantity: 'oro_product[primaryUnitPrecision][unit]'
-          Product Image: 'oro_product[images][0][image][file]'
+          Product Image:
+            type: 'xpath'
+            locator: '//*[contains(@class,"digital-asset-item")]//input[contains(@name,"digitalAsset")]'
           Main Image: 'oro_product[images][0][main]'
           Listing Image: 'oro_product[images][0][listing]'
           Additional Image: 'oro_product[images][0][additional]'

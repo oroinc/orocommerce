@@ -18,8 +18,14 @@ Feature: Duplicate product
       | Status           | Enabled  |
     And I click Edit Product1 in grid
     And I set Images with:
-      | File     | Main | Listing | Additional |
-      | cat1.jpg | 1    | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     When I save and duplicate form
     Then I should see "Product has been saved and duplicated" flash message
 
@@ -77,8 +83,14 @@ Feature: Duplicate product
       | Shipping Option Freight Class Value 1 | parcel                     |
     And I click on "Remove Image 1"
     And I set Images with:
-      | File     | Main | Listing | Additional |
-      | cat2.jpg | 0    | 0       | 1          |
+      | Main  | Listing | Additional |
+      |       | 0       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And click on cat2.jpg in grid
     And click "Category2"
     And I save and close form
     Then I should see "Product has been saved" flash message

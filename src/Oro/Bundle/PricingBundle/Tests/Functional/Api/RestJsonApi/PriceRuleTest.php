@@ -158,6 +158,58 @@ class PriceRuleTest extends RestJsonApiTestCase
         $this->assertLexemesCreated($priceRule->getPriceList());
     }
 
+    public function testCreateAsIncludedData()
+    {
+        $this->cleanScheduledMessages();
+
+        $priceListId = $this->getReference('price_list_3')->getId();
+
+        $this->patch(
+            ['entity' => 'pricelists', 'id' => (string)$priceListId],
+            [
+                'data'     => [
+                    'type'          => 'pricelists',
+                    'id'            => (string)$priceListId,
+                    'relationships' => [
+                        'priceRules' => [
+                            'data' => [
+                                ['type' => 'pricerules', 'id' => 'new_rule']
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'type'          => 'pricerules',
+                        'id'            => 'new_rule',
+                        'attributes'    => [
+                            'currency' => 'EUR',
+                            'quantity' => 1,
+                            'priority' => 10,
+                            'rule'     => 'pricelist[0].prices.value * 0.8'
+                        ],
+                        'relationships' => [
+                            'productUnit' => [
+                                'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.box->code)>']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $priceRule = $this->getEntityManager()
+            ->getRepository(PriceRule::class)
+            ->findOneBy(['rule' => 'pricelist[0].prices.value * 0.8']);
+
+        self::assertEquals($priceListId, $priceRule->getPriceList()->getId());
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            ['product' => [$priceRule->getPriceList()->getId() => []]]
+        );
+        $this->assertLexemesCreated($priceRule->getPriceList());
+    }
+
     public function testDeleteList()
     {
         $this->cleanScheduledMessages();

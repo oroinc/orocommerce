@@ -10,6 +10,8 @@ use Doctrine\ORM\EntityManager;
 use Gaufrette\Adapter\Local;
 use Gaufrette\File;
 use Gaufrette\Filesystem;
+use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
+use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -232,6 +234,8 @@ class LoadProductDemoData extends AbstractFixture implements
     {
         $productImage = null;
 
+        $user = $this->getFirstUser($manager);
+
         try {
             $imagePath = $locator->locate(sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
 
@@ -240,9 +244,27 @@ class LoadProductDemoData extends AbstractFixture implements
             }
 
             $fileManager = $this->container->get('oro_attachment.file_manager');
-            $image = $fileManager->createFileEntity($imagePath);
+            $file = $fileManager->createFileEntity($imagePath);
+            $file->setOwner($user);
+            $manager->persist($file);
+
+            $title = new LocalizedFallbackValue();
+            $title->setString($sku);
+            $manager->persist($title);
+
+            $digitalAsset = new DigitalAsset();
+            $digitalAsset->addTitle($title)
+                ->setSourceFile($file)
+                ->setOwner($user)
+                ->setOrganization($user->getOrganization());
+            $manager->persist($digitalAsset);
+
+            $image = new AttachmentFile();
+            $image->setDigitalAsset($digitalAsset);
             $manager->persist($image);
             $manager->flush();
+
+            $this->writeFilteredDigitalAssets($file, $locator, $sku);
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
@@ -326,6 +348,34 @@ class LoadProductDemoData extends AbstractFixture implements
                     ->getPathForFilteredImage($productImage->getImage(), $filterName);
                 $publicMediaCacheManager->writeToStorage($filteredImage->getContent(), $storagePath);
             }
+        }
+    }
+
+    /**
+     * @param AttachmentFile $file
+     * @param FileLocator $locator
+     * @param string $sku
+     */
+    private function writeFilteredDigitalAssets(AttachmentFile $file, $locator, $sku): void
+    {
+        $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
+        $cacheManager = $this->container->get('oro_attachment.manager.protected_mediacache');
+        $filters = array_keys($this->container->getParameter('liip_imagine.filter_sets'));
+
+        foreach ($filters as $filter) {
+            if (strpos($filter, 'digital_asset_') !== 0) {
+                continue;
+            }
+
+            $filesystem = $this->getFilesystem($locator, $filter);
+
+            $filteredImage = $this->getResizedProductImageFile($filesystem, $sku);
+            if (!$filteredImage) {
+                continue;
+            }
+
+            $storagePath = $resizedImagePathProvider->getPathForFilteredImage($file, $filter);
+            $cacheManager->writeToStorage($filteredImage->getContent(), $storagePath);
         }
     }
 

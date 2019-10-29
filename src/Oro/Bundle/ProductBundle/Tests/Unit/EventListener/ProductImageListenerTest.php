@@ -9,11 +9,11 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
@@ -142,12 +142,28 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
+    public function testPreRemove(): void
+    {
+        $productImage = $this->prepareProductImage();
+
+        $this->productImageEntityManager->expects($this->once())
+            ->method('remove')
+            ->with($productImage->getImage());
+
+        $this->lifecycleArgs->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->productImageEntityManager);
+
+        $this->listener->preRemove($productImage, $this->lifecycleArgs);
+    }
+
     /**
-     * @return ProductImage
+     * @return StubProductImage
      */
     private function prepareProductImage()
     {
-        $parentProductImage = new ProductImage();
+        $parentProductImage = new StubProductImage();
+        $parentProductImage->setImage(new File());
         $parentProductImage->setTypes(
             new ArrayCollection(
                 [
@@ -160,7 +176,8 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $parentProduct = new Product();
         $parentProduct->addImage($parentProductImage);
 
-        $productImage = new ProductImage();
+        $productImage = new StubProductImage();
+        $productImage->setImage(new File());
         $productImage->addType(new ProductImageType('main'));
         $productImage->setProduct($parentProduct);
 
