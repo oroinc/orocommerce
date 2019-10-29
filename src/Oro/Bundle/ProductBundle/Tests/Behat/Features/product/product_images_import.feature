@@ -121,9 +121,9 @@ Feature: Product Images Import
       | Body | Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0 |
     When click view "SKU1" in grid
     And I should see following product images:
+      | gecko1.jpg | 1 |   | 1 |
       | dog1.jpg   |   | 1 | 1 |
       | dog1.jpg   |   |   | 1 |
-      | gecko1.jpg | 1 |   | 1 |
 
   Scenario: Check if there Product Images on frontend
     Given I proceed as the User

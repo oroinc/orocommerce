@@ -130,6 +130,17 @@ oro_behat_extension:
           Quantity: 'oro_action_operation[price][quantity]'
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
+          Currency: 'oro_action_operation[price][price][currency]'
+
+    Update Product Price Form:
+      selector: '[id^="oro_pricing_price_list_product_price-uid"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_pricing_price_list_product_price[quantity]'
+          Unit: 'oro_pricing_price_list_product_price[unit]'
+          Price: 'oro_pricing_price_list_product_price[price][value]'
+          Currency: 'oro_pricing_price_list_product_price[price][currency]'
 
     Order Review Form:
       selector: '[name="oro_workflow_transition"]'

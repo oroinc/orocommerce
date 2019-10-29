@@ -84,6 +84,9 @@ class BaseProductPrice implements
      *          "importexport"={
      *              "order"=20,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -100,6 +103,9 @@ class BaseProductPrice implements
      *          "importexport"={
      *              "order"=30,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -115,6 +121,9 @@ class BaseProductPrice implements
      *          "importexport"={
      *              "order"=40,
      *              "header"="Price"
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -130,6 +139,9 @@ class BaseProductPrice implements
      *          "importexport"={
      *              "order"=50,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )

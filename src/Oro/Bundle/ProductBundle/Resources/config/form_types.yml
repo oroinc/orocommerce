@@ -7,6 +7,7 @@ services:
             - "@router"
         calls:
             - [setDataClass, ['%oro_product.entity.product.class%']]
+            - [setProductImageHelper, ['@oro_product.helper.product_image_helper']]
         tags:
             - { name: form.type, alias: oro_product }
 

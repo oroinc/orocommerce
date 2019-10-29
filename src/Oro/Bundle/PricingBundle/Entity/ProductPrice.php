@@ -30,6 +30,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          },
  *          "sharding"={
  *              "discrimination_field"="priceList"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=false
  *          }
  *      }
  * )
@@ -62,10 +65,14 @@ class ProductPrice extends BaseProductPrice
      *      defaultValues={
      *          "importexport"={
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true,
+     *              "propagate"=true
      *          }
      *      }
      * )
-     **/
+     */
     protected $priceList;
 
     /**
@@ -73,7 +80,7 @@ class ProductPrice extends BaseProductPrice
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRule")
      * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     **/
+     */
     protected $priceRule;
 
     /**
