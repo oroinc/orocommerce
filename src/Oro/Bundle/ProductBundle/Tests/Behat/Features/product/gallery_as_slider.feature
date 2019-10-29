@@ -30,9 +30,23 @@ Feature: Gallery as slider
     And I go to Products / Products
     And I click Edit "PSKU1" in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg | 1     | 1       | 1          |
-      | cat2.jpg |       |         | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       |         | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And click on cat2.jpg in grid
     And I save and close form
     And I should see "Product has been saved" flash message
     And I am on the homepage

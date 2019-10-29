@@ -30,13 +30,27 @@ Feature: Create product
       | Status           | Enable       |
       | Unit Of Quantity | item         |
     And I set Images with:
-      | File     | Main | Listing | Additional |
-      | cat1.jpg | 1    |         | 1          |
-      | cat2.jpg |      | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     |         | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
+    And I set Images with:
+      | Main  | Listing | Additional |
+      |       | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And click on cat2.jpg in grid
     When save form
     Then I should see "Product has been saved" flash message
-    And I remember "listing" image resized ID
-    And I remember "main" image resized ID
+    And I remember "listing" image filtered ID
+    And I remember "main" image filtered ID
 
   Scenario: Check created product on grid
     Given I go to Products/ Products
