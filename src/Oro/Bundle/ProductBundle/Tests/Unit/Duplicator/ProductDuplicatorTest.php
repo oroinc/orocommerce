@@ -181,18 +181,10 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->will($this->returnValue([$attachment1, $attachment2]));
 
-        $this->fileManager->expects($this->any())
+        $this->fileManager->expects($this->exactly(3))
             ->method('cloneFileEntity')
-            ->with($image)
-            ->will($this->returnValue($imageCopy));
-        $this->fileManager->expects($this->any())
-            ->method('cloneFileEntity')
-            ->with($attachmentFile1)
-            ->will($this->returnValue($attachmentFileCopy1));
-        $this->fileManager->expects($this->any())
-            ->method('cloneFileEntity')
-            ->with($attachmentFile2)
-            ->will($this->returnValue($attachmentFileCopy2));
+            ->withConsecutive([$image], [$attachmentFile1], [$attachmentFile2])
+            ->willReturnOnConsecutiveCalls($imageCopy, $attachmentFileCopy1, $attachmentFileCopy2);
 
         $this->connection->expects($this->once())
             ->method('beginTransaction');

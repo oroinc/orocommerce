@@ -24,3 +24,8 @@ oro_cms_content_widget:
     resource:     "@OroCMSBundle/Controller/ContentWidgetController.php"
     type:         annotation
     prefix:       /cms/content-widget
+
+oro_cms_wysiwyg_digita_asset:
+    resource:     "@OroCMSBundle/Controller/WysiwygDigitalAssetController.php"
+    type:         annotation
+    prefix:       /cms/wysiwyg/digital-asset

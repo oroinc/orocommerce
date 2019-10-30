@@ -93,7 +93,7 @@ services:
             # properties
             - []
             # functions
-            - ['widget', 'content_block']
+            - ['widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file']
 
     oro_cms.twig.sandbox_extension:
         class: 'Twig_Extension_Sandbox'
@@ -122,6 +122,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_cms.twig.digital_asset_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\DigitalAssetExtension'
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'
 
@@ -132,6 +139,7 @@ services:
         calls:
             - [addExtension, ['@oro_cms.twig.widget_extension']]
             - [addExtension, ['@oro_cms.twig.content_block_extension']]
+            - [addExtension, ['@oro_cms.twig.digital_asset_extension']]
             - [addExtension, ['@oro_cms.twig.sandbox_extension']]
 
     oro_crm.twig.twig_in_variables_extension:
