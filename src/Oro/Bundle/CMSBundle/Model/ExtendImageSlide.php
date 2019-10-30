@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\CMSBundle\Model;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 /**
  * Extend class which allow to make ImageSlide entity extandable.
  *
- * @method AbstractEnumValue getTextAlignment()
- * @method ImageSlide setTextAlignment(AbstractEnumValue $enumId)
+ * @method null|File getMainImage()
+ * @method ImageSlide setMainImage(File $image)
+ * @method null|File getMediumImage()
+ * @method ImageSlide setMediumImage(File $image)
+ * @method null|File getSmallImage()
+ * @method ImageSlide setSmallImage(File $image)
  */
 class ExtendImageSlide
 {

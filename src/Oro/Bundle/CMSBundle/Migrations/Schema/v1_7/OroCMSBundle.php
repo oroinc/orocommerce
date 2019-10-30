@@ -3,14 +3,20 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
-use Oro\Bundle\CMSBundle\Migrations\Data\ORM\LoadImageSlideTextAlignments;
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCMSBundle implements Migration
+class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
+    const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
+    const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
+    const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
+
     /**
      * {@inheritdoc}
      */
@@ -71,34 +77,43 @@ class OroCMSBundle implements Migration
         $table = $schema->createTable('oro_cms_image_slide');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('content_widget_id', 'integer');
-        $table->addColumn('order', 'integer', ['default' => 0]);
+        $table->addColumn('slide_order', 'integer', ['default' => 0]);
         $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('display_in_same_window', 'boolean', ['default' => true]);
         $table->addColumn('title', 'string', ['length' => 255]);
         $table->addColumn('text', 'text', ['notnull' => false]);
-        $table->addColumn('main_image_id', 'integer');
-        $table->addColumn('medium_image_id', 'integer', ['notnull' => false]);
-        $table->addColumn('small_image_id', 'integer', ['notnull' => false]);
-        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['main_image_id'], 'UNIQ_E2EB2F2BE4873418');
-        $table->addUniqueIndex(['medium_image_id'], 'UNIQ_E2EB2F2B442C36CF');
-        $table->addUniqueIndex(['small_image_id'], 'UNIQ_E2EB2F2BD9E4E1BC');
+        $table->addColumn('text_alignment', 'string', ['length' => 20, 'default' => ImageSlide::TEXT_ALIGNMENT_CENTER]);
 
-        $textAlignmentEnumTable = $this->extendExtension->addEnumField(
+        $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_image_slide',
-            'text_alignment',
-            ImageSlide::TEXT_ALIGNMENT_CODE,
-            false,
-            false,
-            ['dataaudit' => ['auditable' => true]]
+            'mainImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB,
+            null,
+            null
+        );
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            'mediumImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB,
+            null,
+            null
+        );
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            'smallImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB,
+            null,
+            null
         );
 
-        $textAlignmentOptions = new OroOptions();
-        $textAlignmentOptions->set('enum', 'immutable_codes', LoadImageSlideTextAlignments::getDataKeys());
-
-        $textAlignmentEnumTable->addOption(OroOptions::KEY, $textAlignmentOptions);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -146,24 +161,6 @@ class OroCMSBundle implements Migration
             ['content_widget_id'],
             ['id'],
             ['onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_attachment_file'),
-            ['main_image_id'],
-            ['id'],
-            ['onDelete' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_attachment_file'),
-            ['medium_image_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_attachment_file'),
-            ['small_image_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),

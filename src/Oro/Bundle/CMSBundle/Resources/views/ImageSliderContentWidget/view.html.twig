@@ -1,0 +1,65 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="image-collection view">
+    <table class="grid table table-bordered">
+        <thead>
+        <tr>
+            <th>{{ 'oro.cms.imageslide.slide_order.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.url.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.title.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.text.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.text_alignment.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.display_in_same_window.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.main_image.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.medium_image.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.small_image.label'|trans }}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {% for imageSlide in imageSlides %}
+            <tr>
+                <td>
+                    {{ imageSlide.slideOrder }}
+                </td>
+                <td>
+                    {{ imageSlide.url }}
+                </td>
+                <td>
+                    {{ imageSlide.title }}
+                </td>
+                <td>
+                    {{ imageSlide.text|default('oro.ui.empty'|trans)|raw }}
+                </td>
+                <td>
+                    {{ ('oro.cms.imageslide.text_alignment.value.' ~ imageSlide.textAlignment)|trans }}
+                </td>
+                <td>
+                    {% if imageSlide.displayInSameWindow %}
+                        {{ 'oro.cms.imageslide.display_in_same_window.value.yes'|trans }}
+                    {% else %}
+                        {{ 'oro.cms.imageslide.display_in_same_window.value.no'|trans }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ oro_file_view(imageSlide.mainimage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                </td>
+                <td>
+                    {% if imageSlide.mediumImage %}
+                        {{ oro_file_view(imageSlide.mediumImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                    {% else %}
+                        {{ 'oro.ui.empty'|trans }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if imageSlide.smallImage %}
+                        {{ oro_file_view(imageSlide.smallImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                    {% else %}
+                        {{ 'oro.ui.empty'|trans }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

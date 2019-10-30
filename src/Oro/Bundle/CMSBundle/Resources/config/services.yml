@@ -281,3 +281,17 @@ services:
             - '@oro_form.provider.html_tag_provider'
         tags:
             - { name: form.type }
+
+    oro_cms.content_widget_type.image_slider:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_cms.event_listener.content_widget_from:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }

@@ -46,21 +46,36 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
     properties:
         contentWidget:
             - NotBlank: ~
-        order:
+        slideOrder:
             - NotBlank: ~
         url:
             - NotBlank: ~
             - Length:
+                  min: 1
                   max: 255
         displayInSameWindow:
             - NotBlank: ~
         title:
             - NotBlank: ~
             - Length:
+                  min: 1
                   max: 255
         text:
             - Length:
                   max: 255
+        textAlignment:
+            - NotBlank: ~
+            - Choice:
+                choices:
+                    - center
+                    - left
+                    - right
+                    - top_left
+                    - top_center
+                    - top_right
+                    - bottom_left
+                    - bottom_center
+                    - bottom_right
         mainImage:
             - NotBlank: ~
         organization:

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CMSBundle\Model\ExtendImageSlide;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -36,8 +35,6 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
 {
     use OrganizationAwareTrait;
 
-    public const TEXT_ALIGNMENT_CODE = 'img_slide_text_align';
-
     public const TEXT_ALIGNMENT_CENTER = 'center';
     public const TEXT_ALIGNMENT_LEFT = 'left';
     public const TEXT_ALIGNMENT_RIGHT = 'right';
@@ -45,7 +42,7 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     public const TEXT_ALIGNMENT_TOP_CENTER = 'top_center';
     public const TEXT_ALIGNMENT_TOP_RIGHT = 'top_right';
     public const TEXT_ALIGNMENT_BOTTOM_LEFT = 'bottom_left';
-    public const TEXT_ALIGNMENT_BUTTOM_CENTER = 'buttom_center';
+    public const TEXT_ALIGNMENT_BOTTOM_CENTER = 'bottom_center';
     public const TEXT_ALIGNMENT_BOTTOM_RIGHT = 'bottom_right';
 
     /**
@@ -60,11 +57,7 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     /**
      * @var ContentWidget
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CMSBundle\Entity\ContentWidget",
-     *     inversedBy="imageSlides",
-     *     cascade={"persist"}
-     * )
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CMSBundle\Entity\ContentWidget")
      * @ORM\JoinColumn(name="content_widget_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -79,7 +72,7 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     /**
      * @var int
      *
-     * @ORM\Column(name="order", type="integer", options={"default"=0})
+     * @ORM\Column(name="slide_order", type="integer", options={"default"=0})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -88,7 +81,7 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
      *      }
      * )
      */
-    protected $order;
+    protected $slideOrder = 0;
 
     /**
      * @var string
@@ -147,58 +140,18 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     protected $text;
 
     /**
-     * @var File
+     * @var string
      *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File", cascade={"all"})
-     * @ORM\JoinColumn(name="main_image_id", referencedColumnName="id", nullable=false)
+     * @ORM\Column(name="text_alignment", type="string", length=20, nullable=false, options={"default"="center"})
      * @ConfigField(
      *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          },
      *          "dataaudit"={
      *              "auditable"=true
      *          }
      *      }
      * )
      */
-    protected $mainImage;
-
-    /**
-     * @var File
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File", cascade={"all"})
-     * @ORM\JoinColumn(name="medium_image_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $mediumImage;
-
-    /**
-     * @var File
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File", cascade={"all"})
-     * @ORM\JoinColumn(name="small_image_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $smallImage;
+    protected $textAlignment = self::TEXT_ALIGNMENT_CENTER;
 
     /**
      * @return int
@@ -230,18 +183,18 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     /**
      * @return null|int
      */
-    public function getOrder(): ?int
+    public function getSlideOrder(): ?int
     {
-        return $this->order;
+        return $this->slideOrder;
     }
 
     /**
-     * @param int $order
+     * @param int $slideOrder
      * @return $this
      */
-    public function setOrder(int $order): self
+    public function setSlideOrder(int $slideOrder): self
     {
-        $this->order = $order;
+        $this->slideOrder = $slideOrder;
 
         return $this;
     }
@@ -323,59 +276,21 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @return null|File
+     * @return null|string
      */
-    public function getMainImage(): ?File
+    public function getTextAlignment(): ?string
     {
-        return $this->mainImage;
+        return $this->textAlignment;
     }
 
     /**
-     * @param File $mainImage
+     * @param string $textAlignment
      * @return $this
      */
-    public function setMainImage(File $mainImage): self
+    public function setTextAlignment(string $textAlignment): self
     {
-        $this->mainImage = $mainImage;
-        
-        return $this;
-    }
+        $this->textAlignment = $textAlignment;
 
-    /**
-     * @return null|File
-     */
-    public function getMediumImage(): ?File
-    {
-        return $this->mediumImage;
-    }
-
-    /**
-     * @param File $mediumImage
-     * @return $this
-     */
-    public function setMediumImage(File $mediumImage): self
-    {
-        $this->mediumImage = $mediumImage;
-        
-        return $this;
-    }
-
-    /**
-     * @return null|File
-     */
-    public function getSmallImage(): ?File
-    {
-        return $this->smallImage;
-    }
-
-    /**
-     * @param File $smallImage
-     * @return $this
-     */
-    public function setSmallImage(File $smallImage): self
-    {
-        $this->smallImage = $smallImage;
-        
         return $this;
     }
 }
