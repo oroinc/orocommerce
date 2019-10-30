@@ -2,9 +2,9 @@ define(function(require) {
     'use strict';
 
     var TotalsComponent;
-    var subtotalTemplate = require('text!oropricing/templates/order/subtotals.html');
-    var template = require('tpl!oropricing/templates/order/totals.html');
-    var noDataTemplate = require('tpl!oropricing/templates/order/totals-no-data.html');
+    var subtotalTemplate = require('text-loader!oropricing/templates/order/subtotals.html');
+    var template = require('tpl-loader!oropricing/templates/order/totals.html');
+    var noDataTemplate = require('tpl-loader!oropricing/templates/order/totals-no-data.html');
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');

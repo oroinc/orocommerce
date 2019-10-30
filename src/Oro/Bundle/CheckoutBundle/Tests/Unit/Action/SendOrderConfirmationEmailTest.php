@@ -2,113 +2,85 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
+use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Tests\Unit\Workflow\Action\AbstractSendEmailTemplateTest;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
-use Twig\Error\RuntimeError;
 
 class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
 {
-    protected function setUp()
+    /** @var SendOrderConfirmationEmail */
+    private $action;
+
+    protected function setUp(): void
     {
-        $this->createDependencyMocks();
+        parent::setUp();
 
         $this->action = new SendOrderConfirmationEmail(
             $this->contextAccessor,
             $this->emailProcessor,
             new EmailAddressHelper(),
             $this->entityNameResolver,
-            $this->renderer,
-            $this->objectManager,
+            $this->registry,
             $this->validator,
+            $this->localizedTemplateProvider,
             $this->emailOriginHelper
         );
 
         $this->action->setLogger($this->logger);
-        $this->action->setPreferredLanguageProvider($this->languageProvider);
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    public function testExecuteIgnoresTwigExceptions()
+    /**
+     * @dataProvider executeIgnoresExceptionsDataProvider
+     *
+     * @param \Throwable $exception
+     * @param string $logMessage
+     */
+    public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
-        ['context' => $context, 'language' => $language, 'options' => $options] = $this->configureMocks();
-
-        $this->objectRepository
-            ->method('findOneLocalized')
-            ->with(new EmailTemplateCriteria($options['template'], get_class($options['entity'])), $language)
-            ->willReturn($this->emailTemplate);
-
-        $this->renderer
-            ->method('compileMessage')
-            ->will($this->throwException(new RuntimeError('Twig_Error_Runtime')));
+        $this->localizedTemplateProvider->expects($this->once())
+            ->method('getAggregated')
+            ->willThrowException($exception);
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with('Twig exception in @send_order_confirmation_email action');
+            ->with($logMessage);
 
-        $this->action->initialize($options);
-        $this->action->execute($context);
-    }
-
-    public function testExecuteIgnoresMissingEmailTemplate()
-    {
-        ['context' => $context, 'language' => $language, 'options' => $options] = $this->configureMocks();
-
-        $this->objectRepository
-            ->method('findOneLocalized')
-            ->with(new EmailTemplateCriteria($options['template'], get_class($options['entity'])), $language)
-            ->willReturn(null);
-
-        $this->logger->expects($this->at(1)) // $this->at(0) would be logging of the original exception
-            ->method('error')
-            ->with('Cannot find the specified email template in  @send_order_confirmation_email action');
-
-        $this->action->initialize($options);
-        $this->action->execute($context);
+        $this->action->initialize(
+            [
+                'from' => 'test@test.com',
+                'to' => 'test@test.com',
+                'template' => 'test',
+                'subject' => 'subject',
+                'body' => 'body',
+                'entity' => new \stdClass(),
+                'workflow' => 'test',
+            ]
+        );
+        $this->action->execute([]);
     }
 
     /**
      * @return array
      */
-    private function configureMocks(): array
+    public function executeIgnoresExceptionsDataProvider(): array
     {
-        $context = [];
-
-        $language = 'de';
-
-        $options = [
-            'from' => 'test@test.com',
-            'to' => 'test@test.com',
-            'template' => 'test',
-            'subject' => 'subject',
-            'body' => 'body',
-            'entity' => new \stdClass(),
-            'workflow' => 'test'
+        return [
+            [
+                'exception' => new \Twig_Error_Runtime('Twig_Error_Runtime'),
+                'logMessage' => 'Twig exception in @send_order_confirmation_email action',
+            ],
+            [
+                'exception' => new EmailTemplateCompilationException(new EmailTemplateCriteria('test', 'test')),
+                'logMessage' => 'Twig exception in @send_order_confirmation_email action',
+            ],
+            [
+                'exception' => new EntityNotFoundException(),
+                'logMessage' => 'Cannot find the specified email template in @send_order_confirmation_email action',
+            ],
         ];
-        $this->expectsEntityClass($options['entity']);
-        $this->contextAccessor
-            ->method('getValue')
-            ->will($this->returnArgument(1));
-        $this->entityNameResolver
-            ->method('getName')
-            ->will(
-                $this->returnCallback(
-                    function () {
-                        return '_Formatted';
-                    }
-                )
-            );
-
-        $this->languageProvider
-            ->method('getPreferredLanguage')
-            ->with($options['to'])
-            ->willReturn($language);
-
-        $this->emailTemplate
-            ->method('getType')
-            ->willReturn('txt');
-
-        return ['context' => $context, 'language' => $language, 'options' => $options];
     }
 }

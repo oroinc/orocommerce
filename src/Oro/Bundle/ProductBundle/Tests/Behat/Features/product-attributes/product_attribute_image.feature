@@ -48,8 +48,14 @@ Feature: Product attribute image
     And I fill "Product Form" with:
       | ImageField | cat1.jpg |
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg | 1     | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     And I save and close form
     Then I should see "Product has been saved" flash message
 

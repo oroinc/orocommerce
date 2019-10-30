@@ -28,6 +28,10 @@ The content of the landing page.
 
 The styles of the landing page.
 
+### content_properties
+
+The properties of the landing page.
+
 ### url
 
 The relative URL of the landing page for the current localization.

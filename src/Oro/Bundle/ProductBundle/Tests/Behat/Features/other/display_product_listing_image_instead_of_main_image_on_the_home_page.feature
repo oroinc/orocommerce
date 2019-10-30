@@ -8,14 +8,19 @@ Feature: Display product listing image instead of main image on the home page
     And I go to Products / Products
     And I click Edit PSKU1 in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg | 1     | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     And I fill form with:
       | Is Featured | Yes |
-    And I save and close form
+    And I save form
     Then I should see "Product has been saved" flash message
-    Then I click "Edit"
-    And I remember "main" image resized ID
+    And I remember "main" image filtered ID
     Then I am on homepage
     Then I should see remembered "main" image in "Top Selling Items" section
     Then I should see remembered "main" image in "Featured Products" section
@@ -25,12 +30,18 @@ Feature: Display product listing image instead of main image on the home page
     And I go to Products / Products
     And I click Edit PSKU1 in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat2.jpg |       | 1       | 1          |
+      | Main  | Listing | Additional |
+      |       | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And click on cat2.jpg in grid
     And I save and close form
     Then I should see "Product has been saved" flash message
     Then I click "Edit"
-    And I remember "listing" image resized ID
+    And I remember "listing" image filtered ID
     Then I am on homepage
     Then I should see remembered "listing" image in "Top Selling Items" section
     Then I should see remembered "listing" image in "Featured Products" section

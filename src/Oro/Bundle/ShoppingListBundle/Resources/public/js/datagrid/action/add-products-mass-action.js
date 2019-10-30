@@ -5,6 +5,7 @@ define(function(require) {
     var MassAction = require('oro/datagrid/action/mass-action');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
+    var tools = require('oroui/js/tools');
 
     /**
      * Add products to shopping list
@@ -54,7 +55,7 @@ define(function(require) {
             this.frontend_options.url = this.getLink();
             this.frontend_options.title = this.frontend_options.title || this.label;
 
-            require(['oro/' + this.frontend_handle + '-widget'], _.bind(this._createHandleWidget, this));
+            tools.loadModules('oro/' + this.frontend_handle + '-widget', this._createHandleWidget.bind(this));
         },
 
         _createHandleWidget: function(WidgetType) {

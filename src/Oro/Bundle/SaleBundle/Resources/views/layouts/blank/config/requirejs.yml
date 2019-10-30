@@ -1,9 +1,0 @@
-config:
-    paths:
-        'orosale/js/app/components/quote-demand-component': 'bundles/orosale/js/app/components/quote-demand-component.js'
-        'orosale/js/app/components/quote-product-to-order-component': 'bundles/orosale/js/app/components/quote-product-to-order-component.js'
-        'orosale/js/app/views/product-add-to-rfq-view': 'bundles/orosale/js/app/views/product-add-to-rfq-view.js'
-        'orosale/js/validator/quote-product-offer-quantity': 'bundles/orosale/js/validator/quote-product-offer-quantity.js'
-        'orosale/js/app/modules/validator-constraints-module': 'bundles/orosale/js/app/modules/validator-constraints-module.js'
-    appmodules:
-        - orosale/js/app/modules/validator-constraints-module

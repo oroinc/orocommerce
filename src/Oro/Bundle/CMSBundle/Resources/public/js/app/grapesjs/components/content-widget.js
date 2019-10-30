@@ -5,7 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var DialogWidget = require('oro/dialog-widget');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var template = require('tpl!orocms/templates/grapesjs-content-widget.html');
+    var template = require('tpl-loader!orocms/templates/grapesjs-content-widget.html');
     var routing = require('routing');
 
     /**

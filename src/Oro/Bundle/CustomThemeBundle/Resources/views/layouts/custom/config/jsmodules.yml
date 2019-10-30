@@ -1,0 +1,11 @@
+configs:
+    orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager: {}
+dynamic-imports:
+    orocustomtheme:
+        - orocustomtheme/FilterBundle/js/datagrid/frontend-collection-filters-manager
+map:
+    "*":
+        orofilter/js/plugins/filters-toggle-plugin: orocustomtheme/FilterBundle/js/datagrid/plugins/frontend-filters-plugin
+        orofilter/templates/filters-container.html: orocustomtheme/FilterBundle/templates/filters/filters-container.html
+    orocustomtheme/FilterBundle/js/datagrid/plugins/frontend-filters-plugin:
+        orofilter/js/plugins/filters-toggle-plugin: orofilter/js/plugins/filters-toggle-plugin

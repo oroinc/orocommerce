@@ -67,7 +67,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
-            '{"view":"app\/view","stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"}',
+            '{"view":"app\/view","stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
+            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );
     }

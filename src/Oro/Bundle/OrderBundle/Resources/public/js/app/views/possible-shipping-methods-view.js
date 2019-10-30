@@ -9,9 +9,9 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var possibleShippingMethodsTemplate = require('tpl!./../templates/possible-shipping-methods-template.html');
-    var selectedShippingMethodTemplate = require('tpl!./../templates/selected-shipping-method-template.html');
-    var noShippingMethodsAvailableTemplate = require('tpl!./../templates/no-shipping-methods-available.html');
+    var possibleShippingMethodsTemplate = require('tpl-loader!./../templates/possible-shipping-methods-template.html');
+    var selectedShippingMethodTemplate = require('tpl-loader!./../templates/selected-shipping-method-template.html');
+    var noShippingMethodsAvailableTemplate = require('tpl-loader!./../templates/no-shipping-methods-available.html');
     var NumberFormatter = require('orolocale/js/formatter/number');
 
     PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper, {

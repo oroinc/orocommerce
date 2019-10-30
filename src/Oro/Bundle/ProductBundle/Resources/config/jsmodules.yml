@@ -1,0 +1,28 @@
+aliases:
+    oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action$: oroproduct/js/datagrid/action/trigger-event-for-selected-product-ids-mass-action
+    oro/product-collection-popup-add-products-widget$: oroproduct/js/app/widget/product-collection-popup-add-products-widget
+    oro/related-items-widget$: oroproduct/js/app/widget/related-items-widget
+    oroproduct/js/app/datagrid/listener/related-product-listener$: oroproduct/js/app/datagrid/listener/related-items-listener
+app-modules:
+    - oroproduct/js/app/modules/validator-constraints-module
+configs:
+    oroproduct/js/validator/sku-regex: {}
+dynamic-imports:
+    orodatagitd:
+        - oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action
+        - oroproduct/js/app/datagrid/listener/related-product-listener
+    oroproduct:
+        - oro/product-collection-popup-add-products-widget
+        - oro/related-items-widget
+        - oroproduct/js/app/components/config-single-unit-component
+        - oroproduct/js/app/components/product-collection-apply-query-component
+        - oroproduct/js/app/components/product-image-type-radio-control-component
+        - oroproduct/js/app/components/product-name-popup-editor-component
+        - oroproduct/js/app/components/product-primary-unit-limitations-component
+        - oroproduct/js/app/components/product-unit-component
+        - oroproduct/js/app/components/product-unit-selection-limitations-component
+        - oroproduct/js/app/components/product-variant-component
+        - oroproduct/js/app/components/product-variant-field-component
+        - oroproduct/js/app/components/related-items-tabs-component
+        - oroproduct/js/app/views/variant-fields-view
+        - oroproduct/js/validator/sku-regex

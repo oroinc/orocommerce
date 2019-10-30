@@ -1071,11 +1071,25 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="attribute-family-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Product Images Table:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
+      selector: 'div.image-collection > table'
+
+    Active Slide:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.slick-slide.slick-current.slick-active'
+
     Product WYSIWYGField Attribute Content:
       selector: "textarea[id^='oro_product_WYSIWYGField']"
 
     Product WYSIWYG_video Attribute Content:
       selector: "textarea[id^='oro_product_WYSIWYG_video']"
+
+    Digital Asset Choose:
+      selector: 'a[data-role="digital-asset-choose"]:not([class*="hide"])'
+
+    Digital Asset Choose Another:
+      selector: 'a[data-role="digital-asset-update"]:not([class*="hide"])'
 
   pages:
     Product View:

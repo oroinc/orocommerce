@@ -3,7 +3,7 @@ define(function(require) {
 
     var $ = require('jquery');
     var _ = require('underscore');
-    var template = require('tpl!../templates/shopping-list-item-error.html');
+    var template = require('tpl-loader!../templates/shopping-list-item-error.html');
 
     if (typeof template === 'string') {
         template = _.template(template);

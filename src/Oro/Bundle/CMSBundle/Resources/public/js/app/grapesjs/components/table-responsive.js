@@ -4,7 +4,7 @@ define(function(require) {
     var TableResponsiveComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var tableResponsiveTemplate = require('tpl!orocms/templates/grapesjs-table-responsive.html');
+    var tableResponsiveTemplate = require('tpl-loader!orocms/templates/grapesjs-table-responsive.html');
 
     /**
      * Create responsive table component type for builder

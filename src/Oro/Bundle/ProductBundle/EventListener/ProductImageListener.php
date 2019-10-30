@@ -127,6 +127,17 @@ class ProductImageListener
 
     /**
      * @param ProductImage $productImage
+     * @param LifecycleEventArgs $args
+     */
+    public function preRemove(ProductImage $productImage, LifecycleEventArgs $args): void
+    {
+        if ($productImage->getImage()) {
+            $args->getEntityManager()->remove($productImage->getImage());
+        }
+    }
+
+    /**
+     * @param ProductImage $productImage
      */
     protected function dispatchEvent(ProductImage $productImage)
     {

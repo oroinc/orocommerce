@@ -1,15 +1,15 @@
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
     var BackendSelectHeaderCell;
     var _ = require('underscore');
     var $ = require('jquery');
     var routing = require('routing');
-    var template = require('tpl!oroproduct/templates/datagrid/backend-action-header-cell.html');
+    var template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
     var SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     var ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
-    var config = require('module').config();
+    var config = require('module-config').default(module.id);
 
     var shoppingListAddAction = config.shoppingListAddAction || {
         type: 'addproducts',

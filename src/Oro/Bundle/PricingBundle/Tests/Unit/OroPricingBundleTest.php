@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit;
 
+use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\DisableDataAuditListenerPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\PricesStrategyPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
@@ -23,9 +24,10 @@ class OroPricingBundleTest extends \PHPUnit\Framework\TestCase
         $container = $this->getMockBuilder(ContainerBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects($this->exactly(3))
+        $container->expects($this->exactly(4))
             ->method('addCompilerPass')
             ->withConsecutive(
+                [$this->isInstanceOf(DisableDataAuditListenerPass::class)],
                 [$this->isInstanceOf(SubtotalProviderPass::class)],
                 [$this->isInstanceOf(ProductExpressionServicesPass::class)],
                 [$this->isInstanceOf(PricesStrategyPass::class)]

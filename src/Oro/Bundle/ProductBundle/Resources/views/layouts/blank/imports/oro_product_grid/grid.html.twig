@@ -140,21 +140,17 @@
     </div>
 {% endblock %}
 
-{% block _product_require_js_config_widget %}
+{% block _product_grid_js_modules_config_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-grid-toolbar': 'top'
     }) %}
 
-    {% set attr = block('block_attributes') %}
-    <script>
-        require({
-            config: {
-                'orofrontend/js/app/datafilter/frontend-collection-filters-manager': {
-                    templateData: {
-                        attributes: '{{ attr|raw }}'
-                    }
-                }
+    {% import '@OroAsset/Asset.html.twig' as Asset %}
+    {{ Asset.js_modules_config({
+        'orofrontend/js/app/datafilter/frontend-collection-filters-manager': {
+            templateData: {
+                attributes: block('block_attributes')
             }
-        });
-    </script>
+        }
+    }) }}
 {% endblock %}

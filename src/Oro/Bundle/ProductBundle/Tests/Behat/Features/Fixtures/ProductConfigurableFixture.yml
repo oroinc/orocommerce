@@ -85,12 +85,12 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         product: '@product1'
         priceList: '@combinedPriceList'
         quantity: 1
-        value: 10
+        value: 800
         currency: 'USD'
     product2ItemCombined:
         unit: '@item'
         product: '@product2'
         priceList: '@combinedPriceList'
         quantity: 1
-        value: 7
+        value: 1100
         currency: 'USD'
