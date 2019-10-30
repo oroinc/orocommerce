@@ -3,6 +3,7 @@ define(function(require) {
 
     var _ = require('underscore');
     var ContentBlockComponent = require('orocms/js/app/grapesjs/components/content-block');
+    var DigitalAssetsComponent = require('orocms/js/app/grapesjs/components/digital-assets');
     var ContentWidgetComponent = require('orocms/js/app/grapesjs/components/content-widget');
     var TableComponents = require('orocms/js/app/grapesjs/components/table');
     var TableResponsiveComponent = require('orocms/js/app/grapesjs/components/table-responsive');
@@ -195,6 +196,7 @@ define(function(require) {
             new ContentWidgetComponent(this.builder, {
                 exclude: this.excludeContentWidgetAlias
             });
+            new DigitalAssetsComponent(this.builder);
         }
     };
 

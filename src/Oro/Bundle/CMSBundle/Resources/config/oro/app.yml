@@ -21,3 +21,5 @@ liip_imagine:
             quality:          95
             filters:
                 strip:        ~
+        digital_asset_grapesjs:
+            quality: 100

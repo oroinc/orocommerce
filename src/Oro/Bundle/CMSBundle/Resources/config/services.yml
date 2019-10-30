@@ -281,3 +281,9 @@ services:
             - '@oro_form.provider.html_tag_provider'
         tags:
             - { name: form.type }
+
+    oro_cms.provider.preview_metadata:
+        decorates: oro_digital_asset.provider.preview_metadata
+        class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
+        arguments:
+            - '@oro_cms.provider.preview_metadata.inner'
