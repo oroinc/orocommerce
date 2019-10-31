@@ -990,6 +990,9 @@ oro_behat_extension:
     Add Product Templates Button:
       selector: 'div[id^="oro_product_productTemplates-uid"] button'
 
+    General Group Attributes:
+      selector: "select[name='oro_attribute_family[attributeGroups][general][attributeRelations][]']"
+
     Product Images Table:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
       selector: 'div.image-collection > table'
