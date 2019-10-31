@@ -3,7 +3,7 @@ define([
 ], function(_, regexConstraint) {
     'use strict';
 
-    var constraint = _.clone(regexConstraint);
+    const constraint = _.clone(regexConstraint);
 
     constraint[0] = 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Alphanumeric';
 

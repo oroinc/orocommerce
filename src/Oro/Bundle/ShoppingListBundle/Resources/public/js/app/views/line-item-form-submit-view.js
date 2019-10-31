@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var LineItemFormSubmitView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
 
-    LineItemFormSubmitView = BaseView.extend({
+    const LineItemFormSubmitView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
             'successMessage'
         ]),
@@ -21,13 +20,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemFormSubmitView() {
-            LineItemFormSubmitView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemFormSubmitView(options) {
+            LineItemFormSubmitView.__super__.constructor.call(this, options);
         },
 
         _saveChanges: function(e) {
-            var $form = $(e.currentTarget);
-            var validator = $form.validate();
+            const $form = $(e.currentTarget);
+            const validator = $form.validate();
             if (validator && !validator.form()) {
                 return false;
             }

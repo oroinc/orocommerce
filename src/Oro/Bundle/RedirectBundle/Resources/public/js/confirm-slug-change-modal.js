@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ConfirmSlugChangeModal;
-    var Modal = require('oroui/js/modal');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const Modal = require('oroui/js/modal');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    ConfirmSlugChangeModal = Modal.extend({
+    const ConfirmSlugChangeModal = Modal.extend({
         /**
          * @property {Object}
          */
@@ -40,8 +39,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ConfirmSlugChangeModal() {
-            ConfirmSlugChangeModal.__super__.constructor.apply(this, arguments);
+        constructor: function ConfirmSlugChangeModal(options) {
+            ConfirmSlugChangeModal.__super__.constructor.call(this, options);
         },
 
         /**
@@ -49,7 +48,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]);
             }, this));
             if (requiredMissed.length) {
@@ -85,8 +84,8 @@ define(function(require) {
          * @private
          */
         _createContent: function(changedSlugs) {
-            var template = _.template(this.options.messageTemplate);
-            var content = template({
+            const template = _.template(this.options.messageTemplate);
+            const content = template({
                 message: this.options.message,
                 changedSlugs: changedSlugs,
                 checkboxLabel: this.options.checkboxLabel

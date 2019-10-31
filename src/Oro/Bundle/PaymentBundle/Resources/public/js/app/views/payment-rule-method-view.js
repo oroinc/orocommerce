@@ -6,22 +6,20 @@ define([
 ], function($, Backbone, _, mediator) {
     'use strict';
 
-    var PaymentRuleMethodView;
-
     /**
      * @export  orointegration/js/channel-view
      * @class   orointegration.channelView
      * @extends Backbone.View
      */
-    PaymentRuleMethodView = Backbone.View.extend({
+    const PaymentRuleMethodView = Backbone.View.extend({
 
         requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
 
         /**
          * @inheritDoc
          */
-        constructor: function PaymentRuleMethodView() {
-            PaymentRuleMethodView.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentRuleMethodView(options) {
+            PaymentRuleMethodView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -32,7 +30,7 @@ define([
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            var requiredMissed = this.requiredOptions.filter(function(option) {
+            const requiredMissed = this.requiredOptions.filter(function(option) {
                 return _.isUndefined(options[option]);
             });
             if (requiredMissed.length) {
@@ -48,11 +46,11 @@ define([
 
             this.button.on('click', _.bind(this.changeHandler, this));
 
-            var elements = this.form.find(
+            const elements = this.form.find(
                 '.oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder'
             );
             this.methodCount = elements.length;
-            var self = this;
+            const self = this;
             elements.each(function(index, element) {
                 $(element).parent().on('content:remove', function(e) {
                     self.updateMethodSelector(element);
@@ -66,10 +64,10 @@ define([
          * Check whenever form change and shows confirmation
          */
         changeHandler: function() {
-            var $form = this.form;
-            var data = $form.serializeArray();
-            var url = $form.attr('action');
-            var value = $(this.el).find(this.options.methodSelectSelector).val();
+            const $form = this.form;
+            const data = $form.serializeArray();
+            const url = $form.attr('action');
+            const value = $(this.el).find(this.options.methodSelectSelector).val();
             data.push({
                 name: 'oro_payment_methods_configs_rule[methodConfigs][' + this.methodCount + '][type]',
                 value: value
@@ -87,11 +85,11 @@ define([
         },
 
         updateMethodSelector: function(removedElement) {
-            var elements = this.form.find(
+            const elements = this.form.find(
                 '.oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder'
             );
-            var methods = [];
-            var self = this;
+            const methods = [];
+            const self = this;
 
             elements.each(function(index, element) {
                 if (removedElement && self.getMethod(element) === self.getMethod(removedElement)) {

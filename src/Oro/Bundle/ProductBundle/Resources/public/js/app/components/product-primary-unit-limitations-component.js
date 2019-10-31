@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ProductPrimaryUnitLimitationsComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    ProductPrimaryUnitLimitationsComponent = BaseComponent.extend({
+    const ProductPrimaryUnitLimitationsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -35,8 +34,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductPrimaryUnitLimitationsComponent() {
-            ProductPrimaryUnitLimitationsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductPrimaryUnitLimitationsComponent(options) {
+            ProductPrimaryUnitLimitationsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -58,11 +57,11 @@ define(function(require) {
          */
         onChange: function() {
             this.$select.on('change', _.bind(this.onSelectChange, this));
-            var option = this.$select.find('option:selected');
-            var changes = {};
+            const option = this.$select.find('option:selected');
+            const changes = {};
             changes.removed = this.getData() || {};
             this.saveData({});
-            var storedData = this.getData();
+            let storedData = this.getData();
 
             if (option.val() !== undefined) {
                 storedData[option.val()] = option.text();
@@ -83,9 +82,9 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onSelectChange: function(e) {
-            var select = $(e.target);
-            var option = select.find('option:selected');
-            var value = this.options.precisions[option.val()];
+            const select = $(e.target);
+            const option = select.find('option:selected');
+            const value = this.options.precisions[option.val()];
             select.closest('tr').find('input[class="precision"]').val(value);
         },
 
@@ -93,14 +92,14 @@ define(function(require) {
          *  Handle changes in additional precisions
          */
         onAdditionalPrecisionsChange: function(e) {
-            var additionalPrecisions = e;
-            var precisions = this.getInitialOptions();
+            const additionalPrecisions = e;
+            const precisions = this.getInitialOptions();
             _.each(additionalPrecisions, function(val, key) {
                 delete precisions[key];
             });
 
-            var options = this.$select.find('option');
-            var selected = this.$select.find('option:selected');
+            const options = this.$select.find('option');
+            const selected = this.$select.find('option:selected');
             delete precisions[selected.val()];
 
             _.each(options, function(option) {
@@ -108,7 +107,7 @@ define(function(require) {
                     $(option).remove();
                 }
             });
-            var self = this;
+            const self = this;
             _.each(precisions, function(text, val) {
                 self.$select.append($('<option></option>').val(val).text(text));
             });
@@ -146,8 +145,8 @@ define(function(require) {
          * Save initial full select options to data attribute
          */
         saveInitialOptions: function() {
-            var options = this.$select.find('option');
-            var allUnits = {};
+            const options = this.$select.find('option');
+            const allUnits = {};
             _.each(options, function(option) {
                 allUnits[option.value] = option.text;
             });

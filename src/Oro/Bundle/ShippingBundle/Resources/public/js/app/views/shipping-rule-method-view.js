@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ShippingRuleMethodsView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var Popover = require('bootstrap-popover');
-    var mediator = require('oroui/js/mediator');
-    var layout = require('oroui/js/layout');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const Popover = require('bootstrap-popover');
+    const mediator = require('oroui/js/mediator');
+    const layout = require('oroui/js/layout');
 
-    ShippingRuleMethodsView = BaseView.extend({
+    const ShippingRuleMethodsView = BaseView.extend({
         options: {
             addSelector: '.add-method',
             addAllSelector: '.add-all-methods',
@@ -57,8 +56,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShippingRuleMethodsView() {
-            ShippingRuleMethodsView.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingRuleMethodsView(options) {
+            ShippingRuleMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -103,7 +102,7 @@ define(function(require) {
         },
 
         _onInputsChange: function(e) {
-            var $method = $(e.target).closest(this.options.methodViewSelector);
+            const $method = $(e.target).closest(this.options.methodViewSelector);
             if ($method.length) {
                 this.updateMethodPreview($method);
             }
@@ -115,7 +114,7 @@ define(function(require) {
         },
 
         _onMethodRemove: function(e) {
-            var removedMethod = $(e.target).find(this.options.methodSelector).val();
+            const removedMethod = $(e.target).find(this.options.methodSelector).val();
             this.updateMethodsList(removedMethod);
             this.updateMethodSelect();
 
@@ -133,10 +132,10 @@ define(function(require) {
                 return;
             }
 
-            var focusFieldsSelector = this.options.focusFieldsSelector;
+            const focusFieldsSelector = this.options.focusFieldsSelector;
             this.$(this.options.methodViewSelector).each(function() {
-                var $fields = $(this).find(focusFieldsSelector);
-                var notEmptyFieldsCount = $fields.filter(function() {
+                const $fields = $(this).find(focusFieldsSelector);
+                const notEmptyFieldsCount = $fields.filter(function() {
                     return this.value.length > 0;
                 }).length;
                 if (notEmptyFieldsCount === 0) {
@@ -151,8 +150,8 @@ define(function(require) {
         },
 
         createAddRequest: function(addAll) {
-            var methodCount = this.methods.length - 1;
-            var addMethod = function(option) {
+            let methodCount = this.methods.length - 1;
+            const addMethod = function(option) {
                 methodCount++;
                 return {
                     name: 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
@@ -160,9 +159,9 @@ define(function(require) {
                 };
             };
 
-            var data = this.$form.serializeArray();
+            const data = this.$form.serializeArray();
             if (addAll) {
-                data.push.apply(data, this.$methodSelect.find('option[value][value!=""]').get().map(addMethod));
+                data.push(...this.$methodSelect.find('option[value][value!=""]').get().map(addMethod));
             } else {
                 data.push(addMethod(this.$methodSelect.get(0)));
             }
@@ -195,7 +194,7 @@ define(function(require) {
                 }
             }, this);
 
-            var length = this.$methodSelect.find('option').length;
+            const length = this.$methodSelect.find('option').length;
             this.$methodSelect.prop('disabled', length === 0);
             this.$methodSelect.inputWidget('refresh');
             this.$methodSelect.inputWidget('val', '');
@@ -205,18 +204,18 @@ define(function(require) {
         },
 
         updateLabels: function() {
-            var currency = this.$currency.find('option:selected').text();
+            const currency = this.$currency.find('option:selected').text();
             _.each(this.$(this.options.currencyFieldsSelector), function(field) {
-                var $field = $(field);
+                const $field = $(field);
                 $field.data('currency', currency);
 
-                var $label = this.$('label[for="' + field.id + '"]');
+                let $label = this.$('label[for="' + field.id + '"]');
                 if (!$label.length) {
                     $label = $field.closest(this.options.additionalOptionSelector).find('label:first');
                     $label.attr('for', field.id);
                 }
 
-                var $parent = $field.parent();
+                const $parent = $field.parent();
                 if ($parent.is('label')) {
                     $label = $parent;
                 }
@@ -238,23 +237,23 @@ define(function(require) {
                 return;
             }
 
-            var disabled = [];
+            const disabled = [];
             $method.find(this.options.enabledFieldSelector).each(function() {
                 if ($(this).is(':checkbox') && !this.checked) {
                     disabled.push(this.name.replace(/\[enabled\]$/, ''));
                 }
             });
 
-            var $preview = $method.find(this.options.methodPreviewSelector);
-            var preview = [];
+            const $preview = $method.find(this.options.methodPreviewSelector);
+            const preview = [];
             _.each($method.find(this.options.previewFieldsSelector), function(field) {
-                var $field = $(field);
-                var value = _.trim(field.value);
+                const $field = $(field);
+                let value = _.trim(field.value);
                 if (value.length === 0) {
                     return;
                 }
 
-                var isDisabled = _.filter(disabled, function(name) {
+                const isDisabled = _.filter(disabled, function(name) {
                     return field.name.indexOf(name) !== -1;
                 }).length > 0;
                 if (isDisabled) {
@@ -265,8 +264,8 @@ define(function(require) {
                     value = $field.find('option:selected').text();
                 }
 
-                var $label = this.$('label[for="' + field.id + '"]');
-                var label = $label.contents().eq(0).text() + ': ' + ($field.data('currency') || '');
+                const $label = this.$('label[for="' + field.id + '"]');
+                const label = $label.contents().eq(0).text() + ': ' + ($field.data('currency') || '');
 
                 preview.push(label + value);
             }, this);
@@ -286,13 +285,13 @@ define(function(require) {
                 }, true);
             }
 
-            var height = $preview.height();
+            const height = $preview.height();
             $preview.css({
                 'word-wrap': 'break-word',
                 'overflow': 'auto',
                 'white-space': 'normal'
             });
-            var isOverflow = $preview.height() > height;
+            const isOverflow = $preview.height() > height;
 
             $preview.attr('style', '').data(Popover.DATA_KEY).updateContent(isOverflow ? preview.join('<br/>') : '');
         },
@@ -314,7 +313,7 @@ define(function(require) {
             delete this.$add;
             delete this.$addAll;
 
-            ShippingRuleMethodsView.__super__.dispose.apply(this, arguments);
+            ShippingRuleMethodsView.__super__.dispose.call(this);
         }
     });
 

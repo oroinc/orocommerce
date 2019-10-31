@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ProductsPricesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    ProductsPricesComponent = BaseComponent.extend({
+    const ProductsPricesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -26,8 +25,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductsPricesComponent() {
-            ProductsPricesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductsPricesComponent(options) {
+            ProductsPricesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -71,12 +70,12 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var context = {
+            const context = {
                 requestAttributes: {}
             };
             mediator.trigger('pricing:refresh:products-tier-prices:before', context);
             this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
-                var params = {
+                let params = {
                     product_ids: products
                 };
                 params[this.options.requestKeys.CURRENCY] = this.getCurrency();
@@ -100,8 +99,8 @@ define(function(require) {
             }
 
             storage.timeoutId = setTimeout(function() {
-                var data = storage.data;
-                var callbacks = storage.callbacks;
+                const data = storage.data;
+                const callbacks = storage.callbacks;
 
                 storage.timeoutId = null;
                 storage.data = [];
@@ -128,7 +127,7 @@ define(function(require) {
          * @returns {Array} line items
          */
         getLineItems: function() {
-            var items = [];
+            const items = [];
             mediator.trigger('pricing:collect:line-items', items);
             return items;
         },

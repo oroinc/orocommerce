@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var AuthorizedCreditCardComponent;
-    var mediator = require('oroui/js/mediator');
-    var CreditCardComponent = require('oropaypal/js/app/components/credit-card-component');
+    const mediator = require('oroui/js/mediator');
+    const CreditCardComponent = require('oropaypal/js/app/components/credit-card-component');
 
-    AuthorizedCreditCardComponent = CreditCardComponent.extend({
+    const AuthorizedCreditCardComponent = CreditCardComponent.extend({
         /**
          * @property {Object}
          */
@@ -34,8 +33,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AuthorizedCreditCardComponent() {
-            AuthorizedCreditCardComponent.__super__.constructor.apply(this, arguments);
+        constructor: function AuthorizedCreditCardComponent(options) {
+            AuthorizedCreditCardComponent.__super__.constructor.call(this, options);
         },
 
         /**

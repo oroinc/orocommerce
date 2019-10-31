@@ -8,8 +8,8 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
          * @export orotax/js/formatter/tax
          * @name   orotax.formatter.tax
          */
-        var taxFormatter = function() {
-            var formatElement = function(value, currency) {
+        const taxFormatter = function() {
+            const formatElement = function(value, currency) {
                 if (_.isUndefined(currency)) {
                     currency = localeSettings.getCurrency();
                 }
@@ -21,7 +21,7 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                 return NumberFormatter.formatCurrency(value, currency);
             };
 
-            var formatPercent = function(value) {
+            const formatPercent = function(value) {
                 if (value.indexOf('%') > -1) {
                     return value;
                 }
@@ -34,7 +34,7 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatItem: function(item) {
-                    var localItem = _.extend({
+                    const localItem = _.extend({
                         includingTax: 0,
                         excludingTax: 0,
                         taxAmount: 0,
@@ -52,7 +52,7 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatTax: function(item) {
-                    var localItem = _.extend({
+                    const localItem = _.extend({
                         taxAmount: 0,
                         taxableAmount: 0,
                         rate: 0,

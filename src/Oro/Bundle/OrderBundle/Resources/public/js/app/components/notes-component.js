@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var NotesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * @export oroorder/js/app/components/notes-component
      * @extends oroui.app.components.base.Component
      * @class oroorder.app.components.NotesComponent
      */
-    NotesComponent = BaseComponent.extend({
+    const NotesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -69,8 +68,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function NotesComponent() {
-            NotesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function NotesComponent(options) {
+            NotesComponent.__super__.constructor.call(this, options);
         },
 
         /**

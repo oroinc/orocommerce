@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var OrderTaxesComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var TaxFormatter = require('orotax/js/formatter/tax');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const TaxFormatter = require('orotax/js/formatter/tax');
 
     /**
      * @export orotax/js/app/components/order-taxes-component
      * @extends oroui.app.components.base.Component
      * @class orotax.app.components.OrderTaxesComponent
      */
-    OrderTaxesComponent = BaseComponent.extend({
+    const OrderTaxesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -32,8 +31,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function OrderTaxesComponent() {
-            OrderTaxesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function OrderTaxesComponent(options) {
+            OrderTaxesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -48,7 +47,7 @@ define(function(require) {
         },
 
         appendTaxResult: function(totals) {
-            var subtotals = _.extend({subtotals: {}}, totals).subtotals;
+            const subtotals = _.extend({subtotals: {}}, totals).subtotals;
             _.map(_.where(subtotals, {type: 'tax'}), _.bind(this.prepareItem, this));
         },
 

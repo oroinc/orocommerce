@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
-    var ProductQuantityView = require('oroproduct/js/app/views/product-quantity-editable-view');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const BaseProductView = require('oroproduct/js/app/views/base-product-view');
+    const ProductQuantityView = require('oroproduct/js/app/views/product-quantity-editable-view');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
 
-    LineItemView = BaseProductView.extend({
+    const LineItemView = BaseProductView.extend({
         elements: _.extend({}, BaseProductView.prototype.elements, {
             quantity: '[data-name="field__quantity"]',
             unit: '[data-name="field__unit"]'
@@ -18,19 +17,19 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            LineItemView.__super__.initialize.apply(this, arguments);
+            LineItemView.__super__.initialize.call(this, options);
             this.lineItemId = options.lineItemId;
 
             if (this.getElement('quantity').length) {
-                var productQuantityView = new ProductQuantityView(_.extend({
+                const productQuantityView = new ProductQuantityView(_.extend({
                     el: this.$el.get(0),
                     model: this.model
                 }, options.quantityComponentOptions));

@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var CurrencySwitcherComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    CurrencySwitcherComponent = BaseComponent.extend({
+    const CurrencySwitcherComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -21,8 +20,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CurrencySwitcherComponent() {
-            CurrencySwitcherComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CurrencySwitcherComponent(options) {
+            CurrencySwitcherComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -37,9 +36,9 @@ define(function(require) {
 
         onCurrencyChange: function(e) {
             e.preventDefault();
-            var $el = $(e.target);
+            const $el = $(e.target);
 
-            var currency = $el.data('currency');
+            const currency = $el.data('currency');
             if (currency !== this.options.selectedCurrency) {
                 mediator.execute('showLoading');
                 $.post(

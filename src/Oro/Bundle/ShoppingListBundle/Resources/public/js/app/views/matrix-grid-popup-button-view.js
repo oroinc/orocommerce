@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var MatrixGridPopupButtonView;
-    var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
-    var MatrixGridOrderWidget = require('oro/matrix-grid-order-widget');
+    const ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
+    const MatrixGridOrderWidget = require('oro/matrix-grid-order-widget');
 
-    MatrixGridPopupButtonView = ProductAddToShoppingListView.extend({
+    const MatrixGridPopupButtonView = ProductAddToShoppingListView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function MatrixGridPopupButtonView() {
-            MatrixGridPopupButtonView.__super__.constructor.apply(this, arguments);
+        constructor: function MatrixGridPopupButtonView(options) {
+            MatrixGridPopupButtonView.__super__.constructor.call(this, options);
         },
 
         _openMatrixGridPopup: function(shoppingListId) {

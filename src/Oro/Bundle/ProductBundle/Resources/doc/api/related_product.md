@@ -26,12 +26,9 @@ The created record is returned in the response.
 
 During the POST request, the following validation constraints are checked:
 
-* Related Products feature must be enabled (see `Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider::isEnabled()` for details).
-
-* Limit of number of Related Products for given Product cannot be exceeded (see `Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider::getLimit()` for details).
-
+* Related Products feature must be enabled.
+* Limit of number of Related Products for given Product cannot be exceeded.
 * It is not possible to create a relation between the same products. For example, creating a relation between ProductA (as the main product) and ProductA (as the related product) will cause an `HTTP 400 Bad Request` response.
-
 * It is not possible to re-create an already existing relationship. When relationship from ProductA (main product) to ProductB (related item) already exists, and you send the repetitive request to create this relationship, such request will cause an `HTTP 400 Bad Request` response.
 
 {@request:json_api}

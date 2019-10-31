@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var QuoteDemandComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    QuoteDemandComponent = BaseComponent.extend({
+    const QuoteDemandComponent = BaseComponent.extend({
         options: {
             subtotalsRoute: 'oro_sale_quote_frontend_subtotals',
             quoteDemandId: null,
@@ -29,8 +28,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuoteDemandComponent() {
-            QuoteDemandComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuoteDemandComponent(options) {
+            QuoteDemandComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -81,8 +80,8 @@ define(function(require) {
 
         onSubtotalSuccess: function(response) {
             this.inProgress = false;
-            var $response = $('<div/>').html(response);
-            var $content = $(this.options.subtotalSelector);
+            const $response = $('<div/>').html(response);
+            const $content = $(this.options.subtotalSelector);
             $content.html($response.find(this.options.subtotalSelector).html());
         }
     });

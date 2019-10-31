@@ -1,16 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ThemeSelectorView = require('orocms/js/app/grapesjs/controls/theme-selector-view');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const ThemeSelectorView = require('orocms/js/app/grapesjs/controls/theme-selector-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
     /**
      * Create panel manager instance
      * @param options
      * @constructor
      */
-    var PanelManagerModule = function(options) {
+    const PanelManagerModule = function(options) {
         _.extend(this, _.pick(options, ['builder', 'themes']));
 
         this.init();
@@ -47,9 +47,9 @@ define(function(require) {
         },
 
         createThemeSelector: function() {
-            var pn = this.builder.Panels.getPanel('options');
+            const pn = this.builder.Panels.getPanel('options');
 
-            var themeSelector = new ThemeSelectorView({
+            const themeSelector = new ThemeSelectorView({
                 editor: this.builder,
                 themes: this.themes
             });
@@ -60,7 +60,7 @@ define(function(require) {
         },
 
         _addOptionButtonTooltips: function() {
-            var pn = this.builder.Panels.getPanel('options');
+            const pn = this.builder.Panels.getPanel('options');
 
             pn.buttons.each(function(button) {
                 button.set('attributes', {
@@ -77,26 +77,26 @@ define(function(require) {
          * @private
          */
         _moveSettings: function() {
-            var $ = this.builder.$;
+            const $ = this.builder.$;
 
-            var Panels = this.builder.Panels;
+            const Panels = this.builder.Panels;
 
-            var openTmBtn = Panels.getButton('views', 'open-tm');
+            const openTmBtn = Panels.getButton('views', 'open-tm');
             openTmBtn && openTmBtn.set('active', 1);
-            var openSm = Panels.getButton('views', 'open-sm');
+            const openSm = Panels.getButton('views', 'open-sm');
             openSm && openSm.set('active', 1);
 
-            var traitsSector = $('<div class="gjs-sm-sector no-select">'+
+            const traitsSector = $('<div class="gjs-sm-sector no-select">'+
                 '<div class="gjs-sm-title"><span class="fa fa-cog"></span> Settings</div>' +
                 '<div class="gjs-sm-properties" style="display: none;"></div></div>');
-            var traitsProps = traitsSector.find('.gjs-sm-properties');
+            const traitsProps = traitsSector.find('.gjs-sm-properties');
             traitsProps.append($('.gjs-trt-traits'));
             $('.gjs-sm-sectors').before(traitsSector);
 
             traitsSector.find('.gjs-sm-title').on('click', function() {
-                var traitStyle = traitsProps.get(0).style;
+                const traitStyle = traitsProps.get(0).style;
 
-                var hidden = traitStyle.display === 'none';
+                const hidden = traitStyle.display === 'none';
                 if (hidden) {
                     traitStyle.display = 'block';
                 } else {

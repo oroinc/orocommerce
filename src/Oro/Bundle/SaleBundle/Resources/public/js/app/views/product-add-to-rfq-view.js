@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ProductAddToRfqView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
 
-    ProductAddToRfqView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ProductAddToRfqView = BaseView.extend(_.extend({}, ElementsHelper, {
         events: {
             click: 'onClick'
         },
@@ -19,15 +18,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductAddToRfqView() {
-            ProductAddToRfqView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductAddToRfqView(options) {
+            ProductAddToRfqView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductAddToRfqView.__super__.initialize.apply(this, arguments);
+            ProductAddToRfqView.__super__.initialize.call(this, options);
             this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
         },
 
@@ -40,12 +39,12 @@ define(function(require) {
 
         dispose: function() {
             delete this.dropdownWidget;
-            ProductAddToRfqView.__super__.dispose.apply(this, arguments);
+            ProductAddToRfqView.__super__.dispose.call(this);
         },
 
         onClick: function(e) {
-            var $button = $(e.currentTarget);
-            var productItems = {};
+            const $button = $(e.currentTarget);
+            const productItems = {};
 
             if (!this.dropdownWidget.validateForm()) {
                 return;
@@ -55,7 +54,7 @@ define(function(require) {
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')
             }];
-            var url = routing.generate($button.data('url'), {
+            const url = routing.generate($button.data('url'), {
                 product_items: productItems
             });
             mediator.execute('showLoading');

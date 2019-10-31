@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ConfirmSlugChangeComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const mediator = require('oroui/js/mediator');
+    const messenger = require('oroui/js/messenger');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    ConfirmSlugChangeComponent = BaseComponent.extend({
+    const ConfirmSlugChangeComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -58,8 +57,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ConfirmSlugChangeComponent() {
-            ConfirmSlugChangeComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ConfirmSlugChangeComponent(options) {
+            ConfirmSlugChangeComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -67,7 +66,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]);
             }, this));
             if (requiredMissed.length) {
@@ -102,7 +101,7 @@ define(function(require) {
          * @return {Boolean}
          */
         onSubmit: function(event) {
-            var validator = $(event.target).data('validator');
+            const validator = $(event.target).data('validator');
 
             if (validator && !validator.valid()) {
                 return true;
@@ -125,9 +124,9 @@ define(function(require) {
         },
 
         loadSlugListAndShowConfirmModal: function() {
-            var formData = this.$form.serialize();
-            var urls = {};
-            var that = this;
+            const formData = this.$form.serialize();
+            let urls = {};
+            const that = this;
 
             mediator.execute('showLoading');
             $.ajax({
@@ -206,7 +205,7 @@ define(function(require) {
          * @private
          */
         _isSlugFieldsChanged: function() {
-            var isChanged = false;
+            let isChanged = false;
             this.$slugFields.each(_.bind(function(index, item) {
                 if (this.slugFieldsInitialState[index] !== $(item).val()) {
                     isChanged = true;
@@ -224,8 +223,8 @@ define(function(require) {
          * @private
          */
         _getUrlsList: function(urls) {
-            var list = '';
-            for (var localization in urls) {
+            let list = '';
+            for (const localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
                     list += '\n' + __(
                         'oro.redirect.confirm_slug_change.changed_localized_slug_item',

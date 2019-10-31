@@ -1,10 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    var StyleIsolationModule = function(options) {
+    const StyleIsolationModule = function(options) {
         _.extend(this, _.pick(options, ['view', 'builder']));
 
         this.componentCssIdRegexp = /(\[id="component-id-view([\d]*)"\])/g;
@@ -22,10 +22,10 @@ define(function(require) {
         },
 
         wrapMethods: function() {
-            var uniqId = 'id="component-id-' + _.uniqueId('view') + '"';
+            const uniqId = 'id="component-id-' + _.uniqueId('view') + '"';
 
             this.builder.getHtml = _.wrap(this.builder.getHtml, _.bind(function(func) {
-                var html = func();
+                let html = func();
                 if (this.componentHtmlIdRegexp.test(html)) {
                     html = $(html).unwrap().html();
                 }
@@ -34,7 +34,7 @@ define(function(require) {
             }, this));
 
             this.builder.getCss = _.wrap(this.builder.getCss, _.bind(function(func) {
-                var css = this.removeCSSContainerId(func());
+                let css = this.removeCSSContainerId(func());
                 css = css.replace(this.cssSelectorRegexp, '[' + uniqId + '] $&');
                 return css;
             }, this));

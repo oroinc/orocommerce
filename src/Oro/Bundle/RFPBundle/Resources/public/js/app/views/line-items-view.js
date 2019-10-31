@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var LineItemsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const mediator = require('oroui/js/mediator');
 
     /**
      * @export ororfp/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -24,8 +23,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -34,7 +33,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            LineItemsView.__super__.initialize.apply(this, arguments);
+            LineItemsView.__super__.initialize.call(this, options);
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 _sourceElement: this.$el,
@@ -62,7 +61,7 @@ define(function(require) {
          * @returns {Array} products
          */
         getProductsId: function() {
-            var products = this.$el.find('input[data-ftid$="_product"]');
+            let products = this.$el.find('input[data-ftid$="_product"]');
             products = _.filter(products, function(product) {
                 return product.value.length > 0;
             });
@@ -76,18 +75,18 @@ define(function(require) {
          * @returns {Array} products
          */
         getItems: function() {
-            var lineItems = this.$el.find('.order-line-item');
-            var items = [];
+            const lineItems = this.$el.find('.order-line-item');
+            const items = [];
 
             _.each(lineItems, function(lineItem) {
-                var $lineItem = $(lineItem);
-                var productId = $lineItem.find('input[data-ftid$="_product"]')[0].value;
+                const $lineItem = $(lineItem);
+                const productId = $lineItem.find('input[data-ftid$="_product"]')[0].value;
                 if (productId.length === 0) {
                     return;
                 }
 
-                var unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
-                var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
+                const unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
+                const quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
 
                 items.push({product: productId, unit: unitCode, qty: quantity});
             });

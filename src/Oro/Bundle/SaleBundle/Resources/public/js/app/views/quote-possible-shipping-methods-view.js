@@ -1,46 +1,45 @@
 define(function(require) {
     'use strict';
 
-    var QuotePossibleShippingMethodsView;
-    var $ = require('jquery');
-    var PossibleShippingMethodsView = require('oroorder/js/app/views/possible-shipping-methods-view');
+    const $ = require('jquery');
+    const PossibleShippingMethodsView = require('oroorder/js/app/views/possible-shipping-methods-view');
 
-    QuotePossibleShippingMethodsView = PossibleShippingMethodsView.extend({
+    const QuotePossibleShippingMethodsView = PossibleShippingMethodsView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function QuotePossibleShippingMethodsView() {
-            QuotePossibleShippingMethodsView.__super__.constructor.apply(this, arguments);
+        constructor: function QuotePossibleShippingMethodsView(options) {
+            QuotePossibleShippingMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            QuotePossibleShippingMethodsView.__super__.initialize.apply(this, arguments);
+            QuotePossibleShippingMethodsView.__super__.initialize.call(this, options);
         },
 
-        updatePossibleShippingMethods: function() {
-            QuotePossibleShippingMethodsView.__super__.updatePossibleShippingMethods.apply(this, arguments);
+        updatePossibleShippingMethods: function(methods) {
+            QuotePossibleShippingMethodsView.__super__.updatePossibleShippingMethods.call(this, methods);
 
             this.allowUnlistedAndLockFlags();
         },
 
-        onShippingMethodTypeChange: function() {
-            QuotePossibleShippingMethodsView.__super__.onShippingMethodTypeChange.apply(this, arguments);
+        onShippingMethodTypeChange: function(event) {
+            QuotePossibleShippingMethodsView.__super__.onShippingMethodTypeChange.call(this, event);
 
             this.allowUnlistedAndLockFlags();
         },
 
         allowUnlistedAndLockFlags: function() {
-            var $shippingMethodLockedFlag = $('[name$="[shippingMethodLocked]"]');
-            var $allowUnlistedShippingMethodFlag = $('[name$="[allowUnlistedShippingMethod]"]');
+            const $shippingMethodLockedFlag = $('[name$="[shippingMethodLocked]"]');
+            const $allowUnlistedShippingMethodFlag = $('[name$="[allowUnlistedShippingMethod]"]');
 
             if ($shippingMethodLockedFlag.length <= 0 || $allowUnlistedShippingMethodFlag.length <= 0) {
                 return;
             }
 
-            var disableFlags = $('[name$="[estimatedShippingCostAmount]"]').val() <= 0;
+            const disableFlags = $('[name$="[estimatedShippingCostAmount]"]').val() <= 0;
 
             $shippingMethodLockedFlag.prop('disabled', disableFlags);
             $allowUnlistedShippingMethodFlag.prop('disabled', disableFlags);

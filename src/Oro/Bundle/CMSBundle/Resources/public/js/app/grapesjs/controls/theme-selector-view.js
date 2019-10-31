@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ThemeSelector;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var template = require('tpl-loader!orocms/templates/grapesjs-dropdown-action.html');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const template = require('tpl-loader!orocms/templates/grapesjs-dropdown-action.html');
 
-    ThemeSelector = BaseView.extend({
+    const ThemeSelector = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
             'editor', 'themes'
         ]),
@@ -27,27 +26,27 @@ define(function(require) {
             'input [name="theme-filter"]': 'onInput'
         },
 
-        constructor: function ThemeSelector() {
-            ThemeSelector.__super__.constructor.apply(this, arguments);
+        constructor: function ThemeSelector(options) {
+            ThemeSelector.__super__.constructor.call(this, options);
         },
 
-        initialize: function() {
+        initialize: function(options) {
             this.setCurrentTheme();
 
-            ThemeSelector.__super__.initialize.apply(this, arguments);
+            ThemeSelector.__super__.initialize.call(this, options);
         },
 
         render: function() {
-            var data = this.getTemplateData();
-            var template = this.getTemplateFunction();
-            var html = template(data);
+            const data = this.getTemplateData();
+            const template = this.getTemplateFunction();
+            const html = template(data);
             this.$el.html(html);
 
             this.$el.inputWidget('seekAndCreate');
         },
 
         getTemplateData: function() {
-            var options = _.reduce(this.themes, function(options, theme) {
+            const options = _.reduce(this.themes, function(options, theme) {
                 options[theme.name] = theme.label;
                 return options;
             }, {});
@@ -77,14 +76,13 @@ define(function(require) {
         },
 
         onClick: function(e) {
+            const key = $(e.target).data('key');
             if (key === this.currentTheme) {
                 return;
             }
-
-            var key = $(e.target).data('key');
             this.setCurrentTheme(key);
 
-            this.editor.trigger('changeTheme', $(e.target).data('key'));
+            this.editor.trigger('changeTheme', key);
 
             this.render();
         },

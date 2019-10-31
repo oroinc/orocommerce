@@ -3,9 +3,9 @@ define([
 ], function(_, __, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal');
-    var decimalSeparator = options.decimal_separator_symbol;
-    var defaultParam = {
+    const options = localeSettings.getNumberFormats('decimal');
+    const decimalSeparator = options.decimal_separator_symbol;
+    const defaultParam = {
         message: 'This value should have {{ limit }} or less decimal digits.'
     };
 
@@ -20,14 +20,14 @@ define([
                 return true;
             }
 
-            var decimals = value.split(decimalSeparator).pop();
+            const decimals = value.split(decimalSeparator).pop();
             decimals.replace(' ', '');
 
             return isNaN(decimals) || decimals.length <= param.decimals;
         },
         function(param, element) {
-            var value = this.elementValue(element);
-            var placeholders = {};
+            const value = this.elementValue(element);
+            const placeholders = {};
             param = _.extend({}, defaultParam, param);
 
             placeholders.limit = param.decimals;

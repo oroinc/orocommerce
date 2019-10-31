@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var InclusionExclusionSubComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
-    InclusionExclusionSubComponent = BaseComponent.extend({
+    const InclusionExclusionSubComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -40,8 +39,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function InclusionExclusionSubComponent() {
-            InclusionExclusionSubComponent.__super__.constructor.apply(this, arguments);
+        constructor: function InclusionExclusionSubComponent(options) {
+            InclusionExclusionSubComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -75,14 +74,14 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
+            const requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
                 return _.isUndefined(this.options[option]);
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
@@ -119,12 +118,12 @@ define(function(require) {
                 return;
             }
 
-            var currentState = $to.val().split(this.options.delimiter).concat(ids);
+            let currentState = $to.val().split(this.options.delimiter).concat(ids);
             currentState = _.filter(currentState, function(value, index, array) {
                 return value !== '';
             });
 
-            var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
+            const newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
             if ($to.val() !== newVal) {
                 $to.val(newVal).trigger('change');
             }
@@ -158,12 +157,12 @@ define(function(require) {
                 return parseInt(value);
             });
 
-            var currentState = $from.val().split(this.options.delimiter);
+            let currentState = $from.val().split(this.options.delimiter);
             currentState = _.filter(currentState, function(value) {
                 return value !== '' && _.indexOf(ids, parseInt(value)) < 0;
             });
 
-            var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
+            const newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
             if ($from.val() !== newVal) {
                 $from.val(newVal).trigger('change');
             }

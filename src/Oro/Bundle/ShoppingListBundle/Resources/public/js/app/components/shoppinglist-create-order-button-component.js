@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var ButtonComponent = require('oroworkflow/js/app/components/button-component');
-    var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var __ = require('orotranslation/js/translator');
-    var ShoppingListCreateOrderButtonComponent;
+    const ButtonComponent = require('oroworkflow/js/app/components/button-component');
+    const StandardConfirmation = require('oroui/js/standart-confirmation');
+    const __ = require('orotranslation/js/translator');
 
-    ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
+    const ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
         hasEmptyMatrix: null,
 
         shoppingListCollection: null,
@@ -30,8 +29,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListCreateOrderButtonComponent() {
-            ShoppingListCreateOrderButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListCreateOrderButtonComponent(options) {
+            ShoppingListCreateOrderButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -39,7 +38,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
-            return ShoppingListCreateOrderButtonComponent.__super__.initialize.apply(this, arguments);
+            return ShoppingListCreateOrderButtonComponent.__super__.initialize.call(this, options);
         },
 
         /**
@@ -59,7 +58,7 @@ define(function(require) {
          */
         _onClickButtonExecutor: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
-                ._onClickButtonExecutor.bind(this, arguments));
+                ._onClickButtonExecutor.bind(this, clickedButton));
         },
 
         /**
@@ -68,7 +67,7 @@ define(function(require) {
         _onClickButtonRedirect: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
                 ._onClickButtonRedirect
-                .bind(this, arguments));
+                .bind(this, clickedButton));
         },
 
         showConfirmation: function(callback) {
@@ -80,7 +79,7 @@ define(function(require) {
                 return;
             }
 
-            var confirmModal = new StandardConfirmation(this.messages);
+            const confirmModal = new StandardConfirmation(this.messages);
             confirmModal
                 .off('ok')
                 .on('ok')

@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var PriceListsComponent;
-    var $ = require('jquery');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    PriceListsComponent = BaseComponent.extend({
+    const PriceListsComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function PriceListsComponent() {
-            PriceListsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PriceListsComponent(options) {
+            PriceListsComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var $el = options._sourceElement;
+            const $el = options._sourceElement;
             $el.find('input[type="hidden"]').on('change', function(e) {
                 $(this).closest('td').find('.validation-failed').remove();
                 $(this).closest('.error').removeClass('error');

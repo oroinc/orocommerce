@@ -1,17 +1,16 @@
 define(function(require, exports, module) {
     'use strict';
 
-    var BackendSelectHeaderCell;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
-    var SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
-    var ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
-    var config = require('module-config').default(module.id);
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
+    const SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
+    const config = require('module-config').default(module.id);
 
-    var shoppingListAddAction = config.shoppingListAddAction || {
+    const shoppingListAddAction = config.shoppingListAddAction || {
         type: 'addproducts',
         data_identifier: 'product.id',
         frontend_type: 'add-products-mass',
@@ -28,7 +27,7 @@ define(function(require, exports, module) {
         }
     };
 
-    BackendSelectHeaderCell = SelectHeaderCell.extend({
+    const BackendSelectHeaderCell = SelectHeaderCell.extend({
         /** @property */
         autoRender: true,
 
@@ -51,15 +50,15 @@ define(function(require, exports, module) {
         /**
          * @inheritDoc
          */
-        constructor: function BackendSelectHeaderCell() {
-            BackendSelectHeaderCell.__super__.constructor.apply(this, arguments);
+        constructor: function BackendSelectHeaderCell(options) {
+            BackendSelectHeaderCell.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            BackendSelectHeaderCell.__super__.initialize.apply(this, arguments);
+            BackendSelectHeaderCell.__super__.initialize.call(this, options);
             this.selectState = options.selectState;
             this.massActionsInSticky = options.massActionsInSticky;
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.canUse, 50), this));
@@ -77,7 +76,7 @@ define(function(require, exports, module) {
          */
         dispose: function() {
             delete this.shoppingListCollection;
-            return BackendSelectHeaderCell.__super__.dispose.apply(this, arguments);
+            return BackendSelectHeaderCell.__super__.dispose.call(this);
         },
 
         canUse: function(selectState) {
@@ -85,14 +84,14 @@ define(function(require, exports, module) {
         },
 
         _onShoppingListsRefresh: function() {
-            var datagrid = this.column.get('datagrid');
+            const datagrid = this.column.get('datagrid');
             datagrid.resetSelectionState();
 
             $.ajax({
                 method: 'GET',
                 url: routing.generate('oro_shopping_list_frontend_get_mass_actions'),
                 success: function(availableMassActions) {
-                    var newMassActions = {};
+                    const newMassActions = {};
 
                     _.each(availableMassActions, function(massAction, title) {
                         newMassActions[title] = $.extend(true, {}, shoppingListAddAction, massAction, {
@@ -108,7 +107,7 @@ define(function(require, exports, module) {
         },
 
         getTemplateData: function() {
-            var data = BackendSelectHeaderCell.__super__.getTemplateData.call(this);
+            const data = BackendSelectHeaderCell.__super__.getTemplateData.call(this);
 
             data.massActionsInSticky = this.massActionsInSticky;
             data.actionsLength = this.subview('actionsPanel').actions.length;
@@ -122,7 +121,7 @@ define(function(require, exports, module) {
         },
 
         renderActionsPanel: function() {
-            var panel = this.subview('actionsPanel');
+            const panel = this.subview('actionsPanel');
 
             panel.massActionsInSticky = this.massActionsInSticky;
             if (panel.haveActions()) {

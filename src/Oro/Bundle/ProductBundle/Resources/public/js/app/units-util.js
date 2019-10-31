@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var UnitsUtil;
-    var _ = require('underscore');
+    const _ = require('underscore');
 
-    UnitsUtil = {
+    const UnitsUtil = {
         getUnitsLabel: function(model) {
-            var units = {};
-            var unitLabel = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
+            const units = {};
+            const unitLabel = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
             _.each(model.get('product_units'), function(precision, value) {
                 units[value] = _.__(unitLabel.replace('%s', value));
             });
@@ -15,9 +14,9 @@ define(function(require) {
         },
 
         updateSelect: function(model, $el) {
-            var options = [];
-            var oldValue = $el.val();
-            var units = this.getUnitsLabel(model);
+            const options = [];
+            const oldValue = $el.val();
+            const units = this.getUnitsLabel(model);
             if (!_.isEmpty(units)) {
                 _.each(units, function(label, value) {
                     options.push(this.generateSelectOption(value, label));
@@ -36,7 +35,7 @@ define(function(require) {
 
             $el.html(options.join(''));
 
-            var value = model.get('unit_deferred') || oldValue;
+            let value = model.get('unit_deferred') || oldValue;
             if (!value || !$el.find('option[value="' + _.escape(value) + '"]').length) {
                 value = $el.val();
             }

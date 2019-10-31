@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var mediator = require('oroui/js/mediator');
-    var AppliedPromotionCollectionView;
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
 
-    AppliedPromotionCollectionView = BaseView.extend({
+    const AppliedPromotionCollectionView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -38,7 +37,7 @@ define(function(require) {
          * @inheritDoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['click ' + this.options.selectors.changeActiveButton] = 'changeActiveStatus';
             events['click ' + this.options.selectors.removeButton] = 'removeAppliedPromotion';
 
@@ -49,7 +48,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function() {
-            var handlers = {};
+            const handlers = {};
             handlers['entry-point:order:load:before'] = this.showLoadingMask;
             handlers['entry-point:order:load'] = this.refreshCollectionBlock;
             handlers['entry-point:order:load:after'] = this.hideLoadingMask;
@@ -61,15 +60,15 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         changeActiveStatus: function(event) {
-            var self = this;
-            var $tableRow = $(event.target).closest(this.options.selectors.appliedPromotionTableRow);
-            var sourcePromotionId = $tableRow.data(this.options.sourcePromotionIdDataAttribute);
+            const self = this;
+            const $tableRow = $(event.target).closest(this.options.selectors.appliedPromotionTableRow);
+            const sourcePromotionId = $tableRow.data(this.options.sourcePromotionIdDataAttribute);
 
             this.$(this.options.selectors.appliedPromotionElement).each(function() {
                 if ($(this).data(self.options.sourcePromotionIdDataAttribute) === sourcePromotionId) {
-                    var $activeField = $(this).find(self.options.selectors.appliedPromotionActiveField);
-                    var activeState = +$activeField.val();
-                    var newActiveState = !activeState;
+                    const $activeField = $(this).find(self.options.selectors.appliedPromotionActiveField);
+                    const activeState = +$activeField.val();
+                    const newActiveState = !activeState;
                     $activeField.val(+newActiveState);
                 }
             });
@@ -81,10 +80,10 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         removeAppliedPromotion: function(event) {
-            var self = this;
-            var $tableRow = $(event.target).closest(this.options.selectors.appliedPromotionTableRow);
-            var sourcePromotionId = $tableRow.data(this.options.sourcePromotionIdDataAttribute);
-            var sourceCouponId = $tableRow.data(this.options.sourceCouponIdDataAttribute);
+            const self = this;
+            const $tableRow = $(event.target).closest(this.options.selectors.appliedPromotionTableRow);
+            const sourcePromotionId = $tableRow.data(this.options.sourcePromotionIdDataAttribute);
+            const sourceCouponId = $tableRow.data(this.options.sourceCouponIdDataAttribute);
 
             this.$(this.options.selectors.appliedPromotionElement).each(function() {
                 if ($(this).data(self.options.sourcePromotionIdDataAttribute) === sourcePromotionId) {
@@ -101,7 +100,7 @@ define(function(require) {
          */
         refreshCollectionBlock: function(response) {
             if (!_.isUndefined(response.appliedPromotions)) {
-                var $content = $(response.appliedPromotions);
+                const $content = $(response.appliedPromotions);
                 this.$el.html($content.html());
                 this.$el.trigger('content:changed');
                 this._removeLoadingMask();
@@ -152,7 +151,7 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);

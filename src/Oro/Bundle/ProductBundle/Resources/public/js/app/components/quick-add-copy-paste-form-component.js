@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddCopyPasteFormComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
 
     require('jquery.validate');
 
-    QuickAddCopyPasteFormComponent = BaseComponent.extend({
+    const QuickAddCopyPasteFormComponent = BaseComponent.extend({
         /**
          * @property
          */
@@ -48,13 +47,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddCopyPasteFormComponent() {
+        constructor: function QuickAddCopyPasteFormComponent(options) {
             this._onSubmit = this._onSubmit.bind(this);
 
             // Use debounce to give time to apply jquery.validate changing
             this.onFieldChange = _.debounce(this.onFieldChange.bind(this), 50);
 
-            QuickAddCopyPasteFormComponent.__super__.constructor.apply(this, arguments);
+            QuickAddCopyPasteFormComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -74,7 +73,7 @@ define(function(require) {
             // Listen the same events what used by jquery.validate
             this.$field.on('keyup focusout', this.onFieldChange);
 
-            var regexParts = this.$field.data('item-parse-pattern').match(/^\/(.*?)\/(g?i?m?y?)$/);
+            const regexParts = this.$field.data('item-parse-pattern').match(/^\/(.*?)\/(g?i?m?y?)$/);
 
             if (regexParts === null || regexParts.length < 2) {
                 throw new Error('The field must must have a data attribute with valid RegExp string');
@@ -140,7 +139,7 @@ define(function(require) {
          * @private
          */
         _toggleSubmitButton: function(disable) {
-            var disabled = disable || this.isEmptyField();
+            const disabled = disable || this.isEmptyField();
 
             this.$submitButton.attr('disabled', disabled);
         },
@@ -201,7 +200,7 @@ define(function(require) {
             this.fieldItemsLines = _.compact(this.$field.val().split('\n'));
 
             _.each(this.fieldItemsLines, function(line) {
-                var parts = line.match(this.itemParseRegex);
+                const parts = line.match(this.itemParseRegex);
 
                 if (!parts || parts.length < 3) {
                     // row must match the pattern and contains SKU and quantity
@@ -209,14 +208,14 @@ define(function(require) {
                     return;
                 }
 
-                var product = {
+                const product = {
                     raw: [parts[0]],
                     sku: parts[1].toUpperCase(),
                     quantity: parseFloat(parts[2]),
                     unit: parts[3] || void 0
                 };
 
-                var existItem = _.findWhere(this.parsedItems, {sku: product.sku, unit: product.unit});
+                const existItem = _.findWhere(this.parsedItems, {sku: product.sku, unit: product.unit});
 
                 if (existItem) {
                     existItem.raw = existItem.raw.concat(product.raw);
@@ -255,7 +254,7 @@ define(function(require) {
          * @param {object} item
          */
         updateParsedItems: function(item) {
-            var index = _.findIndex(this.parsedItems, this._rowMatcher(item));
+            const index = _.findIndex(this.parsedItems, this._rowMatcher(item));
 
             if (index === -1) {
                 return;
@@ -330,8 +329,8 @@ define(function(require) {
         },
 
         _showErrorMessage: function() {
-            var _errorField = this.$field.attr('name');
-            var _customError = {};
+            const _errorField = this.$field.attr('name');
+            const _customError = {};
 
             _customError[_errorField] = {errors: [__('oro.product.frontend.quick_add.copy_paste.error')]};
 

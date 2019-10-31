@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ProductQuantityEditableView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ApiAccessor = require('oroui/js/tools/api-accessor');
-    var mediator = require('oroui/js/mediator');
-    var tools = require('oroui/js/tools');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var ENTER_KEY_CODE = 13;
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
+    const mediator = require('oroui/js/mediator');
+    const tools = require('oroui/js/tools');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const ENTER_KEY_CODE = 13;
 
-    ProductQuantityEditableView = BaseView.extend({
+    const ProductQuantityEditableView = BaseView.extend({
         options: {
             quantityFieldName: 'quantity',
             unitFieldName: 'unit',
@@ -54,8 +53,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductQuantityEditableView() {
-            ProductQuantityEditableView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductQuantityEditableView(options) {
+            ProductQuantityEditableView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -111,7 +110,7 @@ define(function(require) {
 
             // Emulate change event on blur and press enter in MS browsers
             if (tools.isIE11() || tools.isEDGE()) {
-                var valueBeforeInput = this.elements.quantity.val();
+                let valueBeforeInput = this.elements.quantity.val();
 
                 this.elements.quantity
                     .on('focus' + this.eventNamespace(), function(e) {
@@ -136,7 +135,7 @@ define(function(require) {
             this.elements.unit.find('option').prop('disabled', false);
 
             this.$el.siblings().each(_.bind(function(index, el) {
-                var value = $(el).find('[name="unit"]').val();
+                const value = $(el).find('[name="unit"]').val();
                 this.elements.unit
                     .find('[value="' + value + '"]')
                     .prop('disabled', true);
@@ -152,24 +151,24 @@ define(function(require) {
         },
 
         initValidator: function(options) {
-            var $form = this.$el.find('form');
-            var validationRules = {};
+            const $form = this.$el.find('form');
+            const validationRules = {};
             validationRules[this.elements.quantity.attr('name')] = options.validation.rules.quantity;
             validationRules[this.elements.unit.attr('name')] = options.validation.rules.unit;
 
-            var validationOptions = {
+            const validationOptions = {
                 rules: validationRules
             };
 
             if (options.validation.showErrorsHandler) {
-                var waitors = [];
+                const waitors = [];
                 waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
                     _.bind(function() {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
                         this.updateValidation($form, validationOptions);
                     }, this)
                 ));
-                this.deferredInit = $.when.apply($, waitors);
+                this.deferredInit = $.when(...waitors);
             } else {
                 this.updateValidation($form, validationOptions);
             }
@@ -179,13 +178,13 @@ define(function(require) {
             this.validator = $form.validate();
 
             if (_.isObject(options)) {
-                var settings = this.validator.settings;
+                const settings = this.validator.settings;
                 $.extend(true, settings, options);
             }
         },
 
         initListeners: function() {
-            var changeAction = this.onViewChange;
+            let changeAction = this.onViewChange;
             if (this.elements.saveButton) {
                 this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
                 changeAction = this.enableAccept;
@@ -224,8 +223,8 @@ define(function(require) {
         },
 
         isChanged: function() {
-            var modelData = this.getValue();
-            for (var key in modelData) {
+            const modelData = this.getValue();
+            for (const key in modelData) {
                 if (modelData.hasOwnProperty(key) && this.oldModelState[key] !== modelData[key]) {
                     return true;
                 }
@@ -250,15 +249,15 @@ define(function(require) {
             }
 
             this._isSaving = true;
-            var modelData = this.getValue();
-            var serverUpdateData = {};
+            const modelData = this.getValue();
+            let serverUpdateData = {};
             if (this.dataKey) {
                 serverUpdateData[this.dataKey] = modelData;
             } else {
                 serverUpdateData = modelData;
             }
 
-            var savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
+            const savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
                 processingMessage: this.messages.processingMessage,
                 preventWindowUnload: this.messages.preventWindowUnload,
                 errorHandlerMessage: false
@@ -275,7 +274,7 @@ define(function(require) {
             this.saveModelState();
             this.restoreSavedState();
 
-            var value = _.extend({}, this.triggerData || {}, {
+            const value = _.extend({}, this.triggerData || {}, {
                 value: this.getValue()
             });
             this.trigger('product:quantity-unit:update', value);
@@ -285,17 +284,17 @@ define(function(require) {
         },
 
         onSaveError: function(jqXHR) {
-            var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+            const errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
 
             this.restoreSavedState();
 
-            var errors = jqXHR.responseJSON.errors.errors || [];
+            const errors = jqXHR.responseJSON.errors.errors || [];
             switch (errorCode) {
                 case 400:
-                    var jqXHRerrors = jqXHR.responseJSON.errors.children;
-                    for (var i in jqXHRerrors) {
+                    const jqXHRerrors = jqXHR.responseJSON.errors.children;
+                    for (const i in jqXHRerrors) {
                         if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
-                            errors.push.apply(errors, _.values(jqXHRerrors[i].errors));
+                            errors.push(..._.values(jqXHRerrors[i].errors));
                         }
                     }
                     if (!errors.length) {

@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var PossibleShippingMethodsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var possibleShippingMethodsTemplate = require('tpl-loader!./../templates/possible-shipping-methods-template.html');
-    var selectedShippingMethodTemplate = require('tpl-loader!./../templates/selected-shipping-method-template.html');
-    var noShippingMethodsAvailableTemplate = require('tpl-loader!./../templates/no-shipping-methods-available.html');
-    var NumberFormatter = require('orolocale/js/formatter/number');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const StandardConfirmation = require('oroui/js/standart-confirmation');
+    const possibleShippingMethodsTemplate = require('tpl-loader!./../templates/possible-shipping-methods-template.html');
+    const selectedShippingMethodTemplate = require('tpl-loader!./../templates/selected-shipping-method-template.html');
+    const noShippingMethodsAvailableTemplate = require('tpl-loader!./../templates/no-shipping-methods-available.html');
+    const NumberFormatter = require('orolocale/js/formatter/number');
 
-    PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
 
         options: {
@@ -51,15 +50,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PossibleShippingMethodsView() {
-            PossibleShippingMethodsView.__super__.constructor.apply(this, arguments);
+        constructor: function PossibleShippingMethodsView(options) {
+            PossibleShippingMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            PossibleShippingMethodsView.__super__.initialize.apply(this, arguments);
+            PossibleShippingMethodsView.__super__.initialize.call(this, options);
 
             this.options = $.extend(true, {}, this.options, options || {});
             this.orderHasChanged = false;
@@ -86,7 +85,7 @@ define(function(require) {
         onSaveForm: function(e) {
             this.getElement('calculateShipping').val(true);
 
-            var $form = this.getElement('$form');
+            const $form = this.getElement('$form');
             $form.validate();
             if ($form.valid() && this.orderHasChanged && !this.getElement('overriddenShippingCostAmount').val()) {
                 this.showConfirmation($form);
@@ -154,12 +153,12 @@ define(function(require) {
         },
 
         updatePossibleShippingMethods: function(methods) {
-            var selectedMethod = this.getSelectedMethod();
+            let selectedMethod = this.getSelectedMethod();
             if (!selectedMethod && this.options.savedShippingMethod) {
                 selectedMethod = this.options.savedShippingMethod;
             }
-            var selectedFound = false;
-            var str = this.options.noShippingMethodsAvailableTemplate();
+            let selectedFound = false;
+            let str = this.options.noShippingMethodsAvailableTemplate();
             if (_.size(methods) > 0) {
                 str = this.options.possibleShippingMethodsTemplate({
                     methods: methods,
@@ -184,9 +183,9 @@ define(function(require) {
         },
 
         getSelectedMethod: function() {
-            var selectedMethod = this.getElement('shippingMethod').val();
-            var selectedType = this.getElement('shippingMethodType').val();
-            var selectedCost = this.getElement('estimatedShippingCostAmount').val();
+            const selectedMethod = this.getElement('shippingMethod').val();
+            const selectedType = this.getElement('shippingMethodType').val();
+            const selectedCost = this.getElement('estimatedShippingCostAmount').val();
             if (selectedMethod && selectedType && selectedCost) {
                 return this.createMethodObject(selectedMethod, selectedType, selectedCost);
             }
@@ -194,7 +193,7 @@ define(function(require) {
         },
 
         isMethodAvailable: function(methods, expectedMethod) {
-            var selectedFound = false;
+            let selectedFound = false;
             if (!expectedMethod) {
                 return selectedFound;
             }
@@ -231,7 +230,7 @@ define(function(require) {
 
         renderPreviousSelectedShippingMethod: function(label) {
             this.removeSelectedShippingMethod();
-            var $prevDiv = $('<div>').html(this.options.selectedShippingMethodTemplate({
+            const $prevDiv = $('<div>').html(this.options.selectedShippingMethodTemplate({
                 shippingMethodLabel: _.__('oro.order.previous_shipping_method.label'),
                 shippingMethodClass: 'selected-shipping-method',
                 selectedShippingMethod: this.options.savedShippingMethodLabel
@@ -243,8 +242,8 @@ define(function(require) {
          * @param {Event} event
          */
         onShippingMethodTypeChange: function(event) {
-            var target = $(event.target);
-            var method = this.createMethodObject(
+            const target = $(event.target);
+            const method = this.createMethodObject(
                 target.data('shipping-method'),
                 target.val(),
                 target.data('shipping-price')
@@ -261,7 +260,7 @@ define(function(require) {
         },
 
         areMethodsEqual: function(methodA, methodB) {
-            var equals = false;
+            let equals = false;
             if (methodA && methodB) {
                 equals = methodA.method === methodB.method;
                 equals = equals && methodA.type === methodB.type;
@@ -279,8 +278,8 @@ define(function(require) {
         },
 
         updateTotals: function() {
-            var overriddenCost = this.getElement('overriddenShippingCostAmount').val();
-            var cost = parseFloat(overriddenCost);
+            const overriddenCost = this.getElement('overriddenShippingCostAmount').val();
+            const cost = parseFloat(overriddenCost);
             if (isNaN(cost)) {
                 this.recalculationIsNotRequired = true;
                 mediator.trigger(this.options.events.trigger);
@@ -300,7 +299,7 @@ define(function(require) {
 
             mediator.off(null, null, this);
 
-            PossibleShippingMethodsView.__super__.dispose.apply(this, arguments);
+            PossibleShippingMethodsView.__super__.dispose.call(this);
         }
     }));
 

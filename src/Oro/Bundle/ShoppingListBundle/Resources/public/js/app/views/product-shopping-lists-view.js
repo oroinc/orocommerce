@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ProductShoppingListsView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ProductShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             template: ''
         },
@@ -27,15 +26,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductShoppingListsView() {
-            ProductShoppingListsView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductShoppingListsView(options) {
+            ProductShoppingListsView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductShoppingListsView.__super__.initialize.apply(this, arguments);
+            ProductShoppingListsView.__super__.initialize.call(this, options);
 
             this.options = _.defaults(options || {}, this.options);
             this.options.template = _.template(this.options.template);
@@ -54,7 +53,7 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            var modelAttr = _.each(options.modelAttr, function(value, attribute) {
+            const modelAttr = _.each(options.modelAttr, function(value, attribute) {
                 options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
             }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
@@ -77,17 +76,17 @@ define(function(require) {
         dispose: function() {
             this.disposeElements();
             delete this.shoppingListCollection;
-            ProductShoppingListsView.__super__.dispose.apply(this, arguments);
+            ProductShoppingListsView.__super__.dispose.call(this);
         },
 
-        delegateEvents: function() {
-            ProductShoppingListsView.__super__.delegateEvents.apply(this, arguments);
+        delegateEvents: function(events) {
+            ProductShoppingListsView.__super__.delegateEvents.call(this, events);
             this.delegateElementsEvents();
         },
 
         undelegateEvents: function() {
             this.undelegateElementsEvents();
-            return ProductShoppingListsView.__super__.undelegateEvents.apply(this, arguments);
+            return ProductShoppingListsView.__super__.undelegateEvents.call(this);
         },
 
         render: function() {
@@ -102,8 +101,8 @@ define(function(require) {
         },
 
         updateShoppingLists: function() {
-            var modelShoppingLists = this.model.get('shopping_lists');
-            var $el = $(this.options.template({
+            const modelShoppingLists = this.model.get('shopping_lists');
+            const $el = $(this.options.template({
                 currentShoppingList: this.findCurrentShoppingList(modelShoppingLists),
                 shoppingListsCount: modelShoppingLists && modelShoppingLists.length || 0
             }));
@@ -113,8 +112,8 @@ define(function(require) {
         },
 
         findCurrentShoppingList: function(modelShoppingLists) {
-            var current = _.find(modelShoppingLists, function(list) {
-                var model = this.shoppingListCollection.get(list.id);
+            const current = _.find(modelShoppingLists, function(list) {
+                const model = this.shoppingListCollection.get(list.id);
                 return model && model.get('is_current');
             }, this) || null;
             if (!current) {

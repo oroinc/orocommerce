@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var TypeValueSwitcher;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    TypeValueSwitcher = BaseView.extend({
+    const TypeValueSwitcher = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -48,8 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function TypeValueSwitcher() {
-            TypeValueSwitcher.__super__.constructor.apply(this, arguments);
+        constructor: function TypeValueSwitcher(options) {
+            TypeValueSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
@@ -57,14 +56,14 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]) || _.isNull(this.options[option]);
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var $el = this.options.el;
+            const $el = this.options.el;
             this.$type = $el.find(this.options.type_selector);
             this.$amountDiscountValue = $el.find(this.options.amount_discount_value_selector);
             this.$percentDiscountValue = $el.find(this.options.percent_discount_value_selector);

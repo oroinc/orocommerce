@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var LineItemOfferView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
 
-    LineItemOfferView = LineItemProductView.extend({
+    const LineItemOfferView = LineItemProductView.extend({
         /**
          * @property {Object}
          */
@@ -20,8 +19,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemOfferView() {
-            LineItemOfferView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemOfferView(options) {
+            LineItemOfferView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -34,7 +33,7 @@ define(function(require) {
                 this.options.$[field] = $(selector);
             }, this));
 
-            LineItemOfferView.__super__.initialize.apply(this, arguments);
+            LineItemOfferView.__super__.initialize.call(this, options);
 
             // get all units
             _.each(this.getElement('unit').find('option'), _.bind(function(elem) {
@@ -47,8 +46,8 @@ define(function(require) {
          * @param {Array} units
          */
         filterUnits: function(units) {
-            var $select = this.getElement('unit');
-            var value = $select.val();
+            const $select = this.getElement('unit');
+            const value = $select.val();
 
             $select
                 .val(null)

@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var SubcategoryFilter;
-    var template = require('tpl-loader!orocatalog/templates/filter/subcategory-filter.html');
-    var MultiselectFilter = require('oro/filter/multiselect-filter');
+    const template = require('tpl-loader!orocatalog/templates/filter/subcategory-filter.html');
+    const MultiselectFilter = require('oro/filter/multiselect-filter');
 
-    SubcategoryFilter = MultiselectFilter.extend({
+    const SubcategoryFilter = MultiselectFilter.extend({
         /**
          * @inheritDoc
          */
@@ -26,8 +25,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SubcategoryFilter() {
-            SubcategoryFilter.__super__.constructor.apply(this, arguments);
+        constructor: function SubcategoryFilter(options) {
+            SubcategoryFilter.__super__.constructor.call(this, options);
         }
     });
 

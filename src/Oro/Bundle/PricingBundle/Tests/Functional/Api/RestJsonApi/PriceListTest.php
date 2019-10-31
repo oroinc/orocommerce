@@ -229,6 +229,71 @@ class PriceListTest extends RestJsonApiTestCase
         );
     }
 
+    public function testUpdateAsIncludedData()
+    {
+        $this->cleanScheduledRelationMessages();
+
+        $priceList = $this->getFirstPriceList();
+        $priceListId = $priceList->getId();
+
+        static::assertTrue($priceList->isActive());
+
+        $this->patch(
+            ['entity' => 'pricerules', 'id' => '<toString(@price_list_1_price_rule_1->id)>'],
+            [
+                'data'     => [
+                    'type'          => 'pricerules',
+                    'id'            => '<toString(@price_list_1_price_rule_1->id)>',
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => ['type' => 'pricelists', 'id' => (string)$priceListId]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'meta'       => ['update' => true],
+                        'type'       => 'pricelists',
+                        'id'         => (string)$priceListId,
+                        'attributes' => [
+                            'name'   => 'Updated Name',
+                            'active' => false
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $updatedPriceList = $this->getEntityManager()
+            ->getRepository(PriceList::class)
+            ->find($priceListId);
+
+        static::assertSame('Updated Name', $updatedPriceList->getName());
+        static::assertFalse($updatedPriceList->isActive());
+
+        $lexeme = $this->getEntityManager()
+            ->getRepository(PriceRuleLexeme::class)
+            ->findOneBy(['priceList' => $updatedPriceList]);
+
+        static::assertNotNull($lexeme);
+
+        static::assertMessagesSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                [
+                    PriceListRelationTrigger::WEBSITE       => $this->getReference('US')->getId(),
+                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                    PriceListRelationTrigger::ACCOUNT       => null
+                ],
+                [
+                    PriceListRelationTrigger::WEBSITE       => $this->getReference('Canada')->getId(),
+                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                    PriceListRelationTrigger::ACCOUNT       => $this->getReference('customer.level_1_1')->getId()
+                ]
+            ]
+        );
+    }
+
     public function testDelete()
     {
         $priceListId = $this->getFirstPriceList()->getId();

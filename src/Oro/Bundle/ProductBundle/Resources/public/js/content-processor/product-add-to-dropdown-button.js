@@ -25,8 +25,8 @@ define([
                 return this.element;
             },
 
-            _create: function() {
-                var modules = this.modules = [];
+            _create: function(...args) {
+                const modules = this.modules = [];
                 $(this.element).trigger('deferredInitialize', {
                     dropdownWidget: this,
                     productModel: this.options.productModel,
@@ -34,7 +34,7 @@ define([
                         modules.push(module);
                     }
                 });
-                this._super.apply(this, arguments);
+                this._super(...args);
             },
 
             _destroy: function() {
@@ -43,8 +43,8 @@ define([
                 this._super();
             },
 
-            _renderButtons: function() {
-                this._super.apply(this, arguments);
+            _renderButtons: function(...args) {
+                this._super(...args);
                 _.each(this.modules, function(module) {
                     if (_.isFunction(module._afterRenderButtons)) {
                         module._afterRenderButtons();
@@ -55,7 +55,7 @@ define([
             },
 
             _moreButton: function() {
-                var $button = this._super();
+                const $button = this._super();
 
                 if (this.options.appendToBody === true) {
                     $button.data('container', 'body');
@@ -65,13 +65,13 @@ define([
             },
 
             _prepareMainButton: function($button) {
-                var $mainButton = this._super($button);
+                const $mainButton = this._super($button);
                 $mainButton.data('clone', $button);
                 return $mainButton;
             },
 
             validateForm: function() {
-                var $form = $(this.element).closest('form');
+                const $form = $(this.element).closest('form');
 
                 return $form.data('validator') ? $form.valid() : true;
             }

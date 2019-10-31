@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var WebCatalogTreeView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
-    var widgetManager = require('oroui/js/widget-manager');
-    var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const messenger = require('oroui/js/messenger');
+    const widgetManager = require('oroui/js/widget-manager');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
 
-    WebCatalogTreeView = BaseTreeManageView.extend({
+    const WebCatalogTreeView = BaseTreeManageView.extend({
         /**
          * @property {Object}
          */
@@ -30,8 +29,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function WebCatalogTreeView() {
-            WebCatalogTreeView.__super__.constructor.apply(this, arguments);
+        constructor: function WebCatalogTreeView(options) {
+            WebCatalogTreeView.__super__.constructor.call(this, options);
         },
 
         onConfirmModalOk: function() {
@@ -86,11 +85,11 @@ define(function(require) {
          * @private
          */
         _getChangedUrlsList: function() {
-            var list = '';
-            var newParentId = this.moveEventData.data.node.parent;
-            var nodeId = this.moveEventData.data.node.id;
-            var urls = this._getChangedUrls(nodeId, newParentId);
-            for (var localization in urls) {
+            let list = '';
+            const newParentId = this.moveEventData.data.node.parent;
+            const nodeId = this.moveEventData.data.node.id;
+            const urls = this._getChangedUrls(nodeId, newParentId);
+            for (const localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
                     list += '\n' + __(
                         'oro.redirect.confirm_slug_change.changed_slug_item',
@@ -106,7 +105,7 @@ define(function(require) {
         },
 
         _getChangedUrls: function(nodeId, newParentId) {
-            var urls;
+            let urls;
             $.ajax({
                 async: false,
                 url: routing.generate('oro_content_node_get_possible_urls', {id: nodeId, newParentId: newParentId}),
@@ -143,7 +142,7 @@ define(function(require) {
          * @private
          */
         _doMove: function(createRedirect) {
-            var data = this.moveEventData.data;
+            const data = this.moveEventData.data;
 
             $.ajax({
                 async: false,

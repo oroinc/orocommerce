@@ -88,7 +88,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_17';
+        return 'v1_18';
     }
 
     /**
@@ -407,6 +407,7 @@ class OroProductBundleInstaller implements
                 ],
                 'attachment' => [
                     'acl_protected' => false,
+                    'use_dam' => true,
                 ]
             ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB

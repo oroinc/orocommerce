@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var FrontendCustomFiltersTogglePlugin;
-    var _ = require('underscore');
-    var FullScreenFiltersAction = require('orofrontend/js/app/datafilter/actions/fullscreen-filters-action');
-    var FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
-    var viewportManager = require('oroui/js/viewport-manager');
+    const _ = require('underscore');
+    const FullScreenFiltersAction = require('orofrontend/js/app/datafilter/actions/fullscreen-filters-action');
+    const FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
+    const viewportManager = require('oroui/js/viewport-manager');
 
     function isApplicableWithViewport() {
         return viewportManager.isApplicable({
@@ -13,12 +12,12 @@ define(function(require) {
         });
     }
 
-    FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
+    const FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
         /**
          * @inheritDoc
          */
-        constructor: function FrontendCustomFiltersTogglePlugin() {
-            FrontendCustomFiltersTogglePlugin.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendCustomFiltersTogglePlugin(main, options) {
+            FrontendCustomFiltersTogglePlugin.__super__.constructor.call(this, main, options);
         },
 
         /**
@@ -31,7 +30,7 @@ define(function(require) {
                 };
             }
 
-            FrontendFiltersTogglePlugin.__super__.initialize.apply(this, arguments);
+            FrontendFiltersTogglePlugin.__super__.initialize.call(this, options);
         },
 
         /**

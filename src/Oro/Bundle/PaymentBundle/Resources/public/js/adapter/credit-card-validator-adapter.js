@@ -8,24 +8,24 @@ define([
 ], function(_, __, chinaUnionPayValidator, $) {
     'use strict';
 
-    var defaultOptions = {
+    const defaultOptions = {
         allowedCreditCards: []
     };
 
     return {
         validate: function(element, options) {
             options = _.extend({}, defaultOptions, options);
-            var allowedCCTypes = _.values(options.allowedCreditCards);
-            var validateOptions = {};
+            const allowedCCTypes = _.values(options.allowedCreditCards);
+            const validateOptions = {};
 
-            var customValidators = [];
+            const customValidators = [];
             if (allowedCCTypes.length) {
-                var amexIndex = allowedCCTypes.indexOf('american_express');
+                const amexIndex = allowedCCTypes.indexOf('american_express');
                 if (amexIndex !== -1) {
                     allowedCCTypes[amexIndex] = 'amex';
                 }
 
-                var dinersClubIndex = allowedCCTypes.indexOf('diners_club');
+                const dinersClubIndex = allowedCCTypes.indexOf('diners_club');
                 if (dinersClubIndex !== -1) {
                     allowedCCTypes.splice(
                         dinersClubIndex,
@@ -35,7 +35,7 @@ define([
                     );
                 }
 
-                var chinaUnionPayIndex = allowedCCTypes.indexOf('china_union_pay');
+                const chinaUnionPayIndex = allowedCCTypes.indexOf('china_union_pay');
                 if (chinaUnionPayIndex !== -1) {
                     allowedCCTypes.splice(chinaUnionPayIndex, 1);
                     customValidators.push(chinaUnionPayValidator);
@@ -45,12 +45,12 @@ define([
             } else {
                 customValidators.push(chinaUnionPayValidator);
             }
-            var isValid = $(element).validateCreditCard(validateOptions).valid;
+            let isValid = $(element).validateCreditCard(validateOptions).valid;
             if (false === isValid && customValidators.length > 0) {
-                var number = $(element).val();
-                for (var i = 0; i < customValidators.length; i++) {
-                    var validator = customValidators[i];
-                    var customResult = validator.validate(number);
+                const number = $(element).val();
+                for (let i = 0; i < customValidators.length; i++) {
+                    const validator = customValidators[i];
+                    const customResult = validator.validate(number);
                     if (true === customResult.valid) {
                         isValid = true;
                     }

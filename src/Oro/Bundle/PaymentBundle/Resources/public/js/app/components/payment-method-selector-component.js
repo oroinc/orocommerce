@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var PaymentMethodSelectorComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var routing = require('routing');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const routing = require('routing');
 
-    PaymentMethodSelectorComponent = BaseComponent.extend({
+    const PaymentMethodSelectorComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -40,8 +39,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PaymentMethodSelectorComponent() {
-            PaymentMethodSelectorComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentMethodSelectorComponent(options) {
+            PaymentMethodSelectorComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -95,7 +94,7 @@ define(function(require) {
         },
 
         updateForms: function(e) {
-            var $element = $(e.target);
+            const $element = $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             this.refreshPaymentMethod();
@@ -120,13 +119,13 @@ define(function(require) {
         },
 
         refreshPaymentMethod: function() {
-            var actualMethod = this.getPaymentMethod();
+            const actualMethod = this.getPaymentMethod();
 
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: actualMethod});
         },
 
         getPaymentMethod: function() {
-            var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
+            const $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
             return $checkedRadio.val();
         }
     });

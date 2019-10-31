@@ -1,30 +1,29 @@
 define(function(require) {
     'use strict';
 
-    var TableComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * Create table component type for builder
      */
-    TableComponent = BaseComponent.extend({
+    const TableComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function TableComponent() {
-            TableComponent.__super__.constructor.apply(this, arguments);
+        constructor: function TableComponent(options) {
+            TableComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var ComponentId = 'table';
-            var domComps = options.DomComponents;
-            var dType = domComps.getType('default');
-            var dModel = dType.model;
-            var dView = dType.view;
+            const ComponentId = 'table';
+            const domComps = options.DomComponents;
+            const dType = domComps.getType('default');
+            const dModel = dType.model;
+            const dView = dType.view;
 
             domComps.addType(ComponentId, {
                 model: dModel.extend({
@@ -35,12 +34,12 @@ define(function(require) {
                         droppable: ['tbody', 'thead', 'tfoot'],
                         classes: ['table']
                     }),
-                    constructor: function TableComponentModel() {
-                        dModel.prototype.constructor.apply(this, arguments);
+                    constructor: function TableComponentModel(...args) {
+                        dModel.prototype.constructor.apply(this, args);
                     },
                     initialize: function(o, opt) {
-                        dModel.prototype.initialize.apply(this, arguments);
-                        var components = this.get('components');
+                        dModel.prototype.initialize.call(this, o, opt);
+                        const components = this.get('components');
                         if (!components.length) {
                             components.add({
                                 type: 'thead'
@@ -55,7 +54,7 @@ define(function(require) {
                     }
                 }, {
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
 
                         if (el.tagName === 'TABLE') {
                             result = {

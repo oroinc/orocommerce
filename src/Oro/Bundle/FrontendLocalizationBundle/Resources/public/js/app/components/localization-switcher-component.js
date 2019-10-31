@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var LocalizationSwitcherComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    LocalizationSwitcherComponent = BaseComponent.extend({
+    const LocalizationSwitcherComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -21,8 +20,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LocalizationSwitcherComponent() {
-            LocalizationSwitcherComponent.__super__.constructor.apply(this, arguments);
+        constructor: function LocalizationSwitcherComponent(options) {
+            LocalizationSwitcherComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -40,9 +39,9 @@ define(function(require) {
          */
         onLocalizationChange: function(e) {
             e.preventDefault();
-            var $el = $(e.target);
+            const $el = $(e.target);
 
-            var localization = $el.data('localization');
+            const localization = $el.data('localization');
             if (localization !== this.options.selectedLocalization) {
                 mediator.execute('showLoading');
                 $.post(

@@ -1,24 +1,24 @@
 define(function(require) {
     'use strict';
 
-    var LevelQuantityBuilder = require('oroinventory/js/datagrid/builder/level-quantity-builder');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var PageableCollection = require('orodatagrid/js/pageable-collection');
-    var $ = require('jquery');
+    const LevelQuantityBuilder = require('oroinventory/js/datagrid/builder/level-quantity-builder');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const PageableCollection = require('orodatagrid/js/pageable-collection');
+    const $ = require('jquery');
 
-    var createCollection = function() {
-        var models = [
+    const createCollection = function() {
+        const models = [
             {order: 0, renderable: true, quantity: 123}
         ];
 
-        var collection = new PageableCollection(models);
+        const collection = new PageableCollection(models);
         collection.fullCollection = collection;
 
         return collection;
     };
 
-    var createGrid = function(collection) {
-        var grid = new BaseView({
+    const createGrid = function(collection) {
+        const grid = new BaseView({
             collection: collection
         });
         grid.refreshAction = {execute: function() {}};
@@ -27,8 +27,8 @@ define(function(require) {
         return grid;
     };
 
-    var createBuilder = function(grid, callback) {
-        var deferred = $.Deferred();
+    const createBuilder = function(grid, callback) {
+        const deferred = $.Deferred();
         deferred.done(callback);
 
         grid._deferredRender();
@@ -61,7 +61,7 @@ define(function(require) {
 
         describe('check quantity formatter', function() {
             it('quantity should be valid number', function() {
-                var model = this.collection.models[0];
+                const model = this.collection.models[0];
                 expect(model.get('quantity')).toEqual(123);
 
                 model.set('quantity', 123456.789);
