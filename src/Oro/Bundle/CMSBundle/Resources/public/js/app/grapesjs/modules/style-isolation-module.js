@@ -25,7 +25,7 @@ define(function(require) {
             const uniqId = 'id="component-id-' + _.uniqueId('view') + '"';
 
             this.builder.getHtml = _.wrap(this.builder.getHtml, _.bind(function(func) {
-                var html = this.removeHTMLContainer(func());
+                let html = this.removeHTMLContainer(func());
 
                 html = !html ? html : '<div ' + uniqId + '>' + html + '</div>';
                 return html;
