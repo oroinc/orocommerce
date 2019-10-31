@@ -31,10 +31,10 @@ oro_form:
     html_purifier_modes:
         lax:
             extends: default
-            html_purifier_iframe_domains:
+            allowed_iframe_domains:
                 - 'youtube.com/embed/'
                 - 'player.vimeo.com/video/'
-            html_allowed_elements:
+            allowed_html_elements:
                 iframe:
                     attributes:
                         - allowfullscreen
@@ -121,3 +121,7 @@ oro_form:
                         - aria-haspopup
                         - aria-selected
                         - data-content
+                        - data-placement
+                blockquote:
+                    attributes:
+                        - cite
