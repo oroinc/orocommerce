@@ -89,27 +89,21 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
             'oro_cms_image_slide',
             'mainImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB,
-            null,
-            null
+            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB
         );
         $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_image_slide',
             'mediumImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB,
-            null,
-            null
+            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB
         );
         $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_image_slide',
             'smallImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB,
-            null,
-            null
+            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB
         );
 
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);

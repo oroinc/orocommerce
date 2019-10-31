@@ -50,7 +50,7 @@ Feature: Content Widget in Content Block
   Scenario: Check content widget is rendered on store front
     Given I proceed as the Buyer
     When I am on the homepage
-    Then I should see ". All rights reserved" in the "Homepage Slider" element
+    Then I should see ". All rights reserved"
 
   Scenario: Ensure content widget can be deleted when there are no usages
     Given I proceed as the Admin
