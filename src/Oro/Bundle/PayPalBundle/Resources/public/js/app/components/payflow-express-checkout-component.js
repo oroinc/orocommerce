@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var PayflowExpressCheckoutComponent;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    PayflowExpressCheckoutComponent = BaseComponent.extend({
+    const PayflowExpressCheckoutComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -17,8 +16,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PayflowExpressCheckoutComponent() {
-            PayflowExpressCheckoutComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PayflowExpressCheckoutComponent(options) {
+            PayflowExpressCheckoutComponent.__super__.constructor.call(this, options);
         },
 
         /**

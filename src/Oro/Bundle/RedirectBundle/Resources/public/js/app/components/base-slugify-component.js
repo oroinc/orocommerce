@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var SlugifyComponent;
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const messenger = require('oroui/js/messenger');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    SlugifyComponent = BaseComponent.extend({
+    const SlugifyComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -33,8 +32,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SlugifyComponent() {
-            SlugifyComponent.__super__.constructor.apply(this, arguments);
+        constructor: function SlugifyComponent(options) {
+            SlugifyComponent.__super__.constructor.call(this, options);
         },
 
         /**

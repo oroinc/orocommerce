@@ -1,21 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var ProductsPricesComponent;
-    var mediator = require('oroui/js/mediator');
-    var BaseProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const mediator = require('oroui/js/mediator');
+    const BaseProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
 
     /**
      * @export oroorder/js/app/components/entry-point-component
      * @extends oropricing.app.components.ProductsPricesComponent
      * @class oroorder.app.components.ProductsPricesComponent
      */
-    ProductsPricesComponent = BaseProductsPricesComponent.extend({
+    const ProductsPricesComponent = BaseProductsPricesComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ProductsPricesComponent() {
-            ProductsPricesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductsPricesComponent(options) {
+            ProductsPricesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -29,7 +28,7 @@ define(function(require) {
         },
 
         reloadPrices: function() {
-            ProductsPricesComponent.__super__.reloadPrices.apply(this, arguments);
+            ProductsPricesComponent.__super__.reloadPrices.call(this);
 
             mediator.trigger('entry-point:order:trigger');
         }

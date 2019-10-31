@@ -40,7 +40,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 
         $this->post(
             ['entity' => $this->getApiEntityName()],
-            $this->getAliceFilesFolderName() . '/create.yml'
+            'create.yml'
         );
 
         $relation = $this->getEntityManager()
@@ -110,7 +110,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 
         $this->patch(
             ['entity' => $this->getApiEntityName(), 'id' => (string) $relationId],
-            $this->getAliceFilesFolderName() . '/update.yml'
+            'update.yml'
         );
 
         $updatedRelation = $this->getEntityManager()

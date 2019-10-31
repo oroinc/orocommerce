@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var SinglePageCheckoutAddressView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var routing = require('routing');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ButtonManager = require('oroaction/js/button-manager');
-    var $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ButtonManager = require('oroaction/js/button-manager');
+    const $ = require('jquery');
 
-    SinglePageCheckoutAddressView = BaseView.extend({
+    const SinglePageCheckoutAddressView = BaseView.extend({
         options: {
             entityId: null,
             entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
@@ -47,8 +46,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SinglePageCheckoutAddressView() {
-            SinglePageCheckoutAddressView.__super__.constructor.apply(this, arguments);
+        constructor: function SinglePageCheckoutAddressView(options) {
+            SinglePageCheckoutAddressView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -60,7 +59,7 @@ define(function(require) {
             this.enterManuallyOriginLabel = this.$el.find('[value="0"]').text();
             this._changeEnterManualValueLabel();
 
-            SinglePageCheckoutAddressView.__super__.initialize.apply(this, arguments);
+            SinglePageCheckoutAddressView.__super__.initialize.call(this, options);
         },
 
         /**
@@ -78,7 +77,7 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onSelecting: function(event) {
-            var previousVal = $(event.target).val();
+            const previousVal = $(event.target).val();
             if (this.isManual(event.val)) {
                 this.openDialog(event, previousVal);
             }
@@ -101,14 +100,14 @@ define(function(require) {
          * @param {string} previousVal
          */
         openDialog: function(event, previousVal) {
-            var addressType = $(event.target).data('address-type');
-            var dialogUrl = routing.generate(this.options.dialogRoute, {
+            const addressType = $(event.target).data('address-type');
+            const dialogUrl = routing.generate(this.options.dialogRoute, {
                 operationName: this._operationName(addressType),
                 entityClass: this.options.entityClass,
                 entityId: this.options.entityId
             });
 
-            var buttonManager = new ButtonManager({
+            const buttonManager = new ButtonManager({
                 hasDialog: true,
                 showDialog: true,
                 hasForm: true,
@@ -157,7 +156,7 @@ define(function(require) {
          * @return boolean
          */
         isAvailableShippingType: function(type) {
-            var availableTypes = this.$el.data('addresses-types');
+            const availableTypes = this.$el.data('addresses-types');
 
             return !availableTypes.hasOwnProperty(this.$el.val()) ||
                 _.indexOf(availableTypes[this.$el.val()], type) > -1;
@@ -165,14 +164,14 @@ define(function(require) {
 
         _changeEnterManualValueLabel: function(customLabel) {
             if (this.isManual(this.$el.val())) {
-                var newAddressLabel = this.$el.data('new-address-label');
+                let newAddressLabel = this.$el.data('new-address-label');
                 if (newAddressLabel) {
                     newAddressLabel = this.enterManuallyOriginLabel + ' (' + newAddressLabel + ')';
                 }
 
-                var label = customLabel || newAddressLabel;
+                const label = customLabel || newAddressLabel;
                 if (label) {
-                    var $option = this.$el.find('[value="0"]');
+                    const $option = this.$el.find('[value="0"]');
                     $option.text(label);
                 }
 
@@ -185,8 +184,8 @@ define(function(require) {
          */
         _resetEnterManualValueLabel: function(event) {
             if (this.enterManuallyOriginLabel) {
-                var $element = $(event.target);
-                var $option = $element.find('[value="0"]');
+                const $element = $(event.target);
+                const $option = $element.find('[value="0"]');
 
                 $option.text(this.enterManuallyOriginLabel);
 

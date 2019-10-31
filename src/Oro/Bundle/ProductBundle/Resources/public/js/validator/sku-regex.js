@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     'use strict';
 
-    var regexConstraint = require('oroform/js/validator/regex');
-    var config = require('module-config').default(module.id);
+    const regexConstraint = require('oroform/js/validator/regex');
+    const config = require('module-config').default(module.id);
 
     return [
         'Oro\\Bundle\\ProductBundle\\Validator\\Constraints\\SkuRegex',

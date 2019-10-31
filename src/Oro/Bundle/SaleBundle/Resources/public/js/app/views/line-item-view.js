@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
     require('jquery.validate');
 
     /**
@@ -18,7 +17,7 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.LineItemView
      */
-    LineItemView = BaseView.extend({
+    const LineItemView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -148,8 +147,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -243,11 +242,11 @@ define(function(require) {
          * @returns {String}
          */
         formFieldName: function(field) {
-            var name = '';
-            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
-            var namePart;
+            let name = '';
+            const nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            let namePart;
 
-            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+            for (let i = 0, iMax = nameParts.length; i < iMax; i++) {
                 namePart = nameParts[i];
                 if (!namePart.length) {
                     continue;
@@ -262,7 +261,7 @@ define(function(require) {
         },
 
         checkAddButton: function() {
-            var enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
+            const enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
             this.$addItemButton.toggleClass('d-none', !enabled);
             this.$itemCollection.toggleClass('d-none', !enabled);
         },
@@ -309,7 +308,7 @@ define(function(require) {
 
             this.updateSkuLabel();
 
-            var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
+            const $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
 
             mediator.trigger(this.options.events.trigger);
@@ -321,7 +320,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onTypeChanged: function(e) {
-            var typeValue = parseInt(this.$typeSelect.val());
+            const typeValue = parseInt(this.$typeSelect.val());
 
             this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
             this.$requestsOnlyContainer.toggle(this.typeOffer !== typeValue);
@@ -344,14 +343,14 @@ define(function(require) {
         updateContent: function(force) {
             this.updateValidation();
 
-            var productId = this.getProductId();
-            var productUnits = productId ? this.units[productId] : this.allUnits;
+            const productId = this.getProductId();
+            const productUnits = productId ? this.units[productId] : this.allUnits;
 
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
-                var self = this;
-                var routeParams = {id: productId};
+                const self = this;
+                const routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;
@@ -382,14 +381,14 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateProductUnits: function(data, force) {
-            var self = this;
+            const self = this;
 
             self.model.set('product_units', data || {});
 
-            var widgets = self.$el.find(self.options.itemWidget);
+            const widgets = self.$el.find(self.options.itemWidget);
 
             $.each(widgets, function(index, widget) {
-                var $select = $(widget).find(self.options.unitsSelect);
+                const $select = $(widget).find(self.options.unitsSelect);
 
                 if (!force && $select.hasClass(self.options.syncClass)) {
                     return;
@@ -482,12 +481,12 @@ define(function(require) {
                 .find('input').val('')
             ;
 
-            var self = this;
+            const self = this;
 
-            var widgets = this.$el.find(this.options.itemWidget);
+            const widgets = this.$el.find(this.options.itemWidget);
 
             $.each(widgets, function(index, widget) {
-                var $priceValue = $(widget).find(self.options.offersPriceValueSelector);
+                const $priceValue = $(widget).find(self.options.offersPriceValueSelector);
 
                 $priceValue.addClass('matched-price');
             });
@@ -496,7 +495,7 @@ define(function(require) {
         },
 
         updateSkuLabel: function() {
-            var productData = this.$el.find(this.options.productSelect).inputWidget('data') || {};
+            const productData = this.$el.find(this.options.productSelect).inputWidget('data') || {};
 
             this.$el.find(this.options.productSkuLabel).text(productData.sku || '');
         },
@@ -519,7 +518,7 @@ define(function(require) {
          * Validation for products
          */
         updateValidation: function() {
-            var self = this;
+            const self = this;
 
             self.$el.find(self.options.productFreeFormInput).rules('add', {
                 required: {
@@ -574,7 +573,7 @@ define(function(require) {
          * Disable items update
          */
         setReadonlyState: function() {
-            var self = this;
+            const self = this;
 
             self.$el.find(self.options.productFreeFormInput).prop('readonly', true);
             self.$el.find(self.options.productSkuInput).prop('readonly', true);
@@ -582,7 +581,7 @@ define(function(require) {
             self.$el.find('.removeLineItem').prop('disabled', true);
             self.$el.find('.removeRow').prop('disabled', true);
 
-            var widgets = this.$el.find(self.options.itemWidget);
+            const widgets = this.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
                 $(widget).find(self.options.unitsSelect).prop('readonly', true);
                 $(widget).find(self.options.offersPriceValueSelector).prop('readonly', true);

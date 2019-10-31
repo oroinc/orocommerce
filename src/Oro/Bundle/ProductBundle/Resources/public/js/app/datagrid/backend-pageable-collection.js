@@ -1,21 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var BackendPageableCollection;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var PageableCollection = require('orodatagrid/js/pageable-collection');
-    var LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
-    var tools = require('oroui/js/tools');
-    var error = require('oroui/js/error');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const PageableCollection = require('orodatagrid/js/pageable-collection');
+    const LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
+    const tools = require('oroui/js/tools');
+    const error = require('oroui/js/error');
 
-    BackendPageableCollection = PageableCollection.extend({
+    const BackendPageableCollection = PageableCollection.extend({
         /**
          * @inheritDoc
          */
-        constructor: function BackendPageableCollection() {
-            BackendPageableCollection.__super__.constructor.apply(this, arguments);
+        constructor: function BackendPageableCollection(...args) {
+            BackendPageableCollection.__super__.constructor.apply(this, args);
         },
 
         /**
@@ -35,13 +34,13 @@ define(function(require) {
             this.trigger('gridContentUpdate');
             options = _.defaults(options || {}, {reset: true});
 
-            var state = this._checkState(this.state);
+            const state = this._checkState(this.state);
 
-            var data = options.data || {};
+            let data = options.data || {};
 
             // set up query params
-            var url = options.url || _.result(this, 'url') || '';
-            var qsi = url.indexOf('?');
+            const url = options.url || _.result(this, 'url') || '';
+            const qsi = url.indexOf('?');
             if (qsi !== -1) {
                 _.extend(data, tools.unpackFromQueryString(url.slice(qsi + 1)));
             }
@@ -53,13 +52,13 @@ define(function(require) {
             this.processFiltersParams(data, state);
 
             LayoutSubtreeManager.get('product_datagrid', options.data, function(content) {
-                var $data = $('<div/>').append(content);
+                const $data = $('<div/>').append(content);
 
                 if ($data.find('[data-server-render]').length) {
-                    var options = $data.find('[data-server-render]').data('page-component-options');
+                    const options = $data.find('[data-server-render]').data('page-component-options');
 
                     if (options) {
-                        var params = {
+                        const params = {
                             responseJSON: options,
                             gridContent: $data.find('.grid-body')
                         };

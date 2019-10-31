@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddImportValidationComponent;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var widgetManager = require('oroui/js/widget-manager');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const widgetManager = require('oroui/js/widget-manager');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    QuickAddImportValidationComponent = BaseComponent.extend({
+    const QuickAddImportValidationComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -22,8 +21,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddImportValidationComponent() {
-            QuickAddImportValidationComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddImportValidationComponent(options) {
+            QuickAddImportValidationComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -36,12 +35,12 @@ define(function(require) {
         },
 
         submitAction: function(widget) {
-            var itemRows = $(this.options.itemsTableRows, widget.el);
-            var result = [];
-            var that = this;
+            const itemRows = $(this.options.itemsTableRows, widget.el);
+            const result = [];
+            const that = this;
 
             itemRows.each(function(index, element) {
-                var $fields = $('td', element);
+                const $fields = $('td', element);
 
                 result.push({
                     sku: $fields.get(-1).textContent,
@@ -59,14 +58,14 @@ define(function(require) {
         },
 
         onWidgetRender: function() {
-            var title = _.template(this.options.titleTemplate);
-            var subtitle = '';
-            var that = this;
+            const title = _.template(this.options.titleTemplate);
+            let subtitle = '';
+            const that = this;
 
             widgetManager.getWidgetInstance(this.options._wid, function(widget) {
-                var dialogWidget = widget.getWidget();
-                var instanceData = dialogWidget.get(0);
-                var instance = $.data(instanceData, 'ui-dialog');
+                const dialogWidget = widget.getWidget();
+                const instanceData = dialogWidget.get(0);
+                const instance = $.data(instanceData, 'ui-dialog');
 
                 widget
                     .off('adoptedFormSubmitClick')

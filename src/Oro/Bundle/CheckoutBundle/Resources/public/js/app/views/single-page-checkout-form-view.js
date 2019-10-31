@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var SinglePageCheckoutFormView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var SinglePageCheckoutSubmitButtonView =
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const SinglePageCheckoutSubmitButtonView =
         require('orocheckout/js/app/views/single-page-checkout-submit-button-view');
-    var SinglePageCheckoutAddressView = require('orocheckout/js/app/views/single-page-checkout-address-view');
+    const SinglePageCheckoutAddressView = require('orocheckout/js/app/views/single-page-checkout-address-view');
 
-    SinglePageCheckoutFormView = BaseView.extend({
+    const SinglePageCheckoutFormView = BaseView.extend({
         /**
          * @property
          */
@@ -59,9 +58,9 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SinglePageCheckoutFormView() {
+        constructor: function SinglePageCheckoutFormView(options) {
             this.onChange = _.debounce(this.onChange, this.timeout);
-            SinglePageCheckoutFormView.__super__.constructor.apply(this, arguments);
+            SinglePageCheckoutFormView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -89,14 +88,14 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
-            SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
+            SinglePageCheckoutFormView.__super__.initialize.call(this, options);
         },
 
         afterCheck: function($el) {
             if (!$el) {
                 $el = this.$el;
             }
-            var serializedData = this.getSerializedData();
+            const serializedData = this.getSerializedData();
 
             if (this.lastSerializedData === serializedData) {
                 return;
@@ -145,13 +144,13 @@ define(function(require) {
         onSubmit: function(event) {
             event.preventDefault();
 
-            var validate = this.$el.validate();
+            const validate = this.$el.validate();
             if (!validate.form()) {
                 return;
             }
 
-            var paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
-            var eventData = {
+            const paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
+            const eventData = {
                 stopped: false,
                 resume: _.bind(this.transit, this),
                 data: {paymentMethod: paymentMethod}
@@ -170,8 +169,8 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
-            var paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
-            var eventData = {paymentMethod: paymentMethod};
+            const paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
+            const eventData = {paymentMethod: paymentMethod};
             mediator.trigger('checkout:payment:before-form-serialization', eventData);
 
             this.subview('checkoutSubmitButton').onToggleState();
@@ -180,17 +179,17 @@ define(function(require) {
         },
 
         getSerializedData: function() {
-            var $form = this.$el.closest('form');
+            const $form = this.$el.closest('form');
             $form.find(this.options.stateTokenSelector).prop('disabled', false);
 
             return $form.find(this.options.transitionFormFieldSelector).serialize();
         },
 
         _disableShippingAddress: function() {
-            var $element = this.$el.find(this.options.shipToSelector);
-            var disable = $element.is(':visible') && $element.is(':checked');
-            var $billingAddress = this.subview('checkoutBillingAddress').$el;
-            var text = $billingAddress.find(':selected').text();
+            const $element = this.$el.find(this.options.shipToSelector);
+            const disable = $element.is(':visible') && $element.is(':checked');
+            const $billingAddress = this.subview('checkoutBillingAddress').$el;
+            const text = $billingAddress.find(':selected').text();
 
             this.subview('checkoutShippingAddress').onToggleState(disable, $billingAddress.val(), text);
         },
@@ -200,8 +199,8 @@ define(function(require) {
         },
 
         _toggleShipTo: function() {
-            var $element = this.$el.find(this.options.shipToSelector);
-            var $container = $element.parent();
+            const $element = this.$el.find(this.options.shipToSelector);
+            const $container = $element.parent();
             if (this._isAvailableShipTo()) {
                 $container.removeClass('hidden');
             } else {
@@ -211,7 +210,7 @@ define(function(require) {
         },
 
         _changeShippingMethod: function() {
-            var $selectedType = this.$el.find(this.options.originShippingMethodTypeSelector).filter(':checked');
+            const $selectedType = this.$el.find(this.options.originShippingMethodTypeSelector).filter(':checked');
 
             if (!$selectedType.val()) {
                 return;
@@ -222,7 +221,7 @@ define(function(require) {
         },
 
         _changePaymentMethod: function() {
-            var $selectedMethodVal = this.$el.find(this.options.originPaymentMethodSelector).filter(':checked').val();
+            const $selectedMethodVal = this.$el.find(this.options.originPaymentMethodSelector).filter(':checked').val();
 
             if (!$selectedMethodVal) {
                 return;

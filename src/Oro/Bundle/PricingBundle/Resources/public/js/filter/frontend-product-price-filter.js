@@ -6,8 +6,6 @@ define([
 ], function($, _, __, ProductPriceFilter) {
     'use strict';
 
-    var FrontendProductPriceFilter;
-
     /**
      * Frontend product price filter
      *
@@ -15,7 +13,7 @@ define([
      * @class   oro.filter.FrontendProductPriceFilter
      * @extends oro.filter.ProductPriceFilter
      */
-    FrontendProductPriceFilter = ProductPriceFilter.extend({
+    const FrontendProductPriceFilter = ProductPriceFilter.extend({
         /**
          * @property {Object}
          */
@@ -26,8 +24,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function FrontendProductPriceFilter() {
-            FrontendProductPriceFilter.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendProductPriceFilter(options) {
+            FrontendProductPriceFilter.__super__.constructor.call(this, options);
         }
     });
 

@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListOwnerInlineEditableViewComponent;
-    var ViewComponent = require('oroui/js/app/components/view-component');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const ViewComponent = require('oroui/js/app/components/view-component');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    ShoppingListOwnerInlineEditableViewComponent = ViewComponent.extend({
+    const ShoppingListOwnerInlineEditableViewComponent = ViewComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListOwnerInlineEditableViewComponent() {
-            ShoppingListOwnerInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListOwnerInlineEditableViewComponent(options) {
+            ShoppingListOwnerInlineEditableViewComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -32,7 +31,7 @@ define(function(require) {
          * @param e
          */
         _onShoppingListOwnerChange: function(e) {
-            var ownerId = e.val;
+            const ownerId = e.val;
             $.ajax({
                 method: 'PUT',
                 url: routing.generate('oro_api_set_shopping_list_owner', {

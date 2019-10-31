@@ -1,10 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var SinglePageCheckoutSubmitButtonView;
-    var BaseView = require('oroui/js/app/views/base/view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    SinglePageCheckoutSubmitButtonView = BaseView.extend({
+    const SinglePageCheckoutSubmitButtonView = BaseView.extend({
         events: {
             mouseover: 'onHover',
             mouseout: 'onHoverOut'
@@ -15,8 +14,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SinglePageCheckoutSubmitButtonView() {
-            SinglePageCheckoutSubmitButtonView.__super__.constructor.apply(this, arguments);
+        constructor: function SinglePageCheckoutSubmitButtonView(options) {
+            SinglePageCheckoutSubmitButtonView.__super__.constructor.call(this, options);
         },
 
         onToggleState: function() {

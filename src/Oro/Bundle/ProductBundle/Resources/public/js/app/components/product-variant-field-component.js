@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ProductVariantFieldComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var ViewComponent = require('oroui/js/app/components/view-component');
-    var error = require('oroui/js/error');
-    var tools = require('oroui/js/tools');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const ViewComponent = require('oroui/js/app/components/view-component');
+    const error = require('oroui/js/error');
+    const tools = require('oroui/js/tools');
 
-    ProductVariantFieldComponent = ViewComponent.extend({
+    const ProductVariantFieldComponent = ViewComponent.extend({
         /**
          * @property {Object}
          */
@@ -48,8 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductVariantFieldComponent() {
-            ProductVariantFieldComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductVariantFieldComponent(options) {
+            ProductVariantFieldComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -61,7 +60,7 @@ define(function(require) {
             this.state = {};
 
             this.options = _.defaults(options || {}, tools.deepClone(this.options));
-            ProductVariantFieldComponent.__super__.initialize.apply(this, arguments);
+            ProductVariantFieldComponent.__super__.initialize.call(this, options);
 
             // _sourceElement is a form element which contains selects
             this.$el = this.options._sourceElement;
@@ -123,7 +122,7 @@ define(function(require) {
             delete this.state;
             delete this.filteredOptions;
 
-            ProductVariantFieldComponent.__super__.dispose.apply(this);
+            ProductVariantFieldComponent.__super__.dispose.call(this);
         },
 
         /**
@@ -132,12 +131,12 @@ define(function(require) {
          * @private
          */
         _initVariantInstances: function() {
-            var onChangeHandler = _.bind(this._onVariantFieldChange, this, this.options.simpleProductVariants);
+            const onChangeHandler = _.bind(this._onVariantFieldChange, this, this.options.simpleProductVariants);
 
             if (this.$el.find('select').length) {
                 this.$el.find('select').each(_.bind(function(index, select) {
-                    var $select = $(select);
-                    var normalizeName = this._extractName($select.data('name'));
+                    const $select = $(select);
+                    const normalizeName = this._extractName($select.data('name'));
 
                     this.filteredOptions = this.filteredOptions.concat(
                         $select.find('option').get().filter(_.bind(function(option) {
@@ -200,7 +199,7 @@ define(function(require) {
          * @private
          */
         _onVariantFieldChange: function(simpleProductVariants, event) {
-            var $target = $(event.target);
+            const $target = $(event.target);
 
             this.setState(this._extractName($target.data('name')), $target.val());
             this._resolveVariantFieldsChain(simpleProductVariants);
@@ -230,10 +229,10 @@ define(function(require) {
          * @private
          */
         _resolveHierarchy: function(simpleProductVariants) {
-            var result = [];
+            let result = [];
 
             this._hierarchy.forEach(_.bind(function(field, index) {
-                var parentField = this._hierarchy[index - 1];
+                const parentField = this._hierarchy[index - 1];
 
                 simpleProductVariants = _.isUndefined(parentField)
                     ? simpleProductVariants
@@ -246,7 +245,7 @@ define(function(require) {
         },
 
         _prepareFoundKeyValue: function(value) {
-            var result = {};
+            const result = {};
             result[value] = this.getState(value);
 
             return result;
@@ -258,10 +257,10 @@ define(function(require) {
          * @private
          */
         _updateProduct: function() {
-            var variants = this.options.simpleProductVariants;
+            const variants = this.options.simpleProductVariants;
             this.foundProductId = null;
 
-            for (var variant in variants) {
+            for (const variant in variants) {
                 if (variants.hasOwnProperty(variant) && _.isEqual(this.getState(), variants[variant])) {
                     this.foundProductId = variant;
                     break;

@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var LineItemsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orosale/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    const LineItemsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -26,8 +25,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**

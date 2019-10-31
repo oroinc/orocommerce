@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var DiscountOptionsView;
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
 
-    DiscountOptionsView = BaseView.extend({
+    const DiscountOptionsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -26,8 +25,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function DiscountOptionsView() {
-            DiscountOptionsView.__super__.constructor.apply(this, arguments);
+        constructor: function DiscountOptionsView(options) {
+            DiscountOptionsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -36,7 +35,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            var $el = this.options.el;
+            const $el = this.options.el;
             this.$formContainer = $el.find(this.options.selectors.formContainerSelector);
             $el.on('change', this.options.selectors.formTypesChoiceSelector, _.bind(this.changeDiscountForm, this));
         },
@@ -45,7 +44,7 @@ define(function(require) {
          * @param {jquery.Event} event
          */
         changeDiscountForm: function(event) {
-            var currentFormName = $(event.target).val();
+            const currentFormName = $(event.target).val();
 
             this.$formContainer
                 .trigger('content:remove')

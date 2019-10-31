@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var AddProductComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    AddProductComponent = BaseComponent.extend({
+    const AddProductComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -22,8 +21,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AddProductComponent() {
-            AddProductComponent.__super__.constructor.apply(this, arguments);
+        constructor: function AddProductComponent(options) {
+            AddProductComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -41,7 +40,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onShoppingListChange: function(e) {
-            var value = e.target.value;
+            const value = e.target.value;
 
             if (value === '') {
                 this.shoppingListLabelSelector.parent('div').removeClass('hidden');

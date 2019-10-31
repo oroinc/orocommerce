@@ -1,25 +1,24 @@
 define(function(require) {
     'use strict';
 
-    var LinkButtonComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    LinkButtonComponent = BaseComponent.extend({
+    const LinkButtonComponent = BaseComponent.extend({
 
         editor: null,
 
-        constructor: function LinkButtonComponent() {
-            LinkButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function LinkButtonComponent(options) {
+            LinkButtonComponent.__super__.constructor.call(this, options);
         },
 
         initialize: function(options) {
             this.editor = options;
-            var ComponentId = 'link-button';
-            var domComps = options.DomComponents;
-            var parentType = domComps.getType('link');
-            var parentModel = parentType.model;
-            var parentView = parentType.view;
+            const ComponentId = 'link-button';
+            const domComps = options.DomComponents;
+            const parentType = domComps.getType('link');
+            const parentModel = parentType.model;
+            const parentView = parentType.view;
 
             domComps.addType(ComponentId, {
                 model: parentModel.extend({
@@ -27,12 +26,12 @@ define(function(require) {
                         classes: ['btn', 'btn--info'],
                         content: 'Link Button'
                     }),
-                    constructor: function LinkButtonComponentModel() {
-                        parentModel.prototype.constructor.apply(this, arguments);
+                    constructor: function LinkButtonComponentModel(...args) {
+                        parentModel.prototype.constructor.apply(this, args);
                     }
                 }, {
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
                         if (el.tagName === 'A' && el.className.indexOf('btn') !== -1) {
                             result = {
                                 type: ComponentId

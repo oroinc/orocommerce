@@ -4,14 +4,14 @@ define(function(require) {
     require('jasmine-jquery');
     require('orofrontend/default/js/app/modules/input-widgets');
 
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var Translator = require('orotranslation/lib/translator');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const Translator = require('orotranslation/lib/translator');
 
     // fixtures
-    var html = require('text!./Fixture/units-select-template.html');
+    const html = require('text-loader!./Fixture/units-select-template.html');
 
     Translator.fromJSON({
         locale: 'en',
@@ -28,10 +28,10 @@ define(function(require) {
     });
 
     // variables
-    var $el;
-    var model;
+    let $el;
+    let model;
 
-    var getOptions = function($el) {
+    const getOptions = function($el) {
         return _.map($el.find('option'), function(el) {
             return el.innerHTML;
         });

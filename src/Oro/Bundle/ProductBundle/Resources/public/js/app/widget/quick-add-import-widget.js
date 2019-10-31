@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddImportWidget;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var formToAjaxOptions = require('oroui/js/tools/form-to-ajax-options');
-    var DialogWidget = require('oro/dialog-widget');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
+    const formToAjaxOptions = require('oroui/js/tools/form-to-ajax-options');
+    const DialogWidget = require('oro/dialog-widget');
 
-    QuickAddImportWidget = DialogWidget.extend({
+    const QuickAddImportWidget = DialogWidget.extend({
         /**
          * @inheritDoc
          */
@@ -45,7 +44,7 @@ define(function(require) {
                 return;
             }
 
-            QuickAddImportWidget.__super__._onContentLoad.apply(this, arguments);
+            QuickAddImportWidget.__super__._onContentLoad.call(this, content);
         },
 
         /**
@@ -64,11 +63,11 @@ define(function(require) {
          * @param {jQuery} $form
          */
         loadContentWithFileUpload: function(file, $form) {
-            var arrayData = $form.formToArray();
-            var formData = new FormData();
-            var fileFieldName = $form.find('input:file').attr('name');
+            const arrayData = $form.formToArray();
+            const formData = new FormData();
+            const fileFieldName = $form.find('input:file').attr('name');
 
-            for (var i = 0; i < arrayData.length; i++) {
+            for (let i = 0; i < arrayData.length; i++) {
                 formData.append(
                     arrayData[i].name,
                     fileFieldName === arrayData[i].name ? file : arrayData[i].value
@@ -79,7 +78,7 @@ define(function(require) {
                 formData.append(name, value);
             });
 
-            var ajaxOptions = formToAjaxOptions($form, {
+            const ajaxOptions = formToAjaxOptions($form, {
                 success: this._onContentLoad.bind(this),
                 errorHandlerMessage: false,
                 error: this._onContentLoadFail.bind(this),

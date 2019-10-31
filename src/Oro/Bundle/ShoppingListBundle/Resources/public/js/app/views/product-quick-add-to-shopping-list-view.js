@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var ProductQuickAddToShoppingListView;
-    var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
-    var mediator = require('oroui/js/mediator');
+    const ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
+    const mediator = require('oroui/js/mediator');
 
-    ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
+    const ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ProductQuickAddToShoppingListView() {
-            ProductQuickAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductQuickAddToShoppingListView(options) {
+            ProductQuickAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductQuickAddToShoppingListView.__super__.initialize.apply(this, arguments);
+            ProductQuickAddToShoppingListView.__super__.initialize.call(this, options);
             this.options.quickAddComponentPrefix = options.quickAddComponentPrefix;
         },
 
@@ -40,7 +39,7 @@ define(function(require) {
                 return;
             }
 
-            ProductQuickAddToShoppingListView.__super__.onClick.apply(this, arguments);
+            ProductQuickAddToShoppingListView.__super__.onClick.call(this, e);
         },
 
         formHasErrors: function() {

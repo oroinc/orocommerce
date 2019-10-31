@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var EntryPointComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * @export oroorder/js/app/components/entry-point-component
      * @extends oroui.app.components.base.Component
      * @class oroorder.app.components.EntryPointComponent
      */
-    EntryPointComponent = BaseComponent.extend({
+    const EntryPointComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -40,8 +39,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function EntryPointComponent() {
-            EntryPointComponent.__super__.constructor.apply(this, arguments);
+        constructor: function EntryPointComponent(options) {
+            EntryPointComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -70,9 +69,9 @@ define(function(require) {
         },
 
         listenerOn: function() {
-            var callback = _.bind(this._sendEntryPointAjax, this);
+            const callback = _.bind(this._sendEntryPointAjax, this);
 
-            var changeCallback = _.bind(function(e) {
+            const changeCallback = _.bind(function(e) {
                 if (this.timeoutId || $(e.target).is('select')) {
                     mediator.trigger(this.options.events.before);
                     callback.call(this);
@@ -81,7 +80,7 @@ define(function(require) {
                 this.clearTimeout();
             }, this);
 
-            var keyUpCallback = _.bind(function() {
+            const keyUpCallback = _.bind(function() {
                 this.clearTimeout();
 
                 mediator.trigger(this.options.events.before);
@@ -110,7 +109,7 @@ define(function(require) {
          * @private
          */
         _sendEntryPointAjax: function() {
-            var self = this;
+            const self = this;
 
             this.listenerOff();
 
@@ -137,10 +136,10 @@ define(function(require) {
          * @return {Object}
          */
         getData: function() {
-            var disabled = this.options._sourceElement.find('input:disabled[data-entry-point-trigger]')
+            const disabled = this.options._sourceElement.find('input:disabled[data-entry-point-trigger]')
                 .removeAttr('disabled');
 
-            var data = this.options._sourceElement.serializeArray();
+            const data = this.options._sourceElement.serializeArray();
 
             disabled.attr('disabled', 'disabled');
 

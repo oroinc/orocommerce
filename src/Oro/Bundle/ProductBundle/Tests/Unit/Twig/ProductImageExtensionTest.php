@@ -78,6 +78,11 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
                 'imageTypes' => ['main', 'additional', 'listing'],
                 'expectedResult' => [$productImage3, $productImage4, $productImage1, $productImage2]
             ],
+            'duplicated images' => [
+                'product' => (clone $product)->addImage($productImage1),
+                'imageTypes' => ['main', 'additional', 'listing'],
+                'expectedResult' => [$productImage3, $productImage4, $productImage1, $productImage2]
+            ],
             'empty images' => [
                 'product' => new Product(),
                 'imageTypes' => ['main', 'additional'],

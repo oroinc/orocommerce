@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListWidgetViewComponent;
-    var ViewComponent = require('oroui/js/app/components/view-component');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const ViewComponent = require('oroui/js/app/components/view-component');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ShoppingListWidgetViewComponent = ViewComponent.extend({
+    const ShoppingListWidgetViewComponent = ViewComponent.extend({
         shoppingListCollection: null,
 
         elements: {
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListWidgetViewComponent() {
-            ShoppingListWidgetViewComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListWidgetViewComponent(options) {
+            ShoppingListWidgetViewComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -29,7 +28,7 @@ define(function(require) {
         initialize: function(options) {
             this.$el = options._sourceElement;
 
-            ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
+            ShoppingListWidgetViewComponent.__super__.initialize.call(this, options);
 
             this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
 
@@ -44,9 +43,9 @@ define(function(require) {
          * @param e
          */
         _onCurrentShoppingListChange: function(e) {
-            var self = this;
-            var shoppingListId = parseInt($(e.target).val(), 10);
-            var shoppingListLabel = $(e.target).data('label');
+            const self = this;
+            const shoppingListId = parseInt($(e.target).val(), 10);
+            const shoppingListLabel = $(e.target).data('label');
 
             $.ajax({
                 method: 'PUT',
@@ -59,7 +58,7 @@ define(function(require) {
                     });
                     self.shoppingListCollection.trigger('change');
 
-                    var message = _.__('oro.shoppinglist.actions.shopping_list_set_as_default', {
+                    const message = _.__('oro.shoppinglist.actions.shopping_list_set_as_default', {
                         shoppingList: shoppingListLabel
                     });
                     mediator.execute('showFlashMessage', 'success', message);

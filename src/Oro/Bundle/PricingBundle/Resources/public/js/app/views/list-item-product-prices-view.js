@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var ListItemProductPricesView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var layout = require('oroui/js/layout');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var PricesHelper = require('oropricing/js/app/prices-helper');
-    var Popover = require('bootstrap-popover');
-    var _ = require('underscore');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var ListItemProductPricesSubView = require('oropricing/js/app/views/list-item-product-prices-subview');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const layout = require('oroui/js/layout');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const PricesHelper = require('oropricing/js/app/prices-helper');
+    const Popover = require('bootstrap-popover');
+    const _ = require('underscore');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const ListItemProductPricesSubView = require('oropricing/js/app/views/list-item-product-prices-subview');
 
-    ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         pricesHintContent: require('tpl-loader!oropricing/templates/product/list-item-prices-tier-table.html'),
 
         elements: {
@@ -36,15 +35,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ListItemProductPricesView() {
-            ListItemProductPricesView.__super__.constructor.apply(this, arguments);
+        constructor: function ListItemProductPricesView(options) {
+            ListItemProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ListItemProductPricesView.__super__.initialize.apply(this, arguments);
+            ListItemProductPricesView.__super__.initialize.call(this, options);
             this.deferredInitializeCheck(options, ['productModel']);
         },
 
@@ -78,7 +77,7 @@ define(function(require) {
                 this.model.off(null, null, this);
             }
 
-            ListItemProductPricesView.__super__.dispose.apply(this, arguments);
+            ListItemProductPricesView.__super__.dispose.call(this);
         },
 
         /**
@@ -106,19 +105,19 @@ define(function(require) {
          * Update qty in case when it less than allowed by price list
          */
         updateQtyForUnit: function() {
-            var unit = this.model.get('unit');
-            var qtyCheckedForUnit = this.model.get('qtyCheckedForUnit');
+            const unit = this.model.get('unit');
+            const qtyCheckedForUnit = this.model.get('qtyCheckedForUnit');
             if (!_.isEmpty(qtyCheckedForUnit[unit])) {
                 return false;
             }
 
-            var prices = this.model.get('pricesByUnit');
+            const prices = this.model.get('pricesByUnit');
             if (_.isEmpty(prices) || _.isEmpty(prices[unit])) {
                 return false;
             }
 
             qtyCheckedForUnit[unit] = true;
-            var lastPrice = _.last(prices[unit]);
+            const lastPrice = _.last(prices[unit]);
             if (this.model.get('quantity') < lastPrice.quantity) {
                 this.model.set('quantity', lastPrice.quantity);
             }
@@ -127,8 +126,8 @@ define(function(require) {
         },
 
         renderHint: function() {
-            var $pricesHint = this.getElement('pricesHint');
-            var prices = this.getPreparedPriceForHint();
+            const $pricesHint = this.getElement('pricesHint');
+            const prices = this.getPreparedPriceForHint();
             if (0 === $pricesHint.length || 0 === _.keys(prices).length) {
                 return;
             }

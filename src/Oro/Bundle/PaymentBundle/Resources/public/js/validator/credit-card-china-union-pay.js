@@ -9,9 +9,9 @@ define([
      */
     return {
         validate: function(number) {
-            var numNormalized = normalizer.normalize(number);
-            var isLengthValid = /^62[0-9]{14,17}$/.test(numNormalized);
-            var isLuhnValid = luhnValidator.validate(numNormalized);
+            const numNormalized = normalizer.normalize(number);
+            const isLengthValid = /^62[0-9]{14,17}$/.test(numNormalized);
+            const isLuhnValid = luhnValidator.validate(numNormalized);
 
             return {
                 card_type: 'china_union_pay',

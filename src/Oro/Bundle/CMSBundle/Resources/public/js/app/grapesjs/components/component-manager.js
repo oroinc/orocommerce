@@ -1,21 +1,21 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var ContentBlockComponent = require('orocms/js/app/grapesjs/components/content-block');
-    var ContentWidgetComponent = require('orocms/js/app/grapesjs/components/content-widget');
-    var TableComponents = require('orocms/js/app/grapesjs/components/table');
-    var TableResponsiveComponent = require('orocms/js/app/grapesjs/components/table-responsive');
-    var LinkButtonComponent = require('orocms/js/app/grapesjs/components/link-button');
-    var CodeComponent = require('orocms/js/app/grapesjs/components/code');
-    var selectTemplate = require('tpl-loader!orocms/templates/grapesjs-select-action.html');
+    const _ = require('underscore');
+    const ContentBlockComponent = require('orocms/js/app/grapesjs/components/content-block');
+    const ContentWidgetComponent = require('orocms/js/app/grapesjs/components/content-widget');
+    const TableComponents = require('orocms/js/app/grapesjs/components/table');
+    const TableResponsiveComponent = require('orocms/js/app/grapesjs/components/table-responsive');
+    const LinkButtonComponent = require('orocms/js/app/grapesjs/components/link-button');
+    const CodeComponent = require('orocms/js/app/grapesjs/components/code');
+    const selectTemplate = require('tpl-loader!orocms/templates/grapesjs-select-action.html');
 
     /**
      * Create component manager
      * @param options
      * @constructor
      */
-    var ComponentManager = function(options) {
+    const ComponentManager = function(options) {
         _.extend(this, _.pick(options, [
             'builder', 'excludeContentBlockAlias', 'excludeContentWidgetAlias'
         ]));
@@ -114,11 +114,11 @@ define(function(require) {
                 priority: 0,
 
                 result: function result(rte, action) {
-                    var value = action.btn.querySelector('[name="tag"]').value;
+                    const value = action.btn.querySelector('[name="tag"]').value;
 
                     if (value === 'normal') {
-                        var parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
-                        var text = parentNode.innerText;
+                        const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
+                        const text = parentNode.innerText;
                         parentNode.remove();
 
                         return rte.insertHTML(text);
@@ -127,8 +127,8 @@ define(function(require) {
                 },
 
                 update: function(rte, action) {
-                    var value = rte.doc.queryCommandValue(action.name);
-                    var select = action.btn.querySelector('[name="tag"]');
+                    const value = rte.doc.queryCommandValue(action.name);
+                    const select = action.btn.querySelector('[name="tag"]');
 
                     if (value !== 'false') {
                         if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(value) !== -1) {

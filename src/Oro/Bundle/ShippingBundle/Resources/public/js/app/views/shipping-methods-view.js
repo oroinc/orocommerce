@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ShippingMethodsView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var mediator = require('oroui/js/mediator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const mediator = require('oroui/js/mediator');
 
-    ShippingMethodsView = BaseView.extend({
+    const ShippingMethodsView = BaseView.extend({
         autoRender: true,
 
         options: {
@@ -18,15 +17,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShippingMethodsView() {
-            ShippingMethodsView.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingMethodsView(options) {
+            ShippingMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ShippingMethodsView.__super__.initialize.apply(this, arguments);
+            ShippingMethodsView.__super__.initialize.call(this, options);
 
             this.options = _.defaults(options || {}, this.options);
             this.options.template = _.template(this.options.template);
@@ -41,7 +40,7 @@ define(function(require) {
         },
 
         updateShippingMethods: function(options) {
-            var $el = $(this.options.template({
+            const $el = $(this.options.template({
                 methods: options || this.options.data.methods,
                 currentShippingMethod: this.options.data.currentShippingMethod,
                 currentShippingMethodType: this.options.data.currentShippingMethodType,

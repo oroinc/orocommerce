@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var SelectedProductGridSubComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
 
-    SelectedProductGridSubComponent = BaseComponent.extend({
+    const SelectedProductGridSubComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -76,8 +75,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SelectedProductGridSubComponent() {
-            SelectedProductGridSubComponent.__super__.constructor.apply(this, arguments);
+        constructor: function SelectedProductGridSubComponent(options) {
+            SelectedProductGridSubComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -139,9 +138,9 @@ define(function(require) {
          * @param {Object} gridElement
          */
         onGridLoadComplete: function(collection, gridElement) {
-            var type = this._getGridType(collection.inputName);
+            const type = this._getGridType(collection.inputName);
             if (!_.isUndefined(type) && this.tabs[type].update > 0) {
-                var foundGrid = this.options._sourceElement.find(gridElement);
+                const foundGrid = this.options._sourceElement.find(gridElement);
                 if (foundGrid.length) {
                     this.tabs[type].loadCounter(collection, type);
                 }
@@ -154,7 +153,7 @@ define(function(require) {
          * @private
          */
         _getGridType: function(gridName) {
-            for (var i = 0; i < this.options.grids.length; i++) {
+            for (let i = 0; i < this.options.grids.length; i++) {
                 if (gridName.indexOf(this.options.grids[i].name) !== -1) {
                     return this.options.grids[i].type;
                 }
@@ -169,10 +168,10 @@ define(function(require) {
          * @private
          */
         _loadCounter: function(collection, type) {
-            var tabData = this.tabs[type];
-            var originalUrl = collection.url;
-            var query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
-            var url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
+            const tabData = this.tabs[type];
+            const originalUrl = collection.url;
+            const query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
+            const url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
 
             if (tabData.request) {
                 tabData.request.abort();
@@ -210,14 +209,14 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
+            const requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
                 return _.isUndefined(this.options[option]);
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
@@ -284,7 +283,7 @@ define(function(require) {
          * @private
          */
         _refreshGrid: function(controlsBlockAlias, gridName, value, reload) {
-            var parameters = {
+            const parameters = {
                 updateUrl: false,
                 reload: reload,
                 params: {}

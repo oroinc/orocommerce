@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const routing = require('routing');
 
     /**
      * @export ororfp/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemView
      */
-    LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -82,8 +81,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -172,14 +171,14 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateContent: function(force) {
-            var productId = this.model.get('productId');
-            var productUnits = this.units[productId];
+            const productId = this.model.get('productId');
+            const productUnits = this.units[productId];
 
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
-                var self = this;
-                var routeParams = {id: productId};
+                const self = this;
+                const routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;
@@ -212,13 +211,13 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateProductUnits: function(units, force) {
-            var self = this;
+            const self = this;
 
             this.model.set('product_units', units);
 
-            var widgets = self.$el.find(self.options.itemWidget);
+            const widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
-                var $select = $(widget).find(self.options.selectors.unitSelector);
+                const $select = $(widget).find(self.options.selectors.unitSelector);
 
                 if (!force && $select.hasClass(self.options.syncClass)) {
                     return;

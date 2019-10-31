@@ -1,25 +1,23 @@
 define(function(require) {
     'use strict';
 
-    var LocalizedFieldSlugifyComponent;
-    var BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
-    var $ = require('jquery');
+    const BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
+    const $ = require('jquery');
 
-    LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
+    const LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function LocalizedFieldSlugifyComponent() {
-            LocalizedFieldSlugifyComponent.__super__.constructor.apply(this, arguments);
+        constructor: function LocalizedFieldSlugifyComponent(options) {
+            LocalizedFieldSlugifyComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @param {Object} options
          */
         syncField: function(event) {
-            var $source = $(event.target);
-            var $target;
-            $target = this.getTargetBySource($source);
+            const $source = $(event.target);
+            const $target = this.getTargetBySource($source);
 
             if (!this.doSync) {
                 return;
@@ -48,7 +46,7 @@ define(function(require) {
          * @returns {*|jQuery|HTMLElement}
          */
         getTargetBySource: function($source) {
-            var sourceIndex = this.$sources.index($source);
+            const sourceIndex = this.$sources.index($source);
             return $(this.$targets.get(sourceIndex));
         }
     });

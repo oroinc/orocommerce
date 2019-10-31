@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var CouponGenerationPreviewView;
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    CouponGenerationPreviewView = BaseView.extend({
+    const CouponGenerationPreviewView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -23,8 +22,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CouponGenerationPreviewView() {
-            CouponGenerationPreviewView.__super__.constructor.apply(this, arguments);
+        constructor: function CouponGenerationPreviewView(options) {
+            CouponGenerationPreviewView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -38,7 +37,7 @@ define(function(require) {
          * @param {jquery.Event} event
          */
         onFormFieldChange: function(event) {
-            var self = this;
+            const self = this;
             if ($(event.target).is($(event.currentTarget))) {
                 $.ajax({
                     method: 'POST',

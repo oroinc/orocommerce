@@ -1,10 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var ProductHelper;
-    var _ = require('underscore');
+    const _ = require('underscore');
 
-    ProductHelper = {
+    const ProductHelper = {
         trimWhiteSpace: function(val) {
             val = val.replace(/(\n|\r\n|^)\s+/g, '$1')// trim white space in each line start
                 .replace(/\s+(\n|\r\n|$)/g, '$1');// trim white space in each line end
