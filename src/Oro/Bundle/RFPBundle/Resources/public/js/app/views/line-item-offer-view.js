@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var LineItemOfferView;
-    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
+    const BaseProductView = require('oroproduct/js/app/views/base-product-view');
 
-    LineItemOfferView = BaseProductView.extend({
+    const LineItemOfferView = BaseProductView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function LineItemOfferView() {
-            LineItemOfferView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemOfferView(options) {
+            LineItemOfferView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -24,7 +23,7 @@ define(function(require) {
             this.lineItemModel = options.lineItemModel;
             this.lineItemModel.on('change', this.updateModel, this);
             this.updateModel();
-            LineItemOfferView.__super__.initialize.apply(this, arguments);
+            LineItemOfferView.__super__.initialize.call(this, options);
         },
 
         updateModel: function() {

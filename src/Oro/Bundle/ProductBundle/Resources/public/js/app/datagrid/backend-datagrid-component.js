@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ProductDataGidComponent;
-    var DataGridComponent = require('orodatagrid/js/app/components/datagrid-component');
-    var mapCustomModuleName = require('oroproduct/js/app/datagrid/map-custom-module-name');
+    const DataGridComponent = require('orodatagrid/js/app/components/datagrid-component');
+    const mapCustomModuleName = require('oroproduct/js/app/datagrid/map-custom-module-name');
 
-    ProductDataGidComponent = DataGridComponent.extend({
+    const ProductDataGidComponent = DataGridComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ProductDataGidComponent() {
-            ProductDataGidComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductDataGidComponent(options) {
+            ProductDataGidComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -28,14 +27,14 @@ define(function(require) {
                 this.modules.PageableCollection = mapCustomModuleName(this.metadata.PageableCollection);
             }
 
-            ProductDataGidComponent.__super__.collectModules.apply(this, arguments);
+            ProductDataGidComponent.__super__.collectModules.call(this);
         },
 
         /**
          * @inheritDoc
          */
         insertDataGrid: function(options) {
-            var selector = options.gridMainContainer || '.oro-datagrid';
+            const selector = options.gridMainContainer || '.oro-datagrid';
 
             this.$el = options.$el.find(selector);
         },
@@ -43,8 +42,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        build: function() {
-            ProductDataGidComponent.__super__.build.apply(this, arguments);
+        build: function(...args) {
+            ProductDataGidComponent.__super__.build.apply(this, args);
 
             this.grid.on('shown', function() {
                 this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');

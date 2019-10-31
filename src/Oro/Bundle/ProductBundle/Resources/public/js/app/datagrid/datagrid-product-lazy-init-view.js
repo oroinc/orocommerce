@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var DataGridProductLazyInitView;
-    var _ = require('underscore');
-    var LazyInitView = require('orofrontend/js/app/views/lazy-init-view');
+    const _ = require('underscore');
+    const LazyInitView = require('orofrontend/js/app/views/lazy-init-view');
 
     /**
      * @class DataGridProductLazyInitView
      * @extends LazyInitView
      */
-    DataGridProductLazyInitView = LazyInitView.extend({
-        constructor: function DataGridProductLazyInitView() {
-            DataGridProductLazyInitView.__super__.constructor.apply(this, arguments);
+    const DataGridProductLazyInitView = LazyInitView.extend({
+        constructor: function DataGridProductLazyInitView(options) {
+            DataGridProductLazyInitView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -20,7 +19,7 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            DataGridProductLazyInitView.__super__.initialize.apply(this, arguments);
+            DataGridProductLazyInitView.__super__.initialize.call(this, options);
 
             if (this.lazy === 'scroll') {
                 this.listenToOnce(this.collection, {

@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ConsentsGroupView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var Modal = require('oroui/js/modal');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const Modal = require('oroui/js/modal');
 
-    ConsentsGroupView = BaseView.extend({
+    const ConsentsGroupView = BaseView.extend({
         /**
          * @inheritDoc
          */
@@ -55,21 +54,21 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ConsentsGroupView() {
-            ConsentsGroupView.__super__.constructor.apply(this, arguments);
+        constructor: function ConsentsGroupView(options) {
+            ConsentsGroupView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
-        initialize: function() {
+        initialize: function(options) {
             this.initModal();
             this.$form = this.$el.closest('form');
             this.$consents = this.$el.find('[data-role="consent-checkbox"]');
             this.delegateEvents();
             this._removeValidationRules();
 
-            ConsentsGroupView.__super__.initialize.apply(this, arguments);
+            ConsentsGroupView.__super__.initialize.call(this, options);
         },
 
         /**
@@ -92,8 +91,8 @@ define(function(require) {
         /**
          * Create events listeners
          */
-        delegateEvents: function() {
-            ConsentsGroupView.__super__.delegateEvents.apply(this, arguments);
+        delegateEvents: function(events) {
+            ConsentsGroupView.__super__.delegateEvents.call(this, events);
 
             if (this.$form && this.$form.length) {
                 this.$form.on('submit' + this.eventNamespace(), _.bind(this._onFormSubmit, this));
@@ -108,7 +107,7 @@ define(function(require) {
                 this.$form.off(this.eventNamespace());
             }
 
-            ConsentsGroupView.__super__.undelegateEvents.apply(this, arguments);
+            ConsentsGroupView.__super__.undelegateEvents.call(this);
         },
 
         /**
@@ -125,7 +124,7 @@ define(function(require) {
          * @private
          */
         _onFormSubmit: function(event) {
-            var needConfirm = this.$consents.filter(function() {
+            const needConfirm = this.$consents.filter(function() {
                 return this.defaultChecked && $(this).is(':not(:checked)');
             });
 
@@ -161,7 +160,7 @@ define(function(require) {
                 delete this.confirmModal;
             }
 
-            ConsentsGroupView.__super__.dispose.apply(this, arguments);
+            ConsentsGroupView.__super__.dispose.call(this);
         }
     });
 

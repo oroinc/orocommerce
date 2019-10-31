@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var DISABLED_CLASS = 'btn--disabled';
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const DISABLED_CLASS = 'btn--disabled';
 
-    var TransitionButtonComponent;
-    TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
+    const TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             enabled: true,
@@ -28,8 +27,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function TransitionButtonComponent() {
-            TransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function TransitionButtonComponent(options) {
+            TransitionButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -141,7 +140,7 @@ define(function(require) {
             this.inProgress = false;
 
             if (response.hasOwnProperty('responseData')) {
-                var eventData = {stopped: false, responseData: response.responseData};
+                const eventData = {stopped: false, responseData: response.responseData};
                 // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) {
@@ -152,29 +151,29 @@ define(function(require) {
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
-                var $response = $('<div/>').html(response);
-                var $title = $response.find('title');
+                const $response = $('<div/>').html(response);
+                const $title = $response.find('title');
                 if ($title.length) {
                     document.title = $title.text();
                 }
-                var flashNotificationsSelector = this.options.selectors.checkoutFlashNotifications;
-                var sidebarSelector = this.options.selectors.checkoutSidebar;
-                var contentSelector = this.options.selectors.checkoutContent;
+                const flashNotificationsSelector = this.options.selectors.checkoutFlashNotifications;
+                const sidebarSelector = this.options.selectors.checkoutSidebar;
+                const contentSelector = this.options.selectors.checkoutContent;
 
                 mediator.trigger('checkout-content:before-update');
 
-                var $sidebar = $(sidebarSelector);
+                const $sidebar = $(sidebarSelector);
                 $sidebar.html($response.find(sidebarSelector).html());
 
-                var $content = $(contentSelector);
+                const $content = $(contentSelector);
                 $content.html($response.find(contentSelector).html());
 
-                var $flashNotifications = $response.find(flashNotificationsSelector);
+                const $flashNotifications = $response.find(flashNotificationsSelector);
 
                 _.each($flashNotifications, function(element) {
-                    var $element = $(element);
-                    var type = $element.data('type');
-                    var message = $element.data('message');
+                    const $element = $(element);
+                    const type = $element.data('type');
+                    let message = $element.data('message');
                     message = message.replace(/\n/g, '<br>');
                     _.delay(function() {
                         mediator.execute('showFlashMessage', type, message);

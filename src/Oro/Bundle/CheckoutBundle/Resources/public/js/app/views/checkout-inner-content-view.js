@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var CheckoutInnerContentView;
-    var mediator = require('oroui/js/mediator');
-    var CheckoutContentView = require('orocheckout/js/app/views/checkout-content-view');
+    const mediator = require('oroui/js/mediator');
+    const CheckoutContentView = require('orocheckout/js/app/views/checkout-content-view');
 
-    CheckoutInnerContentView = CheckoutContentView.extend({
+    const CheckoutInnerContentView = CheckoutContentView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function CheckoutInnerContentView() {
-            CheckoutInnerContentView.__super__.constructor.apply(this, arguments);
+        constructor: function CheckoutInnerContentView(options) {
+            CheckoutInnerContentView.__super__.constructor.call(this, options);
         },
 
         _onContentUpdated: function() {

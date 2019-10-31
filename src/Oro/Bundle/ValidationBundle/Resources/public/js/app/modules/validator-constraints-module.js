@@ -1,8 +1,8 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery.validate');
-    var constraints = [
+    const $ = require('jquery.validate');
+    const constraints = [
         'orovalidation/js/validator/letters',
         'orovalidation/js/validator/alphanumeric',
         'orovalidation/js/validator/alphanumeric-dash',

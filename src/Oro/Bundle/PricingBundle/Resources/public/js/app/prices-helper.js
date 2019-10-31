@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var PricesHelper;
-    var _ = require('underscore');
+    const _ = require('underscore');
 
-    PricesHelper = {
+    const PricesHelper = {
         preparePrices: function(prices) {
             prices = _.sortBy(prices, 'quantity');
             prices = prices.reverse();
-            var pricesByUnit = {};
+            const pricesByUnit = {};
             _.each(prices, function(price) {
-                var unit = price.unit;
+                const unit = price.unit;
                 pricesByUnit[unit] = pricesByUnit[unit] || [];
                 pricesByUnit[unit].push(price);
             });
@@ -50,7 +49,7 @@ define(function(require) {
          * @returns {Number}
          */
         findPriceValue: function(prices, unit, quantity) {
-            var price = this.findPrice(prices, unit, quantity);
+            const price = this.findPrice(prices, unit, quantity);
             return price ? price.price : 0;
         },
 

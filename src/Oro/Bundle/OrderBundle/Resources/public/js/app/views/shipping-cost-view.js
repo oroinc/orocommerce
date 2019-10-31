@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var ShippingCostView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const TotalsListener = require('oropricing/js/app/listener/totals-listener');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/shipping-cost-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.ShippingCostView
      */
-    ShippingCostView = BaseView.extend({
+    const ShippingCostView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -36,8 +35,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShippingCostView() {
-            ShippingCostView.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingCostView(options) {
+            ShippingCostView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -68,11 +67,11 @@ define(function(require) {
          * @returns {String}
          */
         formFieldName: function(field) {
-            var name = '';
-            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
-            var namePart;
+            let name = '';
+            const nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            let namePart;
 
-            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+            for (let i = 0, iMax = nameParts.length; i < iMax; i++) {
                 namePart = nameParts[i];
                 if (!namePart.length) {
                     continue;

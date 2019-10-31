@@ -1,20 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var RelatedItemsTabsComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var BaseCollection = require('oroui/js/app/models/base/collection');
-    var TabCollectionView = require('oroui/js/app/views/tab-collection-view');
-    var $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const BaseCollection = require('oroui/js/app/models/base/collection');
+    const TabCollectionView = require('oroui/js/app/views/tab-collection-view');
+    const $ = require('jquery');
 
-    RelatedItemsTabsComponent = BaseComponent.extend({
+    const RelatedItemsTabsComponent = BaseComponent.extend({
 
         /**
          * @inheritDoc
          */
-        constructor: function RelatedItemsTabsComponent() {
-            RelatedItemsTabsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function RelatedItemsTabsComponent(options) {
+            RelatedItemsTabsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -27,12 +26,12 @@ define(function(require) {
                 return;
             }
 
-            var categories = _.each(options.data, function(item) {
+            const categories = _.each(options.data, function(item) {
                 item.uniqueId = _.uniqueId(item.id);
             });
 
             this.categories = new BaseCollection(categories);
-            var firstElement = this.categories.first();
+            const firstElement = this.categories.first();
             firstElement.set('active', true);
 
             this.view = new TabCollectionView({
@@ -61,7 +60,7 @@ define(function(require) {
         },
 
         _showGrid: function(gridName) {
-            var $grid = this._getGrid(gridName);
+            const $grid = this._getGrid(gridName);
 
             $grid.show();
         },

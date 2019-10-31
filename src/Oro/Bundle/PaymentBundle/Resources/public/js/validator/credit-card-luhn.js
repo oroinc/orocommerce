@@ -6,13 +6,12 @@ define(function() {
      */
     return {
         validate: function(number) {
-            var digit;
-            var n;
-            var sum = 0;
-            var _j;
-            var _len1;
-            var _ref1;
-            _ref1 = number.split('').reverse();
+            let digit;
+            let n;
+            let sum = 0;
+            let _j;
+            let _len1;
+            const _ref1 = number.split('').reverse();
             for (n = _j = 0, _len1 = _ref1.length; _j < _len1; n = ++_j) {
                 digit = _ref1[n];
                 digit = +digit;

@@ -1,28 +1,27 @@
 define(function(require) {
     'use strict';
 
-    var PaymentTermView;
-    var mediator = require('oroui/js/mediator');
-    var BasePaymentTermView = require('oropaymentterm/js/app/views/payment-term-view');
+    const mediator = require('oroui/js/mediator');
+    const BasePaymentTermView = require('oropaymentterm/js/app/views/payment-term-view');
 
     /**
      * @export oroorder/js/app/views/payment-term-view
      * @extends oropayment/js/app/views/PaymentTermView
      * @class oroorder.app.views.PaymentTermView
      */
-    PaymentTermView = BasePaymentTermView.extend({
+    const PaymentTermView = BasePaymentTermView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function PaymentTermView() {
-            PaymentTermView.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentTermView(options) {
+            PaymentTermView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            PaymentTermView.__super__.initialize.apply(this, arguments);
+            PaymentTermView.__super__.initialize.call(this, options);
 
             mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
         },

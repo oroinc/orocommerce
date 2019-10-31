@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ConsentEntityTreeSelectFormView;
-    var _ = require('underscore');
-    var EntityTreeSelectFormTypeView = require('oroform/js/app/components/entity-tree-select-form-type-view');
+    const _ = require('underscore');
+    const EntityTreeSelectFormTypeView = require('oroform/js/app/components/entity-tree-select-form-type-view');
 
     /**
      * Extension for jsTree view from @entity-tree-select-form-type-component
      * Add new way for update and re-render tree from response data
      */
-    ConsentEntityTreeSelectFormView = EntityTreeSelectFormTypeView.extend({
+    const ConsentEntityTreeSelectFormView = EntityTreeSelectFormTypeView.extend({
         optionNames: EntityTreeSelectFormTypeView.prototype.optionNames.concat([
             'updateApiAccessor', 'chooseWebCatalogMessage', 'loadingMask'
         ]),
@@ -27,8 +26,8 @@ define(function(require) {
         /**
          * @constructor
          */
-        constructor: function ConsentEntityTreeSelectFormView() {
-            ConsentEntityTreeSelectFormView.__super__.constructor.apply(this, arguments);
+        constructor: function ConsentEntityTreeSelectFormView(options) {
+            ConsentEntityTreeSelectFormView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -37,7 +36,7 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            ConsentEntityTreeSelectFormView.__super__.initialize.apply(this, arguments);
+            ConsentEntityTreeSelectFormView.__super__.initialize.call(this, options);
             this.$fieldSelector.on('update:field', _.bind(this._onUpdateFieldValue, this));
         },
 

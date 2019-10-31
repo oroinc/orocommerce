@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddFormButtonComponent;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var Modal = require('oroui/js/modal');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const Modal = require('oroui/js/modal');
 
-    QuickAddFormButtonComponent = BaseComponent.extend({
+    const QuickAddFormButtonComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -55,8 +54,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddFormButtonComponent() {
-            QuickAddFormButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddFormButtonComponent(options) {
+            QuickAddFormButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -96,7 +95,7 @@ define(function(require) {
 
             delete this.messages;
 
-            QuickAddFormButtonComponent.__super__.dispose.apply(this, arguments);
+            QuickAddFormButtonComponent.__super__.dispose.call(this);
         },
 
         /**
@@ -136,7 +135,7 @@ define(function(require) {
          * @return {Function}
          */
         getConfirmDialog: function(callback) {
-            var confirmModal = new this.confirmModalConstructor({
+            const confirmModal = new this.confirmModalConstructor({
                 title: __(this.messages.confirm_title),
                 content: this.confirmMessage,
                 okText: __(this.messages.confirm_ok),

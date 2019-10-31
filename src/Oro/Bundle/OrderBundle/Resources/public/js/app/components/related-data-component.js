@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var RelatedDataComponent;
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var FormView = require('orofrontend/js/app/views/form-view');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const FormView = require('orofrontend/js/app/views/form-view');
 
     /**
      * @export oroorder/js/app/components/related-data-component
      * @extends oroui.app.components.base.Component
      * @class oroorder.app.components.RelatedDataComponent
      */
-    RelatedDataComponent = BaseComponent.extend({
+    const RelatedDataComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -21,8 +20,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RelatedDataComponent() {
-            RelatedDataComponent.__super__.constructor.apply(this, arguments);
+        constructor: function RelatedDataComponent(options) {
+            RelatedDataComponent.__super__.constructor.call(this, options);
         },
 
         /**

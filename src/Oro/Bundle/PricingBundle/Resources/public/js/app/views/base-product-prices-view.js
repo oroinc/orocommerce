@@ -1,21 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var BaseProductPricesView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var layout = require('oroui/js/layout');
-    var mediator = require('oroui/js/mediator');
-    var numberFormatter = require('orolocale/js/formatter/number');
-    var numeral = require('numeral');
-    var localeSettings = require('orolocale/js/locale-settings');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var PricesHelper = require('oropricing/js/app/prices-helper');
-    var Popover = require('bootstrap-popover');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const layout = require('oroui/js/layout');
+    const mediator = require('oroui/js/mediator');
+    const numberFormatter = require('orolocale/js/formatter/number');
+    const numeral = require('numeral');
+    const localeSettings = require('orolocale/js/locale-settings');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const PricesHelper = require('oropricing/js/app/prices-helper');
+    const Popover = require('bootstrap-popover');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         priceTemplate: require('tpl-loader!oropricing/templates/product/price.html'),
         unitTemplate: require('tpl-loader!oropricing/templates/product/unit.html'),
 
@@ -63,15 +62,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BaseProductPricesView() {
-            BaseProductPricesView.__super__.constructor.apply(this, arguments);
+        constructor: function BaseProductPricesView(options) {
+            BaseProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            BaseProductPricesView.__super__.initialize.apply(this, arguments);
+            BaseProductPricesView.__super__.initialize.call(this, options);
             this.deferredInitializeCheck(options, ['productModel']);
         },
 
@@ -90,7 +89,7 @@ define(function(require) {
             delete this.foundPrice;
             this.setUnitLabel(true);
             this.disposeElements();
-            BaseProductPricesView.__super__.dispose.apply(this, arguments);
+            BaseProductPricesView.__super__.dispose.call(this);
         },
 
         render: function() {
@@ -115,12 +114,12 @@ define(function(require) {
         },
 
         renderHint: function() {
-            var $pricesHint = this.getElement('pricesHint');
+            const $pricesHint = this.getElement('pricesHint');
             if (!$pricesHint.length) {
                 return;
             }
 
-            var content = this.getHintContent();
+            const content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
             if (!content.length) {
                 return;
@@ -166,8 +165,8 @@ define(function(require) {
                 return;
             }
 
-            var price = this.model.get('price');
-            var unitLabel = null;
+            const price = this.model.get('price');
+            let unitLabel = null;
             if (!clear && price) {
                 unitLabel = _.__('oro.pricing.price.formatted.unit', {
                     formattedUnit: _(price.formatted_unit).capitalize(),
@@ -192,12 +191,12 @@ define(function(require) {
                 this.changeQuantity = false;
             }
 
-            var quantity = this.model.get('quantity');
-            var unit = this.model.get('unit');
+            const quantity = this.model.get('quantity');
+            const unit = this.model.get('unit');
             changeQuantity = changeQuantity && this.changeQuantity;
 
-            var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
-            var price = this.foundPrice[foundKey] || null;
+            const foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
+            let price = this.foundPrice[foundKey] || null;
 
             if (!price) {
                 if (changeQuantity) {
@@ -210,7 +209,7 @@ define(function(require) {
             }
 
             if (changeQuantity) {
-                var setQuantity = price ? price.quantity : this.options.defaultQuantity;
+                const setQuantity = price ? price.quantity : this.options.defaultQuantity;
                 if (quantity.toString() !== setQuantity.toString()) {
                     this.model.set('quantity', setQuantity);
                 }
@@ -220,13 +219,13 @@ define(function(require) {
         },
 
         findPriceValue: function() {
-            var price = this.findPrice();
+            const price = this.findPrice();
             return price ? price.price : null;
         },
 
         updateUI: function() {
             this.rendered = true;
-            var price = this.model.get('price');
+            const price = this.model.get('price');
             if (price === null) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');

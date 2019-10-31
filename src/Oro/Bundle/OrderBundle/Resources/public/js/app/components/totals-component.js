@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var TotalsComponent;
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var PricingTotalsComponent = require('oropricing/js/app/components/totals-component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const PricingTotalsComponent = require('oropricing/js/app/components/totals-component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
      * @export oroorder/js/app/components/totals-component
      * @extends oropricing.app.components.TotalsComponent
      * @class oroorder.app.components.TotalsComponent
      */
-    TotalsComponent = PricingTotalsComponent.extend({
+    const TotalsComponent = PricingTotalsComponent.extend({
         /**
          * @property {Object}
          */
@@ -22,8 +21,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function TotalsComponent() {
-            TotalsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function TotalsComponent(options) {
+            TotalsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -31,7 +30,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this._deferredInit();
-            $.when.apply($, _.compact(options._subPromises)).then(function() {
+            $.when(..._.compact(options._subPromises)).then(function() {
                 this.handleSubLayoutInit();
                 this._resolveDeferredInit();
             }.bind(this));

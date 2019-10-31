@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ValueChangingListener;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
 
     /**
      * @export oroorder/js/app/listener/value-changing-listener
      * @class oroorder.app.listener.TotalsListener
      */
-    ValueChangingListener = {
+    const ValueChangingListener = {
         /**
          * @param {String} promiseEvent
          * @param {jQuery|Array} $fields
@@ -18,16 +17,16 @@ define(function(require) {
         listen: function(promiseEvent, $fields) {
             _.each($fields, function(field) {
                 field = $(field).on('value:changing', function() {
-                    var promise = $.Deferred();
+                    const promise = $.Deferred();
 
-                    var changed = function() {
+                    const changed = function() {
                         promise.resolve();
 
                         field.off('value:changed', changed);
                         mediator.off(promiseEvent, setPromise);
                     };
 
-                    var setPromise = function(promises) {
+                    const setPromise = function(promises) {
                         promises.push(promise);
                     };
 

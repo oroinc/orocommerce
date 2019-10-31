@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var PaymentMethodComponent;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var routing = require('routing');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const routing = require('routing');
 
-    PaymentMethodComponent = BaseComponent.extend({
+    const PaymentMethodComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PaymentMethodComponent() {
-            PaymentMethodComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentMethodComponent(options) {
+            PaymentMethodComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -39,7 +38,7 @@ define(function(require) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
 
-                var responseData = _.extend({successUrl: this.getSuccessUrl()}, eventData.responseData);
+                const responseData = _.extend({successUrl: this.getSuccessUrl()}, eventData.responseData);
 
                 if (!responseData.successUrl) {
                     return;

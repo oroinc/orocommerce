@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ProductAutocompleteComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var ProductHelper = require('oroproduct/js/app/product-helper');
-    var AutocompleteComponent = require('oro/autocomplete-component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const ProductHelper = require('oroproduct/js/app/product-helper');
+    const AutocompleteComponent = require('oro/autocomplete-component');
 
-    ProductAutocompleteComponent = AutocompleteComponent.extend({
+    const ProductAutocompleteComponent = AutocompleteComponent.extend({
         /**
          * @property {Object}
          */
@@ -23,15 +22,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductAutocompleteComponent() {
-            ProductAutocompleteComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductAutocompleteComponent(options) {
+            ProductAutocompleteComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var thisOptions = {
+            const thisOptions = {
                 product: {},
                 productBySkuRoute: 'oro_frontend_autocomplete_search',
                 selectors: {
@@ -43,7 +42,7 @@ define(function(require) {
             };
             this.options = $.extend(true, thisOptions, options);
 
-            ProductAutocompleteComponent.__super__.initialize.apply(this, arguments);
+            ProductAutocompleteComponent.__super__.initialize.call(this, options);
 
             this.$row = this.$el.closest(this.options.selectors.row);
             this.$sku = this.$row.find(this.options.selectors.sku);
@@ -71,9 +70,9 @@ define(function(require) {
                 return;
             }
 
-            var val = ProductHelper.trimWhiteSpace(e.target.value);
-            var hasChanged = this.hasChanged(val);
-            var $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
+            const val = ProductHelper.trimWhiteSpace(e.target.value);
+            const hasChanged = this.hasChanged(val);
+            const $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
 
             if (hasChanged && !$autoComplete.length) {
                 this.resetProduct();
@@ -86,7 +85,7 @@ define(function(require) {
         },
 
         updater: function(item) {
-            var resultMapping = this.resultsMapping[item];
+            const resultMapping = this.resultsMapping[item];
 
             this.resetProduct();
             this.validateProduct(resultMapping.sku);
@@ -95,7 +94,7 @@ define(function(require) {
         },
 
         validateProduct: function(val) {
-            var self = this;
+            const self = this;
             val = val.split(' ')[0];
 
             $.ajax({
@@ -120,15 +119,15 @@ define(function(require) {
         },
 
         validateResponse: function(response, requestId) {
-            var val = this.$el.val();
+            const val = this.$el.val();
 
             // proceed check only for non-empty value that was changed
             if (!!val && this.hasChanged(val)) {
                 this.previousValue = val;
                 this.resetProduct();
 
-                var needleSku = val.split(' ')[0].toUpperCase();
-                var item = _.find(response.results, function(resultItem) {
+                const needleSku = val.split(' ')[0].toUpperCase();
+                const item = _.find(response.results, function(resultItem) {
                     return resultItem.sku.toUpperCase() === needleSku;
                 });
                 if (item) {

@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var routing = require('routing');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var tools = require('oroui/js/tools');
-    var AppliedCouponCollectionView;
+    const $ = require('jquery');
+    const routing = require('routing');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const tools = require('oroui/js/tools');
 
-    AppliedCouponCollectionView = BaseView.extend({
+    const AppliedCouponCollectionView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -46,8 +45,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AppliedCouponCollectionView() {
-            AppliedCouponCollectionView.__super__.constructor.apply(this, arguments);
+        constructor: function AppliedCouponCollectionView(options) {
+            AppliedCouponCollectionView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -57,11 +56,11 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
 
-            var handlers = {};
+            const handlers = {};
             handlers['applied-coupon:remove'] = this.removeAppliedCoupon;
             handlers.widget_initialize = this.attachDialogListeners;
 
-            var $hiddenCollection = this.$(this.options.selectors.hiddenCollection);
+            const $hiddenCollection = this.$(this.options.selectors.hiddenCollection);
             this.newCollectionElementData.prototypeString = $hiddenCollection.data('prototype');
             this.newCollectionElementData.prototypeName = $hiddenCollection.data('prototype-name');
             this.newCollectionElementData.lastIndex = $hiddenCollection.data('last-index');
@@ -73,10 +72,10 @@ define(function(require) {
          * @param {Integer} couponId
          */
         removeAppliedCoupon: function(couponId) {
-            var self = this;
+            const self = this;
             couponId = parseInt(couponId);
             this.$(this.options.selectors.appliedCouponElement).each(function(key, element) {
-                var $element = $(element);
+                const $element = $(element);
                 if (parseInt($element.data(self.options.sourceCouponIdDataAttribute)) === couponId) {
                     $element.remove();
                 }
@@ -88,7 +87,7 @@ define(function(require) {
          */
         attachDialogListeners: function(widget) {
             if (this.options.dialogWidgetAlias === widget.getAlias()) {
-                var self = this;
+                const self = this;
                 widget.on('contentLoad', function() {
                     widget.$el.on('submit', _.bind(self.onAddSubmit, self, widget));
                 });
@@ -102,15 +101,15 @@ define(function(require) {
         onAddSubmit: function(widget, event) {
             event.preventDefault();
             mediator.trigger('entry-point:order:before');
-            var self = this;
-            var couponIds = widget.form.find(this.options.selectors.addedCouponsField).val();
+            const self = this;
+            const couponIds = widget.form.find(this.options.selectors.addedCouponsField).val();
             $.ajax({
                 url: routing.generate(this.options.getAppliedCouponsDataRoute, {couponIds: couponIds}),
                 type: 'GET',
                 dataType: 'json',
                 success: function(appliedCouponsData) {
                     _.each(appliedCouponsData, function(appliedCouponData) {
-                        var $element = self._createNewCollectionElement(appliedCouponData);
+                        const $element = self._createNewCollectionElement(appliedCouponData);
                         self.$(self.options.selectors.hiddenCollection).append($element);
                     });
 
@@ -127,11 +126,11 @@ define(function(require) {
          * @private
          */
         _createNewCollectionElement: function(appliedCouponData) {
-            var html = this.newCollectionElementData.prototypeString.replace(
+            const html = this.newCollectionElementData.prototypeString.replace(
                 tools.safeRegExp(this.newCollectionElementData.prototypeName, 'ig'),
                 this.newCollectionElementData.lastIndex
             );
-            var $element = $(html);
+            const $element = $(html);
 
             $element.find(this.options.selectors.couponCodeField).val(appliedCouponData.couponCode);
             $element.find(this.options.selectors.sourcePromotionIdField).val(appliedCouponData.sourcePromotionId);
@@ -146,14 +145,14 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]) && !this.options[option];
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);

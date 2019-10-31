@@ -1,17 +1,17 @@
 define(function(require) {
     'use strict';
-    var quantityVisibleLength = 6;
-    var QuantitySwitcher;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
+
+    const quantityVisibleLength = 6;
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
     /**
      * @export oropricing/js/app/views/quantity-switcher
      * @extends oroui.app.views.base.View
      * @class oropricing.app.views.QuantitySwitcher
      */
-    QuantitySwitcher = AbstractSwitcher.extend({
+    const QuantitySwitcher = AbstractSwitcher.extend({
         options: {
             selectors: {
                 fieldType: null,
@@ -25,15 +25,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuantitySwitcher() {
-            QuantitySwitcher.__super__.constructor.apply(this, arguments);
+        constructor: function QuantitySwitcher(options) {
+            QuantitySwitcher.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
-        initialize: function() {
-            QuantitySwitcher.__super__.initialize.apply(this, arguments);
+        initialize: function(options) {
+            QuantitySwitcher.__super__.initialize.call(this, options);
             this.initLayout().done(_.bind(this.initSwitcher, this));
             this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
                 this.onSubmit(e);
@@ -41,7 +41,7 @@ define(function(require) {
         },
 
         addValidationError: function($identifier) {
-            var $field = this.$el.closest('.price_rule')
+            const $field = this.$el.closest('.price_rule')
                 .find('div.error-block' + $identifier);
 
             $field.addClass(this.visibleClass).append($('<span></span>')
@@ -83,8 +83,8 @@ define(function(require) {
         },
 
         changeVisibility: function($field1, $field2) {
-            var $input1 = $field1.find('input');
-            var $input2 = $field2.find('input');
+            const $input1 = $field1.find('input');
+            const $input2 = $field2.find('input');
             if (!!$input1.val()) {
                 $input2.val($input1.val());
             }
@@ -111,7 +111,7 @@ define(function(require) {
 
             this.$form.off(this.eventNamespace());
 
-            AbstractSwitcher.__super__.dispose.apply(this, arguments);
+            AbstractSwitcher.__super__.dispose.call(this);
         }
     });
 

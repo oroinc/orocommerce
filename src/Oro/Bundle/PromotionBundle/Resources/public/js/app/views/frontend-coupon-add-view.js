@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var routing = require('routing');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
-    var FrontendCouponAddView;
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
+    const messenger = require('oroui/js/messenger');
 
-    FrontendCouponAddView = BaseView.extend({
+    const FrontendCouponAddView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -52,7 +51,7 @@ define(function(require) {
          * @inheritDoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
             events['keydown ' + this.options.selectors.couponCodeSelector] = 'applyCouponByEnter';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
@@ -75,12 +74,12 @@ define(function(require) {
         applyCoupon: function(e) {
             e.preventDefault();
 
-            var couponCode = this.$(this.options.selectors.couponCodeSelector).val();
+            const couponCode = this.$(this.options.selectors.couponCodeSelector).val();
             if (!couponCode) {
                 return;
             }
 
-            var data = {
+            const data = {
                 couponCode: couponCode,
                 entityClass: this.options.entityClass,
                 entityId: this.options.entityId
@@ -107,8 +106,8 @@ define(function(require) {
 
         removeCoupon: function(e) {
             e.preventDefault();
-            var $el = $(e.currentTarget);
-            var appliedCouponId = $el.data('object-id');
+            const $el = $(e.currentTarget);
+            const appliedCouponId = $el.data('object-id');
 
             this._showLoadingMask();
             $.ajax({
@@ -137,7 +136,7 @@ define(function(require) {
          * @private
          */
         _showSuccess: function(message) {
-            var attr = {flash: true};
+            const attr = {flash: true};
             if (this.options.refreshOnSuccess) {
                 attr.afterReload = true;
             }
@@ -151,7 +150,7 @@ define(function(require) {
          */
         _showErrors: function(errors) {
             this._clearMessages();
-            var messageOptions = this._prepareMessageOptions();
+            const messageOptions = this._prepareMessageOptions();
             _.each(errors, function(message) {
                 messageOptions.delay = false;
                 mediator.execute('showMessage', 'error', __(message), messageOptions);
@@ -223,14 +222,14 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]) && !this.options[option];
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);

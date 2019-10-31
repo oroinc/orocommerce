@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListWidgetView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ShoppingListWidgetView = BaseView.extend({
+    const ShoppingListWidgetView = BaseView.extend({
         options: {
             currentClass: ''
         },
@@ -25,15 +24,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListWidgetView() {
-            ShoppingListWidgetView.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListWidgetView(options) {
+            ShoppingListWidgetView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ShoppingListWidgetView.__super__.initialize.apply(this, arguments);
+            ShoppingListWidgetView.__super__.initialize.call(this, options);
 
             this.options = _.defaults(options || {}, this.options);
             this.$el = $(this.options._sourceElement);
@@ -50,11 +49,11 @@ define(function(require) {
                 return;
             }
             delete this.shoppingListCollection;
-            return ShoppingListWidgetView.__super__.dispose.apply(this, arguments);
+            return ShoppingListWidgetView.__super__.dispose.call(this);
         },
 
         render: function() {
-            var showShoppingListDropdown =
+            const showShoppingListDropdown =
                 this.shoppingListCollection.length ||
                 this.$el.closest('.shopping-list-widget').find('.shopping-list-widget__create-btn').length;
 
@@ -68,21 +67,21 @@ define(function(require) {
         },
 
         updateLabel: function() {
-            var self = this;
+            const self = this;
             self.$el.find(this.elements.shoppingListTitle).each(function() {
-                var $title = $(this);
-                var shoppingListId = $title.data('shopping-list-id');
+                const $title = $(this);
+                const shoppingListId = $title.data('shopping-list-id');
                 $title.html(_.escape(self.shoppingListCollection.get(shoppingListId).get('label')));
             });
         },
 
         updateRadio: function() {
-            var self = this;
+            const self = this;
             self.$el.find(this.elements.shoppingListCurrentLabel).each(function() {
-                var $label = $(this);
-                var $input = $label.find('input');
-                var shoppingListId = $label.data('shopping-list-id');
-                var isCurrent = self.shoppingListCollection.get(shoppingListId).get('is_current');
+                const $label = $(this);
+                const $input = $label.find('input');
+                const shoppingListId = $label.data('shopping-list-id');
+                const isCurrent = self.shoppingListCollection.get(shoppingListId).get('is_current');
 
                 $label.removeClass('checked');
                 if (isCurrent) {

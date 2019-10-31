@@ -1,12 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
-    var messenger = require('oroui/js/messenger');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
+    const messenger = require('oroui/js/messenger');
 
-    var defaultParam = {
+    const defaultParam = {
         message: 'All product prices should be unique.'
     };
 
@@ -15,12 +15,12 @@ define(function(require) {
      * @return {string}
      */
     function getStringifiedValues(element) {
-        var price = $(element);
+        const price = $(element);
 
-        var priceList = price.find('input[name$="[priceList]"]').val();
-        var quantity = price.find('input[name$="[quantity]"]').val();
-        var unit = price.find('select[name$="[unit]"] option:selected').val();
-        var currency = price.find('select[name$="[currency]"] option:selected').val();
+        const priceList = price.find('input[name$="[priceList]"]').val();
+        const quantity = price.find('input[name$="[quantity]"]').val();
+        const unit = price.find('select[name$="[unit]"] option:selected').val();
+        const currency = price.find('select[name$="[currency]"] option:selected').val();
 
         if (
             !priceList || !priceList.trim() ||
@@ -40,11 +40,11 @@ define(function(require) {
     return [
         'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
         function(value, element) {
-            var processedPrices = [];
-            var $container = $(element).closest('.oro-item-collection');
+            const processedPrices = [];
+            const $container = $(element).closest('.oro-item-collection');
 
-            var duplicate = _.find($container.find('.oro-multiselect-holder'), function(price) {
-                var stringifiedPrice = getStringifiedValues(price);
+            const duplicate = _.find($container.find('.oro-multiselect-holder'), function(price) {
+                const stringifiedPrice = getStringifiedValues(price);
 
                 if (stringifiedPrice === '') {
                     return;

@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var BackendPaginationInput;
-    var _ = require('underscore');
-    var PaginationInput = require('orodatagrid/js/datagrid/pagination-input');
+    const _ = require('underscore');
+    const PaginationInput = require('orodatagrid/js/datagrid/pagination-input');
 
-    BackendPaginationInput = PaginationInput.extend({
+    const BackendPaginationInput = PaginationInput.extend({
         themeOptions: {
             optionPrefix: 'backendpagination',
             el: '[data-grid-pagination]'
@@ -14,15 +13,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BackendPaginationInput() {
-            BackendPaginationInput.__super__.constructor.apply(this, arguments);
+        constructor: function BackendPaginationInput(options) {
+            BackendPaginationInput.__super__.constructor.call(this, options);
         },
 
         makeHandles: function(handles) {
-            handles = BackendPaginationInput.__super__.makeHandles.apply(this, arguments);
+            handles = BackendPaginationInput.__super__.makeHandles.call(this, handles);
 
             _.each(handles, function(index) {
-                var $arrow = this.$el.find('[data-grid-pagination-direction=' + index.direction + ']');
+                const $arrow = this.$el.find('[data-grid-pagination-direction=' + index.direction + ']');
 
                 if ($arrow.length) {
                     if (index.className || !this.enabled) {
@@ -40,12 +39,12 @@ define(function(require) {
          * @inheritDoc
          */
         onChangePage: function(e) {
-            var obj = {};
+            const obj = {};
             e.preventDefault();
             this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
-                BackendPaginationInput.__super__.onChangePage.apply(this, arguments);
+                BackendPaginationInput.__super__.onChangePage.call(this, e);
             }
         },
 
@@ -53,11 +52,11 @@ define(function(require) {
          * @inheritDoc
          */
         onChangePageByInput: function(e) {
-            var obj = {};
+            const obj = {};
             this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
-                BackendPaginationInput.__super__.onChangePageByInput.apply(this, arguments);
+                BackendPaginationInput.__super__.onChangePageByInput.call(this, e);
             }
         },
 
@@ -65,8 +64,8 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            var state = this.collection.state;
-            var totalPages = state.totalPages || 1;
+            const state = this.collection.state;
+            const totalPages = state.totalPages || 1;
 
             // prevent render if data is not loaded yet
             if (state.totalRecords === null) {

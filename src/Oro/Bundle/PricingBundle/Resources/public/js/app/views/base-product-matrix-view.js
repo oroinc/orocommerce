@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var BaseProductMatrixView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var PricesHelper = require('oropricing/js/app/prices-helper');
-    var ScrollView = require('orofrontend/js/app/views/scroll-view');
-    var FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const PricesHelper = require('oropricing/js/app/prices-helper');
+    const ScrollView = require('orofrontend/js/app/views/scroll-view');
+    const FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    BaseProductMatrixView = BaseView.extend({
+    const BaseProductMatrixView = BaseView.extend({
         autoRender: false,
 
         optionNames: BaseView.prototype.optionNames.concat([
@@ -34,15 +33,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BaseProductMatrixView() {
-            BaseProductMatrixView.__super__.constructor.apply(this, arguments);
+        constructor: function BaseProductMatrixView(options) {
+            BaseProductMatrixView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            BaseProductMatrixView.__super__.initialize.apply(this, arguments);
+            BaseProductMatrixView.__super__.initialize.call(this, options);
             this.initModel(options);
             this.setPrices(options);
             if (_.isDesktop()) {
@@ -75,7 +74,7 @@ define(function(require) {
             delete this.total;
             delete this.minValue;
 
-            BaseProductMatrixView.__super__.dispose.apply(this, arguments);
+            BaseProductMatrixView.__super__.dispose.call(this);
         },
 
         /**
@@ -137,18 +136,18 @@ define(function(require) {
          * @param {jQuery} $element
          */
         updateTotal: function($element) {
-            var $cell = $element.closest('[data-index]');
-            var index = $cell.data('index');
-            var productId = $cell.data('product-id');
-            var indexKey = index.row + '.' + index.column;
+            const $cell = $element.closest('[data-index]');
+            const index = $cell.data('index');
+            const productId = $cell.data('product-id');
+            const indexKey = index.row + '.' + index.column;
 
-            var cells = this.total.cells;
-            var columns = this.total.columns;
-            var rows = this.total.rows;
+            const cells = this.total.cells;
+            const columns = this.total.columns;
+            const rows = this.total.rows;
 
-            var cell = cells[indexKey] = this.getTotal(cells, indexKey);
-            var column = columns[index.column] = this.getTotal(columns, index.column);
-            var row = rows[index.row] = this.getTotal(rows, index.row);
+            const cell = cells[indexKey] = this.getTotal(cells, indexKey);
+            const column = columns[index.column] = this.getTotal(columns, index.column);
+            const row = rows[index.row] = this.getTotal(rows, index.row);
 
             // remove old values
             this.changeTotal(this.total, cell, -1);
@@ -157,7 +156,7 @@ define(function(require) {
 
             // recalculate cell total
             cell.quantity = this.getValidQuantity($element.val());
-            var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
+            const quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
             cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
             $element.val(quantity);
 
@@ -204,7 +203,7 @@ define(function(require) {
          * @return {Number}
          */
         getValidQuantity: function(quantity) {
-            var val = parseInt(quantity, 10) || 0;
+            const val = parseInt(quantity, 10) || 0;
 
             if (_.isEmpty(quantity)) {
                 return 0;
@@ -233,10 +232,10 @@ define(function(require) {
          */
         renderSubTotals: function(totals, key) {
             _.each(totals, function(total, index) {
-                var $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
-                var $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
+                const $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
+                const $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
 
-                var formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
+                const formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
 
                 $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
                 $price.toggleClass('valid', total.price > 0).html(formattedCurrency);
@@ -258,7 +257,7 @@ define(function(require) {
          * Toggle visibility of clear button
          */
         checkClearButtonVisibility: function() {
-            var isFieldsEmpty = _.every(this.$('[data-name="field__quantity"]:enabled'), function(field) {
+            const isFieldsEmpty = _.every(this.$('[data-name="field__quantity"]:enabled'), function(field) {
                 return _.isEmpty(field.value);
             });
 

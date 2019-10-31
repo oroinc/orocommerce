@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var ListItemProductPricesSubview;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var numeral = require('numeral');
-    var localeSettings = require('orolocale/js/locale-settings');
-    var PricesHelper = require('oropricing/js/app/prices-helper');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const numeral = require('numeral');
+    const localeSettings = require('orolocale/js/locale-settings');
+    const PricesHelper = require('oropricing/js/app/prices-helper');
+    const _ = require('underscore');
 
-    ListItemProductPricesSubview = BaseView.extend({
+    const ListItemProductPricesSubview = BaseView.extend({
         template: require('tpl-loader!oropricing/templates/product/list-item-product-prices.html'),
 
         modelAttr: {
@@ -19,15 +18,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ListItemProductPricesSubview() {
-            ListItemProductPricesSubview.__super__.constructor.apply(this, arguments);
+        constructor: function ListItemProductPricesSubview(options) {
+            ListItemProductPricesSubview.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ListItemProductPricesSubview.__super__.initialize.apply(this, arguments);
+            ListItemProductPricesSubview.__super__.initialize.call(this, options);
 
             this.showListedPrice = options.showListedPrice;
             this.showValuePrice = options.showValuePrice;
@@ -50,7 +49,7 @@ define(function(require) {
                 this.model.off(null, null, this);
             }
 
-            ListItemProductPricesSubview.__super__.dispose.apply(this, arguments);
+            ListItemProductPricesSubview.__super__.dispose.call(this);
         },
 
         /**
@@ -76,8 +75,8 @@ define(function(require) {
                 return;
             }
 
-            var price = this.findPrice();
-            var unitLabel = null;
+            const price = this.findPrice();
+            let unitLabel = null;
             if (price) {
                 unitLabel = _.__('oro.pricing.price.formatted.unit', {
                     formattedUnit: _(price.formatted_unit).capitalize(),
@@ -92,7 +91,7 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            ListItemProductPricesSubview.__super__.render.apply(this, arguments);
+            ListItemProductPricesSubview.__super__.render.call(this);
             this.setUnitLabel();
 
             mediator.trigger('layout:reposition');
@@ -104,9 +103,9 @@ define(function(require) {
                 return null;
             }
 
-            var quantity = this.model.get('quantity');
-            var unit = this.model.get('unit');
-            var prices = this.model.get('pricesByUnit');
+            const quantity = this.model.get('quantity');
+            const unit = this.model.get('unit');
+            const prices = this.model.get('pricesByUnit');
 
             return PricesHelper.findPrice(prices, unit, quantity);
         },
@@ -116,8 +115,8 @@ define(function(require) {
                 return null;
             }
 
-            var prices = this.model.get('pricesByUnit');
-            var listedPrice = this.model.get('listedPrice');
+            const prices = this.model.get('pricesByUnit');
+            let listedPrice = this.model.get('listedPrice');
             if (null === listedPrice) {
                 listedPrice = {};
                 _.each(prices, function(unitData, unitKey) {
