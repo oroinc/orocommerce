@@ -18,6 +18,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
+use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
@@ -75,6 +76,8 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     public function testGetWidgetData(): void
     {
         $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+
         $data = [new ImageSlide()];
 
         $this->repository->expects($this->once())
@@ -82,7 +85,10 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
             ->willReturn($data);
 
-        $this->assertSame(['imageSlides' => $data], $this->contentWidgetType->getWidgetData($contentWidget));
+        $this->assertSame(
+            ['name' => 'test_name', 'imageSlides' => $data],
+            $this->contentWidgetType->getWidgetData($contentWidget)
+        );
     }
 
     public function testGetSettingsForm(): void
@@ -98,6 +104,13 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         $form = $this->contentWidgetType->getSettingsForm($contentWidget, $this->factory);
 
         $this->assertInstanceOf(SymfonyFormType::class, $form->getConfig()->getType()->getInnerType());
+        $this->assertTrue($form->has('slidesToShow'));
+        $this->assertTrue($form->has('slidesToScroll'));
+        $this->assertTrue($form->has('autoplay'));
+        $this->assertTrue($form->has('autoplaySpeed'));
+        $this->assertTrue($form->has('arrows'));
+        $this->assertTrue($form->has('dots'));
+        $this->assertTrue($form->has('infinite'));
         $this->assertTrue($form->has('imageSlides'));
         $this->assertInstanceOf(
             ImageSlideCollectionType::class,
@@ -108,24 +121,42 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     public function testGetBackOfficeViewSubBlocks(): void
     {
         $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+
         $data = [new ImageSlide()];
 
-        $this->repository->expects($this->once())
+        $this->repository->expects($this->any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
             ->willReturn($data);
 
         $twig = $this->createMock(Environment::class);
-        $twig->expects($this->once())
+        $twig->expects($this->exactly(2))
             ->method('render')
-            ->with('@OroCMS/ImageSliderContentWidget/view.html.twig', ['imageSlides' => $data])
-            ->willReturn('rendered template');
+            ->willReturnMap(
+                [
+                    [
+                        '@OroCMS/ImageSliderContentWidget/slider_options.html.twig',
+                        ['name' => 'test_name', 'imageSlides' => $data],
+                        'rendered settings template'
+                    ],
+                    [
+                        '@OroCMS/ImageSliderContentWidget/view.html.twig',
+                        ['name' => 'test_name', 'imageSlides' => $data],
+                        'rendered slides template'
+                    ],
+                ]
+            );
 
         $this->assertEquals(
             [
                 [
+                    'title' => 'oro.cms.contentwidget.sections.slider_options.label',
+                    'subblocks' => [['data' => ['rendered settings template']]]
+                ],
+                [
                     'title' => 'oro.cms.contentwidget.sections.image_slides.label',
-                    'subblocks' => [['data' => ['rendered template']]]
+                    'subblocks' => [['data' => ['rendered slides template']]]
                 ]
             ],
             $this->contentWidgetType->getBackOfficeViewSubBlocks($contentWidget, $twig)
@@ -169,7 +200,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                     new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 [
-                    SymfonyFormType::class => [new DataBlockExtension()]
+                    SymfonyFormType::class => [new DataBlockExtension(), new FormTypeValidatorExtensionStub()]
                 ]
             )
         ];

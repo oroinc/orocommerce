@@ -50,7 +50,7 @@ class ContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCase
         $imageSlide2 = $this->getEntity(ImageSlide::class, ['id' => 2002]);
 
         $data = new ContentWidget();
-        $data->setSettings(['imageSlides' => [$imageSlide2]]);
+        $data->setSettings(['imageSlides' => [$imageSlide2], 'param' => 'value']);
 
         $this->repository->expects($this->once())
             ->method('findBy')
@@ -67,7 +67,7 @@ class ContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onBeforeFlush(new AfterFormProcessEvent($this->createMock(Form::class), $data));
 
-        $this->assertEquals([], $data->getSettings());
+        $this->assertEquals(['param' => 'value'], $data->getSettings());
     }
 
     public function testOnBeforeFlushInvalidData(): void

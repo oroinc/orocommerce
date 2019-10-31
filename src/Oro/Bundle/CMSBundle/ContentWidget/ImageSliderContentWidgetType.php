@@ -6,15 +6,20 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Form\Type\ImageSlideCollectionType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Type;
 use Twig\Environment;
 
 /**
  * Type for the image slider widgets.
  */
-class ImageSliderContentWidgetType extends AbstractContentWidgetType
+class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
 {
     /** @var ManagerRegistry */
     private $registry;
@@ -48,6 +53,19 @@ class ImageSliderContentWidgetType extends AbstractContentWidgetType
     {
         return [
             [
+                'title' => 'oro.cms.contentwidget.sections.slider_options.label',
+                'subblocks' => [
+                    [
+                        'data' => [
+                            $twig->render(
+                                '@OroCMS/ImageSliderContentWidget/slider_options.html.twig',
+                                $this->getWidgetData($contentWidget)
+                            ),
+                        ]
+                    ],
+                ]
+            ],
+            [
                 'title' => 'oro.cms.contentwidget.sections.image_slides.label',
                 'subblocks' => [
                     [
@@ -64,11 +82,113 @@ class ImageSliderContentWidgetType extends AbstractContentWidgetType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return $formFactory->create(FormType::class)
+            ->add(
+                'slidesToShow',
+                IntegerType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.slides_to_show.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'block_config' => [
+                        'image_slides' => [
+                            'title' => 'oro.cms.contentwidget.sections.slider_options.label'
+                        ]
+                    ],
+                    'constraints' => [
+                        new NotBlank(),
+                        new Type('integer'),
+                        new Range(['min' => 1]),
+                    ]
+                ]
+            )
+            ->add(
+                'slidesToScroll',
+                IntegerType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.slides_to_scroll.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'block_config' => [
+                        'image_slides' => [
+                            'title' => 'oro.cms.contentwidget.sections.settings.label'
+                        ]
+                    ],
+                    'constraints' => [
+                        new NotBlank(),
+                        new Type('integer'),
+                        new Range(['min' => 1]),
+                    ]
+                ]
+            )
+            ->add(
+                'autoplay',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.autoplay.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'constraints' => [
+                        new Type('boolean'),
+                    ]
+                ]
+            )
+            ->add(
+                'autoplaySpeed',
+                IntegerType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.autoplay_speed.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'constraints' => [
+                        new NotBlank(),
+                        new Type('integer'),
+                        new Range(['min' => 1]),
+                    ]
+                ]
+            )
+            ->add(
+                'arrows',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.arrows.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'constraints' => [
+                        new Type('boolean'),
+                    ]
+                ]
+            )
+            ->add(
+                'dots',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.dots.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'constraints' => [
+                        new Type('boolean'),
+                    ]
+                ]
+            )
+            ->add(
+                'infinite',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.infinite.label',
+                    'required' => true,
+                    'block' => 'settings',
+                    'constraints' => [
+                        new Type('boolean'),
+                    ]
+                ]
+            )
             ->add(
                 'imageSlides',
                 ImageSlideCollectionType::class,
@@ -89,7 +209,13 @@ class ImageSliderContentWidgetType extends AbstractContentWidgetType
      */
     public function getWidgetData(ContentWidget $contentWidget): array
     {
-        return array_merge($contentWidget->getSettings(), ['imageSlides' => $this->getImageSlides($contentWidget)]);
+        return array_merge(
+            $contentWidget->getSettings(),
+            [
+                'name' => $contentWidget->getName(),
+                'imageSlides' => $this->getImageSlides($contentWidget)
+            ]
+        );
     }
 
     /**
@@ -101,5 +227,13 @@ class ImageSliderContentWidgetType extends AbstractContentWidgetType
         return $this->registry->getManagerForClass(ImageSlide::class)
             ->getRepository(ImageSlide::class)
             ->findBy(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isInline(): bool
+    {
+        return false;
     }
 }

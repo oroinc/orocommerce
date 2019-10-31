@@ -1,15 +1,16 @@
-{% set sliderOptions = {
-    slidesToShow: 1,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    arrows: false,
-    dots: true,
-    itemSelector: '.promo-slider__item'
-} %}
 <div class="promo-slider"
-     data-page-component-name="promo-slider"
+     data-page-component-name="{{ name }}"
      data-page-component-module="orofrontend/js/app/components/list-slider-component"
-     data-page-component-options="{{ sliderOptions|json_encode }}">
+     data-page-component-options="{{ {
+         slidesToShow: slidesToShow is defined and slidesToShow is not null ? slidesToShow : 1,
+         slidesToScroll: slidesToScroll is defined and slidesToScroll is not null ? slidesToScroll : 1,
+         autoplay: autoplay is defined and autoplay is not null ? autoplay : true,
+         autoplaySpeed: autoplaySpeed is defined and autoplaySpeed is not null ? autoplaySpeed : 4000,
+         arrows: arrows is defined and arrows is not null ? arrows : false,
+         dots: dots is defined and dots is not null ? dots : true,
+         infinite: infinite is defined and infinite is not null ? infinite : false,
+         itemSelector: '.promo-slider__item'
+     }|json_encode }}">
     {% for imageSlide in imageSlides %}
         {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
         <div class="promo-slider__item">
@@ -28,11 +29,7 @@
             </a>
             <div class="promo-slider__info promo-slider__info--{{ imageSlide.textAlignment }}-mode">
                 <a href="{{ imageSlide.url }}" target="{{ windowTarget }}" class="promo-slider__link">
-                    <h2 class="promo-slider__title">{{ imageSlide.title }}</h2>
-                    <div class="promo-slider__description">{{ imageSlide.text|raw }}</div>
-                </a>
-                <a href="{{ imageSlide.url }}" target="{{ windowTarget }}" class="btn btn--info promo-slider__view-btn">
-                    Call to action
+                    {{ imageSlide.text|raw }}
                 </a>
             </div>
         </div>

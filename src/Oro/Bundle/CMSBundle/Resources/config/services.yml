@@ -141,14 +141,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_cms.migration.home_page_slider_images_source_fixer:
-        class: 'Oro\Bundle\CMSBundle\Migration\HomePageSliderImagesSourceFixer'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
-        public: true
-        arguments:
-            - '@oro_config.global'
-            - '@doctrine.dbal.default_connection'
-
     oro_cms.entity_listener.page:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener
         public: false

@@ -57,6 +57,8 @@ class ContentWidgetFormEventListener
             $manager->remove($imageSlide);
         }
 
-        $contentWidget->setSettings([]);
+        unset($settings['imageSlides']);
+
+        $contentWidget->setSettings($settings);
     }
 }

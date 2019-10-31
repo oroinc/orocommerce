@@ -83,9 +83,19 @@ oro.cms:
             additional_information.label: Additional Information
             image_slides.label: Slides
             usages.label: Usages
+            slider_options.label: Slider Options
 
     content_widget_type:
         image_slider.label: Image Slider
+
+        slider_options:
+            slides_to_show.label: 'Number of Slides to Show'
+            slides_to_scroll.label: 'Number of Slides to Scroll'
+            autoplay.label: 'Enable Autoplay'
+            autoplay_speed.label: 'Autoplay Speed (milliseconds)'
+            arrows.label: 'Show Arrows'
+            dots.label: 'Show Dots'
+            infinite.label: 'Enable Infinite Scroll'
 
     imageslide:
         entity_label: Image Slide
