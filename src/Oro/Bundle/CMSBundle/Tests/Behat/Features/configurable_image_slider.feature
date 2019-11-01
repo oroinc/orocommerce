@@ -2,13 +2,9 @@
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 
 Feature: Configurable image slider
-  In order to modify image sliders on the storefront
+  In order to have image sliders displayed on the storefront
   As an Administrator
-  I need to be able to create and show image slider on the storefront
-
-  In order to modify some predefined marketing content on the store frontend
-  As an Administrator
-  I want to edit the defined content blocks
+  I need to be able to create and modify the image slider widget in the back office
 
   Scenario: Feature background
     Given sessions active:
@@ -43,10 +39,8 @@ Feature: Configurable image slider
       | Title | cat1.jpg |
     And I click "Upload"
     And click on cat1.jpg in grid
-
     And I click on "Choose Medium Slider Image 1"
     And click on cat1.jpg in grid
-
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Widget Type: Image Slider"

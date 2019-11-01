@@ -181,7 +181,7 @@ services:
     oro_cms.entity_listener.image_slide:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\ImageSlide', event: preRemove }
 
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry

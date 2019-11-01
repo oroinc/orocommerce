@@ -24,6 +24,9 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
     /** @var ManagerRegistry */
     private $registry;
 
+    /** @var int */
+    private $pointer = 0;
+
     /**
      * @param ManagerRegistry $registry
      */
@@ -51,16 +54,15 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
      */
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
+        $data = $this->getWidgetData($contentWidget);
+
         return [
             [
                 'title' => 'oro.cms.contentwidget.sections.slider_options.label',
                 'subblocks' => [
                     [
                         'data' => [
-                            $twig->render(
-                                '@OroCMS/ImageSliderContentWidget/slider_options.html.twig',
-                                $this->getWidgetData($contentWidget)
-                            ),
+                            $twig->render('@OroCMS/ImageSliderContentWidget/slider_options.html.twig', $data),
                         ]
                     ],
                 ]
@@ -70,10 +72,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 'subblocks' => [
                     [
                         'data' => [
-                            $twig->render(
-                                '@OroCMS/ImageSliderContentWidget/view.html.twig',
-                                $this->getWidgetData($contentWidget)
-                            ),
+                            $twig->render('@OroCMS/ImageSliderContentWidget/image_slides.html.twig', $data),
                         ]
                     ],
                 ]
@@ -95,9 +94,9 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.slides_to_show.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'block_config' => [
-                        'image_slides' => [
+                        'slider_options' => [
                             'title' => 'oro.cms.contentwidget.sections.slider_options.label'
                         ]
                     ],
@@ -114,12 +113,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.slides_to_scroll.label',
                     'required' => true,
-                    'block' => 'settings',
-                    'block_config' => [
-                        'image_slides' => [
-                            'title' => 'oro.cms.contentwidget.sections.settings.label'
-                        ]
-                    ],
+                    'block' => 'slider_options',
                     'constraints' => [
                         new NotBlank(),
                         new Type('integer'),
@@ -133,7 +127,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.autoplay.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
                     ]
@@ -145,7 +139,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.autoplay_speed.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'constraints' => [
                         new NotBlank(),
                         new Type('integer'),
@@ -159,7 +153,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.arrows.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
                     ]
@@ -171,7 +165,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.dots.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
                     ]
@@ -183,7 +177,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.infinite.label',
                     'required' => true,
-                    'block' => 'settings',
+                    'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
                     ]
@@ -212,7 +206,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         return array_merge(
             $contentWidget->getSettings(),
             [
-                'name' => $contentWidget->getName(),
+                'pageComponentName' => $contentWidget->getName() . ($this->pointer++ ?: ''),
                 'imageSlides' => $this->getImageSlides($contentWidget)
             ]
         );

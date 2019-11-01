@@ -80,13 +80,17 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 
         $data = [new ImageSlide()];
 
-        $this->repository->expects($this->once())
+        $this->repository->expects($this->any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
             ->willReturn($data);
 
         $this->assertSame(
-            ['name' => 'test_name', 'imageSlides' => $data],
+            ['pageComponentName' => 'test_name', 'imageSlides' => $data],
+            $this->contentWidgetType->getWidgetData($contentWidget)
+        );
+        $this->assertSame(
+            ['pageComponentName' => 'test_name1', 'imageSlides' => $data],
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }
@@ -137,12 +141,12 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                 [
                     [
                         '@OroCMS/ImageSliderContentWidget/slider_options.html.twig',
-                        ['name' => 'test_name', 'imageSlides' => $data],
+                        ['pageComponentName' => 'test_name', 'imageSlides' => $data],
                         'rendered settings template'
                     ],
                     [
-                        '@OroCMS/ImageSliderContentWidget/view.html.twig',
-                        ['name' => 'test_name', 'imageSlides' => $data],
+                        '@OroCMS/ImageSliderContentWidget/image_slides.html.twig',
+                        ['pageComponentName' => 'test_name', 'imageSlides' => $data],
                         'rendered slides template'
                     ],
                 ]
