@@ -25,7 +25,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         text: 'short description'
 
     localizedFallbackValueLongDesc21:
-        text: 'long description'
+        wysiwyg: 'long description'
 
     localizedFallbackValueMetaDesc21:
         text: 'meta description'

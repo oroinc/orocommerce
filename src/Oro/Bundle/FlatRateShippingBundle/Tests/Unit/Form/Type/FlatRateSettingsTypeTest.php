@@ -4,8 +4,10 @@ namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateSettingsType;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
@@ -14,13 +16,14 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -31,7 +34,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /**
@@ -66,7 +69,11 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                     ['OroLocaleBundle:LocalizedFallbackValue', null, $repositoryLocalizedFallbackValue],
                 ]
             );
-        $this->translator = $this->createMock(TranslatorInterface::class);
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $entityConfigProvider */
+        $entityConfigProvider = $this->createMock(ConfigProvider::class);
+
+        $this->translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
@@ -83,7 +90,11 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                     FallbackValueType::class => new FallbackValueType(),
                     FallbackPropertyType::class => new FallbackPropertyType($this->translator),
                 ],
-                []
+                [
+                    FormType::class => [
+                        new TooltipFormExtension($entityConfigProvider, $this->translator),
+                    ],
+                ]
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];

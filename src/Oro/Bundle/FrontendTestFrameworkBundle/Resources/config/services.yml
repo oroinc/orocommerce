@@ -11,6 +11,7 @@ services:
         decoration_priority: -256 # should be at the top of the decoration chain
         arguments:
             - '@oro_website.manager.stub.inner'
+            - '@oro_website.cache.website'
 
     oro_promotion.alias.provider.matching_products_provider:
         alias: oro_promotion.provider.matching_products_provider

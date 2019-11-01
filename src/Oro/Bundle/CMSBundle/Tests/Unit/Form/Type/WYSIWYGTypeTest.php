@@ -54,7 +54,9 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                         'allow_tags' => []
                     ]
                 ],
-                'error_bubbling' => true
+
+                'error_bubbling' => true,
+                'auto_render' => true,
             ])
             ->will($this->returnSelf());
 
@@ -109,14 +111,18 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
         $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
-        $type->finishView($view, $form, ['page-component' => [
-            'module' => 'component/module',
-            'options' => ['view' => 'app/view']
-        ]]);
+        $type->finishView($view, $form, [
+            'page-component' => [
+                'module' => 'component/module',
+                'options' => ['view' => 'app/view']
+            ],
+            'auto_render' => true,
+        ]);
 
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            . ',"autoRender":true'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
@@ -138,14 +144,17 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
         $type = new WYSIWYGType($this->htmlTagProvider, $this->purifierScopeProvider);
-        $type->finishView($view, $form, ['page-component' => [
-            'module' => 'component/module',
-            'options' => ['view' => 'app/view']
-        ]]);
+        $type->finishView($view, $form, [
+            'page-component' => [
+                'module' => 'component/module',
+                'options' => ['view' => 'app/view']
+            ],
+            'auto_render' => true,
+        ]);
 
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
-            '{"view":"app\/view","stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
+            '{"view":"app\/view","autoRender":true,"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );

@@ -131,7 +131,7 @@ class LoadProductDemoData extends AbstractFixture implements
                 );
 
             $description = new LocalizedFallbackValue();
-            $description->setText(nl2br($text));
+            $description->setWysiwyg(nl2br($text));
 
             $shortDescription = new LocalizedFallbackValue();
             $shortDescription->setText($row['description']);

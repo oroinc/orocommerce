@@ -83,7 +83,7 @@ class CategoryTypeTest extends WebTestCase
         $submitData = [
             'titles' => [ 'values' => ['default' => $defaultTitle]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
-            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'longDescriptions' => ['values' => [ 'default' => ['wysiwyg' => $defaultLongDescription]]],
             'smallImage' => ['file' => $smallImage],
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
@@ -156,7 +156,7 @@ class CategoryTypeTest extends WebTestCase
         $submitData = [
             'titles' => [ 'values' => ['default' => $defaultTitle]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
-            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'longDescriptions' => ['values' => [ 'default' => ['wysiwyg' => $defaultLongDescription]]],
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];

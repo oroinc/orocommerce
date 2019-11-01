@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -92,7 +93,13 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->with(
                 'longDescriptions',
                 LocalizedFallbackValueCollectionType::class,
-                $this->getOroRichTextTypeConfiguration('oro.catalog.category.long_descriptions.label')
+                [
+                    'label' => 'oro.catalog.category.long_descriptions.label',
+                    'required' => false,
+                    'field' => ['wysiwyg', 'wysiwyg_style'],
+                    'entry_type' => WYSIWYGValueType::class,
+                    'use_tabs' => true
+                ]
             )
             ->will($this->returnSelf());
 
@@ -243,12 +250,14 @@ class CategoryTypeTest extends FormIntegrationTestCase
             'entry_type' => OroRichTextType::class,
             'entry_options' => [
                 'wysiwyg_options' => [
+                    'autoRender' => false,
                     'statusbar' => true,
                     'resize' => true,
                     'width' => 500,
                     'height' => 200,
                 ],
-            ]
+            ],
+            'use_tabs' => true
         ];
     }
 }

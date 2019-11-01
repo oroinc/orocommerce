@@ -43,6 +43,7 @@ class WYSIWYGType extends AbstractType
             $options['page-component']['options']['allow_tags'] = $allowedElements;
         }
 
+        $options['page-component']['options']['autoRender'] = $options['auto_render'];
         $options['page-component']['options']['stylesInputSelector'] = sprintf(
             '[data-grapesjs-styles="%s"]',
             $form->getName() . WYSIWYGStylesType::TYPE_SUFFIX
@@ -68,7 +69,8 @@ class WYSIWYGType extends AbstractType
                     'allow_tags' => []
                 ]
             ],
-            'error_bubbling' => true
+            'error_bubbling' => true,
+            'auto_render' => true
         ]);
     }
 

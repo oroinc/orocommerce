@@ -20,7 +20,7 @@ class RelatedItemsProductEditListener
     const RELATED_ITEMS_ID = 'relatedItems';
 
     /** @var int */
-    const BLOCK_PRIORITY = 10;
+    const BLOCK_PRIORITY = 1500;
 
     /** @var TranslatorInterface */
     private $translator;

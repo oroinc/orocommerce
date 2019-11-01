@@ -158,6 +158,11 @@ define(function(require) {
 
         initialValue: '',
 
+        events: {
+            'wysiwyg:enable': 'enableEditor',
+            'wysiwyg:disable': 'disableEditor'
+        },
+
         /**
          * @inheritDoc
          */
@@ -205,16 +210,38 @@ define(function(require) {
                 return;
             }
 
-            this.builderUndelegateEvents();
+            this.disableEditor();
 
             GrapesjsEditorView.__super__.dispose.call(this);
+        },
+
+        disableEditor: function() {
+            if (this.builder) {
+                this.builderUndelegateEvents();
+                this.builder.destroy();
+
+                this.disposeElements();
+
+                this.builder = null;
+            }
+        },
+
+        enableEditor: function() {
+            if (!this.builder) {
+                this.render();
+            }
+        },
+
+        disposeElements: function() {
+            this.$el.show();
+            this.$container.remove();
         },
 
         /**
          * @TODO Should refactored
          */
         getContainer: function() {
-            const $editor = $('<div id="grapesjs" />');
+            const $editor = $('<div class="grapesjs" />');
             $editor.html(this.initialValue);
             this.$el.parent().append($editor);
 
@@ -299,7 +326,10 @@ define(function(require) {
          */
         builderUndelegateEvents: function() {
             this.$el.closest('form').off(this.eventNamespace());
-            this.builder.off();
+
+            if (this.builder) {
+                this.builder.off();
+            }
         },
 
         /**
@@ -381,6 +411,7 @@ define(function(require) {
             this._addClassForFrameWrapper();
 
             mediator.trigger('grapesjs:loaded', this.builder);
+            mediator.trigger('page:afterChange');
         },
 
         /**

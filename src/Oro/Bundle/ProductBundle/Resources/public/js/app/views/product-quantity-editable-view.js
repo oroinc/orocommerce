@@ -143,11 +143,11 @@ define(function(require) {
         },
 
         enableAccept: function() {
-            this.elements.saveButton.prop('disabled', false);
+            this.elements.saveButton.attr('disabled', false).inputWidget('refresh');
         },
 
         enableQuantity: function() {
-            this.elements.quantity.prop('disabled', false);
+            this.elements.quantity.attr('disabled', false).inputWidget('refresh');
         },
 
         initValidator: function(options) {

@@ -168,7 +168,6 @@ class ShoppingListControllerTest extends WebTestCase
                     'Price for requested quantity is not available',
                     '$0.00',
                     'Price for requested quantity is not available',
-                    'Price for requested quantity is not available',
                 ],
                 'atLeastOneAvailableProduct' => true,
             ],
@@ -187,6 +186,12 @@ class ShoppingListControllerTest extends WebTestCase
                 BaseLoadCustomerData::AUTH_PW
             )
         );
+        $this->configManager->set(
+            'oro_product.general_frontend_product_visibility',
+            ['in_stock', 'out_of_stock', 'discontinued']
+        );
+        $this->configManager->flush();
+
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])

@@ -383,10 +383,12 @@ define(function(require) {
                 ) || null;
             }
 
-            if (this.editLineItem) {
+            // Local variable used because this.editLineItem is set to null in model change:unit listener
+            const editLineItem = this.editLineItem;
+            if (editLineItem) {
                 // quantity precision depend on unit, set unit first
-                this.model.set('unit', this.editLineItem.unit);
-                this.model.set('quantity', this.editLineItem.quantity);
+                this.model.set('unit', editLineItem.unit);
+                this.model.set('quantity', editLineItem.quantity);
                 this.model.set('quantity_changed_manually', true);// prevent quantity change in other components
             }
         },

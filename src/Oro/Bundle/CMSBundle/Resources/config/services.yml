@@ -303,3 +303,12 @@ services:
             - [addScopeMapping, ['secure', 'default']]
             - [addScopeMapping, ['selective', 'lax']]
             - [addScopeMapping, ['unsecure', null]]
+
+    oro_cms.listener.wysiwyg_block_listener:
+        class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGBlockListener
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.provider.entity'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onBeforeFormRender, priority: -255 }

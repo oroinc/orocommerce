@@ -89,7 +89,7 @@ class BrandTypeTest extends WebTestCase
 
         $submitData = [
             'names' => [ 'values' => ['default' => $defaultName]],
-            'descriptions' => ['values' => [ 'default' => $defaultDescription]],
+            'descriptions' => ['values' => [ 'default' => ['wysiwyg' => $defaultDescription]]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
             'metaTitles' => ['values' => ['default' => $metaTitle]],
             'metaDescriptions' => ['values' => ['default' => $metaDescription]],

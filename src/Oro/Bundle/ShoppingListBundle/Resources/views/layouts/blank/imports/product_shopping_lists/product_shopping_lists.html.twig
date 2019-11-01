@@ -179,10 +179,16 @@
                                         <input class="shopping-lists-modify__input input input--size-x-s"
                                                type="number"
                                                min="1"
-                                               value="<%= lineItem.quantity %>"
+                                               value="<%- lineItem.quantity %>"
                                                name="quantity"
                                                data-role="field__quantity"
-                                               disabled="disabled" required>
+                                               disabled="disabled"
+                                               data-precision="<%- precision %>"
+                                               required
+                                            <% if (precision) { %>
+                                                data-precision="<%- precision %>"
+                                            <% } %>
+                                            >
                                     </li>
                                     <li class="shopping-lists-modify__select">
                                         <% if (applySingleUnitMode && isProductApplySingleUnitMode([lineItem.unit])) { %>
