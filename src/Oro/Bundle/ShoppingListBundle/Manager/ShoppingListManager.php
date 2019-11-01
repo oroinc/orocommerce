@@ -300,6 +300,22 @@ class ShoppingListManager
     }
 
     /**
+     * Remove shopping list line items containing products with unavailable inventory statuses.
+     *
+     * @param ShoppingList $shoppingList
+     */
+    public function actualizeLineItems(ShoppingList $shoppingList)
+    {
+        /** @var LineItemRepository $repository */
+        $repository = $this->doctrine
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class);
+
+        $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
+        $repository->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
+    }
+
+    /**
      * @param LineItem $lineItem
      * @param LineItem $duplicate
      * @param bool     $concatNotes

@@ -22,9 +22,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
      */
     public function load(ObjectManager $manager)
     {
+        $shoppingLists = [];
         foreach (static::$lineItems as $name => $lineItem) {
             /** @var ShoppingList $shoppingList */
             $shoppingList = $this->getReference($lineItem['shoppingList']);
+            $shoppingLists[$shoppingList->getId()] = $shoppingList;
 
             /** @var ProductUnit $unit */
             $unit = $this->getReference($lineItem['unit']);
@@ -47,6 +49,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
                 $name,
                 $parentProduct
             );
+        }
+
+        $shoppingListTotalManager = $this->container->get('oro_shopping_list.manager.shopping_list_total');
+        foreach ($shoppingLists as $shoppingList) {
+            $shoppingListTotalManager->recalculateTotals($shoppingList, false);
         }
 
         $manager->flush();
