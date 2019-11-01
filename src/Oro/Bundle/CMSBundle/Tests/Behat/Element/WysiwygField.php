@@ -12,7 +12,7 @@ class WysiwygField extends Element
     public function setValue($value)
     {
         $this->session->executeScript(
-            sprintf('(function(){$("#%s").val("%s");})()', $this->getAttribute('id'), $value)
+            sprintf('(function(){$("#%s").val("%s").trigger("change");})()', $this->getAttribute('id'), $value)
         );
     }
 }
