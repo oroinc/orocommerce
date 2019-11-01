@@ -61,9 +61,15 @@ class ShoppingListTotalListenerTest extends WebTestCase
      */
     private function createTotal(ShoppingList $shoppingList)
     {
-        $subtotal = (new Subtotal())->setCurrency('USD')->setAmount(1);
+        $currency = 'USD';
+        $subtotal = (new Subtotal())->setCurrency($currency)->setAmount(1);
+        /** @var ShoppingListTotalRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(ShoppingListTotal::class);
+        $total = $repo->findOneBy(['shoppingList' => $shoppingList, 'currency' => $currency]);
 
-        $total = new ShoppingListTotal($shoppingList, 'USD');
+        if (!$total) {
+            $total = new ShoppingListTotal($shoppingList, $currency);
+        }
         $total->setValid(true);
         $total->setSubtotal($subtotal);
 

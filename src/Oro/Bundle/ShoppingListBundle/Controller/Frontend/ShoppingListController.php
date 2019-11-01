@@ -40,6 +40,7 @@ class ShoppingListController extends Controller
         }
 
         if ($shoppingList) {
+            $this->get('oro_shopping_list.manager.shopping_list')->actualizeLineItems($shoppingList);
             $title = $shoppingList->getLabel();
             $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
         } else {
