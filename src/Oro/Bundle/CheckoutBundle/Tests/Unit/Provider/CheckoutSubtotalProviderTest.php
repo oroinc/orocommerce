@@ -53,13 +53,6 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($value) {
-                    return round($value);
-                }
-            );
 
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
@@ -79,6 +72,11 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     public function testGetSubtotalWithoutLineItems()
     {
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
         $this->translator->expects($this->once())
             ->method('trans')
             ->with(CheckoutSubtotalProvider::LABEL)
@@ -124,6 +122,11 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotalCurrency = null,
         $entityCurrency = null
     ) {
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
         $customer = new Customer();
         $website = new Website();
         $defaultCurrency = 'USD';
@@ -205,6 +208,11 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotalCurrency = null,
         $entityCurrency = null
     ) {
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
         $defaultCurrency = 'USD';
 
         $this->featureChecker
@@ -276,6 +284,11 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entityCurrency = null,
         $subtotalCurrency = null
     ) {
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
         $defaultCurrency = 'USD';
 
         $this->featureChecker
@@ -317,6 +330,60 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertNull($subtotal->getCombinedPriceList());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
+        $this->assertFalse($subtotal->isVisible());
+    }
+
+    public function testLineItemsRounding()
+    {
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value, 2, PHP_ROUND_HALF_UP);
+            });
+        $this->featureChecker
+            ->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists')
+            ->willReturn(true);
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(CheckoutSubtotalProvider::LABEL)
+            ->willReturnCallback(function ($str) {
+                return $str . ' TRANS';
+            });
+
+        $product = $this->prepareProduct();
+        $productUnit = $this->prepareProductUnit('item', 2);
+
+        $lineItem1 = new CheckoutLineItem();
+        $lineItem1->setProduct($product)
+            ->setProductUnit($productUnit)
+            ->setQuantity(1)
+            ->setPriceFixed(true)
+            ->setPrice(Price::create(0.0149, 'USD'));
+        $lineItem2 = new CheckoutLineItem();
+        $lineItem2->setProduct($product)
+            ->setProductUnit($productUnit)
+            ->setQuantity(1)
+            ->setPriceFixed(true)
+            ->setPrice(Price::create(0.0149, 'USD'));
+
+        $entity = new Checkout();
+        $entity->setCurrency('USD');
+        $entity->addLineItem($lineItem1);
+        $entity->addLineItem($lineItem2);
+
+        $this->priceListTreeHandler->expects($this->never())->method('getPriceList');
+        $subtotal = $this->provider->getSubtotal($entity);
+
+        $this->assertInstanceOf(Subtotal::class, $subtotal);
+        $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals('oro.checkout.subtotals.checkout_subtotal.label TRANS', $subtotal->getLabel());
+        $this->assertEquals('USD', $subtotal->getCurrency());
+        $this->assertNull($subtotal->getCombinedPriceList());
+        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertEquals(0.02, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
     }
 

@@ -140,7 +140,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
             foreach ($prices as $identifier => $price) {
                 if ($price && array_key_exists($identifier, $productsPriceCriteria)) {
                     $priceValue = $price->getValue();
-                    $subtotalAmount += (float)$priceValue * $productsPriceCriteria[$identifier]->getQuantity();
+                    $rowTotal = (float)$priceValue * $productsPriceCriteria[$identifier]->getQuantity();
+                    $subtotalAmount += $this->rounding->round($rowTotal);
                     $subtotal->setVisible(true);
                 }
             }
@@ -148,10 +149,11 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
 
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem->isPriceFixed() && $lineItem->getPrice() instanceof Price) {
-                $subtotalAmount += $this->getRowTotal($lineItem, $currency);
+                $rowTotal = $this->getRowTotal($lineItem, $currency);
+                $subtotalAmount += $this->rounding->round($rowTotal);
             }
         }
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
+        $subtotal->setAmount($subtotalAmount);
         $subtotal->setCurrency($currency);
 
         return $subtotal;
