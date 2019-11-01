@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\ResultSetMappingUtil;
 use Oro\Component\DoctrineUtils\ORM\SqlQueryBuilder;
 
@@ -90,6 +92,46 @@ class ShoppingListTotalRepository extends EntityRepository
         $updateQB->andWhere($expr->exists($visitorSubQB->getSQL()));
 
         $updateQB->execute();
+    }
+
+    /**
+     * Invalidate ShoppingList subtotals by given Product ids for website
+     *
+     * @param Website $website
+     * @param array $productIds
+     */
+    public function invalidateByProducts(Website $website, array $productIds)
+    {
+        if (!$productIds) {
+            return;
+        }
+
+        $lineItemMetadata = $this->getEntityManager()->getClassMetadata(LineItem::class);
+
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+        $subQuery = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $subQuery->select($subQuery->expr()->literal(1, Type::INTEGER))
+            ->from($lineItemMetadata->getTableName(), 'li')
+            ->where(
+                $subQuery->expr()->eq('li.shopping_list_id', 'sl.id'),
+                $subQuery->expr()->in('li.product_id', ':products')
+            );
+
+        $updateQB = $this->getBaseInvalidateQb($website->getId());
+        $updateQB->andWhere($expr->exists($subQuery->getSQL()));
+        $updateQB->setParameter('products', $productIds, Connection::PARAM_INT_ARRAY);
+
+        $updateQB->execute();
+    }
+
+    /**
+     * Invalidate ShoppingList subtotals by given website
+     *
+     * @param Website $website
+     */
+    public function invalidateByWebsite(Website $website)
+    {
+        $this->getBaseInvalidateQb($website->getId())->execute();
     }
 
     /**

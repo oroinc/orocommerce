@@ -66,7 +66,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     string: 'ZU product'
     localization: '@localization_zulu'
   zuluLocDescription:
-    text: 'ZU product desc'
+    wysiwyg: 'ZU product desc'
     localization: '@localization_zulu'
   zuluLocShortDescription:
     text: 'ZU product shortdesc'

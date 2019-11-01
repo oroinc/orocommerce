@@ -64,7 +64,7 @@ class BrandControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_product_brand[names][values][default]'] = $name;
-        $form['oro_product_brand[descriptions][values][default]'] = $description;
+        $form['oro_product_brand[descriptions][values][default][wysiwyg]'] = $description;
         $form['oro_product_brand[shortDescriptions][values][default]'] = $shortDescription;
 
         $this->client->followRedirects(true);
@@ -91,7 +91,7 @@ class BrandControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
         $form['oro_product_brand[names][values][default]'] = $nameDefaultNew;
-        $form['oro_product_brand[descriptions][values][default]'] = $descriptionDefaultNew;
+        $form['oro_product_brand[descriptions][values][default][wysiwyg]'] = $descriptionDefaultNew;
         $form['oro_product_brand[shortDescriptions][values][default]'] = $shortDescriptionDefaultNew;
 
         $this->client->followRedirects(true);
@@ -106,7 +106,7 @@ class BrandControllerTest extends WebTestCase
         );
         $this->assertEquals(
             $descriptionDefaultNew,
-            $crawler->filter('textarea[name="oro_product_brand[descriptions][values][default]"]')->html()
+            $crawler->filter('textarea[name="oro_product_brand[descriptions][values][default][wysiwyg]"]')->html()
         );
         $this->assertEquals(
             $shortDescriptionDefaultNew,

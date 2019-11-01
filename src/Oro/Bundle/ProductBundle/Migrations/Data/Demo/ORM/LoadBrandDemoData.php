@@ -12,6 +12,9 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads demo brands.
+ */
 class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     use UserUtilityTrait;
@@ -57,7 +60,7 @@ class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterfa
             $name->setString($row['name']);
 
             $description = new LocalizedFallbackValue();
-            $description->setText($row['description']);
+            $description->setWysiwyg($row['description']);
 
             $shortDescription = new LocalizedFallbackValue();
             $shortDescription->setText($row['short_description']);

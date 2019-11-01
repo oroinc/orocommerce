@@ -42,12 +42,17 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $scrollData = new ScrollData([
             ScrollData::DATA_BLOCKS => [
-                'firstBlock' => [
+                'general' => [
                     ScrollData::TITLE => 'first block',
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [
                                 'first subblock data',
+                            ]
+                        ],
+                        1 => [
+                            ScrollData::DATA => [
+                                'second subblock data',
                             ]
                         ],
                     ]
@@ -65,13 +70,18 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                'firstBlock' => [
+                'general' => [
                     ScrollData::TITLE => 'first block',
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [
                                 'first subblock data',
-                                $htmlTemplate
+                            ]
+                        ],
+                        1 => [
+                            ScrollData::DATA => [
+                                'second subblock data',
+                                $htmlTemplate,
                             ]
                         ],
                     ]
@@ -120,6 +130,11 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
                                 'first subblock data',
                             ]
                         ],
+                        1 => [
+                            ScrollData::DATA => [
+                                'second subblock data',
+                            ]
+                        ],
                     ],
                 ],
             ],
@@ -141,7 +156,12 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
                         0 => [
                             ScrollData::DATA => [
                                 'first subblock data',
-                                'rendered'
+                            ]
+                        ],
+                        1 => [
+                            ScrollData::DATA => [
+                                'second subblock data',
+                                'rendered',
                             ]
                         ],
                     ],

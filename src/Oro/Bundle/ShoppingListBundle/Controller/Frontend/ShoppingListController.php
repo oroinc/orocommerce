@@ -44,6 +44,7 @@ class ShoppingListController extends AbstractController
         }
 
         if ($shoppingList) {
+            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
             $title = $shoppingList->getLabel();
             $totalWithSubtotalsAsArray = $this->get(TotalProcessorProvider::class)
                 ->getTotalWithSubtotalsAsArray($shoppingList);
