@@ -60,9 +60,6 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                   min: 1
                   max: 255
-        text:
-            - Length:
-                  max: 255
         textAlignment:
             - NotBlank: ~
             - Choice:
