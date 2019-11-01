@@ -163,6 +163,7 @@ define(function(require) {
                 shoppingListsCollection: this.shoppingListCollection,
                 productUnits: UnitsUtil.getUnitsLabel(this.model),
                 unit: this.model.get('unit'),
+                precision: this.model.get('product_units')[this.model.get('unit')],
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
                 isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this)
