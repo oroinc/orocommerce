@@ -103,10 +103,15 @@
                                         <input class="shopping-lists-modify__input input input--size-s"
                                                type="number"
                                                min="1"
-                                               value="<%= lineItem.quantity %>"
+                                               value="<%- lineItem.quantity %>"
                                                name="quantity"
                                                data-role="field__quantity"
-                                               disabled="disabled" required>
+                                               disabled="disabled"
+                                               required
+                                            <% if (precision) { %>
+                                                data-precision="<%- precision %>"
+                                            <% } %>
+                                        >
                                     </li>
                                     <li class="shopping-lists-modify__select">
                                         <% if (applySingleUnitMode && isProductApplySingleUnitMode([lineItem.unit])) { %>
@@ -182,7 +187,7 @@
                             <li class="shopping-lists-modify__text">
                                 <input class="shopping-lists-modify__input input input--size-s"
                                        type="number"
-                                       min="1" 
+                                       min="1"
                                        value="1"
                                        name="oro_product_frontend_line_item[quantity]"
                                        data-role="add-form-qty">
