@@ -66,7 +66,8 @@ class ProductHelperTestCase extends WebTestCase
         $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
-        $formValues['oro_product']['descriptions']['values']['default'] = ProductTestHelper::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['descriptions']['values']['default']['wysiwyg'] =
+            ProductTestHelper::DEFAULT_DESCRIPTION;
         $formValues['oro_product']['shortDescriptions']['values']['default'] =
             ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
         $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
@@ -143,7 +144,7 @@ class ProductHelperTestCase extends WebTestCase
                 ],
                 'descriptions' => [
                     'values' => [
-                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
+                        'default' => ['wysiwyg' => ProductTestHelper::DEFAULT_DESCRIPTION],
                         'localizations' => [
                             $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],

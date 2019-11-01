@@ -10,6 +10,7 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
@@ -95,6 +96,7 @@ class OroCMSBundleInstaller implements
         $this->addOroCmsLoginPageImageAssociations($schema);
 
         $this->addContentVariantTypes($schema);
+        $this->addLocalizedFallbackValueFields($schema);
     }
 
     /**
@@ -518,6 +520,54 @@ class OroCMSBundleInstaller implements
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addLocalizedFallbackValueFields(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_fallback_localization_val');
+        $table->addColumn(
+            'wysiwyg',
+            'wysiwyg',
+            [
+                'notnull' => false,
+                'comment' => '(DC2Type:wysiwyg)',
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false],
+                    'importexport' => ['excluded' => false],
+                ],
+            ]
+        );
+        $table->addColumn(
+            'wysiwyg_style',
+            'wysiwyg_style',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false],
+                    'importexport' => ['excluded' => false],
+                ],
+            ]
+        );
+        $table->addColumn(
+            'wysiwyg_properties',
+            'wysiwyg_properties',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false],
+                    'importexport' => ['excluded' => false],
+                ],
+            ]
         );
     }
 }

@@ -34,9 +34,9 @@ Feature: Product attribute not in family
   Scenario: Ensure product attribute is not present in datagrid column manager of related products datagrid
     Given I click View PSKU2 in grid
     And I click "Related Items"
-    When click "Grid Settings"
+    When click "RelatedProductsGridSettings"
     Then I should not see "Grid Settings SelectField"
-    And click "Grid Settings"
+    And click "RelatedProductsGridSettings"
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families

@@ -9,6 +9,9 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds shipping information to the product view and edit pages.
+ */
 class FormViewListener
 {
     /** @var TranslatorInterface */
@@ -71,7 +74,7 @@ class FormViewListener
                 'shippingOptions' => $shippingOptions
             ]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 600);
+        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
     }
 
     /**
@@ -83,7 +86,7 @@ class FormViewListener
             'OroShippingBundle:Product:shipping_options_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options');
+        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
     }
 
     /**
@@ -92,7 +95,7 @@ class FormViewListener
      * @param string $label
      * @param int $priority
      */
-    protected function addBlock(ScrollData $scrollData, $html, $label, $priority = 100)
+    protected function addBlock(ScrollData $scrollData, $html, $label, $priority)
     {
         $blockLabel = $this->translator->trans($label);
         $blockId    = $scrollData->addBlock($blockLabel, $priority);

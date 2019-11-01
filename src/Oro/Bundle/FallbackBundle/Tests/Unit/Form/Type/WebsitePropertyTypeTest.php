@@ -3,17 +3,20 @@
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -39,8 +42,11 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $websiteCollection = new WebsiteCollectionType($this->registry);
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
-        $translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $entityConfigProvider */
+        $entityConfigProvider = $this->createMock(ConfigProvider::class);
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
+        $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
@@ -50,7 +56,11 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                     WebsiteCollectionType::class => $websiteCollection,
                     CheckboxTypeStub::class => new CheckboxTypeStub(),
                 ],
-                []
+                [
+                    FormType::class => [
+                        new TooltipFormExtension($entityConfigProvider, $translator),
+                    ],
+                ]
             )
         ];
     }

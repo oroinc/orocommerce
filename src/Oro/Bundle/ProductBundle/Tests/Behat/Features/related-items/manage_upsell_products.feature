@@ -256,7 +256,7 @@ Feature: Manage up-sell products
     And I save and close form
     And I should see "Product has been saved" flash message
     And I choose "Up-sell Products" tab
-    And I should see following grid:
+    And I should see following "UpsellProductsViewGrid" grid:
       | SKU    | NAME              |
       | PSKU4  | Product 4         |
       | PSKU3  | Product 3         |
