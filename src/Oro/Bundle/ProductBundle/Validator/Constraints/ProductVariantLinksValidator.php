@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -13,6 +14,8 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ProductVariantLinksValidator extends ConstraintValidator
 {
+    use ConfigurableProductAccessorTrait;
+
     const ALIAS = 'oro_product_variant_links';
 
     /**
@@ -29,27 +32,22 @@ class ProductVariantLinksValidator extends ConstraintValidator
     }
 
     /**
-     * @param Product $value
+     * @param object $value
      * @param ProductVariantLinks|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_a($value, Product::class)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Entity must be instance of "%s", "%s" given',
-                    Product::class,
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
-        }
-
-        if (!$value->isConfigurable()) {
+        $product = $this->getConfigurableProduct($value, $constraint);
+        if ($product === null) {
             return;
         }
 
-        $this->validateLinksWithoutFields($value, $constraint);
-        $this->validateLinksHaveFilledFields($value, $constraint);
+        $this->validateLinksWithoutFields($product, $constraint);
+        if ($value instanceof ProductVariantLink) {
+            $this->validateVariantLinksCollectionHaveFilledFIelds([$value], $product->getVariantFields(), $constraint);
+        } else {
+            $this->validateLinksHaveFilledFields($product, $constraint);
+        }
     }
 
     /**
@@ -81,6 +79,19 @@ class ProductVariantLinksValidator extends ConstraintValidator
             $variantLinks = $variantLinks->unwrap();
         }
 
+        $this->validateVariantLinksCollectionHaveFilledFIelds($variantLinks, $variantFields, $constraint);
+    }
+
+    /**
+     * @param iterable|ProductVariantLink[] $variantLinks
+     * @param array $variantFields
+     * @param ProductVariantLinks $constraint
+     */
+    private function validateVariantLinksCollectionHaveFilledFIelds(
+        $variantLinks,
+        array $variantFields,
+        ProductVariantLinks $constraint
+    ): void {
         $errorsData = [];
         foreach ($variantLinks as $variantLink) {
             $product = $variantLink->getProduct();
@@ -99,12 +110,12 @@ class ProductVariantLinksValidator extends ConstraintValidator
             }
         }
 
-        foreach ($errorsData as $productSku => $variantFields) {
+        foreach ($errorsData as $productSku => $fields) {
             $this->context->addViolation(
                 $constraint->variantLinkHasNoFilledFieldMessage,
                 [
                     '%product_sku%' => $productSku,
-                    '%fields%' => implode(', ', $variantFields)
+                    '%fields%' => implode(', ', $fields)
                 ]
             );
         }

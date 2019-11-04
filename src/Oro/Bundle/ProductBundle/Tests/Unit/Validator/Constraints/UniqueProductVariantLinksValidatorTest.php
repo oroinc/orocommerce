@@ -5,12 +5,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -19,6 +20,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     const VARIANT_FIELD_KEY_COLOR = 'color';
     const VARIANT_FIELD_KEY_SIZE = 'size';
     const VARIANT_FIELD_KEY_SLIM_FIT = 'slim_fit';
@@ -59,13 +62,24 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         unset($this->service, $this->context);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
     public function testNotProductValidate()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
         $this->service->validate(new \stdClass(), new UniqueProductVariantLinks());
+    }
+
+    public function testUnreachablePropertyException()
+    {
+        $constraint = new UniqueProductVariantLinks();
+        $constraint->property = 'test';
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not access property "test" for class "stdClass"');
+
+        $this->service->validate(new \stdClass(), $constraint);
     }
 
     public function testNotValidateWithNoVariantFields()
@@ -82,6 +96,36 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $this->context->expects($this->never())->method('addViolation');
 
         $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    public function testNotValidatePropertyWithNoVariantFields()
+    {
+        $product = $this->prepareProduct([], [
+            [
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+            [
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+        ]);
+        $variantLink = new ProductVariantLink($product, $this->getEntity(Product::class, ['id' => 555]));
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $constraint = new UniqueProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->service->validate($variantLink, $constraint);
+    }
+
+    public function testNotValidatePropertyNull()
+    {
+        $variantLink = new ProductVariantLink();
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $constraint = new UniqueProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->service->validate($variantLink, $constraint);
     }
 
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeStringExistingProduct()
@@ -111,7 +155,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->assertRepositoryCalls($product, $simpleProducts);
+        $this->assertRepositoryCallsProductVariantLinks($product, $simpleProducts);
         $this->context->expects($this->never())->method('addViolation');
 
         $this->service->validate($product, new UniqueProductVariantLinks());
@@ -168,7 +212,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->assertRepositoryCalls($product, $simpleProducts);
+        $this->assertRepositoryCallsProductVariantLinks($product, $simpleProducts);
         $this->context->expects($this->once())
             ->method('addViolation')
             ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
@@ -250,6 +294,35 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
             ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
 
         $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    public function testPropertyAddsViolationIfVariantFieldCombinationsAreNotUniqueTypeSelect()
+    {
+        $product = $this->prepareProduct(
+            [
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
+            ],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('l', 'L'),
+                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
+                ],
+            ]
+        );
+        $variantLink = new ProductVariantLink($product, $this->getEntity(Product::class, ['id' => 555]));
+
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
+
+        $constraint = new UniqueProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->service->validate($variantLink, $constraint);
     }
 
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeBoolean()
@@ -356,24 +429,39 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param \Oro\Bundle\ProductBundle\Entity\Product $product
+     * @param Product $product
      * @param array $simpleProducts
      */
-    private function assertRepositoryCalls(Product $product, array $simpleProducts): void
+    private function assertRepositoryCallsProductVariantLinks(Product $product, array $simpleProducts): void
     {
-        $repo = $this->createMock(ProductRepository::class);
+        $variantLink1 = $this->getEntity(ProductVariantLink::class, [
+            'id' => 1,
+            'product' => $simpleProducts[0],
+            'parentProduct' => $product
+        ]);
+
+        $variantLink2 = $this->getEntity(ProductVariantLink::class, [
+            'id' => 2,
+            'product' => $simpleProducts[1],
+            'parentProduct' => $product
+        ]);
+
+        $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->once())
-            ->method('getSimpleProductsForConfigurableProduct')
-            ->with($product)
-            ->willReturn($simpleProducts);
+            ->method('findBy')
+            ->willReturn([
+                $variantLink1,
+                $variantLink2
+            ]);
+
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
-            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
             ->willReturn($repo);
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
             ->willReturn($em);
     }
 

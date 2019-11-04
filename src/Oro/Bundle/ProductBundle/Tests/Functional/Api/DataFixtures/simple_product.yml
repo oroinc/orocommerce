@@ -1,0 +1,36 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductAttributesData
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData
+
+initial: true
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    smpl_product2_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    smpl_product2_name:
+        string: 'SMPL Product 2'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product2:
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@smpl_product2_precision'
+        unitPrecisions: ['@smpl_product2_precision']
+        setNames: [['@smpl_product2_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'

@@ -16,6 +16,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -523,6 +524,70 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetTypes()
     {
         $this->assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
+    }
+
+    public function testAddVariantLink()
+    {
+        $productSimple = new Product();
+        $productSimple->setId(1);
+
+        $parentProduct = new Product();
+        $parentProduct->setId(2);
+
+        /** @var ProductVariantLink | MockObject $variantLink1 */
+        $variantLink1 = $this
+            ->getMockBuilder(ProductVariantLink::class)
+            ->setConstructorArgs([$parentProduct, $productSimple])
+            ->setMethods(['setParentProduct'])
+            ->getMock();
+
+        $variantLink1->expects($this->never())
+            ->method('setParentProduct');
+
+        /** @var ProductVariantLink | MockObject $variantLink2 */
+        $variantLink2 = $this
+            ->getMockBuilder(ProductVariantLink::class)
+            ->setMethods(['setParentProduct'])
+            ->getMock();
+
+        $variantLink2->expects($this->once())
+            ->method('setParentProduct');
+
+        $product = new Product();
+        $product->addVariantLink($variantLink1);
+        $product->addVariantLink($variantLink2);
+    }
+
+    public function testAddParentVariantLink()
+    {
+        $productSimple = new Product();
+        $productSimple->setId(1);
+
+        $parentProduct = new Product();
+        $parentProduct->setId(2);
+
+        /** @var ProductVariantLink | MockObject $variantLink1 */
+        $variantLink1 = $this
+            ->getMockBuilder(ProductVariantLink::class)
+            ->setConstructorArgs([$parentProduct, $productSimple])
+            ->setMethods(['setParentProduct'])
+            ->getMock();
+
+        $variantLink1->expects($this->never())
+            ->method('setParentProduct');
+
+        /** @var ProductVariantLink | MockObject $variantLink2 */
+        $variantLink2 = $this
+            ->getMockBuilder(ProductVariantLink::class)
+            ->setMethods(['setProduct'])
+            ->getMock();
+
+        $variantLink2->expects($this->once())
+            ->method('setProduct');
+
+        $product = new Product();
+        $product->addParentVariantLink($variantLink1);
+        $product->addParentVariantLink($variantLink2);
     }
 
     /**

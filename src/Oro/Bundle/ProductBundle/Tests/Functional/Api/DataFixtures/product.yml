@@ -1,0 +1,129 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductAttributesData
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData
+
+initial: true
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product2_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product3_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product4_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product5_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1_name:
+        string: 'Product 1'
+    product2_name:
+        string: 'Product 2'
+    product3_name:
+        string: 'Product 3'
+    product4_name:
+        string: 'Product 4'
+    product5_name:
+        string: 'Product 5'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    configurable_product1:
+        sku: 'CPSKU1'
+        primaryUnitPrecision: '@product1_precision'
+        unitPrecisions: ['@product1_precision']
+        attributeFamily: '@default_product_family'
+        setNames: [['@product1_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        variantFields: ['testAttrInteger', 'testAttrFloat']
+        variantLinks:
+            - '@configurable_product1_variant1_link'
+            - '@configurable_product1_variant2_link'
+    simple_product1:
+        sku: 'CVPSKU1'
+        primaryUnitPrecision: '@product2_precision'
+        unitPrecisions: ['@product2_precision']
+        attributeFamily: '@default_product_family'
+        setNames: [['@product2_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrInteger: 15
+        testAttrFloat: 12.12
+        parentVariantLinks: ['@configurable_product1_variant1_link']
+    simple_product2:
+        sku: 'CVPSKU2'
+        primaryUnitPrecision: '@product3_precision'
+        unitPrecisions: ['@product3_precision']
+        setNames: [['@product3_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrInteger: 16
+        testAttrFloat: 12.1
+        parentVariantLinks: ['@configurable_product1_variant2_link']
+    simple_product3:
+        sku: 'CVPSKU3'
+        primaryUnitPrecision: '@product4_precision'
+        unitPrecisions: ['@product4_precision']
+        setNames: [['@product4_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrInteger: 16
+        testAttrFloat: 12.1
+    simple_product4:
+        sku: 'CVPSKU4'
+        primaryUnitPrecision: '@product5_precision'
+        unitPrecisions: ['@product5_precision']
+        setNames: [['@product5_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrInteger: 18
+        testAttrFloat: 12.5
+
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    configurable_product1_variant1_link:
+        parentProduct: '@configurable_product1'
+        product: '@simple_product1'
+    configurable_product1_variant2_link:
+        parentProduct: '@configurable_product1'
+        product: '@simple_product2'
