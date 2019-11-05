@@ -115,8 +115,8 @@ databaseBeforeSecondPart: []
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
-        excludingTax: '191.52'   # 20.117754 * 4 + 22.21 * 5 = 191.521016
-        taxAmount: '8.37'        # 2.092246 * 4 = 8.368984
+        excludingTax: '191.53'   # 20.12 * 4 + 22.21 * 5 = 191.53
+        taxAmount: '8.36'        # 2.09 * 4 = 8.36
         adjustment: '0.008984'   # 0.002246 * 4 = 0.008984
         currency: 'USD'
     items:
@@ -251,4 +251,5 @@ expectedResult:
             taxes:
                 - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '80.47', taxAmount: '8.37', currency: 'USD' }
+        # 20.12 * 4 = 80.48; 2.09 * 4 = 8.36
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '80.48', taxAmount: '8.36', currency: 'USD' }

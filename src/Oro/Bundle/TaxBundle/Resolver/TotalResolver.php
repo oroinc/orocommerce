@@ -64,16 +64,6 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnItem()) {
-            try {
-                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
-                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-            } catch (NumberFormatException $e) {
-                return;
-            }
-            $data = $adjustedAmounts;
-        }
-
         $data = $this->mergeShippingData($taxable, $data);
 
         $result = $taxable->getResult();
