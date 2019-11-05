@@ -10,6 +10,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
 use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 
 class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
@@ -20,6 +21,11 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
     private $settingsProvider;
 
     /**
+     * @var RoundingResolver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $roundingResolver;
+
+    /**
      * @var RowTotalResolver
      */
     private $resolver;
@@ -27,7 +33,13 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
-        $this->resolver = new RowTotalResolver($this->settingsProvider, new TaxCalculator());
+        $this->roundingResolver = $this->createMock(RoundingResolver::class);
+
+        $this->resolver = new RowTotalResolver(
+            $this->settingsProvider,
+            new TaxCalculator(),
+            $this->roundingResolver
+        );
     }
 
     public function testEmptyTaxRule()
@@ -45,17 +57,19 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider rowTotalDataProvider
      * @param BigDecimal $amount
-     * @param array      $taxRules
-     * @param array      $expected
-     * @param int        $quantity
-     * @param bool       $isStartCalculationWithRowTotal
+     * @param array $taxRules
+     * @param array $expected
+     * @param int $quantity
+     * @param bool $isStartCalculationWithRowTotal
+     * @param bool $isStartCalculationOnItem
      */
     public function testResolveRowTotal(
         BigDecimal $amount,
         array $taxRules,
         array $expected,
         $quantity,
-        $isStartCalculationWithRowTotal
+        $isStartCalculationWithRowTotal,
+        $isStartCalculationOnItem = false
     ) {
         $result = new Result();
 
@@ -66,6 +80,18 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
             ->method('isStartCalculationWithUnitPrice')
             ->willReturn(!$isStartCalculationWithRowTotal);
 
+        $this->settingsProvider->expects($this->any())
+            ->method('isStartCalculationOnItem')
+            ->willReturn($isStartCalculationOnItem);
+        if ($isStartCalculationOnItem) {
+            $this->roundingResolver->expects($this->atLeastOnce())
+                ->method('round')
+                ->with($this->isInstanceOf(TaxResultElement::class));
+        } else {
+            $this->roundingResolver->expects($this->never())
+                ->method('round');
+        }
+
         $this->resolver->resolveRowTotal($result, $taxRules, $amount, $quantity);
         $this->assertEquals($expected['row'], $result->getRow());
         $this->assertEquals($expected['result'], $result->getTaxes());
@@ -73,6 +99,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function rowTotalDataProvider()
     {
@@ -102,6 +129,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'quantity' => 2,
                 'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => false,
             ],
             'use zero tax' => [
                 'amount' => BigDecimal::of('19.99'),
@@ -116,6 +144,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'quantity' => 1,
                 'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => false,
             ],
             'use two taxes one of which is zero' => [
                 'amount' => BigDecimal::of('19.99'),
@@ -132,6 +161,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'quantity' => 1,
                 'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => false,
             ],
             'with start calculation with row total' => [
                 'amount' => BigDecimal::of('19.9949'),
@@ -149,6 +179,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'quantity' => 2,
                 'isStartCalculationWithRowTotal' => true,
+                'isStartCalculationOnItem' => false,
             ],
             'with more decimal places in tax rate' => [
                 'amount' => BigDecimal::of('19.9949'),
@@ -166,6 +197,25 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'quantity' => 2,
                 'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => false,
+            ],
+            'with start calculation on item' => [
+                'amount' => BigDecimal::of('19.9949'),
+                'taxRules' => [
+                    $this->getTaxRule('city', '0.08'),
+                    $this->getTaxRule('region', '0.07')
+                ],
+                'expected' => [
+                    'row' => ResultElement::create('45.9770', '39.98', '5.9970', '-0.0030'),
+                    'result' => [
+                        $taxResult1_1,
+                        $taxResult1_2,
+                    ]
+
+                ],
+                'quantity' => 2,
+                'isStartCalculationWithRowTotal' => false,
+                'isStartCalculationOnItem' => true,
             ],
         ];
     }

@@ -385,8 +385,9 @@ services:
         class: 'Oro\Bundle\TaxBundle\Resolver\RowTotalResolver'
         public: false
         arguments:
-            - "@oro_tax.provider.taxation_settings_provider"
-            - "@oro_tax.calculator"
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.calculator'
+            - '@oro_tax.resolver.rounding'
 
     oro_tax.resolver.total:
         class: 'Oro\Bundle\TaxBundle\Resolver\TotalResolver'
