@@ -1,0 +1,7 @@
+oro_cms:
+    content_restrictions:
+        mode: selective
+        lax_restrictions:
+            ROLE_WYSIWYG:
+                Oro\Bundle\CMSBundle\Entity\Page: ['content']
+                Oro\Bundle\CMSBundle\Entity\TextContentVariant: ['content']
