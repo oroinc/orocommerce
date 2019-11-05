@@ -30,6 +30,7 @@ class WYSIWYGType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        $options['page-component']['options']['autoRender'] = $options['auto_render'];
         $options['page-component']['options']['stylesInputSelector'] = sprintf(
             '[data-grapesjs-styles="%s"]',
             $form->getName() . WYSIWYGStylesType::TYPE_SUFFIX
@@ -54,7 +55,8 @@ class WYSIWYGType extends AbstractType
                     'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
                     'allow_tags' => $this->htmlTagProvider->getAllowedElements()
                 ]
-            ]
+            ],
+            'auto_render' => true,
         ]);
     }
 

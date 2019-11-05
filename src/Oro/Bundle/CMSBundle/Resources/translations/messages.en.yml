@@ -39,6 +39,8 @@ oro.cms:
                 label: Default Variant
                 yes.label: Yes
                 no.label: No
+            make_default:
+                label: Make Default
         organization.label: Organization
         owner.label: Owner
         titles:
@@ -132,4 +134,13 @@ oro.entity_extend.form.data_type:
     wysiwyg_style: WYSIWYG Style
     wysiwyg_properties: WYSIWYG Properties
 oro.scope.content_block.label: Content Block
-
+oro.locale.localizedfallbackvalue:
+    wysiwyg:
+        label: 'WYSIWYG value'
+        description: The text value for the curent localization, can contain html tags
+    wysiwyg_style:
+        label: 'WYSIWYG Style value'
+        description: The text value for the curent localization, can contain css data
+    wysiwyg_properties:
+        label: 'WYSIWYG Properties'
+        description: The text value for the curent localization, can contain additional WYSIWYG data

@@ -1,35 +1,34 @@
 define(function(require) {
     'use strict';
 
-    var ContentWidnetComponent;
-    var _ = require('underscore');
-    var DialogWidget = require('oro/dialog-widget');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var template = require('tpl-loader!orocms/templates/grapesjs-content-widget.html');
-    var routing = require('routing');
+    const _ = require('underscore');
+    const DialogWidget = require('oro/dialog-widget');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const template = require('tpl-loader!orocms/templates/grapesjs-content-widget.html');
+    const routing = require('routing');
 
     /**
      * Content widget component
      */
-    ContentWidnetComponent = BaseComponent.extend({
+    const ContentWidnetComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ContentWidnetComponent() {
-            ContentWidnetComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ContentWidnetComponent(options) {
+            ContentWidnetComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var ComponentId = 'content-widget';
-            var domComps = options.DomComponents;
-            var commands = options.Commands;
-            var dType = domComps.getType('default');
-            var dModel = dType.model;
-            var dView = dType.view;
-            var datagridName = 'cms-content-widget-grid';
+            const ComponentId = 'content-widget';
+            const domComps = options.DomComponents;
+            const commands = options.Commands;
+            const dType = domComps.getType('default');
+            const dModel = dType.model;
+            const dView = dType.view;
+            const datagridName = 'cms-content-widget-grid';
 
             options.BlockManager.add(ComponentId, {
                 id: ComponentId,
@@ -44,11 +43,11 @@ define(function(require) {
             });
 
             commands.add('content-widget-settings', function(editor, sender, event) {
-                var routeParams = {
+                const routeParams = {
                     gridName: datagridName
                 };
 
-                var dialog = new DialogWidget({
+                const dialog = new DialogWidget({
                     title: _.__('oro.cms.wysiwyg.content_widget.title'),
                     url: routing.generate(
                         'oro_datagrid_widget',
@@ -67,12 +66,12 @@ define(function(require) {
                 });
 
                 dialog.on('contentLoad', function(data, widget) {
-                    var gridWidget = widget.componentManager.get(datagridName);
+                    const gridWidget = widget.componentManager.get(datagridName);
                     gridWidget.grid.columns.remove(_.last(gridWidget.grid.columns.models));
                 });
 
                 dialog.on('grid-row-select', function(data) {
-                    var sel = editor.getSelected();
+                    let sel = editor.getSelected();
                     if (event.cid) {
                         sel = event;
                     }
@@ -99,13 +98,13 @@ define(function(require) {
                         contentWidget: null,
                         droppable: false
                     }),
-                    constructor: function ContentWidnetComponent() {
-                        dModel.prototype.constructor.apply(this, arguments);
+                    constructor: function ContentWidnetComponent(...args) {
+                        dModel.prototype.constructor.apply(this, args);
                     },
-                    initialize: function(o, opt) {
-                        dModel.prototype.initialize.apply(this, arguments);
+                    initialize: function(o, opt, ...rest) {
+                        dModel.prototype.initialize.call(this, o, opt, ...rest);
 
-                        var toolbar = this.get('toolbar');
+                        const toolbar = this.get('toolbar');
 
                         if (!isToolbarCommandExist(toolbar, 'content-widget-settings')) {
                             toolbar.unshift({
@@ -136,7 +135,7 @@ define(function(require) {
                     }
                 }, {
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
                         if (el.tagName === 'DIV' && el.className.indexOf('content-widget') !== -1) {
                             result = {
                                 type: ComponentId
@@ -148,7 +147,7 @@ define(function(require) {
                 }),
                 view: dView.extend({
                     onRender: function() {
-                        var contentWidget = this.model.get('contentWidget');
+                        const contentWidget = this.model.get('contentWidget');
 
                         if (contentWidget) {
                             this.$el.html(template({
@@ -164,8 +163,8 @@ define(function(require) {
                             }));
                         }
                     },
-                    constructor: function ContentBlockComponentView() {
-                        dView.prototype.constructor.apply(this, arguments);
+                    constructor: function ContentBlockComponentView(...args) {
+                        dView.prototype.constructor.apply(this, args);
                     }
                 })
             });

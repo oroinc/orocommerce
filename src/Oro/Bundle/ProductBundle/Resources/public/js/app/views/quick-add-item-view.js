@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddItemView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
 
-    QuickAddItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const QuickAddItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -69,8 +68,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddItemView() {
-            QuickAddItemView.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddItemView(options) {
+            QuickAddItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -78,14 +77,14 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            QuickAddItemView.__super__.initialize.apply(this, arguments);
+            QuickAddItemView.__super__.initialize.call(this, options);
             this.initModel(options);
             this.initializeElements(options);
             this.initializeRow();
         },
 
         initializeRow: function() {
-            var currentSku = this.$elements.skuHiddenField.val();
+            const currentSku = this.$elements.skuHiddenField.val();
             if (!currentSku.length) {
                 this.clearModel();
                 this.clearSku();
@@ -123,7 +122,7 @@ define(function(require) {
         dispose: function() {
             delete this.templates;
             delete this.validator;
-            QuickAddItemView.__super__.dispose.apply(this, arguments);
+            QuickAddItemView.__super__.dispose.call(this);
         },
 
         onQuantityChange: _.debounce(function(e) {
@@ -152,14 +151,14 @@ define(function(require) {
         },
 
         updateModelFromData: function(data) {
-            var item = data.item;
-            var canBeUpdated = this.canBeUpdated(item);
+            const item = data.item;
+            const canBeUpdated = this.canBeUpdated(item);
 
             if (this.model.get('sku') && !canBeUpdated) {
                 return;
             }
 
-            var resolvedUnitCode = this._resolveUnitCode(item.unit);
+            const resolvedUnitCode = this._resolveUnitCode(item.unit);
 
             this.model.set({
                 sku: item.sku,
@@ -181,7 +180,7 @@ define(function(require) {
         },
 
         updateModel: function(data) {
-            var obj = data.item;
+            const obj = data.item;
             if (!obj || !this.checkEl(data.$el)) {
                 return;
             }
@@ -241,7 +240,7 @@ define(function(require) {
         },
 
         canBeUpdated: function(item) {
-            var resolvedUnitCode = this._resolveUnitCode(item.unit);
+            const resolvedUnitCode = this._resolveUnitCode(item.unit);
 
             return this.model.get('sku') === item.sku &&
                 (this.model.get('unit') === resolvedUnitCode || this.model.get('unit_deferred') === resolvedUnitCode);
@@ -250,7 +249,7 @@ define(function(require) {
         setUnits: function() {
             UnitsUtil.updateSelect(this.model, this.getElement('unit'));
             if (this.model.get('unit_deferred')) {
-                var unitDeferred = this.model.get('unit_deferred');
+                const unitDeferred = this.model.get('unit_deferred');
                 this.model.set('unit', this._resolveUnitCode(unitDeferred));
                 this.model.set('unit_deferred', '');
             }
@@ -269,7 +268,7 @@ define(function(require) {
                 unit = unit.toLowerCase();
             }
 
-            var labels = UnitsUtil.getUnitsLabel(this.model);
+            const labels = UnitsUtil.getUnitsLabel(this.model);
 
             return _.findKey(labels, function(unitLabel) {
                 return unitLabel.toLowerCase() === unit;
@@ -278,7 +277,7 @@ define(function(require) {
 
         publishModelChanges: function() {
             mediator.trigger('quick-add-item:model-change', {item: this.model.attributes, $el: this.$el});
-            var precision = this.model.get('product_units')[this.model.get('unit')];
+            const precision = this.model.get('product_units')[this.model.get('unit')];
 
             this.getElement('quantity')
                 .data('precision', precision)
@@ -286,7 +285,7 @@ define(function(require) {
         },
 
         showUnitError: function() {
-            var unitName = _.escape(this.model.get('unit_raw') || this.model.get('unit') ||
+            const unitName = _.escape(this.model.get('unit_raw') || this.model.get('unit') ||
                 this.model.get('unit_deferred'));
             this.getValidator().showLabel(this.getElement('unit')[0], __(this.options.unitErrorText, {unit: unitName}));
         },
@@ -311,7 +310,7 @@ define(function(require) {
 
             this.getElement('unit').inputWidget('refresh');
 
-            var eventData = {$el: this.$el, item: this.model.toJSON()};
+            const eventData = {$el: this.$el, item: this.model.toJSON()};
 
             if (this.model.get('sku') && this.unitInvalid()) {
                 this.showUnitError();

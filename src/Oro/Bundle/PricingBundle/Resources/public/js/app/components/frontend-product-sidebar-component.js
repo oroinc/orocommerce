@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var FrontendProductSidebarComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    FrontendProductSidebarComponent = BaseComponent.extend({
+    const FrontendProductSidebarComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -20,8 +19,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function FrontendProductSidebarComponent() {
-            FrontendProductSidebarComponent.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendProductSidebarComponent(options) {
+            FrontendProductSidebarComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -47,9 +46,9 @@ define(function(require) {
          * @param {Boolean} widgetReload
          */
         triggerSidebarChanged: function(widgetReload) {
-            var currency = $(this.options.currenciesSelector).val();
+            const currency = $(this.options.currenciesSelector).val();
 
-            var params = {
+            const params = {
                 priceCurrencies: currency,
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked'),
                 saveState: true

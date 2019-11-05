@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddView;
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    QuickAddView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const QuickAddView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             container: '[data-role="quick-order-add-container"]',
             collection: '.js-item-collection',
@@ -52,11 +51,11 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuickAddView() {
+        constructor: function QuickAddView(options) {
             this.onCollectionItemRemove = _.debounce(this.onCollectionItemRemove, 0);
             this.onQuickAddRowsComplete = _.debounce(this.onQuickAddRowsComplete, 0);
 
-            QuickAddView.__super__.constructor.apply(this, arguments);
+            QuickAddView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -64,7 +63,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options);
-            QuickAddView.__super__.initialize.apply(this, arguments);
+            QuickAddView.__super__.initialize.call(this, options);
 
             this.initializeElements(options);
             this.rowsCountInitial = this.getRowsCount();
@@ -89,8 +88,8 @@ define(function(require) {
         },
 
         showTopButtons: function() {
-            var $buttons = this.getElement('buttons');
-            var $container = this.getElement('container');
+            const $buttons = this.getElement('buttons');
+            const $container = this.getElement('container');
 
             this.getElement('clear').removeClass('hidden');
             this.$buttonsCopy = this.$buttonsCopy ? this.$buttonsCopy : $($buttons, $container).clone(true, true);
@@ -128,7 +127,7 @@ define(function(require) {
                 }
             }, this);
 
-            var emptyRowLength = this.getEmptyRows().length;
+            const emptyRowLength = this.getEmptyRows().length;
 
             if (emptyRowLength >= this.newRows.length) {
                 this.fillNewRowsWithData();
@@ -144,7 +143,7 @@ define(function(require) {
         },
 
         onCollectionItemRemove: function() {
-            var rowsNeeded = this.rowsCountBeforeQuickAdd - this.getRowsCount();
+            const rowsNeeded = this.rowsCountBeforeQuickAdd - this.getRowsCount();
 
             if (rowsNeeded > 0) {
                 this.addRows(rowsNeeded);
@@ -157,14 +156,14 @@ define(function(require) {
         },
 
         validateData: function(data) {
-            var val = _.pluck(data, 'sku');
-            var routeParams = {
+            const val = _.pluck(data, 'sku');
+            const routeParams = {
                 name: 'oro_product_visibility_limited_with_prices',
                 per_page: val.length,
                 query: ''
             };
 
-            var ajaxPromise = $.ajax({
+            const ajaxPromise = $.ajax({
                 url: routing.generate(this.options.productBySkuRoute, routeParams),
                 method: 'post',
                 data: {
@@ -172,9 +171,9 @@ define(function(require) {
                 }
             });
 
-            var requestId = _.uniqueId('request');
+            const requestId = _.uniqueId('request');
             mediator.trigger('quick-add-form:requestProductsBySku', {requestId: requestId});
-            var self = this;
+            const self = this;
             $.when(ajaxPromise, this.rowsPromise)
                 .done(function(ajaxPromiseArguments) {
                     if (ajaxPromiseArguments[1] === 'success') {
@@ -195,7 +194,7 @@ define(function(require) {
                 return;
             }
 
-            var $rows = this.getEmptyRows();
+            const $rows = this.getEmptyRows();
             _.each(this.newRows, function(item, i) {
                 mediator.trigger('quick-add-form-row:update', {item: item, $el: $rows.eq(i), triggerBlurEvent: false});
             });
@@ -209,7 +208,7 @@ define(function(require) {
             }
 
             _.each(this.existingRows, function(item) {
-                var $row = $(this.findRow(item));
+                const $row = $(this.findRow(item));
                 mediator.trigger('quick-add-form-row:update', {item: item, $el: $row, triggerBlurEvent: false});
             }, this);
 
@@ -226,12 +225,12 @@ define(function(require) {
         findRow: function(rowData) {
             this.clearElementsCache();
 
-            var rows = this.getElement('rows');
-            var rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
+            const rows = this.getElement('rows');
+            const rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
 
             return _.find(rows, function(row) {
-                var $unit = $(row).find(this.elements.unit);
-                var unitLabel = $unit.find('option:selected').text().toLowerCase();
+                const $unit = $(row).find(this.elements.unit);
+                const unitLabel = $unit.find('option:selected').text().toLowerCase();
 
                 return unitLabel === rowDataUnit && $(row).find(this.elements.sku).val() === rowData.sku;
             }, this);
@@ -243,8 +242,8 @@ define(function(require) {
         },
 
         addRows: function(count) {
-            var $collectionElement = this.getElement('collection');
-            var oldCount = $collectionElement.data('row-count-add');
+            const $collectionElement = this.getElement('collection');
+            const oldCount = $collectionElement.data('row-count-add');
 
             $collectionElement.data('row-count-add', count);
             this.getElement('add').click();
@@ -255,7 +254,7 @@ define(function(require) {
             delete this.rowsCountInitial;
             delete this.data;
             this.disposeElements();
-            QuickAddView.__super__.dispose.apply(this, arguments);
+            QuickAddView.__super__.dispose.call(this);
         }
     }));
 

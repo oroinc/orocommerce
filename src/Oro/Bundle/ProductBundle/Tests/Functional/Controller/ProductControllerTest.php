@@ -286,7 +286,7 @@ class ProductControllerTest extends ProductHelperTestCase
                 ],
                 'descriptions' => [
                     'values' => [
-                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
+                        'default' => ['wysiwyg' => ProductTestHelper::DEFAULT_DESCRIPTION],
                         'localizations' => [
                             $localization->getId() => [
                                 'fallback' => FallbackType::SYSTEM

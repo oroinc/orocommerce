@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var FiltersEventsDispatcher;
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    FiltersEventsDispatcher = BaseComponent.extend({
-        constructor: function FiltersEventsDispatcher() {
-            FiltersEventsDispatcher.__super__.constructor.apply(this, arguments);
+    const FiltersEventsDispatcher = BaseComponent.extend({
+        constructor: function FiltersEventsDispatcher(options) {
+            FiltersEventsDispatcher.__super__.constructor.call(this, options);
         },
 
         /**
@@ -25,7 +24,7 @@ define(function(require) {
             this.listenTo(this.datagrid.collection, 'sync', this.triggerFiltersUpdateEvent);
             this.listenTo(this.datagrid, 'filterManager:connected', this.triggerFiltersUpdateEvent);
 
-            FiltersEventsDispatcher.__super__.initialize.apply(this, arguments);
+            FiltersEventsDispatcher.__super__.initialize.call(this, options);
         },
 
         triggerFiltersUpdateEvent: function() {
@@ -40,7 +39,7 @@ define(function(require) {
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new FiltersEventsDispatcher({
+                const validation = new FiltersEventsDispatcher({
                     grid: grid,
                     options: options
                 });

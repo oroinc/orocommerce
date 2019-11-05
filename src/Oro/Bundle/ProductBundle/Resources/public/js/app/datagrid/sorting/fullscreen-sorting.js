@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var FullscreenSorting;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var template = require('tpl-loader!oroproduct/templates/datagrid/fullscreen-sorting.html');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/fullscreen-sorting.html');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
 
-    FullscreenSorting = BaseView.extend({
+    const FullscreenSorting = BaseView.extend({
         keepElement: true,
 
         autoRender: true,
@@ -24,8 +23,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function FullscreenSorting() {
-            FullscreenSorting.__super__.constructor.apply(this, arguments);
+        constructor: function FullscreenSorting(options) {
+            FullscreenSorting.__super__.constructor.call(this, options);
         },
 
         /**
@@ -77,13 +76,13 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var itemsList = [];
+            const itemsList = [];
 
-            var currentVal = this.$el.val();
-            var groupName = 'sorting-' + _.random(1000, 10000);
+            const currentVal = this.$el.val();
+            const groupName = 'sorting-' + _.random(1000, 10000);
 
             this.$el.find('option').each(function() {
-                var val = $(this).prop('value');
+                const val = $(this).prop('value');
 
                 itemsList.push({
                     name: groupName,

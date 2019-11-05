@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var DiscountCollectionView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var tools = require('oroui/js/tools');
-    var LoadingMask = require('oroui/js/app/views/loading-mask-view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const tools = require('oroui/js/tools');
+    const LoadingMask = require('oroui/js/app/views/loading-mask-view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
 
-    DiscountCollectionView = BaseView.extend({
+    const DiscountCollectionView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -47,7 +46,7 @@ define(function(require) {
          * @inheritDoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['click ' + this.options.selectors.deleteButton] = 'onDeleteClick';
 
             return events;
@@ -57,7 +56,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function() {
-            var handlers = {};
+            const handlers = {};
             handlers['totals:update'] = this.updateSumAndValidators;
             handlers.widget_initialize = this.attachDialogListeners;
             handlers['entry-point:order:load'] = this.refreshCollectionBlock;
@@ -70,7 +69,7 @@ define(function(require) {
          */
         refreshCollectionBlock: function(response) {
             if ('discounts' in response) {
-                var collectionBlockHtml = $(response.discounts).html();
+                const collectionBlockHtml = $(response.discounts).html();
                 this.$el.html(collectionBlockHtml);
                 this.$el.trigger('content:changed');
             }
@@ -81,12 +80,12 @@ define(function(require) {
          * @param {Object} subtotals
          */
         updateSumAndValidators: function(subtotals) {
-            var $discountsSumElement = this.$el.closest('form').find(this.options.selectors.discountsSumSelector);
-            var dataValidation = $discountsSumElement.data('validation');
-            var discountsSum = 0;
-            var total = 0;
+            const $discountsSumElement = this.$el.closest('form').find(this.options.selectors.discountsSumSelector);
+            const dataValidation = $discountsSumElement.data('validation');
+            let discountsSum = 0;
+            let total = 0;
 
-            var self = this;
+            const self = this;
             _.each(subtotals.subtotals, function(subtotal) {
                 if (subtotal.type === self.options.discountType) {
                     discountsSum += subtotal.amount;
@@ -104,7 +103,7 @@ define(function(require) {
                 dataValidation.Range.max = NumberFormatter.formatDecimal(total);
             }
 
-            var validator = $($discountsSumElement.closest('form')).validate();
+            const validator = $($discountsSumElement.closest('form')).validate();
             if (validator) {
                 validator.element($discountsSumElement);
             }
@@ -114,7 +113,7 @@ define(function(require) {
          * @param {Object} widget
          */
         attachDialogListeners: function(widget) {
-            var self = this;
+            const self = this;
             if ('add-order-discount-dialog' === widget.getAlias()) {
                 widget.on('contentLoad', function() {
                     widget.$el.on('submit', _.bind(self.onAddSubmit, self, widget));
@@ -161,7 +160,7 @@ define(function(require) {
          * @param {Event} event
          */
         onDeleteClick: function(event) {
-            var collectionElementIndex = $(event.target).data('element-index');
+            const collectionElementIndex = $(event.target).data('element-index');
             this._getSelectedHiddenInputs(collectionElementIndex).remove();
             this._showLoading();
             mediator.trigger('entry-point:order:trigger');
@@ -177,7 +176,7 @@ define(function(require) {
         _populateCollectionInputsWithSubmission: function(form, $newInputs) {
             _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
                 if ('value' !== fieldType) {
-                    var submissionInputVal = $(fieldSelector, form).val();
+                    const submissionInputVal = $(fieldSelector, form).val();
                     $newInputs.filter(fieldSelector).attr('value', submissionInputVal);
                 }
             }, this), form);
@@ -190,7 +189,7 @@ define(function(require) {
          * @private
          */
         _createInputsFromSubmission: function(form) {
-            var $newInputs = this._createNewHiddenCollectionInputs();
+            const $newInputs = this._createNewHiddenCollectionInputs();
             this._populateCollectionInputsWithSubmission(form, $newInputs);
             this.$(this.options.selectors.hiddenCollection).append($newInputs);
         },
@@ -202,7 +201,7 @@ define(function(require) {
          * @private
          */
         _updateInputsFromSubmission: function(widget) {
-            var $hiddenInputs = this._getSelectedHiddenInputs(widget.options.dialogOptions.collectionElementIndex);
+            const $hiddenInputs = this._getSelectedHiddenInputs(widget.options.dialogOptions.collectionElementIndex);
             this._populateCollectionInputsWithSubmission(widget.form, $hiddenInputs);
         },
 
@@ -213,10 +212,10 @@ define(function(require) {
          * @private
          */
         _createNewHiddenCollectionInputs: function() {
-            var inputsPrototypeString = this.$(this.options.selectors.hiddenCollection).data('prototype');
-            var prototypeName = this.$(this.options.selectors.hiddenCollection).data('prototype-name');
-            var lastIndex = this.$(this.options.selectors.hiddenCollection).data('last-index');
-            var newInputsHtml = inputsPrototypeString.replace(tools.safeRegExp(prototypeName, 'ig'), lastIndex);
+            const inputsPrototypeString = this.$(this.options.selectors.hiddenCollection).data('prototype');
+            const prototypeName = this.$(this.options.selectors.hiddenCollection).data('prototype-name');
+            const lastIndex = this.$(this.options.selectors.hiddenCollection).data('last-index');
+            const newInputsHtml = inputsPrototypeString.replace(tools.safeRegExp(prototypeName, 'ig'), lastIndex);
 
             return $(newInputsHtml);
         },
@@ -228,7 +227,7 @@ define(function(require) {
          * @private
          */
         _populateDialogForm: function(widget) {
-            var $hiddenInputs = this._getSelectedHiddenInputs(widget.options.dialogOptions.collectionElementIndex);
+            const $hiddenInputs = this._getSelectedHiddenInputs(widget.options.dialogOptions.collectionElementIndex);
             this._setDialogFormInputs($hiddenInputs, widget);
             this._triggerFormValueWidgetRefresh(widget);
         },
@@ -241,7 +240,7 @@ define(function(require) {
          * @private
          */
         _getSelectedHiddenInputs: function(collectionElementIndex) {
-            var inputsSelector = this.options.selectors.hiddenInputsForIndex.replace(
+            const inputsSelector = this.options.selectors.hiddenInputsForIndex.replace(
                 tools.safeRegExp('INDEX', 'ig'),
                 collectionElementIndex
             );
@@ -258,9 +257,9 @@ define(function(require) {
          */
         _setDialogFormInputs: function($hiddenInputs, widget) {
             _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
-                var hiddenInputVal;
+                let hiddenInputVal;
                 if ('value' === fieldType) {
-                    var selectedType = widget.$el
+                    const selectedType = widget.$el
                         .find(this.options.selectors.formFields.type).val();
                     if (this.options.percentType === selectedType) {
                         hiddenInputVal = $($hiddenInputs)

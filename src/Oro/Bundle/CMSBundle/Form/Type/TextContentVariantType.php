@@ -5,7 +5,7 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,7 +22,7 @@ class TextContentVariantType extends AbstractType
         $builder
             ->add(
                 'default',
-                CheckboxType::class,
+                RadioType::class,
                 [
                     'label' => 'oro.cms.page.default.label',
                     'required' => false

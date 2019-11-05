@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var TransitionButtonComponent = require('orocheckout/js/app/components/transition-button-component');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
+    const TransitionButtonComponent = require('orocheckout/js/app/components/transition-button-component');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
-    var ShippingTransitionButtonComponent;
-    ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
+    const ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
         /**
          * @inheritDoc
          */
-        constructor: function ShippingTransitionButtonComponent() {
-            ShippingTransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingTransitionButtonComponent(options) {
+            ShippingTransitionButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -52,20 +51,20 @@ define(function(require) {
         },
 
         initShippingMethod: function() {
-            var selectedTypeValue = this.getShippingMethodTypeElement().val();
-            var selectedMethodValue = this.getShippingMethodElement().val();
+            const selectedTypeValue = this.getShippingMethodTypeElement().val();
+            const selectedMethodValue = this.getShippingMethodElement().val();
             if (this.getShippingMethodTypeSelector().length && selectedTypeValue && selectedMethodValue) {
-                var selectedEl = this
+                const selectedEl = this
                     .getShippingMethodTypeSelector()
                     .filter('[data-shipping-type="' + selectedTypeValue + '"]')
                     .filter('[data-shipping-method="' + selectedMethodValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
             } else {
-                var selectedType = this.getShippingMethodTypeSelector().filter(':checked');
+                const selectedType = this.getShippingMethodTypeSelector().filter(':checked');
                 if (selectedType.val()) {
-                    var method = $(selectedType).data('shipping-method');
-                    var type = $(selectedType).data('shipping-type');
+                    const method = $(selectedType).data('shipping-method');
+                    const type = $(selectedType).data('shipping-type');
                     this.setElementsValue(type, method);
                 } else {
                     this.setElementsValue(null, null);
@@ -101,9 +100,9 @@ define(function(require) {
          */
         onShippingMethodTypeChange: function(event) {
             mediator.trigger('checkout:shipping-method:changed');
-            var methodType = $(event.target);
-            var method = methodType.data('shipping-method');
-            var type = methodType.data('shipping-type');
+            const methodType = $(event.target);
+            const method = methodType.data('shipping-method');
+            const type = methodType.data('shipping-type');
             this.setElementsValue(type, method);
         },
 

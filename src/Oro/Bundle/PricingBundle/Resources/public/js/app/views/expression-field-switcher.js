@@ -1,17 +1,17 @@
 define(function(require) {
     'use strict';
-    var unitAndCurrencyVisibleLength = 12;
-    var ExpressionFieldSwitcher;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
+
+    const unitAndCurrencyVisibleLength = 12;
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
     /**
      * @export oropricing/js/app/views/expression-field-switcher
      * @extends oroui.app.views.base.View
      * @class oropricing.app.views.ExpressionFieldSwitcher
      */
-    ExpressionFieldSwitcher = AbstractSwitcher.extend({
+    const ExpressionFieldSwitcher = AbstractSwitcher.extend({
         options: {
             selectors: {
                 fieldType: null,
@@ -24,15 +24,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ExpressionFieldSwitcher() {
-            ExpressionFieldSwitcher.__super__.constructor.apply(this, arguments);
+        constructor: function ExpressionFieldSwitcher(options) {
+            ExpressionFieldSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
-        initialize: function() {
-            ExpressionFieldSwitcher.__super__.initialize.apply(this, arguments);
+        initialize: function(options) {
+            ExpressionFieldSwitcher.__super__.initialize.call(this, options);
             this.initLayout().done(_.bind(this.initSwitcher, this));
             this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
                 this.onSubmit(e);
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         addValidationError: function($identifier) {
-            var $field = this.$el.closest('.price_rule')
+            const $field = this.$el.closest('.price_rule')
                 .find('div.error-block' + $identifier);
 
             $field.addClass(this.visibleClass).append($('<span></span>')
@@ -48,7 +48,7 @@ define(function(require) {
         },
 
         initSwitcher: function() {
-            var $expressionIdentifier = this.options.selectors.expressionType;
+            const $expressionIdentifier = this.options.selectors.expressionType;
             this.expressionLink.click(_.bind(function() {
                 this.changeFieldVisibility(this.field, this.expression);
                 this.expressionInput.val('');
@@ -106,7 +106,7 @@ define(function(require) {
 
             this.$form.off(this.eventNamespace());
 
-            AbstractSwitcher.__super__.dispose.apply(this, arguments);
+            AbstractSwitcher.__super__.dispose.call(this);
         }
     });
 

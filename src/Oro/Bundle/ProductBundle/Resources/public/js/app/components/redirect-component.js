@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var RedirectComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    RedirectComponent = BaseComponent.extend({
+    const RedirectComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -16,15 +15,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RedirectComponent() {
-            RedirectComponent.__super__.constructor.apply(this, arguments);
+        constructor: function RedirectComponent(options) {
+            RedirectComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var targetUrl = options.targetUrl || null;
+            const targetUrl = options.targetUrl || null;
             this.redirectTo(targetUrl);
         },
 

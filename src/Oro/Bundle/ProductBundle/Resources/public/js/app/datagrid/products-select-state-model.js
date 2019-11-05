@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ProductsSelectStateModel;
-    var _ = require('underscore');
-    var SelectStateModel = require('orodatagrid/js/datagrid/select-state-model');
+    const _ = require('underscore');
+    const SelectStateModel = require('orodatagrid/js/datagrid/select-state-model');
 
-    ProductsSelectStateModel = SelectStateModel.extend({
+    const ProductsSelectStateModel = SelectStateModel.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ProductsSelectStateModel() {
-            ProductsSelectStateModel.__super__.constructor.apply(this, arguments);
+        constructor: function ProductsSelectStateModel(attrs, options) {
+            ProductsSelectStateModel.__super__.constructor.call(this, attrs, options);
         },
 
         addRow: function(model) {
@@ -26,7 +25,7 @@ define(function(require) {
         },
 
         hasRow: function(model) {
-            var rows = this.get('rows');
+            const rows = this.get('rows');
 
             if (rows.length) {
                 return _.find(rows, function(item) {

@@ -757,4 +757,22 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($resultItems->contains($lineItem2));
         $this->assertTrue($resultItems->contains($lineItem3));
     }
+
+    public function testActualizeLineItems()
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
+        $allowedStatuses = ['in_stock'];
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn($allowedStatuses);
+
+        $this->lineItemRepository->expects($this->once())
+            ->method('deleteItemsByShoppingListAndInventoryStatuses')
+            ->with($shoppingList, $allowedStatuses);
+
+        $this->manager->actualizeLineItems($shoppingList);
+    }
 }

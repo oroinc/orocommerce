@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ProductVariantComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    ProductVariantComponent = BaseComponent.extend({
+    const ProductVariantComponent = BaseComponent.extend({
         relatedSiblingComponents: {
             // grid is required to update variants columns
             productVariantsGridComponent: 'product-product-variants-edit'
@@ -26,8 +25,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductVariantComponent() {
-            ProductVariantComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductVariantComponent(options) {
+            ProductVariantComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -49,8 +48,8 @@ define(function(require) {
         },
 
         onVariantFieldChange: function() {
-            var variantFields = [];
-            var self = this;
+            let variantFields = [];
+            const self = this;
             this.variantFieldCheckboxes.each(function(idx, el) {
                 if (el.checked) {
                     variantFields.push(self.getFieldName(el));
@@ -78,10 +77,10 @@ define(function(require) {
 
         updateVisibilityChange: function() {
             if (this.variantFieldCheckboxes.length > 0) {
-                var self = this;
-                var gridName = this.options.datagridName;
+                const self = this;
+                const gridName = this.options.datagridName;
                 this.variantFieldCheckboxes.each(function(idx, el) {
-                    var columnName = self.getFieldName(el);
+                    const columnName = self.getFieldName(el);
                     mediator.trigger('datagrid:changeColumnParam:' + gridName, columnName, 'renderable', el.checked);
                 });
             }

@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var QuoteProductToOrderComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    QuoteProductToOrderComponent = BaseComponent.extend({
+    const QuoteProductToOrderComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -69,8 +68,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function QuoteProductToOrderComponent() {
-            QuoteProductToOrderComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuoteProductToOrderComponent(options) {
+            QuoteProductToOrderComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -95,7 +94,7 @@ define(function(require) {
          * @param {Event} e
          */
         onOfferChange: function(e) {
-            var target = $(e.target);
+            const target = $(e.target);
 
             this.quantityEventsEnabled = false;
 
@@ -113,8 +112,8 @@ define(function(require) {
         },
 
         onQuantityChange: function() {
-            var self = this;
-            var quantity = this.$quantity.val();
+            const self = this;
+            const quantity = this.$quantity.val();
             if (!this.isQuantityValueValid(quantity)) {
                 return;
             }
@@ -153,7 +152,7 @@ define(function(require) {
          * @returns {Boolean}
          */
         isQuantityValueValid: function(value) {
-            var floatValue = parseFloat(value);
+            const floatValue = parseFloat(value);
             return !_.isNaN(floatValue) && floatValue > 0;
         },
 
@@ -162,14 +161,14 @@ define(function(require) {
          * @param {Boolean} value
          */
         setValidAttribute: function(field, value) {
-            var $field = $(field);
+            const $field = $(field);
             $field.data('valid', value);
             $field.attr('data-valid', value.toString());
             $field.valid();
         },
 
         addQuantityEvents: function() {
-            var disableFixedQuoteQuantityChange = Boolean(_.reduce(this.$offerSelector, function(disable, element) {
+            const disableFixedQuoteQuantityChange = Boolean(_.reduce(this.$offerSelector, function(disable, element) {
                 return disable &= !$(element).data(this.options.data_attributes.allow_increment);
             }, true, this));
 
@@ -232,7 +231,7 @@ define(function(require) {
          */
         updateSelector: function(id) {
             this.blockQuantityUpdate = true;
-            var selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
+            const selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
             selector.prop('checked', 'checked');
             selector.trigger('change');
             this.blockQuantityUpdate = false;

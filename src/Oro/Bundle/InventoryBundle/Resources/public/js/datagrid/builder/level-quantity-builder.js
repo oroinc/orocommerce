@@ -2,8 +2,8 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
 ], function($, _, mediator, NumberFormatter) {
     'use strict';
 
-    var LevelQuantity = function() {
-        this.initialize.apply(this, arguments);
+    const LevelQuantity = function(options) {
+        this.initialize(options);
     };
 
     _.extend(LevelQuantity.prototype, {
@@ -39,8 +39,8 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             this.grid = options.grid;
             this.grid.refreshAction.execute();
 
-            var inputSelector = options.options.metadata.options.cellSelection.selector;
-            var quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
+            const inputSelector = options.options.metadata.options.cellSelection.selector;
+            const quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
             this.options = _.defaults(quantityValidationOptions || {}, this.options);
 
             this._formatInitialQuantity();
@@ -55,7 +55,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
          * Format quantity to emulate number cell behaviour and value
          */
         _formatInitialQuantity: function() {
-            var quantityColumn = this.options.quantityColumnName;
+            const quantityColumn = this.options.quantityColumnName;
             // apply rounding
             _.each(this.grid.collection.fullCollection.models, function(model) {
                 model.on('change:' + quantityColumn, function(model, value) {
@@ -96,12 +96,12 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
          * @param {Backgrid.Cell} cell
          */
         _applyValidationToCell: function(cell) {
-            var quantityConstraints = this.options.quantityConstraints;
-            var constraintNames = this.constraintNames;
-            var unitCode = cell.model.get(this.options.unitColumnName);
-            var precision = this.options.unitPrecisions[unitCode] || 0;
+            const quantityConstraints = this.options.quantityConstraints;
+            const constraintNames = this.constraintNames;
+            const unitCode = cell.model.get(this.options.unitColumnName);
+            const precision = this.options.unitPrecisions[unitCode] || 0;
 
-            var constraints = {};
+            const constraints = {};
             if (quantityConstraints[constraintNames.range]) {
                 constraints[constraintNames.range] = quantityConstraints[constraintNames.range];
             }
@@ -111,7 +111,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
                 constraints[constraintNames.integer] = quantityConstraints[constraintNames.integer];
             }
 
-            var editorInput = cell.$el.find(':input').first();
+            const editorInput = cell.$el.find(':input').first();
             editorInput.parent().addClass('controls').removeClass('editable');
             editorInput.attr('name', 'quantity_' + cell.model.cid);
             editorInput.data('validation', constraints);
@@ -126,7 +126,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new LevelQuantity({
+                const validation = new LevelQuantity({
                     grid: grid,
                     options: options
                 });

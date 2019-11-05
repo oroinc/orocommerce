@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var MatrixGridAddToShoppingListView;
-    var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
-    var _ = require('underscore');
+    const ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
+    const _ = require('underscore');
 
-    MatrixGridAddToShoppingListView = ProductAddToShoppingListView.extend({
+    const MatrixGridAddToShoppingListView = ProductAddToShoppingListView.extend({
         /**
          * @inheritDoc
          */
-        constructor: function MatrixGridAddToShoppingListView() {
-            MatrixGridAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        constructor: function MatrixGridAddToShoppingListView(options) {
+            MatrixGridAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         _saveLineItem: function(url, urlOptions, formData) {
@@ -31,12 +30,12 @@ define(function(require) {
                 return true;
             }
 
-            var isFormEmpty = _.every(this.$form.find('[data-name="field__quantity"]:enabled'), function(field) {
+            const isFormEmpty = _.every(this.$form.find('[data-name="field__quantity"]:enabled'), function(field) {
                 return _.isEmpty(field.value);
             });
 
             if (isFormEmpty) {
-                var validator = this.$form.validate();
+                const validator = this.$form.validate();
                 validator.errorsFor(this.$form[0]).remove();
                 validator.showLabel(this.$form[0], _.__('oro.product.validation.configurable.required'));
                 return false;

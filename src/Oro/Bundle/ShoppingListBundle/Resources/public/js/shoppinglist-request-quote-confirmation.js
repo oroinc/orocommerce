@@ -1,18 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var StandartConfirmation = require('oroui/js/standart-confirmation');
-    var mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const StandartConfirmation = require('oroui/js/standart-confirmation');
+    const mediator = require('oroui/js/mediator');
 
-    var ShoppingListRequestQuoteConfirmation;
-
-    ShoppingListRequestQuoteConfirmation = StandartConfirmation.extend({
+    const ShoppingListRequestQuoteConfirmation = StandartConfirmation.extend({
         open: function() {
-            var lineItems = mediator.execute('get-line-items');
-            var lineItemsCount = lineItems.filter(function(lineItem) {
+            const lineItems = mediator.execute('get-line-items');
+            const lineItemsCount = lineItems.filter(function(lineItem) {
                 if (lineItem.$el.attr('class').indexOf('--configurable') !== -1) {
-                    var quantities = 0;
+                    let quantities = 0;
                     _.each(lineItem.$elements.quantity, function(quantity) {
                         quantities += quantity.value ? parseInt(quantity.value) : 0;
                     });

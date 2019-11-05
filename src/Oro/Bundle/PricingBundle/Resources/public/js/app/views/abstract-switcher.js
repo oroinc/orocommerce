@@ -1,15 +1,15 @@
 define(function(require) {
     'use strict';
-    var AbstractSwitcher;
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oropricing/js/app/views/abstract-switcher
      * @extends oroui.app.views.base.View
      * @class oropricing.app.views.AbstractSwitcher
      */
-    AbstractSwitcher = BaseView.extend({
+    const AbstractSwitcher = BaseView.extend({
         options: {
             selectors: {
                 fieldType: null,
@@ -29,8 +29,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AbstractSwitcher() {
-            AbstractSwitcher.__super__.constructor.apply(this, arguments);
+        constructor: function AbstractSwitcher(options) {
+            AbstractSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
@@ -63,7 +63,7 @@ define(function(require) {
             AbstractSwitcher.onSubmitCounter += 1;
             if (!this.isValid()) {
                 AbstractSwitcher.isFormValid = false;
-                var visibleIdentifier;
+                let visibleIdentifier;
                 if (this.isVisible(this.field)) {
                     visibleIdentifier = this.options.selectors.fieldType;
                 } else if (this.isVisible(this.expression)) {
@@ -96,7 +96,7 @@ define(function(require) {
         },
 
         getValue: function($field) {
-            var $value = null;
+            let $value = null;
             if ($field.find('select').length > 0) {
                 $value = $field.find('select').find('option:selected').attr('value');
             } else if ($field.find('input').length > 0) {
@@ -147,7 +147,7 @@ define(function(require) {
             delete this.expressionLink;
             delete this.fieldLink;
 
-            AbstractSwitcher.__super__.dispose.apply(this, arguments);
+            AbstractSwitcher.__super__.dispose.call(this);
         }
     });
 

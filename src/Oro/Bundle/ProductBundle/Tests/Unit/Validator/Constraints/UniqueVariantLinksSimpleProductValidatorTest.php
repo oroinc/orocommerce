@@ -6,13 +6,14 @@ use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $uniqueVariantLinksProductValidatorMock;
 
@@ -114,7 +117,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
             ->with($parentProduct, new UniqueProductVariantLinks())
             ->willReturn(new ConstraintViolationList());
 
-        $this->assertRepositoryCalls($product, [$parentProduct]);
+        $this->assertRepositoryCallsProductVariantLinks($product, [$parentProduct]);
 
         $this->context->expects($this->never())->method('addViolation');
 
@@ -134,7 +137,16 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
                 [$parentProduct, new UniqueProductVariantLinks()],
                 [$parentProduct2, new UniqueProductVariantLinks()]
             )
-            ->willReturn(new ConstraintViolationList([new ConstraintViolation('message', '', [], '', '', '')]));
+            ->willReturn(new ConstraintViolationList([
+                new ConstraintViolation(
+                    'message',
+                    '',
+                    [],
+                    '',
+                    '',
+                    ''
+                )
+            ]));
 
         $this->context->expects($this->once())
             ->method('addViolation')
@@ -162,7 +174,16 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
                 [$parentProduct2, new UniqueProductVariantLinks()]
             )
             ->willReturnOnConsecutiveCalls(
-                new ConstraintViolationList([new ConstraintViolation('message', '', [], '', '', '')]),
+                new ConstraintViolationList([
+                    new ConstraintViolation(
+                        'message',
+                        '',
+                        [],
+                        '',
+                        '',
+                        ''
+                    )
+                ]),
                 new ConstraintViolationList()
             );
 
@@ -192,11 +213,20 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
                 [$parentProduct2, new UniqueProductVariantLinks()]
             )
             ->willReturnOnConsecutiveCalls(
-                new ConstraintViolationList([new ConstraintViolation('message', '', [], '', '', '')]),
+                new ConstraintViolationList([
+                    new ConstraintViolation(
+                        'message',
+                        '',
+                        [],
+                        '',
+                        '',
+                        ''
+                    )
+                ]),
                 new ConstraintViolationList()
             );
 
-        $this->assertRepositoryCalls($product, [$parentProduct, $parentProduct2]);
+        $this->assertRepositoryCallsProductVariantLinks($product, [$parentProduct, $parentProduct2]);
         $this->context->expects($this->once())
             ->method('addViolation')
             ->with(
@@ -242,23 +272,34 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
 
     /**
      * @param Product $product
-     * @param array $configurableProducts
+     * @param array $partntProducts
      */
-    private function assertRepositoryCalls(Product $product, array $configurableProducts)
+    private function assertRepositoryCallsProductVariantLinks(Product $product, array $partntProducts): void
     {
-        $repo = $this->createMock(ProductRepository::class);
+        $k = 1;
+        $variantLinks = [];
+        foreach ($partntProducts as $partntProduct) {
+            $variantLinks[] = $this->getEntity(ProductVariantLink::class, [
+                'id' => $k,
+                'product' => $product,
+                'parentProduct' => $partntProduct
+            ]);
+            $k++;
+        }
+
+        $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->once())
-            ->method('getParentProductsForSimpleProduct')
-            ->with($product)
-            ->willReturn($configurableProducts);
+            ->method('findBy')
+            ->willReturn($variantLinks);
+
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
-            ->with(Product::class)
+            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
             ->willReturn($repo);
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with(Product::class)
+            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
             ->willReturn($em);
     }
 }

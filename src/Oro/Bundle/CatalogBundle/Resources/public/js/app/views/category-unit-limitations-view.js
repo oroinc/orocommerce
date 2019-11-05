@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var CategoryUnitLimitationsView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
 
-    CategoryUnitLimitationsView = BaseView.extend({
+    const CategoryUnitLimitationsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -18,8 +17,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CategoryUnitLimitationsView() {
-            CategoryUnitLimitationsView.__super__.constructor.apply(this, arguments);
+        constructor: function CategoryUnitLimitationsView(options) {
+            CategoryUnitLimitationsView.__super__.constructor.call(this, options);
         },
 
         /**

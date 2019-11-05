@@ -6,9 +6,7 @@ define([
 ], function(MassAction, mediator, StandardConfirmation, _) {
     'use strict';
 
-    var TriggerEventForSelectedProductIdsMassAction;
-
-    TriggerEventForSelectedProductIdsMassAction = MassAction.extend({
+    const TriggerEventForSelectedProductIdsMassAction = MassAction.extend({
 
         /**
          * @param {Boolean}
@@ -23,8 +21,8 @@ define([
         /**
          * @inheritdoc
          */
-        initialize: function() {
-            TriggerEventForSelectedProductIdsMassAction.__super__.initialize.apply(this, arguments);
+        initialize: function(options) {
+            TriggerEventForSelectedProductIdsMassAction.__super__.initialize.call(this, options);
             mediator.on('get-selected-products-mass-action-run:' + this.datagrid.name, this.runAction, this);
         },
 
@@ -36,7 +34,7 @@ define([
          * @inheritdoc
          */
         execute: function() {
-            var selectionState = this.datagrid.getSelectionState();
+            const selectionState = this.datagrid.getSelectionState();
             if (selectionState.inset) {
                 this._triggerSelectEvent(selectionState.selectedIds);
             } else {
@@ -49,7 +47,7 @@ define([
          * @inheritdoc
          */
         getActionParameters: function() {
-            var params = TriggerEventForSelectedProductIdsMassAction.__super__.getActionParameters.call(this);
+            const params = TriggerEventForSelectedProductIdsMassAction.__super__.getActionParameters.call(this);
             params.force = +this.force;
 
             return params;
@@ -60,7 +58,7 @@ define([
          * @private
          */
         _triggerSelectEvent: function(ids) {
-            var scope = this.datagrid.getGridScope();
+            const scope = this.datagrid.getGridScope();
             if (scope) {
                 mediator.trigger(this.event_name + ':' + scope, ids);
             }

@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var RelatedItemsWidget;
-    var DialogWidget = require('oro/dialog-widget');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
+    const DialogWidget = require('oro/dialog-widget');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
 
-    RelatedItemsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
+    const RelatedItemsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         elements: {
             appendedIds: '[data-role="related-items-appended-ids"]',
             removedIds: '[data-role="related-items-removed-ids"]',
@@ -32,8 +31,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RelatedItemsWidget() {
-            RelatedItemsWidget.__super__.constructor.apply(this, arguments);
+        constructor: function RelatedItemsWidget(options) {
+            RelatedItemsWidget.__super__.constructor.call(this, options);
         },
 
         /**
@@ -41,7 +40,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            RelatedItemsWidget.__super__.initialize.apply(this, arguments);
+            RelatedItemsWidget.__super__.initialize.call(this, options);
 
             this.options.itemsLimit = isNaN(this.options.itemsLimit) ? -1 : this.options.itemsLimit;
 
@@ -49,7 +48,7 @@ define(function(require) {
         },
 
         setSelectedCount: function(grid) {
-            var selectedCount = grid.metadata.options.urlParams.relatedItemsIds;
+            const selectedCount = grid.metadata.options.urlParams.relatedItemsIds;
             this.selectedCount = selectedCount !== 'undefined' ? selectedCount.length : 0;
         },
 
@@ -64,10 +63,10 @@ define(function(require) {
         },
 
         prepareContentRequestOptions: function(data, method, url) {
-            var addedProductRelatedItemsIds = $(this.options.itemsIdsToAdd).val();
-            var removedProductRelatedItemsIds = $(this.options.itemsIdsToRemove).val();
+            const addedProductRelatedItemsIds = $(this.options.itemsIdsToAdd).val();
+            const removedProductRelatedItemsIds = $(this.options.itemsIdsToRemove).val();
 
-            var options = RelatedItemsWidget.__super__.prepareContentRequestOptions.apply(this, arguments);
+            const options = RelatedItemsWidget.__super__.prepareContentRequestOptions.call(this, data, method, url);
             options.data += '&' + $.param({
                 addedProductRelatedItems: addedProductRelatedItemsIds,
                 removedProductRelatedItems: removedProductRelatedItemsIds
@@ -93,12 +92,12 @@ define(function(require) {
         },
 
         getAppendedIds: function() {
-            var addedVal = this.getElement('appendedIds').val();
+            const addedVal = this.getElement('appendedIds').val();
             return addedVal.length ? addedVal.split(',') : [];
         },
 
         getRemovedIds: function() {
-            var removedVal = this.getElement('removedIds').val();
+            const removedVal = this.getElement('removedIds').val();
             return removedVal.length ? removedVal.split(',') : [];
         },
 

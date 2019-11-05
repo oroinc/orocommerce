@@ -2,19 +2,41 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\EventListener\AttributeFormViewListener as BaseAttributeFormViewListener;
+use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * This class allows to restrict moving of attributes
  */
 class AttributeFormViewListener extends BaseAttributeFormViewListener
 {
+    /** @var int */
+    private const DEFAULT_PRIORITY = 500;
+
     /**
      * @internal
      */
     const EVENT_TYPE_VIEW = 'view';
+
+    /**
+     * @var ConfigProvider
+     */
+    private $entityConfigProvider;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * @var array
@@ -23,6 +45,8 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         'inventory_status',
         'images',
         'productPriceAttributesPrices',
+        'shortDescriptions',
+        'descriptions',
     ];
 
     /**
@@ -32,6 +56,22 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
      * @var string
      */
     private $eventType;
+
+    /**
+     * @param AttributeManager $attributeManager
+     * @param ConfigProvider $entityConfigProvider
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(
+        AttributeManager $attributeManager,
+        ConfigProvider $entityConfigProvider,
+        TranslatorInterface $translator
+    ) {
+        parent::__construct($attributeManager);
+
+        $this->entityConfigProvider = $entityConfigProvider;
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritDoc}
@@ -65,5 +105,102 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
     protected function getRestrictedToMoveFields()
     {
         return $this->fieldsRestrictedToMove;
+    }
+
+    /**
+     * @param ScrollData $scrollData
+     * @param array $groups
+     */
+    protected function addNotEmptyGroupBlocks(ScrollData $scrollData, array $groups)
+    {
+        parent::addNotEmptyGroupBlocks($scrollData, $groups);
+
+        foreach ($groups as $group) {
+            if (empty($group['attributes'])) {
+                continue;
+            }
+
+            /** @var AttributeGroup $currentGroup */
+            $currentGroup = $group['group'];
+
+            $block = $scrollData->getBlock($currentGroup->getCode());
+
+            $priority = $block[ScrollData::PRIORITY] ?? self::DEFAULT_PRIORITY;
+
+            /** @var FieldConfigModel $attribute */
+            foreach ($group['attributes'] as $attribute) {
+                if ($attribute->getType() !== WYSIWYGType::TYPE) {
+                    continue;
+                }
+
+                $config = $this->entityConfigProvider->getConfig(Product::class, $attribute->getFieldName());
+
+                $scrollData->addNamedBlock(
+                    $attribute->getFieldName(),
+                    $this->translator->trans($config->get('label')),
+                    ++$priority
+                );
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function addAttributeEditBlocks(BeforeListRenderEvent $event, AttributeGroup $group, array $attributes)
+    {
+        parent::addAttributeEditBlocks($event, $group, $attributes);
+
+        foreach ($attributes as $attribute) {
+            if ($attribute->getType() !== WYSIWYGType::TYPE) {
+                continue;
+            }
+
+            $this->moveFieldToBlock($event->getScrollData(), $attribute->getFieldName(), $attribute->getFieldName());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function renderAttributeEditData(Environment $twig, FormView $attributeView, FieldConfigModel $attribute)
+    {
+        return $attribute->getType() === WYSIWYGType::TYPE
+            ? $twig->render('OroEntityConfigBundle:Attribute:widget.html.twig', ['child' => $attributeView])
+            : parent::renderAttributeEditData($twig, $attributeView, $attribute);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function addAttributeViewBlocks(BeforeListRenderEvent $event, AttributeGroup $group, array $attributes)
+    {
+        parent::addAttributeViewBlocks($event, $group, $attributes);
+
+        foreach ($attributes as $attribute) {
+            if ($attribute->getType() !== WYSIWYGType::TYPE) {
+                continue;
+            }
+
+            $this->moveFieldToBlock($event->getScrollData(), $attribute->getFieldName(), $attribute->getFieldName());
+        }
+    }
+
+    /**
+     * @param Environment $twig
+     * @param object $entity
+     * @param FieldConfigModel $attribute
+     * @return string
+     */
+    protected function renderAttributeViewData(Environment $twig, $entity, FieldConfigModel $attribute)
+    {
+        if ($attribute->getType() === WYSIWYGType::TYPE) {
+            return $twig->render(
+                'OroEntityConfigBundle:Attribute:attributeCollapsibleView.html.twig',
+                ['entity' => $entity, 'field' => $attribute]
+            );
+        }
+
+        return parent::renderAttributeViewData($twig, $entity, $attribute);
     }
 }

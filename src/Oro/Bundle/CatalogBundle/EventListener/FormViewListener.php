@@ -10,6 +10,9 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds category information to the product view and edit pages.
+ */
 class FormViewListener
 {
     const CATEGORY_FIELD = 'category';
@@ -83,7 +86,7 @@ class FormViewListener
     protected function addCategoryBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.catalog.product.section.catalog');
-        $blockId = $scrollData->addBlock($blockLabel);
+        $blockId = $scrollData->addBlock($blockLabel, 300);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }

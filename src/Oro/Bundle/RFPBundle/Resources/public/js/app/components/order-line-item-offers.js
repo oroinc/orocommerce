@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var OrderLineItemOffers;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    OrderLineItemOffers = BaseComponent.extend({
+    const OrderLineItemOffers = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -38,8 +37,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function OrderLineItemOffers() {
-            OrderLineItemOffers.__super__.constructor.apply(this, arguments);
+        constructor: function OrderLineItemOffers(options) {
+            OrderLineItemOffers.__super__.constructor.call(this, options);
         },
 
         /**
@@ -60,14 +59,14 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onRadioClick: function(e) {
-            var target = $(e.target);
+            const target = $(e.target);
 
-            var quantity = target.data('quantity');
+            const quantity = target.data('quantity');
             if (this.findObject(this.options.quantitySelector) !== quantity) {
                 this.findObject(this.options.quantitySelector).val(quantity);
             }
 
-            var unit = target.data('unit');
+            const unit = target.data('unit');
             if (this.findObject(this.options.unitSelector) !== unit) {
                 this.findObject(this.options.unitSelector)
                     .val(target.data('unit'))

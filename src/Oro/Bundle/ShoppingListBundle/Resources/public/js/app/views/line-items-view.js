@@ -1,21 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var LineItemView = require('oroshoppinglist/js/app/views/line-item-view');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const LineItemView = require('oroshoppinglist/js/app/views/line-item-view');
 
-    var LineItemsView;
-
-    LineItemsView = BaseView.extend({
+    const LineItemsView = BaseView.extend({
         lineItems: [],
 
         /**
          * @inheritDoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**

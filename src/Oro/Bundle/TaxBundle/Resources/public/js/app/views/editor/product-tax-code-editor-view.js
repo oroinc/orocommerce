@@ -1,25 +1,24 @@
 define(function(require) {
     'use strict';
 
-    var ProductTaxCodeEditorView;
-    var AbstractRelationEditorView = require('oroform/js/app/views/editor/abstract-relation-editor-view');
-    var _ = require('underscore');
+    const AbstractRelationEditorView = require('oroform/js/app/views/editor/abstract-relation-editor-view');
+    const _ = require('underscore');
     require('jquery.select2');
 
-    ProductTaxCodeEditorView =
+    const ProductTaxCodeEditorView =
         AbstractRelationEditorView.extend(/** @exports ProductTaxCodeEditorView.prototype */{
             /**
              * @inheritDoc
              */
-            constructor: function ProductTaxCodeEditorView() {
-                ProductTaxCodeEditorView.__super__.constructor.apply(this, arguments);
+            constructor: function ProductTaxCodeEditorView(options) {
+                ProductTaxCodeEditorView.__super__.constructor.call(this, options);
             },
 
             /**
              * @inheritDoc
              */
             initialize: function(options) {
-                ProductTaxCodeEditorView.__super__.initialize.apply(this, arguments);
+                ProductTaxCodeEditorView.__super__.initialize.call(this, options);
                 if (options.value_field_name || options.ignore_value_field_name) {
                     this.valueFieldName = options.value_field_name;
                 } else {
@@ -35,8 +34,8 @@ define(function(require) {
             },
 
             getSelect2Options: function() {
-                var _this = this;
-                var options = _.omit(ProductTaxCodeEditorView.__super__.getSelect2Options.call(this), 'data');
+                const _this = this;
+                const options = _.omit(ProductTaxCodeEditorView.__super__.getSelect2Options.call(this), 'data');
 
                 return _.extend(options, {
                     allowClear: true,
@@ -56,7 +55,7 @@ define(function(require) {
                             _this.currentRequest.state() !== 'resolved') {
                             _this.currentRequest.abort();
                         }
-                        var autoCompleteUrlParameters = _.extend(_this.model.toJSON(), {
+                        const autoCompleteUrlParameters = _.extend(_this.model.toJSON(), {
                             term: options.term,
                             page: options.page,
                             per_page: _this.perPage
@@ -72,18 +71,18 @@ define(function(require) {
             },
 
             getChoiceLabel: function() {
-                var label = _.result(this.getSelect2Data(), 'label');
+                const label = _.result(this.getSelect2Data(), 'label');
                 return label !== void 0 ? label : '';
             },
 
             getServerUpdateData: function() {
-                var data = {};
+                const data = {};
                 data[this.valueFieldName] = this.getValue();
                 return data;
             },
 
             getModelUpdateData: function() {
-                var data = this.getServerUpdateData();
+                const data = this.getServerUpdateData();
                 data[this.fieldName] = this.getChoiceLabel();
                 return data;
             }

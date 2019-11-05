@@ -3,8 +3,8 @@ define([
 ], function(_, __, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal');
-    var decimalSeparator = options.decimal_separator_symbol;
+    const options = localeSettings.getNumberFormats('decimal');
+    const decimalSeparator = options.decimal_separator_symbol;
 
     return [
         'decimal-precision',
@@ -12,12 +12,12 @@ define([
             if (!_.contains(value, decimalSeparator)) {
                 return true;
             }
-            var floatValue = parseFloat(value);
+            const floatValue = parseFloat(value);
 
             return parseFloat(floatValue.toFixed(param.precision)) === floatValue;
         },
         function(param, element) {
-            var placeholders = {};
+            const placeholders = {};
 
             placeholders.precision = param.precision;
 

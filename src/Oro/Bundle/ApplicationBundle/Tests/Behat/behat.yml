@@ -89,7 +89,7 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//*[contains(@id, "oro_product_variantFields_BooleanField") and @data-name="field__is-selected"]'
           Inventory Status: 'oro_product[inventory_status]'
-          Description: 'oro_product[descriptions][values][default]'
+          Description: 'oro_product[descriptions][values][default][wysiwyg]'
           Short Description: 'oro_product[shortDescriptions][values][default]'
 
     Customer User Addresses Form:

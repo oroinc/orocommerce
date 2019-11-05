@@ -36,6 +36,9 @@ class UniqueProductVariantLinksTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTargets()
     {
-        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $this->constraint->getTargets());
+        $this->assertEquals(
+            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            $this->constraint->getTargets()
+        );
     }
 }

@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var TotalsListener;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var ValueChangingListener = require('oropricing/js/app/listener/value-changing-listener');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const ValueChangingListener = require('oropricing/js/app/listener/value-changing-listener');
 
     /**
      * @export oropricing/js/app/listener/totals-listener
      * @class oropricing.app.listener.TotalsListener
      */
-    TotalsListener = {
+    const TotalsListener = {
         /**
          * Listen fields change
          *
