@@ -32,7 +32,7 @@ datagrids:
                 label:
                     data_name: paymentTerm.label
             default:
-                label: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                label: ASC
         filters:
             columns:
                 label:
@@ -75,7 +75,7 @@ datagrids:
                 label:
                     data_name: paymentTerm.label
             default:
-                label: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                label: ASC
         filters:
             columns:
                 label:

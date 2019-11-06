@@ -2,7 +2,6 @@ parameters:
     oro_shopping_list.entity.shopping_list.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
     oro_shopping_list.entity.shopping_list_total.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
     oro_shopping_list.entity.line_item.class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
-    oro_shopping_list.entity.matrix_collection.class: Oro\Bundle\ShoppingListBundle\Model\MatrixCollection
 
 services:
     oro_shopping_list.validator.line_item:

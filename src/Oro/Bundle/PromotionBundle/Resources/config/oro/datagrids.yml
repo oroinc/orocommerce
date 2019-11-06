@@ -184,7 +184,7 @@ datagrids:
                 updatedAt:
                     data_name: coupon.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                createdAt: ASC
         filters:
             columns:
                 code:
@@ -301,7 +301,7 @@ datagrids:
                 updatedAt:
                     data_name: coupon.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                createdAt: ASC
         filters:
             columns:
                 code:

@@ -129,7 +129,7 @@ datagrids:
                 total:
                     data_name: total
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 poNumber:
@@ -292,7 +292,7 @@ datagrids:
                 updatedAt:
                     data_name: order1.updatedAt
         default:
-            createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+            createdAt: DESC
         filters:
             columns:
                 identifier:
@@ -460,7 +460,7 @@ datagrids:
                 updatedAt:
                     data_name: order1.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 identifier:
@@ -770,8 +770,8 @@ datagrids:
                 qtySold:
                     data_name: qtySold
             default:
-                timePeriod: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
-                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                timePeriod: DESC
+                productSku: DESC
         filters:
             columns:
                 timePeriod:
@@ -852,4 +852,4 @@ datagrids:
                     type: datetime
                     data_name: ordered_at_by_CUSTOMER_USER_ID
             default:
-                recency: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                recency: DESC

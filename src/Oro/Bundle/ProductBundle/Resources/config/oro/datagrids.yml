@@ -117,7 +117,7 @@ datagrids:
         extends: products-select-grid-base-without-default-sorting
         sorters:
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
 
     all-products-select-grid:
         extends: products-select-grid-base
@@ -516,7 +516,7 @@ datagrids:
                 isVariant:
                     data_name: isVariant
             default:
-                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                sku: ASC
 
     product-product-variants-view:
         extends: product-product-variants-base
@@ -556,8 +556,8 @@ datagrids:
                 visible:
                     data_name: visible
             default:
-                visible: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
-                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                visible: DESC
+                sku: ASC
 
     products-related-items-base:
         extended_entity_name: '%oro_product.entity.product.class%'
@@ -620,7 +620,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 sku:
@@ -762,7 +762,8 @@ datagrids:
             columns:
                 isRelated:
                     data_name: isRelated
-            default: { isRelated: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC' }
+            default:
+                isRelated: DESC
 
     products-related-products-select:
         extends: products-related-items-select
@@ -925,7 +926,7 @@ datagrids:
                 defaultTitle:
                     data_name: brand.defaultTitle
             default:
-                defaultTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                defaultTitle: ASC
         filters:
             columns:
                 defaultTitle:
