@@ -102,7 +102,9 @@ class HTMLPurifierScopeProvider
      */
     private function getUserRoles(): array
     {
-        return $this->tokenAccessor->getToken()->getRoles();
+        $token = $this->tokenAccessor->getToken();
+
+        return $token ? $token->getRoles() : [];
     }
 
     /**
