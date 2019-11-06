@@ -1,9 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var error = require('oroui/js/error');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const error = require('oroui/js/error');
 
     /**
      * Static get all tags in element node
@@ -11,12 +11,12 @@ define(function(require) {
      * @returns {Array}
      */
     function getTags(element) {
-        var _res = [];
+        let _res = [];
 
         _res.push(element.nodeName.toLowerCase());
 
-        for (var i = 0; i < element.childNodes.length; i++) {
-            var child = element.childNodes[i];
+        for (let i = 0; i < element.childNodes.length; i++) {
+            const child = element.childNodes[i];
 
             if (child.nodeType === 1) {
                 _res.push(child.nodeName.toLowerCase());
@@ -36,7 +36,7 @@ define(function(require) {
      * @param options
      * @constructor
      */
-    var ComponentRestriction = function(editor, options) {
+    const ComponentRestriction = function(editor, options) {
         this.editor = editor;
         this.allowTags = this._prepearAllowTagsCollection(options.allowTags);
 
@@ -48,29 +48,29 @@ define(function(require) {
          * Check existing component types
          */
         resolveRestriction: function() {
-            var DomComponents = this.editor.DomComponents;
-            var BlockManager = this.editor.BlockManager;
-            var componentTypes = DomComponents.componentTypes;
+            const DomComponents = this.editor.DomComponents;
+            const BlockManager = this.editor.BlockManager;
+            const componentTypes = DomComponents.componentTypes;
 
             DomComponents.componentTypes = _.reject(componentTypes, function(type) {
                 return !this.isAllowedTag(type.model.prototype.defaults.tagName);
             }, this);
 
-            var types = _.pluck(DomComponents.componentTypes, 'id');
-            var _res = [];
+            const types = _.pluck(DomComponents.componentTypes, 'id');
+            const _res = [];
 
             _.each(BlockManager.getAll().models, function(model) {
                 if (!model) {
                     return;
                 }
-                var content = model.get('content');
+                const content = model.get('content');
 
                 if (_.isObject(content)) {
                     if (!_.contains(types, content.type)) {
                         _res.push(model.id);
                     }
                 } else {
-                    var res = _.every(this.getTags($(content).get(0)), function(tag) {
+                    const res = _.every(this.getTags($(content).get(0)), function(tag) {
                         return this.isAllowedTag(tag);
                     }, this);
 
@@ -122,7 +122,7 @@ define(function(require) {
          */
         checkTemplate: function(template) {
             return _.every(this.getTags($(template).get(0)), function(tag) {
-                var isAllowed = this.isAllowedTag(tag);
+                const isAllowed = this.isAllowedTag(tag);
                 if (!isAllowed) {
                     error.showErrorInConsole('Tag "' + tag + '" is not allowed');
                 }

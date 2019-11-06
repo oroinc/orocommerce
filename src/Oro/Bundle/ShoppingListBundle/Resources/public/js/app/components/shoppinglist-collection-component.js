@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListCollectionComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var BaseCollection = require('oroui/js/app/models/base/collection');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const BaseCollection = require('oroui/js/app/models/base/collection');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
 
-    ShoppingListCollectionComponent = BaseComponent.extend({
+    const ShoppingListCollectionComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListCollectionComponent() {
-            ShoppingListCollectionComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListCollectionComponent(options) {
+            ShoppingListCollectionComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -54,21 +53,21 @@ define(function(require) {
             }
 
             if (response.message) {
-                var isSuccessful = response.hasOwnProperty('successful') && response.successful;
+                const isSuccessful = response.hasOwnProperty('successful') && response.successful;
                 mediator.execute(
                     'showFlashMessage', (isSuccessful ? 'success' : 'error'),
                     response.message
                 );
             }
 
-            var updateShoppingListCollection = function(shoppingList) {
+            const updateShoppingListCollection = function(shoppingList) {
                 if (shoppingList && !this.collection.find({id: shoppingList.id})) {
                     this.collection.add(_.defaults(shoppingList, {is_current: true}), {
                         silent: true
                     });
                 }
             }.bind(this);
-            var updateModel = function(model, product) {
+            const updateModel = function(model, product) {
                 model.set('shopping_lists', product.shopping_lists, {silent: true});
                 model.trigger('change:shopping_lists');
             };

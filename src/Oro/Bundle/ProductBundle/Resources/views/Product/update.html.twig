@@ -60,7 +60,7 @@
     {% if entity.isConfigurable %}
         {% set productsVariantSelector %}
             <div data-page-component-module="oroproduct/js/app/components/product-variant-component">
-              {{ form_row(form.variantFields) }}
+                {{ form_row(form.variantFields) }}
             </div>
         {% endset %}
         {% set generalData = generalData|merge([
@@ -72,13 +72,16 @@
         form_row(form.slugPrototypesWithRedirect),
         form_row(form.status),
         form_row(form.featured),
-        form_row(form.newArrival),
-        form_row(form.brand),
-        form_row(form.primaryUnitPrecision)
+        form_row(form.newArrival)
     ]) %}
 
+    {% set additionalGeneralData = [
+        form_row(form.brand),
+        form_row(form.primaryUnitPrecision)
+    ] %}
+
     {% if oro_is_product_primary_unit_visible(entity) %}
-        {% set generalData = generalData|merge([
+        {% set additionalGeneralData = additionalGeneralData|merge([
             form_row(form.additionalUnitPrecisions)
         ]) %}
     {% endif %}
@@ -91,39 +94,35 @@
         },
         {
             'title': '',
-            'data': {
-                'descriptions': form_row(form.descriptions),
-                'shortDescriptions': form_row(form.shortDescriptions),
-            },
+            'data': additionalGeneralData,
             'spanClass': 'responsive-cell'
-        },
+        }
     ]} %}
 
     {% set dataBlocks = {
-        'general': generalBlock
-    } %}
-
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% if child.vars.name not in entity.variantFields %}
-            {% set additionalData = additionalData|merge([form_row(child)]) %}
-        {% endif %}
-    {% endfor %}
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.product.sections.additional'|trans,
+        'general': generalBlock,
+        'short_description': {
+            'title': 'oro.product.short_descriptions.label'|trans,
             'subblocks': [{
                 'title': '',
-                'useSpan': false,
-                'data' : additionalData
+                'data': [form_widget(form.shortDescriptions)],
             }]
-        }] ) %}
-    {% endif %}
+        },
+        'description': {
+            'title': 'oro.product.descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.descriptions)],
+            }]
+        }
+    } %}
+
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.product.sections.additional'|trans)) %}
 
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
-            'priority': 5,
+            'priority': 1400,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -136,7 +135,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
-            'priority': 0,
+            'priority': 100,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -149,7 +148,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
-            'priority': 0,
+            'priority': 200,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -186,6 +185,7 @@
             }]
         }] ) %}
     {% endif %}
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

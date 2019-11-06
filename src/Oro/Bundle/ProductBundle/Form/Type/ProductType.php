@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
@@ -117,16 +118,9 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
-                    'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                        ],
-                    ],
+                    'field' => ['wysiwyg', 'wysiwyg_style'],
+                    'entry_type' => WYSIWYGValueType::class,
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -139,12 +133,14 @@ class ProductType extends AbstractType
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
+                            'autoRender' => false,
                             'statusbar' => true,
                             'resize' => true,
                             'width' => 500,
                             'height' => 300,
                         ]
-                    ]
+                    ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(

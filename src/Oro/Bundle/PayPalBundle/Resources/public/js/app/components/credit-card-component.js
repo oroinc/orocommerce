@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var CreditCardComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
     require('jquery.validate');
 
-    CreditCardComponent = BaseComponent.extend({
+    const CreditCardComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -61,8 +60,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CreditCardComponent() {
-            CreditCardComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CreditCardComponent(options) {
+            CreditCardComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -109,7 +108,7 @@ define(function(require) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
 
-                var resolvedEventData = _.extend(
+                const resolvedEventData = _.extend(
                     {
                         SECURETOKEN: false,
                         SECURETOKENID: false,
@@ -127,7 +126,7 @@ define(function(require) {
                     return;
                 }
 
-                var data = this.$el.find('[data-gateway]').serializeArray();
+                const data = this.$el.find('[data-gateway]').serializeArray();
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
                 data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
 
@@ -146,9 +145,9 @@ define(function(require) {
          * @param {Object} data
          */
         postUrl: function(formAction, data) {
-            var $form = $('<form action="' + formAction + '" method="POST" data-nohash="true">');
+            const $form = $('<form action="' + formAction + '" method="POST" data-nohash="true">');
             _.each(data, function(field) {
-                var $field = $('<input>')
+                const $field = $('<input>')
                     .prop('type', 'hidden')
                     .prop('name', field.name)
                     .val(field.value);
@@ -179,7 +178,7 @@ define(function(require) {
         },
 
         setExpirationDate: function() {
-            var hiddenExpirationDate = this.$el.find(this.options.selectors.hiddenDate);
+            const hiddenExpirationDate = this.$el.find(this.options.selectors.hiddenDate);
             if (this.month && this.year) {
                 hiddenExpirationDate.val(this.month + this.year);
             } else {
@@ -209,10 +208,10 @@ define(function(require) {
          * @param {String} elementSelector
          */
         validate: function(elementSelector) {
-            var appendElement;
+            let appendElement;
             if (elementSelector) {
-                var element = this.$form.find(elementSelector);
-                var parentForm = element.closest('form');
+                const element = this.$form.find(elementSelector);
+                const parentForm = element.closest('form');
 
                 if (elementSelector !== this.options.selectors.expirationDate && parentForm.length) {
                     return this._validateFormField(this.$el, element);
@@ -223,15 +222,15 @@ define(function(require) {
                 appendElement = this.$form.clone();
             }
 
-            var virtualForm = $('<form>');
+            const virtualForm = $('<form>');
             virtualForm.append(appendElement);
 
-            var self = this;
-            var validator = virtualForm.validate({
+            const self = this;
+            const validator = virtualForm.validate({
                 ignore: '', // required to validate all fields in virtual form
                 errorPlacement: function(error, element) {
-                    var $el = self.$form.find('#' + $(element).attr('id'));
-                    var parentWithValidation = $el.parents(self.options.selectors.validation);
+                    const $el = self.$form.find('#' + $(element).attr('id'));
+                    const parentWithValidation = $el.parents(self.options.selectors.validation);
 
                     $el.addClass('error');
 
@@ -254,7 +253,7 @@ define(function(require) {
 
             this._addCardTypeValidationRule(virtualForm);
 
-            var errors;
+            let errors;
 
             if (elementSelector) {
                 errors = this.$form.find(elementSelector).parent();
@@ -283,9 +282,9 @@ define(function(require) {
          */
         _addCardTypeValidationRule: function(form) {
             // Add CC type validation rule
-            var cardNumberField = form.find(this.options.selectors.cardNumber);
-            var cardNumberValidation = cardNumberField.data('validation');
-            var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
+            const cardNumberField = form.find(this.options.selectors.cardNumber);
+            const cardNumberValidation = cardNumberField.data('validation');
+            const creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
 
             if (creditCardTypeValidator && creditCardTypeValidator in cardNumberValidation) {
                 _.extend(cardNumberValidation[creditCardTypeValidator],
@@ -306,7 +305,7 @@ define(function(require) {
          * @returns {Boolean}
          */
         getGlobalPaymentValidate: function() {
-            var validateValueObject = {};
+            const validateValueObject = {};
             mediator.trigger('checkout:payment:validate:get-value', validateValueObject);
             return validateValueObject.value;
         },
@@ -351,7 +350,7 @@ define(function(require) {
          * @param {Object} e
          */
         onSaveForLaterChange: function(e) {
-            var $el = $(e.target);
+            const $el = $(e.target);
             mediator.trigger('checkout:payment:save-for-later:change', $el.prop('checked'));
         },
 

@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var BaseProductView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         optionNames: BaseView.prototype.optionNames.concat(['normalizeQuantityField']),
 
         normalizeQuantityField: true,
@@ -52,15 +51,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BaseProductView() {
-            BaseProductView.__super__.constructor.apply(this, arguments);
+        constructor: function BaseProductView(options) {
+            BaseProductView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            BaseProductView.__super__.initialize.apply(this, arguments);
+            BaseProductView.__super__.initialize.call(this, options);
 
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
@@ -108,10 +107,10 @@ define(function(require) {
         },
 
         onProductChanged: function() {
-            var modelProductId = this.model.get('id');
+            const modelProductId = this.model.get('id');
             this.model.set('line_item_form_enable', Boolean(modelProductId));
 
-            var productId = modelProductId || this.originalProductId;
+            const productId = modelProductId || this.originalProductId;
             mediator.trigger('layout-subtree:update:product', {
                 layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {
                     id: productId,
@@ -131,18 +130,18 @@ define(function(require) {
         },
 
         setPrecision: function() {
-            var precision = this.model.get('product_units')[this.model.get('unit')];
+            const precision = this.model.get('product_units')[this.model.get('unit')];
             this.getElement('quantity')
                 .data('precision', precision)
                 .inputWidget('refresh');
         },
 
         changeUnitLabel: function() {
-            var $unit = this.getElement('unit');
-            var unitLabel = this.model.get('unit_label');
+            const $unit = this.getElement('unit');
+            const unitLabel = this.model.get('unit_label');
 
             $unit.find('option').each(function() {
-                var $option = $(this);
+                const $option = $(this);
                 if (!$option.data('originalText')) {
                     $option.data('originalText', this.text);
                 }
@@ -184,7 +183,7 @@ define(function(require) {
         },
 
         getLineItem: function() {
-            var $innerLineItem = this.getElement('productItem').find(this.elements.lineItem);
+            const $innerLineItem = this.getElement('productItem').find(this.elements.lineItem);
             return this.getElement('lineItem').not($innerLineItem);
         },
 
@@ -196,7 +195,7 @@ define(function(require) {
             delete this.modelAttr;
             delete this.rowId;
             this.disposeElements();
-            BaseProductView.__super__.dispose.apply(this, arguments);
+            BaseProductView.__super__.dispose.call(this);
         }
     }));
 

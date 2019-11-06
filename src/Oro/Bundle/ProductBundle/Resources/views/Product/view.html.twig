@@ -41,12 +41,6 @@
             'url': path('oro_product_info', {id: entity.id})
         }) }}
     {% endset %}
-    {% set productDescription %}
-        {{ UI.renderCollapsibleHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less') }}
-    {% endset %}
-    {% set productShortDescription %}
-        {{ UI.renderCollapsibleHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less') }}
-    {% endset %}
 
     {% set productInfo %}
         {% embed '@OroProduct/Product/widget/info.html.twig' with {'product': entity} %}
@@ -54,6 +48,56 @@
             {% block images %}{% endblock %}
         {% endembed %}
     {% endset %}
+
+    {% set additionalGeneralData = {
+        'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
+    } %}
+
+    {% if oro_is_product_primary_unit_visible(entity) %}
+        {% set primaryUnitPrecisionElement %}
+            {{ 'oro.product.productunitprecision.representation'|transchoice(
+                entity.primaryUnitPrecision.precision,
+                {
+                    '{{ label }}': ('oro.product_unit.'~ entity.primaryUnitPrecision.unit.code ~'.label.full')|trans
+                }
+            ) }}
+        {% endset %}
+        {% set additionalGeneralData = additionalGeneralData|merge({
+            'unitOfQuantity' : UI.renderProperty('oro.product.primary_unit_precision.label'|trans, primaryUnitPrecisionElement)
+        }) %}
+    {% endif %}
+
+    {% if entity.additionalUnitPrecisions.count %}
+        {% set titles = [
+            'oro.product.productunitprecision.unit.label'|trans,
+            'oro.product.productunitprecision.precision.label'|trans,
+            'oro.product.productunitprecision.of'|trans ~ ' ' ~('oro.product_unit.'~ entity.primaryUnitPrecision.unit.code ~'.label.full')|trans,
+            'oro.product.productunitprecision.sell.label'|trans
+        ] %}
+        {% set rows = [] %}
+        {% for unitPrecision in entity.additionalUnitPrecisions %}
+            {% set sell = unitPrecision.sell ? 'oro.product.productunitprecision.sell_yes.label'|trans : 'oro.product.productunitprecision.sell_not.label'|trans %}
+            {% set row = [
+                ('oro.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
+                unitPrecision.precision,
+                unitPrecision.conversionRate,
+                sell
+            ] %}
+            {% set rows = rows|merge([row]) %}
+        {% endfor %}
+
+        {% set additionalGeneralData = additionalGeneralData|merge({
+            'additionalUnitPrecisions' : UI.renderHtmlProperty(
+                'oro.product.additional_unit_precisions.label'|trans,
+                UI.renderTable(titles,rows,"grid table unit-table"),
+                null,
+                null,
+                {
+                    rootClass: 'attribute-item--mobile-full'
+                }
+            )
+        }) %}
+    {% endif %}
 
     {% set dataBlocks = {
         'general': {
@@ -67,13 +111,29 @@
                         'attributeFamily': UI.renderProperty('oro.product.attribute_family.label'|trans, entity.attributeFamily),
                         'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans),
                         'newArrival': UI.renderProperty('oro.product.new_arrival.label'|trans, entity.newArrival ? 'oro.product.new_arrival.yes'|trans : 'oro.product.new_arrival.no'|trans),
-                        'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
                     }
                 },
-                {'data' : {
-                    'shortDescriptions': productShortDescription,
-                    'descriptions': productDescription,
-                }}
+                {'data' : additionalGeneralData}
+            ]
+        },
+        'short_description': {
+            'title': 'oro.product.short_descriptions.label'|trans,
+            'subblocks': [
+                {
+                    'data' : {
+                        'shortDescriptions': UI.renderCollapsibleHtml(entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
+                    }
+                }
+            ]
+        },
+        'description': {
+            'title': 'oro.product.descriptions.label'|trans,
+            'subblocks': [
+                {
+                    'data' : {
+                        'descriptions': UI.renderCollapsibleHtml(entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
+                    }
+                }
             ]
         }
     } %}
@@ -81,7 +141,6 @@
     {% if entity.isConfigurable %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
-            'priority': 100,
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,
@@ -119,76 +178,17 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
-            'priority': 200,
+            'priority': 100,
             'subblocks': [{
                 'data': {'images': imagesData}
             }]
         }
     }) %}
 
-    {% set unitOfQuantityData = {} %}
-
-    {% if oro_is_product_primary_unit_visible(entity) %}
-        {% set primaryUnitPrecisionElement %}
-            {{ 'oro.product.productunitprecision.representation'|transchoice(
-            entity.primaryUnitPrecision.precision,
-            {
-                '{{ label }}': ('oro.product_unit.'~ entity.primaryUnitPrecision.unit.code ~'.label.full')|trans
-            }
-            ) }}
-        {% endset %}
-        {% set unitOfQuantityData = { 'unitOfQuantity' : UI.renderProperty('oro.product.productunitprecision.unit.label'|trans, primaryUnitPrecisionElement) } %}
-    {% endif %}
-
-    {% if entity.additionalUnitPrecisions.count %}
-        {% set titles = [
-            'oro.product.productunitprecision.unit.label'|trans,
-            'oro.product.productunitprecision.precision.label'|trans,
-            'oro.product.productunitprecision.of'|trans ~ ' ' ~('oro.product_unit.'~ entity.primaryUnitPrecision.unit.code ~'.label.full')|trans,
-            'oro.product.productunitprecision.sell.label'|trans
-        ] %}
-        {% set rows = [] %}
-        {% for unitPrecision in entity.additionalUnitPrecisions %}
-            {% set sell = unitPrecision.sell ? 'oro.product.productunitprecision.sell_yes.label'|trans : 'oro.product.productunitprecision.sell_not.label'|trans %}
-            {% set row = [
-                ('oro.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
-                unitPrecision.precision,
-                unitPrecision.conversionRate,
-                sell
-            ] %}
-            {% set rows = rows|merge([row]) %}
-        {% endfor %}
-
-        {% set unitOfQuantityData = unitOfQuantityData|merge({
-            'additionalUnitPrecisions' : UI.renderHtmlProperty(
-                'oro.product.additional_unit_precisions.label'|trans,
-                UI.renderTable(titles,rows,"grid table unit-table"),
-                null,
-                null,
-                {
-                    rootClass: 'attribute-item--mobile-full'
-                }
-            )
-        }) %}
-
-    {% endif %}
-
-    {% if unitOfQuantityData is not empty %}
-        {% set dataBlocks = dataBlocks|merge({
-            'unit_of_quantity': {
-                'title' : 'oro.product.primary_unit_precision.label'|trans,
-                'priority': 300,
-                'subblocks': [{
-                    'data': unitOfQuantityData
-                }]
-            }
-        }) %}
-    {% endif %}
-
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
-            'priority': 400,
+            'priority': 1400,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -287,7 +287,7 @@
             'relatedItems': {
                 'title': get_related_items_translation_key()|trans,
                 'headerLinkContent': headerLinkContent,
-                'priority': 450,
+                'priority': 1500,
                 'subblocks': [{
                     'data': [relatedItemsTabs]|merge(relatedItemsSubblocks)
                 }]
@@ -311,7 +311,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
-            'priority': 700,
+            'priority': 200,
             'subblocks': [{
                 'data': {'pageTemplate': pageTemplatesData }
             }]

@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var ProductCollectionApplyQueryComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var InclusionExclusionSubComponent =
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const StandardConfirmation = require('oroui/js/standart-confirmation');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const InclusionExclusionSubComponent =
         require('oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent');
-    var SelectedProductGridSubComponent =
+    const SelectedProductGridSubComponent =
         require('oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent');
 
     /**
      * Perform synchronization between segment definition filters block and grid. By click on "apply the query" button
      * will apply the definition filters to the related grid.
      */
-    ProductCollectionApplyQueryComponent = BaseComponent.extend({
+    const ProductCollectionApplyQueryComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -115,8 +114,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductCollectionApplyQueryComponent() {
-            ProductCollectionApplyQueryComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductCollectionApplyQueryComponent(options) {
+            ProductCollectionApplyQueryComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -209,7 +208,7 @@ define(function(require) {
         },
 
         onReset: function(e) {
-            var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
+            const filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
             this.updateSegmentDefinitionValue('filters', filters);
             this.currentDefinitionState = this.initialDefinitionState;
             this.$included.val(this.initialIncluded).trigger('change');
@@ -222,21 +221,21 @@ define(function(require) {
          * @param {Object} data
          */
         onFiltersValidate: function(e, data) {
-            var filters = this.fetchSegmentDefinitionValue('filters');
+            const filters = this.fetchSegmentDefinitionValue('filters');
             if (!_.isEmpty(filters) || this.$included.val()) {
                 data.result = true;
             }
         },
 
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
                 return _.isUndefined(this.options[option]);
             }, this));
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
+            const requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
@@ -251,7 +250,7 @@ define(function(require) {
          * @private
          */
         _applyQuery: function(reload) {
-            var parameters = {
+            const parameters = {
                 updateUrl: false,
                 reload: reload,
                 params: {}
@@ -273,7 +272,7 @@ define(function(require) {
         },
 
         _getSegmentDefinitionInput: function() {
-            var name = this.options.segmentDefinitionFieldName;
+            const name = this.options.segmentDefinitionFieldName;
             return $(this.options.segmentDefinitionSelectorTemplate.replace('%s', name));
         },
 
@@ -283,8 +282,8 @@ define(function(require) {
          * @param {string=} key name of data branch
          */
         fetchSegmentDefinitionValue: function(key) {
-            var data = {};
-            var json = this._getSegmentDefinitionInput().val();
+            let data = {};
+            const json = this._getSegmentDefinitionInput().val();
             if (json) {
                 try {
                     data = JSON.parse(json);
@@ -301,12 +300,12 @@ define(function(require) {
          * @param {Object|string} value data if single argument is passed or key name of data branch
          * @param {Object=} value data for data branch
          */
-        updateSegmentDefinitionValue: function(value) {
-            var key;
-            var data = this.fetchSegmentDefinitionValue();
-            if (arguments.length === 2) {
+        updateSegmentDefinitionValue: function(value, ...rest) {
+            let key;
+            let data = this.fetchSegmentDefinitionValue();
+            if (rest.length === 1) {
                 key = value;
-                value = arguments[1];
+                value = rest[0];
                 data[key] = value;
             } else {
                 data = value;
@@ -341,7 +340,7 @@ define(function(require) {
          * @private
          */
         _showConfirmModal: function() {
-            var confirmModal = new StandardConfirmation({
+            const confirmModal = new StandardConfirmation({
                 content: __('oro.product.product_collection.filter_query.confirmation_modal_content'),
                 okText: __('oro.product.product_collection.filter_query.continue')
             });
@@ -354,7 +353,7 @@ define(function(require) {
          * @private
          */
         _initializeInclusionExclusionSubComponent: function() {
-            var options = {
+            const options = {
                 _sourceElement: this.options._sourceElement,
                 scope: this.options.scope,
                 selectors: {
@@ -369,7 +368,7 @@ define(function(require) {
          * @private
          */
         _initializeSelectedProductGridsSubComponent: function() {
-            var options = {
+            const options = {
                 _sourceElement: this.options._sourceElement,
                 applyQueryEventName: this.applyQueryEventName,
                 excludedControlsBlockAlias: this.options.excludedControlsBlockAlias,
@@ -389,20 +388,20 @@ define(function(require) {
          * @private
          */
         _isConditionBuilderValid: function() {
-            var $form = this.$form;
+            const $form = this.$form;
             if (!$form.data('validator')) {
                 return true;
             }
 
             $form.valid();
 
-            var invalidElements = $form.validate().invalidElements();
+            const invalidElements = $form.validate().invalidElements();
             if (!invalidElements.length) {
                 return true;
             }
 
-            var $conditionBuilder = this.options._sourceElement.find('.condition-builder');
-            var conditionBuilderInvalidElements = _.filter(invalidElements, _.bind(function(value) {
+            const $conditionBuilder = this.options._sourceElement.find('.condition-builder');
+            const conditionBuilderInvalidElements = _.filter(invalidElements, _.bind(function(value) {
                 return $.contains($conditionBuilder[0], value);
             }, this));
 
@@ -416,7 +415,7 @@ define(function(require) {
          * @private
          */
         _enableHiddenFieldValidation: function() {
-            var $form = this.$form;
+            const $form = this.$form;
             if ($form.data('validator')) {
                 $form.validate()
                     .settings

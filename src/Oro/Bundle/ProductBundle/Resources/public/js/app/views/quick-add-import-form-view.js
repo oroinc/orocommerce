@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddImportFormView;
-    var _ = require('underscore');
-    var QuickAddImportWidget = require('oro/quick-add-import-widget');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const QuickAddImportWidget = require('oro/quick-add-import-widget');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    QuickAddImportFormView = BaseView.extend({
+    const QuickAddImportFormView = BaseView.extend({
         /**
          * @type {string}
          */
@@ -43,7 +42,7 @@ define(function(require) {
             QuickAddImportFormView.__super__.delegateEvents.call(this);
 
             if (this.droppableContainer) {
-                var events = _.reduce({
+                const events = _.reduce({
                     dragenter: 'onDragenter',
                     dragover: 'onDragover',
                     dragleave: 'onDragleave',
@@ -124,7 +123,7 @@ define(function(require) {
         },
 
         getWidget: function() {
-            var widget = new QuickAddImportWidget();
+            const widget = new QuickAddImportWidget();
 
             widget.once('contentLoad', this.onWidgetContentLoad.bind(this));
 

@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var PriceListCurrencyLimitationView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    PriceListCurrencyLimitationView = BaseView.extend({
+    const PriceListCurrencyLimitationView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -28,7 +27,7 @@ define(function(require) {
          * @inheritDoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['change ' + this.options.priceListSelector] = this.prepareCurrencySelect.bind(this, true);
             return events;
         },
@@ -74,15 +73,15 @@ define(function(require) {
          * @return {Object.<string, HTMLOptionElement>}
          */
         getSystemSupportedCurrencyOptions: function() {
-            var $collectionContainer = this.$el.closest(this.options.container);
-            var currencyOptions = $collectionContainer.data('systemSupportedCurrencyOptions');
+            const $collectionContainer = this.$el.closest(this.options.container);
+            let currencyOptions = $collectionContainer.data('systemSupportedCurrencyOptions');
 
             if (!currencyOptions) {
                 currencyOptions = {};
                 $($collectionContainer.data('prototype'))
                     .find(this.options.currencySelector + ' option')
                     .each(function(i, option) {
-                        var optionClone = option.cloneNode(true);
+                        const optionClone = option.cloneNode(true);
                         optionClone.removeAttribute('selected');
                         currencyOptions[optionClone.value] = optionClone;
                     });
@@ -98,10 +97,10 @@ define(function(require) {
          *  @param {Boolean} selectFirst
          */
         prepareCurrencySelect: function(selectFirst) {
-            var priceListId = this.$(this.options.priceListSelector).val();
+            const priceListId = this.$(this.options.priceListSelector).val();
 
             if (!priceListId) {
-                var $currencySelect = this.$(this.options.currencySelector);
+                const $currencySelect = this.$(this.options.currencySelector);
                 $currencySelect.find('option[value=""]').show();
                 $currencySelect.attr('disabled', 'disabled');
                 $currencySelect.val('');
@@ -112,7 +111,7 @@ define(function(require) {
             if (_.has(this.currencies, priceListId)) {
                 this.handleCurrencies(this.currencies[priceListId], selectFirst);
             } else {
-                var loadingMaskView = this.getLoadingMaskView();
+                const loadingMaskView = this.getLoadingMaskView();
                 $.ajax({
                     url: routing.generate(this.options.currenciesRoute, {id: priceListId}),
                     type: 'GET',
@@ -120,7 +119,7 @@ define(function(require) {
                         loadingMaskView.show();
                     },
                     success: function(response) {
-                        var priceListCurrencies = _.keys(response);
+                        const priceListCurrencies = _.keys(response);
                         this.currencies[priceListId] = priceListCurrencies;
                         this.$el.closest(this.options.container).data('currencies', this.currencies);
                         this.handleCurrencies(priceListCurrencies, selectFirst);
@@ -142,10 +141,10 @@ define(function(require) {
                 priceListCurrencies.unshift('');
             }
 
-            var optionElements = [];
-            var systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
-            var $currencySelect = this.$(this.options.currencySelector);
-            var value = $currencySelect.val();
+            const optionElements = [];
+            const systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
+            const $currencySelect = this.$(this.options.currencySelector);
+            const value = $currencySelect.val();
             $currencySelect.empty();
             _.each(priceListCurrencies, function(currency) {
                 if (currency in systemSupportedCurrencyOptions) {
@@ -172,7 +171,7 @@ define(function(require) {
          * @return {LoadingMaskView}
          */
         getLoadingMaskView: function() {
-            var loadingMaskView = this.subview('loading-mask');
+            let loadingMaskView = this.subview('loading-mask');
             if (!loadingMaskView) {
                 loadingMaskView = new LoadingMaskView({container: this.$el});
                 this.subview('loading-mask', loadingMaskView);

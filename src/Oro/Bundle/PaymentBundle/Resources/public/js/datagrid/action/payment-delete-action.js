@@ -7,8 +7,6 @@ define([
 ], function(_, messenger, __, DeleteConfirmation, DeleteAction) {
     'use strict';
 
-    var PaymentDeleteAction;
-
     /**
      * Delete action with confirm dialog, triggers REST DELETE request
      *
@@ -16,7 +14,7 @@ define([
      * @class   oro.datagrid.action.PaymentDeleteAction
      * @extends oro.datagrid.action.DeleteAction
      */
-    PaymentDeleteAction = DeleteAction.extend({
+    const PaymentDeleteAction = DeleteAction.extend({
 
         /** @property {Function} */
         confirmModalConstructor: DeleteConfirmation,
@@ -27,8 +25,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function PaymentDeleteAction() {
-            PaymentDeleteAction.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentDeleteAction(options) {
+            PaymentDeleteAction.__super__.constructor.call(this, options);
         },
 
         /**
@@ -39,11 +37,11 @@ define([
                 this.confirm_content = this.model.get('payment_delete_message');
             }
 
-            DeleteAction.__super__.initialize.apply(this, arguments);
+            DeleteAction.__super__.initialize.call(this, options);
         },
 
         getConfirmDialogOptions: function() {
-            var options = {
+            const options = {
                 title: __(this.messages.confirm_title),
                 content: this.confirm_content,
                 okText: __(this.messages.confirm_ok),

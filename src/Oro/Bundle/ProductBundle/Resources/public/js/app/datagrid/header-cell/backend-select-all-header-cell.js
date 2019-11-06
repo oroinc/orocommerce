@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var BackendSelectAllHeaderCell;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
-    var additionalTpl = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
-    var SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
+    const additionalTpl = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
+    const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
 
-    BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
+    const BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
         /** @property */
         autoRender: true,
 
@@ -24,8 +23,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function BackendSelectAllHeaderCell() {
-            BackendSelectAllHeaderCell.__super__.constructor.apply(this, arguments);
+        constructor: function BackendSelectAllHeaderCell(options) {
+            BackendSelectAllHeaderCell.__super__.constructor.call(this, options);
         },
 
         /**
@@ -65,7 +64,7 @@ define(function(require) {
         },
 
         onCheckboxChange: function(event) {
-            var checked = $(event.currentTarget).is(':checked');
+            const checked = $(event.currentTarget).is(':checked');
 
             if (!checked) {
                 this.collection.trigger('backgrid:selectNone');

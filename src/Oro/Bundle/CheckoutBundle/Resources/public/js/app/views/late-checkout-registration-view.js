@@ -2,12 +2,11 @@
 define(function(require) {
     'use strict';
 
-    var LateRegistrationView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/views/base/view');
 
-    LateRegistrationView = BaseComponent.extend({
+    const LateRegistrationView = BaseComponent.extend({
 
         /**
          * @property {jQuery}
@@ -24,8 +23,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LateRegistrationView() {
-            LateRegistrationView.__super__.constructor.apply(this, arguments);
+        constructor: function LateRegistrationView(options) {
+            LateRegistrationView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -41,8 +40,8 @@ define(function(require) {
         },
 
         onOptionChange: function() {
-            var inputs = this.$fieldsContainer.find('input');
-            var validationDisabled = false;
+            const inputs = this.$fieldsContainer.find('input');
+            let validationDisabled = false;
             if ($(this.$switcher).is(':checked')) {
                 $(this.$fieldsContainer).show();
             } else {

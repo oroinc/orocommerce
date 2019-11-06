@@ -8,14 +8,12 @@ define([
 ], function($, Backbone, _, __, mediator, DeleteConfirmation) {
     'use strict';
 
-    var ContentWidgetView;
-
     /**
      * @export  orointegration/js/channel-view
      * @class   orointegration.channelView
      * @extends Backbone.View
      */
-    ContentWidgetView = Backbone.View.extend({
+    const ContentWidgetView = Backbone.View.extend({
         /**
          * @type {Object}
          */
@@ -34,15 +32,15 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function ContentWidgetView() {
-            ContentWidgetView.__super__.constructor.apply(this, arguments);
+        constructor: function ContentWidgetView(options) {
+            ContentWidgetView.__super__.constructor.call(this, options);
         },
 
         /**
          * @param options Object
          */
         initialize: function(options) {
-            var requiredMissed = this.requiredOptions.filter(function(option) {
+            const requiredMissed = this.requiredOptions.filter(function(option) {
                 return _.isUndefined(options[option]);
             });
             if (requiredMissed.length) {
@@ -61,17 +59,17 @@ define([
          * @param {$.Event} e
          */
         changeHandler: function(e) {
-            var $el = $(e.currentTarget);
+            const $el = $(e.currentTarget);
 
             if ($el.data('cancelled') === true) {
                 $el.data('cancelled', false);
             } else {
-                var prevVal = $el.data('current');
+                const prevVal = $el.data('current');
 
                 if (this.isEmpty()) {
                     this.processChange($el);
                 } else {
-                    var confirm = new DeleteConfirmation({
+                    const confirm = new DeleteConfirmation({
                         title: __('oro.cms.change_type.confirmation.title'),
                         okText: __('Yes'),
                         content: __('oro.cms.change_type.confirmation.body')
@@ -99,11 +97,11 @@ define([
         processChange: function($el) {
             this.memoizeValue($el);
 
-            var $form = $(this.options.formSelector);
-            var url = $form.attr('action');
-            var fieldsSet = this.options.fieldsSets;
+            const $form = $(this.options.formSelector);
+            const url = $form.attr('action');
+            const fieldsSet = this.options.fieldsSets;
 
-            var data = _.filter($form.serializeArray(), function(field) {
+            const data = _.filter($form.serializeArray(), function(field) {
                 return _.indexOf(fieldsSet, field.name) !== -1;
             });
             data.push({name: this.options.updateMarker, value: $el.attr('name')});
@@ -117,8 +115,8 @@ define([
          * @returns {boolean}
          */
         isEmpty: function() {
-            var fieldsSet = this.options.fieldsSets;
-            var fields = $(this.options.formSelector)
+            const fieldsSet = this.options.fieldsSets;
+            const fields = $(this.options.formSelector)
                 .find('input[type="text"],textarea')
                 .filter(function() {
                     return this.name && _.indexOf(fieldsSet, this.name) === -1 && this.value !== '';
@@ -133,7 +131,7 @@ define([
          * @param {$.element} el
          */
         memoizeValue: function(el) {
-            var $el = $(el);
+            const $el = $(el);
             $el.data('current', $el.val());
         }
     });

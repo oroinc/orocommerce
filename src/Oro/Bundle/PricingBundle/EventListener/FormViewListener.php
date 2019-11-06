@@ -27,8 +27,8 @@ class FormViewListener implements FeatureToggleableInterface
     const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
     const PRICING_BLOCK_NAME = 'prices';
 
-    const PRICING_BLOCK_PRIORITY = 550;
-    const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 500;
+    const PRICING_BLOCK_PRIORITY = 1650;
+    const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 1600;
 
     /**
      * @var AuthorizationCheckerInterface
@@ -105,7 +105,7 @@ class FormViewListener implements FeatureToggleableInterface
         );
         $scrollData = $event->getScrollData();
         $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
-        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 10);
+        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 1600);
         $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
         $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $template, 'productPriceAttributesPrices');
     }

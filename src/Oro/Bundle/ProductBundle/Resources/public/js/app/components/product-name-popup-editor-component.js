@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ProductNamePopupEditorComponent;
-    var CellPopupEditorComponent = require('orodatagrid/js/app/components/cell-popup-editor-component');
-    var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
-    var routing = require('routing');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const CellPopupEditorComponent = require('orodatagrid/js/app/components/cell-popup-editor-component');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const mediator = require('oroui/js/mediator');
+    const messenger = require('oroui/js/messenger');
+    const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    ProductNamePopupEditorComponent =
+    const ProductNamePopupEditorComponent =
         CellPopupEditorComponent.extend(/** @exports ProductNamePopupEditorComponent.prototype */{
             /**
              * @property {Object}
@@ -33,8 +32,8 @@ define(function(require) {
             /**
              * @inheritDoc
              */
-            constructor: function ProductNamePopupEditorComponent() {
-                ProductNamePopupEditorComponent.__super__.constructor.apply(this, arguments);
+            constructor: function ProductNamePopupEditorComponent(options) {
+                ProductNamePopupEditorComponent.__super__.constructor.call(this, options);
             },
 
             /**
@@ -43,7 +42,7 @@ define(function(require) {
             initialize: function(options) {
                 this.options = _.defaults(options || {}, this.options);
 
-                return ProductNamePopupEditorComponent.__super__.initialize.apply(this, arguments);
+                return ProductNamePopupEditorComponent.__super__.initialize.call(this, options);
             },
 
             /**
@@ -64,8 +63,8 @@ define(function(require) {
                     this.confirmModalOpened = true;
                 }
 
-                var urls = {};
-                var that = this;
+                let urls = {};
+                const that = this;
 
                 mediator.execute('showLoading');
                 $.ajax({
@@ -119,7 +118,7 @@ define(function(require) {
              * @return {Object}
              */
             getServerUpdateData: function() {
-                var data = this.view.getServerUpdateData();
+                const data = this.view.getServerUpdateData();
                 data.createRedirect = this.createRedirectOption;
 
                 return data;
@@ -131,8 +130,8 @@ define(function(require) {
                 * @private
             */
             _getUrlsList: function(urls) {
-                var list = '';
-                for (var localization in urls) {
+                let list = '';
+                for (const localization in urls) {
                     if (urls.hasOwnProperty(localization)) {
                         list += '\n' + __(
                             'oro.redirect.confirm_slug_change.changed_localized_slug_item',

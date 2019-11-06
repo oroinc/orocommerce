@@ -31,8 +31,8 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
     private $configurationProvider;
 
     /**
-     * @param AttributeManager               $attributeManager
-     * @param AttributeTypeRegistry          $attributeTypeRegistry
+     * @param AttributeManager                        $attributeManager
+     * @param AttributeTypeRegistry                   $attributeTypeRegistry
      * @param AttributeConfigurationProviderInterface $configurationProvider
      */
     public function __construct(

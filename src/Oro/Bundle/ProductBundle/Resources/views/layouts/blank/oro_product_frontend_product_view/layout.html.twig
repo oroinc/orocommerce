@@ -127,7 +127,7 @@
 
     <div {{ block('block_attributes') }}>
         <div class="collapse-view__container tiny-container" data-collapse-container>
-            {{ description|raw }}
+            {{ description|raw|render_content}}
         </div>
         <a href="#" class="collapse-view__trigger" data-collapse-trigger>
             <i class="collapse-view__trigger-icon fa-chevron-down"></i>

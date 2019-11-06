@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var FullscreenAttributeGroupTabContentComponent;
-    var AttributeGroupTabContentComponent = require('oroentityconfig/js/attribute-group-tab-content-component');
-    var FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
-    var viewportManager = require('oroui/js/viewport-manager');
+    const AttributeGroupTabContentComponent = require('oroentityconfig/js/attribute-group-tab-content-component');
+    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
+    const viewportManager = require('oroui/js/viewport-manager');
 
-    FullscreenAttributeGroupTabContentComponent = AttributeGroupTabContentComponent.extend({
+    const FullscreenAttributeGroupTabContentComponent = AttributeGroupTabContentComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function FullscreenAttributeGroupTabContentComponent() {
-            FullscreenAttributeGroupTabContentComponent.__super__.constructor.apply(this, arguments);
+        constructor: function FullscreenAttributeGroupTabContentComponent(options) {
+            FullscreenAttributeGroupTabContentComponent.__super__.constructor.call(this, options);
         },
 
         /**

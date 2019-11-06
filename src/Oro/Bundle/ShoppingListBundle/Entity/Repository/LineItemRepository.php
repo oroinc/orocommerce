@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -10,6 +11,9 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Entity repository for Shopping List Line Item entity
+ */
 class LineItemRepository extends EntityRepository
 {
     /**
@@ -202,5 +206,36 @@ DQL;
         }, $result);
 
         return $result;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $allowedInventoryStatuses
+     */
+    public function deleteItemsByShoppingListAndInventoryStatuses(
+        ShoppingList $shoppingList,
+        array $allowedInventoryStatuses
+    ) {
+        $lineItemsQB = $this->createQueryBuilder('li');
+        $lineItemsQB->select('li.id')
+            ->join('li.product', 'p')
+            ->where($lineItemsQB->expr()->notIn('IDENTITY(p.inventory_status)', ':allowedInventoryStatuses'))
+            ->andWhere($lineItemsQB->expr()->eq('li.shoppingList', ':shoppingList'))
+            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('allowedInventoryStatuses', $allowedInventoryStatuses);
+        $query = $lineItemsQB->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+        $ids = $query->getResult($identifierHydrationMode);
+
+        $deleteQb = $this->getEntityManager()->createQueryBuilder();
+        $deleteQb->delete()
+            ->from($this->getEntityName(), 'li')
+            ->where($deleteQb->expr()->in('li.id', ':ids'));
+        $deleteQb->getQuery()->execute(['ids' => $ids]);
     }
 }

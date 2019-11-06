@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var BackendActionsPanel;
-    var _ = require('underscore');
-    var ActionsPanel = require('orodatagrid/js/datagrid/actions-panel');
+    const _ = require('underscore');
+    const ActionsPanel = require('orodatagrid/js/datagrid/actions-panel');
 
-    BackendActionsPanel = ActionsPanel.extend({
+    const BackendActionsPanel = ActionsPanel.extend({
         /**
          * @inheritDoc
          */
-        constructor: function BackendActionsPanel() {
-            BackendActionsPanel.__super__.constructor.apply(this, arguments);
+        constructor: function BackendActionsPanel(options) {
+            BackendActionsPanel.__super__.constructor.call(this, options);
         },
 
         /**
@@ -19,12 +18,12 @@ define(function(require) {
          * @return {*}
          */
         render: function() {
-            var currentLauncherIsPresent = !!_.filter(this.launchers, function(launcher) {
+            const currentLauncherIsPresent = !!_.filter(this.launchers, function(launcher) {
                 return launcher.action.is_current === true;
             }).length;
 
             _.each(this.launchers, function(launcher, index) {
-                var $el = null;
+                let $el = null;
 
                 if (currentLauncherIsPresent) {
                     $el = this.findContainer(launcher, launcher.action.is_current);
@@ -42,7 +41,7 @@ define(function(require) {
          * @param {Boolean} pasteToExtraPanel
          */
         findContainer: function(launcher, pasteToExtraPanel) {
-            var $el = this.$el;
+            let $el = this.$el;
 
             if (this.massActionsInSticky) {
                 if (pasteToExtraPanel) {

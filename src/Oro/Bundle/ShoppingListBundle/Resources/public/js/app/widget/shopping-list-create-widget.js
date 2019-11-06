@@ -1,27 +1,26 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListCreateWidget;
-    var routing = require('routing');
-    var DialogWidget = require('oro/dialog-widget');
-    var _ = require('underscore');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const routing = require('routing');
+    const DialogWidget = require('oro/dialog-widget');
+    const _ = require('underscore');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ShoppingListCreateWidget = DialogWidget.extend({
+    const ShoppingListCreateWidget = DialogWidget.extend({
         shoppingListCollection: null,
 
         /**
          * @inheritDoc
          */
-        constructor: function ShoppingListCreateWidget() {
-            ShoppingListCreateWidget.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListCreateWidget(options) {
+            ShoppingListCreateWidget.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            var urlOptions = {};
+            const urlOptions = {};
             if (options.createOnly) {
                 urlOptions.createOnly = true;
             }
@@ -46,7 +45,7 @@ define(function(require) {
                 this.shoppingListCollection = collection;
             }, this));
 
-            ShoppingListCreateWidget.__super__.initialize.apply(this, arguments);
+            ShoppingListCreateWidget.__super__.initialize.call(this, options);
         },
 
         dispose: function() {
@@ -54,11 +53,11 @@ define(function(require) {
                 return;
             }
             delete this.shoppingListCollection;
-            return ShoppingListCreateWidget.__super__.dispose.apply(this, arguments);
+            return ShoppingListCreateWidget.__super__.dispose.call(this);
         },
 
         onFormSave: function(data) {
-            var label = data.label || this.$el.find('.form-field-label').val();
+            const label = data.label || this.$el.find('.form-field-label').val();
             if (this.shoppingListCollection.length) {
                 this.shoppingListCollection.each(function(model) {
                     model.set('is_current', model.get('id') === data.savedId, {silent: true});

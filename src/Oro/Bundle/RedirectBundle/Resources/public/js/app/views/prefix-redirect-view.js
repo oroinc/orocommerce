@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var PrefixRedirect;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orowebcatalog/js/app/views/scope-toggle-view
      * @extends oroui.app.views.base.View
      * @class orowebcatalog.app.views.PrefixRedirect
      */
-    PrefixRedirect = BaseView.extend({
+    const PrefixRedirect = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -48,8 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function PrefixRedirect() {
-            PrefixRedirect.__super__.constructor.apply(this, arguments);
+        constructor: function PrefixRedirect(options) {
+            PrefixRedirect.__super__.constructor.call(this, options);
         },
 
         /**

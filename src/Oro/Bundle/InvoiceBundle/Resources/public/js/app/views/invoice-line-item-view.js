@@ -1,22 +1,21 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
-    var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
-    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var mediator = require('oroui/js/mediator');
-    var localeSettings = require('orolocale/js/locale-settings');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    const ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
+    const TotalsListener = require('oropricing/js/app/listener/totals-listener');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const mediator = require('oroui/js/mediator');
+    const localeSettings = require('orolocale/js/locale-settings');
 
     /**
      * @export oroinvoice/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class orob2invoice.app.views.LineItemView
      */
-    LineItemView = LineItemProductView.extend({
+    const LineItemView = LineItemProductView.extend({
         options: {
             priceTypes: {
                 BUNDLE: 20,
@@ -39,8 +38,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -54,13 +53,13 @@ define(function(require) {
             this.$el.on('click', '.removeLineItem', this._removeRow);
             mediator.on('update:currency', this._updateCurrency, this);
 
-            LineItemView.__super__.initialize.apply(this, arguments);
+            LineItemView.__super__.initialize.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
-        handleLayoutInit: function() {
+        handleLayoutInit: function(options) {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
@@ -75,7 +74,7 @@ define(function(require) {
             this.initItemTotal();
             mediator.trigger('invoice-line-item:created', this.$el);
 
-            LineItemView.__super__.handleLayoutInit.apply(this, arguments);
+            LineItemView.__super__.handleLayoutInit.call(this, options);
         },
 
         initSubtotalListener: function() {
@@ -89,7 +88,7 @@ define(function(require) {
         },
 
         initUnitLoader: function(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 _sourceElement: this.$el,
                 productSelector: this.options.selectors.productSelector,
                 quantitySelector: this.options.selectors.quantitySelector,
@@ -104,15 +103,15 @@ define(function(require) {
         },
 
         initTypeSwitcher: function() {
-            var $product = this.$el.find('div' + this.options.selectors.productType);
-            var $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
+            const $product = this.$el.find('div' + this.options.selectors.productType);
+            const $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
 
-            var showFreeFormType = function() {
+            const showFreeFormType = function() {
                 $product.hide();
                 $freeForm.show();
             };
 
-            var showProductType = function() {
+            const showProductType = function() {
                 $freeForm.hide();
                 $product.show();
             };
@@ -140,7 +139,7 @@ define(function(require) {
                 this.fieldsByName.product.change(_.bind(function() {
                     this._resetData();
 
-                    var data = this.fieldsByName.product.inputWidget('data') || {};
+                    const data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).text(data.sku || null);
                 }, this));
             }
@@ -162,11 +161,11 @@ define(function(require) {
          * @returns {String}
          */
         _formFieldName: function(field) {
-            var name = '';
-            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
-            var namePart;
+            let name = '';
+            const nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            let namePart;
 
-            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+            for (let i = 0, iMax = nameParts.length; i < iMax; i++) {
                 namePart = nameParts[i];
                 if (!namePart.length) {
                     continue;
@@ -193,7 +192,7 @@ define(function(require) {
         },
 
         _setTotalPrice: function() {
-            var totalPrice;
+            let totalPrice;
             if (!this.fieldsByName.priceValue) {
                 return;
             }

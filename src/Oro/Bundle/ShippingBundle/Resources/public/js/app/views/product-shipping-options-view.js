@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ProductShippingOptionsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
 
-    ProductShippingOptionsView = BaseView.extend({
+    const ProductShippingOptionsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -37,8 +36,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductShippingOptionsView() {
-            ProductShippingOptionsView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductShippingOptionsView(options) {
+            ProductShippingOptionsView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -66,21 +65,21 @@ define(function(require) {
         },
 
         onContentChanged: function() {
-            var items = this.$el.find(this.options.selectors.itemContainer);
-            var self = this;
-            var productUnits = this.getProductUnits();
-            var selectedUnits = [];
-            var allSelectedUnits = [];
+            const items = this.$el.find(this.options.selectors.itemContainer);
+            const self = this;
+            const productUnits = this.getProductUnits();
+            const selectedUnits = [];
+            const allSelectedUnits = [];
 
             _.each(this.getSelects(), function(select) {
-                var currentValue = $(select).val();
+                const currentValue = $(select).val();
                 if (_.indexOf(_.keys(productUnits), currentValue) !== -1) {
                     allSelectedUnits.push(currentValue);
                 }
             });
 
             _.each(this.getSelects(), function(select) {
-                var $select = $(select);
+                const $select = $(select);
 
                 self.changeOptions(productUnits, allSelectedUnits, $select);
 
@@ -90,7 +89,7 @@ define(function(require) {
             });
 
             _.each(this.$el.find(this.options.selectors.subselects), function(select) {
-                var $first = $(select).find('option:not([value=""]):first');
+                const $first = $(select).find('option:not([value=""]):first');
                 if (!$(select).data('selected') && !$(select).val() && $first.length) {
                     $(select).val($first.val()).change();
                     $(select).data('selected', true);
@@ -120,9 +119,9 @@ define(function(require) {
          * @param {Object} productUnits
          */
         onPrecisionRemoved: function(productUnits) {
-            var self = this;
+            const self = this;
 
-            var selects = this.$el.find(this.options.selectSelector);
+            const selects = this.$el.find(this.options.selectSelector);
 
             _.each(selects, function(select) {
                 if (productUnits.hasOwnProperty($(select).val())) {
@@ -142,10 +141,10 @@ define(function(require) {
          * @returns {Object}
          */
         getProductUnits: function() {
-            var units = {};
-            var that = this;
+            let units = {};
+            const that = this;
             $.each($(':data(' + this.options.unitsAttribute + ')'), function(index, element) {
-                var elementUnits = $(element).data(that.options.unitsAttribute) || {};
+                const elementUnits = $(element).data(that.options.unitsAttribute) || {};
                 units = $.extend(units, elementUnits);
             });
 
@@ -167,7 +166,7 @@ define(function(require) {
          * @param {jQuery.Element} $select
          */
         changeOptions: function(units, allSelectedUnits, $select) {
-            var currentValue = $select.val();
+            let currentValue = $select.val();
 
             _.each(units, function(text, value) {
                 if (!$select.find('option[value="' + value + '"]').length) {
@@ -187,7 +186,7 @@ define(function(require) {
             });
 
             if (!currentValue) {
-                var $firstValue = $select.find('option:first');
+                const $firstValue = $select.find('option:first');
                 $select.val($firstValue.length ? $firstValue.val() : '');
 
                 if ($firstValue.length) {

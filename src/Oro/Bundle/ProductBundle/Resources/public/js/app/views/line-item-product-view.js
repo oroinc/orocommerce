@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var LineItemProductView;
-    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
-    var _ = require('underscore');
+    const BaseProductView = require('oroproduct/js/app/views/base-product-view');
+    const _ = require('underscore');
 
-    LineItemProductView = BaseProductView.extend({
+    const LineItemProductView = BaseProductView.extend({
         elements: _.extend({}, BaseProductView.prototype.elements, {
             id: '[data-name="field__product"]',
             quantity: '[data-name="field__quantity"]:first',
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function LineItemProductView() {
-            LineItemProductView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemProductView(options) {
+            LineItemProductView.__super__.constructor.call(this, options);
         }
     });
 

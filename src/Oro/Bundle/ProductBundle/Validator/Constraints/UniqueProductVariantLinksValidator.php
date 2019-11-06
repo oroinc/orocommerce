@@ -4,8 +4,9 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -15,6 +16,8 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
+    use ConfigurableProductAccessorTrait;
+
     const ALIAS = 'oro_product_unique_variant_links';
 
     /**
@@ -37,30 +40,19 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     }
 
     /**
-     * @param Product $value
      * @param UniqueProductVariantLinks|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_a($value, Product::class)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Entity must be instance of "%s", "%s" given',
-                    Product::class,
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
-        }
-
-        if (!$value->isConfigurable()) {
+        $product = $this->getConfigurableProduct($value, $constraint);
+        if ($product === null) {
             return;
         }
-
-        if (count($value->getVariantFields()) === 0) {
-            return;
+        if (count($product->getVariantFields()) === 0) {
+            return null;
         }
 
-        $this->validateUniqueVariantLinks($value, $constraint);
+        $this->validateUniqueVariantLinks($product, $constraint);
     }
 
     /**
@@ -115,14 +107,29 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             && $variantLinks instanceof AbstractLazyCollection
             && !$variantLinks->isInitialized()
         ) {
-            /** @var ProductRepository $repo */
-            $repo = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+            $repo = $this
+                ->registry
+                ->getManagerForClass(ProductVariantLink::class)
+                ->getRepository(ProductVariantLink::class);
 
-            return $repo->getSimpleProductsForConfigurableProduct($value);
+            // variantLinksInDb
+            $persistedProductVariantLinks = $repo->findBy([
+                'parentProduct' => $value
+            ]);
+
+            $variantLinkCollection = [];
+            // Merge items from DB with newly added or changes items
+            if ($variantLinks instanceof PersistentCollection) {
+                $variantLinkCollection = $variantLinks->unwrap()->toArray();
+            }
+
+            return array_map(function (ProductVariantLink $productVariantLink) {
+                return $productVariantLink->getProduct();
+            }, array_merge($variantLinkCollection, $persistedProductVariantLinks));
         }
 
         $simpleProducts = [];
-        foreach ($value->getVariantLinks() as $variantLink) {
+        foreach ($variantLinks as $variantLink) {
             if ($variantLink->getProduct()) {
                 $simpleProducts[] = $variantLink->getProduct();
             }

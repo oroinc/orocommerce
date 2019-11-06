@@ -235,7 +235,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
                     ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                    ScrollData::PRIORITY => 600
+                    ScrollData::PRIORITY => 1800
                 ],
             ],
         ];
@@ -271,7 +271,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
                     ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                    ScrollData::PRIORITY => 100
+                    ScrollData::PRIORITY => 1800
                 ],
             ],
         ];

@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ProductUnitPrecisionLimitationsComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const __ = require('orotranslation/js/translator');
 
-    ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
+    const ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -29,8 +28,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductUnitPrecisionLimitationsComponent() {
-            ProductUnitPrecisionLimitationsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductUnitPrecisionLimitationsComponent(options) {
+            ProductUnitPrecisionLimitationsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -49,13 +48,13 @@ define(function(require) {
          * Change options in selects
          */
         onChange: function() {
-            var self = this;
-            var units = this.getUnits();
+            const self = this;
+            const units = this.getUnits();
 
             _.each(this.getSelects(), function(select) {
-                var $select = $(select);
-                var clearChangeRequired = self.clearOptions(units, $select);
-                var addChangeRequired = self.addOptions(units, $select);
+                const $select = $(select);
+                const clearChangeRequired = self.clearOptions(units, $select);
+                const addChangeRequired = self.addOptions(units, $select);
                 if (clearChangeRequired || addChangeRequired) {
                     $select.trigger('change');
                 }
@@ -71,15 +70,15 @@ define(function(require) {
          * @return {Boolean}
          */
         clearOptions: function(units, $select) {
-            var updateRequired = false;
-            var self = this;
+            let updateRequired = false;
+            const self = this;
 
             _.each($select.find('option'), function(option) {
                 if (!option.value) {
                     return;
                 }
 
-                var $option = $(option);
+                const $option = $(option);
                 if (!units.hasOwnProperty(option.value)) {
                     if (option.selected !== true) {
                         $option.remove();
@@ -103,8 +102,8 @@ define(function(require) {
          * @return {Boolean}
          */
         addOptions: function(units, $select) {
-            var updateRequired = false;
-            var emptyOption = $select.find('option[value=""]');
+            let updateRequired = false;
+            const emptyOption = $select.find('option[value=""]');
 
             if (_.isEmpty(units)) {
                 emptyOption.show();
@@ -114,8 +113,8 @@ define(function(require) {
 
             _.each($select.find('option:contains( - )'), function(option) {
                 if (units.hasOwnProperty(option.value)) {
-                    var oldText = option.text;
-                    var newText = oldText.substring(0, oldText.indexOf(' - '));
+                    const oldText = option.text;
+                    const newText = oldText.substring(0, oldText.indexOf(' - '));
                     $(option).text(newText);
                     $select.closest('.oro-multiselect-holder').find('.validation-failed').hide();
                     updateRequired = true;
@@ -130,7 +129,7 @@ define(function(require) {
             });
 
             if ($select.val() === '' && !_.isEmpty(units)) {
-                var value = _.keys(units)[0];
+                const value = _.keys(units)[0];
                 $select.val(value);
                 updateRequired = true;
             }
@@ -153,10 +152,10 @@ define(function(require) {
          * @returns {Object}
          */
         getUnits: function() {
-            var units = {};
-            var attribute = this.options.unitsAttribute;
+            const units = {};
+            const attribute = this.options.unitsAttribute;
             _.each($(':data(' + attribute + ')'), function(container) {
-                var unit = $(container).data(attribute) || {};
+                const unit = $(container).data(attribute) || {};
                 _.each(unit, function(val, key) {
                     units[key] = val;
                 });
@@ -171,9 +170,9 @@ define(function(require) {
          * @returns {Object}
          */
         getUnitsWithPrices: function() {
-            var unitsWithPrice = {};
+            const unitsWithPrice = {};
             _.each(this.getSelects(), function(select) {
-                var selected = $(select).find('option:selected');
+                const selected = $(select).find('option:selected');
                 unitsWithPrice[selected.val()] = selected.text();
             });
 

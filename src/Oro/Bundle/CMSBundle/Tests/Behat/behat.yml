@@ -17,6 +17,9 @@ oro_behat_extension:
             route: 'oro_cms_page_index'
 
     elements:
+        WysiwygField:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 

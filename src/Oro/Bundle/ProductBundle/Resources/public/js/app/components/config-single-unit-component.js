@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var ConfigHideFieldsComponent;
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    ConfigHideFieldsComponent = BaseComponent.extend({
+    const ConfigHideFieldsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -34,8 +33,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ConfigHideFieldsComponent() {
-            ConfigHideFieldsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ConfigHideFieldsComponent(options) {
+            ConfigHideFieldsComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -48,7 +47,7 @@ define(function(require) {
             this.$el.inputWidget('create');
 
             this.$form = this.$el.closest('form');
-            var id = this.$el.data('dependency-id');
+            const id = this.$el.data('dependency-id');
 
             this.$dependedEl = this.$form.find('[data-depends-on-field="' + id + '"]');
 
@@ -70,7 +69,7 @@ define(function(require) {
         },
 
         updateDependentFields: function() {
-            var isChecked = this.$el.prop('checked');
+            const isChecked = this.$el.prop('checked');
 
             if (isChecked) {
                 this.$dependedEl.closest(this.options.selectors.row_container).show();

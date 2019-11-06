@@ -1,9 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
     require('jquery-elevatezoom');
 
     $.widget('oroproduct.zoomWidget', {
@@ -43,7 +43,7 @@ define(function(require) {
                 }
             }, this));
 
-            var initImage = this.element.data('slider:activeImage') || this.element.get(0);
+            const initImage = this.element.data('slider:activeImage') || this.element.get(0);
 
             mediator.on('widget:doRefresh', this._reset, this);
 
@@ -113,7 +113,7 @@ define(function(require) {
         _onZoomedImageLoaded: function() {
             this._zoomedImageLoadedState = true;
 
-            for (var i = 0; i < this._zoomedImageLoadedQueue.length; i++) {
+            for (let i = 0; i < this._zoomedImageLoadedQueue.length; i++) {
                 if (typeof this._zoomedImageLoadedQueue[i] === 'function') {
                     _.bind(this._zoomedImageLoadedQueue[i], this)();
                 }
@@ -130,24 +130,24 @@ define(function(require) {
          * @private
          */
         _resetImageProperty: function() {
-            var imageZoomData = this.element.data('elevateZoom');
+            const imageZoomData = this.element.data('elevateZoom');
 
             if (!imageZoomData) {
                 // Widget was destroyed, nothing to do
                 return;
             }
 
-            var imageLargeWidth = imageZoomData.largeWidth;
-            var imageLargeHeight = imageZoomData.largeHeight;
+            const imageLargeWidth = imageZoomData.largeWidth;
+            const imageLargeHeight = imageZoomData.largeHeight;
 
-            var zoomWindowWidth = this.options.zoomWindowWidth;
-            var zoomWindowHeight = this.options.zoomWindowHeight;
+            const zoomWindowWidth = this.options.zoomWindowWidth;
+            const zoomWindowHeight = this.options.zoomWindowHeight;
 
             // Check if image has small size
             if (imageLargeWidth <= zoomWindowWidth || imageLargeHeight <= zoomWindowHeight) {
                 // Increase large size of small image
-                var newImageZoomWidth = imageLargeWidth * 3;
-                var newImageZoomHeight = imageLargeHeight * 3;
+                const newImageZoomWidth = imageLargeWidth * 3;
+                const newImageZoomHeight = imageLargeHeight * 3;
 
                 imageZoomData.largeWidth = newImageZoomWidth;
                 imageZoomData.largeHeight = newImageZoomHeight;
@@ -168,16 +168,16 @@ define(function(require) {
          * @private
          */
         _setZoomWindowSize: function(activeImage) {
-            var imageWidth = $(activeImage).width();
-            var imageHeight = $(activeImage).height();
+            const imageWidth = $(activeImage).width();
+            const imageHeight = $(activeImage).height();
 
-            var zoomWindowHeight = this.options.zoomWindowHeight;
+            const zoomWindowHeight = this.options.zoomWindowHeight;
 
-            var maxZoomWindowWidth = this.options.maxZoomWindowWidth;
-            var minZoomWindowWidth = this.options.minZoomWindowWidth;
+            const maxZoomWindowWidth = this.options.maxZoomWindowWidth;
+            const minZoomWindowWidth = this.options.minZoomWindowWidth;
 
             // Calculate proportional size of zoom window
-            var proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
+            let proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
 
             // Check max zoom window width
             proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
@@ -195,7 +195,7 @@ define(function(require) {
          * @private
          */
         _removeZoomContainer: function() {
-            var elevateZoom = this.element.data('elevateZoom');
+            const elevateZoom = this.element.data('elevateZoom');
 
             if (elevateZoom && elevateZoom.zoomContainer) {
                 elevateZoom.zoomContainer.remove();

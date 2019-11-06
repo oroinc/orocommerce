@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var ProductShoppingListsWidget;
-    var DialogWidget = require('oro/dialog-widget');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var ApiAccessor = require('oroui/js/tools/api-accessor');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const DialogWidget = require('oro/dialog-widget');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
+    const ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
             actionWrapperTemplate: _.template('<div class="action-wrapper"/>'),
             preventModelRemoval: true,
@@ -71,8 +70,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ProductShoppingListsWidget() {
-            ProductShoppingListsWidget.__super__.constructor.apply(this, arguments);
+        constructor: function ProductShoppingListsWidget(options) {
+            ProductShoppingListsWidget.__super__.constructor.call(this, options);
         },
 
         /**
@@ -125,24 +124,24 @@ define(function(require) {
             this.disposeElements();
             delete this.shoppingListCollection;
             mediator.off(null, null, this);
-            ProductShoppingListsWidget.__super__.dispose.apply(this, arguments);
+            ProductShoppingListsWidget.__super__.dispose.call(this);
         },
 
-        delegateEvents: function() {
-            ProductShoppingListsWidget.__super__.delegateEvents.apply(this, arguments);
+        delegateEvents: function(events) {
+            ProductShoppingListsWidget.__super__.delegateEvents.call(this, events);
             this.delegateElementsEvents();
         },
 
         undelegateEvents: function() {
             this.undelegateElementsEvents();
-            return ProductShoppingListsWidget.__super__.undelegateEvents.apply(this, arguments);
+            return ProductShoppingListsWidget.__super__.undelegateEvents.call(this);
         },
 
         render: function() {
             this.clearElementsCache();
 
-            var shoppingLists = this.model.get('shopping_lists').map((function(item) {
-                var model = this.shoppingListCollection.get(item.id);
+            const shoppingLists = this.model.get('shopping_lists').map((function(item) {
+                const model = this.shoppingListCollection.get(item.id);
                 if (!model) {
                     return false;
                 }
@@ -164,12 +163,13 @@ define(function(require) {
                 shoppingListsCollection: this.shoppingListCollection,
                 productUnits: UnitsUtil.getUnitsLabel(this.model),
                 unit: this.model.get('unit'),
+                precision: this.model.get('product_units')[this.model.get('unit')],
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
                 isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this)
             })));
 
-            return ProductShoppingListsWidget.__super__.render.apply(this, arguments);
+            return ProductShoppingListsWidget.__super__.render.call(this);
         },
 
         isProductApplySingleUnitMode: function(productUnits) {
@@ -181,7 +181,7 @@ define(function(require) {
         },
 
         onLineItemDelete: function(deleteData) {
-            var shoppingLists = this.model.get('shopping_lists');
+            let shoppingLists = this.model.get('shopping_lists');
             shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
                     return lineItem.id !== deleteData.lineItemId;
@@ -197,7 +197,7 @@ define(function(require) {
         },
 
         onLineItemUpdate: function(updateData) {
-            var updatedShoppingLists = this.updateShoppingLists(
+            const updatedShoppingLists = this.updateShoppingLists(
                 this.model.get('shopping_lists'),
                 updateData.shoppingListId,
                 updateData.lineItemId,
@@ -216,17 +216,17 @@ define(function(require) {
         },
 
         onAddFormReset: function() {
-            var $form = this.getElement('addForm');
+            const $form = this.getElement('addForm');
 
             $form[0].reset();
             $form.find('select').inputWidget('refresh');
         },
 
         onAddFormShoppingListChange: function(e) {
-            var $addFormQty = this.getElement('addFormQty');
-            var selectedShoppingList = this.getSelectedShoppingList();
-            var selectedUnit = this.getSelectedUnit();
-            var quantity = this.getMinimumQuantity(selectedUnit);
+            const $addFormQty = this.getElement('addFormQty');
+            const selectedShoppingList = this.getSelectedShoppingList();
+            const selectedUnit = this.getSelectedUnit();
+            let quantity = this.getMinimumQuantity(selectedUnit);
 
             if (selectedShoppingList && selectedShoppingList.line_items) {
                 quantity = selectedShoppingList.line_items[0].quantity;
@@ -237,13 +237,13 @@ define(function(require) {
         },
 
         onAddFormUnitChange: function(e) {
-            var $addFormQty = this.getElement('addFormQty');
-            var selectedShoppingList = this.getSelectedShoppingList();
-            var selectedUnit = this.getSelectedUnit();
-            var quantity = this.getMinimumQuantity(selectedUnit);
+            const $addFormQty = this.getElement('addFormQty');
+            const selectedShoppingList = this.getSelectedShoppingList();
+            const selectedUnit = this.getSelectedUnit();
+            let quantity = this.getMinimumQuantity(selectedUnit);
 
             if (selectedShoppingList && selectedShoppingList.line_items) {
-                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+                const selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if (selectedLineItem && selectedLineItem.quantity) {
                     quantity = selectedLineItem.quantity;
@@ -254,16 +254,16 @@ define(function(require) {
         },
 
         onAddFormAccept: function() {
-            var $addFormQty = this.getElement('addFormQty');
-            var selectedShoppingList = this.getSelectedShoppingList();
-            var selectedUnit = this.getSelectedUnit();
+            const $addFormQty = this.getElement('addFormQty');
+            const selectedShoppingList = this.getSelectedShoppingList();
+            const selectedUnit = this.getSelectedUnit();
 
             if (!selectedShoppingList) {
                 return false;
             }
 
             if (selectedShoppingList.line_items) {
-                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+                const selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if (selectedLineItem) {
                     this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($addFormQty.val(), 10));
@@ -276,15 +276,15 @@ define(function(require) {
         },
 
         onSaveError: function(jqXHR) {
-            var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+            const errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
 
-            var errors = [];
+            const errors = [];
             switch (errorCode) {
                 case 400:
-                    var jqXHRerrors = jqXHR.responseJSON.errors.children;
-                    for (var i in jqXHRerrors) {
+                    const jqXHRerrors = jqXHR.responseJSON.errors.children;
+                    for (const i in jqXHRerrors) {
                         if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
-                            errors.push.apply(errors, _.values(jqXHRerrors[i].errors));
+                            errors.push(..._.values(jqXHRerrors[i].errors));
                         }
                     }
                     if (!errors.length) {
@@ -313,9 +313,9 @@ define(function(require) {
         },
 
         saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
-            var self = this;
-            var urlOptions = {};
-            var formData = this.getElement('addForm').serialize();
+            const self = this;
+            const urlOptions = {};
+            const formData = this.getElement('addForm').serialize();
 
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
@@ -330,7 +330,7 @@ define(function(require) {
                 success: function(response) {
                     mediator.execute('hideLoading');
                     if (response && response.message) {
-                        var isSuccessful = response.hasOwnProperty('successful') && response.successful;
+                        const isSuccessful = response.hasOwnProperty('successful') && response.successful;
                         mediator.execute(
                             'showFlashMessage', (isSuccessful ? 'success' : 'error'),
                             response.message
@@ -349,18 +349,18 @@ define(function(require) {
         },
 
         updateLineItem: function(lineItem, shoppingListId, newQty) {
-            var updateApiAccessor = new ApiAccessor(_.extend(this.options.update_api_accessor, {
+            const updateApiAccessor = new ApiAccessor(_.extend(this.options.update_api_accessor, {
                 default_route_parameters: {
                     id: lineItem.id
                 }
             }));
 
-            var modelData = {
+            const modelData = {
                 quantity: newQty,
                 unit: lineItem.unit
             };
 
-            var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
+            const updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
                 processingMessage: this.messages.processingMessage,
                 preventWindowUnload: this.messages.preventWindowUnload
             });
@@ -385,7 +385,7 @@ define(function(require) {
         },
 
         toggleEditMode: function(e, key) {
-            var $target = $(e.currentTarget);
+            const $target = $(e.currentTarget);
 
             if (key === 'enable') {
                 $target
@@ -413,7 +413,7 @@ define(function(require) {
         },
 
         getSelectedShoppingList: function() {
-            var properties = {
+            const properties = {
                 id: this.getSelectedShoppingListId()
             };
 
@@ -434,8 +434,8 @@ define(function(require) {
         },
 
         getMinimumQuantity: function(unit) {
-            var quantity = 1;
-            var prices = _.filter(this.model.get('prices') || {}, function(price) {
+            let quantity = 1;
+            const prices = _.filter(this.model.get('prices') || {}, function(price) {
                 return price.unit === unit;
             });
             if (prices.length) {

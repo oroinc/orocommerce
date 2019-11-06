@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var ContentVariantCollectionComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    ContentVariantCollectionComponent = BaseComponent.extend({
+    const ContentVariantCollectionComponent = BaseComponent.extend({
         options: {
             buttonSelector: '[data-role="variant-button"]',
             variantRemoveSelector: '[data-action="remove"]',
@@ -17,8 +16,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ContentVariantCollectionComponent() {
-            ContentVariantCollectionComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ContentVariantCollectionComponent(options) {
+            ContentVariantCollectionComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -38,15 +37,15 @@ define(function(require) {
         onAdd: function(e) {
             e.preventDefault();
 
-            var $button = $(e.currentTarget);
+            const $button = $(e.currentTarget);
             if ($button.attr('disabled')) {
                 return;
             }
 
-            var prototype = this.$el.data('prototype');
+            const prototype = this.$el.data('prototype');
             if (prototype) {
-                var index = parseInt(this.$el.data('last-index'));
-                var nextItemHtml = prototype.replace(new RegExp(this.prototypeName, 'g'), index);
+                let index = parseInt(this.$el.data('last-index'));
+                const nextItemHtml = prototype.replace(new RegExp(this.prototypeName, 'g'), index);
 
                 this.$collectionContainer
                     .prepend(nextItemHtml)
@@ -61,15 +60,15 @@ define(function(require) {
 
         onRemove: function(e) {
             e.preventDefault();
-            var item = $(e.target).closest('*[data-content]');
+            const item = $(e.target).closest('*[data-content]');
             item.remove();
 
             mediator.trigger('cms:content-variant-collection:remove', this.$el);
         },
 
         validateContainer: function() {
-            var $validationField = this.$el.find('[data-name="collection-validation"]:first');
-            var $form = $validationField.closest('form');
+            const $validationField = this.$el.find('[data-name="collection-validation"]:first');
+            const $form = $validationField.closest('form');
             if ($form.data('validator')) {
                 $form.validate().element($validationField.get(0));
             }
