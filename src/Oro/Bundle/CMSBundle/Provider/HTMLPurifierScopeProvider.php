@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * Provide purifier scope corresponds to content_restrictions mode
@@ -60,6 +61,7 @@ class HTMLPurifierScopeProvider
     /**
      * @param string $entityName
      * @param string $fieldName
+     *
      * @return string|null
      */
     public function getScope(string $entityName, string $fieldName): ?string
@@ -68,13 +70,14 @@ class HTMLPurifierScopeProvider
             return null;
         }
 
-        $availableRoles = $this->tokenAccessor->getUser()->getRoles();
+        $availableRoles = $this->getUserRoles();
         $useSecureMode = true;
         foreach ($availableRoles as $role) {
-            $roleKey = $role->getRole();
-            if (!array_key_exists($roleKey, $this->contentRestrictions)) {
+            if (!$this->isRoleSupport($role)) {
                 continue;
             }
+
+            $roleKey = $role->getRole();
             foreach ($this->contentRestrictions[$roleKey] as $restrictionEntityName => $restrictionFields) {
                 if ($restrictionEntityName === $entityName && in_array($fieldName, $restrictionFields, true)) {
                     $useSecureMode = false;
@@ -92,5 +95,23 @@ class HTMLPurifierScopeProvider
         }
 
         throw new \LogicException('Mode is not available.');
+    }
+
+    /**
+     * @return array|Role[]
+     */
+    private function getUserRoles(): array
+    {
+        return $this->tokenAccessor->getToken()->getRoles();
+    }
+
+    /**
+     * @param Role $role
+     *
+     * @return bool
+     */
+    private function isRoleSupport(Role $role): bool
+    {
+        return array_key_exists($role->getRole(), $this->contentRestrictions);
     }
 }

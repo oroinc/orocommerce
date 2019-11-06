@@ -4,11 +4,14 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
-use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\Security\Core\Role\Role;
+use Oro\Bundle\UserProBundle\Tests\Unit\Fixture\Entity\Role;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
 class HTMLPurifierScopeProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @dataProvider testGetScopeDataProvider
      * @param string $mode
@@ -19,16 +22,16 @@ class HTMLPurifierScopeProviderTest extends \PHPUnit\Framework\TestCase
     {
         $role = new Role('ROLE_FOO');
 
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
+        $token = $this->createMock(AbstractToken::class);
+        $token->expects($this->any())
             ->method('getRoles')
             ->willReturn([$role]);
 
         /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor */
         $tokenAccessor = $this->createMock(TokenAccessor::class);
         $tokenAccessor->expects($this->any())
-            ->method('getUser')
-            ->willReturn($user);
+            ->method('getToken')
+            ->willReturn($token);
 
         $provider = new HTMLPurifierScopeProvider($tokenAccessor, $mode, $restrictions);
         $provider->addScopeMapping('secure', 'default');
