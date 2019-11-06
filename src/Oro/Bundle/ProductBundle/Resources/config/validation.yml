@@ -66,6 +66,13 @@ Oro\Bundle\ProductBundle\Entity\ProductUnit:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks:
+            groups: [ api ]
+            property: parentProduct
+        - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks:
+            groups: [ api ]
+            property: parentProduct
     properties:
         visible:
             - Type:

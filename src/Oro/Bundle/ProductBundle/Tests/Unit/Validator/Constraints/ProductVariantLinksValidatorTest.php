@@ -139,6 +139,58 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $this->service->validate($product, $constraint);
     }
 
+    public function testUnreachablePropertyException()
+    {
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'test';
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not access property "test" for class "stdClass"');
+
+        $this->service->validate(new \stdClass(), $constraint);
+    }
+
+    public function testNotValidatePropertyNull()
+    {
+        $variantLink = new ProductVariantLink();
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->service->validate($variantLink, $constraint);
+    }
+
+    public function testAddViolationWhenProductByPropertyHasNoFilledField()
+    {
+        $product = $this->prepareProduct(
+            [
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
+                self::VARIANT_FIELD_KEY_SLIM_FIT
+            ],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SLIM_FIT => true
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'M',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Black',
+                ]
+            ]
+        );
+        $variantLink = new ProductVariantLink($product, new Product());
+
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'parentProduct';
+
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with($constraint->variantLinkHasNoFilledFieldMessage);
+
+        $this->service->validate($variantLink, $constraint);
+    }
+
     /**
      * @param array $variantFields
      * @param array $variantLinkFields
