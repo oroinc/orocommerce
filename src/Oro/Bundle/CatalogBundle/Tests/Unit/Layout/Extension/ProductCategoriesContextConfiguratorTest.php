@@ -151,6 +151,55 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
         $this->configurator->configureContext($context);
     }
 
+    public function testConfigureForNotFoundProductView()
+    {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
+        $this->currentRequest->attributes->expects($this->any())
+            ->method('get')
+            ->will($this->returnCallback(function ($param) {
+                switch ($param) {
+                    case '_route':
+                        return ProductCategoriesContextConfigurator::PRODUCT_VIEW_ROUTE;
+                    case '_route_params':
+                        return ['id' => 1];
+                    default:
+                        return null;
+                }
+            }));
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn(null);
+
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+        $categoryRepository->expects($this->never())
+            ->method('findOneByProduct');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($productRepository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $context = $this->createMock(ContextInterface::class);
+        $context->expects($this->never())
+            ->method('getResolver');
+
+        $context->expects($this->never())
+            ->method('set');
+
+        $this->configurator->configureContext($context);
+    }
+
     public function testConfigureWhenCurrentRequestIsNotSet()
     {
         $requestStack = $this->createMock(RequestStack::class);

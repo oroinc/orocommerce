@@ -28,7 +28,9 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
 
 Oro\Bundle\CMSBundle\Entity\ContentWidget:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [organization, name]
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [organization, name]
+            errorPath: name
     properties:
         name:
             - NotBlank: ~
@@ -41,6 +43,47 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
         template:
             - Length:
                   max: 255
+        organization:
+            - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    properties:
+        contentWidget:
+            - NotBlank: ~
+        slideOrder:
+            - NotBlank: ~
+            - Type: numeric
+        url:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - Oro\Bundle\SecurityBundle\Validator\Constraints\NotDangerousProtocol:
+                message: oro.cms.image_slider.url.not_dangerous_protocol.message
+        displayInSameWindow:
+            - Type: boolean
+        title:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+        textAlignment:
+            - NotBlank: ~
+            - Choice:
+                choices:
+                    - center
+                    - left
+                    - right
+                    - top_left
+                    - top_center
+                    - top_right
+                    - bottom_left
+                    - bottom_center
+                    - bottom_right
+        mainImage:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:

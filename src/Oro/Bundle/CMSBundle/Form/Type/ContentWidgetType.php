@@ -159,10 +159,14 @@ class ContentWidgetType extends AbstractType
             foreach ($view->children['settings'] as $child) {
                 if (!isset($child->vars['block'])) {
                     $child->vars['block'] = 'additional_information';
+
+                    if (!isset($view->vars['block_config']['additional_information']['title'])) {
+                        $title = 'oro.cms.contentwidget.sections.additional_information.label';
+
+                        $view->vars['block_config']['additional_information']['title'] = $title;
+                    }
                 }
             }
-        } else {
-            unset($view->vars['block_config']['additional_information']);
         }
 
         $this->updateBlockConfig($view);
@@ -227,9 +231,6 @@ class ContentWidgetType extends AbstractType
                     'general' => [
                         'title' => 'oro.cms.contentwidget.sections.general.label',
                     ],
-                    'additional_information' => [
-                        'title' => 'oro.cms.contentwidget.sections.additional_information.label',
-                    ]
                 ],
             ]
         );

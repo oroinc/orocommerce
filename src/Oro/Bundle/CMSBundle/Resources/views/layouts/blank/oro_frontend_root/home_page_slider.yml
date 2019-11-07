@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'OroCMSBundle:layouts:blank/oro_frontend_root/default.html.twig'
         - '@addTree':
             items:
                 hero_promo:
