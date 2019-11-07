@@ -78,7 +78,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
-            return  $this->container->get(FileUrlByUuidProvider::class)->getFileUrl(
+            return $this->container->get(FileUrlByUuidProvider::class)->getFileUrl(
                 $fileUuid,
                 $action,
                 $referenceType
@@ -94,7 +94,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     public static function getSubscribedServices(): array
     {
         return [
-            FileUrlByUuidProvider::class
+            FileUrlByUuidProvider::class,
         ];
     }
 }

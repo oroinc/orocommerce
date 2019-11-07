@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var _ = require('underscore');
+    var routing = require('routing');
 
     var DigitalAssetHelper = {};
 
@@ -34,8 +35,7 @@ define(function(require) {
          * @returns {string}
          */
         getImageUrl: function(digitalAssetId) {
-            // TODO: get url for digital asset preview using routing component
-            return 'https://ak7.picdn.net/shutterstock/videos/24544817/thumb/6.jpg';
+            return routing.generate('oro_cms_wysiwyg_digital_asset', {id: digitalAssetId, action: 'get'});
         }
     });
 });

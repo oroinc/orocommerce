@@ -354,6 +354,11 @@ class OroCMSBundleInstaller implements
         $table->addColumn('content_widget_id', 'integer');
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer');
+        $table->addColumn('entity_field', 'string', ['notnull' => false, 'length' => 50]);
+        $table->addUniqueIndex(
+            ['entity_class', 'entity_id', 'entity_field', 'content_widget_id'],
+            'uidx_oro_cms_content_widget_usage'
+        );
         $table->setPrimaryKey(['id']);
     }
 

@@ -57,7 +57,7 @@ define(function(require) {
                             .setAttributes({alt: metadata['title'] || ''})
                             .set(
                                 'src',
-                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',"' + metadata['uuid'] + '") }}'
+                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',\'' + metadata['uuid'] + '\') }}'
                             );
                     }
                 }
