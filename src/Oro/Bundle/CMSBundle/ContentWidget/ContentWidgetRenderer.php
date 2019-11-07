@@ -134,6 +134,10 @@ class ContentWidgetRenderer implements LoggerAwareInterface
             return '@OroContactUsBridge/ContactUsFormContentWidget/widget.html.twig';
         }
 
+        if ($contentWidget->getWidgetType() === 'image_slider') {
+            return '@OroCMS/ImageSliderContentWidget/widget.html.twig';
+        }
+
         return (string) $contentWidget->getTemplate();
     }
 

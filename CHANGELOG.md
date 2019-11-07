@@ -13,6 +13,14 @@ The current file describes significant changes in the code that may affect the u
 #### WebCatalog component
 * Methods `getApiResourceClassName()` and `getApiResourceIdentifierDqlExpression()` were added to
   `Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType`.
+  
+#### CMSBundle
+* A new "home-page-slider" content widget is added which makes possible to dynamically modify slider settings as well
+as content of each slide. If you install application from a scratch new slider will be available out of the box. But
+you should consider to upgrade custom slider while application update. For this you need to modify "home-page-slider"
+widget to have same look as old one. And replace content of "home-page-slider" content block to 
+"<div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">{{ widget("home-page-slider") }}</div>".
+It will render slider via widget.
 
 #### WebCatalogBundle
 * The `_web_content_scope` request attribute was removed.

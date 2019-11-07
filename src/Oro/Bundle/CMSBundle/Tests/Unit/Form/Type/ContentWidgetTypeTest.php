@@ -41,7 +41,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
             ->method('trans')
             ->willReturnCallback(
                 static function ($key) {
-                    return str_replace('not ', '', $key);
+                    return 'translated ' . $key;
                 }
             );
 
@@ -205,11 +205,8 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         $formView->children['settings'] = $settingsFormView;
         $formView->vars['block_config'] = [
             'general' => [
-                'title' => 'not translated general label',
+                'title' => 'general label',
             ],
-            'additional_information' => [
-                'title' => 'not translated additional_information label',
-            ]
         ];
 
         $this->formType->finishView($formView, $this->createMock(FormInterface::class), []);
@@ -221,7 +218,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     'title' => 'translated general label',
                 ],
                 'additional_information' => [
-                    'title' => 'translated additional_information label',
+                    'title' => 'translated oro.cms.contentwidget.sections.additional_information.label',
                 ]
             ],
             $formView->vars['block_config']
@@ -239,10 +236,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         $formView = new FormView();
         $formView->vars['block_config'] = [
             'general' => [
-                'title' => 'not translated general label',
-            ],
-            'additional_information' => [
-                'title' => 'not translated additional_information label',
+                'title' => 'general label',
             ]
         ];
 
@@ -271,9 +265,6 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                         'general' => [
                             'title' => 'oro.cms.contentwidget.sections.general.label',
                         ],
-                        'additional_information' => [
-                            'title' => 'oro.cms.contentwidget.sections.additional_information.label',
-                        ]
                     ],
                 ]
             );
