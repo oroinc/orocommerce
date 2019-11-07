@@ -4,7 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
-use Oro\Bundle\UserProBundle\Tests\Unit\Fixture\Entity\Role;
+use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
