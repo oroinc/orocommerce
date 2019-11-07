@@ -40,8 +40,6 @@ class ContentWidgetFormEventListener
 
         $manager = $this->registry->getManagerForClass(ImageSlide::class);
         foreach ($newImageSlides as $imageSlide) {
-            $imageSlide->setContentWidget($contentWidget);
-
             $manager->persist($imageSlide);
         }
 

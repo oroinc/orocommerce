@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Symfony\Component\Form\AbstractType;
@@ -10,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -115,6 +118,21 @@ class ImageSlideType extends AbstractType
                 ],
             ]
         );
+
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'setContentWidget']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function setContentWidget(FormEvent $event): void
+    {
+        $data = $event->getData();
+        if (!$data instanceof ImageSlide) {
+            return;
+        }
+
+        $data->setContentWidget($event->getForm()->getConfig()->getOption('content_widget'));
     }
 
     /**
@@ -123,6 +141,8 @@ class ImageSlideType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => ImageSlide::class]);
+        $resolver->setRequired(['content_widget']);
+        $resolver->setAllowedTypes('content_widget', [ContentWidget::class]);
     }
 
     /**

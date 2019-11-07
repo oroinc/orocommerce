@@ -13,6 +13,6 @@ class ImageSlideTypeStub extends ImageSlideType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => ImageSlide::class]);
+        $resolver->setDefaults(['data_class' => ImageSlide::class, 'content_widget' => null]);
     }
 }

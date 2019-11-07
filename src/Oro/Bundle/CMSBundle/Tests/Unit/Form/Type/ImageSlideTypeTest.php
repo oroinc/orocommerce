@@ -7,6 +7,7 @@ use Oro\Bundle\AttachmentBundle\Form\EventSubscriber\FileSubscriber;
 use Oro\Bundle\AttachmentBundle\Form\Type\FileType;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\AttachmentBundle\Validator\ConfigFileValidator;
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Type\ImageSlideCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\ImageSlideType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ImageSlideCollectionTypeStub;
@@ -38,7 +39,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
     {
         $defaultData = new ImageSlide();
 
-        $form = $this->factory->create(ImageSlideType::class, $defaultData, []);
+        $form = $this->factory->create(ImageSlideType::class, $defaultData, ['content_widget' => new ContentWidget()]);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -60,7 +61,8 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
         $smallImage = $this->getEntity(File::class, ['id' => 3003]);
 
         $extected = new ImageSlide();
-        $extected->setSlideOrder(42)
+        $extected->setContentWidget(new ContentWidget())
+            ->setSlideOrder(42)
             ->setUrl('path/to/test')
             ->setDisplayInSameWindow(true)
             ->setTitle('test title')

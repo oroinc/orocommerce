@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Valid;
 use Twig\Environment;
 
 /**
@@ -126,7 +127,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 CheckboxType::class,
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.autoplay.label',
-                    'required' => true,
+                    'required' => false,
                     'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
@@ -138,10 +139,9 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 IntegerType::class,
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.autoplay_speed.label',
-                    'required' => true,
+                    'required' => false,
                     'block' => 'slider_options',
                     'constraints' => [
-                        new NotBlank(),
                         new Type('integer'),
                         new Range(['min' => 1]),
                     ]
@@ -152,7 +152,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 CheckboxType::class,
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.arrows.label',
-                    'required' => true,
+                    'required' => false,
                     'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
@@ -164,7 +164,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 CheckboxType::class,
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.dots.label',
-                    'required' => true,
+                    'required' => false,
                     'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
@@ -176,7 +176,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 CheckboxType::class,
                 [
                     'label' => 'oro.cms.content_widget_type.slider_options.infinite.label',
-                    'required' => true,
+                    'required' => false,
                     'block' => 'slider_options',
                     'constraints' => [
                         new Type('boolean'),
@@ -188,12 +188,16 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 ImageSlideCollectionType::class,
                 [
                     'data' => $this->getImageSlides($contentWidget),
+                    'entry_options'  => ['content_widget' => $contentWidget],
                     'block' => 'image_slides',
                     'block_config' => [
                         'image_slides' => [
                             'title' => 'oro.cms.contentwidget.sections.image_slides.label'
                         ]
-                    ]
+                    ],
+                    'constraints' => [
+                        new Valid(),
+                    ],
                 ]
             );
     }

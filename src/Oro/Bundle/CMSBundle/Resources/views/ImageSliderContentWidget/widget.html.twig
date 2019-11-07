@@ -14,7 +14,7 @@
     {% for imageSlide in imageSlides %}
         {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
         <div class="promo-slider__item">
-            <a href="{{ imageSlide.url }}" target="{{ windowTarget }}">
+            <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}">
                 <div class="promo-slider__picture">
                     <picture>
                         <source srcset="{{ imageSlide.smallImage ? filtered_image_url(imageSlide.smallImage, 'original') : filtered_image_url(imageSlide.mainImage, 'max_width_414') }}"
@@ -28,7 +28,7 @@
                 </div>
             </a>
             <div class="promo-slider__info promo-slider__info--{{ imageSlide.textAlignment }}-mode">
-                <a href="{{ imageSlide.url }}" target="{{ windowTarget }}" class="promo-slider__link">
+                <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}" class="promo-slider__link">
                     {{ imageSlide.text|raw }}
                 </a>
             </div>

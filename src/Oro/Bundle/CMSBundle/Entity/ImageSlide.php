@@ -189,10 +189,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param int $slideOrder
+     * @param null|int $slideOrder
      * @return $this
      */
-    public function setSlideOrder(int $slideOrder): self
+    public function setSlideOrder(?int $slideOrder): self
     {
         $this->slideOrder = $slideOrder;
 
@@ -208,10 +208,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $url
+     * @param null|string $url
      * @return $this
      */
-    public function setUrl(string $url): self
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
 
@@ -227,10 +227,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param bool $displayInSameWindow
+     * @param null|bool $displayInSameWindow
      * @return $this
      */
-    public function setDisplayInSameWindow(bool $displayInSameWindow): self
+    public function setDisplayInSameWindow(?bool $displayInSameWindow): self
     {
         $this->displayInSameWindow = $displayInSameWindow;
         
@@ -246,10 +246,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $title
+     * @param null|string $title
      * @return $this
      */
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
         
@@ -265,10 +265,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $text
+     * @param null|string $text
      * @return $this
      */
-    public function setText(string $text): self
+    public function setText(?string $text): self
     {
         $this->text = $text;
         
@@ -284,10 +284,10 @@ class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $textAlignment
+     * @param null|string $textAlignment
      * @return $this
      */
-    public function setTextAlignment(string $textAlignment): self
+    public function setTextAlignment(?string $textAlignment): self
     {
         $this->textAlignment = $textAlignment;
 
