@@ -37,7 +37,7 @@ Feature: Landing Page content purify
       | Titles  | Other page                                                                              |
       | Content | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
     And I save and close form
-    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
     When I fill "CMS Page Form" with:
       | Content | <div>Some Content</div> |
     And I save and close form

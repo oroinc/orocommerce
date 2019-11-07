@@ -72,7 +72,6 @@ class Configuration implements ConfigurationInterface
                             ->info(
                                 'List of user roles that has edit permission on entity field with selected secure level'
                             )
-                            ->performNoDeepMerging()
                             ->useAttributeAsKey('ROLE')
                             ->arrayPrototype()
                                 ->useAttributeAsKey('\Entity')

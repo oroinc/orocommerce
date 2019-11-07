@@ -44,12 +44,12 @@ Feature: Content Block content purify
       | Customer Group  | Non-Authenticated Visitors                                                              |
       | Content Variant | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
     When I save and close form
-    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
 
     When I fill "Content Block Form" with:
       | Content Variant | xss text <script></script> |
     And I save and close form
-    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
 
     When I fill "Content Block Form" with:
       | Content Variant | <div>Some Content</div> |
@@ -66,7 +66,7 @@ Feature: Content Block content purify
     When I fill "Content Block Form" with:
       | Content Variant | Same text <script></script> Same text |
     And I save and close form
-    Then I should see "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
 
     When I fill "Content Block Form" with:
       | Content Variant | Selective content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
