@@ -4,8 +4,9 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -89,14 +90,29 @@ class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
             && $parentVariantLinks instanceof AbstractLazyCollection
             && !$parentVariantLinks->isInitialized()
         ) {
-            /** @var ProductRepository $repo */
-            $repo = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+            $repo = $this
+                ->registry
+                ->getManagerForClass(ProductVariantLink::class)
+                ->getRepository(ProductVariantLink::class);
 
-            return $repo->getParentProductsForSimpleProduct($value);
+            // variantLinksInDb
+            $persistedParentProductVariantLinks = $repo->findBy([
+                'product' => $value
+            ]);
+
+            $parentVariantLinkCollection = [];
+            // Merge items from DB with newly added or changes items
+            if ($parentVariantLinks instanceof PersistentCollection) {
+                $parentVariantLinkCollection = $parentVariantLinks->unwrap()->toArray();
+            }
+
+            return array_map(function (ProductVariantLink $productVariantLink) {
+                return $productVariantLink->getParentProduct();
+            }, array_merge($parentVariantLinkCollection, $persistedParentProductVariantLinks));
         }
 
         $parentProducts = [];
-        foreach ($value->getParentVariantLinks() as $parentVariantLink) {
+        foreach ($parentVariantLinks as $parentVariantLink) {
             $parentProducts[] = $parentVariantLink->getParentProduct();
         }
 

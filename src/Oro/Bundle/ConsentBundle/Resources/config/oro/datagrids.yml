@@ -76,7 +76,7 @@ datagrids:
                 updatedAt:
                     data_name: consent.updatedAt
             default:
-                id: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                id: DESC
         filters:
             columns:
                 id:

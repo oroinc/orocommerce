@@ -220,9 +220,9 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
         arguments:
             - '@translator'
-            - '%oro_web_catalog.type.content_variant_collection.class%'
+            - Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
         tags:
-            - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
+            - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType }
 
     oro_product.form.extension.attribute_config_extension:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'

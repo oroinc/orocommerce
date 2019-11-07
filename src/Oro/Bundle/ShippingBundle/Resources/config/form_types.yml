@@ -4,7 +4,7 @@ services:
         arguments:
             - '@oro_address.form.listener.address'
         calls:
-            - [setDataClass, ['%oro_shipping.model.shipping_origin.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Model\ShippingOrigin']]
         tags:
             - { name: form.type }
 
@@ -46,7 +46,7 @@ services:
     oro_shipping.form.type.weight:
         class: Oro\Bundle\ShippingBundle\Form\Type\WeightType
         calls:
-            - [setDataClass, ['%oro_shipping.model.weight.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Model\Weight']]
         tags:
             - { name: form.type, alias: oro_shipping_weight }
 
@@ -102,14 +102,14 @@ services:
     oro_shipping.form.type.dimensions:
         class: Oro\Bundle\ShippingBundle\Form\Type\DimensionsType
         calls:
-            - [setDataClass, ['%oro_shipping.model.dimensions.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Model\Dimensions']]
         tags:
             - { name: form.type, alias: oro_shipping_dimensions }
 
     oro_shipping.form.type.dimensions_value:
         class: Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType
         calls:
-            - [setDataClass, ['%oro_shipping.model.dimensions_value.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Model\DimensionsValue']]
         tags:
             - { name: form.type, alias: oro_shipping_dimensions_value }
 

@@ -80,7 +80,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                inCategory: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                inCategory: DESC
         filters:
             columns:
                 inCategory:
@@ -137,7 +137,7 @@ datagrids:
                         data_name: text.category_title_LOCALIZATION_ID
                         type: string
                 default:
-                    categoryTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                    categoryTitle: ASC
             options:
                 toolbarOptions:
                     pagination:

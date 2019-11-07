@@ -1,6 +1,3 @@
-parameters:
-    oro_order.form.type.order_line_item.class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType'
-
 services:
     oro_order.form.type.order:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderType'
@@ -37,7 +34,7 @@ services:
              - '@form.registry'
 
     oro_order.form.type.order_line_item:
-        class: '%oro_order.form.type.order_line_item.class%'
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType'
         arguments:
             - '@oro_product.provider.product_units_provider'
         calls:

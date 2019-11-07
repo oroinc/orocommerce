@@ -64,49 +64,12 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnItem()) {
-            try {
-                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
-                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-            } catch (NumberFormatException $e) {
-                return;
-            }
-            $data = $adjustedAmounts;
-        }
-
         $data = $this->mergeShippingData($taxable, $data);
 
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
         $result->lockResult();
-    }
-
-    /**
-     * @param ResultElement $data
-     * @param BigDecimal $adjustment
-     * @return ResultElement
-     */
-    protected function adjustAmounts(ResultElement $data, BigDecimal $adjustment)
-    {
-        $arrayCopy = $data->getArrayCopy();
-        $currentData = new ResultElement($arrayCopy);
-
-        $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
-
-        if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            $keysToAdjust[ResultElement::EXCLUDING_TAX] = $adjustment->negated();
-        } else {
-            $keysToAdjust[ResultElement::INCLUDING_TAX] = $adjustment;
-        }
-
-        foreach ($keysToAdjust as $key => $adjustment) {
-            if ($currentData->offsetExists($key)) {
-                $currentData->offsetSet($key, BigDecimal::of($currentData->getOffset($key))->plus($adjustment));
-            }
-        }
-
-        return $currentData;
     }
 
     /**

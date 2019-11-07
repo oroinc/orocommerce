@@ -70,7 +70,7 @@ datagrids:
                 validUntil:
                     data_name: quote.validUntil
             default:
-                qid: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                qid: ASC
         actions:
             view:
                 type:          navigate
