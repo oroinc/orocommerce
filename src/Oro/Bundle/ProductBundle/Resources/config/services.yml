@@ -828,7 +828,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:

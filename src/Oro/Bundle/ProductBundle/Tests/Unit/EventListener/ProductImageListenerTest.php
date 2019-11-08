@@ -142,21 +142,6 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
-    public function testPreRemove(): void
-    {
-        $productImage = $this->prepareProductImage();
-
-        $this->productImageEntityManager->expects($this->once())
-            ->method('remove')
-            ->with($productImage->getImage());
-
-        $this->lifecycleArgs->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($this->productImageEntityManager);
-
-        $this->listener->preRemove($productImage, $this->lifecycleArgs);
-    }
-
     /**
      * @return StubProductImage
      */
