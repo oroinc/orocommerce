@@ -57,6 +57,8 @@ oro_form:
                         - aria-valuemax
                         - aria-live
                         - aria-atomic
+                        - data-title
+                        - data-type
                         - data-spy
                         - data-ride
                         - data-interval

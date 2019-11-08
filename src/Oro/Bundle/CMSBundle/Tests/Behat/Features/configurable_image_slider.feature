@@ -74,11 +74,23 @@ Feature: Configurable image slider
       | 1           | /product | Slide 1 | Slide text 1 | Center         | Same Window | cat1.jpg   | cat1.jpg     | N/A         |
       | 2           | /about   | Slide 2 | Slide text 2 | Center         | New Window  | cat2.jpg   | N/A          | cat2.jpg    |
 
+  Scenario: Edit user roles
+    And I am logged in under Globe ORO Pro organization
+    And go to System/User Management/Users
+    And click Edit admin in grid
+    And I fill form with:
+      | Roles | [Administrator, WYSIWYG ROLE] |
+    When I save and close form
+    Then I should see "User saved" flash message
+    # Relogin for refresh token after change user roles
+    And I am logged out
+
   Scenario: Create Landing Page
     Given I go to Marketing/Landing Pages
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Image slider page"
     And I fill in WYSIWYG "CMS Page Content" with "<div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div>"
+    And I wait for action
     When I save form
     Then I should see "Page has been saved" flash message
     And I should see URL Slug field filled with "image-slider-page"
