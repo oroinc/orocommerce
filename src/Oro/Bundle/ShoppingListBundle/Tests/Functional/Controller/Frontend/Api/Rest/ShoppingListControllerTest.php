@@ -49,12 +49,10 @@ class ShoppingListControllerTest extends WebTestCase
         }
     }
 
-    public function testSetCurrentFailsOnNonExistingList()
+    public function testSetCurrentFailsOnNonExistingList(): void
     {
-        $this->client->request(
-            'PUT',
-            $this->getUrl('oro_api_set_shopping_list_current', ['id' => -1])
-        );
+        $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_current', ['id' => $id]));
+        $this->client->request('PUT', $url);
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
@@ -225,6 +223,14 @@ class ShoppingListControllerTest extends WebTestCase
                 'status' => 200,
             ],
         ];
+    }
+
+    public function testSetOwnerWhenInvalidShoppingListId()
+    {
+        $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $id]));
+        $this->client->request('PUT', $url);
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
     /**

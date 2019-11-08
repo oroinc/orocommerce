@@ -24,6 +24,9 @@ class BrandController extends RestController implements ClassResourceInterface
 {
     /**
      * @param int $id Brand id
+     *
+     * @Get(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *     description="Get sissue",
      *     resource=true
@@ -42,6 +45,9 @@ class BrandController extends RestController implements ClassResourceInterface
      * Delete brand
      *
      * @param int $id Brand id
+     *
+     * @Delete(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Delete brand",
      *      resource=true,
