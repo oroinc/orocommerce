@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var DigitalAssetsComponent;
-    var _ = require('underscore');
-    var routing = require('routing');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var DigitalAssetDialogWidget = require('orodigitalasset/js/widget/digital-asset-dialog-widget');
-    var DigitalAssetImageComponent = require('orocms/js/app/grapesjs/components/digital-asset-image');
-    var DigitalAssetFileComponent = require('orocms/js/app/grapesjs/components/digital-asset-file');
-    var DigitalAssetPropertyFileType = require('orocms/js/app/grapesjs/components/digital-asset-property-file-type');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const DigitalAssetDialogWidget = require('orodigitalasset/js/widget/digital-asset-dialog-widget');
+    const DigitalAssetImageComponent = require('orocms/js/app/grapesjs/components/digital-asset-image');
+    const DigitalAssetFileComponent = require('orocms/js/app/grapesjs/components/digital-asset-file');
+    const DigitalAssetPropertyFileType = require('orocms/js/app/grapesjs/components/digital-asset-property-file-type');
 
     /**
      * Digital assets component
@@ -17,7 +16,7 @@ define(function(require) {
      * - overrides image dom component type
      * - overrides file property type command
      */
-    DigitalAssetsComponent = BaseComponent.extend({
+    const DigitalAssetsComponent = BaseComponent.extend({
         editor: null,
 
         constructor: function DigitalAssetsComponent(editor, options) {
@@ -55,8 +54,8 @@ define(function(require) {
 
                 dialog: null,
 
-                constructor: function OpenDigitalAssetsCommand() {
-                    OpenDigitalAssetsCommand.__super__.constructor.apply(this, arguments);
+                constructor: function OpenDigitalAssetsCommand(...args) {
+                    OpenDigitalAssetsCommand.__super__.constructor.apply(this, args);
                 },
 
                 /**

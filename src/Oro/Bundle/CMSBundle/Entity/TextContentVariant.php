@@ -73,6 +73,13 @@ class TextContentVariant
      * @var string
      *
      * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          }
+     *      }
+     * )
      */
     protected $contentStyle;
 

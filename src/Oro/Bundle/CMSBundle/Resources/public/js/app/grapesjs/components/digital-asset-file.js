@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var DigitalAssetFileComponent;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * Adds "file" dom component type which uses digital assets manager.
      */
-    DigitalAssetFileComponent = BaseComponent.extend({
+    const DigitalAssetFileComponent = BaseComponent.extend({
         editor: null,
 
         constructor: function DigitalAssetFileComponent(editor, options) {
@@ -52,7 +51,7 @@ define(function(require) {
                     title: __('oro.cms.wysiwyg.digital_asset.file.title'),
                     routeName: 'oro_digital_asset_widget_choose_file',
                     onSelect: function(digitalAssetModel) {
-                        var metadata = digitalAssetModel.get('previewMetadata');
+                        const metadata = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetFileComponentModel
                             .setAttributes({
@@ -66,10 +65,10 @@ define(function(require) {
         },
 
         _addComponentType: function() {
-            var DefaultComponentType = this.editor.DomComponents.getType('link');
-            var DefaultModel = DefaultComponentType.model;
-            var DefaultView = DefaultComponentType.view;
-            var digitalAssetFile = this;
+            const DefaultComponentType = this.editor.DomComponents.getType('link');
+            const DefaultModel = DefaultComponentType.model;
+            const DefaultView = DefaultComponentType.view;
+            const digitalAssetFile = this;
 
             digitalAssetFile.editor.DomComponents.addType('file', {
                 model: DefaultModel.extend({
@@ -86,18 +85,19 @@ define(function(require) {
                         'traits': ['title', 'target']
                     }),
 
-                    constructor: function DigitalAssetFileComponentModel() {
-                        DefaultModel.prototype.constructor.apply(this, arguments);
+                    constructor: function DigitalAssetFileComponentModel(...args) {
+                        DefaultModel.prototype.constructor.apply(this, args);
                     },
 
                     /**
                      * @param {Object} properties
                      * @param {Object} options
+                     * @param args
                      */
-                    initialize: function(properties, options) {
-                        DefaultModel.prototype.initialize.apply(this, arguments);
+                    initialize: function(properties, options, ...args) {
+                        DefaultModel.prototype.initialize.apply(this, [properties, options, ...args]);
 
-                        var toolbar = this.get('toolbar');
+                        const toolbar = this.get('toolbar');
                         if (_.findIndex(toolbar, {command: this._toolbarSettingsCommand.bind(this)}) === -1) {
                             toolbar.unshift({
                                 attributes: {'class': 'fa fa-gear'},
@@ -117,11 +117,11 @@ define(function(require) {
                      * @return {Object}
                      * @private
                      */
-                    getAttrToHTML: function() {
-                        var attr = DefaultModel.prototype.getAttrToHTML.apply(this, arguments);
+                    getAttrToHTML: function(...args) {
+                        const attr = DefaultModel.prototype.getAttrToHTML.apply(this, args);
 
                         _.each(['href', 'title'], (function(attributeName) {
-                            var attributeValue = this.get(attributeName);
+                            const attributeValue = this.get(attributeName);
                             if (attributeValue) {
                                 attr[attributeName] = attributeValue;
                             }
@@ -134,7 +134,7 @@ define(function(require) {
                      * @inheritDoc
                      */
                     isComponent: function(el) {
-                        var result = '';
+                        let result = '';
                         if (el.tagName === 'A' && el.className.indexOf('digital-asset-file') !== -1) {
                             result = {
                                 type: 'file'
@@ -147,8 +147,8 @@ define(function(require) {
                 view: DefaultView.extend({
                     tagName: 'a',
 
-                    constructor: function DigitalAssetComponentView() {
-                        DefaultView.prototype.constructor.apply(this, arguments);
+                    constructor: function DigitalAssetComponentView(...args) {
+                        DefaultView.prototype.constructor.apply(this, args);
                     },
 
                     /**
@@ -171,8 +171,8 @@ define(function(require) {
                     /**
                      * @inheritDoc
                      */
-                    updateAttributes: function() {
-                        DefaultView.prototype.updateAttributes.apply(this, arguments);
+                    updateAttributes: function(...args) {
+                        DefaultView.prototype.updateAttributes.apply(this, args);
 
                         this.$el.attr('href', '#');
                     }

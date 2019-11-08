@@ -1,10 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var routing = require('routing');
+    const _ = require('underscore');
+    const routing = require('routing');
 
-    var DigitalAssetHelper = {};
+    const DigitalAssetHelper = {};
 
     return _.extend(DigitalAssetHelper, {
         /**
@@ -14,7 +14,7 @@ define(function(require) {
          * @returns {string}
          */
         getImageUrlFromTwigTag: function(twigTagString) {
-            var digitalAssetId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(twigTagString);
+            const digitalAssetId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(twigTagString);
 
             return DigitalAssetHelper.getImageUrl(digitalAssetId);
         },
@@ -24,8 +24,8 @@ define(function(require) {
          * @return {number|null}
          */
         getDigitalAssetIdFromTwigTag: function(twigTagString) {
-            var regex = /{{\s*[\w_]+\s*\(\s*([0-9]+)\s*,.+?\)\s*}}/;
-            var matches = regex.exec(twigTagString);
+            const regex = /{{\s*[\w_]+\s*\(\s*([0-9]+)\s*,.+?\)\s*}}/;
+            const matches = regex.exec(twigTagString);
 
             return matches !== null ? matches[1] || null : null;
         },

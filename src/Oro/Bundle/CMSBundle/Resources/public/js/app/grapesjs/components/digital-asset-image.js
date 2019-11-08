@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var DigitalAssetImageComponent;
-    var __ = require('orotranslation/js/translator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var DigitalAssetHelper = require('orocms/js/app/grapesjs/helpers/digital-asset-helper');
+    const __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const DigitalAssetHelper = require('orocms/js/app/grapesjs/helpers/digital-asset-helper');
 
     /**
      * Overrides "image" dom component type to make it use digital assets manager.
      */
-    DigitalAssetImageComponent = BaseComponent.extend({
+    const DigitalAssetImageComponent = BaseComponent.extend({
         editor: null,
 
         constructor: function DigitalAssetImageComponent(editor, options) {
@@ -51,7 +50,7 @@ define(function(require) {
                     title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                     routeName: 'oro_digital_asset_widget_choose_image',
                     onSelect: function(digitalAssetModel) {
-                        var metadata = digitalAssetModel.get('previewMetadata');
+                        const metadata = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
                             .setAttributes({alt: metadata['title'] || ''})
@@ -69,17 +68,17 @@ define(function(require) {
          * @private
          */
         _addComponentType: function() {
-            var DefaultComponentType = this.editor.DomComponents.getType('image');
-            var DefaultModel = DefaultComponentType.model;
-            var DefaultView = DefaultComponentType.view;
-            var self = this;
+            const DefaultComponentType = this.editor.DomComponents.getType('image');
+            const DefaultModel = DefaultComponentType.model;
+            const DefaultView = DefaultComponentType.view;
+            const self = this;
 
             self.editor.DomComponents.addType('image', {
                 model: DefaultModel,
 
                 view: DefaultView.extend({
-                    constructor: function DigitalAssetImageComponentView() {
-                        DefaultView.prototype.constructor.apply(this, arguments);
+                    constructor: function DigitalAssetImageComponentView(...args) {
+                        DefaultView.prototype.constructor.apply(this, args);
                     },
 
                     /**
@@ -96,8 +95,8 @@ define(function(require) {
                     /**
                      * @inheritDoc
                      */
-                    updateAttributes: function() {
-                        DefaultView.prototype.updateAttributes.apply(this, arguments);
+                    updateAttributes: function(...args) {
+                        DefaultView.prototype.updateAttributes.apply(this, args);
 
                         this.$el.attr('src', DigitalAssetHelper.getImageUrlFromTwigTag(this.model.get('src')));
                     }

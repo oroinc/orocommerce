@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var DigitalAssetPropertyFileTypeComponent;
-    var __ = require('orotranslation/js/translator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var DigitalAssetHelper = require('orocms/js/app/grapesjs/helpers/digital-asset-helper');
+    const __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const DigitalAssetHelper = require('orocms/js/app/grapesjs/helpers/digital-asset-helper');
 
     /**
      * Overrides "file" property type in StyleManager to enable digital asset manager when choosing background image.
      */
-    DigitalAssetPropertyFileTypeComponent = BaseComponent.extend({
+    const DigitalAssetPropertyFileTypeComponent = BaseComponent.extend({
         editor: null,
 
         constructor: function DigitalAssetPropertyFileTypeComponent(editor, options) {
@@ -30,16 +29,16 @@ define(function(require) {
          * @private
          */
         _overrideFileType: function() {
-            var DefaultPropertyType = this.editor.StyleManager.getType('file');
-            var DefaultView = DefaultPropertyType.view;
-            var digitalAssetsComponent = this;
+            const DefaultPropertyType = this.editor.StyleManager.getType('file');
+            const DefaultView = DefaultPropertyType.view;
+            const digitalAssetsComponent = this;
 
             this.editor.StyleManager.addType(
                 'file',
                 {
                     view: DefaultView.extend({
-                        constructor: function DigitalAssetPropertyFileView() {
-                            DefaultView.prototype.constructor.apply(this, arguments);
+                        constructor: function DigitalAssetPropertyFileView(...args) {
+                            DefaultView.prototype.constructor.apply(this, args);
                         },
 
                         /**
@@ -63,7 +62,7 @@ define(function(require) {
                          * @private
                          */
                         _onSelect: function(digitalAssetModel, command) {
-                            var metadata = digitalAssetModel.get('previewMetadata');
+                            const metadata = digitalAssetModel.get('previewMetadata');
 
                             this.spreadUrl(
                                 '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',"' + metadata['uuid'] + '") }}'

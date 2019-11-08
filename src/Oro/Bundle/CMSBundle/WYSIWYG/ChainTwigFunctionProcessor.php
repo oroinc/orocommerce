@@ -11,7 +11,7 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
     private $processors;
 
     /** @var string[] */
-    private $applicablePositions;
+    private $applicableFieldTypes;
 
     /** @var string[] */
     private $acceptedTwigFunctions;
@@ -29,18 +29,22 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
      */
     public function getApplicableFieldTypes(): array
     {
-        if ($this->applicablePositions === null) {
-            $this->applicablePositions = [];
+        if ($this->applicableFieldTypes === null) {
+            $this->applicableFieldTypes = [];
             foreach ($this->processors as $processor) {
-                $this->applicablePositions[] = $processor->getApplicableFieldTypes();
+                $this->applicableFieldTypes[] = $processor->getApplicableFieldTypes();
             }
 
-            if ($this->applicablePositions) {
-                $this->applicablePositions = array_unique(array_merge(...$this->applicablePositions));
+            if ($this->applicableFieldTypes) {
+                $this->applicableFieldTypes = \array_values(
+                    \array_unique(
+                        \array_merge(...$this->applicableFieldTypes)
+                    )
+                );
             }
         }
 
-        return $this->applicablePositions;
+        return $this->applicableFieldTypes;
     }
 
     /**
@@ -55,7 +59,11 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
             }
 
             if ($this->acceptedTwigFunctions) {
-                $this->acceptedTwigFunctions = array_unique(array_merge(...$this->acceptedTwigFunctions));
+                $this->acceptedTwigFunctions = \array_values(
+                    \array_unique(
+                        \array_merge(...$this->acceptedTwigFunctions)
+                    )
+                );
             }
         }
 
@@ -68,8 +76,8 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
         $isFlushNeeded = false;
+        $fieldType = $processedDTO->getProcessedEntity()->getFieldType();
         foreach ($this->processors as $processor) {
-            $fieldType = $processedDTO->getProcessedEntity()->getFieldType();
             if (\in_array($fieldType, $processor->getApplicableFieldTypes(), false)) {
                 $processorTwigFunctionCalls = array_intersect_key(
                     $twigFunctionCalls,
