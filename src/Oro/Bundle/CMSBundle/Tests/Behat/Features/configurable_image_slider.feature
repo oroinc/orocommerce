@@ -1,5 +1,6 @@
 @ticket-BB-17548
 @fixture-OroCMSBundle:CustomerUserFixture.yml
+@fixture-OroCMSBundle:WysiwygRoleFixture.yml
 
 Feature: Configurable image slider
   In order to have image sliders displayed on the storefront
@@ -75,22 +76,22 @@ Feature: Configurable image slider
       | 2           | /about   | Slide 2 | Slide text 2 | Center         | New Window  | cat2.jpg   | N/A          | cat2.jpg    |
 
   Scenario: Edit user roles
-    And I am logged in under Globe ORO Pro organization
-    And go to System/User Management/Users
-    And click Edit admin in grid
+    Given I go to System/User Management/Users
+    When click Edit admin in grid
+    And I click "Groups and Roles"
     And I fill form with:
-      | Roles | [Administrator, WYSIWYG ROLE] |
-    When I save and close form
+      | Roles | [Administrator, WYSIWYG] |
+    And I save and close form
     Then I should see "User saved" flash message
     # Relogin for refresh token after change user roles
     And I am logged out
 
   Scenario: Create Landing Page
-    Given I go to Marketing/Landing Pages
+    Given login as administrator
+    And I go to Marketing/Landing Pages
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Image slider page"
     And I fill in WYSIWYG "CMS Page Content" with "<div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div>"
-    And I wait for action
     When I save form
     Then I should see "Page has been saved" flash message
     And I should see URL Slug field filled with "image-slider-page"
