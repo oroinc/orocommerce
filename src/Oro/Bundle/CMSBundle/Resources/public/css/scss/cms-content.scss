@@ -1,0 +1,23 @@
+/* @theme: admin.oro; */
+
+.cms-content {
+    padding-bottom: $content-padding-medium;
+    margin-bottom: -$content-padding-medium;
+
+    overflow-y: auto;
+
+    audio,
+    canvas,
+    img,
+    video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    figure,
+    figcaption {
+        display: block;
+
+        text-align: center;
+    }
+}
