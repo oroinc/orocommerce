@@ -27,7 +27,7 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      *
      * @Rest\Post(
      *      "/paymentrules/{id}/enable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Payment Rule", resource=true)
@@ -36,7 +36,7 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * @param $id
      * @return Response
      */
-    public function enableAction($id)
+    public function enableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */
         $paymentMethodsConfigsRule = $this->getManager()->find($id);
@@ -74,7 +74,7 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      *
      * @Rest\Post(
      *      "/paymentrules/{id}/disable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Payment Rule", resource=true)
@@ -83,7 +83,7 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * @param $id
      * @return Response
      */
-    public function disableAction($id)
+    public function disableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */
         $paymentMethodsConfigsRule = $this->getManager()->find($id);

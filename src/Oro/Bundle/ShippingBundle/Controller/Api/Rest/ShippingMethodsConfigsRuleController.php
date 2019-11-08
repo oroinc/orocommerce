@@ -26,7 +26,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @Rest\Post(
      *      "/shippingrules/{id}/enable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
@@ -36,7 +36,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @return Response
      */
-    public function enableAction($id)
+    public function enableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
@@ -75,7 +75,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @Rest\Post(
      *      "/shippingrules/{id}/disable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
@@ -85,7 +85,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @return Response
      */
-    public function disableAction($id)
+    public function disableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
