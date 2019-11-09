@@ -35,7 +35,6 @@ workflows:
                         action_group: b2b_flow_checkout_update_shipping_address
                         parameters_mapping:
                             checkout: $checkout
-                            billing_address_has_shipping: $billing_address_has_shipping
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_shipping_method
@@ -113,7 +112,6 @@ workflows:
                         action_group: b2b_flow_checkout_update_shipping_address
                         parameters_mapping:
                             checkout: $checkout
-                            billing_address_has_shipping: $billing_address_has_shipping
 
                     - '@call_service_method':
                         service: oro_checkout.action.default_shipping_method_setter

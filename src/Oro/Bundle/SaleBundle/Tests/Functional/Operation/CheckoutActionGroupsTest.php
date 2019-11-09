@@ -142,11 +142,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
             'b2b_flow_checkout_update_shipping_address',
             [
                 'checkout' => $checkout,
-                'billing_address_has_shipping' => true,
             ]
         );
-
-        $this->assertTrue($result['billing_address_has_shipping']);
 
         // shipping address are duplicated, old shipping address removed
         $this->assertNull($this->findEntity(OrderAddress::class, $shippingAddressId));

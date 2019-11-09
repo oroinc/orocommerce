@@ -65,7 +65,6 @@ operations:
                 action_group: b2b_flow_checkout_update_shipping_address
                 parameters_mapping:
                     checkout: $.data
-                    billing_address_has_shipping: $.data.shipToBillingAddress
             - '@run_action_group':
                 action_group: b2b_flow_checkout_update_shipping_method
                 parameters_mapping:
