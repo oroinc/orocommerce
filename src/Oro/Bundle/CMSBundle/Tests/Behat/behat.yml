@@ -31,7 +31,11 @@ oro_behat_extension:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             options:
                 mapping:
-                    Content: 'oro_cms_page[content]'
+                    Titles: 'oro_cms_page[titles][values][default]'
+                    Content:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_page[content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
@@ -39,6 +43,10 @@ oro_behat_extension:
             options:
                 mapping:
                     Titles: 'oro_cms_content_block[titles][values][default]'
+                    Content Variant:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][0][content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -158,5 +166,7 @@ oro_behat_extension:
                 - OroApplicationBundle::CommerceMainContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - OroNavigationBundle::TabContext
+                - OroSecurityBundle::ACLContext
+                - OroUserBundle::FeatureContext
             paths:
                 - '@OroCMSBundle/Tests/Behat/Features'

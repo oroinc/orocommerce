@@ -1,0 +1,5 @@
+Oro\Bundle\UserBundle\Entity\Role:
+    wysiwyg_role:
+        label: WYSIWYG
+        __calls:
+            - setRole: ['ROLE_WYSIWYG', false]

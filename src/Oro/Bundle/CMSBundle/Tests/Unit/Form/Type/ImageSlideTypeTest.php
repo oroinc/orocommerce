@@ -18,6 +18,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -122,6 +123,8 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        $htmlTagHelper = new HtmlTagHelper($htmlTagProvider);
+
         /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ContextInterface::class);
 
@@ -139,7 +142,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     ),
                     ImageSlideCollectionType::class => new ImageSlideCollectionTypeStub(),
                     ImageSlideType::class => new ImageSlideTypeStub(),
-                    new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    new OroRichTextType($configManager, $htmlTagProvider, $context, $htmlTagHelper),
                 ],
                 [
                     FormType::class => [new DataBlockExtension()]

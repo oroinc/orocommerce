@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -100,6 +101,10 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        $purifierScopeProvider->expects($this->any())
+            ->method('getScope')
+            ->willReturn('default');
 
         return [
             new PreloadedExtension(
@@ -107,7 +112,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
