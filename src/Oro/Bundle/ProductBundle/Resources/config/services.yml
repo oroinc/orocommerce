@@ -1128,6 +1128,15 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_product.access_rule.frontend_organization_for_product:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        calls:
+            - [setOrganizationOptional, [ true ]]
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\ProductBundle\Entity\Product, frontend: true }
+
     oro_product.security.acl.voter.product_collection_segment:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter
         public: false

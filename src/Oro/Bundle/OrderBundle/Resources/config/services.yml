@@ -461,6 +461,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }
 
+    oro_order.access_rule.frontend_order_line_item:
+        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderLineItemAccessRule
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
+
     oro_order.entity_listener.order_line_item.product_variant_fields:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderLineItem\OrderLineItemEventListener'
         public: false

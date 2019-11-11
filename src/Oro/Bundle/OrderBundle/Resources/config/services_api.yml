@@ -1,11 +1,4 @@
 services:
-    oro_order.api.frontend.order_line_item_query_modifier:
-        class: Oro\Bundle\OrderBundle\Api\OrderLineItemQueryModifier
-        arguments:
-            - '@oro_entity.orm.entity_class_resolver'
-        tags:
-            - { name: oro.api.query_modifier, requestType: frontend }
-
     oro_order.api.frontend.order_address_query_modifier:
         class: Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier
         arguments:

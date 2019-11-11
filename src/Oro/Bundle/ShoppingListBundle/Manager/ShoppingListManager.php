@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
@@ -53,6 +54,9 @@ class ShoppingListManager
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var EntityDeleteHandlerRegistry */
+    private $deleteHandlerRegistry;
+
     /**
      * @param ManagerRegistry                    $doctrine
      * @param TokenAccessorInterface             $tokenAccessor
@@ -63,6 +67,9 @@ class ShoppingListManager
      * @param ProductVariantAvailabilityProvider $productVariantProvider
      * @param ProductMatrixAvailabilityProvider  $productMatrixAvailabilityProvider
      * @param ConfigManager                      $configManager
+     * @param EntityDeleteHandlerRegistry        $deleteHandlerRegistry
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         ManagerRegistry $doctrine,
@@ -73,7 +80,8 @@ class ShoppingListManager
         ShoppingListTotalManager $totalManager,
         ProductVariantAvailabilityProvider $productVariantProvider,
         ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        EntityDeleteHandlerRegistry $deleteHandlerRegistry
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
@@ -84,6 +92,7 @@ class ShoppingListManager
         $this->productVariantProvider = $productVariantProvider;
         $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
         $this->configManager = $configManager;
+        $this->deleteHandlerRegistry = $deleteHandlerRegistry;
     }
 
     /**
@@ -188,24 +197,15 @@ class ShoppingListManager
      */
     public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
     {
-        $em = $this->getEntityManager();
-
         $products = [];
         if ($product->isConfigurable()) {
             $products = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
         }
         $products[] = $product;
 
-        $lineItems = $this->getLineItemRepository($em)->getItemsByShoppingListAndProducts($shoppingList, $products);
-        foreach ($lineItems as $lineItem) {
-            $shoppingList->removeLineItem($lineItem);
-            $em->remove($lineItem);
-        }
-
-        $this->totalManager->recalculateTotals($shoppingList, false);
-        if ($lineItems && $flush) {
-            $em->flush();
-        }
+        $lineItems = $this->getLineItemRepository($this->getEntityManager())
+            ->getItemsByShoppingListAndProducts($shoppingList, $products);
+        $this->deleteLineItems($lineItems, $flush);
 
         return count($lineItems);
     }
@@ -226,12 +226,7 @@ class ShoppingListManager
             || !$parentProduct
             || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
         ) {
-            $shoppingList = $lineItem->getShoppingList();
-            $shoppingList->removeLineItem($lineItem);
-            $em = $this->getEntityManager();
-            $em->remove($lineItem);
-            $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
-            $em->flush();
+            $this->deleteHandlerRegistry->getHandler(LineItem::class)->delete($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
@@ -289,14 +284,7 @@ class ShoppingListManager
      */
     public function removeLineItems($shoppingList)
     {
-        $em = $this->getEntityManager();
-        $lineItems = $shoppingList->getLineItems();
-        foreach ($lineItems as $lineItem) {
-            $shoppingList->removeLineItem($lineItem);
-            $em->remove($lineItem);
-        }
-        $this->totalManager->recalculateTotals($shoppingList, false);
-        $em->flush();
+        $this->deleteLineItems($shoppingList->getLineItems()->toArray());
     }
 
     /**
@@ -394,6 +382,26 @@ class ShoppingListManager
         $this->totalManager->recalculateTotals($shoppingList, false);
 
         return $this;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     * @param bool       $flush
+     */
+    private function deleteLineItems(array $lineItems, bool $flush = true)
+    {
+        if (!$lineItems) {
+            return;
+        }
+
+        $handler = $this->deleteHandlerRegistry->getHandler(LineItem::class);
+        $flushAllOptions = [];
+        foreach ($lineItems as $lineItem) {
+            $flushAllOptions[] = $handler->delete($lineItem, false);
+        }
+        if ($flush) {
+            $handler->flushAll($flushAllOptions);
+        }
     }
 
     /**

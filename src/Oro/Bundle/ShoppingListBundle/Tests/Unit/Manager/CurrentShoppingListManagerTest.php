@@ -12,10 +12,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -25,8 +24,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
-    private const CURRENT_WEBSITE_ID = 999;
 
     /** @var CurrentShoppingListManager */
     private $currentShoppingListManager;
@@ -72,23 +69,13 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with(ShoppingList::class)
             ->willReturn($this->shoppingListRepository);
 
-        $website = $this->createMock(Website::class);
-        $website->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::CURRENT_WEBSITE_ID);
-        $websiteManager = $this->createMock(WebsiteManager::class);
-        $websiteManager->expects($this->any())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
         $this->currentShoppingListManager = new CurrentShoppingListManager(
             $this->shoppingListManager,
             $this->guestShoppingListManager,
-            $this->cache,
+            new CurrentShoppingListStorage($this->cache),
             $doctrine,
             $this->aclHelper,
-            $this->tokenAccessor,
-            $websiteManager
+            $this->tokenAccessor
         );
     }
 
@@ -130,14 +117,14 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 ->method('findByUserAndId');
             $this->shoppingListRepository->expects($this->once())
                 ->method('findAvailableForCustomerUser')
-                ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+                ->with($this->aclHelper, false)
                 ->willReturn(null);
         } else {
             $this->expectCacheFetchAndNoSave($customerUserId, $shoppingList->getId());
 
             $this->shoppingListRepository->expects($this->once())
                 ->method('findByUserAndId')
-                ->with($this->aclHelper, $shoppingList->getId(), self::CURRENT_WEBSITE_ID)
+                ->with($this->aclHelper, $shoppingList->getId())
                 ->willReturn($shoppingList);
             $this->shoppingListRepository->expects($this->never())
                 ->method('findAvailableForCustomerUser');
@@ -361,7 +348,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn($shoppingList);
         $this->shoppingListRepository->expects($this->never())
             ->method('findAvailableForCustomerUser');
@@ -389,11 +376,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn(null);
         $this->shoppingListRepository->expects($this->once())
             ->method('findAvailableForCustomerUser')
-            ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, false)
             ->willReturn($anotherShoppingList);
         $this->shoppingListManager->expects($this->never())
             ->method('create');
@@ -422,11 +409,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn(null);
         $this->shoppingListRepository->expects($this->once())
             ->method('findAvailableForCustomerUser')
-            ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, false)
             ->willReturn(null);
         $this->shoppingListManager->expects($this->once())
             ->method('create')
@@ -452,11 +439,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn(null);
         $this->shoppingListRepository->expects($this->once())
             ->method('findAvailableForCustomerUser')
-            ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, false)
             ->willReturn(null);
 
         $this->assertNull($this->currentShoppingListManager->getCurrent());
@@ -484,7 +471,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn($shoppingList);
 
         $this->assertSame($shoppingList, $this->currentShoppingListManager->getForCurrentUser($shoppingListId));
@@ -507,11 +494,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
-            ->with($this->aclHelper, $shoppingListId, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $shoppingListId)
             ->willReturn(null);
         $this->shoppingListRepository->expects($this->once())
             ->method('findAvailableForCustomerUser')
-            ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, false)
             ->willReturn(null);
         $this->shoppingListManager->expects($this->once())
             ->method('create')
@@ -539,7 +526,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('findByUserAndId');
         $this->shoppingListRepository->expects($this->once())
             ->method('findAvailableForCustomerUser')
-            ->with($this->aclHelper, false, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, false)
             ->willReturn(null);
         $this->shoppingListManager->expects($this->once())
             ->method('create')
@@ -592,7 +579,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUser')
-            ->with($this->aclHelper, $sortCriteria, $currentShoppingList, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $sortCriteria, $currentShoppingList)
             ->willReturn($shoppingLists);
 
         $this->assertEquals(
@@ -632,7 +619,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUser')
-            ->with($this->aclHelper, $sortCriteria, null, self::CURRENT_WEBSITE_ID)
+            ->with($this->aclHelper, $sortCriteria, null)
             ->willReturn($shoppingLists);
 
         $this->assertEquals(

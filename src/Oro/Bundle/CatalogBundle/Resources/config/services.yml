@@ -314,3 +314,10 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_organization.organization.entity.class%', event: prePersist }
+
+    oro_catalog.access_rule.frontend_organization_for_category:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\CatalogBundle\Entity\Category, frontend: true }

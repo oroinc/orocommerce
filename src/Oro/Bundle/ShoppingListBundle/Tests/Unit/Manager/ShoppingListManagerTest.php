@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerInterface;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -62,6 +64,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
+    /** @var EntityDeleteHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $deleteHandlerRegistry;
+
     protected function setUp()
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
@@ -106,6 +111,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->deleteHandlerRegistry = $this->createMock(EntityDeleteHandlerRegistry::class);
 
         $this->manager = new ShoppingListManager(
             $doctrine,
@@ -116,7 +122,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->totalManager,
             $this->productVariantProvider,
             $this->productMatrixAvailabilityProvider,
-            $this->configManager
+            $this->configManager,
+            $this->deleteHandlerRegistry
         );
     }
 
@@ -170,6 +177,46 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $productUnit->setDefaultPrecision($defaultPrecision);
 
         return $productUnit;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     * @param bool       $flush
+     */
+    private function assertDeleteLineItems(array $lineItems, bool $flush = true)
+    {
+        if ($lineItems) {
+            $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
+            $this->deleteHandlerRegistry->expects($this->once())
+                ->method('getHandler')
+                ->with(LineItem::class)
+                ->willReturn($deleteHandler);
+            $index = 0;
+            foreach ($lineItems as $lineItem) {
+                $deleteHandler->expects($this->at($index))
+                    ->method('delete')
+                    ->with($this->identicalTo($lineItem), $this->isFalse())
+                    ->willReturn(['entity' => $lineItem]);
+                $index++;
+            }
+            if ($flush) {
+                $deleteHandler->expects($this->at($index))
+                    ->method('flushAll')
+                    ->with(array_map(
+                        function ($lineItem) {
+                            return ['entity' => $lineItem];
+                        },
+                        $lineItems
+                    ));
+            } else {
+                $deleteHandler->expects($this->never())
+                    ->method('flushAll');
+            }
+        } else {
+            $this->deleteHandlerRegistry->expects($this->never())
+                ->method('getHandler')
+                ->with(LineItem::class);
+        }
     }
 
     public function testCreate()
@@ -376,33 +423,16 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $product = $this->getProduct(42);
 
-        $removedLineItems = [];
-        $this->em->expects($this->exactly(count($relatedLineItems)))
-            ->method('remove')
-            ->willReturnCallback(function (LineItem $item) use (&$removedLineItems) {
-                $removedLineItems[] = $item;
-            });
-        $this->em->expects($expectedFlush ? $this->once() : $this->never())
-            ->method('flush');
-
         $this->lineItemRepository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
             ->with($shoppingList, [$product])
             ->willReturn($relatedLineItems);
 
+        $this->assertDeleteLineItems($relatedLineItems, $expectedFlush);
+
         $result = $this->manager->removeProduct($shoppingList, $product, $flush);
 
         $this->assertEquals(count($relatedLineItems), $result);
-
-        foreach ($relatedLineItems as $lineItem) {
-            $this->assertContains($lineItem, $removedLineItems);
-            $this->assertNotContains($lineItem, $shoppingList->getLineItems());
-        }
-
-        $this->assertCount(
-            count($lineItems) - count($relatedLineItems),
-            $shoppingList->getLineItems()
-        );
     }
 
     /**
@@ -437,12 +467,12 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array           $simpleProducts
-     * @param ArrayCollection $lineItems
+     * @param array $simpleProducts
+     * @param array $lineItems
      *
      * @dataProvider getSimpleProductsProvider
      */
-    public function testRemoveConfigurableProduct($simpleProducts, ArrayCollection $lineItems)
+    public function testRemoveConfigurableProduct($simpleProducts, $lineItems)
     {
         $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
         $shoppingList = $this->getShoppingList(1);
@@ -455,9 +485,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn($simpleProducts);
 
-        $this->em->expects($this->exactly(count($lineItems)))
-            ->method('remove');
-
         $products = $simpleProducts;
         $products[] = $product;
 
@@ -466,9 +493,10 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList, $products)
             ->willReturn($lineItems);
 
+        $this->assertDeleteLineItems($lineItems);
+
         $result = $this->manager->removeProduct($shoppingList, $product, true);
         $this->assertEquals(count($lineItems), $result);
-        $this->assertTrue($shoppingList->getLineItems()->isEmpty());
     }
 
     /**
@@ -479,7 +507,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [],
-                new ArrayCollection()
+                []
             ],
             [
                 [
@@ -487,11 +515,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                     $this->getProduct(45, Product::TYPE_SIMPLE),
                     $this->getProduct(46, Product::TYPE_SIMPLE)
                 ],
-                new ArrayCollection([
+                [
                     $this->getLineItem(38),
                     $this->getLineItem(39),
                     $this->getLineItem(40)
-                ])
+                ]
             ]
         ];
     }
@@ -543,17 +571,13 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         $shoppingList = new ShoppingList();
         $lineItem1 = new LineItem();
-        $this->manager->addLineItem($lineItem1, $shoppingList);
+        $shoppingList->addLineItem($lineItem1);
         $lineItem2 = new LineItem();
-        $this->manager->addLineItem($lineItem2, $shoppingList);
-        $this->assertCount(2, $shoppingList->getLineItems());
+        $shoppingList->addLineItem($lineItem2);
 
-        $this->totalManager->expects($this->once())
-            ->method('recalculateTotals')
-            ->with($shoppingList, false);
+        $this->assertDeleteLineItems([$lineItem1, $lineItem2]);
 
         $this->manager->removeLineItems($shoppingList);
-        $this->assertCount(0, $shoppingList->getLineItems());
     }
 
     public function testUpdateLineItem()
@@ -586,9 +610,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(0);
-        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
 
-        $this->assertEmpty($shoppingList->getLineItems());
+        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
+        $this->deleteHandlerRegistry->expects($this->once())
+            ->method('getHandler')
+            ->with(LineItem::class)
+            ->willReturn($deleteHandler);
+        $deleteHandler->expects($this->once())
+            ->method('delete')
+            ->with($this->identicalTo($lineItem));
+
+        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
     }
 
     public function testRemoveLineItemWithSimpleProductsInItems()
@@ -604,15 +636,18 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem);
         $shoppingList->addLineItem($lineItem1);
 
+        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
+        $this->deleteHandlerRegistry->expects($this->once())
+            ->method('getHandler')
+            ->with(LineItem::class)
+            ->willReturn($deleteHandler);
+        $deleteHandler->expects($this->once())
+            ->method('delete')
+            ->with($this->identicalTo($lineItem));
+
         $countDeletedItems = $this->manager->removeLineItem($lineItem);
 
         $this->assertEquals(1, $countDeletedItems);
-
-        $lineItems = $shoppingList->getLineItems();
-
-        $this->assertCount(1, $lineItems);
-        $this->assertTrue($lineItems->contains($lineItem1));
-        $this->assertFalse($lineItems->contains($lineItem));
     }
 
     public function testRemoveLineItemWithConfigurableProductsAndMatrixMatrixType()
@@ -623,34 +658,19 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getProduct(5, Product::TYPE_CONFIGURABLE);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $simpleProduct1 = $this->getProduct(6, Product::TYPE_SIMPLE);
-        $simpleProduct2 = $this->getProduct(7, Product::TYPE_SIMPLE);
-        $simpleProduct3 = $this->getProduct(8, Product::TYPE_SIMPLE);
-
-        $lineItem3 = new LineItem();
-        $lineItem3->setProduct($simpleProduct3);
-        $lineItem3->setParentProduct($product);
-        $lineItem3->setUnit($this->getProductUnit('test', 1));
-
         $lineItem1 = new LineItem();
-        $lineItem1->setProduct($simpleProduct1);
+        $lineItem1->setProduct($this->getProduct(6, Product::TYPE_SIMPLE));
         $lineItem1->setParentProduct($product);
         $lineItem1->setUnit($this->getProductUnit('test', 1));
 
         $lineItem2 = new LineItem();
-        $lineItem2->setProduct($simpleProduct2);
+        $lineItem2->setProduct($this->getProduct(7, Product::TYPE_SIMPLE));
         $lineItem2->setParentProduct($product);
         $lineItem2->setUnit($this->getProductUnit('test', 1));
 
         $shoppingList = $this->getShoppingList(1);
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
-        $shoppingList->addLineItem($lineItem3);
-
-        $this->lineItemRepository->expects($this->once())
-            ->method('getItemsByShoppingListAndProducts')
-            ->with($shoppingList, [$product])
-            ->willReturn([$lineItem1, $lineItem2, $lineItem3]);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -661,10 +681,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(true);
 
+        $lineItems = [$lineItem1, $lineItem2];
+        $this->lineItemRepository->expects($this->once())
+            ->method('getItemsByShoppingListAndProducts')
+            ->with($shoppingList, [$product])
+            ->willReturn($lineItems);
+
+        $this->assertDeleteLineItems($lineItems);
+
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
-        $this->assertEquals(3, $countDeletedItems);
-        $this->assertEmpty($shoppingList->getLineItems());
+        $this->assertEquals(2, $countDeletedItems);
     }
 
     public function testRemoveLineItemWithConfigurableProductsAndNoneMatrixType()
@@ -675,87 +702,49 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
-        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
-        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
-
-        $lineItem1 = new LineItem();
-        $lineItem1->setProduct($simpleProduct1);
-        $lineItem1->setParentProduct($product);
-        $lineItem1->setUnit($this->getProductUnit('test', 1));
-
-        $lineItem3 = new LineItem();
-        $lineItem3->setProduct($simpleProduct3);
-        $lineItem3->setParentProduct($product);
-        $lineItem3->setUnit($this->getProductUnit('test', 1));
-
-        $lineItem2 = new LineItem();
-        $lineItem2->setProduct($simpleProduct2);
-        $lineItem2->setParentProduct($product);
-        $lineItem2->setUnit($this->getProductUnit('test', 1));
-
-        $shoppingList = $this->getShoppingList(1);
-        $shoppingList->addLineItem($lineItem1);
-        $shoppingList->addLineItem($lineItem2);
-        $shoppingList->addLineItem($lineItem3);
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->getProduct(44, Product::TYPE_SIMPLE));
+        $lineItem->setParentProduct($product);
+        $lineItem->setUnit($this->getProductUnit('test', 1));
 
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_product.matrix_form_on_shopping_list')
             ->willReturn(Configuration::MATRIX_FORM_NONE);
 
-        $countDeletedItems = $this->manager->removeLineItem($lineItem1);
+        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
+        $this->deleteHandlerRegistry->expects($this->once())
+            ->method('getHandler')
+            ->with(LineItem::class)
+            ->willReturn($deleteHandler);
+        $deleteHandler->expects($this->once())
+            ->method('delete')
+            ->with($this->identicalTo($lineItem));
+
+        $countDeletedItems = $this->manager->removeLineItem($lineItem);
 
         $this->assertEquals(1, $countDeletedItems);
-
-        $resultLineItems = $shoppingList->getLineItems();
-        $this->assertCount(2, $resultLineItems);
-        $this->assertFalse($resultLineItems->contains($lineItem1));
-        $this->assertTrue($resultLineItems->contains($lineItem2));
-        $this->assertTrue($resultLineItems->contains($lineItem3));
     }
 
     public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem()
     {
-        $productUnitPrecision = new ProductUnitPrecision();
-        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->getProduct(11, Product::TYPE_SIMPLE));
+        $lineItem->setParentProduct($this->getProduct(10, Product::TYPE_CONFIGURABLE));
+        $lineItem->setUnit($this->getProductUnit('test', 1));
 
-        $product = $this->getProduct(10, Product::TYPE_CONFIGURABLE);
-        $product->setPrimaryUnitPrecision($productUnitPrecision);
+        $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
+        $this->deleteHandlerRegistry->expects($this->once())
+            ->method('getHandler')
+            ->with(LineItem::class)
+            ->willReturn($deleteHandler);
+        $deleteHandler->expects($this->once())
+            ->method('delete')
+            ->with($this->identicalTo($lineItem));
 
-        $simpleProduct1 = $this->getProduct(11, Product::TYPE_SIMPLE);
-        $simpleProduct2 = $this->getProduct(12, Product::TYPE_SIMPLE);
-        $simpleProduct3 = $this->getProduct(13, Product::TYPE_SIMPLE);
-
-        $lineItem1 = new LineItem();
-        $lineItem1->setProduct($simpleProduct1);
-        $lineItem1->setParentProduct($product);
-        $lineItem1->setUnit($this->getProductUnit('test', 1));
-
-        $lineItem2 = new LineItem();
-        $lineItem2->setProduct($simpleProduct2);
-        $lineItem2->setParentProduct($product);
-        $lineItem2->setUnit($this->getProductUnit('test', 1));
-
-        $lineItem3 = new LineItem();
-        $lineItem3->setProduct($simpleProduct3);
-        $lineItem3->setParentProduct($product);
-        $lineItem3->setUnit($this->getProductUnit('test', 1));
-
-        $shoppingList = $this->getShoppingList(1);
-        $shoppingList->addLineItem($lineItem1);
-        $shoppingList->addLineItem($lineItem2);
-        $shoppingList->addLineItem($lineItem3);
-
-        $countDeletedItems = $this->manager->removeLineItem($lineItem1, true);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem, true);
 
         $this->assertEquals(1, $countDeletedItems);
-
-        $resultItems = $shoppingList->getLineItems();
-        $this->assertCount(2, $resultItems);
-        $this->assertFalse($resultItems->contains($lineItem1));
-        $this->assertTrue($resultItems->contains($lineItem2));
-        $this->assertTrue($resultItems->contains($lineItem3));
     }
 
     public function testActualizeLineItems()

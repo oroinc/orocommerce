@@ -9,5 +9,7 @@ oro:
             max.error.label: "Shopping list subtotal amount cannot exceed the {{ limit }}."
             min.error.label: "Shopping list subtotal amount cannot be less than {{ limit }}."
 
+        create_not_allowed: "It is not allowed to create a new shopping list."
+
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"

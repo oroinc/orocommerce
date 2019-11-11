@@ -6,12 +6,15 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class ShoppingListViewVoter extends AbstractEntityVoter
+/**
+ * This security voter denies access to shopping lists created on another websites.
+ */
+class ShoppingListVoter extends AbstractEntityVoter
 {
     /**
      * @var array
      */
-    protected $supportedAttributes = ['VIEW'];
+    protected $supportedAttributes = ['VIEW', 'CREATE', 'EDIT', 'DELETE'];
 
     /**
      * @var WebsiteManager

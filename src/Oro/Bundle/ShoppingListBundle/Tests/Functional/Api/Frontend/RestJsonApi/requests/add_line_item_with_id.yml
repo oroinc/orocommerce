@@ -1,0 +1,18 @@
+data:
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item1->id)>'
+        attributes:
+            quantity: 10
+            notes: 'Updated Existing Line Item Notes'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
