@@ -51,4 +51,4 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
         # Cannot use '@quote1->id' because quote is not yet persisted to DB at this point.
         entityId: '1'
         entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
-        serializedData: '[]'
+        serializedData: <('[]')>
