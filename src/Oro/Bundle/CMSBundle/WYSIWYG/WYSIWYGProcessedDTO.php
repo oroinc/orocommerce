@@ -87,4 +87,21 @@ class WYSIWYGProcessedDTO
 
         return $ownerFieldName;
     }
+
+    /**
+     * @param string $fieldName
+     * @param string|null $fieldType
+     * @return WYSIWYGProcessedDTO
+     */
+    public function withProcessedEntityField(string $fieldName, ?string $fieldType = null): WYSIWYGProcessedDTO
+    {
+        $dto = clone $this;
+        $dto->processedEntity = $this->getProcessedEntity()->withField($fieldName, $fieldType);
+
+        if ($this->isSelfOwner()) {
+            $dto->ownerEntity = $this->getOwnerEntity()->withField($fieldName, $fieldType);
+        }
+
+        return $dto;
+    }
 }

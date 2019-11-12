@@ -6,9 +6,15 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetProcessedEntity(): void
+    /**
+     * @return WYSIWYGProcessedDTO
+     */
+    public function testGetProcessedEntity(): WYSIWYGProcessedDTO
     {
         /** @var WYSIWYGProcessedEntityDTO $entityDTO */
         $entityDTO = $this->createMock(WYSIWYGProcessedEntityDTO::class);
@@ -17,9 +23,40 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($entityDTO, $processedDTO->getProcessedEntity());
         $this->assertTrue($processedDTO->isSelfOwner());
+
+        return $processedDTO;
     }
 
-    public function testOwnerEntity(): void
+    /**
+     * @depends testGetProcessedEntity
+     * @param WYSIWYGProcessedDTO $dto
+     */
+    public function testWithProcessedEntityField(WYSIWYGProcessedDTO $dto): void
+    {
+        /** @var \PHPUnit\Framework\MockObject\MockObject $entityDTO */
+        $entityDTO = $dto->getProcessedEntity();
+        $newProcessed = clone $entityDTO;
+        $newOwner = clone $entityDTO;
+
+        $entityDTO->expects($this->exactly(2))
+            ->method('withField')
+            ->with('test_field_name', 'test_type')
+            ->willReturnOnConsecutiveCalls($newProcessed, $newOwner);
+
+        $newDto = $dto->withProcessedEntityField('test_field_name', 'test_type');
+        $this->assertNotSame($dto, $newDto);
+        $this->assertSame($entityDTO, $dto->getProcessedEntity());
+        $this->assertSame($entityDTO, $dto->getOwnerEntity());
+
+        $this->assertSame($newProcessed, $newDto->getProcessedEntity());
+        $this->assertSame($newOwner, $newDto->getOwnerEntity());
+        $this->assertFalse($newDto->isSelfOwner());
+    }
+
+    /**
+     * @return WYSIWYGProcessedDTO
+     */
+    public function testOwnerEntity(): WYSIWYGProcessedDTO
     {
         /** @var WYSIWYGProcessedEntityDTO $entityDTO */
         $entityDTO = $this->createMock(WYSIWYGProcessedEntityDTO::class);
@@ -32,6 +69,30 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($entityDTO, $processedDTO->getProcessedEntity());
         $this->assertSame($ownerEntityDTO, $processedDTO->getOwnerEntity());
         $this->assertFalse($processedDTO->isSelfOwner());
+
+        return $processedDTO;
+    }
+
+    /**
+     * @depends testOwnerEntity
+     */
+    public function testWithProcessedEntityFieldNotSelfOwner(WYSIWYGProcessedDTO $dto): void
+    {
+        /** @var \PHPUnit\Framework\MockObject\MockObject $entityDTO */
+        $entityDTO = $dto->getProcessedEntity();
+        $newProcessed = clone $entityDTO;
+
+        $entityDTO->expects($this->once())
+            ->method('withField')
+            ->with('test_field_name', 'test_type')
+            ->willReturn($newProcessed);
+
+        $newDto = $dto->withProcessedEntityField('test_field_name', 'test_type');
+        $this->assertNotSame($dto, $newDto);
+
+        $this->assertSame($newProcessed, $newDto->getProcessedEntity());
+        $this->assertSame($dto->getOwnerEntity(), $newDto->getOwnerEntity());
+        $this->assertFalse($newDto->isSelfOwner());
     }
 
     public function testOwnerEntitySameProcessed(): void

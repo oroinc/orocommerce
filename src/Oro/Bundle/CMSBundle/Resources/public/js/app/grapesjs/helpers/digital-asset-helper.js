@@ -16,7 +16,11 @@ define(function(require) {
         getImageUrlFromTwigTag: function(twigTagString) {
             const digitalAssetId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(twigTagString);
 
-            return DigitalAssetHelper.getImageUrl(digitalAssetId);
+            if (digitalAssetId) {
+                return DigitalAssetHelper.getImageUrl(digitalAssetId);
+            }
+
+            return '';
         },
 
         /**

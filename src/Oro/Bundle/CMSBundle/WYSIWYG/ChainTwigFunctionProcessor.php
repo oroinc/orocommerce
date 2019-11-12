@@ -11,10 +11,7 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
     private $processors;
 
     /** @var string[] */
-    private $applicableFieldTypes;
-
-    /** @var string[] */
-    private $acceptedTwigFunctions;
+    private $applicableMapping;
 
     /**
      * @param iterable|WYSIWYGTwigFunctionProcessorInterface[] $processors
@@ -27,47 +24,25 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getApplicableFieldTypes(): array
+    public function getApplicableMapping(): array
     {
-        if ($this->applicableFieldTypes === null) {
-            $this->applicableFieldTypes = [];
+        if ($this->applicableMapping === null) {
+            $this->applicableMapping = [];
             foreach ($this->processors as $processor) {
-                $this->applicableFieldTypes[] = $processor->getApplicableFieldTypes();
-            }
-
-            if ($this->applicableFieldTypes) {
-                $this->applicableFieldTypes = \array_values(
-                    \array_unique(
-                        \array_merge(...$this->applicableFieldTypes)
-                    )
-                );
+                foreach ($processor->getApplicableMapping() as $type => $functionNames) {
+                    if (!isset($this->applicableMapping[$type])) {
+                        $this->applicableMapping[$type] = $functionNames;
+                    } else {
+                        $different = \array_diff($functionNames, $this->applicableMapping[$type]);
+                        if ($different) {
+                            $this->applicableMapping[$type] = \array_merge($this->applicableMapping[$type], $different);
+                        }
+                    }
+                }
             }
         }
 
-        return $this->applicableFieldTypes;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAcceptedTwigFunctions(): array
-    {
-        if ($this->acceptedTwigFunctions === null) {
-            $this->acceptedTwigFunctions = [];
-            foreach ($this->processors as $processor) {
-                $this->acceptedTwigFunctions[] = $processor->getAcceptedTwigFunctions();
-            }
-
-            if ($this->acceptedTwigFunctions) {
-                $this->acceptedTwigFunctions = \array_values(
-                    \array_unique(
-                        \array_merge(...$this->acceptedTwigFunctions)
-                    )
-                );
-            }
-        }
-
-        return $this->acceptedTwigFunctions;
+        return $this->applicableMapping;
     }
 
     /**
@@ -76,15 +51,19 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
         $isFlushNeeded = false;
-        $fieldType = $processedDTO->getProcessedEntity()->getFieldType();
         foreach ($this->processors as $processor) {
-            if (\in_array($fieldType, $processor->getApplicableFieldTypes(), false)) {
-                $processorTwigFunctionCalls = array_intersect_key(
-                    $twigFunctionCalls,
-                    \array_flip($processor->getAcceptedTwigFunctions())
-                );
+            $preparedFunctionCalls = [];
+            foreach ($processor->getApplicableMapping() as $type => $functionNames) {
+                if (\array_key_exists($type, $twigFunctionCalls)) {
+                    $preparedFunctionCalls[$type] = \array_intersect_key(
+                        $twigFunctionCalls[$type],
+                        \array_flip($functionNames)
+                    );
+                }
+            }
 
-                $isFlushNeeded = $processor->processTwigFunctions($processedDTO, $processorTwigFunctionCalls)
+            if ($preparedFunctionCalls) {
+                $isFlushNeeded = $processor->processTwigFunctions($processedDTO, $preparedFunctionCalls)
                     || $isFlushNeeded;
             }
         }

@@ -25,20 +25,10 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     /**
      * {@inheritdoc}
      */
-    public function getApplicableFieldTypes(): array
+    public function getApplicableMapping(): array
     {
         return [
-            self::FIELD_CONTENT_TYPE,
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAcceptedTwigFunctions(): array
-    {
-        return [
-            'widget',
+            self::FIELD_CONTENT_TYPE => ['widget'],
         ];
     }
 
@@ -128,8 +118,8 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     private function getWidgetNames(array $twigFunctionCalls): array
     {
         $actualWidgetCalls = [];
-        if (isset($twigFunctionCalls['widget'])) {
-            foreach ($twigFunctionCalls['widget'] as list($widgetName)) {
+        if (isset($twigFunctionCalls[self::FIELD_CONTENT_TYPE]['widget'])) {
+            foreach ($twigFunctionCalls[self::FIELD_CONTENT_TYPE]['widget'] as list($widgetName)) {
                 if ($widgetName && \is_string($widgetName)) {
                     $actualWidgetCalls[$widgetName] = true;
                 }

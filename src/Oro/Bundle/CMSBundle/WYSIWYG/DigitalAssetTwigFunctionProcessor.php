@@ -34,22 +34,11 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
     /**
      * {@inheritdoc}
      */
-    public function getApplicableFieldTypes(): array
+    public function getApplicableMapping(): array
     {
         return [
-            self::FIELD_CONTENT_TYPE,
-            self::FIELD_STYLES_TYPE,
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAcceptedTwigFunctions(): array
-    {
-        return [
-            'wysiwyg_image',
-            'wysiwyg_file',
+            self::FIELD_CONTENT_TYPE => ['wysiwyg_image', 'wysiwyg_file'],
+            self::FIELD_STYLES_TYPE => ['wysiwyg_image', 'wysiwyg_file'],
         ];
     }
 
@@ -159,12 +148,14 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
 
         $actualCalls = [];
         if ($twigFunctionCalls) {
-            foreach ($twigFunctionCalls as $callArguments) {
-                foreach ($callArguments as list($digitalAssetId, $uuid)) {
-                    if ($digitalAssetId) {
-                        $uuid = strtolower(trim($uuid));
-                        if ($this->validator->validate($uuid, $this->constraint)->count() === 0) {
-                            $actualCalls[$uuid] = (int)$digitalAssetId;
+            foreach ($twigFunctionCalls as $fieldType => $calls) {
+                foreach ($calls as $callArguments) {
+                    foreach ($callArguments as list($digitalAssetId, $uuid)) {
+                        if ($digitalAssetId) {
+                            $uuid = strtolower(trim($uuid));
+                            if ($this->validator->validate($uuid, $this->constraint)->count() === 0) {
+                                $actualCalls[$uuid] = (int)$digitalAssetId;
+                            }
                         }
                     }
                 }

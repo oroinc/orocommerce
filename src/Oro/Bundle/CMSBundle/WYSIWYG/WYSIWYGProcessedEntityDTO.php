@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\WYSIWYG;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -85,7 +86,12 @@ class WYSIWYGProcessedEntityDTO
     public function getMetadata(): ClassMetadata
     {
         if (!$this->metadata) {
-            $this->metadata = $this->getEntityManager()->getClassMetadata(\get_class($this->getEntity()));
+            $entity = $this->getEntity();
+            if ($entity instanceof Collection) {
+                $entity = $entity->first();
+            }
+
+            $this->metadata = $this->getEntityManager()->getClassMetadata(\get_class($entity));
         }
 
         return $this->metadata;
@@ -122,27 +128,26 @@ class WYSIWYGProcessedEntityDTO
     }
 
     /**
-     * @param array $fieldNames
-     * @return array|null
+     * @return mixed
      */
-    public function filterChangedFields(array $fieldNames): ?array
+    public function getFieldValue()
     {
-        $changedFields = [];
-        if ($fieldNames) {
-            if ($this->changeSet !== null) {
-                foreach ($fieldNames as $fieldName) {
-                    if (isset($this->changeSet[$fieldName])) {
-                        $changedFields[$fieldName] = $this->changeSet[$fieldName][1] ?? null;
-                    }
-                }
-            } else {
-                $metadata = $this->getMetadata();
-                foreach ($fieldNames as $fieldName) {
-                    $changedFields[$fieldName] = $metadata->getFieldValue($this->getEntity(), $fieldName);
-                }
-            }
-        }
+        return $this->getMetadata()->getFieldValue($this->getEntity(), $this->getFieldName());
+    }
 
-        return $changedFields;
+    /**
+     * @return bool
+     */
+    public function isFieldChanged(): bool
+    {
+        return $this->changeSet === null || array_key_exists($this->getFieldName(), $this->changeSet);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRelation(): bool
+    {
+        return $this->getMetadata()->hasAssociation($this->getFieldName());
     }
 }

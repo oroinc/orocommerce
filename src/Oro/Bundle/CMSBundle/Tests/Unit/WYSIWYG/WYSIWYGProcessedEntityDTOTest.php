@@ -18,7 +18,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
         $this->em = $this->createMock(EntityManager::class);
     }
 
-    public function testCreateFromLifecycleEventArgs(): void
+    public function testCreateFromLifecycleEventArgs(): WYSIWYGProcessedEntityDTO
     {
         $entity = new \stdClass();
 
@@ -30,9 +30,20 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($this->em, $dto->getEntityManager());
         $this->assertSame($entity, $dto->getEntity());
+
+        return $dto;
     }
 
-    public function testCreateFromPreUpdateEventArgs(): void
+    /**
+     * @depends testCreateFromLifecycleEventArgs
+     * @param WYSIWYGProcessedEntityDTO $dto
+     */
+    public function testIsFieldChangedWithoutChangeSet(WYSIWYGProcessedEntityDTO $dto): void
+    {
+        $this->assertTrue($dto->isFieldChanged());
+    }
+
+    public function testCreateFromPreUpdateEventArgs(): WYSIWYGProcessedEntityDTO
     {
         $entity = new \stdClass();
 
@@ -47,7 +58,21 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($this->em, $dto->getEntityManager());
         $this->assertSame($entity, $dto->getEntity());
+
+        return $dto;
     }
+
+    /**
+     * @depends testCreateFromPreUpdateEventArgs
+     * @param WYSIWYGProcessedEntityDTO $dto
+     */
+    public function testIsFieldChangedWithChangeSet(WYSIWYGProcessedEntityDTO $dto): void
+    {
+        $this->assertFalse($dto->isFieldChanged());
+        $this->assertTrue($dto->withField('test')->isFieldChanged());
+        $this->assertFalse($dto->withField('not_changed')->isFieldChanged());
+    }
+
 
     public function testGetMetadata(): WYSIWYGProcessedEntityDTO
     {
@@ -83,6 +108,42 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(42, $dto->getEntityId());
     }
 
+    /**
+     * @depends testGetMetadata
+     * @param WYSIWYGProcessedEntityDTO $dto
+     */
+    public function testGetFieldValue(WYSIWYGProcessedEntityDTO $dto): void
+    {
+        $dto = $dto->withField('test_field');
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject $metadata */
+        $metadata = $dto->getMetadata();
+        $metadata->expects($this->once())
+            ->method('getFieldValue')
+            ->with($dto->getEntity(), 'test_field')
+            ->willReturn('field_value');
+
+        $this->assertSame('field_value', $dto->getFieldValue());
+    }
+
+    /**
+     * @depends testGetMetadata
+     * @param WYSIWYGProcessedEntityDTO $dto
+     */
+    public function testIsRelation(WYSIWYGProcessedEntityDTO $dto): void
+    {
+        $dto = $dto->withField('test_field');
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject $metadata */
+        $metadata = $dto->getMetadata();
+        $metadata->expects($this->once())
+            ->method('hasAssociation')
+            ->with('test_field')
+            ->willReturn(true);
+
+        $this->assertTrue($dto->isRelation());
+    }
+
     public function testField(): void
     {
         $entity = new \stdClass();
@@ -97,58 +158,5 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('test_field', $newDto->getFieldName());
         $this->assertSame('test_type', $newDto->getFieldType());
-    }
-
-    public function testFilterChangedFieldsFromChangeSet(): void
-    {
-        $entity = new \stdClass();
-        $dto = new WYSIWYGProcessedEntityDTO($this->em, $entity, [
-            'field_a' => [null, 'new_field_a'],
-            'field_b' => ['old_field_b', 'new_field_b'],
-            'field_c' => ['old_field_c', null],
-        ]);
-
-        $this->assertSame(
-            [
-                'field_a' => 'new_field_a',
-                'field_c' => null,
-            ],
-            $dto->filterChangedFields(['field_a', 'field_c'])
-        );
-
-        $this->assertSame(
-            [
-                'field_b' => 'new_field_b',
-            ],
-            $dto->filterChangedFields(['field_b'])
-        );
-    }
-
-    public function testFilterChangedFieldsFromEntityValue(): void
-    {
-        $entity = new \stdClass();
-        $dto = new WYSIWYGProcessedEntityDTO($this->em, $entity);
-
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->expects($this->exactly(2))
-            ->method('getFieldValue')
-            ->withConsecutive(
-                [$entity, 'field_a'],
-                [$entity, 'field_b']
-            )
-            ->willReturnOnConsecutiveCalls('field_a_data', 'field_b_data');
-
-        $this->em->expects($this->once())
-            ->method('getClassMetadata')
-            ->with(\stdClass::class)
-            ->willReturn($metadata);
-
-        $this->assertSame(
-            [
-                'field_a' => 'field_a_data',
-                'field_b' => 'field_b_data',
-            ],
-            $dto->filterChangedFields(['field_a', 'field_b'])
-        );
     }
 }

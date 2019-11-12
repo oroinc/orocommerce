@@ -1,5 +1,5 @@
 {% block text_with_placeholders_widget %}
     {% if text %}
-        {{ text|oro_html_sanitize|render_content }}
+        {{ text|render_content }}
     {% endif %}
 {% endblock %}

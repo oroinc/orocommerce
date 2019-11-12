@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\WYSIWYG;
 
 use Oro\Bundle\CMSBundle\WYSIWYG\ChainTwigFunctionProcessor;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
-use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 
 class ChainTwigFunctionProcessorTest extends \PHPUnit\Framework\TestCase
@@ -28,94 +27,96 @@ class ChainTwigFunctionProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetApplicableFieldTypes(): void
+    public function testGetApplicableMapping(): void
     {
         $this->innerProcessorA->expects($this->once())
-            ->method('getApplicableFieldTypes')
-            ->willReturn(['type_A', 'type_B']);
+            ->method('getApplicableMapping')
+            ->willReturn(['type_A' => ['function_1_a', 'function_2_a'], 'type_B' => ['function_1_b', 'function_2_b']]);
 
         $this->innerProcessorB->expects($this->once())
-            ->method('getApplicableFieldTypes')
-            ->willReturn(['type_B', 'type_C']);
+            ->method('getApplicableMapping')
+            ->willReturn(['type_B' => ['function_2_b', 'function_3_b'], 'type_C' => ['function_1_c', 'function_2_c']]);
 
         $this->assertEquals(
-            ['type_A', 'type_B', 'type_C'],
-            $this->processor->getApplicableFieldTypes()
+            [
+                'type_A' => ['function_1_a', 'function_2_a'],
+                'type_B' => ['function_1_b', 'function_2_b', 'function_3_b'],
+                'type_C' => ['function_1_c', 'function_2_c'],
+            ],
+            $this->processor->getApplicableMapping()
         );
 
         // Second call must not call inner processors
         $this->assertEquals(
-            ['type_A', 'type_B', 'type_C'],
-            $this->processor->getApplicableFieldTypes()
-        );
-    }
-
-    public function testGetAcceptedTwigFunctions(): void
-    {
-        $this->innerProcessorA->expects($this->once())
-            ->method('getAcceptedTwigFunctions')
-            ->willReturn(['function_A', 'function_B']);
-
-        $this->innerProcessorB->expects($this->once())
-            ->method('getAcceptedTwigFunctions')
-            ->willReturn(['function_B', 'function_C']);
-
-        $this->assertEquals(
-            ['function_A', 'function_B', 'function_C'],
-            $this->processor->getAcceptedTwigFunctions()
-        );
-
-        // Second call must not call inner processors
-        $this->assertEquals(
-            ['function_A', 'function_B', 'function_C'],
-            $this->processor->getAcceptedTwigFunctions()
+            [
+                'type_A' => ['function_1_a', 'function_2_a'],
+                'type_B' => ['function_1_b', 'function_2_b', 'function_3_b'],
+                'type_C' => ['function_1_c', 'function_2_c'],
+            ],
+            $this->processor->getApplicableMapping()
         );
     }
 
     public function testProcessTwigFunctions(): void
     {
+        /** @var WYSIWYGProcessedDTO|\PHPUnit\Framework\MockObject\MockObject $processedDTO */
+        $processedDTO = $this->createMock(WYSIWYGProcessedDTO::class);
+
         $this->innerProcessorA->expects($this->once())
-            ->method('getApplicableFieldTypes')
-            ->willReturn(['type_A', 'type_B']);
+            ->method('getApplicableMapping')
+            ->willReturn(['type_A' => ['function_1_a', 'function_2_a'], 'type_B' => ['function_1_b', 'function_2_b']]);
 
-        $this->innerProcessorA->expects($this->never())
-            ->method('getAcceptedTwigFunctions');
+        $this->innerProcessorA->expects($this->once())
+            ->method('processTwigFunctions')
+            ->with($processedDTO, [
+                'type_A' => [
+                    'function_1_a' => [['test_arg_1_a_1'], ['test_arg_1_a_2']],
+                    'function_2_a' => [['test_arg_2_a_1'], ['test_arg_2_a_2']],
+                ],
+                'type_B' => [
+                    'function_1_b' => [['test_arg_1_b_1'], ['test_arg_1_b_2']],
+                    'function_2_b' => [['test_arg_1_b_1'], ['test_arg_1_b_2']],
+                ],
+            ])
+            ->willReturn(true);
 
         $this->innerProcessorB->expects($this->once())
-            ->method('getApplicableFieldTypes')
-            ->willReturn(['type_B', 'type_C']);
-
-        $this->innerProcessorB->expects($this->once())
-            ->method('getAcceptedTwigFunctions')
-            ->willReturn(['function_B', 'function_C']);
-
-        /** @var WYSIWYGProcessedEntityDTO|\PHPUnit\Framework\MockObject\MockObject $entityDto */
-        $entityDto = $this->createMock(WYSIWYGProcessedEntityDTO::class);
-        $entityDto->expects($this->once())
-            ->method('getFieldType')
-            ->willReturn('type_C');
-
-        $processedDTO = new WYSIWYGProcessedDTO($entityDto);
+            ->method('getApplicableMapping')
+            ->willReturn(['type_B' => ['function_2_b', 'function_3_b'], 'type_C' => ['function_1_c', 'function_2_c']]);
 
         $this->innerProcessorB->expects($this->once())
             ->method('processTwigFunctions')
             ->with($processedDTO, [
-                'function_C' => [['test_arg_C']],
+                'type_B' => [
+                    'function_2_b' => [['test_arg_1_b_1'], ['test_arg_1_b_2']],
+                ],
+                'type_C' => [
+                    'function_2_c' => [['test_arg_2_c_1'], ['test_arg_2_c_2']],
+                ],
             ])
             ->willReturn(true);
 
         $this->assertTrue($this->processor->processTwigFunctions(
             $processedDTO,
             [
-                'function_A' => [['test_arg_A']],
-                'function_C' => [['test_arg_C']],
+                'type_A' => [
+                    'function_1_a' => [['test_arg_1_a_1'], ['test_arg_1_a_2']],
+                    'function_2_a' => [['test_arg_2_a_1'], ['test_arg_2_a_2']],
+                ],
+                'type_B' => [
+                    'function_1_b' => [['test_arg_1_b_1'], ['test_arg_1_b_2']],
+                    'function_2_b' => [['test_arg_1_b_1'], ['test_arg_1_b_2']],
+                ],
+                'type_C' => [
+                    'function_2_c' => [['test_arg_2_c_1'], ['test_arg_2_c_2']],
+                ]
             ]
         ));
     }
 
     public function testOnPreRemove()
     {
-        /** @var WYSIWYGProcessedDTOTest|\PHPUnit\Framework\MockObject\MockObject $processedDTO */
+        /** @var WYSIWYGProcessedDTO|\PHPUnit\Framework\MockObject\MockObject $processedDTO */
         $processedDTO = $this->createMock(WYSIWYGProcessedDTO::class);
 
         $this->innerProcessorA->expects($this->once())

@@ -98,7 +98,10 @@ define(function(require) {
                     updateAttributes: function(...args) {
                         DefaultView.prototype.updateAttributes.apply(this, args);
 
-                        this.$el.attr('src', DigitalAssetHelper.getImageUrlFromTwigTag(this.model.get('src')));
+                        const imageSrc = DigitalAssetHelper.getImageUrlFromTwigTag(this.model.get('src'));
+                        if (imageSrc) {
+                            this.$el.attr('src', imageSrc);
+                        }
                     }
                 })
 

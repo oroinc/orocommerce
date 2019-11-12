@@ -14,14 +14,9 @@ interface WYSIWYGTwigFunctionProcessorInterface
     public const FIELD_STYLES_TYPE = WYSIWYGStyleType::TYPE;
 
     /**
-     * @return string[] Array of DBAL types
+     * @return string[][] ['DBAL_type' => ['function_name', ...], ...]
      */
-    public function getApplicableFieldTypes(): array;
-
-    /**
-     * @return string[]
-     */
-    public function getAcceptedTwigFunctions(): array;
+    public function getApplicableMapping(): array;
 
     /**
      * @param WYSIWYGProcessedDTO $processedDTO

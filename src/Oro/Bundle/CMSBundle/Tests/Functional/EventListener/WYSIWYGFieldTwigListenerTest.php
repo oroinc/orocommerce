@@ -29,20 +29,40 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
             ->findOneBy(['formattingCode' => 'en']);
     }
 
-    public function testPerformAssociations(): void
+    public function testProcessRelation(): void
     {
         $expectedCalls = [
-            // Persist
-            ['default', 'wysiwyg'],
-            ['default', 'wysiwyg_styles'],
-            ['en', 'wysiwyg'],
-            ['en', 'wysiwyg_styles'],
+            // On persist
+            [
+                'wysiwyg' => [
+                    'test' => [
+                        ['default', 'wysiwyg'],
+                        ['en', 'wysiwyg'],
+                    ],
+                ],
+                'wysiwyg_style' => [
+                    'test' => [
+                        ['default', 'wysiwyg_styles'],
+                        ['en', 'wysiwyg_styles'],
+                    ],
+                ],
+            ],
 
-            // Update
-            ['default', 'wysiwyg'],
-            ['default', 'wysiwyg2'],
-            ['en', 'wysiwyg_styles'],
-            ['en', 'wysiwyg_styles2'],
+            // On update
+            [
+                'wysiwyg' => [
+                    'test' => [
+                        ['default', 'wysiwyg'],
+                        ['default', 'wysiwyg2'],
+                    ],
+                ],
+                'wysiwyg_style' => [
+                    'test' => [
+                        ['en', 'wysiwyg_styles'],
+                        ['en', 'wysiwyg_styles2'],
+                    ],
+                ],
+            ],
         ];
 
         $this->assertProcessTwigFunctions($expectedCalls);
@@ -71,43 +91,22 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
         $this->getContainer()->set('oro_cms.wysiwyg.chain_twig_function_processor', $processor);
 
         $processor->expects($this->any())
-            ->method('getApplicableFieldTypes')
+            ->method('getApplicableMapping')
             ->willReturn([
-                WYSIWYGTwigFunctionProcessorInterface::FIELD_CONTENT_TYPE,
-                WYSIWYGTwigFunctionProcessorInterface::FIELD_STYLES_TYPE,
+                WYSIWYGTwigFunctionProcessorInterface::FIELD_CONTENT_TYPE => ['test'],
+                WYSIWYGTwigFunctionProcessorInterface::FIELD_STYLES_TYPE => ['test'],
             ]);
-        $processor->expects($this->any())
-            ->method('getAcceptedTwigFunctions')
-            ->willReturn(['test']);
 
-        $processor->expects($this->atLeast(\count($expectedCalls)))
+        $processor->expects($this->atLeast(2))
             ->method('processTwigFunctions')
             ->willReturnCallback(
                 function (WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls) use (&$expectedCalls) {
-                    $processedEntityDTO = $processedDTO->getProcessedEntity();
-                    $processedEntity = $processedEntityDTO->getEntity();
-                    $this->assertInstanceOf(LocalizedFallbackValue::class, $processedEntity);
-
-                    if (empty($twigFunctionCalls)) {
-                        $actualFieldValue = $processedEntityDTO->getFieldName() === 'wysiwyg'
-                            ? $processedEntity->getWysiwyg()
-                            : $processedEntity->getWysiwygStyle();
-
-                        $this->assertEmpty($actualFieldValue);
+                    if (empty($twigFunctionCalls['wysiwyg']) && empty($twigFunctionCalls['wysiwyg_style'])) {
                         return false;
                     }
 
-                    $this->assertFalse($processedDTO->isSelfOwner());
-                    $this->assertSame('descriptions', $processedDTO->getOwnerEntity()->getFieldName());
-
-                    $this->assertCount(1, $twigFunctionCalls);
-                    $this->assertArrayHasKey('test', $twigFunctionCalls);
-
-                    foreach ($twigFunctionCalls['test'] as $args) {
-                        $index = \array_search($args, $expectedCalls);
-                        $this->assertNotFalse($index, "Index: " . $index);
-                        unset($expectedCalls[$index]);
-                    }
+                    $this->assertEquals(reset($expectedCalls), $twigFunctionCalls);
+                    unset($expectedCalls[key($expectedCalls)]);
 
                     return true;
                 }

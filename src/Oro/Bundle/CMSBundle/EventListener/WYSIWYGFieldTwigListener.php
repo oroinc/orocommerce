@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\EventListener;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
@@ -16,7 +19,7 @@ use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 /**
  * Listens to changes in wysiwyg fields to
  * 1) create children files for DAM assets used via wysiwyg_file() and wysiwyg_image() twig functions
- * 2) track usages of DAM assets
+ * 2) track usages of content widgets
  */
 class WYSIWYGFieldTwigListener implements OptionalListenerInterface
 {
@@ -49,9 +52,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
      */
     public function postPersist(LifecycleEventArgs $args): void
     {
-        $processedDTO = $this->prepareDTO($args);
-        if ($processedDTO) {
-            $isFlushNeeded = $this->processChangedEntity($processedDTO);
+        if ($this->isApplicable($args)) {
+            $isFlushNeeded = $this->processEntity($this->createDTO($args));
             $this->postProcess($args, $isFlushNeeded);
         }
     }
@@ -61,9 +63,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
      */
     public function preUpdate(PreUpdateEventArgs $args): void
     {
-        $processedDTO = $this->prepareDTO($args);
-        if ($processedDTO) {
-            $isFlushNeeded = $this->processChangedEntity($processedDTO);
+        if ($this->isApplicable($args)) {
+            $isFlushNeeded = $this->processEntity($this->createDTO($args));
             $this->postProcess($args, $isFlushNeeded);
         }
     }
@@ -73,11 +74,33 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
      */
     public function preRemove(LifecycleEventArgs $args): void
     {
-        $processedDTO = $this->prepareDTO($args);
-        if ($processedDTO && !empty($this->getWysiwygFields($processedDTO->getProcessedEntity()))) {
-            $isFlushNeeded = $this->processor->onPreRemove($processedDTO);
+        if ($this->isApplicable($args)) {
+            $isFlushNeeded = $this->processor->onPreRemove($this->createDTO($args));
             $this->postProcess($args, $isFlushNeeded);
         }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     * @return bool
+     */
+    private function isApplicable(LifecycleEventArgs $args): bool
+    {
+        if (!$this->enabled
+            || !$this->processor->getApplicableMapping()
+            || !is_object($args->getEntity())
+            || $args->getEntity() instanceof LocalizedFallbackValue
+        ) {
+            return false;
+        }
+
+        $metadata = $args->getEntityManager()->getClassMetadata(\get_class($args->getEntity()));
+        if (\count($metadata->getIdentifier()) !== 1) {
+            // Composite keys are not supported.
+            return false;
+        }
+
+        return !empty($this->getWysiwygFields($metadata));
     }
 
     /**
@@ -106,14 +129,10 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
 
     /**
      * @param LifecycleEventArgs $args
-     * @return WYSIWYGProcessedDTO|null
+     * @return WYSIWYGProcessedDTO
      */
-    private function prepareDTO(LifecycleEventArgs $args): ?WYSIWYGProcessedDTO
+    private function createDTO(LifecycleEventArgs $args): WYSIWYGProcessedDTO
     {
-        if (!$this->enabled || $args->getEntity() instanceof LocalizedFallbackValue) {
-            return null;
-        }
-
         return new WYSIWYGProcessedDTO(
             WYSIWYGProcessedEntityDTO::createFromLifecycleEventArgs($args)
         );
@@ -123,108 +142,138 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
      * @param WYSIWYGProcessedDTO $processedDTO
      * @return bool
      */
-    private function processChangedEntity(WYSIWYGProcessedDTO $processedDTO): bool
+    private function processEntity(WYSIWYGProcessedDTO $processedDTO): bool
     {
-        $processedEntity = $processedDTO->getProcessedEntity();
-        if (\count($processedEntity->getMetadata()->getIdentifier()) !== 1) {
-            // Composite keys are not supported.
-            return false;
-        }
+        $isFlushNeeded = false;
 
-        $isFlushNeeded = $this->processEntityRelations($processedDTO);
+        $wysiwygFields = $this->getWysiwygFields($processedDTO->getProcessedEntity()->getMetadata());
+        foreach ($wysiwygFields as $fieldName => $fieldType) {
+            $processedFieldDTO = $processedDTO->withProcessedEntityField($fieldName, $fieldType);
 
-        $wysiwygFields = $this->getWysiwygFields($processedEntity);
-        if (!$wysiwygFields) {
-            return $isFlushNeeded;
-        }
-
-        $acceptedTwigFunctions = $this->processor->getAcceptedTwigFunctions();
-        if (!$acceptedTwigFunctions) {
-            return $isFlushNeeded;
-        }
-
-        $changedFields = $processedEntity->filterChangedFields(\array_keys($wysiwygFields));
-        if (!$changedFields) {
-            return $isFlushNeeded;
-        }
-
-        foreach ($changedFields as $fieldName => $fieldValue) {
-            $foundTwigFunctionCalls = $this->twigParser->findFunctionCalls($fieldValue, $acceptedTwigFunctions);
-
-            $processedEntityFieldDTO = $processedEntity->withField($fieldName, $wysiwygFields[$fieldName]);
-
-            $ownerEntityDTO = $processedDTO->isSelfOwner()
-                ? $processedDTO->getOwnerEntity()->withField($fieldName)
-                : $processedDTO->getOwnerEntity();
-
-            $processedFieldDTO = new WYSIWYGProcessedDTO($processedEntityFieldDTO, $ownerEntityDTO);
-
-            $isFlushNeeded = $this->processor->processTwigFunctions($processedFieldDTO, $foundTwigFunctionCalls)
-                || $isFlushNeeded;
+            if ($processedFieldDTO->getProcessedEntity()->isRelation()) {
+                $isFlushNeeded = $this->processRelation($processedFieldDTO) || $isFlushNeeded;
+            } else {
+                $isFlushNeeded = $this->processField($processedFieldDTO) || $isFlushNeeded;
+            }
         }
 
         return $isFlushNeeded;
     }
 
     /**
-     * Process entity relations
-     *
      * @param WYSIWYGProcessedDTO $processedDTO
      * @return bool
      */
-    private function processEntityRelations(WYSIWYGProcessedDTO $processedDTO): bool
+    private function processField(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $processedEntity = $processedDTO->getProcessedEntity();
-        $metadata = $processedDTO->getProcessedEntity()->getMetadata();
-
-        $isFlushNeeded = false;
-        foreach ($metadata->getAssociationMappings() as $associationName => $associationMapping) {
-            if (!$this->isTargetLocalizedFallbackValue($associationMapping)) {
-                continue;
-            }
-
-            $associationValue = $metadata->getFieldValue($processedEntity->getEntity(), $associationName);
-            $ownerEntityDTO = $processedDTO->isSelfOwner()
-                ? $processedDTO->getOwnerEntity()->withField($associationName)
-                : $processedDTO->getOwnerEntity();
-
-            // OneToMany
-            if (\is_iterable($associationValue)) {
-                foreach ($associationValue as $associatedEntity) {
-                    $associatedEntityDTO = new WYSIWYGProcessedEntityDTO(
-                        $processedEntity->getEntityManager(),
-                        $associatedEntity
-                    );
-
-                    $associationProcessedDTO = new WYSIWYGProcessedDTO($associatedEntityDTO, $ownerEntityDTO);
-                    $isFlushNeeded = $this->processChangedEntity($associationProcessedDTO) || $isFlushNeeded;
-                }
-                // ManyToOne, OneToOne
-            } elseif (\is_object($associationValue)) {
-                $associatedEntityDTO = new WYSIWYGProcessedEntityDTO(
-                    $processedEntity->getEntityManager(),
-                    $associationValue
-                );
-
-                $associationProcessedDTO = new WYSIWYGProcessedDTO($associatedEntityDTO, $ownerEntityDTO);
-                $isFlushNeeded = $this->processChangedEntity($associationProcessedDTO) || $isFlushNeeded;
-            }
+        if (!$processedEntity->isFieldChanged()) {
+            return false;
         }
 
-        return $isFlushNeeded;
+        $applicableMapping = $this->processor->getApplicableMapping();
+        if (!isset($applicableMapping[$processedEntity->getFieldType()])) {
+            return false;
+        }
+
+        $foundTwigFunctionCalls[$processedEntity->getFieldType()] = $this->twigParser->findFunctionCalls(
+            $processedEntity->getFieldValue(),
+            $applicableMapping[$processedEntity->getFieldType()]
+        );
+
+        return $this->processor->processTwigFunctions($processedDTO, $foundTwigFunctionCalls);
     }
 
     /**
-     * @param WYSIWYGProcessedEntityDTO $processedEntityDTO
+     * @param WYSIWYGProcessedDTO $processedDTO
+     * @return bool
+     */
+    private function processRelation(WYSIWYGProcessedDTO $processedDTO): bool
+    {
+        $processedEntity = $processedDTO->getProcessedEntity();
+        $collection = $processedEntity->getFieldValue();
+
+        if (!$this->isScheduledCollection($processedEntity, $collection)) {
+            return false;
+        }
+
+        $collectionDTO = new WYSIWYGProcessedEntityDTO($processedEntity->getEntityManager(), $collection);
+        $metadata = $collectionDTO->getMetadata();
+
+        $applicableMapping = $this->processor->getApplicableMapping();
+        $foundTwigFunctionCalls = [];
+
+        foreach ($this->getWysiwygFields($metadata) as $fieldName => $fieldType) {
+            if (!isset($applicableMapping[$fieldType])) {
+                continue;
+            }
+
+            $foundTwigFunctionCalls[$fieldType] = [];
+            foreach ($collectionDTO->getEntity() as $entity) {
+                $foundCalls = $this->twigParser->findFunctionCalls(
+                    $metadata->getFieldValue($entity, $fieldName),
+                    $applicableMapping[$fieldType]
+                );
+
+                if ($foundCalls) {
+                    $foundTwigFunctionCalls[$fieldType] = \array_merge_recursive(
+                        $foundTwigFunctionCalls[$fieldType],
+                        $foundCalls
+                    );
+                }
+            }
+        }
+
+        return $this->processor->processTwigFunctions(
+            $processedDTO->withProcessedEntityField($fieldName, $fieldType),
+            $foundTwigFunctionCalls
+        );
+    }
+
+    /**
+     * @param WYSIWYGProcessedEntityDTO $processedEntity
+     * @param iterable $collection
+     * @return bool
+     */
+    private function isScheduledCollection(WYSIWYGProcessedEntityDTO $processedEntity, $collection): bool
+    {
+        if (!$collection instanceof Collection
+
+            // No sense check non-initialized collections
+            || ($collection instanceof AbstractLazyCollection && !$collection->isInitialized())
+
+            // All LocalizedFallbackValue removed only in case when removed parent entity.
+            // It makes no sense to handle this case in collection.
+            || !\count($collection)
+        ) {
+            return false;
+        }
+
+        $uow = $processedEntity->getEntityManager()->getUnitOfWork();
+        $collectionUpdates = $uow->getScheduledCollectionUpdates();
+        if (isset($collectionUpdates[\spl_object_hash($collection)])) {
+            return true;
+        }
+
+        foreach ($collection as $entity) {
+            if ($uow->isEntityScheduled($entity) || $uow->getEntityChangeSet($entity)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
      * @return array
      */
-    private function getWysiwygFields(WYSIWYGProcessedEntityDTO $processedEntityDTO): array
+    private function getWysiwygFields(ClassMetadata $metadata): array
     {
-        $metadata = $processedEntityDTO->getMetadata();
         $entityName = $metadata->getName();
         if (!isset($this->fieldLists[$entityName])) {
             $this->fieldLists[$entityName] = [];
-            $applicableFieldTypes = $this->processor->getApplicableFieldTypes();
+            $applicableFieldTypes = \array_keys($this->processor->getApplicableMapping());
 
             foreach ($metadata->getFieldNames() as $fieldName) {
                 $mapping = $metadata->getFieldMapping($fieldName);
@@ -232,18 +281,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
                     $this->fieldLists[$entityName][$fieldName] = $mapping['type'];
                 }
             }
+
+            foreach ($metadata->getAssociationMappings() as $relationName => $mapping) {
+                if (isset($mapping['targetEntity']) && $mapping['targetEntity'] === LocalizedFallbackValue::class) {
+                    $this->fieldLists[$entityName][$relationName] = LocalizedFallbackValue::class;
+                }
+            }
         }
 
         return $this->fieldLists[$entityName];
-    }
-
-    /**
-     * @param array $associationMapping
-     * @return bool
-     */
-    private function isTargetLocalizedFallbackValue(array $associationMapping): bool
-    {
-        return isset($associationMapping['targetEntity'])
-            && $associationMapping['targetEntity'] === LocalizedFallbackValue::class;
     }
 }
