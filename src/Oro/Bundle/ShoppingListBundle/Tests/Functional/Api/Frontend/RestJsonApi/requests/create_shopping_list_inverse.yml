@@ -1,0 +1,24 @@
+data:
+    type: shoppinglists
+    id: 'new_shopping_list'
+    attributes:
+        name: 'New Shopping List'
+included:
+    -
+        type: shoppinglistitems
+        id: 'item1'
+        attributes:
+            quantity: 10
+        relationships:
+            shoppingList:
+                data:
+                    type: shoppinglists
+                    id: 'new_shopping_list'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

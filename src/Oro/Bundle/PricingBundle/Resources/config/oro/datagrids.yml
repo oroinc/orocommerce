@@ -58,7 +58,7 @@ datagrids:
                 activity:
                     data_name: activity
             default:
-                createdAt:     '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 name:
@@ -147,7 +147,7 @@ datagrids:
                 name:
                     data_name: relatedEntity.name
             default:
-                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name: ASC
         filters:
             columns:
                 name:
@@ -277,8 +277,8 @@ datagrids:
                 name:
                     data_name:  relatedEntity.name
             default:
-                has_price_list: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
-                name:           '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                has_price_list: DESC
+                name: ASC
         properties:
             id: ~
         options:
@@ -453,7 +453,7 @@ datagrids:
                 currency:
                     data_name: productPrice.currency
             default:
-                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                productSku: ASC
         filters:
             columns:
                 productSku:
@@ -597,7 +597,7 @@ datagrids:
                 currency:
                     data_name: productPrice.currency
             default:
-                priceListName: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                priceListName: ASC
         filters:
             columns:
                 priceListName:
@@ -688,7 +688,7 @@ datagrids:
                 updatedAt:
                     data_name: priceAttributepriceList.updatedAt
             default:
-                createdAt:     '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 name:

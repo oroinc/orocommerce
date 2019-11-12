@@ -1,3 +1,8 @@
+oro_cms:
+    content_restrictions:
+        # secure, selective, unsecure
+        mode: secure
+
 doctrine:
     dbal:
         types:
@@ -21,5 +26,104 @@ liip_imagine:
             quality:          95
             filters:
                 strip:        ~
-        digital_asset_grapesjs:
-            quality: 100
+
+oro_form:
+    html_purifier_modes:
+        lax:
+            extends: default
+            allowed_iframe_domains:
+                - 'youtube.com/embed/'
+                - 'player.vimeo.com/video/'
+            allowed_html_elements:
+                iframe:
+                    attributes:
+                        - allowfullscreen
+                        - frameborder
+                        - height
+                        - marginheight
+                        - marginwidth
+                        - name
+                        - scrolling
+                        - src
+                        - width
+                div:
+                    attributes:
+                        - role
+                        - aria-label
+                        - aria-labelledby
+                        - aria-orientation
+                        - aria-valuenow
+                        - aria-valuemin
+                        - aria-valuemax
+                        - aria-live
+                        - aria-atomic
+                        - data-title
+                        - data-type
+                        - data-spy
+                        - data-ride
+                        - data-interval
+                        - data-parent
+                        - data-target
+                        - data-offset
+                        - data-delay
+                        - data-autohide
+                        - tabindex
+                        - aria-hidden
+                button:
+                    attributes:
+                        - type
+                        - title
+                        - aria-label
+                        - aria-haspopup
+                        - aria-expanded
+                        - aria-labelledby
+                        - aria-controls
+                        - data-dismiss
+                        - data-toggle
+                        - data-target
+                        - data-display
+                        - data-content
+                        - data-container
+                        - data-placement
+                        - disabled
+                span:
+                    attributes:
+                        - title
+                        - role
+                        - aria-hidden
+                        - data-toggle
+                        - data-content
+                        - tabindex
+                nav:
+                    attributes:
+                        - aria-label
+                ul:
+                    attributes:
+                        - role
+                li:
+                    attributes:
+                        - aria-current
+                        - aria-selected
+                        - data-target
+                        - data-slide-to
+                cite:
+                    attributes:
+                        - title
+                a:
+                    attributes:
+                        - tabindex
+                        - role
+                        - data-toggle
+                        - data-slide
+                        - data-trigger
+                        - aria-label
+                        - aria-disabled
+                        - aria-expanded
+                        - aria-controls
+                        - aria-haspopup
+                        - aria-selected
+                        - data-content
+                        - data-placement
+                blockquote:
+                    attributes:
+                        - cite

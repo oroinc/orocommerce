@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
+use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
@@ -20,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 class LineItemController extends RestController implements ClassResourceInterface
 {
     /**
+     * @Delete(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Delete Line Item",
      *      resource=true
@@ -30,7 +34,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $success = false;
         /** @var LineItem $lineItem */
@@ -54,6 +58,8 @@ class LineItemController extends RestController implements ClassResourceInterfac
     }
 
     /**
+     * @Put(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Update Line Item",
      *      resource=true
@@ -65,7 +71,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * @param Request $request
      * @return Response
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         /** @var LineItem $entity */
         $entity = $this->getManager()->find($id);

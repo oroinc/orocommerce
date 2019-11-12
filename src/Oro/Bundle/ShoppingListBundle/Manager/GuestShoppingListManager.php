@@ -82,7 +82,7 @@ class GuestShoppingListManager
     /**
      * @return ShoppingList|null
      */
-    public function getShoppingListForCustomerVisitor()
+    public function findExistingShoppingListForCustomerVisitor(): ?ShoppingList
     {
         $token = $this->tokenStorage->getToken();
         if (!$token instanceof AnonymousCustomerUserToken) {
@@ -112,11 +112,23 @@ class GuestShoppingListManager
             }
         }
 
-        if ($this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')) {
-            return $this->createShoppingListForCustomerVisitor();
+        return null;
+    }
+
+    /**
+     * @return ShoppingList|null
+     */
+    public function getShoppingListForCustomerVisitor()
+    {
+        $shoppingList = $this->findExistingShoppingListForCustomerVisitor();
+
+        if (null === $shoppingList
+            && $this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')
+        ) {
+            $shoppingList = $this->createShoppingListForCustomerVisitor();
         }
 
-        return null;
+        return $shoppingList;
     }
 
     /**
@@ -132,7 +144,7 @@ class GuestShoppingListManager
     /**
      * @return ShoppingList
      */
-    private function createShoppingListForCustomerVisitor()
+    public function createShoppingListForCustomerVisitor()
     {
         $token = $this->tokenStorage->getToken();
 

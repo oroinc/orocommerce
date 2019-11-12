@@ -7,3 +7,10 @@ trusted_data:
         Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager:
             isUserAssignable:
                 criteria: true
+        Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
+            getShoppingListJoin:
+                joinDqlPart: true
+    safe_methods:
+        Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
+            getCustomerVisitorSubquery: true
+            ensureShoppingListJoined: true

@@ -21,7 +21,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ShoppingListController extends RestController implements ClassResourceInterface
 {
     /**
-     * @Put("/shoppinglists/current/{id}")
+     * @Put(
+     *     "/shoppinglists/current/{id}",
+     *     requirements={"id"="\d+"}
+     * )
      *
      * @ApiDoc(
      *      description="Set current Shopping List",
@@ -53,7 +56,10 @@ class ShoppingListController extends RestController implements ClassResourceInte
     }
 
     /**
-     * @Put("/shoppinglists/{id}/owner")
+     * @Put(
+     *     "/shoppinglists/{id}/owner",
+     *     requirements={"id"="\d+"}
+     * )
      *
      * @ApiDoc(
      *      description="Set Shopping List Owner",

@@ -83,7 +83,63 @@ oro.cms:
         sections:
             general.label: General
             additional_information.label: Additional Information
+            image_slides.label: Slides
             usages.label: Usages
+            slider_options.label: Slider Options
+
+    content_widget_type:
+        image_slider.label: Image Slider
+
+        slider_options:
+            slides_to_show.label: 'Number of Slides to Show'
+            slides_to_scroll.label: 'Number of Slides to Scroll'
+            autoplay.label: 'Enable Autoplay'
+            autoplay_speed.label: 'Autoplay Speed (milliseconds)'
+            arrows.label: 'Show Arrows'
+            dots.label: 'Show Dots'
+            infinite.label: 'Enable Infinite Scroll'
+
+    imageslide:
+        entity_label: Image Slide
+        entity_plural_label: Image Slides
+        id.label: ID
+        content_widget.label: Content Widget
+        slide_order.label: Slide Order
+        url.label: URL
+        display_in_same_window:
+            label: Target
+            value:
+                no: New Window
+                yes: Same Window
+        title.label: Title
+        text.label: Text
+        text_alignment:
+            label: Text Alignment
+            value:
+                center: Center
+                left: Left
+                right: Right
+                top_left: Top-Left
+                top_center: Top-Center
+                top_right: Top-Right
+                bottom_left: Bottom-Left
+                bottom_center: Bottom-Center
+                bottom_right: Bottom-Right
+        main_image.label: Main Image
+        medium_image.label: Medium Image
+        small_image.label: Small Image
+        organization.label: Organization
+
+        form.tooltip:
+            slide_order.label: When "1" is the leftmost slide, choose the preferred order of slides within the slider.
+            url.label: Enter an URL of the page to which a user will be redirected after clicking on the slide.
+            display_in_same_window.label: Set how to open the slide link. Select "Same Window" to open it in the current browser window. Select "Blank" to open it in a new browser tab.
+            title.label: Provide alternative text for the slide image. This text is displayed as image "Alt".
+            text.label: Add text content to the slide.
+            text_alignment.label: Set where to position text within the slide.
+            main_image.label: Upload a background image for the slide, or select an existing one.
+            medium_image.label: Upload a background image for the slide, or select an existing one.
+            small_image.label: Upload a background image for the slide, or select an existing one.
 
     textcontentvariant:
         entity_label: Content Variant

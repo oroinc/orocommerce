@@ -2,7 +2,6 @@ parameters:
     oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
     oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
-    oro_web_catalog.type.content_variant_collection.class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
 
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:

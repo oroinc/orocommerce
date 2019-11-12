@@ -63,7 +63,7 @@ datagrids:
                 updatedAt:
                     data_name: shopping_list.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 id:
@@ -224,7 +224,7 @@ datagrids:
                 unitCode:
                     data_name: unitCode
             default:
-                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                productSku: ASC
         filters:
             columns:
                 productSku:

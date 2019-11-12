@@ -50,7 +50,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     public function getWysiwygImageUrl(
         int $digitalAssetId,
         string $fileUuid,
-        string $filterName = 'product_original',
+        string $filterName = 'digital_asset_grapesjs',
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {

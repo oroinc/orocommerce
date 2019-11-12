@@ -1,0 +1,42 @@
+data:
+    type: shoppinglists
+    id: new
+    attributes:
+        name: 'New Shopping List'
+        notes: null
+        currency: USD
+        total: '10.1'
+        subTotal: '10.1'
+        default: true
+    relationships:
+        items:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: new
+included:
+    -
+        type: shoppinglistitems
+        id: new
+        meta:
+            includeId: item1
+        attributes:
+            quantity: 10
+            notes: null
+            currency: USD
+            value: '1.01'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            shoppingList:
+                data:
+                    type: shoppinglists
+                    id: new
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

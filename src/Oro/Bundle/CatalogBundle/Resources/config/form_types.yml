@@ -21,7 +21,7 @@ services:
         arguments:
             - '@oro_catalog.visibility.default_product_options'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category_unit_precision.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision']]
         tags:
             - { name: form.type, alias: oro_catalog_category_unit_precision }
 

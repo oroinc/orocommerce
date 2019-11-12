@@ -40,7 +40,7 @@ datagrids:
                 productUnit:
                     data_name: productUnit
             default:
-                productUnit:   '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                productUnit: ASC
         properties:
             combinedId: ~
             unitCode: ~
