@@ -335,7 +335,7 @@ services:
         tags:
             - { name: oro_cms.content_widget.type }
 
-    oro_cms.event_listener.content_widget_from:
+    oro_cms.event_listener.content_widget_form:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
         arguments:
             - '@doctrine'

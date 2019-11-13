@@ -1,7 +1,7 @@
 {% block content_block_widget %}
     {% if contentBlock.contentStyle|length -%}
         {%- spaceless -%}
-            <style type="text/css">{{ contentBlock.contentStyle|raw }}</style>
+            <style type="text/css">{{ contentBlock.contentStyle|render_content }}</style>
         {%- endspaceless -%}
     {%- endif %}
     <div{{ block('block_attributes') }}>
