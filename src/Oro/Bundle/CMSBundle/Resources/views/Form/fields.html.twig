@@ -73,6 +73,13 @@
     {% endfor %}
 {% endblock %}
 
+{% block image_slide_collection_row %}
+    <div class="oro-image-slide-collection">
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
+        {{ block('oro_collection_widget') }}
+    </div>
+{% endblock %}
+
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
     {% spaceless %}
         {% set scopes %}

@@ -60,6 +60,7 @@ services:
         class: 'Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler'
         arguments:
             - '@doctrine'
+            - '@oro_form.event.event_dispatcher'
 
     Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler:
         alias: oro_cms.form.handler.content_widget

@@ -29,7 +29,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name: ASC
         filters:
             columns:
                 name:
@@ -85,7 +85,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name: ASC
         filters:
             columns:
                 name:
@@ -142,7 +142,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name: ASC
         filters:
             columns:
                 name:
@@ -198,7 +198,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name: ASC
         filters:
             columns:
                 name:

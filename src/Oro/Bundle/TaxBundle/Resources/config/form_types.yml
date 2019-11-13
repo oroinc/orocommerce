@@ -130,7 +130,7 @@ services:
         arguments:
             - '@oro_address.form.listener.address'
         calls:
-            - [setDataClass, ['%oro_tax.model.tax_base_exclusion.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Model\TaxBaseExclusion']]
         tags:
             - { name: form.type, alias: oro_tax_base_exclusion }
 
@@ -144,7 +144,7 @@ services:
         arguments:
             - '@oro_address.form.listener.address'
         calls:
-            - [setDataClass, ['%oro_tax.model.address.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Model\Address']]
         tags:
             - { name: form.type, alias: oro_tax_origin_address }
 

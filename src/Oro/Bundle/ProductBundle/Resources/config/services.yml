@@ -828,7 +828,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:
@@ -1128,6 +1127,15 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_product.access_rule.frontend_organization_for_product:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        calls:
+            - [setOrganizationOptional, [ true ]]
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\ProductBundle\Entity\Product, frontend: true }
 
     oro_product.security.acl.voter.product_collection_segment:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter

@@ -141,14 +141,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_cms.migration.home_page_slider_images_source_fixer:
-        class: 'Oro\Bundle\CMSBundle\Migration\HomePageSliderImagesSourceFixer'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
-        public: true
-        arguments:
-            - '@oro_config.global'
-            - '@doctrine.dbal.default_connection'
-
     oro_cms.entity_listener.page:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener
         public: false
@@ -185,6 +177,11 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preRemove }
+
+    oro_cms.entity_listener.image_slide:
+        class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\ImageSlide', event: preRemove }
 
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
@@ -279,8 +276,30 @@ services:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
         arguments:
             - '@oro_form.provider.html_tag_provider'
+            - '@oro_cms.provider.html_purifier_scope_provider'
         tags:
             - { name: form.type }
+
+    oro_cms.validator.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator
+        arguments:
+            - '@oro_ui.html_tag_helper'
+            - '@oro_cms.provider.html_purifier_scope_provider'
+            - '@logger'
+        tags:
+            - { name: validator.constraint_validator, alias: wysiwyg_validator }
+
+    oro_cms.provider.html_purifier_scope_provider:
+        class: Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider
+        public: false
+        arguments:
+            - '@oro_security.token_accessor'
+            - '%oro_cms.content_restrictions_mode%'
+            - '%oro_cms.lax_content_restrictions%'
+        calls:
+            - [addScopeMapping, ['secure', 'default']]
+            - [addScopeMapping, ['selective', 'lax']]
+            - [addScopeMapping, ['unsecure', null]]
 
     oro_cms.listener.wysiwyg_block_listener:
         class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGBlockListener
@@ -290,3 +309,17 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: entity_form.render.before, method: onBeforeFormRender, priority: -255 }
+
+    oro_cms.content_widget_type.image_slider:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_cms.event_listener.content_widget_from:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }

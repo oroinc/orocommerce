@@ -57,6 +57,15 @@ services:
             - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }
             - { name: container.hot_path }
 
+    oro_redirect.access_rule.frontend_organization_for_slug:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        calls:
+            - [setOrganizationOptional, [ true ]]
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\RedirectBundle\Entity\Slug, frontend: true }
+
     oro_redirect.migration.extension.slug:
         class: Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension
         tags:

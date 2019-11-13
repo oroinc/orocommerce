@@ -6,6 +6,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
@@ -20,12 +21,13 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
 
         return [
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
                 ],
                 []
             )

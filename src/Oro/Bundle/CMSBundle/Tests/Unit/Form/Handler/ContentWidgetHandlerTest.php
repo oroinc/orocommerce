@@ -6,6 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler;
+use Oro\Bundle\FormBundle\Event\FormHandler\Events;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -22,6 +24,9 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
+
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
     /** @var ContentWidgetHandler */
     private $handler;
@@ -46,7 +51,9 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(ContentWidget::class)
             ->willReturn($this->manager);
 
-        $this->handler = new ContentWidgetHandler($registry);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->handler = new ContentWidgetHandler($registry, $this->eventDispatcher);
 
         $this->data = new ContentWidget();
 
@@ -135,6 +142,15 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects($this->once())
             ->method('flush');
+
+        $this->eventDispatcher->expects($this->exactly(4))
+            ->method('dispatch')
+            ->withConsecutive(
+                [Events::BEFORE_FORM_DATA_SET],
+                [Events::BEFORE_FORM_SUBMIT],
+                [Events::BEFORE_FLUSH],
+                [Events::AFTER_FLUSH]
+            );
 
         $this->assertTrue($this->handler->process($this->data, $this->form, $this->request));
         $this->assertTrue($this->form->isValid());

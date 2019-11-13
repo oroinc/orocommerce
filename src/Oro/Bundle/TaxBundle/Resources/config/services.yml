@@ -8,12 +8,6 @@ parameters:
     oro_tax.entity.zip_code.class: Oro\Bundle\TaxBundle\Entity\ZipCode
     oro_tax.entity.tax_value.class: Oro\Bundle\TaxBundle\Entity\TaxValue
 
-    oro_tax.model.tax_base_exclusion.class: Oro\Bundle\TaxBundle\Model\TaxBaseExclusion
-    oro_tax.model.address.class: Oro\Bundle\TaxBundle\Model\Address
-
-    oro_tax.event.resolver_event_connector.common_class: Oro\Bundle\TaxBundle\Event\ResolverEventConnector
-    oro_tax.event_subscriber.import_export_tax_subscriber.class: Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber
-
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
         public: false
@@ -385,8 +379,9 @@ services:
         class: 'Oro\Bundle\TaxBundle\Resolver\RowTotalResolver'
         public: false
         arguments:
-            - "@oro_tax.provider.taxation_settings_provider"
-            - "@oro_tax.calculator"
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.calculator'
+            - '@oro_tax.resolver.rounding'
 
     oro_tax.resolver.total:
         class: 'Oro\Bundle\TaxBundle\Resolver\TotalResolver'
@@ -574,13 +569,13 @@ services:
             - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
 
     oro_tax.manager.oro.customer_tax_code_manager:
-        public: false:
+        public: false
         class: 'Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper'
         arguments:
             - "@oro_entity.doctrine_helper"
 
     oro_tax.event_listener.import_export_tax_subscriber:
-        class: '%oro_tax.event_subscriber.import_export_tax_subscriber.class%'
+        class: Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber
         arguments:
             - '@translator'
             - '@oro_tax.manager.oro.customer_tax_code_manager'

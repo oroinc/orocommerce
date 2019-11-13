@@ -13,7 +13,8 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroActivityListBundle::ActivityContext
         - OroCustomerBundle::FrontendGridContext
-        - OroConfigBundle::FeatureContext
+        - OroQueryDesignerBundle::QueryDesignerContext
+        - OroFilterBundle::FilterContext
         - OroOrderBundle::OrderContext
         - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
@@ -61,6 +62,7 @@ oro_behat_extension:
           Discount: 'oro_promotion[discountConfiguration][type]'
           Type: 'oro_promotion[discountConfiguration][options][discount_type]'
           Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'
+          Unit Of Quantity: 'oro_promotion[discountConfiguration][options][discount_product_unit_code]'
 
     Coupon Form:
       selector: 'form[name="oro_promotion_coupon_type"]'
@@ -215,6 +217,9 @@ oro_behat_extension:
 
     Featured Products:
       selector: 'div.select2-drop-active div.select2-result-label:contains("Featured Products")'
+
+    Product Segment SKU1:
+      selector: 'div.select2-drop-active div.select2-result-label:contains("Product Segment SKU1")'
 
     Select2 results:
       selector: 'div.select2-drop-active ul.select2-results'

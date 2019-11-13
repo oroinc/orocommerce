@@ -88,8 +88,6 @@ action_groups:
         parameters:
             checkout:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            billing_address_has_shipping:
-                default: false
         actions:
             - '@tree':
                 conditions:
