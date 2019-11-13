@@ -65,7 +65,7 @@ define(function(require) {
                             const metadata = digitalAssetModel.get('previewMetadata');
 
                             this.spreadUrl(
-                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',"' + metadata['uuid'] + '") }}'
+                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',\'' + metadata['uuid'] + '\') }}'
                             );
                         },
 

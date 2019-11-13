@@ -55,7 +55,7 @@ define(function(require) {
 
                         digitalAssetFileComponentModel
                             .setAttributes({
-                                href: '{{ wysiwyg_file('+metadata['digitalAssetId']+',"'+metadata['uuid']+'") }}',
+                                href: '{{ wysiwyg_file('+metadata['digitalAssetId']+',\''+metadata['uuid']+'\') }}',
                                 title: metadata['title'] || ''
                             })
                             .set('content', metadata['filename'] || '');
