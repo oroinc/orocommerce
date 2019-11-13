@@ -130,7 +130,9 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
         $this->em->flush();
 
         /** @var ContentWidgetUsage[] $usages */
-        $usages = $this->usageRepository->findAll();
+        $usages = $this->usageRepository->findBy([
+            'entityClass' => Page::class,
+        ]);
 
         $this->assertCount(count($contentWidgets), $usages);
 
