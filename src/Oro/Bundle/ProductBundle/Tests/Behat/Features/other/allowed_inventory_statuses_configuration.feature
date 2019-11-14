@@ -78,10 +78,9 @@ Feature: Allowed inventory statuses configuration
 
   Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid when product have discontinued status
     Given go to Products/Products
-    And click edit "SKU1" in grid
-    And fill "Products Product Option Form" with:
-      | Inventory Status | Discontinued |
-    And save and close form
+    And edit "SKU1" Inventory status as "Discontinued" by double click
+    And I click "Save changes"
+    Then I should see "Record has been successfully updated" flash message
     And I go to Sales/Orders
     When click "Create Order"
     And click "Add Product"
@@ -149,14 +148,16 @@ Feature: Allowed inventory statuses configuration
     And click on SKU2 in grid
     And click "Cancel"
 
-  Scenario: Disallow discontinued for front view but allow for order, rfq, quote
+  Scenario: Allow discontinued for order, rfq, quote
     Given go to System / Configuration
     And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And uncheck "Use default" for "Visible Inventory Statuses" field
     And uncheck "Use default" for "Can Be Added to RFQs" field
     And uncheck "Use default" for "Can Be Added to Orders" field
     And fill form with:
-      | Can Be Added to RFQs   | [In Stock, Out of Stock, Discontinued] |
-      | Can Be Added to Orders | [In Stock, Out of Stock, Discontinued] |
+      | Visible Inventory Statuses | [In Stock, Out of Stock, Discontinued] |
+      | Can Be Added to RFQs       | [In Stock, Out of Stock, Discontinued] |
+      | Can Be Added to Orders     | [In Stock, Out of Stock, Discontinued] |
     And click "Save settings"
     And should see "Configuration saved" flash message
 
@@ -179,8 +180,15 @@ Feature: Allowed inventory statuses configuration
   Scenario: Check that it is possible to create Order from the shopping list with Discontinued product
     Given I open page with shopping list List 1
     And I click "Create Order"
-    Then I go through the order completion, and should be on order view page
-    And I should see following "Order Line Items Grid" grid:
+    And I proceed as the Admin
+    And go to System / Configuration
+    And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And check "Use default" for "Visible Inventory Statuses" field
+    And click "Save settings"
+    And should see "Configuration saved" flash message
+    When I proceed as the Manager
+    And I go through the order completion, and should be on order view page
+    Then I should see following "Order Line Items Grid" grid:
       | Product               |
       | Product1 Item #: SKU1 |
       | Product2 Item #: SKU2 |
@@ -199,10 +207,13 @@ Feature: Allowed inventory statuses configuration
 
   Scenario: Disallow discontinued for all front action
     Given I proceed as the Admin
+    And uncheck "Use default" for "Visible Inventory Statuses" field
     And check "Use default" for "Can Be Added to RFQs" field
     And check "Use default" for "Can Be Added to Orders" field
+    And fill form with:
+      | Visible Inventory Statuses | [In Stock, Out of Stock, Discontinued] |
     And click "Save settings"
-    And should see "Configuration saved" flash message
+    Then I should see "Configuration saved" flash message
 
   Scenario: Check that it is impossible to create Order from the shopping list with Discontinued product
     Given I proceed as the Manager

@@ -399,6 +399,8 @@ services:
         arguments:
             - "@oro_tax.provider.taxation_settings_provider"
             - "@oro_tax.calculator"
+        calls:
+            - ['setRoundingResolver', ['@oro_tax.resolver.rounding']]
 
     oro_tax.resolver.total:
         class: 'Oro\Bundle\TaxBundle\Resolver\TotalResolver'

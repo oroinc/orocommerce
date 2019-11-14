@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
@@ -13,7 +14,11 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadGuestShoppin
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ShoppingListTotalRepositoryTest extends WebTestCase
 {
     /** @var EntityManager */
@@ -76,6 +81,66 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->assertFalse($shoppingListTotal->isValid());
     }
 
+    public function testInvalidateByProducts()
+    {
+        /** @var Website $website */
+        $website = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
+
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product7 = $this->getReference(LoadProductData::PRODUCT_7);
+
+        /** @var ShoppingListTotal $totalSL4 */
+        $totalSL4 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_4)
+        ]);
+        $this->assertTrue($totalSL4->isValid());
+        /** @var ShoppingListTotal $totalSL5 */
+        $totalSL5 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+        ]);
+        $this->assertTrue($totalSL5->isValid());
+        /** @var ShoppingListTotal $totalSL7 */
+        $totalSL7 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)
+        ]);
+        $this->assertTrue($totalSL7->isValid());
+
+        $this->repository->invalidateByProducts(
+            $website,
+            [$product1->getId(), $product7->getId()]
+        );
+
+        $this->manager->refresh($totalSL4);
+        $this->assertTrue($totalSL4->isValid());
+        $this->manager->refresh($totalSL5);
+        $this->assertFalse($totalSL5->isValid());
+        $this->manager->refresh($totalSL7);
+        $this->assertFalse($totalSL7->isValid());
+    }
+
+    public function testInvalidateByWebsite()
+    {
+        /** @var Website $website */
+        $website = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
+
+        /** @var ShoppingListTotal $total */
+        $total = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_4)
+        ]);
+        $this->assertTrue($total->isValid());
+
+        $this->repository->invalidateByWebsite($website);
+
+        $this->manager->refresh($total);
+        $this->assertFalse($total->isValid());
+    }
+
     /**
      * @param ShoppingList $shoppingList
      * @return ShoppingListTotal
@@ -100,9 +165,15 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
      */
     private function createTotal(ShoppingList $shoppingList)
     {
-        $subtotal = (new Subtotal())->setCurrency('USD')->setAmount(1);
+        $currency = 'USD';
+        $subtotal = (new Subtotal())->setCurrency($currency)->setAmount(1);
+        /** @var ShoppingListTotalRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(ShoppingListTotal::class);
+        $total = $repo->findOneBy(['shoppingList' => $shoppingList, 'currency' => $currency]);
 
-        $total = new ShoppingListTotal($shoppingList, 'USD');
+        if (!$total) {
+            $total = new ShoppingListTotal($shoppingList, $currency);
+        }
         $total->setValid(true);
         $total->setSubtotal($subtotal);
 

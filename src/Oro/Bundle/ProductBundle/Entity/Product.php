@@ -1133,7 +1133,9 @@ class Product extends ExtendProduct implements
      */
     public function addVariantLink(ProductVariantLink $variantLink)
     {
-        $variantLink->setParentProduct($this);
+        if (!$variantLink->getParentProduct()) {
+            $variantLink->setParentProduct($this);
+        }
 
         if (!$this->variantLinks->contains($variantLink)) {
             $this->variantLinks->add($variantLink);
@@ -1179,7 +1181,9 @@ class Product extends ExtendProduct implements
      */
     public function addParentVariantLink(ProductVariantLink $parentVariantLink)
     {
-        $parentVariantLink->setProduct($this);
+        if (!$parentVariantLink->getProduct()) {
+            $parentVariantLink->setProduct($this);
+        }
 
         if (!$this->parentVariantLinks->contains($parentVariantLink)) {
             $this->parentVariantLinks->add($parentVariantLink);

@@ -31,7 +31,6 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 
     protected function setUp()
     {
-        \PHPUnit\Framework\Error\Warning::$enabled = false;
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

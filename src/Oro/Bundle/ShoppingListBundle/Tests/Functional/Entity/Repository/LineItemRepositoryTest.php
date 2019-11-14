@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -28,7 +29,7 @@ class LineItemRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                LoadShoppingListLineItems::class,
             ]
         );
     }
@@ -44,7 +45,7 @@ class LineItemRepositoryTest extends WebTestCase
 
         $this->setProperty($lineItem, 'id', ($lineItem->getId() + 1));
         $duplicate = $repository->findDuplicate($lineItem);
-        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\LineItem', $duplicate);
+        $this->assertInstanceOf(LineItem::class, $duplicate);
     }
 
     public function testGetItemsByProductAndShoppingList()
@@ -264,12 +265,33 @@ class LineItemRepositoryTest extends WebTestCase
         );
     }
 
+    public function testDeleteItemsByShoppingListAndInventoryStatuses()
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $allowedStatuses = ['in_stock'];
+
+        $repo = $this->getLineItemRepository();
+        $repo->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
+        $actual = array_map(function (LineItem $item) {
+            return $item->getId();
+        }, $repo->findBy(['shoppingList' => $shoppingList]));
+        sort($actual);
+
+        $expected = [
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_5)->getId()
+        ];
+        sort($expected);
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @return LineItemRepository
      */
     protected function getLineItemRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:LineItem');
+        return $this->getContainer()->get('doctrine')->getRepository(LineItem::class);
     }
 
     /**
@@ -277,7 +299,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getCustomerUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:CustomerUser');
+        return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class);
     }
 
     /**

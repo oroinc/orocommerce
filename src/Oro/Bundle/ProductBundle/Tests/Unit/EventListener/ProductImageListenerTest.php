@@ -59,7 +59,12 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $this->productImageHelper = $this->createMock(ProductImageHelper::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->lifecycleArgs = $this->createMock(LifecycleEventArgs::class);
+        $this->lifecycleArgs->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($this->productImageEntityManager);
+
         $this->productRepository = $this->createMock(ProductRepository::class);
 
         $this->listener = new ProductImageListener(
@@ -98,14 +103,102 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $productImage = $this->prepareProductImage();
 
         $this->eventDispatcher->expects($this->exactly(2))
-            ->method('dispatch')
-            ->willReturn(true);
-
-        $this->lifecycleArgs->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($this->productImageEntityManager);
+            ->method('dispatch');
 
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
+    }
+
+    public function testPostPersistForNotMAinAndListingImage()
+    {
+        $this->imageTypeProvider->expects($this->any())
+            ->method('getMaxNumberByType')
+            ->willReturn(
+                [
+                    'main' => [
+                        'max' => 1,
+                        'label' => 'Main'
+                    ],
+                    'listing' => [
+                        'max' => 1,
+                        'label' => 'Listing'
+                    ],
+                    'additional' => [
+                        'max' => null,
+                        'label' => 'Additional'
+                    ],
+                ]
+            );
+
+        $this->productImageHelper->expects($this->once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 3,
+                    'listing' => 3,
+                    'additional' => 3,
+                ]
+            );
+
+        $mainImage1 = new ProductImage();
+        $mainImage1->addType(new ProductImageType('main'));
+
+        $mainImage2 = new ProductImage();
+        $mainImage2->addType(new ProductImageType('main'));
+
+        $listingImage1 = new ProductImage();
+        $listingImage1->addType(new ProductImageType('listing'));
+
+        $listingImage2 = new ProductImage();
+        $listingImage2->addType(new ProductImageType('listing'));
+
+        $additionalImage1 = new ProductImage();
+        $additionalImage1->addType(new ProductImageType('additional'));
+
+        $additionalImage2 = new ProductImage();
+        $additionalImage2->addType(new ProductImageType('additional'));
+
+        $newImage = new ProductImage();
+        $newImage->addType(new ProductImageType('main'));
+        $newImage->addType(new ProductImageType('listing'));
+        $newImage->addType(new ProductImageType('additional'));
+
+        $product = new Product();
+        $product->addImage($mainImage1);
+        $product->addImage($mainImage2);
+        $product->addImage($listingImage1);
+        $product->addImage($listingImage2);
+        $product->addImage($additionalImage1);
+        $product->addImage($additionalImage2);
+        $product->addImage($newImage);
+
+        $this->listener->postPersist($newImage, $this->lifecycleArgs);
+
+        $this->assertProductImageTypes([], $mainImage1);
+        $this->assertProductImageTypes([], $mainImage2);
+
+        $this->assertProductImageTypes([], $listingImage1);
+        $this->assertProductImageTypes([], $listingImage2);
+
+        $this->assertProductImageTypes(['additional'], $additionalImage1);
+        $this->assertProductImageTypes(['additional'], $additionalImage2);
+
+        $this->assertProductImageTypes(['main', 'listing', 'additional'], $newImage);
+    }
+
+    /**
+     * @param array $expected
+     * @param ProductImage $productImage
+     */
+    private function assertProductImageTypes(array $expected, ProductImage $productImage): void
+    {
+        $types = array_map(
+            static function (ProductImageType $productImageType) {
+                return $productImageType->getType();
+            },
+            $productImage->getTypes()->toArray()
+        );
+
+        $this->assertEquals($expected, $types);
     }
 
     public function testPostUpdate()
@@ -121,10 +214,6 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testFilePostUpdate()
     {
-        $this->lifecycleArgs->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($this->productImageEntityManager);
-
         $productImage = $this->prepareProductImage();
 
         $this->productRepository->expects($this->once())

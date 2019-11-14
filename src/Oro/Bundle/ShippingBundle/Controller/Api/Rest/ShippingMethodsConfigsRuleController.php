@@ -27,7 +27,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @Rest\Post(
      *      "/shippingrules/{id}/enable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
@@ -76,7 +76,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @Rest\Post(
      *      "/shippingrules/{id}/disable",
-     *      requirements={"version"="latest|v1"},
+     *      requirements={"version"="latest|v1", "id"="\d+"},
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)

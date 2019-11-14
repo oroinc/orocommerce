@@ -9,6 +9,7 @@ use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
@@ -63,6 +64,56 @@ class ProductImageImportTest extends WebTestCase
         );
 
         $this->assertImportedDataValid();
+    }
+
+    public function testImportAddAndReplaceStrategyWithTypes()
+    {
+        $this->assertImportWorks(
+            __DIR__ . '/data/product_image/product_image_import_with_types.csv'
+        );
+
+        /** @var  EntityRepository $productRepo */
+        $productRepo = static::getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(Product::class)
+            ->getRepository(Product::class);
+
+        /** @var Product $product */
+        $product = $productRepo->findOneById($this->getReference(LoadProductData::PRODUCT_1));
+
+        $this->assertCount(4, $product->getImages());
+
+        $this->assertProductImageTypes(['main', 'additional'], 'product-1_1.jpg', $product);
+        $this->assertProductImageTypes(['listing', 'additional'], 'product-1_2.jpg', $product);
+        $this->assertProductImageTypes(['additional'], 'product-1_3.jpg', $product);
+    }
+
+    /**
+     * @param array $expected
+     * @param string $imageName
+     * @param Product $product
+     */
+    private function assertProductImageTypes(array $expected, string $imageName, Product $product): void
+    {
+        $productImage = null;
+        foreach ($product->getImages() as $image) {
+            if ($image->getImage() && $image->getImage()->getOriginalFilename() === $imageName) {
+                $productImage = $image;
+
+                break;
+            }
+        }
+
+        $this->assertNotNull($productImage);
+
+        $types = array_map(
+            static function (ProductImageType $productImageType) {
+                return $productImageType->getType();
+            },
+            $productImage->getTypes()->toArray()
+        );
+
+        $this->assertEquals(array_combine($expected, $expected), $types);
     }
 
     /**

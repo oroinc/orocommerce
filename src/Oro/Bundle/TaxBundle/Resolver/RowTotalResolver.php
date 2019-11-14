@@ -28,6 +28,9 @@ class RowTotalResolver
      */
     protected $calculator;
 
+    /** @var RoundingResolver */
+    protected $roundingResolver;
+
     /**
      * @param TaxationSettingsProvider $settingsProvider
      * @param TaxCalculatorInterface   $calculator
@@ -36,6 +39,14 @@ class RowTotalResolver
     {
         $this->settingsProvider = $settingsProvider;
         $this->calculator = $calculator;
+    }
+
+    /**
+     * @param RoundingResolver $roundingResolver
+     */
+    public function setRoundingResolver(RoundingResolver $roundingResolver)
+    {
+        $this->roundingResolver = $roundingResolver;
     }
 
     /**
@@ -72,12 +83,18 @@ class RowTotalResolver
                     );
             }
 
-            $taxResults[] = TaxResultElement::create(
+            $taxResult = TaxResultElement::create(
                 $taxRule->getTax(),
                 $currentTaxRate,
                 $totalResultElement->getExcludingTax(),
                 $currentTaxAmount
             );
+
+            if ($this->settingsProvider->isStartCalculationOnItem()) {
+                $this->roundingResolver->round($taxResult);
+            }
+
+            $taxResults[] = $taxResult;
         }
 
         $result->offsetSet(Result::ROW, $totalResultElement);

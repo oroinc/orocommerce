@@ -4,8 +4,14 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Validate that configurable product has selected configurable attributes and these attributes are filled in variants.
+ */
 class ProductVariantLinks extends Constraint
 {
+    /** @var string */
+    public $property;
+
     /** @var string */
     public $variantFieldRequiredMessage = 'oro.product.product_variant_links.variant_field_required.message';
 
@@ -25,6 +31,6 @@ class ProductVariantLinks extends Constraint
      */
     public function getTargets()
     {
-        return self::CLASS_CONSTRAINT;
+        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
     }
 }
