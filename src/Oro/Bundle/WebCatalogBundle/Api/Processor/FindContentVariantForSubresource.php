@@ -69,6 +69,13 @@ class FindContentVariantForSubresource implements ProcessorInterface
             $expr = $contentVariantType->getApiResourceIdentifierDqlExpression(
                 ContentNodeProvider::ENTITY_ALIAS_PLACEHOLDER
             );
+
+            //Empty getApiResourceIdentifierDqlExpression means ContentVariantType is not enabled for API and should not
+            //be added to the query
+            if (!$expr) {
+                continue;
+            }
+
             $contentVariantFields[$expr] = $contentVariantType->getName();
         }
 
