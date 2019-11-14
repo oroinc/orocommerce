@@ -69,8 +69,11 @@ class WYSIWYGType extends AbstractType
                     'allow_tags' => []
                 ]
             ],
-            'error_bubbling' => true,
-            'auto_render' => true
+            'attr' => [
+                'class' => 'hide'
+            ],
+            'auto_render' => true,
+            'error_bubbling' => true
         ]);
     }
 

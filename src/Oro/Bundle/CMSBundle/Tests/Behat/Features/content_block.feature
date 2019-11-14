@@ -44,9 +44,10 @@ Feature: Content Block
     And fill "Content Block Form" with:
       | Customer Group | All Customers |
     And I save and close form
+    Then I should see "Content block has been saved" flash message
+    When I proceed as the Buyer
     When I am on homepage
     Then I should not see "LOREM IPSUM"
-    When I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     Then I should see "LOREM IPSUM"
 
