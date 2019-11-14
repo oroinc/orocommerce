@@ -8,6 +8,7 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
@@ -33,11 +34,16 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
 
         $context = $this->createMock(ContextInterface::class);
 
+        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context);
+        $richTextType->setHtmlTagHelper($htmlTagHelper);
+
         return [
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    OroRichTextType::class => $richTextType,
                 ],
                 []
             )

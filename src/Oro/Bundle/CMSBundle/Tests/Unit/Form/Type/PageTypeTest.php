@@ -14,6 +14,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
@@ -113,13 +114,18 @@ class PageTypeTest extends FormIntegrationTestCase
 
         $context = $this->createMock(ContextInterface::class);
 
+        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context);
+        $richTextType->setHtmlTagHelper($htmlTagHelper);
+
         return [
             new PreloadedExtension(
                 [
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    OroRichTextType::class => $richTextType,
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
