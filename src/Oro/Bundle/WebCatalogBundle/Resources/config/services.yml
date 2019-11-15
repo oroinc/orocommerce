@@ -251,6 +251,9 @@ services:
             - '@oro_web_catalog.content_node_provider'
             - '@oro_scope.scope_manager'
 
+    Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface:
+        alias: oro_web_catalog.content_node_tree_resolver
+
     oro_web_catalog.cache:
         parent: oro.cache.abstract
         calls:
