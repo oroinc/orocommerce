@@ -5,7 +5,7 @@ import GrapesJS from 'grapesjs';
 import BaseView from 'oroui/js/app/views/base/view';
 import ModuleManager from 'orocms/js/app/grapesjs/modules/module-manager';
 import mediator from 'oroui/js/mediator';
-import canvasStyle from 'text-loader!orocms/css/grapesjs/grapesjs-canvas.css';
+import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
@@ -55,6 +55,7 @@ const GrapesjsEditorView = BaseView.extend({
         fromElement: true,
         height: '2000px',
         avoidInlineStyle: true,
+        avoidFrameOffset: true,
 
         /**
          * Color picker options
@@ -450,6 +451,7 @@ const GrapesjsEditorView = BaseView.extend({
             mediator.on('dropdown-button:click', this._onComponentUpdatedBuilder, this);
         }
         this._updateInitialField();
+        this.builder.trigger('change:canvasOffset');
         mediator.trigger('grapesjs:components:updated', state);
         this.componentUpdated = true;
     },

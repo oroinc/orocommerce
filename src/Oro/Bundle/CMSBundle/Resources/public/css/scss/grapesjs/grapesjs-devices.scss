@@ -2,11 +2,18 @@
 
 .#{$app-prefix} {
     &cv-canvas {
+        &.desktop {
+            border: $canvas-border;
+        }
+
         &:not(.desktop) {
             background-color: transparent;
             background-image: $canvas-pattern;
             background-size: $canvas-pattern-size;
             background-position: $canvas-pattern-position;
+
+            box-shadow: $canvas-box-shadow;
+            border: none;
         }
 
         &.tablet,
