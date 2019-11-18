@@ -117,6 +117,18 @@ class ResolvedContentNode implements ContentNodeInterface
     }
 
     /**
+     * @param ArrayCollection $childNodes
+     * @return ResolvedContentNode
+     */
+    public function setChildNodes(ArrayCollection $childNodes): self
+    {
+        $this->childNodes = $childNodes;
+
+        return $this;
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     public function isRewriteVariantTitle()
