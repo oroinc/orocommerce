@@ -34,7 +34,7 @@ services:
             - { name: oro_product.quick_add_processor }
 
     oro_rfp.event_listener.product_db_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['rfp']]
@@ -44,7 +44,7 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_rfp.event_listener.product_search_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_search_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_search_query_restriction
         calls:
             - [setScope, ['rfp']]

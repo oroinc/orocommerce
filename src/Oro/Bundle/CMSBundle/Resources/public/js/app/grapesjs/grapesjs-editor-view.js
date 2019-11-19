@@ -5,7 +5,7 @@ import GrapesJS from 'grapesjs';
 import BaseView from 'oroui/js/app/views/base/view';
 import ModuleManager from 'orocms/js/app/grapesjs/modules/module-manager';
 import mediator from 'oroui/js/mediator';
-import canvasStyle from 'text-loader!orocms/css/grapesjs/grapesjs-canvas.css';
+import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
@@ -52,9 +52,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     builderOptions: {
-        fromElement: true,
         height: '2000px',
         avoidInlineStyle: true,
+        avoidFrameOffset: true,
 
         /**
          * Color picker options
@@ -210,6 +210,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     render: function() {
         this.applyComponentsJSON();
+        this.initContainer();
         this.initBuilder();
     },
 
@@ -255,16 +256,12 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * Resolve editor container
+     * Creates editor container
      * @returns {*}
      */
-    getContainer: function() {
-        const $editor = $('<div class="grapesjs" />');
-        $editor.html(escapeWrapper(this.$el.val()));
-        this.$el.parent().append($editor);
-        this.$container = $editor;
-
-        return $editor.get(0);
+    initContainer: function() {
+        this.$container = $('<div class="grapesjs" />');
+        this.$container.insertAfter(this.$el);
     },
 
     /**
@@ -289,7 +286,8 @@ const GrapesjsEditorView = BaseView.extend({
             {}
             , {
                 avoidInlineStyle: 1,
-                container: this.getContainer()
+                container: this.$container.get(0),
+                components: escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
 
@@ -452,6 +450,7 @@ const GrapesjsEditorView = BaseView.extend({
             mediator.on('dropdown-button:click', this._onComponentUpdatedBuilder, this);
         }
         this._updateInitialField();
+        this.builder.trigger('change:canvasOffset');
         mediator.trigger('grapesjs:components:updated', state);
         this.componentUpdated = true;
     },
