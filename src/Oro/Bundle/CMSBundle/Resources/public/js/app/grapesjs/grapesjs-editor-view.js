@@ -52,7 +52,6 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     builderOptions: {
-        fromElement: true,
         height: '2000px',
         avoidInlineStyle: true,
         avoidFrameOffset: true,
@@ -212,6 +211,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     render: function() {
         this.applyComponentsJSON();
+        this.initContainer();
         this.initBuilder();
     },
 
@@ -257,16 +257,12 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * Resolve editor container
+     * Creates editor container
      * @returns {*}
      */
-    getContainer: function() {
-        const $editor = $('<div class="grapesjs" />');
-        $editor.html(escapeWrapper(this.$el.val()));
-        this.$el.parent().append($editor);
-        this.$container = $editor;
-
-        return $editor.get(0);
+    initContainer: function() {
+        this.$container = $('<div class="grapesjs" />');
+        this.$container.insertAfter(this.$el);
     },
 
     /**
@@ -291,7 +287,8 @@ const GrapesjsEditorView = BaseView.extend({
             {}
             , {
                 avoidInlineStyle: 1,
-                container: this.getContainer()
+                container: this.$container.get(0),
+                components: escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
 
