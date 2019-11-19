@@ -1234,6 +1234,29 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testTryToAddToCartForNewListItemNotSellProductProductUnit()
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $response = $this->postSubresource(
+            ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId, 'association' => 'items'],
+            'add_line_item_not_sell_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'product line item constraint',
+                    'detail' => 'The given product unit is not valid for given product.',
+                    'source' => ['pointer' => '/data/0/relationships/unit/data']
+                ],
+            ],
+            $response
+        );
+    }
+
     public function testTryToAddToCartWithoutUnit()
     {
         $response = $this->postSubresource(
