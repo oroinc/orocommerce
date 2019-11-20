@@ -1,8 +1,8 @@
 {% block attribute_wysiwyg_widget %}
     {% if styles|length -%}
         {%- spaceless -%}
-            <style type="text/css">{{ styles|raw }}</style>
+            <style type="text/css">{{ styles|render_content }}</style>
         {%- endspaceless -%}
     {%- endif %}
-    {{ value|raw }}
+    {{ value|render_content }}
 {% endblock %}

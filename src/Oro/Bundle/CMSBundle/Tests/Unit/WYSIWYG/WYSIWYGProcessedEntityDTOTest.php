@@ -3,76 +3,51 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\WYSIWYG;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
+use Oro\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyAccessor;
+
     protected function setUp()
     {
         $this->em = $this->createMock(EntityManager::class);
+        $this->propertyAccessor = new PropertyAccessor();
     }
 
-    public function testCreateFromLifecycleEventArgs(): WYSIWYGProcessedEntityDTO
+    public function testIsFieldChangedWithoutChangeSet(): void
     {
         $entity = new \stdClass();
+        $dto = new WYSIWYGProcessedEntityDTO($this->em, $this->propertyAccessor, $entity);
 
-        $dto = WYSIWYGProcessedEntityDTO::createFromLifecycleEventArgs(new LifecycleEventArgs($entity, $this->em));
-        $this->assertEquals(
-            new WYSIWYGProcessedEntityDTO($this->em, $entity),
-            $dto
-        );
-
-        $this->assertSame($this->em, $dto->getEntityManager());
-        $this->assertSame($entity, $dto->getEntity());
-
-        return $dto;
-    }
-
-    /**
-     * @depends testCreateFromLifecycleEventArgs
-     * @param WYSIWYGProcessedEntityDTO $dto
-     */
-    public function testIsFieldChangedWithoutChangeSet(WYSIWYGProcessedEntityDTO $dto): void
-    {
         $this->assertTrue($dto->isFieldChanged());
     }
 
-    public function testCreateFromPreUpdateEventArgs(): WYSIWYGProcessedEntityDTO
+    public function testIsFieldChangedWithChangeSet(): void
     {
         $entity = new \stdClass();
+        $changeSet = [
+            'test' => ['old val', 'new val'],
+            'serialized_data' => [
+                ['test_serialized' => 'old val'],
+                ['test_serialized' => 'new val'],
+            ],
+        ];
 
-        $changeSet = ['test' => ['old val', 'new val']];
-        $dto = WYSIWYGProcessedEntityDTO::createFromLifecycleEventArgs(
-            new PreUpdateEventArgs($entity, $this->em, $changeSet)
-        );
-        $this->assertEquals(
-            new WYSIWYGProcessedEntityDTO($this->em, $entity, $changeSet),
-            $dto
-        );
+        $dto = new WYSIWYGProcessedEntityDTO($this->em, $this->propertyAccessor, $entity, $changeSet);
 
-        $this->assertSame($this->em, $dto->getEntityManager());
-        $this->assertSame($entity, $dto->getEntity());
-
-        return $dto;
-    }
-
-    /**
-     * @depends testCreateFromPreUpdateEventArgs
-     * @param WYSIWYGProcessedEntityDTO $dto
-     */
-    public function testIsFieldChangedWithChangeSet(WYSIWYGProcessedEntityDTO $dto): void
-    {
         $this->assertFalse($dto->isFieldChanged());
         $this->assertTrue($dto->withField('test')->isFieldChanged());
+        $this->assertTrue($dto->withField('test_serialized')->isFieldChanged());
         $this->assertFalse($dto->withField('not_changed')->isFieldChanged());
     }
-
 
     public function testGetMetadata(): WYSIWYGProcessedEntityDTO
     {
@@ -83,7 +58,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
             ->with(\stdClass::class)
             ->willReturn($metadata);
 
-        $dto = new WYSIWYGProcessedEntityDTO($this->em, new \stdClass());
+        $dto = new WYSIWYGProcessedEntityDTO($this->em, $this->propertyAccessor, new \stdClass());
 
         $this->assertSame($metadata, $dto->getMetadata());
 
@@ -116,12 +91,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
     {
         $dto = $dto->withField('test_field');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $metadata */
-        $metadata = $dto->getMetadata();
-        $metadata->expects($this->once())
-            ->method('getFieldValue')
-            ->with($dto->getEntity(), 'test_field')
-            ->willReturn('field_value');
+        $dto->getEntity()->test_field = 'field_value';
 
         $this->assertSame('field_value', $dto->getFieldValue());
     }
@@ -147,7 +117,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
     public function testField(): void
     {
         $entity = new \stdClass();
-        $dto = new WYSIWYGProcessedEntityDTO($this->em, $entity);
+        $dto = new WYSIWYGProcessedEntityDTO($this->em, $this->propertyAccessor, $entity);
 
         $newDto = $dto->withField('test_field', 'test_type');
 

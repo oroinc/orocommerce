@@ -12,14 +12,18 @@ use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Listens to changes in wysiwyg fields to
  * 1) create children files for DAM assets used via wysiwyg_file() and wysiwyg_image() twig functions
  * 2) track usages of content widgets
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class WYSIWYGFieldTwigListener implements OptionalListenerInterface
 {
@@ -31,20 +35,34 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
     /** @var WYSIWYGTwigFunctionProcessorInterface */
     private $processor;
 
+    /** @var PropertyAccessorInterface */
+    private $propertyAccessor;
+
     /** @var string[][] */
     private $fieldLists = [];
 
     /** @var bool */
     private $transactional = false;
 
+    /** @var EntityConfigManager */
+    private $entityConfigManager;
+
     /**
+     * @param EntityConfigManager $entityConfigManager
      * @param TwigParser $twigParser
      * @param WYSIWYGTwigFunctionProcessorInterface $processor
+     * @param PropertyAccessorInterface $propertyAccessor
      */
-    public function __construct(TwigParser $twigParser, WYSIWYGTwigFunctionProcessorInterface $processor)
-    {
+    public function __construct(
+        EntityConfigManager $entityConfigManager,
+        TwigParser $twigParser,
+        WYSIWYGTwigFunctionProcessorInterface $processor,
+        PropertyAccessorInterface $propertyAccessor
+    ) {
+        $this->entityConfigManager = $entityConfigManager;
         $this->twigParser = $twigParser;
         $this->processor = $processor;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -134,7 +152,12 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
     private function createDTO(LifecycleEventArgs $args): WYSIWYGProcessedDTO
     {
         return new WYSIWYGProcessedDTO(
-            WYSIWYGProcessedEntityDTO::createFromLifecycleEventArgs($args)
+            new WYSIWYGProcessedEntityDTO(
+                $args->getEntityManager(),
+                $this->propertyAccessor,
+                $args->getEntity(),
+                $args instanceof PreUpdateEventArgs ? $args->getEntityChangeSet() : null
+            )
         );
     }
 
@@ -197,7 +220,11 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
             return false;
         }
 
-        $collectionDTO = new WYSIWYGProcessedEntityDTO($processedEntity->getEntityManager(), $collection);
+        $collectionDTO = new WYSIWYGProcessedEntityDTO(
+            $processedEntity->getEntityManager(),
+            $this->propertyAccessor,
+            $collection
+        );
         $metadata = $collectionDTO->getMetadata();
 
         $applicableMapping = $this->processor->getApplicableMapping();
@@ -275,20 +302,53 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
             $this->fieldLists[$entityName] = [];
             $applicableFieldTypes = \array_keys($this->processor->getApplicableMapping());
 
-            foreach ($metadata->getFieldNames() as $fieldName) {
-                $mapping = $metadata->getFieldMapping($fieldName);
-                if (\in_array($mapping['type'], $applicableFieldTypes, true)) {
-                    $this->fieldLists[$entityName][$fieldName] = $mapping['type'];
-                }
-            }
-
-            foreach ($metadata->getAssociationMappings() as $relationName => $mapping) {
-                if (isset($mapping['targetEntity']) && $mapping['targetEntity'] === LocalizedFallbackValue::class) {
-                    $this->fieldLists[$entityName][$relationName] = LocalizedFallbackValue::class;
-                }
-            }
+            $this->collectRegularWysiwygFields($metadata, $applicableFieldTypes);
+            $this->collectSerializedWysiwygFields($metadata->getName(), $applicableFieldTypes);
         }
 
         return $this->fieldLists[$entityName];
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     * @param array $applicableFieldTypes
+     */
+    private function collectRegularWysiwygFields(ClassMetadata $metadata, array $applicableFieldTypes): void
+    {
+        $entityName = $metadata->getName();
+
+        foreach ($metadata->getFieldNames() as $fieldName) {
+            $mapping = $metadata->getFieldMapping($fieldName);
+            if (\in_array($mapping['type'], $applicableFieldTypes, true)) {
+                $this->fieldLists[$entityName][$fieldName] = $mapping['type'];
+            }
+        }
+
+        foreach ($metadata->getAssociationMappings() as $relationName => $mapping) {
+            if (isset($mapping['targetEntity']) && $mapping['targetEntity'] === LocalizedFallbackValue::class) {
+                $this->fieldLists[$entityName][$relationName] = LocalizedFallbackValue::class;
+            }
+        }
+    }
+
+    /**
+     * @param string $entityName
+     * @param array $applicableFieldTypes
+     */
+    private function collectSerializedWysiwygFields(string $entityName, array $applicableFieldTypes): void
+    {
+        $entityConfigModel = $this->entityConfigManager->getConfigEntityModel($entityName);
+        if ($entityConfigModel) {
+            // Working with fieldConfigModels because regular doctrine metadata does not contain info about
+            // serialized fields.
+            foreach ($entityConfigModel->getFields() as $fieldConfigModel) {
+                $fieldName = $fieldConfigModel->getFieldName();
+                $fieldType = $fieldConfigModel->getType();
+
+                if (\in_array($fieldType, $applicableFieldTypes, true)) {
+                    $this->fieldLists[$entityName][$fieldName] = $fieldType;
+                }
+            }
+        }
     }
 }

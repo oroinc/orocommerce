@@ -188,8 +188,10 @@ services:
     oro_cms.event_listener.wysiwyg_field_twig_listener:
         class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGFieldTwigListener
         arguments:
+            - '@oro_entity_config.config_manager'
             - '@oro_cms.parser.twig'
             - '@oro_cms.wysiwyg.chain_twig_function_processor'
+            - '@property_accessor'
         tags:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: preUpdate }

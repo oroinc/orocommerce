@@ -4,9 +4,8 @@ namespace Oro\Bundle\CMSBundle\WYSIWYG;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * DTO model for entity with wysiwyg fields
@@ -15,6 +14,9 @@ class WYSIWYGProcessedEntityDTO
 {
     /** @var EntityManager */
     private $entityManager;
+
+    /** @var PropertyAccessorInterface */
+    private $propertyAccessor;
 
     /** @var object */
     private $entity;
@@ -33,27 +35,20 @@ class WYSIWYGProcessedEntityDTO
 
     /**
      * @param EntityManager $entityManager
+     * @param PropertyAccessorInterface $propertyAccessor
      * @param object $entity
      * @param array|null $changeSet
      */
-    public function __construct(EntityManager $entityManager, $entity, ?array $changeSet = null)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        PropertyAccessorInterface $propertyAccessor,
+        $entity,
+        ?array $changeSet = null
+    ) {
         $this->entityManager = $entityManager;
+        $this->propertyAccessor = $propertyAccessor;
         $this->entity = $entity;
         $this->changeSet = $changeSet;
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     * @return WYSIWYGProcessedEntityDTO
-     */
-    public static function createFromLifecycleEventArgs(LifecycleEventArgs $args): WYSIWYGProcessedEntityDTO
-    {
-        return new self(
-            $args->getEntityManager(),
-            $args->getEntity(),
-            $args instanceof PreUpdateEventArgs ? $args->getEntityChangeSet() : null
-        );
     }
 
     /**
@@ -132,7 +127,12 @@ class WYSIWYGProcessedEntityDTO
      */
     public function getFieldValue()
     {
-        return $this->getMetadata()->getFieldValue($this->getEntity(), $this->getFieldName());
+        $value = null;
+        if ($this->propertyAccessor->isReadable($this->getEntity(), $this->getFieldName())) {
+            $value = $this->propertyAccessor->getValue($this->getEntity(), $this->getFieldName());
+        }
+
+        return $value;
     }
 
     /**
@@ -140,7 +140,20 @@ class WYSIWYGProcessedEntityDTO
      */
     public function isFieldChanged(): bool
     {
-        return $this->changeSet === null || array_key_exists($this->getFieldName(), $this->changeSet);
+        if ($this->changeSet === null) {
+            return true;
+        }
+
+        if (\array_key_exists($this->getFieldName(), $this->changeSet)) {
+            return true;
+        }
+
+        if (\array_key_exists('serialized_data', $this->changeSet)
+            && \array_key_exists($this->getFieldName(), $this->changeSet['serialized_data'][1])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
