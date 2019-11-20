@@ -43,6 +43,7 @@ Feature: Landing Page content purify
     And I save and close form
     Then I should see "Page has been saved" flash message
     And should see "Some Content"
+    And I should see "Current content view is simplified, please check the page on the Storefront to see the actual result"
 
   Scenario: Edit Landing Page in selective mode
     Given login as "testUser1@test.com" user
