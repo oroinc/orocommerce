@@ -27,11 +27,11 @@ Feature: WYSIWYG field type as product attribute
     When I go to Products/ Product Attributes
     And click "Create Attribute"
     And fill form with:
-      | Field Name | WYSIWYG_video  |
-      | Type       | WYSIWYG        |
+      | Field Name | WYSIWYG_video |
+      | Type       | WYSIWYG       |
     And click "Continue"
     And fill form with:
-      | Label      | WYSIWYG video |
+      | Label | WYSIWYG video |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -47,13 +47,25 @@ Feature: WYSIWYG field type as product attribute
   Scenario: Edit product to fill new attribute value
     Given I go to Products/ Products
     When click "edit" on row "PSKU1" in grid
-    And I fill in WYSIWYG "Product WYSIWYG_video Attribute Content" with "<p id='WYSIWYG_escaped'>WYSIWYG Content <span>here!</span></p>"
+    And I fill "ProductForm" with:
+      | Product WYSIWYG_video Attribute Content | <div onclick=\"alert('test');\">Some Content</div> |
+    And I save and close form
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    When I fill "ProductForm" with:
+      | Product WYSIWYG_video Attribute Content | <p id='WYSIWYG_escaped'>WYSIWYG_video Content <span>here!</span></p> |
+    And I fill "ProductForm" with:
+      | Product WYSIWYG_embed Field Content | <div onclick=\"alert('test');\">Some Content</div> |
+    And I save and close form
+    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    When I fill "ProductForm" with:
+      | Product WYSIWYG_embed Field Content | <p id='WYSIWYG_escaped'>WYSIWYG_embed Content <span>here!</span></p> |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    And I should not see alert
-    And I should see "<p id='WYSIWYG_escaped'>WYSIWYG Content <span>here!</span></p>"
+    And I should see "WYSIWYG_video Content here!"
+    And I should see "WYSIWYG_embed Content here!"
+    And I should see "Current content view is simplified, please check the page on the Storefront to see the actual result"
     And I click logout in user menu
 
   Scenario: Open product view page on Front Store to see created attribute
     When I open product with sku "PSKU1" on the store frontend
-    Then I should see "WYSIWYG Content here!"
+    Then I should see "WYSIWYG_video Content here!"

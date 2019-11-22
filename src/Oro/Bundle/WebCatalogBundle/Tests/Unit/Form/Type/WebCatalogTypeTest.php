@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -29,7 +30,16 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
         $context = $this->createMock(ContextInterface::class);
-        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context);
+        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $htmlTagHelper->expects($this->any())
+            ->method('sanitize')
+            ->willReturnMap([
+                ['description', 'default', 'description'],
+                ['description UP', 'default', 'description UP'],
+            ]);
+
+        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context, $htmlTagHelper);
 
         return [
             new PreloadedExtension(

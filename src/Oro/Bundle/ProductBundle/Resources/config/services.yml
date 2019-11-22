@@ -6,8 +6,7 @@ parameters:
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
-    oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
-    oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
+
     oro_product.sku.regex_pattern: '/^[-_a-zA-Z0-9]*$/'
 
 services:
@@ -828,7 +827,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:
@@ -1128,6 +1126,15 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_product.access_rule.frontend_organization_for_product:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        calls:
+            - [setOrganizationOptional, [ true ]]
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\ProductBundle\Entity\Product, frontend: true }
 
     oro_product.security.acl.voter.product_collection_segment:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter

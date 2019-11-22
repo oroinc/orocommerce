@@ -13,10 +13,15 @@
     }
 
     &cv-canvas {
-        border: $canvas-border;
         background-color: $canvas-bg-color;
         padding: 8px;
         width: calc(77% - 14px);
+
+        .gjs-highlighter,
+        .gjs-highlighter-sel {
+            margin-left: -2px;
+            margin-top: -2px;
+        }
     }
 
     &pn-commands {
@@ -152,8 +157,14 @@
     }
 
     &toolbar {
-        margin-#{$start}: 1px;
         margin-top: -2px;
+    }
+
+
+    &com-badge,
+    &com-badge-red,
+    &badge {
+        margin-left: -2px;
     }
 
     &am-assets-cont {
@@ -215,6 +226,7 @@
 
             select {
                 padding-#{$end}: 15px;
+                min-width: 95px;
             }
         }
     }

@@ -1,4 +1,5 @@
 @fixture-OroCMSBundle:CustomerUserFixture.yml
+@fixture-OroCMSBundle:WysiwygRoleFixture.yml
 Feature: Content Block
   In order to modify some predefined marketing content on the store frontend
   As an Administrator
@@ -25,15 +26,28 @@ Feature: Content Block
     When I save and close form
     Then I should see "Content block has been saved" flash message
 
+  Scenario: Edit user roles
+    Given I go to System/User Management/Users
+    When click Edit admin in grid
+    And I click "Groups and Roles"
+    And I fill form with:
+      | Roles | [Administrator, WYSIWYG] |
+    And I save and close form
+    Then I should see "User saved" flash message
+    # Relogin for refresh token after change user roles
+    And I am logged out
+
   Scenario: Block for authenticated non authenticated users
-    Given I go to Marketing/ Content Blocks
+    Given login as administrator
+    And I go to Marketing/ Content Blocks
     And I click "edit" on row "home-page-slider" in grid
     And fill "Content Block Form" with:
       | Customer Group | All Customers |
     And I save and close form
+    Then I should see "Content block has been saved" flash message
+    When I proceed as the Buyer
     When I am on homepage
     Then I should not see "LOREM IPSUM"
-    When I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     Then I should see "LOREM IPSUM"
 

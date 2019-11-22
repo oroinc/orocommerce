@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -16,6 +17,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroCMSBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
@@ -27,6 +31,9 @@ class OroCMSBundleInstaller implements
     const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
     const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
+    const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
+    const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
+    const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
 
     /**
      * @var ExtendExtension
@@ -80,6 +87,7 @@ class OroCMSBundleInstaller implements
         $this->createOroCmsTextContentVariantScopeTable($schema);
         $this->createOroCmsContentWidgetTable($schema);
         $this->createOroCmsContentWidgetUsageTable($schema);
+        $this->createOroCmsImageSlideTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
@@ -91,6 +99,7 @@ class OroCMSBundleInstaller implements
         $this->addOroCmsTextContentVariantScopeForeignKeys($schema);
         $this->addOroCmsContentWidgetForeignKeys($schema);
         $this->addOroCmsContentWidgetUsageForeignKeys($schema);
+        $this->addOroCmsImageSlideForeignKeys($schema);
 
         /** Associations */
         $this->addOroCmsLoginPageImageAssociations($schema);
@@ -358,6 +367,49 @@ class OroCMSBundleInstaller implements
     }
 
     /**
+     * Create oro_cms_image_slide table
+     *
+     * @param Schema $schema
+     */
+    private function createOroCmsImageSlideTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_cms_image_slide');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('content_widget_id', 'integer');
+        $table->addColumn('slide_order', 'integer', ['default' => 0]);
+        $table->addColumn('url', 'string', ['length' => 255]);
+        $table->addColumn('display_in_same_window', 'boolean', ['default' => true]);
+        $table->addColumn('title', 'string', ['length' => 255]);
+        $table->addColumn('text', 'text', ['notnull' => false]);
+        $table->addColumn('text_alignment', 'string', ['length' => 20, 'default' => ImageSlide::TEXT_ALIGNMENT_CENTER]);
+
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            'mainImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB
+        );
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            'mediumImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB
+        );
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            'smallImage',
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB
+        );
+
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add oro_cms_content_widget foreign keys.
      *
      * @param Schema $schema
@@ -386,6 +438,28 @@ class OroCMSBundleInstaller implements
             ['content_widget_id'],
             ['id'],
             ['onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add oro_cms_image_slide foreign keys.
+     *
+     * @param Schema $schema
+     */
+    private function addOroCmsImageSlideForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_cms_image_slide');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_content_widget'),
+            ['content_widget_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
         );
     }
 

@@ -37,11 +37,13 @@ define(function(require) {
          * Run device manager
          */
         init: function() {
-            this.$builderIframe = this.builder.Canvas.getFrameEl();
+            this.rte = this.builder.RichTextEditor;
             this.canvasEl = this.builder.Canvas.getElement();
+            this.$builderIframe = this.builder.Canvas.getFrameEl();
 
             this.initButtons();
             this.builder.on('changeTheme', _.bind(this.initButtons, this));
+            this.builder.on('rteToolbarPosUpdate', _.bind(this.updateRtePosition, this));
         },
 
         initButtons: function() {
@@ -193,6 +195,22 @@ define(function(require) {
             }
 
             return str;
+        },
+
+        updateRtePosition: function(pos) {
+            const style = window.getComputedStyle(this.$builderIframe);
+            const borderTopSize = parseInt(style['border-top-width']);
+            const borderLeftSize = parseInt(style['border-left-width']);
+            const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
+            const builderIframeWidth = $(this.$builderIframe).innerWidth();
+            let positionLeft = pos.left;
+
+            if (builderIframeWidth <= (pos.left + pos.targetWidth)) {
+                positionLeft = pos.elementLeft + pos.elementWidth - rteActionBarWidth;
+            }
+
+            pos.left = positionLeft += borderLeftSize;
+            pos.top = pos.elementTop + pos.elementHeight + borderTopSize;
         }
     };
 

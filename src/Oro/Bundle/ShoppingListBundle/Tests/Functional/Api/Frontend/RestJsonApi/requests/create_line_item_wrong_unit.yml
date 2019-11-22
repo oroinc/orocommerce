@@ -1,0 +1,19 @@
+data:
+    type: shoppinglistitems
+    attributes:
+        quantity: 10
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product2->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@set->code)>'

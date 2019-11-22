@@ -131,7 +131,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.shopping-list-view, method: onShoppingListView }
 
     oro_order.event_listener.product_db_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['order']]
@@ -141,7 +141,7 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_order.event_listener.product_search_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_search_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_search_query_restriction
         calls:
             - [setScope, ['order']]
@@ -460,6 +460,11 @@ services:
             - '@oro_product.search.product_reindex_manager'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }
+
+    oro_order.access_rule.frontend_order_line_item:
+        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderLineItemAccessRule
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
 
     oro_order.entity_listener.order_line_item.product_variant_fields:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderLineItem\OrderLineItemEventListener'

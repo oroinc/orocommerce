@@ -11,7 +11,8 @@ use Oro\Bundle\SecurityBundle\AccessRule\Expr\Path;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Limits QuoteDemand entity by the logged in customer user or current visitor.
+ * Denies access to QuoteDemand entities that does not belong to the logged in customer user or current visitor.
+ * This access rule is intended to be used on the storefront only.
  */
 class FrontendQuoteDemandAccessRule implements AccessRuleInterface
 {

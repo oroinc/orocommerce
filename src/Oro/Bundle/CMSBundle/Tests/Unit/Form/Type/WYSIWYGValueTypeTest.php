@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
+use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -16,12 +17,15 @@ class WYSIWYGValueTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject $purifierScopeProvider */
+        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
+        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
 
         return [
             new PreloadedExtension(
                 [
-                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider),
+                    WYSIWYGType::class => new WYSIWYGType($htmlTagProvider, $purifierScopeProvider),
                 ],
                 []
             )

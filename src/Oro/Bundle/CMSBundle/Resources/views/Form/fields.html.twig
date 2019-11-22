@@ -64,6 +64,8 @@
     {{ form_errors(form.content) }}
     {{ form_widget(form.content_style) }}
     {{ form_errors(form.content_style) }}
+    {{ form_widget(form.content_properties) }}
+    {{ form_errors(form.content_properties) }}
 {% endblock %}
 
 {% block wysiwyg_value_widget %}
@@ -71,6 +73,13 @@
         {{ form_widget(child) }}
         {{ form_errors(child) }}
     {% endfor %}
+{% endblock %}
+
+{% block image_slide_collection_row %}
+    <div class="oro-image-slide-collection">
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
+        {{ block('oro_collection_widget') }}
+    </div>
 {% endblock %}
 
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}

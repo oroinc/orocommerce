@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * Handles logic related to getting/creating shopping lists for currently logged in customer users,
@@ -23,8 +21,8 @@ class CurrentShoppingListManager
     /** @var GuestShoppingListManager */
     private $guestShoppingListManager;
 
-    /** @var Cache */
-    private $cache;
+    /** @var CurrentShoppingListStorage */
+    private $currentShoppingListStorage;
 
     /** @var ManagerRegistry */
     private $doctrine;
@@ -35,34 +33,28 @@ class CurrentShoppingListManager
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
-
     /**
-     * @param ShoppingListManager      $shoppingListManager
-     * @param GuestShoppingListManager $guestShoppingListManager
-     * @param Cache                    $cache
-     * @param ManagerRegistry          $doctrine
-     * @param AclHelper                $aclHelper
-     * @param TokenAccessorInterface   $tokenAccessor
-     * @param WebsiteManager           $websiteManager
+     * @param ShoppingListManager        $shoppingListManager
+     * @param GuestShoppingListManager   $guestShoppingListManager
+     * @param CurrentShoppingListStorage $currentShoppingListStorage
+     * @param ManagerRegistry            $doctrine
+     * @param AclHelper                  $aclHelper
+     * @param TokenAccessorInterface     $tokenAccessor
      */
     public function __construct(
         ShoppingListManager $shoppingListManager,
         GuestShoppingListManager $guestShoppingListManager,
-        Cache $cache,
+        CurrentShoppingListStorage $currentShoppingListStorage,
         ManagerRegistry $doctrine,
         AclHelper $aclHelper,
-        TokenAccessorInterface $tokenAccessor,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->guestShoppingListManager = $guestShoppingListManager;
-        $this->cache = $cache;
+        $this->currentShoppingListStorage = $currentShoppingListStorage;
         $this->doctrine = $doctrine;
         $this->aclHelper = $aclHelper;
         $this->tokenAccessor = $tokenAccessor;
-        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -95,7 +87,7 @@ class CurrentShoppingListManager
             throw new \LogicException('The shopping list ID must not be empty.');
         }
 
-        $this->cache->save($customerUserId, $shoppingListId);
+        $this->currentShoppingListStorage->set($customerUserId, $shoppingListId);
         $shoppingList->setCurrent(true);
     }
 
@@ -130,7 +122,7 @@ class CurrentShoppingListManager
         $shoppingList = null;
         if ($shoppingListId) {
             $shoppingList = $this->getShoppingListRepository()
-                ->findByUserAndId($this->aclHelper, $shoppingListId, $this->getWebsiteId());
+                ->findByUserAndId($this->aclHelper, $shoppingListId);
         }
         if (null === $shoppingList) {
             $shoppingList = $this->getCurrentShoppingList(true);
@@ -155,7 +147,7 @@ class CurrentShoppingListManager
         $currentShoppingList = $this->getCurrentShoppingList();
         if (null !== $currentShoppingList) {
             $shoppingLists = $this->getShoppingListRepository()
-                ->findByUser($this->aclHelper, $sortCriteria, $currentShoppingList, $this->getWebsiteId());
+                ->findByUser($this->aclHelper, $sortCriteria, $currentShoppingList);
             $shoppingLists = array_merge([$currentShoppingList], $shoppingLists);
         }
 
@@ -174,7 +166,7 @@ class CurrentShoppingListManager
         }
 
         return $this->getShoppingListRepository()
-            ->findByUser($this->aclHelper, $sortCriteria, null, $this->getWebsiteId());
+            ->findByUser($this->aclHelper, $sortCriteria);
     }
 
     /**
@@ -201,14 +193,14 @@ class CurrentShoppingListManager
 
         $customerUser = $this->getCustomerUser();
         if (null !== $customerUser) {
-            $currentListId = $this->cache->fetch($customerUser->getId());
-            if (false !== $currentListId) {
+            $currentListId = $this->currentShoppingListStorage->get($customerUser->getId());
+            if (null !== $currentListId) {
                 $shoppingList = $this->getShoppingListRepository()
-                    ->findByUserAndId($this->aclHelper, $currentListId, $this->getWebsiteId());
+                    ->findByUserAndId($this->aclHelper, $currentListId);
             }
             if (null === $shoppingList) {
                 $shoppingList = $this->getShoppingListRepository()
-                    ->findAvailableForCustomerUser($this->aclHelper, false, $this->getWebsiteId());
+                    ->findAvailableForCustomerUser($this->aclHelper);
             }
             if (null !== $shoppingList) {
                 if ($shoppingList->getId() !== $currentListId) {
@@ -232,16 +224,6 @@ class CurrentShoppingListManager
         $user = $this->tokenAccessor->getUser();
 
         return $user instanceof CustomerUser ? $user : null;
-    }
-
-    /**
-     * @return int|null
-     */
-    private function getWebsiteId()
-    {
-        $website = $this->websiteManager->getCurrentWebsite();
-
-        return null !== $website ? $website->getId() : null;
     }
 
     /**

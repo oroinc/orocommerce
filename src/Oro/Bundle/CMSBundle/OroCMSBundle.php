@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
@@ -24,6 +25,7 @@ class OroCMSBundle extends Bundle
 
         $container
             ->addCompilerPass(new EntityExtendFieldTypePass())
+            ->addCompilerPass(new ExtendFieldValidationLoaderPass())
             ->addCompilerPass(new AttributeBlockTypeMapperPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Page::class => [

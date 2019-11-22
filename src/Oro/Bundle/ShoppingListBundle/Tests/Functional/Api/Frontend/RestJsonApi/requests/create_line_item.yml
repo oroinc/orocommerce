@@ -1,0 +1,23 @@
+data:
+    type: shoppinglistitems
+    attributes:
+        quantity: 10
+        notes: 'New Line Item Notes'
+        # the "currency" and "value" should be ignored, because they are read-only fields
+        currency: EUR
+        value: '100'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@set->code)>'

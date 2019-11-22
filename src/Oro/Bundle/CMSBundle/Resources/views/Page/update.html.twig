@@ -45,8 +45,9 @@
     {% set pageContent %}
         <div class="page-content-editor">
             {{ form_widget(form.content) }}
+            {{ form_widget(form.content_style) }}
+            {{ form_widget(form.content_properties) }}
         </div>
-        {{ form_widget(form.content_style) }}
     {% endset %}
 
     {% set dataBlocks = [

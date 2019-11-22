@@ -28,6 +28,7 @@ use Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\NullContext;
@@ -182,6 +183,8 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -192,7 +195,8 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
                     OroRichTextType::class => new OroRichTextType(
                         $this->configManager,
                         new HtmlTagProvider([]),
-                        new NullContext()
+                        new NullContext(),
+                        $htmlTagHelper
                     ),
                     TranslatableEntityType::class => $translatableEntity,
                 ],

@@ -7,6 +7,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -63,6 +64,13 @@ class ProductImageListener
         $productImages = $product->getImages();
         $imagesByTypeCounter = $this->productImageHelper->countImagesByType($productImages);
 
+        $currentTypes = array_map(
+            static function (ProductImageType $productImageType) {
+                return $productImageType->getType();
+            },
+            $newProductImage->getTypes()->toArray()
+        );
+
         // Ensures that maximum number of images per type is not exceeded.
         // Required for API and UI import.
         foreach ($productImages as $productImage) {
@@ -74,6 +82,10 @@ class ProductImageListener
             // Goes through types, removes a type if maximum number of images is exceeded.
             foreach ($productImage->getTypes() as $type) {
                 $typeName = $type->getType();
+                if (!\in_array($typeName, $currentTypes, true)) {
+                    continue;
+                }
+
                 $maxNumberByType = $this->getMaxNumberByType($typeName);
                 if ($maxNumberByType === null || $imagesByTypeCounter[$typeName] <= $maxNumberByType) {
                     continue;
@@ -81,6 +93,8 @@ class ProductImageListener
 
                 $entityManager->remove($type);
                 $productImage->getTypes()->removeElement($type);
+
+                $imagesByTypeCounter[$typeName]--;
             }
         }
 
@@ -122,17 +136,6 @@ class ProductImageListener
         if ($productImage && !in_array($productImage->getId(), $this->updatedProductImageIds)) {
             $this->dispatchEvent($productImage);
             $this->updatedProductImageIds[] = $productImage->getId();
-        }
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @param LifecycleEventArgs $args
-     */
-    public function preRemove(ProductImage $productImage, LifecycleEventArgs $args): void
-    {
-        if ($productImage->getImage()) {
-            $args->getEntityManager()->remove($productImage->getImage());
         }
     }
 

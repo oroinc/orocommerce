@@ -22,9 +22,14 @@
     {% endset %}
 
     {% set pageContent %}
+        <div class="alert alert-info alert--compact" role="alert">
+            <span class="fa-info alert-icon" aria-hidden="true"></span>
+            {{ 'oro.cms.page.information_message'|trans }}
+        </div>
+
         <div class="row-fluid form-horizontal">
-            <div class="responsive-block">
-                {{ entity.content|oro_html_sanitize }}
+            <div class="cms-content">
+                {{ entity.content|oro_html_sanitize|raw }}
             </div>
         </div>
     {% endset %}

@@ -24,6 +24,9 @@ class BrandController extends RestController implements ClassResourceInterface
 {
     /**
      * @param int $id Brand id
+     *
+     * @Get(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *     description="Get sissue",
      *     resource=true
@@ -33,7 +36,7 @@ class BrandController extends RestController implements ClassResourceInterface
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetRequest($id);
     }
@@ -42,6 +45,9 @@ class BrandController extends RestController implements ClassResourceInterface
      * Delete brand
      *
      * @param int $id Brand id
+     *
+     * @Delete(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Delete brand",
      *      resource=true,
@@ -59,7 +65,7 @@ class BrandController extends RestController implements ClassResourceInterface
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         return $this->handleDeleteRequest($id);
     }

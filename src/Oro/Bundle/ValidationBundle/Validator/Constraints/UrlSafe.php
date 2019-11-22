@@ -23,7 +23,7 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
     public function __construct($options = null)
     {
         if ($options['allowSlashes'] ?? false) {
-            $options['pattern'] = '/(?=[^\/])^[a-zA-Z0-9\-\.\_\~\/]*$(?<=[^\/])/';
+            $options['pattern'] = '/(?=[^\/])^[a-zA-Z0-9\-\.\_\~\/]*[^\/]$/';
             $options['message'] = 'This value should not start or end with "/" and should contain only latin letters, '
                 . 'numbers and symbols "-._~/".';
         }

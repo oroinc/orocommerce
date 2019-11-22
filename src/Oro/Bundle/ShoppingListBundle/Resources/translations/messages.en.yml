@@ -6,13 +6,22 @@ oro:
         id.label: ID
         label:
             label: Label
+            description: The name of the shopping list.
             edit.tooltip: Edit Shopping List Label
-        notes.label: Notes
-        customer.label: Customer
-        customer_user.label: Customer User
+        notes:
+            label: Notes
+            description: Any additional notes made by the buyer.
+        customer:
+            label: Customer
+            description: A company that buys products using the storefront.
+        customer_user:
+            label: Customer User
+            description: A person who acts on behalf of the company to buy products using the storefront.
         organization.label: Organization
         owner.label: Owner
-        line_items.label: Line Items
+        line_items:
+            label: Line Items
+            description: The collection of shopping list items.
         current.label: Current
         default.label: 'Shopping List'
         items.label: 'Item|Items'
@@ -78,17 +87,28 @@ oro:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items
             id.label: ID
-            notes.label: Notes
+            notes:
+                label: Notes
+                description: Additional information for the product.
             product_sku.label: SKU
             product_name.label: Product
             quantity:
                 label: Quantity
+                description: The quantity of product units to be purchased.
                 enter: Enter a QTY
                 placeholder: 'QTY #'
-            product.label: Product
-            parent_product.label: Parent Product
-            shopping_list.label: Shopping List
-            unit.label: Unit
+            product:
+                label: Product
+                description: The product to be purchased.
+            parent_product:
+                label: Parent Product
+                description: The parent product uniting multiple product variants.
+            shopping_list:
+                label: Shopping List
+                description: The shopping list that contains the line item.
+            unit:
+                label: Unit
+                description: The unit of quantity the product to be purchased in.
             organization.label: Organization
             owner.label: Owner
             customer_user.label: Customer User

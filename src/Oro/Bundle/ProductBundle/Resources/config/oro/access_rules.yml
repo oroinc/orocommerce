@@ -1,4 +1,0 @@
-access_rules:
-    frontend:
-        entities:
-            - 'Oro\Bundle\ProductBundle\Entity\Product'

@@ -1,0 +1,9 @@
+include:
+    - '@OroOrganizationProBundle:GlobalOrganizationFixture.yml'
+
+Oro\Bundle\UserBundle\Entity\Role:
+    oro_global_wysiwyg_role:
+        label: GLOBAL WYSIWYG ROLE
+        __calls:
+            - setRole: ['ROLE_WYSIWYG_GLOBAL', false]
+        organization: '@global_organization'

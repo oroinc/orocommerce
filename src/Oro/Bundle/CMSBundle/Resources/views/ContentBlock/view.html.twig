@@ -22,7 +22,26 @@
             'oro.cms.contentblock.content_variants.default.yes.label'|trans
             :
             'oro.cms.contentblock.content_variants.default.no.label'|trans) }}
-            {{ UI.renderProperty('oro.cms.page.content.label'|trans, variant.content) }}
+
+            {% set infoMessage = null %}
+
+            {% if variant.content is not null %}
+                {% set infoMessage %}
+                    <div class="alert alert-info alert--compact" role="alert">
+                        <span class="fa-info alert-icon" aria-hidden="true"></span>
+                        {{ 'oro.cms.page.information_message'|trans }}
+                    </div>
+                {% endset %}
+            {% endif %}
+
+            {{ UI.renderAttribute(
+                'oro.cms.page.content.label'|trans,
+                '<div class="control-label">' ~
+                infoMessage ~
+                variant.content|default('oro.ui.empty'|trans)|oro_html_sanitize|raw ~
+                '</div>')
+            }}
+
             {% if not variant.default %}
                 {{ scope.renderRestrictionsView(scopeEntities, variant.scopes) }}
             {% endif %}

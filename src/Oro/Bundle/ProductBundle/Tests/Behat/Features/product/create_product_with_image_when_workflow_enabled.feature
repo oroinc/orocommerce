@@ -21,8 +21,8 @@ Feature: Create product with image when workflow enabled
       | Name   | Product1 |
       | Status | Enabled  |
     And I set Images with:
-      | Main  | Listing | Additional |
-      | 1     | 1       | 1          |
+      | Main | Listing | Additional |
+      | 1    | 1       | 1          |
     And I click on "Digital Asset Choose"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -65,7 +65,26 @@ Feature: Create product with image when workflow enabled
     And I click view "PSKU2" in grid
     And I should see "Product Workflow"
     And I should see "dog1.jpg"
+    And I should see following product images:
+      | dog1.jpg | 1 | 1 | 1 |
     And I go to Products/ Products
     And I click view "PSKU3" in grid
     And I should see "Product Workflow"
     And I should see "dog1.jpg"
+    And I should see following product images:
+      | dog1.jpg |  |  | 1 |
+
+  Scenario: Import Product Images second time
+    Given I go to Products/ Products
+    And I open "Product Images" import tab
+    When I download "Product Images" Data Template file
+    And fill template with data:
+      | SKU   | Name     | Main | Listing | Additional |
+      | PSKU2 | dog1.jpg | 1    | 1       | 1          |
+    And I open "Product Images" import tab
+    And import file
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    And I click view "PSKU2" in grid
+    And I should see following product images:
+      | dog1.jpg | 1 | 1 | 1 |
+      | dog1.jpg |   |   | 1 |

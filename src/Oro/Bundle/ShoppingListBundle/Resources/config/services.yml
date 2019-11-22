@@ -54,11 +54,10 @@ services:
         arguments:
             - "@oro_shopping_list.manager.shopping_list"
             - "@oro_shopping_list.manager.guest_shopping_list"
-            - '@oro_shopping_list.shopping_list_provider.cache'
+            - '@oro_shopping_list.current_shopping_list_storage'
             - "@doctrine"
             - "@oro_security.acl_helper"
             - "@oro_security.token_accessor"
-            - "@oro_website.manager"
 
     Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager:
         alias: 'oro_shopping_list.manager.current_shopping_list'
@@ -77,6 +76,7 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
             - "@oro_product.provider.product_matrix_availability_provider"
             - "@oro_config.manager"
+            - "@oro_entity.delete_handler_registry"
 
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:
         alias: 'oro_shopping_list.manager.shopping_list'
@@ -116,6 +116,14 @@ services:
 
     Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler:
         alias: 'oro_shopping_list.handler.shopping_list_line_item'
+
+    oro_shopping_list.delete_handler.line_item:
+        class: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
@@ -168,7 +176,7 @@ services:
             - "@oro_product.storage.product_data_storage"
 
     oro_shopping_list.event_listener.product_db_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['shopping_list']]
@@ -367,6 +375,11 @@ services:
         calls:
             - [ setNamespace, [ 'shopping_list' ] ]
 
+    oro_shopping_list.current_shopping_list_storage:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage'
+        arguments:
+            - '@oro_shopping_list.shopping_list_provider.cache'
+
     oro_shopping_list.validator_service.line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
         arguments:
@@ -432,8 +445,8 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
-    oro_shopping_list.voter.view_shopping_list_voter:
-        class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListViewVoter
+    oro_shopping_list.voter.shopping_list_voter:
+        class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListVoter
         arguments:
             - "@oro_entity.doctrine_helper"
         public: false
@@ -586,3 +599,13 @@ services:
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false
+
+    oro_shopping_list.access_rule.frontend_shopping_list:
+        class: Oro\Bundle\WebsiteBundle\Acl\AccessRule\WebsiteAwareAccessRule
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, frontend: true }
+
+    oro_shopping_list.access_rule.frontend_shopping_list_item:
+        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ShoppingListItemAccessRule
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }

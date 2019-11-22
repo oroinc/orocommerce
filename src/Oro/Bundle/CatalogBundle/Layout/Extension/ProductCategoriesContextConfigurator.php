@@ -11,6 +11,9 @@ use Oro\Component\Layout\ContextConfiguratorInterface;
 use Oro\Component\Layout\ContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Configure category context based on current category or currently requested product
+ */
 class ProductCategoriesContextConfigurator implements ContextConfiguratorInterface
 {
     const CATEGORY_IDS_OPTION_NAME = 'category_ids';
@@ -60,16 +63,16 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
         }
 
         $allowedRoutes = [self::PRODUCT_LIST_ROUTE, self::PRODUCT_VIEW_ROUTE];
-        if (!in_array($request->attributes->get('_route'), $allowedRoutes)) {
+        if (!\in_array($request->attributes->get('_route'), $allowedRoutes, true)) {
             return;
         }
 
         /** @var Category $currentCategory */
         $currentCategory = null;
 
-        if ($request->attributes->get('_route') == self::PRODUCT_LIST_ROUTE) {
+        if ($request->attributes->get('_route') === self::PRODUCT_LIST_ROUTE) {
             $currentCategory = $this->categoryProvider->getCurrentCategory();
-        } elseif ($request->attributes->get('_route') == self::PRODUCT_VIEW_ROUTE) {
+        } elseif ($request->attributes->get('_route') === self::PRODUCT_VIEW_ROUTE) {
             $routeParams = $request->attributes->get('_route_params');
 
             $product = $this->registry
@@ -77,6 +80,9 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
                 ->getRepository(Product::class)
                 ->find((int)$routeParams['id']);
 
+            if (!$product) {
+                return;
+            }
             /** @var CategoryRepository $categoryRepository */
             $categoryRepository = $this->registry
                 ->getManagerForClass(Category::class)

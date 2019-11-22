@@ -242,6 +242,14 @@ oro_behat_extension:
           Price Unit 1: 'oro_product[prices][0][unit]'
           Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
           Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
+          Product WYSIWYG_video Attribute Content:
+            type: 'css'
+            locator: 'textarea[id^="oro_product_WYSIWYG_video"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Product WYSIWYG_embed Field Content:
+            type: 'css'
+            locator: 'textarea[id^="oro_product_WYSIWYG_embed"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
           Configurable Attributes:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
@@ -1084,9 +1092,6 @@ oro_behat_extension:
 
     Product WYSIWYGField Attribute Content:
       selector: "textarea[id^='oro_product_WYSIWYGField']"
-
-    Product WYSIWYG_video Attribute Content:
-      selector: "textarea[id^='oro_product_WYSIWYG_video']"
 
     Digital Asset Choose:
       selector: 'a[data-role="digital-asset-choose"]:not([class*="hide"])'

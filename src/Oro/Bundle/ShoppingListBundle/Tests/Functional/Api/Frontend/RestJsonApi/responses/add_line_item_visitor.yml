@@ -1,0 +1,18 @@
+data:
+    -
+        type: shoppinglistitems
+        id: new
+        attributes:
+            quantity: 10
+            notes: 'New Line Item Notes'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product2->id)>'
+            parentProduct:
+                data: null
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@set->code)>'

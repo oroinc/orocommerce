@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadAuthCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\WebsiteManagerTrait;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -17,15 +18,13 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class ShoppingListRepositoryTest extends WebTestCase
 {
-    /**
-     * @var CustomerUser
-     */
-    protected $customerUser;
+    use WebsiteManagerTrait;
 
-    /**
-     * @var AclHelper
-     */
-    protected $aclHelper;
+    /** @var CustomerUser */
+    private $customerUser;
+
+    /** @var AclHelper */
+    private $aclHelper;
 
     /**
      * {@inheritdoc}
@@ -35,15 +34,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
+        $this->setCurrentWebsite('default');
+
         $this->loadFixtures([LoadShoppingLists::class]);
 
         $this->customerUser = $this->getCustomerUser();
-
-        $token = $this->createToken($this->customerUser);
-
-        $this->client->getContainer()->get('security.token_storage')->setToken($token);
-
         $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
+
+        $this->client->getContainer()->get('security.token_storage')
+            ->setToken($this->createToken($this->customerUser));
     }
 
     public function testFindAvailableForCustomerUser()
@@ -53,23 +52,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
         $this->assertSame($shoppingList, $availableShoppingList);
-
-        /** @var Website $website */
-        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
-        $this->assertNull($this->getRepository()->findAvailableForCustomerUser(
-            $this->aclHelper,
-            null,
-            $website->getId()
-        ));
     }
 
     public function testFindByUser()
     {
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
-        $this->assertTrue(count($shoppingLists) > 0);
+        $this->assertCount(6, $shoppingLists);
 
         $updatedAt = null;
 
@@ -83,13 +74,6 @@ class ShoppingListRepositoryTest extends WebTestCase
 
             $updatedAt = $shoppingList->getUpdatedAt();
         }
-
-        /** @var Website $website */
-        $website = $this->getReference(LoadWebsiteData::WEBSITE3);
-        $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, [], [], $website->getId());
-        $this->assertCount(1, $shoppingLists);
-        $list = reset($shoppingLists);
-        $this->assertEquals(LoadShoppingLists::SHOPPING_LIST_9 . '_label', $list->getLabel());
     }
 
     public function testFindByUserAndId()
@@ -116,7 +100,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     /**
      * @return ShoppingListRepository
      */
-    protected function getRepository()
+    private function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(ShoppingList::class);
     }
@@ -125,7 +109,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      * @param CustomerUser $customerUser
      * @return UsernamePasswordOrganizationToken
      */
-    protected function createToken(CustomerUser $customerUser)
+    private function createToken(CustomerUser $customerUser)
     {
         return new UsernamePasswordOrganizationToken(
             $customerUser,
