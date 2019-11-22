@@ -128,7 +128,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $manager->flush();
         }
 
-        $this->getContentBlock(
+        $this->updateOrCreateContentBlock(
             $manager,
             $user,
             '<div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">
@@ -143,7 +143,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
      * @param string $content
      * @return ContentBlock|null
      */
-    private function getContentBlock(ObjectManager $manager, User $user, string $content): void
+    private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {
         $contentBlock = $manager->getRepository(ContentBlock::class)
             ->findOneBy(['alias' => self::HOME_PAGE_SLIDER_ALIAS]);
@@ -165,17 +165,18 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $slider->addTitle($title);
             $slider->addContentVariant($variant);
             $manager->persist($slider);
-            $manager->flush();
         } else {
             $html = file_get_contents(__DIR__ . '/data/frontpage_slider.html');
 
             foreach ($contentBlock->getContentVariants() as $contentVariant) {
                 if ($contentVariant->getContent() === $html) {
                     $contentVariant->setContent($content);
-                    return;
+                    break;
                 }
             }
         }
+
+        $manager->flush();
     }
 
     /**
