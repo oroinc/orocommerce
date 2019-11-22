@@ -54,9 +54,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                         'allow_tags' => []
                     ]
                 ],
-
-                'error_bubbling' => true,
+                'attr' => [
+                    'class' => 'hide'
+                ],
                 'auto_render' => true,
+                'error_bubbling' => true
             ])
             ->will($this->returnSelf());
 

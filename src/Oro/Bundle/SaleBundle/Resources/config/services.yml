@@ -69,7 +69,7 @@ services:
             - { name: oro.checkout.line_item.converter, alias: quote_demand }
 
     oro_sale.event_listener.product_db_query_restriction:
-        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['quote']]

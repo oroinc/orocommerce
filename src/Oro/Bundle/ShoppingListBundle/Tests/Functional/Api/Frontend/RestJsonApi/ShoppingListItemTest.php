@@ -899,6 +899,25 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWithNotSellProductProductUnit()
+    {
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            'create_line_item_not_sell_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'product line item constraint',
+                'detail' => 'The given product unit is not valid for given product.',
+                'source' => ['pointer' => '/data/relationships/unit/data']
+            ],
+            $response
+        );
+    }
+
     public function testTryToAddDuplicatedLineItem()
     {
         $response = $this->post(

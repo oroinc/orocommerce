@@ -119,10 +119,13 @@ Feature: Product Images Import
     Then Email should not contains the following:
       | Body | Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0 |
     When click view "SKU1" in grid
-    And I should see following product images:
+    Then I should see following product images:
       | gecko1.jpg | 1 |   | 1 |
       | dog1.jpg   |   | 1 | 1 |
       | dog1.jpg   |   |   | 1 |
+    When I click "Edit"
+    Then should see "dog1.jpg"
+    And should see "gecko1.jpg"
 
   Scenario: Check if there Product Images on frontend
     Given I proceed as the User
