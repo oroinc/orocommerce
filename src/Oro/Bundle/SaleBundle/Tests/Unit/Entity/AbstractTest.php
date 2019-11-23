@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-abstract class AbstractTest extends EntityTestCase
+abstract class AbstractTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     /**
      * @param object $object
      * @param string $property
