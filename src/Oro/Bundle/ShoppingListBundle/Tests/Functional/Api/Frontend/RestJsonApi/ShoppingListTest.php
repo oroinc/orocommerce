@@ -232,7 +232,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(['entity' => 'shoppinglists']);
 
-        $expectedContent = $this->loadResponseData('cget_shopping_list.yml');
+        $expectedContent = $this->getResponseData('cget_shopping_list.yml');
         $expectedContent['data'][0]['attributes']['default'] = true;
         $expectedContent['data'][2]['attributes']['default'] = false;
         $this->assertResponseContains($expectedContent, $response);
@@ -258,7 +258,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -295,7 +295,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => 'default']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -495,7 +495,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $shoppingListId = (int)$this->getResourceId($response);
-        $responseContent = $this->loadResponseData('create_shopping_list_empty.yml');
+        $responseContent = $this->getResponseData('create_shopping_list_empty.yml');
         $responseContent['data']['id'] = (string)$shoppingListId;
         $this->assertResponseContains($responseContent, $response);
 

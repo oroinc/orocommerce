@@ -63,7 +63,7 @@ class ProductImageTest extends RestJsonApiTestCase
         );
 
         $expectedData = self::updateExpectedData(
-            $this->loadResponseData('get_product_image_include.yml'),
+            $this->getResponseData('get_product_image_include.yml'),
             $fileId
         );
         $this->assertResponseContains($expectedData, $response);
@@ -84,7 +84,7 @@ class ProductImageTest extends RestJsonApiTestCase
         );
 
         $expectedData = self::updateExpectedData(
-            $this->loadResponseData('get_product_image_include_path_only.yml'),
+            $this->getResponseData('get_product_image_include_path_only.yml'),
             $fileId
         );
         $this->assertResponseContains($expectedData, $response);
