@@ -15,6 +15,13 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
 {
+    private const DEFAULT_OPTIONS_MAP = [
+        ContactInfoSourceOptionsProvider::DONT_DISPLAY => UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO,
+        ContactInfoSourceOptionsProvider::PRE_CONFIGURED => ContactInfoUserOptionsProvider::USE_SYSTEM,
+        ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER => UserOptionsProvider::USE_USER_PROFILE_DATA,
+        ContactInfoSourceOptionsProvider::CUSTOMER_OWNER => UserOptionsProvider::USE_USER_PROFILE_DATA,
+    ];
+
     /**
      * @var NameFormatter
      */
@@ -61,127 +68,118 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testDontDisplay()
-    {
-        $this->contactSourceProvider
-            ->method('getSelectedOption')
-            ->willReturn(ContactInfoSourceOptionsProvider::DONT_DISPLAY);
-        $contactInfo = $this->contactInfoProvider->getContactInfo();
-        static::assertTrue($contactInfo->isEmpty());
-    }
-
-    public function testPreConfigured()
-    {
-        $this->contactSourceProvider
-            ->method('getSelectedOption')
-            ->willReturn(ContactInfoSourceOptionsProvider::PRE_CONFIGURED);
-        $this->configManager->method('get')->willReturnMap(
-            [
-                ['oro_sale.guest_contact_info_text', false, false, null, 'text for anon'],
-                ['oro_sale.contact_details', false, false, null, 'text for customers'],
-            ]
-        );
-
-        $contactInfo = $this->contactInfoProvider->getContactInfo();
-        static::assertFalse($contactInfo->isEmpty());
-        static::assertEquals('text for anon', $contactInfo->getManualText());
-
-        $contactInfo = $this->contactInfoProvider->getContactInfo(new CustomerUser());
-        static::assertFalse($contactInfo->isEmpty());
-        static::assertEquals('text for customers', $contactInfo->getManualText());
-    }
-
     /**
-     * @param string $defaultOption
-     * @param string $selectedOption
-     * @param bool   $allowChoice
-     * @param array  $infoData
+     * @param CustomerUser|null $customerUser
+     * @param $displayOption
+     * @param array|null $userSelectedOption
+     * @param bool $allowChoice
+     * @param array $infoData
      *
-     * @dataProvider infoFromUserOwnerDataProvider
+     * @dataProvider infoDataProvider
      */
-    public function testFromUserOwner($defaultOption, $selectedOption, $allowChoice, $infoData)
-    {
+    public function testFromCustomerOwner(
+        ?CustomerUser $customerUser,
+        $displayOption,
+        ?array $userSelectedOption,
+        $allowChoice,
+        $infoData
+    ) {
+        $this->nameFormatter
+            ->method('format')
+            ->willReturnCallback(function (User $user) {
+                return $user->getFullName();
+            });
+
         $this->contactSourceProvider
             ->method('getSelectedOption')
-            ->willReturn(ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER);
+            ->willReturn($displayOption);
 
         $this->contactInfoUserOptionsProvider
             ->method('getDefaultOption')
-            ->willReturn($defaultOption);
+            ->willReturn(self::DEFAULT_OPTIONS_MAP[$displayOption]);
 
-        $this->contactInfoUserOptionsProvider
-            ->method('getSelectedOption')
-            ->willReturn($selectedOption);
-
-        $user = $this->createUserMock('John Doe', '1111', 'mail@exemple.dev');
-        $customerUser = new CustomerUser();
-        $customerUser->setOwner($user);
+        if ($userSelectedOption) {
+            $this->contactInfoUserOptionsProvider
+                ->method('getSelectedOption')
+                ->willReturnMap($userSelectedOption);
+        } else {
+            $this->contactInfoUserOptionsProvider
+                ->expects($this->never())
+                ->method('getSelectedOption');
+        }
 
         $this->configManager->method('get')->willReturnMap(
             [
                 ['oro_sale.allow_user_configuration', false, false, null, $allowChoice],
-                ['oro_sale.contact_info_manual_text', false, false, $user, 'user text'],
+                [
+                    'oro_sale.contact_info_manual_text',
+                    false,
+                    false,
+                    $customerUser ? $customerUser->getOwner() : null,
+                    'user text'
+                ],
+                [
+                    'oro_sale.contact_info_manual_text',
+                    false,
+                    false,
+                    $customerUser ? $customerUser->getCustomer()->getOwner() : null,
+                    'user2 text'
+                ],
                 ['oro_sale.contact_details', false, false, null, 'system text'],
                 ['oro_sale.guest_contact_info_text', false, false, null, 'text for anon'],
             ]
         );
         $contactInfo = $this->contactInfoProvider->getContactInfo($customerUser);
 
-        static::assertEquals($infoData, $contactInfo->all());
-        $contactInfo = $this->contactInfoProvider->getContactInfo();
-        static::assertEquals(['manual_text' => 'text for anon'], $contactInfo->all());
+        $this->assertEquals($infoData, $contactInfo->all());
     }
 
     /**
-     * @param string $defaultOption
-     * @param string $selectedOption
-     * @param bool   $allowChoice
-     * @param array  $infoData
-     *
-     * @dataProvider infoFromUserOwnerDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array
      */
-    public function testFromCustomerOwner($defaultOption, $selectedOption, $allowChoice, $infoData)
+    public function infoDataProvider()
     {
-        $this->contactSourceProvider
-            ->method('getSelectedOption')
-            ->willReturn(ContactInfoSourceOptionsProvider::CUSTOMER_OWNER);
-
-        $this->contactInfoUserOptionsProvider
-            ->method('getDefaultOption')
-            ->willReturn($defaultOption);
-
-        $this->contactInfoUserOptionsProvider
-            ->method('getSelectedOption')
-            ->willReturn($selectedOption);
-
         $user = $this->createUserMock('John Doe', '1111', 'mail@exemple.dev');
-        $customer = new Customer();
-        $customer->setOwner($user);
-        $customerUser = new CustomerUser();
-        $customerUser->setCustomer($customer);
+        $user2 = $this->createUserMock('Debra Morgan', '42', 'mail.debra@exemple.dev');
+        $customerUser1 = $this->getCustomerUser($user);
+        $customerUser2 = $this->getCustomerUser($user, $user2);
 
-        $this->configManager->method('get')->willReturnMap(
-            [
-                ['oro_sale.allow_user_configuration', false, false, null, $allowChoice],
-                ['oro_sale.contact_info_manual_text', false, false, $user, 'user text'],
-                ['oro_sale.contact_details', false, false, null, 'system text'],
-                ['oro_sale.guest_contact_info_text', false, false, null, 'text for anon'],
-            ]
-        );
-        $contactInfo = $this->contactInfoProvider->getContactInfo($customerUser);
-
-        static::assertEquals($infoData, $contactInfo->all());
-
-        $contactInfo = $this->contactInfoProvider->getContactInfo();
-        static::assertEquals(['manual_text' => 'text for anon'], $contactInfo->all());
-    }
-
-    public function infoFromUserOwnerDataProvider()
-    {
         return [
-            [
-                'defaultOption' => UserOptionsProvider::USE_USER_PROFILE_DATA,
-                'selectedOption' => UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO,
+            'display=DONT_DISPLAY user_allow=false' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::DONT_DISPLAY,
+                'userSelectedOption' => null,
+                'allowChoice' => false,
+                'infoData' => [],
+            ],
+            'display=DONT_DISPLAY user_allow=false anon' => [
+                'customerUser' => null,
+                'displayOption' => ContactInfoSourceOptionsProvider::DONT_DISPLAY,
+                'userSelectedOption' => null,
+                'allowChoice' => false,
+                'infoData' => [],
+            ],
+            'display=DONT_DISPLAY user_display=ENTER_MANUALLY user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::DONT_DISPLAY,
+                'userSelectedOption' => [[$user, UserOptionsProvider::ENTER_MANUALLY]],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'user text',
+                ],
+            ],
+            'display=CUSTOMER_OWNER user_display=DONT_DISPLAY user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO]],
+                'allowChoice' => true,
+                'infoData' => [],
+            ],
+            'display=CUSTOMER_OWNER user_allow=false customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_OWNER,
+                'selectedOption' => null,
                 'allowChoice' => false,
                 'infoData' => [
                     'email' => 'mail@exemple.dev',
@@ -189,29 +187,157 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
                     'phone' => '1111',
                 ],
             ],
-            [
-                'defaultOption' => UserOptionsProvider::USE_USER_PROFILE_DATA,
-                'selectedOption' => UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO,
+            'display=CUSTOMER_OWNER user_display=DON_T_DISPLAY_CONTACT_INFO user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO]],
                 'allowChoice' => true,
                 'infoData' => [],
             ],
-            [
-                'defaultOption' => UserOptionsProvider::USE_USER_PROFILE_DATA,
-                'selectedOption' => UserOptionsProvider::ENTER_MANUALLY,
+            'display=CUSTOMER_OWNER user_display=ENTER_MANUALLY user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::ENTER_MANUALLY]],
                 'allowChoice' => true,
                 'infoData' => [
                     'manual_text' => 'user text',
                 ],
             ],
-            [
-                'defaultOption' => ContactInfoUserOptionsProvider::USE_SYSTEM,
-                'selectedOption' => UserOptionsProvider::ENTER_MANUALLY,
+            'display=CUSTOMER_USER_OWNER user_display=DONT_DISPLAY user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO]],
+                'allowChoice' => true,
+                'infoData' => [],
+            ],
+            'display=CUSTOMER_USER_OWNER user_display=DONT_DISPLAY user_allow=true customerUser2' => [
+                'customerUser' => $customerUser2,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => [
+                    [$user, ContactInfoUserOptionsProvider::USE_SYSTEM],
+                    [$user2, UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO]
+                ],
+                'allowChoice' => true,
+                'infoData' => [],
+            ],
+            'display=CUSTOMER_USER_OWNER user_allow=false customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => null,
+                'allowChoice' => false,
+                'infoData' => [
+                    'email' => 'mail@exemple.dev',
+                    'name' => 'John Doe',
+                    'phone' => '1111',
+                ],
+            ],
+            'display=CUSTOMER_USER_OWNER user_display=DON_T_DISPLAY_CONTACT_INFO user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::DON_T_DISPLAY_CONTACT_INFO]],
+                'allowChoice' => true,
+                'infoData' => [],
+            ],
+            'display=CUSTOMER_USER_OWNER user_display=ENTER_MANUALLY user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => [[$user, UserOptionsProvider::ENTER_MANUALLY]],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'user text',
+                ],
+            ],
+            'display=CUSTOMER_USER_OWNER user_display=ENTER_MANUALLY user_allow=true customerUser2' => [
+                'customerUser' => $customerUser2,
+                'displayOption' => ContactInfoSourceOptionsProvider::CUSTOMER_USER_OWNER,
+                'selectedOption' => [
+                    [$user, ContactInfoUserOptionsProvider::USE_SYSTEM],
+                    [$user2, UserOptionsProvider::ENTER_MANUALLY]
+                ],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'user2 text',
+                ],
+            ],
+            'display=PRE_CONFIGURED user_display=ENTER_MANUALLY(1) user_allow=true customerUser2' => [
+                'customerUser' => $customerUser2,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => [[$user, UserOptionsProvider::ENTER_MANUALLY]],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'user text',
+                ],
+            ],
+            'display=PRE_CONFIGURED user_display=ENTER_MANUALLY(2) user_allow=true customerUser2' => [
+                'customerUser' => $customerUser2,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => [
+                    [$user, ContactInfoUserOptionsProvider::USE_SYSTEM],
+                    [$user2, UserOptionsProvider::ENTER_MANUALLY]
+                ],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'user2 text',
+                ],
+            ],
+            'display=PRE_CONFIGURED user_display=USE_USER_PROFILE_DATA(2) user_allow=true customerUser2' => [
+                'customerUser' => $customerUser2,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => [
+                    [$user, ContactInfoUserOptionsProvider::USE_SYSTEM],
+                    [$user2, UserOptionsProvider::USE_USER_PROFILE_DATA]
+                ],
+                'allowChoice' => true,
+                'infoData' => [
+                    'email' => 'mail.debra@exemple.dev',
+                    'name' => 'Debra Morgan',
+                    'phone' => '42'
+                ],
+            ],
+            'display=PRE_CONFIGURED user_display=USE_SYSTEM user_allow=true customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => [[$user, ContactInfoUserOptionsProvider::USE_SYSTEM]],
+                'allowChoice' => true,
+                'infoData' => [
+                    'manual_text' => 'system text',
+                ],
+            ],
+            'display=PRE_CONFIGURED user_allow=false customerUser1' => [
+                'customerUser' => $customerUser1,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => null,
                 'allowChoice' => false,
                 'infoData' => [
                     'manual_text' => 'system text',
                 ],
             ],
+            'display=PRE_CONFIGURED user_allow=false' => [
+                'customerUser' => null,
+                'displayOption' => ContactInfoSourceOptionsProvider::PRE_CONFIGURED,
+                'selectedOption' => null,
+                'allowChoice' => false,
+                'infoData' => [
+                    'manual_text' => 'text for anon',
+                ],
+            ],
         ];
+    }
+
+    /**
+     * @param User $customerUserOwner
+     * @param User|null $customerOwner
+     * @return CustomerUser
+     */
+    private function getCustomerUser(User $customerUserOwner, User $customerOwner = null)
+    {
+        $customer = new Customer();
+        $customer->setOwner($customerOwner ?: $customerUserOwner);
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
+        $customerUser->setOwner($customerUserOwner);
+
+        return $customerUser;
     }
 
     /**
@@ -224,17 +350,11 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
     private function createUserMock($name, $phone, $email)
     {
         $user = $this->getMockBuilder(User::class)
-            ->setMethods(['getPhone', 'getEmail'])
+            ->setMethods(['getPhone', 'getEmail', 'getFullName'])
             ->getMock();
         $user->method('getPhone')->willReturn($phone);
         $user->method('getEmail')->willReturn($email);
-        $this->nameFormatter
-            ->method('format')
-            ->willReturnMap(
-                [
-                    [$user, null, $name]
-                ]
-            );
+        $user->method('getFullName')->willReturn($name);
 
         return $user;
     }
