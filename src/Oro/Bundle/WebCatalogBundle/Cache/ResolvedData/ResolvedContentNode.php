@@ -123,4 +123,15 @@ class ResolvedContentNode implements ContentNodeInterface
     {
         return $this->rewriteVariantTitle;
     }
+
+    /**
+     * @param ArrayCollection $childNodes
+     * @return ResolvedContentNode
+     */
+    public function setChildNodes(ArrayCollection $childNodes): self
+    {
+        $this->childNodes = $childNodes;
+
+        return $this;
+    }
 }
