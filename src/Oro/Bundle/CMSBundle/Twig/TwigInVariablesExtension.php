@@ -3,7 +3,10 @@
 namespace Oro\Bundle\CMSBundle\Twig;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -14,8 +17,10 @@ use Twig\TwigFilter;
  *
  * Allowed variables, tags and functions are limited by "@oro_cms.twig.content_security_policy" service.
  */
-class TwigInVariablesExtension extends AbstractExtension implements ServiceSubscriberInterface
+class TwigInVariablesExtension extends AbstractExtension implements ServiceSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /** @var ContainerInterface */
     private $container;
 
@@ -25,6 +30,7 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -43,10 +49,19 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
      */
     public function renderContent($content)
     {
-        $template = $this->container->get('oro_cms.twig.renderer')
-            ->createTemplate($content);
+        $renderedContent = '';
+        if ($content) {
+            try {
+                $template = $this->container->get('oro_cms.twig.renderer')
+                    ->createTemplate($content);
 
-        return $template->render([]);
+                $renderedContent = $template->render([]);
+            } catch (\Throwable $exception) {
+                $this->logger->error(sprintf('Could not render content: %s', $content), ['e' => $exception]);
+            }
+        }
+
+        return $renderedContent;
     }
 
     /**

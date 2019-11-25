@@ -146,8 +146,11 @@ services:
         class: 'Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension'
         arguments:
             - '@oro_platform.twig.service_locator'
+        calls:
+            - [setLogger, ['@logger']]
         tags:
             - { name: twig.extension }
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.entity_listener.page:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener
@@ -349,3 +352,11 @@ services:
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
         arguments:
             - '@oro_cms.provider.preview_metadata.inner'
+
+    oro_cms.provider.attachment_entity_config:
+        decorates: oro_attachment.provider.attachment_entity_config
+        class: Oro\Bundle\CMSBundle\Provider\AttachmentEntityConfigProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_cms.provider.attachment_entity_config.inner'
+
