@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Represents Content node with resolved children and ContentVariants
+ */
 class ResolvedContentNode implements ContentNodeInterface
 {
     /**
