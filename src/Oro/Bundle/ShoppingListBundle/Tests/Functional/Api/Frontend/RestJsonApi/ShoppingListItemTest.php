@@ -31,6 +31,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
@@ -894,6 +895,25 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     'detail' => 'The given product unit is not valid for given product.',
                     'source' => ['pointer' => '/data/relationships/unit/data']
                 ],
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWithNotSellProductProductUnit()
+    {
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            'create_line_item_not_sell_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'product line item constraint',
+                'detail' => 'The given product unit is not valid for given product.',
+                'source' => ['pointer' => '/data/relationships/unit/data']
             ],
             $response
         );

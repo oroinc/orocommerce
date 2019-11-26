@@ -18,9 +18,11 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
     protected function setUp()
     {
         parent::setUp();
+        $this->enableVisitor();
         $this->loadFixtures([
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list_for_visitor.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {

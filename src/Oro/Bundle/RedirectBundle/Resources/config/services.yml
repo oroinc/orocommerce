@@ -9,14 +9,8 @@ services:
     oro_redirect.routing.matched_url_decision_maker:
         class: Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker
         arguments:
+            - ['%oro_api.rest.prefix%', '/js/', '/media/', '/_fragment', '/_profiler', '/_wdt']
             - '@oro_frontend.request.frontend_helper'
-        calls:
-            - [addSkippedUrlPattern, ['/_profiler']]
-            - [addSkippedUrlPattern, ['/_wdt']]
-            - [addSkippedUrlPattern, ['/_fragment']]
-            - [addSkippedUrlPattern, ['/js/']]
-            - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
-            - [addSkippedUrlPattern, ['/media/']]
 
     Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker:
         alias: oro_redirect.routing.matched_url_decision_maker
@@ -47,8 +41,6 @@ services:
     oro_redirect.security.firewall:
         class: Oro\Bundle\RedirectBundle\Security\Firewall
         arguments:
-            - "@security.firewall.map"
-            - "@event_dispatcher"
             - "@oro_redirect.routing.matched_url_decision_maker"
             - "@router.request_context"
         tags:

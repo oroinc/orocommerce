@@ -3,13 +3,11 @@
 namespace Oro\Bundle\RedirectBundle\Security;
 
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
-use Symfony\Component\Security\Http\FirewallMapInterface;
 
 /**
  * Decorate default framework firewall, perform token initialization before routing to make user available there.
@@ -38,15 +36,10 @@ class Firewall
     private $matchedUrlDecisionMaker;
 
     /**
-     * @param FirewallMapInterface $map
-     * @param EventDispatcherInterface $dispatcher
-     * @param FirewallFactory $firewallFactory
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      * @param RequestContext|null $context
      */
     public function __construct(
-        FirewallMapInterface $map,
-        EventDispatcherInterface $dispatcher,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         RequestContext $context = null
     ) {

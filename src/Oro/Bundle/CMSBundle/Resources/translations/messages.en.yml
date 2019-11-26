@@ -20,6 +20,7 @@ oro.cms:
         alias.label:            'Alias'
         text_content_variants.label: 'Text Content Variants'
         default.label: Default
+        information_message: Current content view is simplified, please check the page on the Storefront to see the actual result
 
     contentblock:
         entity_label: Content Block

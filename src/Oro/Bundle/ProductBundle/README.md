@@ -46,7 +46,7 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
 - Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase
 - Oro\Bundle\TestFrameworkBundle\Test\WebTestCase
 - Oro\Bundle\UserBundle\Entity\User
-- Oro\Component\Testing\Unit\EntityTestCase
+- Oro\Component\Testing\Unit\EntityTestCaseTrait
 - Oro\Component\Testing\Unit\FormHandlerTestCase
 - Oro\Component\Testing\Unit\Form\Type\Stub\EntityType
 - Sensio\Bundle\FrameworkExtraBundle\Configuration\Route

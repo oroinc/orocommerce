@@ -16,6 +16,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->enableVisitor();
         $this->loadFixtures([
             LoadCustomerUserData::class,
             '@OroOrderBundle/Tests/Functional/Api/Frontend/DataFixtures/orders.yml'

@@ -13,31 +13,40 @@ class MatchedUrlDecisionMaker
     private $frontendHelper;
 
     /** @var string[] */
-    private $skippedUrlPatterns = [];
+    private $skippedUrlPatterns;
+
+    /** @var array */
+    private $checkedUrls = [];
 
     /**
+     * @param string[]       $skippedUrlPatterns
      * @param FrontendHelper $frontendHelper
      */
-    public function __construct(FrontendHelper $frontendHelper)
+    public function __construct(array $skippedUrlPatterns, FrontendHelper $frontendHelper)
     {
+        $this->skippedUrlPatterns = $skippedUrlPatterns;
         $this->frontendHelper = $frontendHelper;
     }
 
     /**
-     * Skipped url pattern should start with slash.
+     * Registers an additional pattern for skipped urls.
      *
-     * @param string $skippedUrlPattern
+     * @param string $skippedUrlPattern The pattern; should start with the slash, e.g. "/test"
      */
-    public function addSkippedUrlPattern($skippedUrlPattern)
+    public function addSkippedUrlPattern(string $skippedUrlPattern): void
     {
         $this->skippedUrlPatterns[] = $skippedUrlPattern;
+        if ($this->checkedUrls) {
+            $this->checkedUrls = [];
+        }
     }
 
     /**
      * @param string $url
+     *
      * @return bool
      */
-    public function matches($url)
+    public function matches(string $url): bool
     {
         return
             $this->frontendHelper->isFrontendUrl($url)
@@ -46,16 +55,23 @@ class MatchedUrlDecisionMaker
 
     /**
      * @param string $url
+     *
      * @return bool
      */
-    private function isSkippedUrl($url)
+    private function isSkippedUrl(string $url): bool
     {
-        foreach ($this->skippedUrlPatterns as $pattern) {
-            if (strpos($url, $pattern) === 0) {
-                return true;
+        $result = $this->checkedUrls[$url] ?? null;
+        if (null === $result) {
+            $result = false;
+            foreach ($this->skippedUrlPatterns as $pattern) {
+                if (strpos($url, $pattern) === 0) {
+                    $result = true;
+                    break;
+                }
             }
+            $this->checkedUrls[$url] = $result;
         }
 
-        return false;
+        return $result;
     }
 }

@@ -75,31 +75,48 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision3:
         unit: '@item'
         precision: '0'
+    precision4:
+        unit: '@item'
+        precision: '0'
+    precision5:
+        unit: '@set'
+        sell: false
+        precision: '0'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_name:
         string: 'Product 1'
     product2_name:
         string: 'Product 2'
+    product3_name:
+        string: 'Product 3'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
+        names: ['@product1_name']
         primaryUnitPrecision: '@precision1'
         unitPrecisions: ['@precision2']
         attributeFamily: '@default_product_family'
-        __calls:
-            - setNames: [['@product1_name']]
         inventoryStatus: '@in_stock'
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
     product2:
         sku: 'PSKU2'
+        names: ['@product2_name']
         primaryUnitPrecision: '@precision3'
         attributeFamily: '@default_product_family'
-        __calls:
-            - setNames: [['@product2_name']]
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product3:
+        sku: 'PSKU3'
+        names: ['@product3_name']
+        primaryUnitPrecision: '@precision4'
+        unitPrecisions: ['@precision4', '@precision5']
+        attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
         organization: '@organization'

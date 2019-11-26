@@ -32,6 +32,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
@@ -232,7 +233,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(['entity' => 'shoppinglists']);
 
-        $expectedContent = $this->loadResponseData('cget_shopping_list.yml');
+        $expectedContent = $this->getResponseData('cget_shopping_list.yml');
         $expectedContent['data'][0]['attributes']['default'] = true;
         $expectedContent['data'][2]['attributes']['default'] = false;
         $this->assertResponseContains($expectedContent, $response);
@@ -258,7 +259,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -295,7 +296,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => 'default']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -495,7 +496,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $shoppingListId = (int)$this->getResourceId($response);
-        $responseContent = $this->loadResponseData('create_shopping_list_empty.yml');
+        $responseContent = $this->getResponseData('create_shopping_list_empty.yml');
         $responseContent['data']['id'] = (string)$shoppingListId;
         $this->assertResponseContains($responseContent, $response);
 
@@ -1218,6 +1219,29 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId, 'association' => 'items'],
             'add_line_item_wrong_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'product line item constraint',
+                    'detail' => 'The given product unit is not valid for given product.',
+                    'source' => ['pointer' => '/data/0/relationships/unit/data']
+                ],
+            ],
+            $response
+        );
+    }
+
+    public function testTryToAddToCartForNewListItemNotSellProductProductUnit()
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $response = $this->postSubresource(
+            ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId, 'association' => 'items'],
+            'add_line_item_not_sell_unit.yml',
             [],
             false
         );

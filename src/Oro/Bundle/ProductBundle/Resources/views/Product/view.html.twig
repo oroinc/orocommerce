@@ -99,6 +99,13 @@
         }) %}
     {% endif %}
 
+    {% set infoMessage %}
+        <div class="alert alert-info alert--compact" role="alert">
+            <span class="fa-info alert-icon" aria-hidden="true"></span>
+            {{ 'oro.cms.page.information_message'|trans }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = {
         'general': {
             'title': 'oro.product.sections.general'|trans,
@@ -121,7 +128,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'shortDescriptions': UI.renderCollapsibleHtml(entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
+                        'shortDescriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
                     }
                 }
             ]
@@ -131,7 +138,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'descriptions': UI.renderCollapsibleHtml(entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
+                        'descriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
                     }
                 }
             ]

@@ -56,7 +56,8 @@ Feature: Content Block content purify
     And I save and close form
     Then I should see "Content block has been saved" flash message
     And should see Content Block with:
-      | Content | <div>Some Content</div> |
+      | Content | Some Content |
+    And I should see "Current content view is simplified, please check the page on the Storefront to see the actual result"
 
   Scenario: Edit Content block in selective mode
     Given login as "testUser1@test.com" user
@@ -74,3 +75,4 @@ Feature: Content Block content purify
     Then I should see "Content block has been saved" flash message
     And should see Content Block with:
       | Content | Selective content |
+    And I should see "Current content view is simplified, please check the page on the Storefront to see the actual result"
