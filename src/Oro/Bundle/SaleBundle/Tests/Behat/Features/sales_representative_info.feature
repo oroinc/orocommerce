@@ -7,7 +7,7 @@ Feature: Sales Representative Info
 
 #  Description
 #
-#  Add a new configuration option on global, organization and website level to enable displaying the primary sales representative contact info.
+#  Add a new configuration option on global, organization level to enable displaying the primary sales representative contact info.
 #  Allow to configure what (whose) information to show - customer user owner, customer owner, or configured for the website. For the last option - allow to specify the contact info.
 #  When enabled, show the contact information of the selected sales representative in the store frontend footer.
 #  If "Allow User Configuration" option is enabled in the system configuration, give admin users the ability to modify their customer visible contact info:
@@ -48,7 +48,7 @@ Feature: Sales Representative Info
 #  when "Customer Owner" -> then "Use My Profile Data"
 #  when "Pre-Configured" -> then "Use System"
 #  Acceptance Criteria
-#  Show that displaying sale rep info can be enabled/disabled per website/organization/globally
+#  Show that displaying sale rep info can be enabled/disabled per organization/globally
 #  Show that each of the "Display" configuration options works (leads to showing contact info of different sales reps - customer user owner/customer owner/pre-configured on different levels)
 #  Demonstrate how sales reps can choose one of the enabled options (when "allow user configuration" is on) and how that leads to showing different contact info on the store frontend.
 
@@ -182,27 +182,3 @@ Feature: Sales Representative Info
     And click "Sign Out"
     And I should see "Sales Representative Info" block with:
       | Test guest contact |
-
-  Scenario: Site level - Allow User Configuration
-    Given I proceed as the Admin
-    And go to System/ Websites
-    And click configuration "Default" in grid
-    And I follow "Commerce/Sales/Contacts" on configuration sidebar
-    When fill "Customer Visible Contact Info Form" with:
-      | Allow User Configuration Default | false |
-      | Allow User Configuration         | false |
-    And click "Save settings"
-    When fill "Customer Visible Contact Info Form" with:
-      | Allow User Configuration | true |
-    Then should see "Available User Options"
-    When fill "Customer Visible Contact Info Form" with:
-      | Display Default                | false                 |
-      | Display                        | Customer Owner        |
-      | Available User Options Default | false                 |
-      | Available User Options         | Use User Profile Data |
-    And click "Save settings"
-    And I proceed as the User
-    And I signed in as AmandaRCole@example.org on the store frontend
-    And I should see "Sales Representative Info" block with:
-      | John Doe          |
-      | admin@example.com |
