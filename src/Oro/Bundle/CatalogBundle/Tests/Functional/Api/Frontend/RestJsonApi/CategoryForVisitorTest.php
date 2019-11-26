@@ -10,6 +10,7 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->enableVisitor();
         $this->loadFixtures([
             LoadCustomerData::class,
             '@OroCatalogBundle/Tests/Functional/Api/Frontend/DataFixtures/category.yml'
