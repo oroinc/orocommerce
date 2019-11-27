@@ -28,7 +28,7 @@ class MatchingSlugHydratorTest extends WebTestCase
     public function testSlugWithMatchedScopeId()
     {
         $builder = $this->repository->createQueryBuilder('slug');
-        $matchingSlug = $builder
+        $matchingSlugs = $builder
             ->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId')
             ->where(
@@ -40,8 +40,12 @@ class MatchingSlugHydratorTest extends WebTestCase
             ->getQuery()
             ->getResult(MatchingSlugHydrator::NAME);
 
+        $this->assertCount(1, $matchingSlugs);
+
+        $matchingSlug = reset($matchingSlugs);
         $expectedSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
-        self::assertSame([$expectedSlug], $matchingSlug);
+
+        $this->assertEquals($expectedSlug->getId(), $matchingSlug->getId());
     }
 
     public function testSlugWithEmptyScopes()
@@ -51,7 +55,7 @@ class MatchingSlugHydratorTest extends WebTestCase
             ->find('web_content', ['customer' => $customerNotForFirstPage]);
 
         $builder = $this->repository->createQueryBuilder('slug');
-        $matchingSlug = $builder
+        $matchingSlugs = $builder
             ->leftJoin('slug.scopes', 'scopes', Join::WITH, $builder->expr()->eq('scopes', ':scope'))
             ->setParameter('scope', $scopeNotForFirstPage)
             ->addSelect('scopes.id as matchedScopeId')
@@ -64,8 +68,12 @@ class MatchingSlugHydratorTest extends WebTestCase
             ->getQuery()
             ->getResult(MatchingSlugHydrator::NAME);
 
+        $this->assertCount(1, $matchingSlugs);
+
+        $matchingSlug = reset($matchingSlugs);
         $expectedSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
-        self::assertSame([$expectedSlug], $matchingSlug);
+
+        $this->assertEquals($expectedSlug->getId(), $matchingSlug->getId());
     }
 
     public function testSlugWithoutMatches()
@@ -88,6 +96,6 @@ class MatchingSlugHydratorTest extends WebTestCase
             ->getQuery()
             ->getResult(MatchingSlugHydrator::NAME);
 
-        self::assertEmpty($matchingSlug);
+        $this->assertEmpty($matchingSlug);
     }
 }
