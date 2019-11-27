@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 
 /**
@@ -12,46 +11,39 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 class ContentWidgetUsageRepository extends EntityRepository
 {
     /**
-     * @param ContentWidget $widget
      * @param string $entityClass
      * @param int $entityId
+     * @param string|null $entityField
+     *
+     * @return ContentWidgetUsage[]
      */
-    public function add(string $entityClass, int $entityId, ContentWidget $widget): void
-    {
-        $usage = $this->findOneBy(['contentWidget' => $widget, 'entityClass' => $entityClass, 'entityId' => $entityId]);
-        if ($usage) {
-            return;
+    public function findForEntityField(
+        string $entityClass,
+        int $entityId,
+        ?string $entityField = null
+    ): array {
+        $qb = $this->createQueryBuilder('usage');
+
+        $qb
+            ->select('usage', 'contentWidget')
+            ->innerJoin('usage.contentWidget', 'contentWidget')
+            ->where(
+                $qb->expr()->eq('usage.entityClass', ':entityClass'),
+                $qb->expr()->eq('usage.entityId', ':entityId')
+            )
+            ->setParameters([
+                ':entityClass' => $entityClass,
+                ':entityId' => $entityId,
+            ]);
+
+        if ($entityField) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('usage.entityField', ':entityField')
+                )
+                ->setParameter(':entityField', $entityField);
         }
 
-        $usage = new ContentWidgetUsage();
-        $usage->setContentWidget($widget)
-            ->setEntityClass($entityClass)
-            ->setEntityId($entityId);
-
-        $this->_em->persist($usage);
-        $this->_em->flush($usage);
-    }
-
-    /**
-     * @param string $entityClass
-     * @param int $entityId
-     * @param ContentWidget|null $widget
-     */
-    public function remove(string $entityClass, int $entityId, ?ContentWidget $widget = null): void
-    {
-        $qb = $this->createQueryBuilder('entity');
-        $qb->delete()
-            ->where($qb->expr()->eq('entity.entityClass', ':entityClass'))
-            ->andWhere($qb->expr()->eq('entity.entityId', ':entityId'))
-            ->setParameter('entityClass', $entityClass)
-            ->setParameter('entityId', $entityId);
-
-        if ($widget) {
-            $qb->andWhere($qb->expr()->eq('entity.contentWidget', ':contentWidget'))
-                ->setParameter('contentWidget', $widget);
-        }
-
-        $qb->getQuery()
-            ->execute();
+        return $qb->getQuery()->getResult();
     }
 }

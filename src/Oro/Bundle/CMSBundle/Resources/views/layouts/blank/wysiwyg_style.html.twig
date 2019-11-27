@@ -1,0 +1,23 @@
+{% block wysiwyg_style_widget %}
+    {% set attr = attr|merge({
+        type: type,
+    }) %}
+
+    {% if media is defined %}
+        {% set attr = attr|merge({
+            media: media
+        }) %}
+    {% endif %}
+
+    {% if scoped != false %}
+        {% set attr = attr|merge({
+            scoped: 'scoped'
+        }) %}
+    {% endif %}
+
+    {% spaceless %}
+        <style{{ block('block_attributes') }}>
+            {{ content|render_content }}
+        </style>
+    {% endspaceless %}
+{% endblock %}

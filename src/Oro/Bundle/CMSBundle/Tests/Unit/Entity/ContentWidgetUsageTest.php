@@ -19,6 +19,7 @@ class ContentWidgetUsageTest extends \PHPUnit\Framework\TestCase
                 ['contentWidget', new ContentWidget()],
                 ['entityClass', \stdClass::class],
                 ['entityId', 4242],
+                ['entityField', 'testFields']
             ]
         );
     }

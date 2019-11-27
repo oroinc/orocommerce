@@ -93,7 +93,7 @@ services:
             # properties
             - []
             # functions
-            - ['widget', 'content_block']
+            - ['widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file']
 
     oro_cms.twig.sandbox_extension:
         class: 'Twig_Extension_Sandbox'
@@ -122,6 +122,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_cms.twig.digital_asset_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\DigitalAssetExtension'
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'
 
@@ -132,14 +139,18 @@ services:
         calls:
             - [addExtension, ['@oro_cms.twig.widget_extension']]
             - [addExtension, ['@oro_cms.twig.content_block_extension']]
+            - [addExtension, ['@oro_cms.twig.digital_asset_extension']]
             - [addExtension, ['@oro_cms.twig.sandbox_extension']]
 
     oro_crm.twig.twig_in_variables_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension'
         arguments:
             - '@oro_platform.twig.service_locator'
+        calls:
+            - [setLogger, ['@logger']]
         tags:
             - { name: twig.extension }
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.entity_listener.page:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener
@@ -151,32 +162,44 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }
 
-    oro_cms.parser.twig_content_widget:
-        class: Oro\Bundle\CMSBundle\Parser\TwigContentWidgetParser
+    oro_cms.parser.twig:
+        class: Oro\Bundle\CMSBundle\Parser\TwigParser
         arguments:
             - '@oro_cms.twig.renderer'
 
-    oro_cms.entity_listener.page_content:
-        class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageContentEntityListener
+    oro_cms.wysiwyg.chain_twig_function_processor:
+        class: 'Oro\Bundle\CMSBundle\WYSIWYG\ChainTwigFunctionProcessor'
+        public: true
         arguments:
-            - '@oro_cms.parser.twig_content_widget'
-            - '@oro_entity.doctrine_helper'
-            - '@property_accessor'
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: preRemove }
+            - !tagged oro_cms.wysiwyg.twig_function_processor
 
-    oro_cms.entity_listener.text_content_variant_content:
-        class: Oro\Bundle\CMSBundle\Entity\EntityListener\TextContentVariantEntityListener
+    oro_cms.wysiwyg.content_widget_twig_function_processor:
+        class: 'Oro\Bundle\CMSBundle\WYSIWYG\ContentWidgetTwigFunctionProcessor'
         arguments:
-            - '@oro_cms.parser.twig_content_widget'
-            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: oro_cms.wysiwyg.twig_function_processor }
+
+    oro_cms.wysiwyg.digital_asset_twig_function_processor:
+        class: 'Oro\Bundle\CMSBundle\WYSIWYG\DigitalAssetTwigFunctionProcessor'
+        arguments:
+            - '@oro_security.acl_helper'
+            - '@validator'
+        tags:
+            - { name: oro_cms.wysiwyg.twig_function_processor }
+
+    oro_cms.event_listener.wysiwyg_field_twig_listener:
+        class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGFieldTwigListener
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_cms.parser.twig'
+            - '@oro_cms.wysiwyg.chain_twig_function_processor'
             - '@property_accessor'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\TextContentVariant', event: preRemove }
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
 
     oro_cms.entity_listener.image_slide:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
@@ -317,9 +340,23 @@ services:
         tags:
             - { name: oro_cms.content_widget.type }
 
-    oro_cms.event_listener.content_widget_from:
+    oro_cms.event_listener.content_widget_form:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
         arguments:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
+
+    oro_cms.provider.preview_metadata:
+        decorates: oro_digital_asset.provider.preview_metadata
+        class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
+        arguments:
+            - '@oro_cms.provider.preview_metadata.inner'
+
+    oro_cms.provider.attachment_entity_config:
+        decorates: oro_attachment.provider.attachment_entity_config
+        class: Oro\Bundle\CMSBundle\Provider\AttachmentEntityConfigProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_cms.provider.attachment_entity_config.inner'
+

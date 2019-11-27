@@ -11,7 +11,6 @@ use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
-use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
@@ -129,22 +128,13 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $manager->flush();
         }
 
-        $slider = $this->getContentBlock(
+        $this->updateOrCreateContentBlock(
             $manager,
             $user,
             '<div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">
                 {{ widget("home-page-slider") }}
             </div>'
         );
-
-        if ($slider) {
-            $usage = new ContentWidgetUsage();
-            $usage->setContentWidget($widget);
-            $usage->setEntityClass(ContentBlock::class);
-            $usage->setEntityId($slider->getId());
-            $manager->persist($usage);
-            $manager->flush();
-        }
     }
 
     /**
@@ -153,7 +143,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
      * @param string $content
      * @return ContentBlock|null
      */
-    private function getContentBlock(ObjectManager $manager, User $user, string $content): ?ContentBlock
+    private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {
         $contentBlock = $manager->getRepository(ContentBlock::class)
             ->findOneBy(['alias' => self::HOME_PAGE_SLIDER_ALIAS]);
@@ -175,22 +165,18 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $slider->addTitle($title);
             $slider->addContentVariant($variant);
             $manager->persist($slider);
-            $manager->flush();
+        } else {
+            $html = file_get_contents(__DIR__ . '/data/frontpage_slider.html');
 
-            return $slider;
-        }
-
-        $html = file_get_contents(__DIR__.'/data/frontpage_slider.html');
-
-        foreach ($contentBlock->getContentVariants() as $contentVariant) {
-            if ($contentVariant->getContent() === $html) {
-                $contentVariant->setContent($content);
-
-                return $contentBlock;
+            foreach ($contentBlock->getContentVariants() as $contentVariant) {
+                if ($contentVariant->getContent() === $html) {
+                    $contentVariant->setContent($content);
+                    break;
+                }
             }
         }
 
-        return null;
+        $manager->flush();
     }
 
     /**

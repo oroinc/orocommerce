@@ -163,7 +163,6 @@ const GrapesjsEditorView = BaseView.extend({
             },
             navbarOpts: false,
             countdownOpts: false,
-            customStyleManager: ModuleManager.getModule('style-manager'),
             modalImportContent: function(editor) {
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
             }
@@ -291,6 +290,9 @@ const GrapesjsEditorView = BaseView.extend({
                 components: escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
+
+        // Ensures all changes to sectors, properties and types are applied.
+        this.builder.StyleManager.getSectors().reset(ModuleManager.getModule('style-manager'));
 
         this.builder.setIsolatedStyle(
             this.$stylesInputElement.val()

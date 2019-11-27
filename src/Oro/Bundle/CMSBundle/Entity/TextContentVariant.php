@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
@@ -58,6 +59,13 @@ class TextContentVariant
      * @var string
      *
      * @ORM\Column(type="wysiwyg", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          }
+     *      }
+     * )
      */
     protected $content;
 
@@ -65,6 +73,13 @@ class TextContentVariant
      * @var string
      *
      * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          }
+     *      }
+     * )
      */
     protected $contentStyle;
 

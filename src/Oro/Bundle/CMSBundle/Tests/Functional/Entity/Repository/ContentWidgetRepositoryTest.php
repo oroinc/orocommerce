@@ -33,6 +33,22 @@ class ContentWidgetRepositoryTest extends WebTestCase
         $this->repository = $this->doctrine->getRepository(ContentWidget::class);
     }
 
+    public function testFindAllByNames(): void
+    {
+        $aclHelper = $this->getContainer()->get('oro_security.acl_helper');
+
+        $this->assertEquals(
+            [
+                $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_1),
+                $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_3)
+            ],
+            $this->repository->findAllByNames([
+                LoadContentWidgetData::CONTENT_WIDGET_1,
+                LoadContentWidgetData::CONTENT_WIDGET_3
+            ], $aclHelper)
+        );
+    }
+
     public function testFindOneByName(): void
     {
         /** @var ContentWidget $expectedContentWidget */
