@@ -64,7 +64,7 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdate()

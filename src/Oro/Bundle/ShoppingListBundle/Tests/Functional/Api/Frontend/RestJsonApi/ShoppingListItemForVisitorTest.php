@@ -159,7 +159,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testUpdate()
@@ -214,7 +214,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             ->find($lineItemId);
 
         self::assertEquals(10, $lineItem->getQuantity());
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testDelete()
@@ -255,7 +255,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             ->find($lineItemId);
 
         $this->assertTrue(null !== $lineItem);
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetListWhenGusetShoppingListFeatureIsDisabled()
@@ -270,7 +270,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetWhenGusetShoppingListFeatureIsDisabled()
@@ -285,7 +285,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToCreateLineItemWhenGusetShoppingListFeatureIsDisabled()
@@ -300,7 +300,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdateLineItemWhenGusetShoppingListFeatureIsDisabled()
@@ -326,7 +326,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToDeleteWhenGusetShoppingListFeatureIsDisabled()
@@ -343,7 +343,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testOptionsWhenGusetShoppingListFeatureIsDisabled()
