@@ -6,7 +6,7 @@ $offset-twice: $offset-default * 2 !default;
 $offset-triple: $offset-default * 3 !default;
 $offset-half: 8px / 2 !default;
 
-$cms-page-paragraph-offset: 0 0 $offset-twice 0 !default;
+$cms-page-paragraph-offset: $offset-twice !default;
 
 // Blockquote
 $cms-page-blockquote-offset: 0 0 $offset-triple 0 !default;

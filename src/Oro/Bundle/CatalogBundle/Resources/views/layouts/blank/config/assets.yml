@@ -4,8 +4,5 @@ styles:
         - 'bundles/orocatalog/blank/scss/variables/category-picture-config.scss'
         - 'bundles/orocatalog/blank/scss/variables/featured-categories-config.scss'
         - 'bundles/orocatalog/blank/scss/variables/featured-category-config.scss'
-        - 'bundles/orocatalog/blank/scss/variables/promo-slider-config.scss'
-
-        - 'bundles/orocatalog/blank/scss/components/promo-slider/promo-slider.scss'
 
         - 'bundles/orocatalog/blank/scss/styles.scss'

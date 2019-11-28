@@ -40,10 +40,10 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
-            'text' => '<h2 class="promo-slider__title">Lorem ipsum</h2><div class="promo-slider__description">
-                Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed 
-                elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</div>
-                <span class="btn btn--info promo-slider__view-btn">Call to action</span>',
+            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p><a href="/product/">Call to action</a></p>',
             'mainImage' => 'promo-slider-1',
             'mediumImage' => 'promo-slider-medium-1',
             'smallImage' => 'promo-slider-small-1',
@@ -53,10 +53,10 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_LEFT,
-            'text' => '<h2 class="promo-slider__title">Lorem ipsum</h2><div class="promo-slider__description">
-                Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed 
-                elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</div>
-                <span class="btn btn--info promo-slider__view-btn">Call to action</span>',
+            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p><a href="/product/?categoryId=2&includeSubcategories=1">Call to action</a></p>',
             'mainImage' => 'promo-slider-2',
             'mediumImage' => 'promo-slider-medium-2',
             'smallImage' => 'promo-slider-small-2',
@@ -66,10 +66,11 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_CENTER,
-            'text' => '<div class="promo-slider__info--text-color-dark"><h2 class="promo-slider__title">Lorem ipsum</h2>
-                <div class="promo-slider__description">Praesent magna arcu, placerat id purus vel, facilisis posuere 
-                augue. Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique 
-                finibus.</div><span class="btn btn--info promo-slider__view-btn">Call to action</span></div>',
+            'text' => '<h2 style="text-align: center;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="text-align: center;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p style="text-align: center;">
+                <a href="/product/?categoryId=7&includeSubcategories=1">Call to action</a></p>',
             'mainImage' => 'promo-slider-3',
             'mediumImage' => 'promo-slider-medium-3',
             'smallImage' => 'promo-slider-small-3',
