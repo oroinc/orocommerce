@@ -43,7 +43,7 @@ define(function(require) {
 
             this.initButtons();
             this.builder.on('changeTheme', _.bind(this.initButtons, this));
-            this.builder.on('rteToolbarPosUpdate', _.bind(this.updateRtePosition, this));
+            this.builder.on('rteToolbarPosUpdate', _.debounce(_.bind(this.updateRtePosition, this), 100));
         },
 
         initButtons: function() {

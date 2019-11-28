@@ -32,6 +32,12 @@ oro.cms:
             digital_asset:
                 image: 'Image'
                 file: 'File'
+        validation:
+            import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
+        import:
+            label: 'Paste here your HTML/CSS and click Import'
+            title: 'Import'
+            button: 'Import'
     change_type:
         confirmation:
             title: 'Change Type'
