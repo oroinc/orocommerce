@@ -1,6 +1,6 @@
 styles:
     inputs:
-        - 'bundles/orocms/blank/scss/variables/cms-page-config.scss'
+        - 'bundles/orocms/blank/scss/variables/cms-typography-config.scss'
         - 'bundles/orocms/blank/scss/variables/promo-slider-config.scss'
 
         - 'bundles/orocms/blank/scss/styles.scss'

@@ -126,7 +126,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <div class="collapse-view__container tiny-container" data-collapse-container>
+        <div class="collapse-view__container cms-typography" data-collapse-container>
             {%- if translated_value.wysiwygStyle|length -%}
                 {%- spaceless -%}
                     <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>

@@ -10,7 +10,7 @@ layout:
                         vars:
                             hideTitle: true
                         attr:
-                            class: 'cms-page'
+                            class: 'cms-typography'
             tree:
                 page_content:
                     hero_promo: ~

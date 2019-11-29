@@ -46,7 +46,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Page context class
      * @property {String}
      */
-    contextClass: 'body cms-page',
+    contextClass: 'body cms-page cms-typography',
 
     /**
      * State of changes in editor
