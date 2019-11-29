@@ -70,7 +70,7 @@ class CategoryProviderTreeTest extends WebTestCase
 
         return new CategoryProvider(
             $requestProductHandler,
-            $this->repository,
+            $this->registry,
             $this->createMock(CategoryTreeProvider::class),
             $this->tokenAccessor
         );

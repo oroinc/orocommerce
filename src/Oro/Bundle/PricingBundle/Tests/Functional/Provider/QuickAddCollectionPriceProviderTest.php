@@ -35,10 +35,10 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
             $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1)->getId()
         );
 
-        $this->getClient()->getContainer()->get('request_stack')->push($request);
+        $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
 
         /** @var ProductRepository $productRepository */
-        $this->productRepository = $this->getClient()->getContainer()->get('oro_product.repository.product');
+        $this->productRepository = $this->getClientInstance()->getContainer()->get('oro_product.repository.product');
     }
 
     public function testIfCorrectPricesAreBeingAddedToRowItems()
@@ -46,7 +46,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );
@@ -66,7 +66,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );
@@ -87,7 +87,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );
@@ -102,7 +102,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $collection->get(1)->setValid(0);
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );
@@ -140,7 +140,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );
@@ -155,7 +155,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
             QuickAddRowsCollectionReadyEvent::NAME,
             $event
         );

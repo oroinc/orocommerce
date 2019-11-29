@@ -13,7 +13,6 @@ services:
 
     oro_sale.provider.quote_product_price:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@oro_pricing.provider.product_price"
@@ -59,7 +58,6 @@ services:
 
     oro_sale.service.quote_product_offer_matcher:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
 
     oro_sale.line_item.converter.quote_demand:
@@ -79,7 +77,6 @@ services:
 
     oro_sale.helper.notification:
         class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -92,7 +89,6 @@ services:
 
     oro_sale.service.request_helper:
         class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@doctrine"
@@ -142,7 +138,6 @@ services:
 
     oro_sale.service.quote_request_handler:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteRequestHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@doctrine"
@@ -198,7 +193,6 @@ services:
 
     oro_sale.provider.quote_checkout:
         class: Oro\Bundle\SaleBundle\Provider\QuoteCheckoutProvider
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -225,7 +219,6 @@ services:
 
     oro_sale.quote_demand.subtotals_calculator_main:
         class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Basic\BasicQuoteDemandSubtotalsCalculator'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -235,7 +228,6 @@ services:
 
     oro_sale.storage.return_route_storage:
         class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_product.storage.session_data_storage
 

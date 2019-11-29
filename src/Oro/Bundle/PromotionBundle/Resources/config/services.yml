@@ -432,7 +432,6 @@ services:
 
     oro_promotion.repository.promotion:
         class: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_entity.abstract_repository
         arguments:
@@ -463,7 +462,6 @@ services:
 
     oro_promotion.applied_promotion_manager:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_promotion.promotion_executor.link'
@@ -557,14 +555,12 @@ services:
 
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_promotion.coupon_generation.coupon'
 
     oro_promotion.coupon_generation.code_generator:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
 
     oro_promotion.coupon_generation.coupon:
@@ -676,7 +672,6 @@ services:
 
     oro_promotion.handler.coupon_validation_handler:
         class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_promotion.handler.abstract_coupon_handler
         calls:
@@ -684,7 +679,6 @@ services:
 
     oro_promotion.handler.frontend_coupon_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_promotion.handler.abstract_coupon_handler
         calls:
@@ -694,7 +688,6 @@ services:
 
     oro_promotion.handler.frontend_coupon_remove_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@security.authorization_checker'

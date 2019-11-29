@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
@@ -29,8 +32,20 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->searchRepository = $this->createMock(ProductRepository::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
+
         $this->categoriesProductsProvider = new CategoriesProductsProvider(
-            $this->categoryRepository,
+            $registry,
             $this->searchRepository
         );
 

@@ -25,7 +25,7 @@ class RedirectRepositoryTest extends WebTestCase
             LoadRedirects::class
         ]);
 
-        $this->repository = $this->getContainer()->get('oro_redirect.repository.redirect');
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(Redirect::class);
     }
 
     public function testFindByUrlSuccessful()

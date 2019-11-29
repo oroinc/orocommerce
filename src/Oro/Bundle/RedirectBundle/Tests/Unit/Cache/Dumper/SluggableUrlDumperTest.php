@@ -2,20 +2,44 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Cache\Dumper;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 
 class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $slugRepository;
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
+
+    public function setUp()
+    {
+        $this->slugRepository = $this->createMock(SlugRepository::class);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->slugRepository);
+
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+    }
+
     public function testDump()
     {
-        /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject $slugRepository */
-        $slugRepository = $this->createMock(SlugRepository::class);
         /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(UrlCacheInterface::class);
-        $dumper = new SluggableUrlDumper($slugRepository, $cache);
+        $dumper = new SluggableUrlDumper($this->registry, $cache);
 
         $routeName = 'test';
         $ids = [1, 2];
@@ -37,7 +61,7 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $slugRepository->expects($this->once())
+        $this->slugRepository->expects($this->once())
             ->method('getSlugDataForDirectUrls')
             ->with($ids)
             ->willReturn($slugs);
@@ -54,11 +78,9 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
 
     public function testDumpFlushableCache()
     {
-        /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject $slugRepository */
-        $slugRepository = $this->createMock(SlugRepository::class);
         /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(UrlCacheAllCapabilities::class);
-        $dumper = new SluggableUrlDumper($slugRepository, $cache);
+        $dumper = new SluggableUrlDumper($this->registry, $cache);
 
         $routeName = 'test';
         $ids = [1, 2];
@@ -73,7 +95,7 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $slugRepository->expects($this->once())
+        $this->slugRepository->expects($this->once())
             ->method('getSlugDataForDirectUrls')
             ->with($ids)
             ->willReturn($slugs);

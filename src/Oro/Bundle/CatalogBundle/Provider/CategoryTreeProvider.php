@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -15,9 +15,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class CategoryTreeProvider
 {
     /**
-     * @var CategoryRepository
+     * @var ManagerRegistry
      */
-    protected $categoryRepository;
+    protected $registry;
 
     /**
      * @var EventDispatcherInterface
@@ -30,16 +30,16 @@ class CategoryTreeProvider
     private $masterCatalogRootProvider;
 
     /**
-     * @param CategoryRepository $categoryRepository
+     * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
      * @param MasterCatalogRootProvider $masterCatalogRootProvider
      */
     public function __construct(
-        CategoryRepository $categoryRepository,
+        ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
         MasterCatalogRootProvider $masterCatalogRootProvider
     ) {
-        $this->categoryRepository = $categoryRepository;
+        $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
@@ -55,7 +55,10 @@ class CategoryTreeProvider
         if (!$root) {
             $root = $this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization();
         }
-        $categories = $this->categoryRepository->getChildren($root, false, 'left', 'ASC', $includeRoot);
+
+        $categories = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->getChildren($root, false, 'left', 'ASC', $includeRoot);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);

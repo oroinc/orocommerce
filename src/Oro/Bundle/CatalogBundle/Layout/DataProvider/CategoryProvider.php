@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -25,8 +26,8 @@ class CategoryProvider
     /** @var array */
     protected $tree = [];
 
-    /** @var CategoryRepository */
-    protected $categoryRepository;
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var RequestProductHandler */
     protected $requestProductHandler;
@@ -42,18 +43,18 @@ class CategoryProvider
 
     /**
      * @param RequestProductHandler  $requestProductHandler
-     * @param CategoryRepository     $categoryRepository
+     * @param ManagerRegistry        $registry
      * @param CategoryTreeProvider   $categoryTreeProvider
      * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
-        CategoryRepository $categoryRepository,
+        ManagerRegistry $registry,
         CategoryTreeProvider $categoryTreeProvider,
         TokenAccessorInterface $tokenAccessor
     ) {
         $this->requestProductHandler = $requestProductHandler;
-        $this->categoryRepository = $categoryRepository;
+        $this->registry = $registry;
         $this->categoryTreeProvider = $categoryTreeProvider;
         $this->tokenAccessor = $tokenAccessor;
     }
@@ -183,7 +184,7 @@ class CategoryProvider
         $parent = $this->getCurrentCategory()->getParentCategory();
 
         if ($parent !== null) {
-            $parents = $this->categoryRepository->getPath($parent);
+            $parents = $this->getCategoryRepository()->getPath($parent);
             return is_array($parents) ? $parents : [];
         } else {
             return [];
@@ -225,7 +226,7 @@ class CategoryProvider
     {
         if (!array_key_exists($categoryId, $this->categories)) {
             if ($categoryId) {
-                $this->categories[$categoryId] = $this->categoryRepository->find($categoryId);
+                $this->categories[$categoryId] = $this->getCategoryRepository()->find($categoryId);
             } else {
                 $this->categories[$categoryId] = $this->getCurrentMasterCatalogRoot();
             }
@@ -252,6 +253,14 @@ class CategoryProvider
     {
         $organization = $this->tokenAccessor->getOrganization();
 
-        return $organization ? $this->categoryRepository->getMasterCatalogRoot($organization) : null;
+        return $organization ? $this->getCategoryRepository()->getMasterCatalogRoot($organization) : null;
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    private function getCategoryRepository(): CategoryRepository
+    {
+        return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);
     }
 }

@@ -3,8 +3,10 @@
 namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Cache\ClearableCache;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -14,6 +16,9 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Calculates urls based on the used Slugs.
+ */
 class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     const BATCH_SIZE = 1000;
@@ -29,9 +34,9 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
     private $producer;
 
     /**
-     * @var SlugRepository
+     * @var ManagerRegistry
      */
-    private $slugRepository;
+    private $registry;
 
     /**
      * @var LoggerInterface
@@ -51,20 +56,20 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
     /**
      * @param JobRunner $jobRunner
      * @param MessageProducerInterface $producer
-     * @param SlugRepository $slugRepository
+     * @param ManagerRegistry $registry
      * @param LoggerInterface $logger
      * @param UrlCacheInterface $cache
      */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
-        SlugRepository $slugRepository,
+        ManagerRegistry $registry,
         LoggerInterface $logger,
         UrlCacheInterface $cache
     ) {
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
-        $this->slugRepository = $slugRepository;
+        $this->registry = $registry;
         $this->logger = $logger;
         $this->cache = $cache;
     }
@@ -96,14 +101,17 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
                 $message->getMessageId(),
                 Topics::CALCULATE_URL_CACHE_MASS,
                 function (JobRunner $jobRunner) {
-                    $usedRoutes = $this->slugRepository->getUsedRoutes();
+                    $repository = $this->registry->getManagerForClass(Slug::class)
+                        ->getRepository(Slug::class);
+
+                    $usedRoutes = $repository->getUsedRoutes();
 
                     foreach ($usedRoutes as $usedRoute) {
-                        $entityCount = $this->slugRepository->getSlugsCountByRoute($usedRoute);
+                        $entityCount = $repository->getSlugsCountByRoute($usedRoute);
                         $batches = (int)ceil($entityCount / $this->batchSize);
 
                         for ($i = 0; $i < $batches; $i++) {
-                            $this->scheduleRecalculationForRouteByScope($jobRunner, $usedRoute, $i);
+                            $this->scheduleRecalculationForRouteByScope($jobRunner, $repository, $usedRoute, $i);
                         }
                     }
 
@@ -127,12 +135,13 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
 
     /**
      * @param JobRunner $jobRunner
+     * @param SlugRepository $repo
      * @param string $usedRoute
      * @param int $page
      */
-    private function scheduleRecalculationForRouteByScope(JobRunner $jobRunner, $usedRoute, $page)
+    private function scheduleRecalculationForRouteByScope(JobRunner $jobRunner, SlugRepository $repo, $usedRoute, $page)
     {
-        $entityIds = $this->slugRepository->getSlugIdsByRoute($usedRoute, $page, $this->batchSize);
+        $entityIds = $repo->getSlugIdsByRoute($usedRoute, $page, $this->batchSize);
 
         $jobRunner->createDelayed(
             sprintf(

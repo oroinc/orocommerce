@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
@@ -62,9 +64,21 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->repository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
         $this->matcher = new SlugUrlMatcher(
             $this->router,
-            $this->repository,
+            $registry,
             $this->scopeManager,
             $this->matchedUrlDecisionMaker,
             $this->aclHelper

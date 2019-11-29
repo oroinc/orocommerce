@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
 /**
@@ -12,9 +12,9 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 class MasterCatalogRootProvider
 {
     /**
-     * @var CategoryRepository
+     * @var ManagerRegistry
      */
-    private $categoryRepository;
+    private $registry;
 
     /**
      * @var TokenAccessor
@@ -22,14 +22,12 @@ class MasterCatalogRootProvider
     private $tokenAccessor;
 
     /**
-     * @param CategoryRepository $categoryRepository
+     * @param ManagerRegistry $registry
      * @param TokenAccessor $tokenAccessor
      */
-    public function __construct(
-        CategoryRepository $categoryRepository,
-        TokenAccessor $tokenAccessor
-    ) {
-        $this->categoryRepository = $categoryRepository;
+    public function __construct(ManagerRegistry $registry, TokenAccessor $tokenAccessor)
+    {
+        $this->registry = $registry;
         $this->tokenAccessor = $tokenAccessor;
     }
 
@@ -40,6 +38,8 @@ class MasterCatalogRootProvider
     {
         $organization = $this->tokenAccessor->getOrganization();
 
-        return $this->categoryRepository->getMasterCatalogRoot($organization);
+        return $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->getMasterCatalogRoot($organization);
     }
 }

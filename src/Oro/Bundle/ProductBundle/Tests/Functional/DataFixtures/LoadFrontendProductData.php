@@ -3,18 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadFrontendProductData extends ContainerAwareFixture implements DependentFixtureInterface
+class LoadFrontendProductData implements FixtureInterface, DependentFixtureInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
