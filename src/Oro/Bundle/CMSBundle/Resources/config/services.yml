@@ -274,13 +274,21 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: preFlush, priority: 255 }
 
-    oro_cms.event_listener.content_widget_datagrid:
+    oro_cms.event_listener.content_widget_datagrid.inline:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener
         arguments:
             - '@oro_cms.content_widget.type_registry'
+            - true
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.cms-content-widget-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.cms-content-widget-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.cms-inline-content-widget-grid, method: onPreBuild }
+
+    oro_cms.event_listener.content_widget_datagrid.block:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - false
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.cms-block-content-widget-grid, method: onPreBuild }
 
     oro_bundle_cms.helper.wysiwygschema:
         class: Oro\Bundle\CMSBundle\Helper\WYSIWYGSchemaHelper

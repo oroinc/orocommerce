@@ -10,12 +10,12 @@ define(function(require) {
     /**
      * Content widget component
      */
-    const ContentWidnetComponent = BaseComponent.extend({
+    const ContentWidgetComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ContentWidnetComponent(options) {
-            ContentWidnetComponent.__super__.constructor.call(this, options);
+        constructor: function ContentWidgetComponent(options) {
+            ContentWidgetComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -28,7 +28,7 @@ define(function(require) {
             const dType = domComps.getType('default');
             const dModel = dType.model;
             const dView = dType.view;
-            const datagridName = 'cms-content-widget-grid';
+            const datagridName = 'cms-block-content-widget-grid';
 
             options.BlockManager.add(ComponentId, {
                 id: ComponentId,
@@ -98,7 +98,7 @@ define(function(require) {
                         contentWidget: null,
                         droppable: false
                     }),
-                    constructor: function ContentWidnetComponent(...args) {
+                    constructor: function ContentWidgetComponent(...args) {
                         dModel.prototype.constructor.apply(this, args);
                     },
                     initialize: function(o, opt, ...rest) {
@@ -171,5 +171,5 @@ define(function(require) {
         }
     });
 
-    return ContentWidnetComponent;
+    return ContentWidgetComponent;
 });
