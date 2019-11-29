@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -36,7 +38,20 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->repository = $this->createMock(SlugRepository::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
-        $this->uniqueSlugResolver = new UniqueSlugResolver($this->repository, $this->aclHelper);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->repository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
+
+        $this->uniqueSlugResolver = new UniqueSlugResolver($registry, $this->aclHelper);
     }
 
     public function testResolveNewSlug()

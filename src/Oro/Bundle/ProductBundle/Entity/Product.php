@@ -430,6 +430,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false
      *          }
      *      }
      * )

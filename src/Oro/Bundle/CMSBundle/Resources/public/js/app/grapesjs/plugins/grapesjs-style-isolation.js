@@ -28,8 +28,9 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
         return cssText.replace(componentCssIdRegexp, '');
     }
 
-    editor.getIsolatedHtml = () => {
+    editor.getIsolatedHtml = content => {
         let html = escapeWrapper(editor.getHtml());
+        content ? html = content : html;
         html = !html ? html : '<div ' + uniqId + '>' + html + '</div>';
         return html;
     };

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
@@ -24,10 +26,19 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);
 
-        $this->provider = new MasterCatalogRootProvider(
-            $this->categoryRepository,
-            $this->tokenAccessor
-        );
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
+
+        $this->provider = new MasterCatalogRootProvider($registry, $this->tokenAccessor);
     }
 
     public function testGetMasterCatalogRootForCurrentOrganization()

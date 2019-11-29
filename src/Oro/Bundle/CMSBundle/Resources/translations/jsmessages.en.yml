@@ -18,12 +18,26 @@ oro.cms:
         content_widget:
             title: 'Select content widget'
             type: 'Content Widget'
+        digital_asset:
+            image:
+                title: 'Select image'
+            file:
+                title: 'Select file'
         component:
             content_block: 'Content Block'
             content_widget: 'Content Widget'
             code: 'Code'
             link_button: 'Link Button'
             table: 'Table'
+            digital_asset:
+                image: 'Image'
+                file: 'File'
+        validation:
+            import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
+        import:
+            label: 'Paste here your HTML/CSS and click Import'
+            title: 'Import'
+            button: 'Import'
     change_type:
         confirmation:
             title: 'Change Type'

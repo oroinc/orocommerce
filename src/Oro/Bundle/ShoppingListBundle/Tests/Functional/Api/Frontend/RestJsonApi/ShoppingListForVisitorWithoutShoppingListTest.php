@@ -18,9 +18,11 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
     protected function setUp()
     {
         parent::setUp();
+        $this->enableVisitor();
         $this->loadFixtures([
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list_for_visitor.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
@@ -55,7 +57,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetListForNewVisitor()
@@ -67,7 +69,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToAddToCart()
@@ -83,7 +85,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToAddToCartForDefaultShoppingListForNewVisitor()
@@ -95,7 +97,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGet()
@@ -109,7 +111,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetForDefaultShoppingList()
@@ -123,7 +125,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetForDefaultShoppingListForNewVisitor()
@@ -135,7 +137,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testGetLineItemsFilteredByDefaultShoppingListForNewVisitor()
@@ -147,7 +149,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetNotVisitorShoppingList()
@@ -161,7 +163,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdate()
@@ -186,7 +188,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdateNotVisitorShoppingList()
@@ -211,7 +213,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToDeleteWithDefaultPermissions()
@@ -227,7 +229,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToCreateWithDefaultPermissions()
@@ -241,7 +243,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetListWhenVisitorHasNoAccessToEditShoppingList()
@@ -255,7 +257,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToGetWhenGusetShoppingListFeatureIsDisabled()
@@ -269,7 +271,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToAddToCartWhenGusetShoppingListFeatureIsDisabled()
@@ -285,7 +287,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdateWhenGusetShoppingListFeatureIsDisabled()
@@ -310,7 +312,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
             false
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testOptionsWhenGusetShoppingListFeatureIsDisabled()

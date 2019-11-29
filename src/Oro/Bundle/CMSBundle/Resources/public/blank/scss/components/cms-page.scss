@@ -1,18 +1,31 @@
 /* @theme: blank; */
 
 .cms-page {
-
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         margin-bottom: $cms-page-heading-offset;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     :first-child {
-        margin-top: 0;
+        margin-top: 0
     }
 
     p,
     address {
-        margin: $cms-page-paragraph-offset;
+        margin-bottom: $cms-page-paragraph-offset;
+
+        &:last-child {
+            margin-bottom: 0;
+
+        }
     }
 
     small {
@@ -75,16 +88,14 @@
         list-style-type: $cms-page-ol-list-style-type;
     }
 
-    dl {
-        dt {
-            font-weight: font-weight('bold');
-            margin-bottom: $offset-half;
-        }
+    dt {
+        font-weight: font-weight('bold');
+        margin-bottom: $offset-half;
+    }
 
-        dd {
-            margin-left: $offset-default;
-            margin-bottom: $offset-default;
-        }
+    dd {
+        margin-left: $offset-default;
+        margin-bottom: $offset-default;
     }
 
     img {
@@ -135,18 +146,18 @@
         font-style: italic;
     }
 
-    & .cms-page__figure_right,
-    & .cms-page__figure_left {
+    .cms-page__figure_right,
+    .cms-page__figure_left {
         clear: both;
     }
 
 
-    & .cms-page__figure_right {
+    .cms-page__figure_right {
         float: right;
         margin-left: $cms-page-figcaption-offset-left;
     }
 
-    & .cms-page__figure_left {
+    .cms-page__figure_left {
         float: left;
         margin-right: $cms-page-figcaption-offset-right;
     }
@@ -185,8 +196,8 @@
 
 @include breakpoint('tablet-small') {
     .cms-page {
-        & .cms-page__figure_right,
-        & .cms-page__figure_left {
+        .cms-page__figure_right,
+        .cms-page__figure_left {
             float: none;
             margin: $cms-page-figure-offset;
         }

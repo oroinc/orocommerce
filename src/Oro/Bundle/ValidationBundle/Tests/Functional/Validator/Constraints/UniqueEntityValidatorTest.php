@@ -1,57 +1,56 @@
 <?php
 
-namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Functional\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\TestFrameworkBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntityValidator;
-use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
-use Symfony\Bridge\Doctrine\Tests\Fixtures\SingleIntIdEntity;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="unique_entity_validator_test")
+ * @dbIsolationPerTest
  */
-class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
+class UniqueEntityValidatorTest extends WebTestCase
 {
     /**
      * @var UniqueEntityValidator
      */
-    protected $validator;
+    private $validator;
 
     /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry
      */
-    protected $registry;
+    private $registry;
 
-    protected $em;
+    /**
+     * @var ObjectManager
+     */
+    private $em;
 
     public function setUp()
     {
-        $this->em = DoctrineTestHelper::createTestEntityManager();
-        $this->registry = $this->createRegistryMock();
+        $this->initClient([], $this->generateBasicAuthHeader());
 
-        $schemaTool = new SchemaTool($this->em);
-        $schemaTool->createSchema(
-            [
-                $this->em->getClassMetadata('Symfony\Bridge\Doctrine\Tests\Fixtures\SingleIntIdEntity'),
-                $this->em->getClassMetadata('Symfony\Bridge\Doctrine\Tests\Fixtures\DoubleNameEntity'),
-                $this->em->getClassMetadata('Symfony\Bridge\Doctrine\Tests\Fixtures\CompositeIntIdEntity'),
-                $this->em->getClassMetadata('Symfony\Bridge\Doctrine\Tests\Fixtures\AssociationEntity'),
-            ]
-        );
+        $this->registry = $this->getContainer()->get('doctrine');
+        $this->em = $this->registry->getManager();
 
         $this->validator = new UniqueEntityValidator($this->registry);
     }
 
-    protected function createContext($constraint)
+    /**
+     * @param Constraint $constraint
+     * @return ExecutionContext
+     */
+    protected function createContext(Constraint $constraint)
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $validator = $this->createMock(ValidatorInterface::class);
@@ -73,17 +72,6 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($contextualValidator));
 
         return $context;
-    }
-
-    protected function createRegistryMock()
-    {
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
-            ->method('getManager')
-            ->with($this->equalTo('foo'))
-            ->will($this->returnValue($this->em));
-
-        return $registry;
     }
 
     /**
@@ -120,11 +108,19 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function validate($constraint, $context)
+    /**
+     * @param Constraint $constraint
+     * @param ExecutionContextInterface $context
+     */
+    protected function validate(Constraint $constraint, ExecutionContextInterface $context)
     {
-        $entity1 = new SingleIntIdEntity(1, 'Foo');
-        $entity2 = new SingleIntIdEntity(2, 'Foo');
+        $entity1 = new Product();
+        $entity1->setName('Foo');
 
+        $entity2 = new Product();
+        $entity2->setName('Foo');
+
+        $this->validator->initialize($context);
         $this->validator->validate($entity1, $constraint);
 
         $this->assertSame(
@@ -154,7 +150,7 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
             [
                 'message' => 'myMessage',
                 'fields' => ['name'],
-                'em' => 'foo',
+                'em' => 'default',
                 'buildViolationAtEntityLevel' => true,
             ]
         );
@@ -195,7 +191,7 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
             [
                 'message' => 'myMessage',
                 'fields' => ['name'],
-                'em' => 'foo',
+                'em' => 'default',
                 'buildViolationAtEntityLevel' => false,
             ]
         );

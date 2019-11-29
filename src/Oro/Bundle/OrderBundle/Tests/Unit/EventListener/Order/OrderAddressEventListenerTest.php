@@ -6,10 +6,10 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Tests\Fixtures\Type;
 use Symfony\Component\Templating\EngineInterface;
 
 class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
@@ -41,7 +41,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
 
         $type = $this->createMock('Symfony\Component\Form\ResolvedFormTypeInterface');
-        $type->expects($this->once())->method('getInnerType')->willReturn(new Type());
+        $type->expects($this->once())->method('getInnerType')->willReturn(new FormType());
 
         $formConfig = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $formConfig->expects($this->once())->method('getType')->willReturn($type);
@@ -93,7 +93,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())->method('add')->with('billingAddress', Type::class, $this->isType('array'))
+        $builder->expects($this->once())->method('add')->with('billingAddress', FormType::class, $this->isType('array'))
             ->willReturnSelf();
         $builder->expects($this->once())->method('getForm')->willReturn($newForm);
         $this->formFactory->expects($this->once())->method('createNamedBuilder')->willReturn($builder);

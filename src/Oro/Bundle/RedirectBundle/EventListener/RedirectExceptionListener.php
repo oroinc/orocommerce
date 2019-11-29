@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
-use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -18,9 +18,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class RedirectExceptionListener
 {
     /**
-     * @var RedirectRepository
+     * @var ManagerRegistry
      */
-    private $repository;
+    private $registry;
 
     /**
      * @var ScopeManager
@@ -33,16 +33,16 @@ class RedirectExceptionListener
     private $matchedUrlDecisionMaker;
 
     /**
-     * @param RedirectRepository $repository
+     * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      */
     public function __construct(
-        RedirectRepository $repository,
+        ManagerRegistry $registry,
         ScopeManager $scopeManager,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker
     ) {
-        $this->repository = $repository;
+        $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
@@ -103,11 +103,14 @@ class RedirectExceptionListener
         $scopeCriteria = $this->scopeManager->getCriteria('web_content');
         $delimiter = sprintf('/%s/', SluggableUrlGenerator::CONTEXT_DELIMITER);
 
+        $repository = $this->registry->getManagerForClass(Redirect::class)
+            ->getRepository(Redirect::class);
+
         if (strpos($url, $delimiter) !== false) {
             list($contextUrl, $itemSlugPrototype) = explode($delimiter, $url);
 
-            $contextRedirect = $this->repository->findByUrl($contextUrl, $scopeCriteria);
-            $prototypeRedirect = $this->repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
+            $contextRedirect = $repository->findByUrl($contextUrl, $scopeCriteria);
+            $prototypeRedirect = $repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
 
             if ($contextRedirect || $prototypeRedirect) {
                 $contextRedirectUrl = $contextRedirect ? $contextRedirect->getTo() : $contextUrl;
@@ -121,7 +124,7 @@ class RedirectExceptionListener
             }
         }
 
-        return $this->repository->findByUrl($url, $scopeCriteria);
+        return $repository->findByUrl($url, $scopeCriteria);
     }
 
     /**

@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +24,15 @@ class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $translator = new StubTranslator();
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                static function (string $key) {
+                    return sprintf('[trans]%s[/trans]', $key);
+                }
+            );
+
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();

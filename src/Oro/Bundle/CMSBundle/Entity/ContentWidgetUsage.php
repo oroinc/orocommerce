@@ -9,7 +9,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * Holds information about content widget relations.
  *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetUsageRepository")
- * @ORM\Table(name="oro_cms_content_widget_usage")
+ * @ORM\Table(name="oro_cms_content_widget_usage", uniqueConstraints={
+ *      @ORM\UniqueConstraint(
+ *          name="uidx_oro_cms_content_widget_usage",
+ *          columns={"entity_class", "entity_id", "entity_field", "content_widget_id"}
+ *     )
+ * })
  * @Config(
  *      mode="hidden"
  * )
@@ -46,6 +51,13 @@ class ContentWidgetUsage
      * @ORM\Column(name="entity_id", type="integer", nullable=false)
      */
     protected $entityId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="entity_field", type="string", length=50, nullable=true)
+     */
+    protected $entityField;
 
     /**
      * @return null|int
@@ -108,6 +120,25 @@ class ContentWidgetUsage
     public function setEntityId(int $entityId): self
     {
         $this->entityId = $entityId;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEntityField(): ?string
+    {
+        return $this->entityField;
+    }
+
+    /**
+     * @param string $entityField
+     * @return ContentWidgetUsage
+     */
+    public function setEntityField(string $entityField): self
+    {
+        $this->entityField = $entityField;
 
         return $this;
     }

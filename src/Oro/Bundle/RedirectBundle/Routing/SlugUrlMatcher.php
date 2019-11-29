@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -31,9 +32,9 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected $router;
 
     /**
-     * @var SlugRepository
+     * @var ManagerRegistry
      */
-    protected $slugRepository;
+    protected $registry;
 
     /**
      * @var ScopeManager
@@ -72,20 +73,20 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
 
     /**
      * @param RouterInterface $router
-     * @param SlugRepository $slugRepository
+     * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      * @param AclHelper $aclHelper
      */
     public function __construct(
         RouterInterface $router,
-        SlugRepository $slugRepository,
+        ManagerRegistry $registry,
         ScopeManager $scopeManager,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         AclHelper $aclHelper
     ) {
         $this->router = $router;
-        $this->slugRepository = $slugRepository;
+        $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
         $this->aclHelper = $aclHelper;
@@ -291,7 +292,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         $url = $this->getCleanUrl($url);
 
-        return $this->slugRepository
+        return $this->getSlugRepository()
             ->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
     }
 
@@ -303,8 +304,17 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         $url = $this->getCleanUrl($url);
 
-        return $this->slugRepository
+        return $this->getSlugRepository()
             ->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
+    }
+
+    /**
+     * @return SlugRepository
+     */
+    private function getSlugRepository(): SlugRepository
+    {
+        return $this->registry->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class);
     }
 
     /**

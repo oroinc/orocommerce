@@ -40,9 +40,11 @@ class WYSIWYGType extends AbstractType
         $scope = $this->purifierScopeProvider->getScope($dataClass, $form->getName());
         if ($scope) {
             $allowedElements = $this->htmlTagProvider->getAllowedElements($scope);
-            $options['page-component']['options']['allow_tags'] = $allowedElements;
+        } else {
+            $allowedElements = false;
         }
 
+        $options['page-component']['options']['allow_tags'] = $allowedElements;
         $options['page-component']['options']['autoRender'] = $options['auto_render'];
         $options['page-component']['options']['stylesInputSelector'] = sprintf(
             '[data-grapesjs-styles="%s"]',

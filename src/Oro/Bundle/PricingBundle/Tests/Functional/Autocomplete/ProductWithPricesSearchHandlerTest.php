@@ -56,13 +56,13 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
         /**
          * @var PriceList $priceList
          */
-        $priceList = $this->getClient()->getContainer()->get('oro_pricing.model.price_list_request_handler')
+        $priceList = $this->getClientInstance()->getContainer()->get('oro_pricing.model.price_list_request_handler')
             ->getPriceList();
 
-        $shardManager = $this->getClient()->getContainer()->get('oro_pricing.shard_manager');
+        $shardManager = $this->getClientInstance()->getContainer()->get('oro_pricing.shard_manager');
 
         /** @var ProductPrice[] $prices */
-        $prices = $this->getClient()->getContainer()->get('doctrine')
+        $prices = $this->getClientInstance()->getContainer()->get('doctrine')
             ->getRepository(ProductPrice::class)
             ->findByPriceList($shardManager, $priceList, []);
 
@@ -102,7 +102,7 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
         $productIds = array_column($items['results'], 'id');
 
         /** @var Product[] $products */
-        $products = $this->getClient()->getContainer()->get('doctrine')
+        $products = $this->getClientInstance()->getContainer()->get('doctrine')
             ->getRepository(Product::class)
             ->findById($productIds);
 

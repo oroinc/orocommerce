@@ -19,7 +19,7 @@ services:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
             - '@router.default'
-            - '@oro_redirect.repository.slug'
+            - '@doctrine'
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
             - '@oro_security.acl_helper'
@@ -134,7 +134,7 @@ services:
         class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
         public: false
         arguments:
-            - "@oro_redirect.repository.slug"
+            - "@doctrine"
             - '@oro_security.acl_helper'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
@@ -197,7 +197,7 @@ services:
         arguments:
            - '@oro_message_queue.job.runner'
            - '@oro_message_queue.client.message_producer'
-           - '@oro_redirect.repository.slug'
+           - '@doctrine'
            - '@monolog.logger'
            - '@oro_redirect.url_cache'
         tags:
@@ -254,7 +254,7 @@ services:
         class: Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper
         public: false
         arguments:
-            - '@oro_redirect.repository.slug'
+            - '@doctrine'
             - '@oro_redirect.url_cache'
 
     oro_redirect.routing.sluggable_url_generator:
@@ -371,12 +371,6 @@ services:
         tags:
             - { name: 'kernel.cache_warmer' }
 
-    oro_redirect.repository.slug:
-        class: Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository
-        parent: oro_entity.abstract_repository
-        arguments:
-            - '%oro_redirect.entity.slug.class%'
-
     oro_redirect.helper.changed_slugs_helper:
         class: Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper
         arguments:
@@ -388,16 +382,10 @@ services:
     Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper:
         alias: oro_redirect.helper.changed_slugs_helper
 
-    oro_redirect.repository.redirect:
-        class: Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository
-        parent: oro_entity.abstract_repository
-        arguments:
-            - '%oro_redirect.entity.redirect.class%'
-
     oro_redirect.event_listener.redirect_exception_listener:
         class: Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener
         arguments:
-            - '@oro_redirect.repository.redirect'
+            - '@doctrine'
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
         tags:

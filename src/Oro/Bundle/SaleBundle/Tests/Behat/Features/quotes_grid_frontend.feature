@@ -79,8 +79,6 @@ Feature: Quotes Grid Frontend
     Then number of records in "AllQuotes" should be 13
     And I reset "AllQuotes" grid
 
-  # Unskip when BB-15406 is resolved.
-  @skip
   Scenario: Enable & Check Status filter
     Given number of records in "AllQuotes" should be 13
     And I show filter "Status" in "AllQuotes" frontend grid

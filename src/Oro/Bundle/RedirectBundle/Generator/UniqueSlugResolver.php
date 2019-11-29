@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -18,9 +20,9 @@ class UniqueSlugResolver
     const SLUG_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
     /**
-     * @var SlugRepository
+     * @var ManagerRegistry
      */
-    protected $repository;
+    protected $registry;
 
     /**
      * @var AclHelper
@@ -35,12 +37,12 @@ class UniqueSlugResolver
     private $processedUrls = [];
 
     /**
-     * @param SlugRepository $repository
+     * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
      */
-    public function __construct(SlugRepository $repository, AclHelper $aclHelper)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
-        $this->repository = $repository;
+        $this->registry = $registry;
         $this->aclHelper = $aclHelper;
     }
 
@@ -101,7 +103,7 @@ class UniqueSlugResolver
         if (preg_match(self::INCREMENTED_SLUG_PATTERN, $slug, $matches)) {
             $baseSlug = $matches[1];
 
-            $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder($baseSlug, $entity);
+            $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($baseSlug, $entity);
             if ($this->aclHelper->apply($qb)->getOneOrNullResult()) {
                 return $baseSlug;
             }
@@ -143,7 +145,7 @@ class UniqueSlugResolver
             return true;
         }
 
-        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
+        $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
 
         return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
     }
@@ -155,7 +157,7 @@ class UniqueSlugResolver
      */
     private function findStoredUrls(string $slug, SluggableInterface $entity)
     {
-        return $this->repository->findAllDirectUrlsByPattern(
+        return $this->getSlugRepository()->findAllDirectUrlsByPattern(
             sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug),
             $entity
         );
@@ -197,5 +199,14 @@ class UniqueSlugResolver
     {
         return !empty($this->processedUrls[$slug])
             && $this->processedUrls[$slug] !== $this->getEntityIdentifier($entity);
+    }
+
+    /**
+     * @return SlugRepository
+     */
+    private function getSlugRepository(): SlugRepository
+    {
+        return $this->registry->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class);
     }
 }

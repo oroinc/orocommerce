@@ -9,6 +9,7 @@ import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
+import 'orocms/js/app/grapesjs/plugins/import/import';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 
 /**
@@ -48,6 +49,12 @@ const GrapesjsEditorView = BaseView.extend({
     contextClass: 'body cms-page',
 
     /**
+     * State of changes in editor
+     * @property {Boolean}
+     */
+    componentUpdated: false,
+
+    /**
      * Main builder options
      * @property {Object}
      */
@@ -55,6 +62,7 @@ const GrapesjsEditorView = BaseView.extend({
         height: '2000px',
         avoidInlineStyle: true,
         avoidFrameOffset: true,
+        allowScripts: 1,
 
         /**
          * Color picker options
@@ -163,13 +171,14 @@ const GrapesjsEditorView = BaseView.extend({
             },
             navbarOpts: false,
             countdownOpts: false,
-            customStyleManager: ModuleManager.getModule('style-manager'),
             modalImportContent: function(editor) {
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
-            }
+            },
+            importViewerOptions: {}
         },
         'grapesjs-components': {},
-        'grapesjs-style-isolation': {}
+        'grapesjs-style-isolation': {},
+        'grapesjs-import': {}
     },
 
     events: {
@@ -193,6 +202,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
         this.$propertiesInputElement = this.$parent.find(this.propertiesInputSelector);
+        this.setAlternativeFields();
 
         if (this.allow_tags) {
             this.builderPlugins['grapesjs-components'] = _.extend({},
@@ -288,19 +298,18 @@ const GrapesjsEditorView = BaseView.extend({
             , {
                 avoidInlineStyle: 1,
                 container: this.$container.get(0),
-                components: escapeWrapper(this.$el.val())
+                components: !_.isEmpty(this.JSONcomponents) ? this.JSONcomponents : escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
+
+        // Ensures all changes to sectors, properties and types are applied.
+        this.builder.StyleManager.getSectors().reset(ModuleManager.getModule('style-manager'));
 
         this.builder.setIsolatedStyle(
             this.$stylesInputElement.val()
         );
 
         mediator.trigger('grapesjs:created', this.builder);
-
-        if (_.isEmpty(this.JSONcomponents)) {
-            this.builder.addComponents(this.JSONcomponents);
-        }
 
         this.builderDelegateEvents();
     },
@@ -309,15 +318,17 @@ const GrapesjsEditorView = BaseView.extend({
      * Add builder event listeners
      */
     builderDelegateEvents: function() {
-        this.$el.closest('form').on(
-            'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
-            , _.bind(function(e) {
-                const keyCode = e.keyCode || e.which;
-                if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, this));
+        this.$el.closest('form')
+            .on(
+                'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
+                , _.bind(function(e) {
+                    const keyCode = e.keyCode || e.which;
+                    if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }, this))
+            .on('submit', _.bind(this.contentValidate, this));
 
         this.builder.on('load', _.bind(this._onLoadBuilder, this));
         this.builder.on('update', _.bind(this._onUpdatedBuilder, this));
@@ -337,7 +348,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Remove builder event listeners
      */
     builderUndelegateEvents: function() {
-        this.$el.closest('form').off(this.eventNamespace());
+        this.$el.closest('form').off();
         mediator.off('dropdown-button:click');
 
         if (this.builder) {
@@ -372,6 +383,40 @@ const GrapesjsEditorView = BaseView.extend({
         const contentBlockAliasField = this.form.find('[name="oro_cms_content_block[alias]"]');
         if (contentBlockAliasField.length && contentBlockAliasField.val()) {
             this.builderOptions.contentBlockAlias = contentBlockAliasField.val();
+        }
+    },
+
+    setAlternativeFields: function() {
+        const fieldPrefix = this.$el.attr('data-name');
+        const styleFiledName = fieldPrefix + '-style';
+        const propertiesFiledName = fieldPrefix + '-properties';
+
+        if (!this.$stylesInputElement.length) {
+            this.$stylesInputElement = $('[data-name="' + styleFiledName + '"]');
+        }
+
+        if (!this.$propertiesInputElement.length) {
+            this.$propertiesInputElement = $('[data-name="' + propertiesFiledName + '"]');
+        }
+    },
+
+    /**
+     * Validation by tags
+     * @param e {Object}
+     */
+    contentValidate: function(e) {
+        const _res = this.builder.ComponentRestriction.validate(
+            this.builder.getIsolatedHtml(this.$el.val())
+        );
+        const validationMessage = _.__('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
+
+        if (_res.length) {
+            e.preventDefault();
+            mediator.execute('showFlashMessage', 'error', validationMessage, {
+                delay: 5000
+            });
+
+            return false;
         }
     },
 
@@ -442,8 +487,6 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _onComponentUpdatedBuilder: function(state) {
-        // TODO: Should be removed after fix behat methods
-        this.componentUpdated = false;
         if (!this.componentUpdated) {
             mediator.on('dropdown-button:click', this._onComponentUpdatedBuilder, this);
         }

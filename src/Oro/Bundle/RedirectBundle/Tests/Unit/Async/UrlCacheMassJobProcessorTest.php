@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -39,6 +42,11 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
     private $repository;
 
     /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $registry;
+
+    /**
      * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
@@ -57,13 +65,20 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->jobRunner = new TestJobRunner();
 
-        $this->producer = $this->getMockBuilder(MessageProducerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->repository = $this->createMock(SlugRepository::class);
 
-        $this->repository = $this->getMockBuilder(SlugRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->repository);
+
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Slug::class)
+            ->willReturn($manager);
 
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->cache = $this->createMock(UrlCacheInterface::class);
@@ -71,7 +86,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor = new UrlCacheMassJobProcessor(
             $this->jobRunner,
             $this->producer,
-            $this->repository,
+            $this->registry,
             $this->logger,
             $this->cache
         );
@@ -166,7 +181,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
         $processor = new UrlCacheMassJobProcessor(
             $this->jobRunner,
             $this->producer,
-            $this->repository,
+            $this->registry,
             $this->logger,
             $cache
         );
@@ -274,7 +289,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor = new UrlCacheMassJobProcessor(
             $jobRunner,
             $this->producer,
-            $this->repository,
+            $this->registry,
             $this->logger,
             $this->cache
         );
@@ -335,7 +350,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor = new UrlCacheMassJobProcessor(
             $jobRunner,
             $this->producer,
-            $this->repository,
+            $this->registry,
             $this->logger,
             $this->cache
         );

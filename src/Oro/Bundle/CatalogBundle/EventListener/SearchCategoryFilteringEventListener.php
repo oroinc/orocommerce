@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -30,24 +31,24 @@ class SearchCategoryFilteringEventListener
     /** @var RequestProductHandler $requestProductHandler */
     private $requestProductHandler;
 
-    /** @var CategoryRepository */
-    private $repository;
+    /** @var ManagerRegistry */
+    private $registry;
 
     /** @var SubcategoryProvider */
     private $categoryProvider;
 
     /**
      * @param RequestProductHandler $requestProductHandler
-     * @param CategoryRepository $categoryRepository
+     * @param ManagerRegistry $registry
      * @param SubcategoryProvider $categoryProvider
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
-        CategoryRepository $categoryRepository,
+        ManagerRegistry $registry,
         SubcategoryProvider $categoryProvider
     ) {
         $this->requestProductHandler = $requestProductHandler;
-        $this->repository = $categoryRepository;
+        $this->registry = $registry;
         $this->categoryProvider = $categoryProvider;
     }
 
@@ -95,7 +96,7 @@ class SearchCategoryFilteringEventListener
     protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId, $includeSubcategories)
     {
         /** @var Category $category */
-        $category = $this->repository->find($categoryId);
+        $category = $this->getCategoryRepository()->find($categoryId);
         $subcategories = $this->categoryProvider->getAvailableSubcategories($category);
 
         $filters = $config->offsetGetByPath(Configuration::FILTERS_PATH, []);
@@ -164,7 +165,7 @@ class SearchCategoryFilteringEventListener
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId, $includeSubcategories = false)
     {
         /** @var Category $category */
-        $category = $this->repository->find($categoryId);
+        $category = $this->getCategoryRepository()->find($categoryId);
 
         if (!$includeSubcategories) {
             $query->addWhere(Criteria::expr()->eq('text.category_path', $category->getMaterializedPath()));
@@ -201,5 +202,14 @@ class SearchCategoryFilteringEventListener
             $parameters->get(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY, false),
             FILTER_VALIDATE_BOOLEAN
         );
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    private function getCategoryRepository(): CategoryRepository
+    {
+        return $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class);
     }
 }

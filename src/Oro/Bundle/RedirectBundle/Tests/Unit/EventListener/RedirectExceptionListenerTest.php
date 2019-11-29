@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener;
@@ -42,8 +44,20 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Redirect::class)
+            ->willReturn($this->repository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Redirect::class)
+            ->willReturn($manager);
+
         $this->listener = new RedirectExceptionListener(
-            $this->repository,
+            $registry,
             $this->scopeManager,
             $this->matchedUrlDecisionMaker
         );

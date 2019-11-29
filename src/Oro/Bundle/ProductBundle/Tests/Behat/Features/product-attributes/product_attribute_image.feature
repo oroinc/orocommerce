@@ -25,9 +25,9 @@ Feature: Product attribute image
     And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
 
     When I fill form with:
-      | File Size        | 10   |
-      | Thumbnail Width  | 1900 |
-      | Thumbnail Height | 1200 |
+      | File Size (MB)        | 10   |
+      | Thumbnail Width       | 1900 |
+      | Thumbnail Height      | 1200 |
     When I save and close form
     Then I should see "Attribute was successfully saved" flash message
 

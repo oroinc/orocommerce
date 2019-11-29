@@ -40,7 +40,9 @@ define(function(require) {
         this.editor = editor;
         this.allowTags = this._prepearAllowTagsCollection(options.allowTags);
 
-        this.resolveRestriction();
+        if (options.allowTags !== false) {
+            this.resolveRestriction();
+        }
     };
 
     ComponentRestriction.prototype = {
@@ -89,7 +91,7 @@ define(function(require) {
          * @returns {Array}
          */
         getTags: function(element) {
-            return getTags(element);
+            return _.uniq(getTags(element));
         },
 
         /**
@@ -128,6 +130,22 @@ define(function(require) {
                 }
                 return isAllowed;
             }, this);
+        },
+
+        validate: function(template) {
+            const restricted = [];
+
+            try {
+                _.each(this.getTags($(template).get(0)), function(tag) {
+                    if (!this.isAllowedTag(tag)) {
+                        restricted.push(_.capitalize(tag));
+                    }
+                }, this);
+            } catch (e) {
+                return restricted;
+            }
+
+            return _.uniq(restricted);
         },
 
         /**

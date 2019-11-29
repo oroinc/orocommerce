@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -58,9 +60,21 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
+
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
-            $this->categoryRepository,
+            $registry,
             $this->categoryTreeProvider,
             $this->tokenAccessor
         );

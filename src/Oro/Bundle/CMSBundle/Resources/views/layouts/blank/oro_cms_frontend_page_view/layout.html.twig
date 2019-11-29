@@ -8,6 +8,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " cms-page"
     }) %}
+
     <div{{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
     </div>
