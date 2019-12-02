@@ -80,7 +80,7 @@
         <% if (prices.length) { %>
         <tr>
             <td colspan="2" class="text-capitalize">
-                <%- addNewLine ? '<br/>' : '' %>
+                <% if (addNewLine) { %><br/><% } %>
                 <b><%- _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
             </td>
         </tr>
