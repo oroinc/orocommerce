@@ -30,12 +30,16 @@ define(function(require) {
          * @private
          */
         _addBlock: function() {
-            this.editor.BlockManager.add('image', {
-                label: __('oro.cms.wysiwyg.component.digital_asset.image'),
-                attributes: {
-                    'class': 'fa fa-picture-o'
-                }
-            });
+            if (this.editor.ComponentRestriction.isAllow([
+                'img'
+            ])) {
+                this.editor.BlockManager.add('image', {
+                    label: __('oro.cms.wysiwyg.component.digital_asset.image'),
+                    attributes: {
+                        'class': 'fa fa-picture-o'
+                    }
+                });
+            }
         },
 
         /**

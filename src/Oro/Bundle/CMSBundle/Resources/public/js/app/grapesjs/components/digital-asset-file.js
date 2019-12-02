@@ -26,17 +26,21 @@ define(function(require) {
         },
 
         _addBlock: function() {
-            this.editor.BlockManager.add('file', {
-                id: 'file',
-                label: __('oro.cms.wysiwyg.component.digital_asset.file'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-file-o'
-                },
-                content: {
-                    type: 'file'
-                }
-            });
+            if (this.editor.ComponentRestriction.isAllow([
+                'a'
+            ])) {
+                this.editor.BlockManager.add('file', {
+                    id: 'file',
+                    label: __('oro.cms.wysiwyg.component.digital_asset.file'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-file-o'
+                    },
+                    content: {
+                        type: 'file'
+                    }
+                });
+            }
         },
 
         /**

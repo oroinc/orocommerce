@@ -405,6 +405,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @param e {Object}
      */
     contentValidate: function(e) {
+        if (!this.allow_tags) {
+            return;
+        }
         const _res = this.builder.ComponentRestriction.validate(
             this.builder.getIsolatedHtml(this.$el.val())
         );

@@ -38,9 +38,9 @@ define(function(require) {
      */
     const ComponentRestriction = function(editor, options) {
         this.editor = editor;
-        this.allowTags = this._prepearAllowTagsCollection(options.allowTags);
+        this.allowTags = options.allowTags ? this._prepearAllowTagsCollection(options.allowTags) : false;
 
-        if (options.allowTags !== false) {
+        if (options.allowTags) {
             this.resolveRestriction();
         }
     };
@@ -109,6 +109,10 @@ define(function(require) {
          * @returns {*}
          */
         isAllow: function(tags) {
+            if (!this.editor.allow_tags) {
+                return true;
+            }
+
             if (_.isString(tags)) {
                 return this.isAllowedTag(tags);
             }

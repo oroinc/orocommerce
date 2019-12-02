@@ -143,13 +143,20 @@ define(function(require) {
             });
 
             this.viewerEditor.refresh();
-            this.checkContent(this.viewerEditor);
+
+            if (this.editor.ComponentRestriction.allowTags) {
+                this.checkContent(this.viewerEditor);
+            }
+
             this.bindEvents();
         },
 
         bindEvents: function() {
-            this.viewerEditor.on('change', _.throttle(_.bind(this.checkContent, this), 500));
-            this.viewerEditor.on('blur', _.bind(this.checkContent, this));
+            if (this.editor.ComponentRestriction.allowTags) {
+                this.viewerEditor.on('change', _.throttle(_.bind(this.checkContent, this), 500));
+                this.viewerEditor.on('blur', _.bind(this.checkContent, this));
+            }
+
             this.importButton.on('click', _.bind(this.onImportCode, this));
         },
 

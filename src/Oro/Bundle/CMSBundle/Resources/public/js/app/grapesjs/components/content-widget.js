@@ -22,6 +22,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.editor = options;
             const ComponentId = 'content-widget';
             const domComps = options.DomComponents;
             const commands = options.Commands;
@@ -29,18 +30,6 @@ define(function(require) {
             const dModel = dType.model;
             const dView = dType.view;
             const datagridName = 'cms-block-content-widget-grid';
-
-            options.BlockManager.add(ComponentId, {
-                id: ComponentId,
-                label: _.__('oro.cms.wysiwyg.component.content_widget'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-object-ungroup'
-                },
-                content: {
-                    type: ComponentId
-                }
-            });
 
             commands.add('content-widget-settings', function(editor, sender, event) {
                 const routeParams = {
@@ -168,6 +157,26 @@ define(function(require) {
                     }
                 })
             });
+
+            this.createComponentButton();
+        },
+
+        createComponentButton: function() {
+            if (this.editor.ComponentRestriction.isAllow([
+                'div'
+            ])) {
+                this.editor.BlockManager.add('content-widget', {
+                    id: 'content-widget',
+                    label: _.__('oro.cms.wysiwyg.component.content_widget'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-object-ungroup'
+                    },
+                    content: {
+                        type: 'content-widget'
+                    }
+                });
+            }
         }
     });
 

@@ -48,17 +48,21 @@ define(function(require) {
         },
 
         createComponentButton: function() {
-            this.editor.BlockManager.add('link-button', {
-                id: 'link-button',
-                label: _.__('oro.cms.wysiwyg.component.link_button'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-hand-pointer-o'
-                },
-                content: {
-                    type: 'link-button'
-                }
-            });
+            if (this.editor.ComponentRestriction.isAllow([
+                'a'
+            ])) {
+                this.editor.BlockManager.add('link-button', {
+                    id: 'link-button',
+                    label: _.__('oro.cms.wysiwyg.component.link_button'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-hand-pointer-o'
+                    },
+                    content: {
+                        type: 'link-button'
+                    }
+                });
+            }
         }
     });
 
