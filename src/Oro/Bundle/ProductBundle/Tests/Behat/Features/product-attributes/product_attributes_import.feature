@@ -238,11 +238,14 @@ Feature: Product attributes import
   Scenario: It should be impossible to import columns with invalid field name
     Given I go to Products/ Product Attributes
     And I fill template with data:
-      | fieldName                 | type   | entity.label       | datagrid.show_filter | datagrid.is_visible |
-      | <script>alert(1)</script> | string | string field Label | no                   | 0                   |
+      | fieldName          | type   | entity.label       | datagrid.show_filter | datagrid.is_visible |
+      | !_>invalid-name<_? | string | string field Label | no                   | 0                   |
     When I try import file
-    Then I should not see "Import File Field Validation" element with text "The mime type of the file is invalid" inside "Import File Form" element
-    When I reload the page
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    When I follow "Error log" link from the email
+    Then I should see "Error in row #1. fieldName: This value should start with a symbol and contain only alphabetic symbols, underscore and numbers."
+    When I login as administrator
+    And I go to Products/ Product Attributes
     Then I should not see "Update schema"
 
   Scenario: Check product attribute validation during import
