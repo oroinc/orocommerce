@@ -1,3 +1,4 @@
 css:
     inputs:
+        - 'bundles/npmassets/font-awesome/scss/font-awesome.scss': ~
         - 'bundles/orocms/css/scss/main.scss'
