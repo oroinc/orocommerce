@@ -1,4 +1,5 @@
 @ticket-BB-16378
+@ticket-BAP-18847
 Feature: Product import validation
   In order to check file for errors before import
   As an administrator
@@ -9,9 +10,9 @@ Feature: Product import validation
     And I go to System/Localization/Localizations
     And I click "Create Localization"
     And fill "Localization Form" with:
-      | Name       | Ukrainian |
-      | Title      | Ukrainian |
-      | Language   | English   |
+      | Name       | Ukrainian           |
+      | Title      | Ukrainian           |
+      | Language   | English             |
       | Formatting | Ukrainian (Ukraine) |
     And I save form
     Then I should see "Localization has been saved" flash message
@@ -20,10 +21,10 @@ Feature: Product import validation
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | attributeFamily.code | names.default.value | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.value |
-      | default_family       | Product 1           | PSKU1 | enabled | simple | in_stock            | set                            | 1                              | invalid,slug^&               |
-      | default_family       | Product 2           | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
-      | default_family       | Product 3           | PSKU3 | enabled | simple | in_stock            | set                            | 1                              |                              |
+      | names.default.value                                                                                               | attributeFamily.code | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.value |
+      | <b>Test</b><br><img src="http://test.jpg"><strong>Test</strong><a href="http://test.pdf" target="_blank">Test</a> | default_family       | PSKU1 | enabled | simple | in_stock            | set                            | 1                              | invalid,slug^&               |
+      | Product 2                                                                                                         | default_family       | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
+      | Product 3                                                                                                         | default_family       | PSKU3 | enabled | simple | in_stock            | set                            | 1                              |                              |
 
   Scenario: Check import error page from the email after validating import file
     Given I validate file
