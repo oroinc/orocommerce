@@ -282,9 +282,7 @@ const GrapesjsEditorView = BaseView.extend({
     applyComponentsJSON: function() {
         const value = this.$propertiesInputElement.val();
 
-        if (value) {
-            this.JSONcomponents = JSON.parse(value);
-        }
+        this.JSONcomponents = value ? JSON.parse(value) : [];
 
         return this.JSONcomponents;
     },
@@ -444,7 +442,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {Object}
      */
     getEditorComponents: function() {
-        return JSON.stringify(this.builder.getComponents());
+        const comps = this.builder.getComponents();
+
+        return comps.length ? JSON.stringify(this.builder.getComponents()) : '';
     },
 
     /**
@@ -527,9 +527,21 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateInitialField: function() {
-        this.$el.val(this.getEditorContent()).trigger('change');
-        this.$stylesInputElement.val(this.getEditorStyles()).trigger('change');
-        this.$propertiesInputElement.val(this.getEditorComponents()).trigger('change');
+        const htmlContent = this.getEditorContent();
+        const cssContent = this.getEditorStyles();
+        const jsonContent = this.getEditorComponents();
+
+        if (this.$el.val() !== htmlContent) {
+            this.$el.val(htmlContent).trigger('change');
+        }
+
+        if (this.$stylesInputElement.val() !== cssContent) {
+            this.$stylesInputElement.val(cssContent).trigger('change');
+        }
+
+        if (this.$propertiesInputElement.val() !== jsonContent) {
+            this.$propertiesInputElement.val(jsonContent).trigger('change');
+        }
     },
 
     /**

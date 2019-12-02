@@ -55,14 +55,14 @@ define(function(require) {
                     title: __('oro.cms.wysiwyg.digital_asset.file.title'),
                     routeName: 'oro_digital_asset_widget_choose_file',
                     onSelect: function(digitalAssetModel) {
-                        const metadata = digitalAssetModel.get('previewMetadata');
+                        const {digitalAssetId, uuid, title, filename} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetFileComponentModel
                             .setAttributes({
-                                href: '{{ wysiwyg_file('+metadata['digitalAssetId']+',\''+metadata['uuid']+'\') }}',
-                                title: metadata['title'] || ''
+                                href: `{{ wysiwyg_file('${digitalAssetId}','${uuid}') }}`,
+                                title: title || ''
                             })
-                            .set('content', metadata['filename'] || '');
+                            .set('content', filename || '');
                     }
                 }
             );

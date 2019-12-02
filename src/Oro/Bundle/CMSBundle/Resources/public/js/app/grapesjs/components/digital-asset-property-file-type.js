@@ -29,14 +29,20 @@ define(function(require) {
          * @private
          */
         _overrideFileType: function() {
-            const DefaultPropertyType = this.editor.StyleManager.getType('file');
+            const {StyleManager} = this.editor;
+
+            const DefaultPropertyType = StyleManager.getType('file');
             const DefaultView = DefaultPropertyType.view;
             const digitalAssetsComponent = this;
 
-            this.editor.StyleManager.addType(
+            StyleManager.addType(
                 'file',
                 {
                     view: DefaultView.extend({
+                        init: function(...args) {
+                            DefaultView.prototype.init.apply(this, args);
+                        },
+
                         constructor: function DigitalAssetPropertyFileView(...args) {
                             DefaultView.prototype.constructor.apply(this, args);
                         },
@@ -62,10 +68,10 @@ define(function(require) {
                          * @private
                          */
                         _onSelect: function(digitalAssetModel, command) {
-                            const metadata = digitalAssetModel.get('previewMetadata');
+                            const {digitalAssetId, uuid} = digitalAssetModel.get('previewMetadata');
 
                             this.spreadUrl(
-                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',\'' + metadata['uuid'] + '\') }}'
+                                `"{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}"`
                             );
                         },
 
@@ -73,7 +79,7 @@ define(function(require) {
                          * @inheritDoc
                          */
                         setValue: function(value, f) {
-                            value = DigitalAssetHelper.getImageUrlFromTwigTag(this.model.get('src'));
+                            value = DigitalAssetHelper.getImageUrlFromTwigTag(value);
 
                             DefaultView.prototype.setValue.apply(this, [value, f]);
                         }

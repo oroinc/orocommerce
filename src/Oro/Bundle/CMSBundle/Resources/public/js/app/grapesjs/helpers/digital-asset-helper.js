@@ -27,11 +27,11 @@ define(function(require) {
          * @param {string} twigTagString
          * @return {number|null}
          */
-        getDigitalAssetIdFromTwigTag: function(twigTagString) {
-            const regex = /{{\s*[\w_]+\s*\(\s*([0-9]+)\s*,.+?\)\s*}}/;
-            const matches = regex.exec(twigTagString);
+        getDigitalAssetIdFromTwigTag: function(twigTagString = '') {
+            const regex = /(?![wysiwyg_image\(\'])[\d]+(?=\'\,)/g;
+            const matches = twigTagString.match(regex);
 
-            return matches !== null ? matches[1] || null : null;
+            return matches && matches.length ? matches : null;
         },
 
         /**
@@ -39,6 +39,9 @@ define(function(require) {
          * @returns {string}
          */
         getImageUrl: function(digitalAssetId) {
+            if (_.isArray(digitalAssetId)) {
+                digitalAssetId = digitalAssetId[0];
+            }
             return routing.generate('oro_cms_wysiwyg_digital_asset', {id: digitalAssetId, action: 'get'});
         }
     });

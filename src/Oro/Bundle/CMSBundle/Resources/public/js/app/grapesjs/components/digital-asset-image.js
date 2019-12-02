@@ -54,13 +54,13 @@ define(function(require) {
                     title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                     routeName: 'oro_digital_asset_widget_choose_image',
                     onSelect: function(digitalAssetModel) {
-                        const metadata = digitalAssetModel.get('previewMetadata');
+                        const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
-                            .setAttributes({alt: metadata['title'] || ''})
+                            .setAttributes({alt: title || ''})
                             .set(
                                 'src',
-                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',\'' + metadata['uuid'] + '\') }}'
+                                `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
                             );
                     }
                 }
