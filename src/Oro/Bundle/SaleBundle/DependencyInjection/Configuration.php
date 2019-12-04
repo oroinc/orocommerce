@@ -22,6 +22,7 @@ class Configuration implements ConfigurationInterface
     const CONTACT_INFO_MANUAL_TEXT = 'contact_info_manual_text';
     const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
     const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
+    const QUOTE_FRONTEND_FEATURE_ENABLED = 'quote_frontend_feature_enabled';
 
     /**
      * {@inheritDoc}
@@ -49,6 +50,7 @@ class Configuration implements ConfigurationInterface
                 self::CONTACT_INFO_MANUAL_TEXT => ['value' => ''],
                 self::GUEST_CONTACT_INFO_TEXT => ['value' => ''],
                 self::ENABLE_GUEST_QUOTE => ['value' => false, 'type' => 'boolean'],
+                self::QUOTE_FRONTEND_FEATURE_ENABLED => ['value' => true, 'type' => 'boolean'],
             ]
         );
 

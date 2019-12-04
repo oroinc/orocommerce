@@ -64,6 +64,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'value' => false,
                         'scope' => 'app'
                     ],
+                    'quote_frontend_feature_enabled' => [
+                        'value' => true,
+                        'scope' => 'app'
+                    ],
                 ],
             ],
             $processor->processConfiguration($configuration, [])

@@ -150,6 +150,11 @@
             max-height: 450px;
             padding: 0;
             overflow-y: auto;
+
+            &--limit {
+                max-height: none;
+                overflow-y: visible;
+            }
         }
     }
 }

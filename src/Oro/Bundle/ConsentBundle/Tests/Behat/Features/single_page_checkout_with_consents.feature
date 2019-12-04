@@ -102,7 +102,8 @@ Feature: Single page checkout with consents
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
     And I click "Add to Shopping List"
-    And I open page with shopping list Shopping List
+    When I open shopping list widget
+    And I click "View List"
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"

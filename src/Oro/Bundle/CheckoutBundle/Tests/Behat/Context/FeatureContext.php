@@ -102,6 +102,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function checkValueOnCheckoutStepAndPressButton($value, $step, $button)
     {
+        $this->waitForAjax();
         $this->assertTitle($step);
         $this->checkValueOnCheckoutPage($value);
 

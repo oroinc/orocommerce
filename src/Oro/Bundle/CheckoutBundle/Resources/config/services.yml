@@ -733,3 +733,17 @@ services:
         parent: oro_action.action.remove_entity
         tags:
             - { name: oro_action.action, alias: remove_checkout_source_entity }
+
+    oro_checkout.action.clear_checkout_source_entity:
+        class: Oro\Bundle\CheckoutBundle\Action\ClearCheckoutSourceEntity
+        arguments:
+            - '@oro_action.expression.context_accessor'
+        tags:
+            - { name: oro_action.action, alias: clear_checkout_source_entity }
+
+    oro_checkout.event_listener.open_orders_datagrid:
+        class: Oro\Bundle\CheckoutBundle\EventListener\OpenOrdersDatagridListener
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-checkouts-grid, method: onPreBuild }
