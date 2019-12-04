@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Schedule recalculations related to product price rules with lexemes.
@@ -21,17 +21,17 @@ class PriceRuleLexemeTriggerHandler
     protected $priceListTriggerHandler;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
      * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
-        RegistryInterface $registry
+        ManagerRegistry $registry
     ) {
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->registry = $registry;

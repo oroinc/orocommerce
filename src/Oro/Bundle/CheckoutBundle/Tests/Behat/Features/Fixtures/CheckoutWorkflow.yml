@@ -30,6 +30,11 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     property_path: null
                     options: {  }
                     label: oro.workflow.custom_checkout_workflow.attribute.remove_source.label
+                clear_source:
+                    type: boolean
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.clear_source.label
                 auto_remove_source:
                     type: boolean
                     property_path: null
@@ -153,7 +158,8 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     form_options: {  }
                     page_template: null
                     dialog_template: null
-                    init_entities: {  }
+                    init_entities:
+                        - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
                     init_datagrids: {  }
                     init_context_attribute: init_context
                     message_parameters: {  }

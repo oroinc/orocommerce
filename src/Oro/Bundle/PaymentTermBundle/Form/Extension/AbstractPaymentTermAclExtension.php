@@ -7,11 +7,8 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PaymentTermAclExtension extends AbstractTypeExtension
+abstract class AbstractPaymentTermAclExtension extends AbstractTypeExtension
 {
-    /** @var string */
-    private $extendedType;
-
     /** @var string ACL resource to disable override */
     private $aclResource;
 
@@ -50,27 +47,6 @@ class PaymentTermAclExtension extends AbstractTypeExtension
                 }
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws \InvalidArgumentException If extendedType not set
-     */
-    public function getExtendedType()
-    {
-        if (!$this->extendedType) {
-            throw new \InvalidArgumentException('Extended Type not configured');
-        }
-
-        return $this->extendedType;
-    }
-
-    /**
-     * @param string $extendedType
-     */
-    public function setExtendedType($extendedType)
-    {
-        $this->extendedType = (string)$extendedType;
     }
 
     /**

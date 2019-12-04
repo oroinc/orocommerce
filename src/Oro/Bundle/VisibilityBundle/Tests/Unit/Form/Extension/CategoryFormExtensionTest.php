@@ -151,8 +151,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('visibility'));
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals($this->categoryFormExtension->getExtendedType(), CategoryType::class);
+        $this->assertEquals([CategoryType::class], CategoryFormExtension::getExtendedTypes());
     }
 }

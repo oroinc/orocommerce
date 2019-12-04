@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -13,7 +14,6 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -44,7 +44,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /** @var ConfigManager */
     private $configManager;
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $registry;
 
     /** @var TokenStorageInterface */
@@ -61,7 +61,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      * @param ProductSegmentProviderInterface $productSegmentProvider
      * @param ProductManager $productManager
      * @param ConfigManager $configManager
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param TokenStorageInterface $tokenStorage
      * @param SymmetricCrypterInterface $crypter
      * @param AclHelper $aclHelper
@@ -71,7 +71,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ProductSegmentProviderInterface $productSegmentProvider,
         ProductManager $productManager,
         ConfigManager $configManager,
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         TokenStorageInterface $tokenStorage,
         SymmetricCrypterInterface $crypter,
         AclHelper $aclHelper
@@ -159,7 +159,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     }
 
     /**
-     * @return RegistryInterface
+     * @return ManagerRegistry
      */
     public function getRegistry()
     {
@@ -204,7 +204,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      */
     protected function restoreQuery(array $data)
     {
-        $em = $this->getRegistry()->getEntityManager();
+        $em = $this->getRegistry()->getManager();
 
         if (!empty($data[self::HINTS])) {
             $configuration = $em->getConfiguration();

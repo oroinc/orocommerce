@@ -3,28 +3,27 @@
 namespace Oro\Bundle\CMSBundle\EventListener;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 
 /**
- * Adds inline property to the content widgets datagrid.
+ * Changes datagrid query to get only inline/block content widgets.
  */
 class ContentWidgetDatagridListener
 {
-    /** @var string */
-    private const COLUMN_INLINE = 'inline';
-
     /** @var ContentWidgetTypeRegistry */
     private $contentWidgetTypeRegistry;
 
+    /** @var bool */
+    private $isInline;
+
     /**
      * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
+     * @param bool $isInline
      */
-    public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry)
+    public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry, bool $isInline)
     {
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
+        $this->isInline = $isInline;
     }
 
     /**
@@ -32,30 +31,13 @@ class ContentWidgetDatagridListener
      */
     public function onPreBuild(PreBuild $event): void
     {
-        $config = $event->getConfig();
-        $config->offsetAddToArrayByPath(
-            '[properties]',
-            [
-                self::COLUMN_INLINE => [
-                    'type' => 'field',
-                    'frontend_type' => PropertyInterface::TYPE_BOOLEAN,
-                ],
-            ]
-        );
-    }
-
-    /**
-     * @param OrmResultAfter $event
-     */
-    public function onResultAfter(OrmResultAfter $event): void
-    {
-        /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
-
-        foreach ($records as $record) {
-            $widgetType = $this->contentWidgetTypeRegistry->getWidgetType($record->getValue('widgetType'));
-
-            $record->addData([self::COLUMN_INLINE => $widgetType ? $widgetType->isInline() : false]);
+        $types = [];
+        foreach ($this->contentWidgetTypeRegistry->getTypes() as $contentWidgetType) {
+            if ($this->isInline === $contentWidgetType->isInline()) {
+                $types[] = $contentWidgetType::getName();
+            }
         }
+
+        $event->getParameters()->set('contentWidgetTypes', $types);
     }
 }

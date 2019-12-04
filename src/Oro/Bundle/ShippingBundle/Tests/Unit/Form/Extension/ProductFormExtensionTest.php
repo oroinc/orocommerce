@@ -97,9 +97,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->buildForm($builder, []);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals($this->extension->getExtendedType(), ProductType::class);
+        $this->assertEquals([ProductType::class], ProductFormExtension::getExtendedTypes());
     }
 
     /**

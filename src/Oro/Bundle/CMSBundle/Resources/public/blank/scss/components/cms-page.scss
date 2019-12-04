@@ -1,165 +1,23 @@
 /* @theme: blank; */
 
 .cms-page {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-bottom: $cms-page-heading-offset;
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-
     :first-child {
-        margin-top: 0
+        margin-top: 0;
     }
 
-    p,
-    address {
-        margin-bottom: $cms-page-paragraph-offset;
-
-        &:last-child {
-            margin-bottom: 0;
-
-        }
-    }
-
-    small {
-        font-size: $cms-page-small-font-size;
-    }
-
-    address {
-        font-style: $cms-page-address-font-style;
-    }
-
-    blockquote {
-        margin: $cms-page-blockquote-offset;
-
-        font-size: $cms-page-blockquote-font-size;
-        font-style: $cms-page-blockquote-font-style;
-        font-weight: $cms-page-blockquote-font-weight;
-
-        background-color: $cms-page-blockquote-background-color;
-        padding: $cms-page-blockquote-inner-offset;
-        line-height: $cms-page-blockquote-line-height;
-
-        color: $cms-page-blockquote-color;
-
-        position: relative;
-
-        @include fa-icon($icon: $cms-page-blockquote-fa-icon, $extra-rules: true) {
-            position: absolute;
-            top: $cms-page-blockquote-fa-icon-top;
-            left: $cms-page-blockquote-fa-icon-left;
-            font-size: $cms-page-blockquote-fa-icon-font-size;
-            color: $cms-page-blockquote-fa-icon-color;
-        }
-
-        @include fa-icon($icon: $cms-page-blockquote-fa-end-icon, $state: after, $extra-rules: true) {
-            position: absolute;
-            bottom: $cms-page-blockquote-fa-icon-bottom;
-            right: $cms-page-blockquote-fa-icon-right;
-            font-size: $cms-page-blockquote-fa-icon-font-size;
-            color: $cms-page-blockquote-fa-icon-color;
-        }
-    }
-
-    hr {
-        margin: $cms-page-hr-offset;
-        border: none;
-        border-top: $cms-page-border-top;
-    }
-
-    ul,
-    ol {
-        margin: $cms-page-list-offset;
-        padding: $cms-page-list-inner-offset;
-    }
-
-    ul {
-        list-style-type: $cms-page-ul-list-style-type;
-    }
-
-    ol {
-        list-style-type: $cms-page-ol-list-style-type;
-    }
-
-    dt {
-        font-weight: font-weight('bold');
-        margin-bottom: $offset-half;
-    }
-
-    dd {
-        margin-left: $offset-default;
-        margin-bottom: $offset-default;
-    }
-
-    img {
-        max-width: $cms-page-img-max-width;
-        height: auto;
-        display: block;
-        margin: $cms-page-img-offset;
-    }
-
-    figure {
-        display: flex;
-        margin: $cms-page-figure-offset;
-        justify-content: center;
-        align-items: center;
-
-        position: relative;
-    }
-
-    figcaption {
-        display: flex;
-        margin: $cms-page-figcaption-offset;
-
-        font-size: $cms-page-figcaption-font-size;
-        text-align: $cms-page-figcaption-text-align;
-        text-transform: $cms-page-figcaption-text-transform;
-
-        align-items: $cms-page-figcaption-align-items;
-        justify-content: $cms-page-figcaption-justify-content;
-
-        position: $cms-page-figcaption-position;
-
-        color: $cms-page-figcaption-color;
-    }
-
-    a {
-        &:not(.btn) {
-            @include link();
-        }
-    }
-
-    strong,
-    b {
-        font-weight: bold;
-    }
-
-    em,
-    i {
-        font-style: italic;
-    }
-
-    .cms-page__figure_right,
-    .cms-page__figure_left {
+    &__figure_right,
+    &__figure_left {
         clear: both;
     }
 
-
-    .cms-page__figure_right {
+    &__figure_right {
         float: right;
-        margin-left: $cms-page-figcaption-offset-left;
+        margin-left: $cms-typography-figcaption-offset-left;
     }
 
-    .cms-page__figure_left {
+    &__figure_left {
         float: left;
-        margin-right: $cms-page-figcaption-offset-right;
+        margin-right: $cms-typography-figcaption-offset-right;
     }
 
     table {
@@ -170,36 +28,14 @@
     iframe[src*=maps] {
         width: 100%;
     }
-
-    code,
-    samp {
-        border-top: $cms-page-code-border;
-        border-bottom: $cms-page-code-border;
-        padding: $cms-page-code-inner-offset;
-        margin: $cms-page-code-offset;
-        display: block;
-
-        font-family: $cms-page-code-font-family;
-        line-height: $cms-page-code-line-height;
-    }
-
-    sub {
-        vertical-align: $cms-page-sub-vertical-align;
-        font-size: $cms-page-sub-font-size;
-    }
-
-    sup {
-        vertical-align: $cms-page-sup-vertical-align;
-        font-size: $cms-page-sup-font-size;
-    }
 }
 
 @include breakpoint('tablet-small') {
     .cms-page {
-        .cms-page__figure_right,
-        .cms-page__figure_left {
+        &__figure_right,
+        &__figure_left {
             float: none;
-            margin: $cms-page-figure-offset;
+            margin: $cms-typography-figure-offset;
         }
     }
 }

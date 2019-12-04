@@ -291,6 +291,26 @@ datagrids:
                 acl_resource:  oro_cms_content_widget_view
                 rowAction:     true
 
+    cms-inline-content-widget-grid:
+        extends: cms-content-widget-grid
+        source:
+            query:
+                where:
+                    and:
+                        - contentWidget.widgetType IN (:contentWidgetTypes)
+            bind_parameters:
+                - contentWidgetTypes
+
+    cms-block-content-widget-grid:
+        extends: cms-content-widget-grid
+        source:
+            query:
+                where:
+                    and:
+                        - contentWidget.widgetType IN (:contentWidgetTypes)
+            bind_parameters:
+                - contentWidgetTypes
+
     cms-content-widget-pages-grid:
         extends: cms-page-grid
         source:

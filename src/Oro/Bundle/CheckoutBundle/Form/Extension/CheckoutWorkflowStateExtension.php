@@ -32,8 +32,8 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
     }
 
     /** {@inheritdoc} */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return WorkflowTransitionType::class;
+        return [WorkflowTransitionType::class];
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -27,7 +27,7 @@ class SegmentMessageFactory
     private $resolver;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -37,9 +37,9 @@ class SegmentMessageFactory
     private $segmentRepository;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }

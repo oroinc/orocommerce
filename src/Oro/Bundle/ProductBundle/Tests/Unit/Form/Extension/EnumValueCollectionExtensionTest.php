@@ -62,9 +62,9 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new EnumValueCollectionExtension($this->doctrineHelper, $this->configManager);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(EnumValueCollectionType::class, $this->extension->getExtendedType());
+        $this->assertEquals([EnumValueCollectionType::class], EnumValueCollectionExtension::getExtendedTypes());
     }
 
     public function testBuildViewWhenEmptyFormData()

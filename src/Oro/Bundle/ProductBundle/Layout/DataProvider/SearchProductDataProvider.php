@@ -45,10 +45,9 @@ class SearchProductDataProvider
     {
         $searchString = $this->getSearchString();
 
-        return $this->translator->transChoice(
+        return $this->translator->trans(
             'oro.product.search.search_title.title',
-            strlen($searchString),
-            ['%text%' => $searchString]
+            ['%count%' => strlen($searchString), '%text%' => $searchString]
         );
     }
 }

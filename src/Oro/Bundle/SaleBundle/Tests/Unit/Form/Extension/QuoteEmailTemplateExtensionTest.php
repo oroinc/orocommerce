@@ -169,7 +169,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
 
     public function testGetExtendedType(): void
     {
-        $this->assertEquals(EmailType::class, $this->extension->getExtendedType());
+        $this->assertEquals([EmailType::class], QuoteEmailTemplateExtension::getExtendedTypes());
     }
 
     /**
@@ -200,7 +200,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
                     ),
                     TranslatableEntityType::class => $translatableEntity,
                 ],
-                [$this->extension->getExtendedType() => [$this->extension]]
+                [EmailType::class => [$this->extension]]
             ),
             $this->getValidatorExtension()
         ];

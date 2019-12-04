@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -24,22 +25,12 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
     private $childName;
 
     /**
-     * @var string
-     */
-    private $extendedType;
-
-    /**
      * @param $childName
-     * @param $extendedType
      * @param ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings
      */
-    public function __construct(
-        $childName,
-        $extendedType,
-        ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings
-    ) {
+    public function __construct($childName, ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings)
+    {
         $this->childName = $childName;
-        $this->extendedType = $extendedType;
         $this->productFormUnitFieldsSettings = $productFormUnitFieldsSettings;
     }
 
@@ -76,8 +67,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [ProductPrimaryUnitPrecisionType::class];
     }
 }

@@ -16,6 +16,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
@@ -194,5 +195,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                 ],
             ],
         ];
+    }
+
+    public function testGetExtendedTypes(): void
+    {
+        $this->assertEquals([QuoteType::class], QuoteDataStorageExtension::getExtendedTypes());
     }
 }

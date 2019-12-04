@@ -28,8 +28,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormat()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.kg.value.full', 42);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.kg.value.full', ['%count%' => 42]);
 
         $this->formatter->format(42, $this->createObject('kg'));
     }
@@ -37,8 +37,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormatShort()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.item.value.short', 42);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42]);
 
         $this->formatter->formatShort(42, $this->createObject('item'));
     }
@@ -46,8 +46,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormatCodeShort()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.item.value.short', 42);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.item.value.short', ['%count%' => 42]);
 
         $this->formatter->formatCode(42, 'item', true);
     }
@@ -55,8 +55,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormatCodeFull()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.item.value.full', 42);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.item.value.full', ['%count%' => 42]);
 
         $this->formatter->formatCode(42, 'item');
     }
@@ -64,8 +64,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormatFractionCodeShort()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.item.value.short_fraction', 0.5);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.item.value.short_fraction', ['%count%' => 0.5]);
 
         $this->formatter->formatCode(0.5, 'item', true);
     }
@@ -73,8 +73,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     public function testFormatFractionGreaterThanOneCodeShort()
     {
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($this->getTranslationPrefix() . '.item.value.short_fraction_gt_1', 1.5);
+            ->method('trans')
+            ->with($this->getTranslationPrefix() . '.item.value.short_fraction_gt_1', ['%count%' => 1.5]);
 
         $this->formatter->formatCode(1.5, 'item', true);
     }

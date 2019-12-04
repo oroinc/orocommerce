@@ -454,8 +454,8 @@ oro_behat_extension:
     Add More Rows:
       selector: ".add-list-item"
 
-    CreateOrderButton:
-      selector: "a[title='Create Order']"
+    Create Order From Quick Order:
+      selector: "a[id='transition-b2b_flow_checkout-start_from_quickorderform']"
 
     ProductPriceCollection:
       class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection'

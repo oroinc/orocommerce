@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Model\CustomerMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CustomerMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -26,7 +26,7 @@ class CustomerMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(RegistryInterface::class)
+        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->getMock();
         $this->customerMessageFactory = new CustomerMessageFactory($this->registry);
     }

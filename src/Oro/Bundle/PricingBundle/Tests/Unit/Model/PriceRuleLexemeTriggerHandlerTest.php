@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -13,7 +14,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,7 +25,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     protected $priceListTriggerHandler;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -39,7 +39,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->handler = new PriceRuleLexemeTriggerHandler($this->priceListTriggerHandler, $this->registry);
     }

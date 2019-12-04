@@ -30,12 +30,16 @@ define(function(require) {
          * @private
          */
         _addBlock: function() {
-            this.editor.BlockManager.add('image', {
-                label: __('oro.cms.wysiwyg.component.digital_asset.image'),
-                attributes: {
-                    'class': 'fa fa-picture-o'
-                }
-            });
+            if (this.editor.ComponentRestriction.isAllow([
+                'img'
+            ])) {
+                this.editor.BlockManager.add('image', {
+                    label: __('oro.cms.wysiwyg.component.digital_asset.image'),
+                    attributes: {
+                        'class': 'fa fa-picture-o'
+                    }
+                });
+            }
         },
 
         /**
@@ -50,13 +54,13 @@ define(function(require) {
                     title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                     routeName: 'oro_digital_asset_widget_choose_image',
                     onSelect: function(digitalAssetModel) {
-                        const metadata = digitalAssetModel.get('previewMetadata');
+                        const {digitalAssetId, uuid, title} = digitalAssetModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel
-                            .setAttributes({alt: metadata['title'] || ''})
+                            .setAttributes({alt: title || ''})
                             .set(
                                 'src',
-                                '{{ wysiwyg_image(' + metadata['digitalAssetId'] + ',\'' + metadata['uuid'] + '\') }}'
+                                `{{ wysiwyg_image('${digitalAssetId}','${uuid}') }}`
                             );
                     }
                 }

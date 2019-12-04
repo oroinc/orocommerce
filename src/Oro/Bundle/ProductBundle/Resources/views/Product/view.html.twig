@@ -55,9 +55,9 @@
 
     {% if oro_is_product_primary_unit_visible(entity) %}
         {% set primaryUnitPrecisionElement %}
-            {{ 'oro.product.productunitprecision.representation'|transchoice(
-                entity.primaryUnitPrecision.precision,
+            {{ 'oro.product.productunitprecision.representation'|trans(
                 {
+                    '%count%': entity.primaryUnitPrecision.precision,
                     '{{ label }}': ('oro.product_unit.'~ entity.primaryUnitPrecision.unit.code ~'.label.full')|trans
                 }
             ) }}

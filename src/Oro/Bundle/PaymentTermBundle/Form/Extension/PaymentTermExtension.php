@@ -74,11 +74,10 @@ class PaymentTermExtension extends AbstractTypeExtension
 
     /**
      * {@inheritdoc}
-     * @throws \InvalidArgumentException If extendedType not set
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PaymentTermSelectType::class;
+        return [PaymentTermSelectType::class];
     }
 
     /**

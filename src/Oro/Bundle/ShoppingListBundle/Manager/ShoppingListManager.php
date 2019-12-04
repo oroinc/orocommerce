@@ -98,16 +98,18 @@ class ShoppingListManager
     /**
      * Creates new shopping list
      *
+     * @param bool $flush
      * @param string $label
-     * @param bool   $flush
-     *
+     * @param CustomerUser|null $customerUser
      * @return ShoppingList
      */
-    public function create($flush = false, $label = '')
+    public function create($flush = false, $label = '', CustomerUser $customerUser = null)
     {
-        $customerUser = $this->getCustomerUser();
-        if (null === $customerUser) {
-            throw new \LogicException('The customer user does not exist in the security context.');
+        if (!$customerUser) {
+            $customerUser = $this->getCustomerUser();
+            if (!$customerUser) {
+                throw new \LogicException('The customer user does not exist in the security context.');
+            }
         }
 
         $shoppingList = new ShoppingList();

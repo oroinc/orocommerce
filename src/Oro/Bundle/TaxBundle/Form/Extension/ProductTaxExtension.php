@@ -14,9 +14,9 @@ class ProductTaxExtension extends AbstractTaxExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ProductType::class;
+        return [ProductType::class];
     }
 
     /** {@inheritdoc} */

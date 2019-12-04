@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Resolves visibility by Category.

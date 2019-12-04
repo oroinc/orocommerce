@@ -189,6 +189,7 @@ oro:
 
                 entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+                total.label: 'Total:'
                 subtotal.label: 'Subtotal:'
 
                 item.label: 'Item #:'
@@ -200,8 +201,10 @@ oro:
                 not_have_available: 'You do not have available Shopping Lists'
                 not_products_available: 'The Shopping List is empty. Please add at least one product.'
                 empty: 'Your Shopping List Is Empty'
+                empty_single: 'Your Shopping List is empty'
 
                 view_details.label: 'View Details'
+                view_list.label: 'View List'
                 create_new_shopping_list.label: 'Create New List'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'

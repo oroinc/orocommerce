@@ -38,9 +38,9 @@ class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductStepOneFormExtension($this->defaultProductUnitProvider);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(ProductStepOneType::class, $this->extension->getExtendedType());
+        $this->assertEquals([ProductStepOneType::class], ProductStepOneFormExtension::getExtendedTypes());
     }
 
     public function testBuildForm()

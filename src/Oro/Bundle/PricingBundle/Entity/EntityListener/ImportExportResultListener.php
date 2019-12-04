@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Resolve combined prices on ImportExportResult post persist
  */
 class ImportExportResultListener
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $registry;
 
     /** @var PriceRuleLexemeTriggerHandler */
@@ -24,12 +24,12 @@ class ImportExportResultListener
     private $priceListTriggerHandler;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param PriceRuleLexemeTriggerHandler $lexemeTriggerHandler
      * @param PriceListTriggerHandler $priceListTriggerHandler
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         PriceRuleLexemeTriggerHandler $lexemeTriggerHandler,
         PriceListTriggerHandler $priceListTriggerHandler
     ) {

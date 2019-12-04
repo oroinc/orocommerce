@@ -55,9 +55,9 @@ Feature: Mass Product Actions for Guest user
       | Unit     | item |
     And I scroll to top
     And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
-    And I hover on "Shopping List Widget"
+    And I open shopping list widget
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element
-    And I click "View Shopping List Details"
+    And I click "View List"
     Then I should see following line items in "Shopping List Line Items Table":
       | SKU    | Quantity | Unit |
       | rtsh_m | 3        | item |

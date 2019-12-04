@@ -46,7 +46,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Page context class
      * @property {String}
      */
-    contextClass: 'body cms-page',
+    contextClass: 'body cms-page cms-typography',
 
     /**
      * State of changes in editor
@@ -282,9 +282,7 @@ const GrapesjsEditorView = BaseView.extend({
     applyComponentsJSON: function() {
         const value = this.$propertiesInputElement.val();
 
-        if (value) {
-            this.JSONcomponents = JSON.parse(value);
-        }
+        this.JSONcomponents = value ? JSON.parse(value) : [];
 
         return this.JSONcomponents;
     },
@@ -405,6 +403,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @param e {Object}
      */
     contentValidate: function(e) {
+        if (!this.allow_tags) {
+            return;
+        }
         const _res = this.builder.ComponentRestriction.validate(
             this.builder.getIsolatedHtml(this.$el.val())
         );
@@ -441,7 +442,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {Object}
      */
     getEditorComponents: function() {
-        return JSON.stringify(this.builder.getComponents());
+        const comps = this.builder.getComponents();
+
+        return comps.length ? JSON.stringify(this.builder.getComponents()) : '';
     },
 
     /**
@@ -524,9 +527,21 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateInitialField: function() {
-        this.$el.val(this.getEditorContent()).trigger('change');
-        this.$stylesInputElement.val(this.getEditorStyles()).trigger('change');
-        this.$propertiesInputElement.val(this.getEditorComponents()).trigger('change');
+        const htmlContent = this.getEditorContent();
+        const cssContent = this.getEditorStyles();
+        const jsonContent = this.getEditorComponents();
+
+        if (this.$el.val() !== htmlContent) {
+            this.$el.val(htmlContent).trigger('change');
+        }
+
+        if (this.$stylesInputElement.val() !== cssContent) {
+            this.$stylesInputElement.val(cssContent).trigger('change');
+        }
+
+        if (this.$propertiesInputElement.val() !== jsonContent) {
+            this.$propertiesInputElement.val(jsonContent).trigger('change');
+        }
     },
 
     /**

@@ -57,11 +57,10 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->translator
             ->expects(self::once())
-            ->method('transChoice')
+            ->method('trans')
             ->with(
                 self::equalTo('oro.product.search.search_title.title'),
-                self::equalTo(strlen($testString)),
-                self::equalTo(['%text%' => $testString])
+                self::equalTo(['%count%' => strlen($testString), '%text%' => $testString])
             )
             ->willReturn($testTitle);
 

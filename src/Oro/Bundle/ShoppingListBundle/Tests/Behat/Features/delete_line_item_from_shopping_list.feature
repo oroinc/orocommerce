@@ -9,7 +9,7 @@ Feature: Delete line item from Shopping List
 
   Scenario: Delete product from Shopping List
     Given I login as AmandaRCole@example.org buyer
-    And Buyer is on Shopping List 5
+    And Buyer is on "Shopping List 5" shopping list
     And I should see following line items in "Shopping List Line Items Table":
       | SKU | Quantity | Unit |
       | AA1 | 1        | set  |

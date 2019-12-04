@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
@@ -60,9 +60,9 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
     }
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    protected function createSegmentProvider(RegistryInterface $registry)
+    protected function createSegmentProvider(ManagerRegistry $registry)
     {
         $this->segmentProductsProvider = new NewArrivalsProvider(
             $this->segmentManager,

@@ -93,7 +93,6 @@
 
         @if ($link-style) {
             // weight of selector below must be increased due of specific styles for cms content
-            // https://github.com/oroinc/orocommerce/blob/master/src/Oro/Bundle/CMSBundle/Resources/public/blank/scss/components/cms-page.scss#L122-L126
             a[href] {
                 @extend %base-button;
                 @include button-custom-variant($link-style...);

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +20,6 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
@@ -64,9 +64,9 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
-            ->method('getEntityManager')
+            ->method('getManager')
             ->willReturn($this->em);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->cache = $this->createMock(CacheProvider::class);
@@ -84,9 +84,9 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     }
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    abstract protected function createSegmentProvider(RegistryInterface $registry);
+    abstract protected function createSegmentProvider(ManagerRegistry $registry);
 
     /**
      * @return string

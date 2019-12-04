@@ -317,13 +317,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         }
     }
 
-    public function testExtendedType()
-    {
-        $type = 'entity';
-        $this->extension->setExtendedType($type);
-        $this->assertSame($type, $this->extension->getExtendedType());
-    }
-
     /**
      * @param bool $expectsAddEventListener
      * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface

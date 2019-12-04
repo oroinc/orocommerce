@@ -18,13 +18,17 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('oro_checkout');
 
-        $rootNode = $treeBuilder->root('oro_checkout');
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
             [
+                'frontend_show_open_orders' => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
                 'frontend_open_orders_separate_page' => [
                     'type' => 'boolean',
                     'value' => false,

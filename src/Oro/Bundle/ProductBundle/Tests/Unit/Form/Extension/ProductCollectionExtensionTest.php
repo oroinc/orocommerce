@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -143,12 +144,9 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionExtension->onPostSubmit(new FormEvent($form, []));
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
-        $extendedType = 'SomeExtendedType';
-        $this->productCollectionExtension = new ProductCollectionExtension($this->translator, $extendedType);
-
-        $this->assertEquals($extendedType, $this->productCollectionExtension->getExtendedType());
+        $this->assertEquals([ContentVariantCollectionType::class], ProductCollectionExtension::getExtendedTypes());
     }
 
     /**

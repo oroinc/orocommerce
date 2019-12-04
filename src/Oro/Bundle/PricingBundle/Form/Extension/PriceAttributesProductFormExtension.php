@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
@@ -10,7 +11,6 @@ use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +25,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -35,10 +35,10 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     private $aclHelper;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
      */
-    public function __construct(RegistryInterface $registry, AclHelper $aclHelper)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
@@ -47,9 +47,9 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ProductType::class;
+        return [ProductType::class];
     }
 
     /**

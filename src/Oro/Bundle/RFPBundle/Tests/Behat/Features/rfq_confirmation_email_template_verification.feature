@@ -35,8 +35,8 @@ Feature: RFQ confirmation email template verification
     And I click "Search Button"
     And I click "Add to Shopping List"
     And I click "View Details" for "PSKU1" product
-    And I click "Shopping List Widget"
-    And I click "View Details"
+    And I open shopping list widget
+    And I click "View List"
     And click "Request Quote"
     And I fill form with:
       | First Name    | John                  |

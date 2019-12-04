@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListToProductDuplicator
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -25,11 +25,11 @@ class PriceListToProductDuplicator
     protected $entityName;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertQueryExecutor
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertQueryExecutor
     ) {
         $this->registry = $registry;

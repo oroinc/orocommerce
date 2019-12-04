@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
 
 class PriceAttributePriceListControllerTest extends WebTestCase
 {
@@ -118,7 +118,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName('CAD'), $crawler->html());
+        $this->assertContains(Currencies::getName('CAD'), $crawler->html());
     }
 
     public function testFieldNameValidator()
@@ -169,6 +169,6 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName('CAD'), $crawler->html());
+        $this->assertContains(Currencies::getName('CAD'), $crawler->html());
     }
 }

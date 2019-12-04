@@ -63,10 +63,9 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->setSectionProvider($this->sectionProvider);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertInternalType('string', $this->extension->getExtendedType());
-        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
+        $this->assertEquals([OrderLineItemType::class], OrderLineItemDataStorageExtension::getExtendedTypes());
     }
 
     public function testBuildViewNoFeatures()
@@ -79,7 +78,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
-            ->with($this->extension->getExtendedType());
+            ->with(OrderLineItemType::class);
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
@@ -100,7 +99,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
-            ->with($this->extension->getExtendedType());
+            ->with(OrderLineItemType::class);
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */

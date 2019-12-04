@@ -74,10 +74,9 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
     {
         $translatedMessage = $entitiesCount . ' processed';
         $this->translator->expects($this->once())
-            ->method('transChoice')
+            ->method('trans')
             ->with(
                 'oro.grid.mass_action.edit.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             )
             ->willReturn($translatedMessage);

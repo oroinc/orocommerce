@@ -32,7 +32,7 @@ Feature: Shopping list duplication for non authenticated visitor
     When I click "Add to Shopping List" for "SKU123" product
     Then I should see "Product has been added to " flash message
     And I open shopping list widget
-    And I click "Shopping List" on shopping list widget
+    And I click "View List"
     And click "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
@@ -53,7 +53,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And I type "Andy001@example.com" in "Email Address"
     And I type "Andy001@example.com" in "Password"
     And I type "Andy001@example.com" in "Confirm Password"
-    And I uncheck "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Given I proceed as the Admin

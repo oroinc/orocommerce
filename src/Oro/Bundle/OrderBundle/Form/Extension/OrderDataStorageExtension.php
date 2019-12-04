@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Extension;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -57,5 +58,13 @@ class OrderDataStorageExtension extends AbstractProductDataStorageExtension
         if ($lineItem->getProduct()) {
             $entity->addLineItem($lineItem);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return [OrderType::class];
     }
 }

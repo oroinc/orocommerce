@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentWidgetData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ContentWidgetRepositoryTest extends WebTestCase
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var ContentWidgetRepository */

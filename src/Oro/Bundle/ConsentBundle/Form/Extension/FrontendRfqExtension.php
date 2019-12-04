@@ -69,10 +69,10 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return RequestType::class;
+        return [RequestType::class];
     }
 }

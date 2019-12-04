@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\SystemConfig;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListConfigConverter
 {
@@ -11,7 +11,7 @@ class PriceListConfigConverter
     const SORT_ORDER_KEY = 'sort_order';
     const PRICE_LIST_KEY = 'priceList';
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /** @var string */
@@ -21,11 +21,10 @@ class PriceListConfigConverter
     protected $managerForPriceList;
 
     /**
-     * PriceListSystemConfigSubscriber constructor.
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param string $priceListClassName
      */
-    public function __construct(RegistryInterface $doctrine, $priceListClassName)
+    public function __construct(ManagerRegistry $doctrine, $priceListClassName)
     {
         $this->doctrine = $doctrine;
         $this->priceListClassName = $priceListClassName;

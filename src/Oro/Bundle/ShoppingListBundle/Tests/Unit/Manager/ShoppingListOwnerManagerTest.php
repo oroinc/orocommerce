@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -12,7 +13,6 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
@@ -23,7 +23,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
     protected $aclHelper;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -43,7 +43,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
             ['organization_field_name', false, null, 'organisation'],
         ]);
 
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->manager = new ShoppingListOwnerManager(
             $this->aclHelper,

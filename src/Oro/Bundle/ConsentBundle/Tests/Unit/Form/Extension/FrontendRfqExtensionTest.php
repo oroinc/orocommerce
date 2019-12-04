@@ -138,8 +138,8 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
         $this->extension->preSetData($event);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(RequestType::class, $this->extension->getExtendedType());
+        $this->assertEquals([RequestType::class], FrontendRfqExtension::getExtendedTypes());
     }
 }

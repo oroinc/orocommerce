@@ -42,8 +42,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(OroInventoryExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(OroInventoryExtension::ALIAS);
+        $rootNode = $treeBuilder->getRootNode();
         SettingsBuilder::append(
             $rootNode,
             [

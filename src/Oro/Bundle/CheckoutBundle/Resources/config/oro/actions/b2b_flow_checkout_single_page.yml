@@ -2,6 +2,7 @@ operations:
     b2b_flow_checkout_single_page_new_address:
         label: oro.checkout.form.address.manual
         enabled: true
+        page_reload: false
         applications: [commerce]
         acl_resource: oro_checkout_frontend_checkout
         frontend_options:

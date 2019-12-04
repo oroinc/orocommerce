@@ -390,7 +390,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $expectedMessage = $this->getContainer()
             ->get('translator')
-            ->transChoice('oro.shoppinglist.actions.add_success_message', count($products));
+            ->trans('oro.shoppinglist.actions.add_success_message', ['%count%' => count($products)]);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($expectedMessage, $crawler->html());

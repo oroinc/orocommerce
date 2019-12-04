@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
@@ -13,7 +14,6 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Listens changes of Price Lists assigned to Customers, Customer Groups, Websites
@@ -24,7 +24,7 @@ class ShoppingListTotalListener
     const ACCOUNT_BATCH_SIZE = 500;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -39,10 +39,10 @@ class ShoppingListTotalListener
     private $anonymousCustomerGroupId;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
      */
-    public function __construct(RegistryInterface $registry, ConfigManager $configManager)
+    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
     {
         $this->registry = $registry;
         $this->configManager = $configManager;

@@ -45,10 +45,10 @@ class FrontendCustomerUserRegistrationExtension extends AbstractTypeExtension im
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return FrontendCustomerUserRegistrationType::class;
+        return [FrontendCustomerUserRegistrationType::class];
     }
 }

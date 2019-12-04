@@ -2,69 +2,63 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 
 class ContentWidgetDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContentWidgetDatagridListener */
-    private $listener;
+    /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentWidgetTypeRegistry;
 
     protected function setUp(): void
     {
-        /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject $contentWidgetTypeRegistry */
-        $contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
-        $contentWidgetTypeRegistry->expects($this->any())
-            ->method('getWidgetType')
-            ->willReturnMap(
+        $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
+        $this->contentWidgetTypeRegistry->expects($this->any())
+            ->method('getTypes')
+            ->willReturn(
                 [
-                    [ContentWidgetTypeStub::getName(), new ContentWidgetTypeStub()]
+                    new ContentWidgetTypeStub(),
+                    new ImageSliderContentWidgetType($this->createMock(ManagerRegistry::class)),
                 ]
             );
-
-        $this->listener = new ContentWidgetDatagridListener($contentWidgetTypeRegistry);
     }
 
-    public function testOnResultAfter(): void
+    /**
+     * @dataProvider onPreBuildDataProvider
+     *
+     * @param bool $isInline
+     * @param array $expected
+     */
+    public function testOnPreBuild(bool $isInline, array $expected): void
     {
         $event = new PreBuild(DatagridConfiguration::create([]), new ParameterBag());
 
-        $this->listener->onPreBuild($event);
+        $listener = new ContentWidgetDatagridListener($this->contentWidgetTypeRegistry, $isInline);
+        $listener->onPreBuild($event);
 
-        $this->assertEquals(
-            [
-                'properties' => [
-                    'inline' => [
-                        'type' => 'field',
-                        'frontend_type' => PropertyInterface::TYPE_BOOLEAN,
-                    ]
-                ]
-            ],
-            $event->getConfig()->toArray()
-        );
+        $this->assertEquals($expected, $event->getParameters()->get('contentWidgetTypes'));
     }
 
-    public function testOnPreBuild(): void
+    /**
+     * @return array
+     */
+    public function onPreBuildDataProvider(): array
     {
-        $record1 = new ResultRecord(['widgetType' => 'unknown_type']);
-        $record2 = new ResultRecord(['widgetType' => ContentWidgetTypeStub::getName()]);
-
-        $event = new OrmResultAfter(
-            new Datagrid('test', DatagridConfiguration::create([]), new ParameterBag()),
-            [$record1, $record2]
-        );
-
-        $this->listener->onResultAfter($event);
-
-        $this->assertFalse($record1->getValue('inline'));
-        $this->assertTrue($record2->getValue('inline'));
+        return [
+            'inline' => [
+                'isInline' => true,
+                'expected' => [ContentWidgetTypeStub::getName()],
+            ],
+            'block' => [
+                'isInline' => false,
+                'expected' => [ImageSliderContentWidgetType::getName()],
+            ],
+        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -23,7 +24,6 @@ use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -51,7 +51,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
      */
     public function setUp()
     {
-        $doctrine = $this->createMock(RegistryInterface::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
 
         $consentConfigConverter = new ConsentConfigConverter($doctrine);
         $this->collectionTransformer = new ConsentCollectionTransformer($consentConfigConverter);

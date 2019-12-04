@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
@@ -13,7 +14,6 @@ use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Adds placeholder fields for product fields
@@ -30,7 +30,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
     private $websiteContextManger;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $doctrine;
 
@@ -41,12 +41,12 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
     /**
      * @param WebsiteContextManager $websiteContextManager
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param ConfigManager $configManager
      */
     public function __construct(
         WebsiteContextManager $websiteContextManager,
-        RegistryInterface $doctrine,
+        ManagerRegistry $doctrine,
         ConfigManager $configManager
     ) {
         $this->websiteContextManger = $websiteContextManager;

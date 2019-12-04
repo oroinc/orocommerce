@@ -256,20 +256,4 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 
         return $this->productRepository;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtendedType()
-    {
-        return $this->extendedType;
-    }
-
-    /**
-     * @param string $extendedType
-     */
-    public function setExtendedType($extendedType)
-    {
-        $this->extendedType = $extendedType;
-    }
 }

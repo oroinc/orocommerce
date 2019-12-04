@@ -10,37 +10,26 @@ define(function(require) {
     /**
      * Content widget component
      */
-    const ContentWidnetComponent = BaseComponent.extend({
+    const ContentWidgetComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function ContentWidnetComponent(options) {
-            ContentWidnetComponent.__super__.constructor.call(this, options);
+        constructor: function ContentWidgetComponent(options) {
+            ContentWidgetComponent.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
+            this.editor = options;
             const ComponentId = 'content-widget';
             const domComps = options.DomComponents;
             const commands = options.Commands;
             const dType = domComps.getType('default');
             const dModel = dType.model;
             const dView = dType.view;
-            const datagridName = 'cms-content-widget-grid';
-
-            options.BlockManager.add(ComponentId, {
-                id: ComponentId,
-                label: _.__('oro.cms.wysiwyg.component.content_widget'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-object-ungroup'
-                },
-                content: {
-                    type: ComponentId
-                }
-            });
+            const datagridName = 'cms-block-content-widget-grid';
 
             commands.add('content-widget-settings', function(editor, sender, event) {
                 const routeParams = {
@@ -98,7 +87,7 @@ define(function(require) {
                         contentWidget: null,
                         droppable: false
                     }),
-                    constructor: function ContentWidnetComponent(...args) {
+                    constructor: function ContentWidgetComponent(...args) {
                         dModel.prototype.constructor.apply(this, args);
                     },
                     initialize: function(o, opt, ...rest) {
@@ -168,8 +157,28 @@ define(function(require) {
                     }
                 })
             });
+
+            this.createComponentButton();
+        },
+
+        createComponentButton: function() {
+            if (this.editor.ComponentRestriction.isAllow([
+                'div'
+            ])) {
+                this.editor.BlockManager.add('content-widget', {
+                    id: 'content-widget',
+                    label: _.__('oro.cms.wysiwyg.component.content_widget'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-object-ungroup'
+                    },
+                    content: {
+                        type: 'content-widget'
+                    }
+                });
+            }
         }
     });
 
-    return ContentWidnetComponent;
+    return ContentWidgetComponent;
 });

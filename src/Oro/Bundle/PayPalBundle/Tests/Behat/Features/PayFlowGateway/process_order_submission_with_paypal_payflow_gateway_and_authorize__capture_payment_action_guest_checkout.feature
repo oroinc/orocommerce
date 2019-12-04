@@ -61,7 +61,8 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I click "product1"
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
-    When I open page with shopping list "Shopping List"
+    When I open shopping list widget
+    And I click "View List"
     Then I should see "product1"
 
   Scenario: Successful order payment with PayPal PayFlow Gateway

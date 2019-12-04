@@ -165,40 +165,6 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onInteractiveLogin($this->event);
     }
 
-    public function testWithEmptyVisitorShoppingList()
-    {
-        $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
-        );
-
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.availability_for_guests')
-            ->willReturn(true);
-        $this->configureToken();
-
-        $visitor = new CustomerVisitorStub();
-        $visitor->addShoppingList(new ShoppingList());
-        $this->visitorManager->expects($this->once())
-            ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
-            ->willReturn($visitor);
-
-        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
-            ->method('setEnabled')
-            ->withConsecutive([false], []);
-
-        $this->guestShoppingListMigrationManager->expects($this->never())
-            ->method('migrateGuestShoppingList');
-
-        $this->listener->onInteractiveLogin($this->event);
-    }
-
     public function testMigrateGuestShoppingList()
     {
         $this->request->cookies->set(

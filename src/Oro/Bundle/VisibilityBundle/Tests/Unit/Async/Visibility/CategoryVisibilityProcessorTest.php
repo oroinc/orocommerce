@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -13,13 +14,11 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
