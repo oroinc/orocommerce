@@ -15,6 +15,8 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -28,6 +30,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /** @var array */
     protected static $valueMapping = [
+        'Use billing address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
@@ -103,6 +106,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->checkValueOnCheckoutPage($value);
 
         $this->pressNextButton($button);
+    }
+
+    /**
+     * Example: When I wait until all blocks on one step checkout page are reloaded
+     * @When /^I wait until all blocks on one step checkout page are reloaded$/
+     */
+    public function iWaitUntilAllBlocksOnOneStepCheckoutPageAreReloaded()
+    {
+        $this->waitForAjax();
     }
 
     /**
