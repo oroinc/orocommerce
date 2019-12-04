@@ -132,3 +132,17 @@ operations:
                          method_parameters: [$.data]
             - '@flush_entity': [$.address]
             - '@flush_entity': [$.data]
+
+    # deprecated since 3.1, will be removed in 4.0
+    b2b_flow_checkout_single_page_new_billing_address_wo_reload:
+        extends: b2b_flow_checkout_single_page_new_billing_address
+        replace:
+            - page_reload
+        page_reload: false
+
+    # deprecated since 3.1, will be removed in 4.0
+    b2b_flow_checkout_single_page_new_shipping_address_wo_reload:
+        extends: b2b_flow_checkout_single_page_new_shipping_address
+        replace:
+            - page_reload
+        page_reload: false

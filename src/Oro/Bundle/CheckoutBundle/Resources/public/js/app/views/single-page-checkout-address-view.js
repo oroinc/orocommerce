@@ -27,8 +27,8 @@ define(function(require) {
         enterManuallyOriginLabel: null,
 
         operations: {
-            billing: 'b2b_flow_checkout_single_page_new_billing_address',
-            shipping: 'b2b_flow_checkout_single_page_new_shipping_address'
+            billing: 'b2b_flow_checkout_single_page_new_billing_address_wo_reload',
+            shipping: 'b2b_flow_checkout_single_page_new_shipping_address_wo_reload'
         },
 
         titles: {
@@ -84,6 +84,10 @@ define(function(require) {
             }
         },
 
+        onEnableState: function() {
+            this._changeEnterManualValueLabel();
+        },
+
         onToggleState: function(disable, value, label) {
             if (disable) {
                 this.$el.prop('disabled', 'disabled');
@@ -114,6 +118,7 @@ define(function(require) {
                 hasForm: true,
                 dialogUrl: dialogUrl,
                 jsDialogWidget: this.options.jsDialogWidget,
+                onDialogResult: _.bind(this.onDialogResult, this, event, previousVal),
                 dialogOptions: {
                     title: this._title(addressType),
                     dialogOptions: {
@@ -121,8 +126,7 @@ define(function(require) {
                         width: this.options.dialogWidth,
                         height: this.options.dialogHeight,
                         resizable: this.options.resizable,
-                        autoResize: this.options.autoResize,
-                        close: _.bind(this.closeDialog, this, event, previousVal)
+                        autoResize: this.options.autoResize
                     },
                     fullscreenViewOptions: {
                         popupLabel: this._title(addressType),
@@ -136,12 +140,21 @@ define(function(require) {
         },
 
         /**
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event} openDialogEvent
          * @param {string} previousVal
+         * @param {object} dialogResultEvent
          */
-        closeDialog: function(event, previousVal) {
-            $(event.target).val(previousVal);
-            $(event.target).inputWidget('refresh');
+        onDialogResult: function(openDialogEvent, previousVal, dialogResultEvent) {
+            if (dialogResultEvent.result) {
+                if (!$(openDialogEvent.target).hasClass('custom-address')) {
+                    $(openDialogEvent.target).addClass('custom-address');
+                }
+
+                $(openDialogEvent.target).trigger('forceChange');
+            } else {
+                $(openDialogEvent.target).val(previousVal);
+                $(openDialogEvent.target).inputWidget('refresh');
+            }
         },
 
         /**

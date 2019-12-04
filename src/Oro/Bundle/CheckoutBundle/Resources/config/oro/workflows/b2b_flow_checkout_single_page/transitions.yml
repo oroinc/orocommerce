@@ -103,6 +103,7 @@ workflows:
                         saveStateUrl: $.result.saveStateUrl
                         targetLayoutBlocks:
                             '[data-role="checkout-ship-to"]':
+                                - 'shipping_address_wrapper'
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'
@@ -110,10 +111,15 @@ workflows:
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-billing-address"].custom-address':
+                                - 'billing_address_wrapper'
+                                - 'shipping_address_wrapper'
                             'select[data-role="checkout-shipping-address"]':
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-shipping-address"].custom-address':
+                                - 'shipping_address_wrapper'
                             '[name="shippingMethodType"]':
                                 - 'checkout_order_summary_totals_wrapper'
                                 - 'payment_methods_wrapper'
