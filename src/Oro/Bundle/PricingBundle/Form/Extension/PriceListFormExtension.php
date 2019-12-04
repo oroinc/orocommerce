@@ -29,9 +29,9 @@ class PriceListFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PriceListSelectWithPriorityType::class;
+        return [PriceListSelectWithPriorityType::class];
     }
 
     /**

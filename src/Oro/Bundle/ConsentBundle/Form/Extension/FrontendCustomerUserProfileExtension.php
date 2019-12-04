@@ -64,11 +64,11 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return FrontendCustomerUserProfileType::class;
+        return [FrontendCustomerUserProfileType::class];
     }
 
     /**

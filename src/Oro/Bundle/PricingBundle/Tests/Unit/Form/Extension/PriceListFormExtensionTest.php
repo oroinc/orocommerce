@@ -46,9 +46,9 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(PriceListFormExtension::MERGE_ALLOWED_FIELD));
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(PriceListSelectWithPriorityType::class, $this->priceListFormExtension->getExtendedType());
+        $this->assertEquals([PriceListSelectWithPriorityType::class], PriceListFormExtension::getExtendedTypes());
     }
 
     /**

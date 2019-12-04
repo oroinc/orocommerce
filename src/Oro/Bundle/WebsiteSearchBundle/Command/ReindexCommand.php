@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,17 +18,17 @@ class ReindexCommand extends Command
     /** @var string */
     protected static $defaultName = 'oro:website-search:reindex';
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
     /**
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(RegistryInterface $doctrine, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;

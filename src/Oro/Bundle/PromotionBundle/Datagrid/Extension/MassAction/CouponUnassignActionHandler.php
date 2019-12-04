@@ -40,9 +40,8 @@ class CouponUnassignActionHandler extends AbstractCouponMassActionHandler
 
         return new MassActionResponse(
             $successful,
-            $this->translator->transChoice(
+            $this->translator->trans(
                 'oro.promotion.mass_action.unassign.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             ),
             $options

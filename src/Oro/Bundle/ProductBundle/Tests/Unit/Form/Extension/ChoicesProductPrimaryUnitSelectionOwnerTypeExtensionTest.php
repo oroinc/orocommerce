@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
@@ -23,11 +24,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $childName;
-
-    /**
-     * @var string|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $extendedType;
 
     /**
      * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -49,10 +45,17 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         $this->choicesProductPrimaryUnitSelectionOwnerTypeExtension =
             new ChoicesProductPrimaryUnitSelectionOwnerTypeExtension(
                 $this->childName,
-                $this->extendedType,
                 $this->productFormUnitFieldsSettings
             );
         parent::setUp();
+    }
+
+    public function testGetExtendedTypes(): void
+    {
+        $this->assertEquals(
+            [ProductPrimaryUnitPrecisionType::class],
+            ChoicesProductPrimaryUnitSelectionOwnerTypeExtension::getExtendedTypes()
+        );
     }
 
     public function testBuildForm()

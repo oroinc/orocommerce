@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
@@ -12,7 +13,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 
@@ -29,7 +29,7 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
 
-    /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
@@ -47,7 +47,7 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->twig = $this->createMock(Environment::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);

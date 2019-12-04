@@ -22,9 +22,9 @@ class FieldChoiceTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new FieldChoiceTypeExtension();
     }
 
-    public function testGetExtendType()
+    public function testGetExtendTypes()
     {
-        $this->assertSame(FieldChoiceType::class, $this->extension->getExtendedType());
+        $this->assertSame([FieldChoiceType::class], FieldChoiceTypeExtension::getExtendedTypes());
     }
 
     public function testBuildView()

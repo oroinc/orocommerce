@@ -125,9 +125,9 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return OrderLineItemType::class;
+        return [OrderLineItemType::class];
     }
 
     /**

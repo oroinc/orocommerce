@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Command;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -10,7 +11,6 @@ use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,7 +25,7 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
     /** @var string */
     protected static $defaultName = 'oro:cron:shopping-list:clear-expired';
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var ExtendDbIdentifierNameGenerator */
@@ -35,12 +35,12 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandInt
     private $configManager;
 
     /**
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator
      * @param ConfigManager $configManager
      */
     public function __construct(
-        RegistryInterface $doctrine,
+        ManagerRegistry $doctrine,
         ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator,
         ConfigManager $configManager
     ) {

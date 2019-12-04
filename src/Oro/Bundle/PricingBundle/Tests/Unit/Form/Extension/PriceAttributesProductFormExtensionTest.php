@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
@@ -23,7 +24,6 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
@@ -31,7 +31,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -43,7 +43,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
 
         parent::setUp();
@@ -340,9 +340,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         ]);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $extension = new PriceAttributesProductFormExtension($this->registry, $this->aclHelper);
-        $this->assertEquals(ProductType::class, $extension->getExtendedType());
+        $this->assertEquals([ProductType::class], PriceAttributesProductFormExtension::getExtendedTypes());
     }
 }

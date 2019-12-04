@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
@@ -27,36 +28,30 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var SectionProvider */
     protected $sectionProvider;
 
-    /** @var string */
-    protected $extendedType;
-
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxProviderRegistry $taxProviderRegistry
      * @param TotalProcessorProvider $totalProcessorProvider
      * @param SectionProvider $sectionProvider
-     * @param string $extendedType
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxProviderRegistry $taxProviderRegistry,
         TotalProcessorProvider $totalProcessorProvider,
-        SectionProvider $sectionProvider,
-        $extendedType
+        SectionProvider $sectionProvider
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->totalProcessorProvider = $totalProcessorProvider;
         $this->sectionProvider = $sectionProvider;
-        $this->extendedType = (string)$extendedType;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [OrderLineItemType::class];
     }
 
     /** {@inheritdoc} */
@@ -79,7 +74,9 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             ];
         }
 
-        $this->sectionProvider->addSections($this->getExtendedType(), $sections);
+        foreach (self::getExtendedTypes() as $extendedType) {
+            $this->sectionProvider->addSections($extendedType, $sections);
+        }
     }
 
     /** {@inheritdoc} */

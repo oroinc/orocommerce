@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -221,5 +222,13 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return [RequestType::class];
     }
 }

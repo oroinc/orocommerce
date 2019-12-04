@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
@@ -18,7 +19,6 @@ use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceCPLEntityListener implements OptionalListenerInterface
@@ -31,7 +31,7 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
     protected $extraActionsStorage;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -52,14 +52,14 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
 
     /**
      * @param ExtraActionEntityStorageInterface $extraActionsStorage
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param ShardManager $shardManager
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         PriceListTriggerHandler $priceListTriggerHandler,
         ShardManager $shardManager,
         EventDispatcherInterface $eventDispatcher

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
@@ -9,7 +10,6 @@ use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +17,7 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
     private const PRODUCT_IDS = [1, 5];
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -33,7 +33,7 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->availableOrderStatusesProvider = $this->createMock(OrderStatusesProviderInterface::class);
 
         $this->latestOrderedProductsInfoProvider = new LatestOrderedProductsInfoProvider(

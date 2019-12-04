@@ -115,10 +115,9 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $this->assertArrayNotHasKey('is_visible', $data['datagrid']);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $extension = new AttributeConfigExtension($this->attributeConfigProvider, $this->translator);
-        $this->assertEquals(ConfigType::class, $extension->getExtendedType());
+        $this->assertEquals([ConfigType::class], AttributeConfigExtension::getExtendedTypes());
     }
 
     public function testFinishViewNotApplicable()

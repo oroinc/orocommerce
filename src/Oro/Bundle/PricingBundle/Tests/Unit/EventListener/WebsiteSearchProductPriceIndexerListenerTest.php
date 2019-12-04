@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
@@ -11,7 +12,6 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPr
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,7 +26,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
     private $websiteContextManager;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrine;
 
@@ -51,7 +51,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Provides purchase information for products.
@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class LatestOrderedProductsInfoProvider
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -23,11 +23,11 @@ class LatestOrderedProductsInfoProvider
 
     /**
      * LatestOrderedProductsInfoProvider constructor.
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param OrderStatusesProviderInterface $availableOrderStatusesProvider
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         OrderStatusesProviderInterface $availableOrderStatusesProvider
     ) {
         $this->registry = $registry;

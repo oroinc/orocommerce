@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\FieldsProviderInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Abstract class for listeners which watch product changes and execute price recalculation.
@@ -23,19 +23,19 @@ abstract class AbstractRuleEntityListener
     protected $fieldsProvider;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
      * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
      * @param FieldsProviderInterface $fieldsProvider
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
         FieldsProviderInterface $fieldsProvider,
-        RegistryInterface $registry
+        ManagerRegistry $registry
     ) {
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;

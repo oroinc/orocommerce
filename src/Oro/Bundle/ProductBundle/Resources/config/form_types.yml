@@ -220,7 +220,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
         arguments:
             - '@translator'
-            - Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType }
 
@@ -255,7 +254,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
         arguments:
             - 'unit'
-            - 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
             - "@oro_product.visibility.product_unit_fields_settings"
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }

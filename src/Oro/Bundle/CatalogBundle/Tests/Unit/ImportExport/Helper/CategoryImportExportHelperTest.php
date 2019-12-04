@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -9,11 +10,10 @@ use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var CategoryImportExportHelper */
@@ -21,7 +21,7 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->helper = new CategoryImportExportHelper($this->doctrine);
     }
 
@@ -94,7 +94,7 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrine
             ->expects($this->once())
-            ->method('getEntityManagerForClass')
+            ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager = $this->createMock(EntityManager::class));
 

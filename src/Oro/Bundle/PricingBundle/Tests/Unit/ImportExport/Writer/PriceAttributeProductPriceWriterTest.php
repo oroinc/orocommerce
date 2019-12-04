@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
@@ -11,7 +12,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Writer\PriceAttributeProductPriceWriter;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceAttributeProductPriceWriterTest extends TestCase
@@ -30,7 +30,7 @@ class PriceAttributeProductPriceWriterTest extends TestCase
     {
         $this->entityManager = $this->createMock(EntityManager::class);
 
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects(static::any())
             ->method('getManager')
             ->willReturn($this->entityManager);

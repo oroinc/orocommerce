@@ -51,7 +51,7 @@
                 {% set itemsCount = shoppingList.lineItems.count %}
                 {% if itemsCount %}
                     <div class="shopping-list__desc">
-                        <b>{{ shoppingList.lineItems.count }}</b> {{ 'oro.shoppinglist.items.label'|transchoice(itemsCount) }}
+                        <b>{{ shoppingList.lineItems.count }}</b> {{ 'oro.shoppinglist.items.label'|trans({'%count%': itemsCount}) }}
                     </div>
                 {% endif %}
             </div>

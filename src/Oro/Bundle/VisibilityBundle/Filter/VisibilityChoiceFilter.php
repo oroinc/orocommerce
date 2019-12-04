@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\VisibilityBundle\Filter;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\ChoiceFilter;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class VisibilityChoiceFilter extends ChoiceFilter
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
     public function setRegistry($registry)
     {

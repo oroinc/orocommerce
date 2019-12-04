@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermAclExtension;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PaymentTermBundle\Form\Extension\OrderPaymentTermAclExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
+class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentTermAclExtension */
+    /** @var OrderPaymentTermAclExtension */
     protected $extension;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -26,27 +27,16 @@ class PaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->extension = new PaymentTermAclExtension(
+        $this->extension = new OrderPaymentTermAclExtension(
             $this->paymentTermAssociationProvider,
             $this->authorizationChecker
         );
-        $this->extension->setExtendedType('extended_type');
         $this->extension->setAclResource('acl_res');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Extended Type not configured
-     */
-    public function testGetExtendedTypeEmpty()
+    public function testGetExtendedTypes()
     {
-        $this->extension->setExtendedType(null);
-        $this->extension->getExtendedType();
-    }
-
-    public function testGetExtended()
-    {
-        $this->assertSame('extended_type', $this->extension->getExtendedType());
+        $this->assertSame([OrderType::class], OrderPaymentTermAclExtension::getExtendedTypes());
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -15,7 +16,6 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -39,7 +39,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
     protected $parser;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 
@@ -65,7 +65,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrine = $this->getMockBuilder(RegistryInterface::class)
+        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 

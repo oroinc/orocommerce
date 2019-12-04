@@ -71,9 +71,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
+        $this->assertEquals([OrderLineItemType::class], OrderLineItemTypeExtension::getExtendedTypes());
     }
 
     public function testBuildView()

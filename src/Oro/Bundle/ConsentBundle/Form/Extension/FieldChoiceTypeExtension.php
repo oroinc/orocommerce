@@ -16,9 +16,9 @@ class FieldChoiceTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return FieldChoiceType::class;
+        return [FieldChoiceType::class];
     }
 
     /**

@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -37,7 +37,7 @@ class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->manager = $this->getMockBuilder(ObjectManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
             ->disableOriginalConstructor()
             ->getMock();

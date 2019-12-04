@@ -49,15 +49,26 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
             ->with('oro_shopping_list_frontend_view', ['id' => $shoppingListId])
             ->willReturn($url);
 
-        $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with('oro.shoppinglist.actions.add_success_message', $entitiesCount, ['%count%' => $entitiesCount])
-            ->willReturn($transChoice);
-
-        $this->translator->expects($withUrl ? $this->once() : $this->never())
+        $this->translator->expects($this->any())
             ->method('trans')
-            ->with('oro.shoppinglist.actions.view')
-            ->willReturn($transMessage);
+            ->willReturnMap(
+                [
+                    [
+                        'oro.shoppinglist.actions.add_success_message',
+                        ['%count%' => $entitiesCount],
+                        null,
+                        null,
+                        $transChoice
+                    ],
+                    [
+                        'oro.shoppinglist.actions.view',
+                        [],
+                        null,
+                        null,
+                        $withUrl ? $transMessage : null
+                    ],
+                ]
+            );
 
         $this->assertEquals($expectedMessage, $this->generator->getSuccessMessage($shoppingListId, $entitiesCount));
     }

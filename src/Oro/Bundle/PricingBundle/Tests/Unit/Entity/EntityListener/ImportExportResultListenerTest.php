@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
@@ -10,7 +11,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,7 +34,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->manager = $this->createMock(ObjectManager::class);
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(PriceList::class)

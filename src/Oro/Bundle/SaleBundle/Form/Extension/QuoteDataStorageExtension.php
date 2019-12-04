@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
 {
@@ -85,5 +86,13 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         return $unit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return [QuoteType::class];
     }
 }

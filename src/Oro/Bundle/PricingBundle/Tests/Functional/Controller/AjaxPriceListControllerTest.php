@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
 
 class AjaxPriceListControllerTest extends WebTestCase
 {
@@ -61,7 +61,7 @@ class AjaxPriceListControllerTest extends WebTestCase
         $this->assertEquals(
             array_map(
                 function ($currencyCode) {
-                    return Intl::getCurrencyBundle()->getCurrencyName($currencyCode);
+                    return Currencies::getName($currencyCode);
                 },
                 $priceList->getCurrencies()
             ),

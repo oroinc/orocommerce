@@ -47,7 +47,7 @@
             <span class="cart-widget__text">
                 {% set isShowDropdown = true %}
                 {% if not is_one_shopping_list_enabled() %}
-                    {{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }}
+                    {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
                 {% else %}
                     {% if (shoppingLists|length > 0) %}
                         {% set shoppingList = shoppingLists[0] %}
@@ -57,7 +57,7 @@
                         {% endif %}
                     {% else %}
                         {% set isShowDropdown = false %}
-                        {{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }}
+                        {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
                     {% endif %}
                 {% endif %}
             </span>
@@ -132,7 +132,7 @@
                             data-role="shopping-list-title">{{ shoppingList.label }}</span>
                     </span>
                     <span class="shopping-list-dropdown__details">
-                        {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
+                        {{ 'oro.frontend.shoppinglist.view.items.label'|trans({'%count%': shoppingList.lineItems|length}) }}
                         {% if shoppingList.lineItems|length > 0 %}
                             | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                         {% endif %}
@@ -160,7 +160,7 @@
                 {% for lineItem in shoppingList.lineItems|default([]) %}
                     {% set product = lineItem.product %}
                     {% set productMatchedPrice = productsMatchedPrices[product.id][lineItem.productUnit.code] is not empty ? productsMatchedPrices[product.id][lineItem.unit.code] : null %}
-                    
+
                     <div class="shopping-list-dropdown__product-item">
                         <div class="shopping-list-dropdown__product-img">
                             {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
@@ -205,7 +205,7 @@
                 {% if shoppingList.lineItems|length > 0 %}
                     <div class="shopping-list-dropdown__total">
                         {{ 'oro.frontend.shoppinglist.view.total.label'|trans }}
-                        {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
+                        {{ 'oro.frontend.shoppinglist.view.items.label'|trans({'%count%': shoppingList.lineItems|length}) }}
                         | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                     </div>
                     <div class="shopping-list-dropdown__order-container">

@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CustomerProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
     /** @var CustomerProductVisibilityRepository */
     protected $repository;
 
-    /** @var  RegistryInterface */
+    /** @var ManagerRegistry */
     protected $registry;
 
     /**

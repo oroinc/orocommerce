@@ -50,9 +50,9 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CheckoutShipUntilType::class;
+        return [CheckoutShipUntilType::class];
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -9,7 +10,6 @@ use Oro\Bundle\SecurityBundle\AccessRule\AclAccessRule;
 use Oro\Bundle\SecurityBundle\AccessRule\AvailableOwnerAccessRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -23,7 +23,7 @@ class ShoppingListOwnerManager
     protected $aclHelper;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -33,12 +33,11 @@ class ShoppingListOwnerManager
     protected $configProvider;
 
     /**
-     * ShoppingListOwnerManager constructor.
      * @param AclHelper $aclHelper
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param ConfigProvider $configProvider
      */
-    public function __construct(AclHelper $aclHelper, RegistryInterface $registry, ConfigProvider $configProvider)
+    public function __construct(AclHelper $aclHelper, ManagerRegistry $registry, ConfigProvider $configProvider)
     {
         $this->aclHelper = $aclHelper;
         $this->registry = $registry;

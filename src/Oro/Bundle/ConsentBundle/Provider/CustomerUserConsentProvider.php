@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ConsentBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Provides Consents data associated with Customer User
@@ -20,7 +20,7 @@ class CustomerUserConsentProvider
     /** @var EnabledConsentProvider */
     protected $enabledConsentProvider;
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /** @var ConsentContextProviderInterface */
@@ -29,13 +29,13 @@ class CustomerUserConsentProvider
     /**
      * @param CmsPageHelper $cmsPageHelper
      * @param EnabledConsentProvider $enabledConsentProvider
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param ConsentContextProviderInterface $consentContextProvider
      */
     public function __construct(
         CmsPageHelper $cmsPageHelper,
         EnabledConsentProvider $enabledConsentProvider,
-        RegistryInterface $doctrine,
+        ManagerRegistry $doctrine,
         ConsentContextProviderInterface $consentContextProvider
     ) {
         $this->cmsPageHelper = $cmsPageHelper;
@@ -52,7 +52,7 @@ class CustomerUserConsentProvider
     {
         /** @var ConsentAcceptanceRepository $consentAcceptanceRepository */
         $consentAcceptanceRepository = $this->doctrine
-            ->getEntityManagerForClass(ConsentAcceptance::class)
+            ->getManagerForClass(ConsentAcceptance::class)
             ->getRepository(ConsentAcceptance::class);
 
         $consents = $this->enabledConsentProvider->getConsents();

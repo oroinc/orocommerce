@@ -47,9 +47,9 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertSame(CheckoutShipUntilType::class, $this->extension->getExtendedType());
+        $this->assertSame([CheckoutShipUntilType::class], CheckoutShipUntilFormExtension::getExtendedTypes());
     }
 
     public function testConfigureOptionsDisabled()
