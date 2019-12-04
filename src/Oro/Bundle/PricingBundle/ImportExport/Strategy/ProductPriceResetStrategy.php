@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Product price reset strategy
+ * It expects the existing prices to be removed from the price list before import
+ */
 class ProductPriceResetStrategy extends ProductPriceImportStrategy
 {
     /**
@@ -20,28 +22,10 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
     protected $processedPriceLists = [];
 
     /**
-     * @param PriceList $entity
-     *
      * {@inheritdoc}
      */
     protected function beforeProcessEntity($entity)
     {
-        if ($entity instanceof ProductPrice) {
-            $priceList = $entity->getPriceList();
-            $identifier = $this->databaseHelper->getIdentifier($priceList);
-            if ($identifier && empty($this->processedPriceLists[$identifier])) {
-                $recordsToDelete = $this->getProductPriceRepository()
-                    ->countByPriceList($this->shardManager, $priceList);
-                if ($recordsToDelete) {
-                    $this->context->incrementDeleteCount($recordsToDelete);
-                }
-
-                $this->getProductPriceRepository()->deleteByPriceList($this->shardManager, $priceList);
-
-                $this->processedPriceLists[$identifier] = true;
-            }
-        }
-
         return parent::beforeProcessEntity($entity);
     }
 

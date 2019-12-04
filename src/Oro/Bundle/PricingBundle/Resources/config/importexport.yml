@@ -185,3 +185,12 @@ services:
         class: 'Oro\Bundle\PricingBundle\ImportExport\Writer\PriceAttributeProductPriceWriter'
         public: false
         parent: oro_integration.writer.persistent_batch_writer
+
+    oro_pricing.importexport.listener.before_import_chunks:
+        class: Oro\Bundle\PricingBundle\ImportExport\EventListener\BeforeImportChunksListener
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: oro.import_export.before_import_chunks, method: onBeforeImportChunks }

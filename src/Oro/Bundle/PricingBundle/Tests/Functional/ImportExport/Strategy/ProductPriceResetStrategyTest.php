@@ -6,6 +6,8 @@ use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
+use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
+use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
@@ -108,8 +110,16 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->assertContains($price, $actualPricesIds);
         }
 
-        $this->strategy->process($productPrice);
+        $body['processorAlias'] = 'oro_pricing_product_price.reset';
+        $body['options']['price_list_id'] = $priceList->getId();
 
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            Events::BEFORE_CREATING_IMPORT_CHUNK_JOBS,
+            new BeforeImportChunksEvent($body)
+        );
+
+        // ProductPriceResetStrategy works in conjunction with PreChunksMessageProcessor
+        // which clears the price list before importing prices in chunks
         $this->assertEmpty(
             $this->getContainer()
                 ->get('doctrine')
@@ -117,23 +127,13 @@ class ProductPriceResetStrategyTest extends WebTestCase
                 ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
         );
 
-        // do not clear twice
-        $newProductPrice = $this->createProductPrice();
-        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
-        $priceManager->persist($newProductPrice);
-        $priceManager->flush();
-
         $this->strategy->process($productPrice);
 
-        $this->assertEquals(
-            [$newProductPrice],
-            $this->getContainer()
-                ->get('doctrine')
-                ->getRepository('OroPricingBundle:ProductPrice')
-                ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
-        );
+        $this->assertNotEmpty($productPrice->getPrice());
+        $this->assertEquals('USD', $productPrice->getPrice()->getCurrency());
+        $this->assertEquals(12.2, $productPrice->getPrice()->getValue());
+        $this->assertNotEmpty($productPrice->getProduct());
     }
-
 
     /**
      * @return ProductPrice
