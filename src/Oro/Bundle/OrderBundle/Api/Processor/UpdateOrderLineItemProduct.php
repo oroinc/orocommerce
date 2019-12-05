@@ -13,7 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Sets a product for an order line item if it was not submitted
- * but the line item has a product SKU and the line item is not represent a free form product.
+ * but the line item has a product SKU and the line item does not represent a free form entry.
  */
 class UpdateOrderLineItemProduct implements ProcessorInterface
 {

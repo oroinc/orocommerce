@@ -494,3 +494,10 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    oro_order.validator.customer_or_user_address_granted:
+        class: 'Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGrantedValidator'
+        arguments:
+            - '@oro_order.order.provider.order_address'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }

@@ -248,8 +248,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "item" is not valid.',
                 'source' => ['pointer' => '/data/attributes/quantity']
             ],
             $response
@@ -306,8 +306,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "item" is not valid.',
                 'source' => ['pointer' => '/data/attributes/quantity']
             ],
             $response
@@ -888,13 +888,11 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title'  => 'product line item constraint',
-                    'detail' => 'The given product unit is not valid for given product.',
-                    'source' => ['pointer' => '/data/relationships/unit/data']
-                ],
+                'title'  => 'product unit exists constraint',
+                'detail' => 'The product unit does not exist for the product.',
+                'source' => ['pointer' => '/data/relationships/unit/data']
             ],
             $response
         );
@@ -911,8 +909,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'product line item constraint',
-                'detail' => 'The given product unit is not valid for given product.',
+                'title'  => 'product unit exists constraint',
+                'detail' => 'The product unit does not exist for the product.',
                 'source' => ['pointer' => '/data/relationships/unit/data']
             ],
             $response

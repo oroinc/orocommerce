@@ -304,3 +304,19 @@ operations:
                 allowMinimize: false
                 dblclick: false
                 maximizedHeightDecreaseBy: minimize-bar
+
+action_groups:
+    api_order_purchase_by_payment_term:
+        parameters:
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            paymentMethod:
+                type: string
+        conditions:
+            '@start_with': [$.paymentMethod, '%oro_payment_term.type%_']
+        actions:
+            - '@payment_purchase':
+                  object: $.order
+                  amount: $.order.total
+                  currency: $.order.currency
+                  paymentMethod: $.paymentMethod

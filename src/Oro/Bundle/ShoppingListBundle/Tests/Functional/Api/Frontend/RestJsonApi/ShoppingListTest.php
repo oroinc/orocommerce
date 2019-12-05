@@ -1223,13 +1223,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title'  => 'product line item constraint',
-                    'detail' => 'The given product unit is not valid for given product.',
-                    'source' => ['pointer' => '/data/0/relationships/unit/data']
-                ],
+                'title'  => 'product unit exists constraint',
+                'detail' => 'The product unit does not exist for the product.',
+                'source' => ['pointer' => '/data/0/relationships/unit/data']
             ],
             $response
         );
@@ -1249,8 +1247,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'product line item constraint',
-                    'detail' => 'The given product unit is not valid for given product.',
+                    'title'  => 'product unit exists constraint',
+                    'detail' => 'The product unit does not exist for the product.',
                     'source' => ['pointer' => '/data/0/relationships/unit/data']
                 ],
             ],
@@ -1329,8 +1327,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "set" is not valid.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
@@ -1351,8 +1349,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "item" is not valid.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response

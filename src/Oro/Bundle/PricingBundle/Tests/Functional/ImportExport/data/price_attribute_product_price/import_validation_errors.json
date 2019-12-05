@@ -6,7 +6,7 @@
   "Error in row #2. Price List Price Attribute: This value should not be blank.",
   "Error in row #3. Not found entity \"Product Unit\"",
   "Error in row #3. Unit Code: Product unit does not exist.",
-  "Error in row #3. Unit Code: Please enter valid unit of measurement",
+  "Error in row #3. Unit Code: The product unit does not exist for the product.",
   "Error in row #4. price.currency: Currency \"undefined\" is not valid for current price list.",
   "Error in row #4. price.currency: This value is not a valid currency.",
   "Error in row #5. Unit Code: Unit \"item\" is not allowed for product \"product-2\".",

@@ -14,6 +14,95 @@ Retrieve a collection of order records.
 
 {@inheritdoc}
 
+### create
+
+Create a new order using **Payment Term** payment method.
+
+The created record is returned in the response.
+
+{@inheritdoc}
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "orders",
+    "relationships": {
+      "billingAddress": {
+        "data": {
+          "type": "orderaddresses",
+          "id": "billing1"
+        }
+      },
+      "shippingAddress": {
+        "data": {
+          "type": "orderaddresses",
+          "id": "shipping1"
+        }
+      },
+      "lineItems": {
+        "data": [
+          {
+            "type": "orderlineitems",
+            "id": "item1"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "orderlineitems",
+      "id": "item1",
+      "attributes": {
+        "quantity": 10
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "1"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "item"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderaddresses",
+      "id": "billing1",
+      "relationships": {
+        "customerAddress": {
+          "data": {
+            "type": "customeraddresses",
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderaddresses",
+      "id": "shipping1",
+      "relationships": {
+        "customerAddress": {
+          "data": {
+            "type": "customeraddresses",
+            "id": "1"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+{@/request}
+
 ## FIELDS
 
 ### discounts
@@ -30,6 +119,12 @@ The **amount** property is a string contains the monetary value of the discount.
 
 Example of data: **\[{"type": "order", "description": "discount 1", "amount": "123.4500"}, {"type": "promotion.shipping", "description": "discount 2", "amount": "15.000"}\]**
 
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### shippingTrackings
 
 An array of the shipping tracking records.
@@ -41,6 +136,12 @@ The **method** property is a string contains the shipping tracking method.
 The **number** property is a string contains the shipping tracking number.
 
 Example of data: **\[{"method": "UPS", "number": "UP243566"}, {"method": "DHL", "number": "123-12345678"}\]**
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ### shippingMethod
 
@@ -54,9 +155,21 @@ The **label** property is a string contains the shipping method label.
 
 Example of data: **{"code": "ups_3", "label": "UPS"}**
 
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### shippingCostAmount
 
 The shipping cost for the order.
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ### paymentStatus
 
@@ -70,6 +183,12 @@ The **label** property is a string contains the payment status label.
 
 Example of data: **{"code": "pending", "label": "Pending payment"}**
 
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### paymentMethod
 
 An array of the selected payment methods.
@@ -81,6 +200,64 @@ The **code** property is a string contains the payment method code.
 The **label** property is a string contains the payment method label.
 
 Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"code": "pay_pal_express_5", "label": "PayPal Express"}\]**
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### paymentTerm
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### currency
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### totalValue
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### subtotalValue
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### billingAddress
+
+#### create
+
+{@inheritdoc}
+
+**Only new order address can be passed.**
+
+**The required field.**
+
+### shippingAddress
+
+#### create
+
+{@inheritdoc}
+
+**Only new order address can be passed.**
+
+**The required field.**
 
 ## SUBRESOURCES
 

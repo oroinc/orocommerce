@@ -53,7 +53,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdate()
@@ -86,7 +86,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, POST');
     }
 
     public function testTryToGetSubresourceForOrder()

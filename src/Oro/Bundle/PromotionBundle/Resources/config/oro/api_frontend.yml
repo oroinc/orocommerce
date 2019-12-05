@@ -6,13 +6,21 @@ api:
                 rowTotalDiscountAmount:
                     data_type: money
                     property_path: _
+                    form_options:
+                        mapped: false
                 rowTotalAfterDiscountIncludingTax:
                     data_type: money
                     property_path: _
+                    form_options:
+                        mapped: false
                 rowTotalAfterDiscountExcludingTax:
                     data_type: money
                     property_path: _
+                    form_options:
+                        mapped: false
                 rowTotalAfterDiscount:
                     data_type: money
                     property_path: _
                     depends_on: [value, quantity]
+                    form_options:
+                        mapped: false

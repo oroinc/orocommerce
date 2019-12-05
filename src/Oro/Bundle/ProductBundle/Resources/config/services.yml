@@ -191,6 +191,8 @@ services:
 
     oro_product.validator.quantity_unit_precision:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator'
+        arguments:
+            - '@oro_product.service.quantity_rounding'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_quantity_unit_precision }
 
