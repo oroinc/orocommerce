@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\DependencyInjection\Compiler;
 
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -33,7 +34,10 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
     {
         if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_VALIDATION_LOADER_SERVICE_ID)) {
             $definition = $container->getDefinition(self::ENTITY_EXTEND_FIELD_VALIDATION_LOADER_SERVICE_ID);
-            $definition->addMethodCall('addConstraints', [WYSIWYGType::TYPE, [[WYSIWYG::class => null]]]);
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
+            );
         }
     }
 
@@ -44,7 +48,10 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
     {
         if ($container->hasDefinition(self::SERIALIZED_FIELDS_EXTEND_FIELD_VALIDATOR_SERVICE_ID)) {
             $definition = $container->getDefinition(self::SERIALIZED_FIELDS_EXTEND_FIELD_VALIDATOR_SERVICE_ID);
-            $definition->addMethodCall('addConstraints', [WYSIWYGType::TYPE, [[WYSIWYG::class => null]]]);
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
+            );
         }
     }
 }

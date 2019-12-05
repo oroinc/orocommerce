@@ -10,6 +10,8 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
+use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -27,6 +29,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\CollectionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
+use Twig\Environment;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
@@ -67,11 +70,14 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $logger = $this->createMock(LoggerInterface::class);
+        $twig = $this->createMock(Environment::class);
 
         $wysiwygConstraint = new WYSIWYG();
+        $twigContent = new TwigContent();
 
         return [
-            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $purifierScopeProvider, $logger)
+            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator($htmlTagHelper, $purifierScopeProvider, $logger),
+            $twigContent->validatedBy() => new TwigContentValidator($twig)
         ];
     }
 

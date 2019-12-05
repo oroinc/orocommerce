@@ -320,6 +320,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: wysiwyg_validator }
 
+    oro_cms.validator.twig_content:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator
+        arguments:
+            - '@oro_cms.twig.renderer'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_cms.provider.html_purifier_scope_provider:
         class: Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider
         public: false
