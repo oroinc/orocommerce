@@ -34,7 +34,8 @@ Feature: Content Widget in CMS Page
     Then I should not see "Delete"
 
   Scenario: Check content widget usages grid
-    When I click View "copyright" in grid
+    When I go to Marketing/ Content Widgets
+    And I click View "copyright" in grid
     Then number of records in "CMS Pages Content Widget Usages Grid" should be 1
     And I should see following "CMS Pages Content Widget Usages Grid" grid:
       | Title         |
