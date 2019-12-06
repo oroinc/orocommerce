@@ -35,6 +35,7 @@ define(function(require) {
          */
         events: {
             change: 'onChange',
+            forceChange: 'onForceChange',
             submit: 'onSubmit'
         },
 
@@ -92,13 +93,13 @@ define(function(require) {
             SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
         },
 
-        afterCheck: function($el) {
+        afterCheck: function($el, force) {
             if (!$el) {
                 $el = this.$el;
             }
             var serializedData = this.getSerializedData();
 
-            if (this.lastSerializedData === serializedData) {
+            if (this.lastSerializedData === serializedData && !force) {
                 return;
             }
 
@@ -125,7 +126,20 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
-            this.afterCheck($(event.target));
+            this.afterCheck($(event.target), false);
+        },
+
+        /**
+         * @param {jQuery.Event} event
+         */
+        onForceChange: function(event) {
+            this._toggleShipTo();
+            this._disableShippingAddress();
+
+            this._changeShippingMethod();
+            this._changePaymentMethod();
+
+            this.afterCheck($(event.target), true);
         },
 
         onBeforeSaveState: function() {
@@ -134,6 +148,12 @@ define(function(require) {
         },
 
         onAfterSaveState: function() {
+            this.subview('checkoutBillingAddress').setElement(this.$el.find(this.options.billingAddressSelector));
+            this.subview('checkoutBillingAddress').onEnableState();
+
+            this.subview('checkoutShippingAddress').setElement(this.$el.find(this.options.shippingAddressSelector));
+            this.subview('checkoutShippingAddress').onEnableState();
+
             // Resets submit button element
             this.subview('checkoutSubmitButton').setElement(this.$el.find(this.options.submitButtonSelector));
             this.subview('checkoutSubmitButton').onEnableState();

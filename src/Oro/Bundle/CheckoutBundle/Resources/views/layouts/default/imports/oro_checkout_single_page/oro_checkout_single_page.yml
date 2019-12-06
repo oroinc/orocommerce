@@ -19,6 +19,11 @@ layout:
                 checkout_billing_information:
                     blockType: container
 
+                billing_address_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
+
                 billing_address:
                     blockType: checkout_form_fields
                     options:
@@ -59,6 +64,11 @@ layout:
 
                 checkout_shipping_information:
                     blockType: container
+
+                shipping_address_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
 
                 shipping_address:
                     blockType: checkout_form_fields
@@ -109,13 +119,15 @@ layout:
                 checkout_form_fields:
                     checkout_view:
                         checkout_billing_information:
-                            billing_address: ~
+                            billing_address_wrapper:
+                                billing_address: ~
                             payment_methods_wrapper:
                                 payment_methods_hidden: ~
                                 payment_methods: ~
                                 payment_additional_data: ~
                         checkout_shipping_information:
-                            shipping_address: ~
+                            shipping_address_wrapper:
+                                shipping_address: ~
                             shipping_methods_wrapper:
                                 shipping_methods_hidden: ~
                                 shipping_methods:
