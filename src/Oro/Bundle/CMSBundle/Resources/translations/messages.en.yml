@@ -21,9 +21,10 @@ oro.cms:
         text_content_variants.label: 'Text Content Variants'
         default.label: Default
         information_message: Current content view is simplified, please check the page on the Storefront to see the actual result
-        draft_project.label:    'Draft Project'
-        draft_source.label:     'Draft Source'
-        draft_uuid.label:       'Draft ID'
+        draft_owner.label: 'Draft Owner'
+        draft_project.label: 'Draft Project'
+        draft_source.label: 'Draft Source'
+        draft_uuid.label: 'Draft ID'
 
     contentblock:
         entity_label: Content Block
