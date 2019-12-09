@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadDraftPageData;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadDraftPageSlugData;
+use Oro\Bundle\DraftBundle\Doctrine\DraftableFilter;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
@@ -15,6 +17,9 @@ class DraftRestrictSlugIncrementListenerTest extends WebTestCase
 {
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
+
+    /** @var EntityManager */
+    private $slugEntityManager;
 
     /**
      * {@inheritdoc}
@@ -29,13 +34,18 @@ class DraftRestrictSlugIncrementListenerTest extends WebTestCase
             ]
         );
 
-        $this->eventDispatcher = $this->getContainer()->get('event_dispatcher');
+        $container = $this->getContainer();
+        $this->eventDispatcher = $container->get('event_dispatcher');
+        $this->slugEntityManager = $container->get('doctrine')->getManagerForClass(Slug::class);
     }
 
     public function testOnRestrictSlugIncrementEventForDraft(): void
     {
+        $this->disableDraftableFilter();
         /** @var Page $page */
         $entity = $this->getReferenceRepository()->getReference(LoadDraftPageData::BASIC_PAGE_1_DRAFT_1);
+        $this->slugEntityManager->refresh($entity);
+        $this->enableDraftableFilter();
 
         $queryBuilder = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder('/basic-page-1-url', $entity);
         $this->assertNotNull($queryBuilder->getQuery()->getOneOrNullResult());
@@ -65,6 +75,22 @@ class DraftRestrictSlugIncrementListenerTest extends WebTestCase
      */
     private function getSlugRepository(): SlugRepository
     {
-        return $this->getContainer()->get('doctrine')->getManager()->getRepository(Slug::class);
+        return $this->slugEntityManager->getRepository(Slug::class);
+    }
+
+    private function disableDraftableFilter(): void
+    {
+        $filters = $this->slugEntityManager->getFilters();
+        if ($filters->isEnabled(DraftableFilter::FILTER_ID)) {
+            $filters->disable(DraftableFilter::FILTER_ID);
+        }
+    }
+
+    private function enableDraftableFilter(): void
+    {
+        $filters = $this->slugEntityManager->getFilters();
+        if (!$filters->isEnabled(DraftableFilter::FILTER_ID)) {
+            $filters->enable(DraftableFilter::FILTER_ID);
+        }
     }
 }

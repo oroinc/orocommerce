@@ -5,7 +5,9 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Query\FilterCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\DraftBundle\Doctrine\DraftableFilter;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class LoadDraftPageSlugData extends AbstractFixture implements DependentFixtureInterface
@@ -50,6 +52,12 @@ class LoadDraftPageSlugData extends AbstractFixture implements DependentFixtureI
      */
     public function load(ObjectManager $manager)
     {
+        /** @var FilterCollection $filters */
+        $filters = $manager->getFilters();
+        if ($filters->isEnabled(DraftableFilter::FILTER_ID)) {
+            $filters->disable(DraftableFilter::FILTER_ID);
+        }
+
         foreach (self::$slugs as $reference => $data) {
             /** @var Page $page */
             $page = $this->getReference($data['page']);
@@ -66,5 +74,7 @@ class LoadDraftPageSlugData extends AbstractFixture implements DependentFixtureI
         }
 
         $manager->flush();
+
+        $filters->enable(DraftableFilter::FILTER_ID);
     }
 }
