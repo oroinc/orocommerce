@@ -211,9 +211,9 @@ define(function(require) {
          * Submit element should be active when text was scrolled to the down
          */
         onScroll: function() {
-            const consentTextHeight = $(this.subview('popup').el).height();
+            const consentTextHeight = Math.floor($(this.subview('popup').el).height());
             const widget = this.subview('popup').widget;
-            const disable = consentTextHeight > (widget.height() + widget.scrollTop());
+            const disable = consentTextHeight > Math.floor(widget.height() + widget.scrollTop());
 
             this.updateSubmitElementState(disable);
         },
