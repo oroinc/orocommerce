@@ -1,6 +1,10 @@
 <% if (title) { %>
-<div class="content-widget-placeholder">
-    <h3 class="content-placeholder-title"><%- widgetType %></h3>
-    <p><%- title %></p>
-</div>
+    <% if (inline) { %>
+        <%- title %> - <b><%- widgetType %></b>
+    <% } else { %>
+        <div class="content-widget-placeholder">
+            <h3 class="content-placeholder-title"><%- widgetType %></h3>
+            <p><%- title %></p>
+        </div>
+    <% } %>
 <% } %>

@@ -43,7 +43,7 @@ define(function(require) {
 
             this.initButtons();
             this.builder.on('changeTheme', _.bind(this.initButtons, this));
-            this.builder.on('rteToolbarPosUpdate', _.debounce(_.bind(this.updateRtePosition, this), 100));
+            this.builder.on('rteToolbarPosUpdate', _.bind(this.updateRtePosition, this));
         },
 
         initButtons: function() {
@@ -198,19 +198,21 @@ define(function(require) {
         },
 
         updateRtePosition: function(pos) {
-            const style = window.getComputedStyle(this.$builderIframe);
-            const borderTopSize = parseInt(style['border-top-width']);
-            const borderLeftSize = parseInt(style['border-left-width']);
-            const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
-            const builderIframeWidth = $(this.$builderIframe).innerWidth();
-            let positionLeft = pos.left;
+            if (pos.targetHeight !== 0) {
+                const style = window.getComputedStyle(this.$builderIframe);
+                const borderTopSize = parseInt(style['border-top-width']);
+                const borderLeftSize = parseInt(style['border-left-width']);
+                const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
+                const builderIframeWidth = $(this.$builderIframe).innerWidth();
+                let positionLeft = pos.left;
 
-            if (builderIframeWidth <= (pos.left + pos.targetWidth)) {
-                positionLeft = pos.elementLeft + pos.elementWidth - rteActionBarWidth;
+                if (builderIframeWidth <= (pos.left + pos.targetWidth)) {
+                    positionLeft = pos.elementLeft + pos.elementWidth - rteActionBarWidth;
+                }
+
+                pos.left = positionLeft += borderLeftSize;
+                pos.top = pos.elementTop + pos.elementHeight + borderTopSize;
             }
-
-            pos.left = positionLeft += borderLeftSize;
-            pos.top = pos.elementTop + pos.elementHeight + borderTopSize;
         }
     };
 
