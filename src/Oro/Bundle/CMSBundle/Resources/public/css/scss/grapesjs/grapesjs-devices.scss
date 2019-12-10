@@ -28,11 +28,8 @@
                 border-width: 55px 20px 75px;
             }
 
-            .gjs-highlighter,
-            .gjs-badge,
-            .gjs-toolbar {
-                margin-left: 20px;
-                margin-top: 55px;
+            #gjs-tools {
+                transform: translate(20px, 55px);
             }
         }
 
@@ -43,11 +40,8 @@
                 border-width: 20px 75px 20px 55px;
             }
 
-            .gjs-highlighter,
-            .gjs-badge,
-            .gjs-toolbar {
-                margin-left: 55px;
-                margin-top: 20px;
+            #gjs-tools {
+                transform: translate(55px, 20px);
             }
         }
     }
