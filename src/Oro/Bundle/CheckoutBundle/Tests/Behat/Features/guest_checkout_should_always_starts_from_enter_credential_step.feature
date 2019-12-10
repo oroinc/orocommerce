@@ -34,7 +34,8 @@ Feature: Guest Checkout should always starts from enter credential step
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I open page with shopping list Shopping List
+    When I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -43,7 +44,8 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "ENTER BILLING ADDRESS"
 
   Scenario: Re-create order from guest shopping list after Billing Information step
-    Given I open page with shopping list Shopping List
+    Given I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -65,7 +67,8 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "ENTER SHIPPING ADDRESS"
 
   Scenario: Re-create order from guest shopping list after Shipping Information step
-    Given I open page with shopping list Shopping List
+    Given I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -98,7 +101,8 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "SELECT A SHIPPING METHOD"
 
   Scenario: Re-create order from guest shopping list after Shipping Method step
-    Given I open page with shopping list Shopping List
+    Given I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -134,7 +138,8 @@ Feature: Guest Checkout should always starts from enter credential step
     Then I should see "SELECT A PAYMENT METHOD"
 
   Scenario: Re-create order from guest shopping list after Payment Method step
-    Given I open page with shopping list Shopping List
+    Given I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -168,11 +173,11 @@ Feature: Guest Checkout should always starts from enter credential step
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I scroll to top
     Then I should see "SELECT A PAYMENT METHOD"
-    When I check "Payment Terms" on the "Payment" checkout step and press Continue
-    Then I should see "Delete this shopping list after submitting order"
+    And I check "Payment Terms" on the "Payment" checkout step and press Continue
 
   Scenario: Finish order from guest shopping list
-    Given I open page with shopping list Shopping List
+    Given I open shopping list widget
+    And I click "View List"
     And I click "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"

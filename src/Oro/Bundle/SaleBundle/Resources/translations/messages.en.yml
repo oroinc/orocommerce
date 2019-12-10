@@ -120,6 +120,7 @@ oro:
                 customer_visible_contact_info.title: 'Customer Visible Contact Info'
                 quotes.title: 'Quotes'
                 guest_quote.title: 'Guest Quote'
+                general_quote.title: 'General'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
                 contact_info_source_display.label: 'Display'
@@ -130,6 +131,7 @@ oro:
                 contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
                 enable_guest_quote.label: 'Enable Guest Quote'
+                quote_frontend_feature_enabled.label: 'Enable Quote (Store Front)'
 
         privilege:
             category.quotes.label: 'Quotes'

@@ -35,17 +35,17 @@ Feature: Quote for guest
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Guest Quote configuration is unavailable on website level
+  Scenario: Guest Quote configuration is available on website level
     When I go to System / Websites
     And click Configuration Default in grid
     And follow "Commerce/Sales" on configuration sidebar
-    Then I should not see "Quotes" in the "Configuration Sidebar Content" element
+    Then I should see "Quotes" in the "Configuration Sidebar Content" element
 
-  Scenario: Guest Quote configuration is unavailable on organization level
+  Scenario: Guest Quote configuration is available on organization level
     When I go to System / User Management / Organizations
     And I click Configuration Oro in grid
     And I follow "Commerce/Sales" on configuration sidebar
-    Then I should not see "Quotes" in the "Configuration Sidebar Content" element
+    Then I should see "Quotes" in the "Configuration Sidebar Content" element
 
   # Guest Link present in DB for all Quotes. If admin user sand this lik via email or give it guest user in any other way.
   # Guest Quote data should be unavailable until Quote change status to "Send to customer"

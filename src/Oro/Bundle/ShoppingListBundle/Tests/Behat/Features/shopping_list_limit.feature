@@ -73,12 +73,12 @@ Feature: Shopping list limit
   Scenario: Check new site is not affected by limit
     Given I operate as the Buyer
     And reload the page
-    When I hover on "Shopping Cart"
+    And I open shopping list widget
     Then I should see "Create New List"
     When click "Create New List"
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     Then should see "New Front Shopping List"
-    When I hover on "Shopping Cart"
+    And I open shopping list widget
     Then should see "New Front Shopping List"
 

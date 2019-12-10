@@ -54,7 +54,8 @@ Feature: Single Page Checkout With Popup for Guest
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
     And I click "Add to Shopping List"
-    And I open page with shopping list Shopping List
+    When I open shopping list widget
+    And I click "View List"
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
@@ -181,8 +182,7 @@ Feature: Single Page Checkout With Popup for Guest
       | Postal Code  | 67890          |
     And I click "Continue"
     Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
-    When I click "Delete this shopping list after submitting order"
-    And I fill "Checkout Order Form" with:
+    When I fill "Checkout Order Form" with:
       | PO Number | Order1 |
     And I wait "Submit Order" button
     And I click "Submit Order"
@@ -198,7 +198,13 @@ Feature: Single Page Checkout With Popup for Guest
 
   Scenario: Create order with new billing address and ship to this address
     Given I proceed as the Guest
-    And I open page with shopping list Shopping List
+    And I am on homepage
+    And type "SKU123" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "SKU123" product
+    And I click "Add to Shopping List"
+    When I open shopping list widget
+    And I click "View List"
     And I scroll to top
     And I wait line items are initialized
     When I click "Create Order"
@@ -278,7 +284,6 @@ Feature: Single Page Checkout With Popup for Guest
       | Country      | Germany          |
       | State        | Berlin           |
     And I click "Continue"
-    And I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order2 |
     And I check "Use billing address" on the checkout page
@@ -297,11 +302,16 @@ Feature: Single Page Checkout With Popup for Guest
 
   Scenario: Create order and check that no flash messages on success page
     Given I proceed as the Guest
-    And I open page with shopping list Shopping List
+    And I am on homepage
+    And type "SKU123" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "SKU123" product
+    And I click "Add to Shopping List"
+    When I open shopping list widget
+    And I click "View List"
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
-    And I click "Delete this shopping list after submitting order"
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:

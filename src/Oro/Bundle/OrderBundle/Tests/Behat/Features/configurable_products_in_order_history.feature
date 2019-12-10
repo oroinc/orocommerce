@@ -84,7 +84,7 @@ Feature: Configurable products in order history
   Scenario: Create order with configurable product
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And Buyer is on Configurable products list 1
+    And Buyer is on "Configurable products list 1" shopping list
     When I press "Create Order"
     And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue

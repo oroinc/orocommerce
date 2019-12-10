@@ -31,7 +31,6 @@ Feature: RFQ with fractional price
       | Quantity     | 101    |
       | Target Price | 10,59  |
     And click "Update Line Item"
-    And I wait for action
     Then I should see "Product 1 QTY: 101 each Target Price 10,59 $ Listed Price: 10,99 $"
 
     When I click "Submit Request"

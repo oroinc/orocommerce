@@ -5,7 +5,7 @@ Feature: Shopping list notes
 
   Scenario: Add notes to shopping list
     Given I login as AmandaRCole@example.org buyer
-    When Buyer is on Another List
+    When Buyer is on "Another List" shopping list
     And I click "View Options for this Shopping List"
     And I click on "Add a Note to This Shopping List"
     And I type "My shopping list <script>alert('malicious script')</script> notes" in "shopping_list_notes"

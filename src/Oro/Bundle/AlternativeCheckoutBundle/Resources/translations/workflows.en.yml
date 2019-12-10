@@ -42,6 +42,8 @@ oro:
                     label: 'Disallow shipping method edit'
                 remove_source:
                     label: 'Remove Source Entity'
+                clear_source:
+                    label: 'Clear Source Entity'
                 auto_remove_source:
                     label: 'Always remove source entity automatically'
                 source_remove_label:

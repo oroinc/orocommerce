@@ -8,7 +8,7 @@ Feature: Shopping list duplication
     Given I login as AmandaRCole@example.org buyer
 
   Scenario: Duplicate shopping list
-    When Buyer is on Shopping List A
+    When Buyer is on "Shopping List A" shopping list
     And I click "Duplicate List"
     Then I should see "The shopping list has been duplicated" flash message
     And I should not see "Some products are not available and cannot be added to shopping list" flash message
@@ -19,7 +19,7 @@ Feature: Shopping list duplication
       | AA3 | 20       | item |
 
   Scenario: Duplicate shopping list with restricted items
-    When Buyer is on Shopping List B
+    When Buyer is on "Shopping List B" shopping list
     And I click "Duplicate List"
     Then I should see "The shopping list has been duplicated" flash message
     And I should see "Some products are not available and cannot be added to shopping list" flash message
@@ -30,5 +30,5 @@ Feature: Shopping list duplication
     And I should not see "AA2"
 
   Scenario: Check duplicate button for shopping list with all restricted items
-    When Buyer is on Shopping List C
+    When Buyer is on "Shopping List C" shopping list
     Then I should not see "Duplicate List"

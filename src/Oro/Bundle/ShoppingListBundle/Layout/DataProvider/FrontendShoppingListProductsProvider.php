@@ -87,6 +87,24 @@ class FrontendShoppingListProductsProvider
     }
 
     /**
+     * @param ShoppingList[] $shoppingLists
+     * @return array
+     */
+    public function getMatchedPrices(array $shoppingLists = [])
+    {
+        if (!$shoppingLists) {
+            return [];
+        }
+
+        $prices = [];
+        foreach ($shoppingLists as $shoppingList) {
+            $prices[] = $this->getMatchedPrice($shoppingList);
+        }
+
+        return array_merge(...$prices);
+    }
+
+    /**
      * Returns array where Shopping List id is a key and array of last added products is a value
      *
      * Example:

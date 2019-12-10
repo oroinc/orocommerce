@@ -35,6 +35,8 @@ workflows:
                 type: boolean
             remove_source:
                 type: boolean
+            clear_source:
+                type: boolean
             auto_remove_source:
                 type: boolean
             source_remove_label:

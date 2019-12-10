@@ -246,6 +246,32 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($website, $shoppingList->getWebsite());
     }
 
+    public function testCreateWithCustomerUserInParameters()
+    {
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $customerUser->setOrganization(new Organization());
+        $this->tokenAccessor->expects($this->never())
+            ->method('getUser');
+
+        $website = $this->createMock(Website::class);
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->em->expects($this->never())
+            ->method('persist');
+        $this->em->expects($this->never())
+            ->method('flush');
+
+        $shoppingList = $this->manager->create(false, '', $customerUser);
+
+        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
+        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        $this->assertSame($website, $shoppingList->getWebsite());
+    }
+
     public function testCreateWithFlushAndLabel()
     {
         $label = 'test label';

@@ -741,7 +741,8 @@ Feature: Consent management via Management Console UI
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
     And I should see "Product has been added to" flash message
-    And I open page with shopping list "Shopping List"
+    And I open shopping list widget
+    And I click "View List"
     And click "Create Order"
     And I click "Create An Account"
     And I fill "Registration Form" with:
@@ -790,7 +791,8 @@ Feature: Consent management via Management Console UI
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
     And I should see "Product has been added to" flash message
-    And I open page with shopping list "Shopping List"
+    And I open shopping list widget
+    And I click "View List"
     And click "Create Order"
     And I click "Continue as a Guest"
     And I should see "Agreements" in the "Checkout Step Title" element

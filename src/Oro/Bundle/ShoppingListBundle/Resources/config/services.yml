@@ -303,6 +303,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_product_units_quantity }
 
+    oro_shopping_list.layout.data_provider.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListLimitProvider
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: layout.data_provider, alias: shopping_list_limit_provider }
+
     oro_shopping_list.repository.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository'
         parent: oro_entity.abstract_repository
@@ -465,6 +472,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_shopping_list.twig.shopping_list_widget_extension:
+        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
+        public: false
+        arguments:
+            - "@oro_platform.twig.service_locator"
+        tags:
+            - { name: twig.extension }
+
     oro_shopping_list.event_listener.interective_login:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\InteractiveLoginListener'
         arguments:
@@ -596,3 +611,10 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ShoppingListItemAccessRule
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
+
+    oro_shopping_list.layout.extension.shopping_list_limit_context:
+        class: Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: layout.context_configurator }

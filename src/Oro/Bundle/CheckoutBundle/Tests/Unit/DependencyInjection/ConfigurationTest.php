@@ -64,6 +64,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'allow_checkout_without_email_confirmation' => [
                             'value' => false,
                             'scope' => 'app'
+                        ],
+                        'frontend_show_open_orders' => [
+                            'value' => true,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

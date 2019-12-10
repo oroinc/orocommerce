@@ -25,6 +25,10 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                'frontend_show_open_orders' => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
                 'frontend_open_orders_separate_page' => [
                     'type' => 'boolean',
                     'value' => false,

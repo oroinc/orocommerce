@@ -1,4 +1,19 @@
 features:
+    quote_frontend:
+        label: oro.sale.system_configuration.fields.frontend_feature_enabled.label
+        toggle: oro_sale.quote_frontend_feature_enabled
+        operations:
+            - oro_sale_accept_quote
+            - oro_sale_frontend_quote_submit_to_order
+            - oro_sale_frontend_guest_quote_submit_to_order
+        routes:
+            - oro_sale_quote_frontend_quote_product_match_offer
+            - oro_sale_quote_frontend_view
+            - oro_sale_quote_frontend_view_guest
+            - oro_sale_quote_frontend_index
+            - oro_sale_quote_frontend_choice
+            - oro_sale_quote_frontend_subtotals
+
     guest_quote:
         label: oro.sale.system_configuration.fields.enable_guest_quote.label
         description: oro.sale.form.tooltip.enable_guest_quote

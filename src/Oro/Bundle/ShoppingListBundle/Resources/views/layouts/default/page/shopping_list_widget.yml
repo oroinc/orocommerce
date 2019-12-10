@@ -25,6 +25,7 @@ layout:
                     options:
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                         shoppingListProducts: '=data["oro_shopping_list_products"].getLastProductsGroupedByShoppingList(shoppingLists, 3, data["frontend_localization"].getCurrentLocalization())'
+                        productsMatchedPrices: '=data["shopping_list_limit_provider"].isOnlyOneEnabled() ? data["oro_shopping_list_products"].getMatchedPrices(shoppingLists) : []'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
                 main_menu_shopping_lists_dropdown_create:

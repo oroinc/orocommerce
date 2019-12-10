@@ -6,6 +6,9 @@ system_configuration:
             title: oro.rfp.system_configuration.groups.rfq.title
             icon: fa-file
             page_reload: true
+        rfp_general:
+            priority: 150
+            title: oro.rfp.system_configuration.groups.general.title
         rfp_notifications:
             priority: 100
             title: oro.rfp.system_configuration.groups.notifications.title
@@ -105,6 +108,10 @@ system_configuration:
                         children:
                             rfq:
                                 children:
+                                    rfp_general:
+                                        children:
+                                            - oro_rfp.feature_enabled
+                                            - oro_rfp.frontend_feature_enabled
                                     rfp_notifications:
                                         children:
                                             - oro_rfp.notify_assigned_sales_reps_of_the_customer

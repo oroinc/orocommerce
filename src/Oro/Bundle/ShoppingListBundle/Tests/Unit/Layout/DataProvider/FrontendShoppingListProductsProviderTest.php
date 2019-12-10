@@ -127,6 +127,26 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetMatchedPrices()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItems = [];
+
+        $this->shoppingListLineItemsDataProvider->expects($this->once())
+            ->method('getShoppingListLineItems')
+            ->willReturn($lineItems);
+
+        $expected = ['expectedData'];
+        $this->frontendProductPricesDataProvider
+            ->expects($this->once())
+            ->method('getProductsMatchedPrice')
+            ->with($lineItems)
+            ->willReturn($expected);
+
+        $result = $this->provider->getMatchedPrices([$shoppingList]);
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * @return array
      */
