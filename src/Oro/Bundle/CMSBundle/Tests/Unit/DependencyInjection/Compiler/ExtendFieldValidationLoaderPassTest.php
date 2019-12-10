@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
+use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -56,10 +57,10 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
         $this->pass->process($this->container);
 
         $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[WYSIWYG::class => null]]]]
+            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
         ], $entityExtendValidationLoaderDefinition->getMethodCalls());
         $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[WYSIWYG::class => null]]]]
+            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
         ], $serializedFieldsValidationLoaderDefinition->getMethodCalls());
     }
 
@@ -88,7 +89,7 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
         $this->pass->process($this->container);
 
         $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[WYSIWYG::class => null]]]]
+            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
         ], $serializedFieldsValidationLoaderDefinition->getMethodCalls());
     }
 
@@ -117,7 +118,7 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
         $this->pass->process($this->container);
 
         $this->assertEquals([
-            ['addConstraints', ['wysiwyg', [[WYSIWYG::class => null]]]]
+            ['addConstraints', ['wysiwyg', [[TwigContent::class => null], [WYSIWYG::class => null]]]]
         ], $entityExtendValidationLoaderDefinition->getMethodCalls());
     }
 }

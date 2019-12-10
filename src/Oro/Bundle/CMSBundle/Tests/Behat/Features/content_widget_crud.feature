@@ -10,6 +10,14 @@ Feature: Content Widget CRUD
     And go to Marketing/ Content Widgets
     And click "Create Content Widget"
     And fill "Content Widget Form" with:
+      | Widget Type | Copyright     |
+      | Name        | test"\%$#test |
+    When I save and close form
+    Then I should see validation errors:
+      | Name | This value should contain only alphabetic symbols, underscore, hyphen and numbers. |
+
+  Scenario: Create content widget
+    Given fill "Content Widget Form" with:
       | Widget Type | Copyright              |
       | Name        | copyright1             |
       | Description | copyright1_description |

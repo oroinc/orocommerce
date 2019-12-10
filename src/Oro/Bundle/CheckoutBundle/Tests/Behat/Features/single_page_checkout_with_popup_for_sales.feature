@@ -59,6 +59,7 @@ Feature: Single Page Checkout With Popup for Sales
       | Save Address | false          |
     And I click "Continue"
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
+    And I scroll to top
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -120,6 +121,7 @@ Feature: Single Page Checkout With Popup for Sales
       | Save Address | true           |
     And I click "Continue"
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, BStreet B Street 2, BCITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
+    And I scroll to top
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:

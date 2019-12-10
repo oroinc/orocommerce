@@ -12,6 +12,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Provides methods to calculate totals, subtotals and discounts for an order and its line items.
+ */
 class TotalHelper
 {
     /** @var TotalProcessorProvider */
@@ -42,6 +45,16 @@ class TotalHelper
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->discountSubtotalProvider = $discountSubtotalProvider;
         $this->rateConverter = $rateConverter;
+    }
+
+    /**
+     * @param Order $order
+     */
+    public function fill(Order $order)
+    {
+        $this->fillSubtotals($order);
+        $this->fillDiscounts($order);
+        $this->fillTotal($order);
     }
 
     /**

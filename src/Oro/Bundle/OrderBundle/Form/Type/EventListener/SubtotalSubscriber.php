@@ -11,6 +11,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Calculates prices for order line items and totals for an order
+ * and adds a validator to "discountsSum" form field to disallow submitting an order
+ * when the sum of all discounts is exceeded the order grand total amount.
+ */
 class SubtotalSubscriber implements EventSubscriberInterface
 {
     /** @var TotalHelper  */
@@ -44,15 +49,13 @@ class SubtotalSubscriber implements EventSubscriberInterface
      */
     public function onSubmitEventListener(FormEvent $event)
     {
-        $form = $event->getForm();
         $data = $event->getData();
         if ($data instanceof Order) {
             $this->priceMatcher->addMatchingPrices($data);
-            $this->totalHelper->fillSubtotals($data);
-            $this->totalHelper->fillDiscounts($data);
-            $this->totalHelper->fillTotal($data);
+            $this->totalHelper->fill($data);
             $event->setData($data);
-            
+
+            $form = $event->getForm();
             if ($form->has('discountsSum')) {
                 $form->remove('discountsSum');
                 $form->add(

@@ -54,3 +54,12 @@ Feature: Landing Page content purify
     When I save and close form
     Then I should see "Page has been saved" flash message
     And should see "Selective content"
+
+  Scenario: Create a new Landing Page with invalid twig
+    Given I go to Marketing / Landing Pages
+    And click "Create Landing Page"
+    And I fill "CMS Page Form" with:
+      | Titles  | Other page          |
+      | Content | {{ widget(\"\"\")}} |
+    When I save and close form
+    Then I should see only "The entered content contains invalid twig constructions." error message

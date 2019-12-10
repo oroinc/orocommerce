@@ -70,9 +70,12 @@ api:
             documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_item.md'
             form_options:
                 constraints:
-                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductLineItem:
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
                         path: unit
                         sell: true
+                        groups: [api]
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                        path: quantity
                         groups: [api]
             fields:
                 customerUser:

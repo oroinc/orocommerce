@@ -22,11 +22,15 @@ class OrderAddressTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    public function testGetList()
+    public function testTryToGetList()
     {
-        $response = $this->cget(['entity' => 'orderaddresses']);
-
-        $this->assertResponseContains('cget_order_address.yml', $response);
+        $response = $this->cget(
+            ['entity' => 'orderaddresses'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, POST');
     }
 
     public function testGet()
@@ -76,7 +80,15 @@ class OrderAddressTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'Use API resource to create an order.'
+                    . ' An order address can be created only together with an order.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdate()
@@ -109,7 +121,7 @@ class OrderAddressTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, POST');
     }
 
     public function testGetSubresourceForCountry()

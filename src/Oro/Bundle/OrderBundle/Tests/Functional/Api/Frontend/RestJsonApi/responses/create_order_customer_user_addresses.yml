@@ -1,0 +1,84 @@
+data:
+    type: orders
+    id: new
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: new
+included:
+    -
+        type: orderlineitems
+        id: new
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: billing1
+        attributes:
+            phone: 123-456
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: shipping1
+        attributes:
+            phone: 123-456
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'

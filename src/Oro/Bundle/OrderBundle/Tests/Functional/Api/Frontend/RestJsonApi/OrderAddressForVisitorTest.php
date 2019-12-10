@@ -31,7 +31,7 @@ class OrderAddressForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, POST');
     }
 
     public function testTryToGet()
@@ -53,7 +53,7 @@ class OrderAddressForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testTryToUpdate()
@@ -86,7 +86,7 @@ class OrderAddressForVisitorTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, POST');
     }
 
     public function testTryToGetSubresourceForCountry()

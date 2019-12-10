@@ -120,17 +120,6 @@ class OrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreate()
-    {
-        $response = $this->post(
-            ['entity' => 'orders'],
-            [],
-            [],
-            false
-        );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
-    }
-
     public function testTryToUpdate()
     {
         $response = $this->patch(
@@ -161,7 +150,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, POST');
     }
 
     public function testGetSubresourceForLineItems()

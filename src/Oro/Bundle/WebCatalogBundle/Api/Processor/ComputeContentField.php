@@ -54,6 +54,10 @@ class ComputeContentField implements ProcessorInterface
 
         $variantsData = $this->getContentVariants($context->getIdentifierValues($data, $nodeIdFieldName));
         foreach ($data as $key => $item) {
+            if (!isset($variantsData[$item[$nodeIdFieldName]])) {
+                continue;
+            }
+
             [$contentClass, $contentId] = $variantsData[$item[$nodeIdFieldName]];
             $data[$key][self::CONTENT_FIELD_NAME] = [
                 ConfigUtil::CLASS_NAME => $contentClass,
@@ -92,6 +96,10 @@ class ComputeContentField implements ProcessorInterface
         $result = [];
         foreach ($details as $nodeId => $detail) {
             $type = $this->contentVariantTypeRegistry->getContentVariantType($detail['type']);
+            if (!isset($detail[$type->getName()])) {
+                continue;
+            }
+
             $result[$nodeId] = [$type->getApiResourceClassName(), $detail[$type->getName()]];
         }
 

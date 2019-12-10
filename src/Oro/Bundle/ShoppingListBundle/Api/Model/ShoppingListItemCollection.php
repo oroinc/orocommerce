@@ -199,7 +199,7 @@ class ShoppingListItemCollection extends ArrayCollection
          * Ensures that a customer user and a organization are assigned to the processing line item.
          * If a customer user or a organization are not assigned to the line item,
          * the shopping list's customer user and organization are assigned to it.
-         * This is required because there is no Doctrine listener than do these assigments.
+         * It is required because there is no Doctrine listener that does these assignments.
          */
         if (null === $item->getCustomerUser() && null !== $this->shoppingList->getCustomerUser()) {
             $item->setCustomerUser($this->shoppingList->getCustomerUser());

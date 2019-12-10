@@ -14,6 +14,89 @@ Retrieve a collection of order line item records.
 
 {@inheritdoc}
 
+### create
+
+This resource describes an order line item entity. It cannot be used independently to create line items.
+Line items can only be created together with an order via the order creation API resource.
+
+{@inheritdoc}
+
+## FIELDS
+
+### price
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+**This value can be specified in the request. The value is compared to the calculated price
+and if the prices are not equal, the `price match constraint` validation error is returned.
+This way you can ensure that the price that was displayed to the customer during checkout
+is the same as in the created order.**
+
+### currency
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+**This value can be specified in the request. The value is compared to the current currency
+and if the currencies are not equal, the `currency match constraint` validation error is returned.
+This way you can ensure that the currency that was displayed to the customer during checkout
+is the same as in the created order.**
+
+### freeFormProduct
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### productName
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### productUnit
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### productUnitCode
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### quantity
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### product
+
+#### create
+
+{@inheritdoc}
+
+**This value can be omitted if `productSku` is specified in the request.**
+
 ## SUBRESOURCES
 
 ### order

@@ -91,7 +91,15 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'access denied exception',
+                'detail' => 'Use API resource to create an order.'
+                    . ' An order line item can be created only together with an order.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testTryToUpdate()
@@ -124,7 +132,7 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, POST');
     }
 
     public function testGetSubresourceForOrder()
