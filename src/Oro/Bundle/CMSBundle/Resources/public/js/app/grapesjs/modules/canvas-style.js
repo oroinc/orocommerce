@@ -41,6 +41,21 @@ export default `
         margin: 0;
     }
     
+    .content-widget-inline {
+        display: inline-block;
+        background-color: #f8f8f8;
+        font-size: 13px;
+        color: #878789;
+        line-height: 1.31;
+        white-space: nowrap;
+        padding: 1px 6px;
+        margin: 0 4px;
+    }
+    
+    .content-widget-inline b {
+        color: #565656;
+    }
+    
     .row {
         margin-left: 0;
         margin-right: 0;

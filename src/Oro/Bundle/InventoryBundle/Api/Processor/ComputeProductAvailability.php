@@ -57,7 +57,12 @@ class ComputeProductAvailability implements ProcessorInterface
             return;
         }
 
-        $product = $this->doctrineHelper->getEntity(Product::class, $data['id']);
+        $idFieldName = $context->getResultFieldName('id');
+        if (!$idFieldName) {
+            return;
+        }
+
+        $product = $this->doctrineHelper->getEntity(Product::class, $data[$idFieldName]);
         $isUpcoming = $this->upcomingProductProvider->isUpcoming($product);
         if ($isUpcomingFieldRequested) {
             $data[$upcomingFieldName] = $isUpcoming;

@@ -137,8 +137,10 @@ define(function(require) {
 
                         this.listenTo(this, 'change:contentBlock', this.onContentBlockChange, this);
 
-                        options.off('canvas:drop').once('canvas:drop', function(DataTransfer, model) {
-                            options.Commands.run('content-block-settings', model);
+                        options.off('canvas:drop').once('canvas:drop', (DataTransfer, model) => {
+                            if (model.is(ComponentId)) {
+                                options.Commands.run('content-block-settings', model);
+                            }
                         });
                     },
 
