@@ -29,6 +29,34 @@ services:
         tags:
             - { name: oro.api.routing_options_resolver, view: frontend_rest_json_api, priority: -10 }
 
+    oro_product.api_doc.documentation_provider.frontend_sku_common_docs:
+        class: Oro\Bundle\ApiBundle\ApiDoc\DocumentationProvider
+        arguments:
+            - '@@OroProductBundle/Resources/doc/api_frontend_sku/common.md'
+            - '@file_locator'
+        tags:
+            - { name: oro.api.documentation_provider, requestType: frontend_sku, priority: 250 }
+
+    oro_product.api.check_request_type.frontend_sku:
+        class: Oro\Bundle\ProductBundle\Api\Processor\CheckFrontendSkuRequestType
+        tags:
+            - { name: oro.api.processor, action: get, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: get_list, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: delete, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: delete_list, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: create, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: update, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: get_subresource, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: delete_subresource, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: add_subresource, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: update_subresource, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: get_relationship, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: delete_relationship, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: add_relationship, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: update_relationship, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: not_allowed, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: options, group: initialize, requestType: frontend, priority: 250 }
+
     oro_product.api.compute_product_unit_label:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductUnitLabel
         arguments:

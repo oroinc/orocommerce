@@ -202,7 +202,7 @@ api:
                             page_size: -1 # disable paging
 
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
-            documentation_resource:  '@OroProductBundle/Resources/doc/api_frontend/product_search.md'
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_search.md'
             identifier_field_names: [id]
             disable_meta_properties: true
             fields:
