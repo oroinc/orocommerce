@@ -57,6 +57,13 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuildProducts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
 
+    oro_catalog.event_listener.datagrid.export:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.import_export.before_get_ids, method: onBeforeExportGetIds }
+
     oro_catalog.event_listener.product_duplicate:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
         calls:
