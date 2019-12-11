@@ -33,4 +33,14 @@ class OpenOrdersSeparatePageConfigProvider
             ->configManager
             ->get('oro_checkout.frontend_open_orders_separate_page');
     }
+
+    /**
+     * @return string
+     */
+    public function getShowOpenOrdersConfig()
+    {
+        return $this
+            ->configManager
+            ->get('oro_checkout.frontend_show_open_orders');
+    }
 }

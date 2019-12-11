@@ -160,15 +160,20 @@ class ExpandProductSearchEntities implements ProcessorInterface
         EntityDefinitionConfig $config,
         array $normalizationContext
     ): array {
+        $idFieldName = $this->getIdentifierFieldName($config);
+        if (!$idFieldName) {
+            return [];
+        }
+
+        $idPropertyName = $config->getField($idFieldName)->getPropertyPath($idFieldName);
         $qb = $this->doctrineHelper
             ->createQueryBuilder($entityClass, 'e')
-            ->where('e IN (:ids)')
+            ->where(sprintf('e.%s IN (:ids)', $idPropertyName))
             ->setParameter('ids', $ids);
 
         $rows = $this->entitySerializer->serialize($qb, $config, $normalizationContext);
 
         $result = [];
-        $idFieldName = $this->getIdentifierFieldName($config);
         foreach ($rows as $row) {
             $result[$row[$idFieldName]] = $row;
         }

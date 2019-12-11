@@ -122,7 +122,7 @@ Feature: Guest Shopping Lists
     And I click "Search Button"
     Then I should see "Product3"
     When I hover on "Shopping List Widget"
-    And I should see "No Items" in the "Shopping List Widget" element
+    And I should see "Your Shopping List is empty" in the "Shopping List Widget" element
     And I should see "Add to Shopping List"
     When I click "View Details" for "SKU003" product
     Then I should see "Add to Shopping List"

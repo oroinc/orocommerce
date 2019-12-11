@@ -10,8 +10,8 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\EventListener\ValueRenderEventListener;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,9 +40,18 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             }
         );
 
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                static function (string $key) {
+                    return sprintf('[trans]%s[/trans]', $key);
+                }
+            );
+
         $this->valueRenderEventListener = new ValueRenderEventListener(
             $this->associationProvider,
-            new StubTranslator(),
+            $translator,
             $this->router
         );
     }

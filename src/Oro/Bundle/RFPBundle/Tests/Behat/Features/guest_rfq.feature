@@ -110,7 +110,7 @@ Feature: Guest RFQ
     And I click "Localization Switcher"
     And I select "Localization 1" localization
     And I open shopping list widget
-    And I click "View Details"
+    And I click "View List"
     And click "Request Quote"
     And I fill form with:
       | First Name             | Tester               |

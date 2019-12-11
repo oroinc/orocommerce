@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,7 +25,7 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
     protected $fieldsProvider;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -43,7 +43,7 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
     {
         $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->listener = $this->getListener();
     }

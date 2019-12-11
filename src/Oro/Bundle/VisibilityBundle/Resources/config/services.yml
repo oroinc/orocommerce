@@ -395,7 +395,6 @@ services:
 
     oro_visibility.root_scopes_provider:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_scope.scope_manager'
@@ -560,7 +559,7 @@ services:
     oro_visibility.event_listener.category_visible_listener:
         class: Oro\Bundle\VisibilityBundle\EventListener\CategoryVisibleListener
         arguments:
-            - '@oro_catalog.repository.category'
+            - '@doctrine'
             - '@oro_visibility.visibility.resolver.category_visibility_resolver'
             - '@oro_customer.provider.customer_user_relations_provider'
             - '@security.token_storage'

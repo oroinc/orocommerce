@@ -218,20 +218,41 @@ action_groups:
             validateOnStartCheckout:
                 type: bool
                 default: true
+            allowManualSourceRemove:
+                type: bool
+                default: true
+            removeSource:
+                type: bool
+                default: true
+            clearSource:
+                type: bool
+                default: false
         actions:
             - '@assign_url':
                 attribute: $.editLink
                 route: oro_shopping_list_frontend_view
                 route_parameters: {id: $.shoppingList.id}
             - '@assign_value': [$.sourceRemoveLabel, 'oro.frontend.shoppinglist.workflow.remove_source.label']
+            - '@call_service_method':
+                attribute: $.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+            - '@tree':
+                conditions:
+                    '@equal': [$.isOneShoppingList, true]
+                actions:
+                    - '@assign_value': [$.allowManualSourceRemove, false]
+                    - '@assign_value': [$.removeSource, false]
+                    - '@assign_value': [$.clearSource, true]
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
                     sourceCriteria:
                         shoppingList: $.shoppingList
                     settings:
-                        allow_manual_source_remove: true
-                        remove_source: true
+                        allow_manual_source_remove: $.allowManualSourceRemove
+                        remove_source: $.removeSource
+                        clear_source: $.clearSource
                         edit_order_link: $.editLink
                         source_remove_label: $.sourceRemoveLabel
                     force: $.forceStartCheckout

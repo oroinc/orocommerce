@@ -32,7 +32,8 @@ Feature: Content Widget in Content Block
     Then I should not see "Delete"
 
   Scenario: Check content widget usages grid
-    When I click "view" on row "copyright" in grid
+    When I go to Marketing/ Content Widgets
+    And I click "view" on row "copyright" in grid
     Then number of records in "Content Blocks Content Widget Usages Grid" should be 1
     And I should see following "Content Blocks Content Widget Usages Grid" grid:
       | Alias            | Title            |

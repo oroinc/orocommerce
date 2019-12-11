@@ -11,7 +11,7 @@ Feature: Inline Editing
   Scenario: Edit shopping list title
     Given I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    And Buyer is on Shopping List 1
+    And Buyer is on "Shopping List 1" shopping list
     When I click "Edit Shopping List Label"
     And I type "Shopping List 2" in "value"
     And I click "Save"
@@ -29,6 +29,6 @@ Feature: Inline Editing
 
   Scenario: Check that buyer can't change shopping list title
     Given I proceed as the User
-    When Buyer is on Shopping List 2
+    When Buyer is on "Shopping List 2" shopping list
     Then I should not see following buttons:
       | Edit Shopping List Label |

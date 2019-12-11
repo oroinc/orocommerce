@@ -254,6 +254,8 @@ action_groups:
                 default: false
             remove_source:
                 default: false
+            clear_source:
+                default: false
             email:
                 default: null
         actions:
@@ -413,6 +415,15 @@ action_groups:
                         - [$.checkout.completedData.currency, $.order.currency]
                         - [$.checkout.completedData.subtotal, $.order.subtotalObject.value]
                         - [$.checkout.completedData.total, $.order.totalObject.value]
+
+            - '@clear_checkout_source_entity':
+                conditions:
+                    '@and':
+                      - '@equal': [$.auto_remove_source, false]
+                      - '@equal': [$.allow_manual_source_remove, false]
+                      - '@equal': [$.remove_source, false]
+                      - '@equal': [$.clear_source, true]
+                parameters: [$.checkout]
 
             - '@remove_checkout_source_entity':
                 conditions:

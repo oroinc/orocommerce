@@ -34,7 +34,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(ProductType::class, $this->getExtension()->getExtendedType());
+        $this->assertEquals([ProductType::class], ProductTaxExtension::getExtendedTypes());
     }
 
     public function testBuildForm()

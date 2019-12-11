@@ -41,9 +41,8 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
             return $this->translator->trans('N/A');
         }
 
-        return $this->translator->transChoice(
+        return $this->translator->trans(
             sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $this->getSuffix($value, $isShort)),
-            $value,
             [
                 '%count%' => $value
             ]

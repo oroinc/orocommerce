@@ -42,9 +42,9 @@ class CustomerGroupFormExtension extends AbstractTypeExtension implements Featur
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CustomerGroupType::class;
+        return [CustomerGroupType::class];
     }
 
     /**

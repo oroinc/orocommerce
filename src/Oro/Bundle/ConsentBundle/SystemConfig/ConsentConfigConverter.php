@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ConsentBundle\SystemConfig;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Convert config to entities and backwards
@@ -13,13 +13,13 @@ class ConsentConfigConverter
     const SORT_ORDER_KEY = 'sort_order';
     const CONSENT_KEY = 'consent';
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /**
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(RegistryInterface $doctrine)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
     }

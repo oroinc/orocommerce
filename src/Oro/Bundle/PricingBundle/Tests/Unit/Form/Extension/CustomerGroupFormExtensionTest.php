@@ -32,12 +32,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 
     public function testGetExtendedType()
     {
-        /** @var CustomerGroupListener|\PHPUnit\Framework\MockObject\MockObject $listener */
-        $listener = $this->createMock(CustomerGroupListener::class);
-
-        $customerGroupFormExtension = new CustomerGroupFormExtension($listener);
-
-        $this->assertSame(CustomerGroupType::class, $customerGroupFormExtension->getExtendedType());
+        $this->assertSame([CustomerGroupType::class], CustomerGroupFormExtension::getExtendedTypes());
     }
 
     public function testSetRelationClass()

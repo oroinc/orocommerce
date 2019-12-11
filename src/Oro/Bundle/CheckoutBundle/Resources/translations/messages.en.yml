@@ -246,6 +246,7 @@ oro:
 
         system_configuration:
             fields:
+                frontend_show_open_orders.title: 'Show open orders'
                 frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
                 guest_checkout:
                     title: 'Enable Guest Checkout'

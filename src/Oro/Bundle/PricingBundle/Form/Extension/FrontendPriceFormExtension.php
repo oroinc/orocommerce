@@ -69,8 +69,8 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PriceType::class;
+        return [PriceType::class];
     }
 }

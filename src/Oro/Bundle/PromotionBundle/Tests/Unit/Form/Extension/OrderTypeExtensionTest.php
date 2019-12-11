@@ -55,8 +55,8 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->orderTypeExtension->postSetData($event);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(OrderType::class, $this->orderTypeExtension->getExtendedType());
+        $this->assertEquals([OrderType::class], OrderTypeExtension::getExtendedTypes());
     }
 }

@@ -11,7 +11,6 @@ use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
-use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
@@ -41,10 +40,10 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
-            'text' => '<h2 class="promo-slider__title">Lorem ipsum</h2><div class="promo-slider__description">
-                Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed 
-                elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</div>
-                <span class="btn btn--info promo-slider__view-btn">Call to action</span>',
+            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p><a href="/product/">Call to action</a></p>',
             'mainImage' => 'promo-slider-1',
             'mediumImage' => 'promo-slider-medium-1',
             'smallImage' => 'promo-slider-small-1',
@@ -54,10 +53,10 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_LEFT,
-            'text' => '<h2 class="promo-slider__title">Lorem ipsum</h2><div class="promo-slider__description">
-                Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed 
-                elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</div>
-                <span class="btn btn--info promo-slider__view-btn">Call to action</span>',
+            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p><a href="/product/?categoryId=2&includeSubcategories=1">Call to action</a></p>',
             'mainImage' => 'promo-slider-2',
             'mediumImage' => 'promo-slider-medium-2',
             'smallImage' => 'promo-slider-small-2',
@@ -67,10 +66,11 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             'displayInSameWindow' => true,
             'title' => 'Lorem ipsum',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_CENTER,
-            'text' => '<div class="promo-slider__info--text-color-dark"><h2 class="promo-slider__title">Lorem ipsum</h2>
-                <div class="promo-slider__description">Praesent magna arcu, placerat id purus vel, facilisis posuere 
-                augue. Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique 
-                finibus.</div><span class="btn btn--info promo-slider__view-btn">Call to action</span></div>',
+            'text' => '<h2 style="text-align: center;text-transform: uppercase;">Lorem ipsum</h2>
+                <p style="text-align: center;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
+                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
+                <p style="text-align: center;">
+                <a href="/product/?categoryId=7&includeSubcategories=1">Call to action</a></p>',
             'mainImage' => 'promo-slider-3',
             'mediumImage' => 'promo-slider-medium-3',
             'smallImage' => 'promo-slider-small-3',
@@ -129,22 +129,13 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $manager->flush();
         }
 
-        $slider = $this->getContentBlock(
+        $this->updateOrCreateContentBlock(
             $manager,
             $user,
             '<div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">
                 {{ widget("home-page-slider") }}
             </div>'
         );
-
-        if ($slider) {
-            $usage = new ContentWidgetUsage();
-            $usage->setContentWidget($widget);
-            $usage->setEntityClass(ContentBlock::class);
-            $usage->setEntityId($slider->getId());
-            $manager->persist($usage);
-            $manager->flush();
-        }
     }
 
     /**
@@ -153,7 +144,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
      * @param string $content
      * @return ContentBlock|null
      */
-    private function getContentBlock(ObjectManager $manager, User $user, string $content): ?ContentBlock
+    private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {
         $contentBlock = $manager->getRepository(ContentBlock::class)
             ->findOneBy(['alias' => self::HOME_PAGE_SLIDER_ALIAS]);
@@ -175,22 +166,18 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $slider->addTitle($title);
             $slider->addContentVariant($variant);
             $manager->persist($slider);
-            $manager->flush();
+        } else {
+            $html = file_get_contents(__DIR__ . '/data/frontpage_slider.html');
 
-            return $slider;
-        }
-
-        $html = file_get_contents(__DIR__.'/data/frontpage_slider.html');
-
-        foreach ($contentBlock->getContentVariants() as $contentVariant) {
-            if ($contentVariant->getContent() === $html) {
-                $contentVariant->setContent($content);
-
-                return $contentBlock;
+            foreach ($contentBlock->getContentVariants() as $contentVariant) {
+                if ($contentVariant->getContent() === $html) {
+                    $contentVariant->setContent($content);
+                    break;
+                }
             }
         }
 
-        return null;
+        $manager->flush();
     }
 
     /**

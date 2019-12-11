@@ -132,10 +132,10 @@ class QuoteProductFormatter
                 $transConstant = 'oro.sale.quoteproductoffer.item';
         }
 
-        $str = $this->translator->transChoice(
+        $str = $this->translator->trans(
             $transConstant,
-            (int)$item->isAllowIncrements(),
             [
+                '%count%'   => (int)$item->isAllowIncrements(),
                 '{units}'   => $this->formatProductUnit($item),
                 '{price}'   => $this->formatPrice($item),
                 '{unit}'    => $this->formatUnitCode($item),

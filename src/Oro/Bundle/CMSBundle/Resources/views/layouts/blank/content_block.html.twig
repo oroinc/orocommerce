@@ -1,13 +1,20 @@
 {% block content_block_widget %}
     {% if contentBlock.contentStyle|length -%}
         {%- spaceless -%}
-            <style type="text/css">{{ contentBlock.contentStyle|raw }}</style>
+            <style type="text/css">{{ contentBlock.contentStyle|render_content }}</style>
         {%- endspaceless -%}
     {%- endif %}
-    <div{{ block('block_attributes') }}>
+
+    {%- set content -%}
         {%- if not hideTitle|default(false) -%}
             <h3>{{ contentBlock.titles|localized_value }}</h3>
         {%- endif -%}
-        {{ contentBlock.content|raw|render_content }}
-    </div>
+        {{ contentBlock.content|render_content }}
+    {%- endset -%}
+
+    {% if block('block_attributes') is not empty -%}
+        <div{{ block('block_attributes') }}>{{ content|raw }}</div>
+    {%- else -%}
+        {{ content|raw }}
+    {%- endif %}
 {% endblock %}

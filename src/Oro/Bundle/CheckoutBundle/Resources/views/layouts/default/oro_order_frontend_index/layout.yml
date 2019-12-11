@@ -23,4 +23,4 @@ layout:
         - '@setOption':
             id: checkouts_datagrid
             optionName: visible
-            optionValue: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
+            optionValue: '=data["oro_checkout_separate_open_orders"].getShowOpenOrdersConfig() && data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'

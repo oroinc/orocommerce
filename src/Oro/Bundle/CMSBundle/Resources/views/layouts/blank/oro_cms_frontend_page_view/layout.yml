@@ -23,7 +23,7 @@ layout:
                     options:
                         text: '=data["page"].getContent()'
                 cms_page_style:
-                    blockType: style
+                    blockType: wysiwyg_style
                     options:
                         content: '=data["page"].getContentStyle()'
             tree:

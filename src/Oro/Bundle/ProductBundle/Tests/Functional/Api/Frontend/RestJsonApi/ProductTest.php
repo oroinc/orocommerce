@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -32,14 +31,6 @@ class ProductTest extends FrontendRestJsonApiTestCase
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml'
         ]);
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.manager');
     }
 
     /**

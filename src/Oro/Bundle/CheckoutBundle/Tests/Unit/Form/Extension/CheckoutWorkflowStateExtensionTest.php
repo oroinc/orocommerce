@@ -72,9 +72,9 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedErrors, $view->vars['errors']);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(WorkflowTransitionType::class, $this->checkoutWorkflowExtension->getExtendedType());
+        $this->assertEquals([WorkflowTransitionType::class], CheckoutWorkflowStateExtension::getExtendedTypes());
     }
 
     /**

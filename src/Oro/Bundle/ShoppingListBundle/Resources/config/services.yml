@@ -20,7 +20,6 @@ services:
 
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
@@ -29,7 +28,6 @@ services:
 
     oro_shopping_list.shopping_list.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
@@ -49,7 +47,6 @@ services:
 
     oro_shopping_list.manager.current_shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@oro_shopping_list.manager.shopping_list"
@@ -64,7 +61,6 @@ services:
 
     oro_shopping_list.manager.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@doctrine"
@@ -83,7 +79,6 @@ services:
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@oro_security.acl_helper"
@@ -98,7 +93,6 @@ services:
 
     oro_shopping_list.handler.shopping_list_line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@doctrine"
@@ -127,7 +121,6 @@ services:
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@translator"
@@ -146,7 +139,6 @@ services:
 
     oro_shopping_list.processor.quick_add:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_shopping_list.processor.abstract_quick_add
         tags:
@@ -154,7 +146,6 @@ services:
 
     oro_shopping_list.processor.quick_add_to_checkout:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_shopping_list.processor.abstract_quick_add
         calls:
@@ -170,7 +161,6 @@ services:
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@oro_product.storage.product_data_storage"
@@ -313,6 +303,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_product_units_quantity }
 
+    oro_shopping_list.layout.data_provider.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListLimitProvider
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: layout.data_provider, alias: shopping_list_limit_provider }
+
     oro_shopping_list.repository.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository'
         parent: oro_entity.abstract_repository
@@ -333,7 +330,6 @@ services:
 
     oro_shopping_list.manager.shopping_list_total:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@doctrine'
@@ -458,7 +454,6 @@ services:
 
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_config.manager'
@@ -471,6 +466,14 @@ services:
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
+        public: false
+        arguments:
+            - "@oro_platform.twig.service_locator"
+        tags:
+            - { name: twig.extension }
+
+    oro_shopping_list.twig.shopping_list_widget_extension:
+        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
         public: false
         arguments:
             - "@oro_platform.twig.service_locator"
@@ -524,7 +527,6 @@ services:
 
     oro_shopping_list.manager.empty_matrix_grid:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_entity.doctrine_helper'
@@ -609,3 +611,10 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ShoppingListItemAccessRule
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
+
+    oro_shopping_list.layout.extension.shopping_list_limit_context:
+        class: Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: layout.context_configurator }

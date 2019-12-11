@@ -2,76 +2,391 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
+
     protected function setUp()
     {
+        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($quantity, $precision) {
+                return round($quantity, $precision);
+            });
+
         parent::setUp();
-
-        $this->constraint = new QuantityUnitPrecision();
-
-        $this->context = $this->createContext();
-        $this->validator = $this->createValidator();
-        $this->validator->initialize($this->context);
     }
 
     /**
-     * @param $precision
-     * @param $quantity
-     *
-     * @dataProvider validPrecisionProvider
+     * {@inheritDoc}
      */
-    public function testValidPrecisionForUnit($precision, $quantity)
+    protected function createValidator()
     {
-        $sku = 'SKU1';
-        $unit = 'item';
-        $quickAddRow = new QuickAddRow(1, $sku, $quantity, $unit);
+        return new QuantityUnitPrecisionValidator($this->roundingService);
+    }
 
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->method('getPrecision')
-            ->willReturn($precision);
+    /**
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testInvalidConstraint()
+    {
+        $this->validator->validate(null, $this->createMock(Constraint::class));
+    }
 
-        $product = $this->createMock(Product::class);
-        $product->method('getUnitPrecision')
-            ->with($unit)
-            ->willReturn($unitPrecision);
-
-        $quickAddRow->setProduct($product);
-
-        $this->validator->validate($quickAddRow, $this->constraint);
+    public function testNullValue()
+    {
+        $this->validator->validate(null, new QuantityUnitPrecision());
 
         $this->assertNoViolation();
     }
 
-    public function testInvalidPrecisionForUnit()
+    public function testNullQuantity()
     {
-        $sku = 'SKU1';
-        $unit = 'item';
-        $precision = 2;
-        $quickAddRow = new QuickAddRow(1, $sku, 2.345, $unit);
+        $quantity = null;
 
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->method('getPrecision')
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNotNumberQuantity()
+    {
+        $quantity = 'test';
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNullProductUnit()
+    {
+        $quantity = 2.345;
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn(null);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNullProductUnitCode()
+    {
+        $quantity = 2.345;
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn(null);
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNullProduct()
+    {
+        $quantity = 2.345;
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn('item');
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn(null);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNullUnitPrecisionAndNullDefaultPrecision()
+    {
+        $unitCode = 'item';
+        $quantity = 2.345;
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn('item');
+        $productUnit->expects($this->once())
+            ->method('getDefaultPrecision')
+            ->willReturn(null);
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn(null);
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->exactly(2))
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testNullUnitPrecisionAndNotNullDefaultPrecision()
+    {
+        $unitCode = 'item';
+        $precision = 2;
+        $quantity = 2.345;
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn('item');
+        $productUnit->expects($this->once())
+            ->method('getDefaultPrecision')
             ->willReturn($precision);
 
         $product = $this->createMock(Product::class);
-        $product->method('getUnitPrecision')
-            ->with($unit)
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn(null);
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->exactly(2))
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+            ->setParameter('{{ unit }}', $unitCode)
+            ->assertRaised();
+    }
+
+    public function testNullPrecision()
+    {
+        $unitCode = 'item';
+        $quantity = 2.345;
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects($this->once())
+            ->method('getPrecision')
+            ->willReturn(null);
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn('item');
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
             ->willReturn($unitPrecision);
 
-        $quickAddRow->setProduct($product);
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
-        $this->validator->validate($quickAddRow, $this->constraint);
+        $this->validator->validate($value, new QuantityUnitPrecision());
 
-        $this->buildViolation('oro.product.frontend.quick_add.validation.invalid_precision')
-            ->setParameter('{{ unit }}', 'item')
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @dataProvider validPrecisionProvider
+     */
+    public function testValidPrecisionForLineItem(int $precision, float $quantity)
+    {
+        $unitCode = 'item';
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects($this->once())
+            ->method('getPrecision')
+            ->willReturn($precision);
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn($unitCode);
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn($unitPrecision);
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testInvalidPrecisionForLineItem()
+    {
+        $unitCode = 'item';
+        $precision = 2;
+        $quantity = 2.345;
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects($this->once())
+            ->method('getPrecision')
+            ->willReturn($precision);
+
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn($unitCode);
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn($unitPrecision);
+
+        $value = $this->createMock(ProductLineItemInterface::class);
+        $value->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($quantity);
+        $value->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $value->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+            ->setParameter('{{ unit }}', $unitCode)
+            ->assertRaised();
+    }
+
+    /**
+     * @dataProvider validPrecisionProvider
+     */
+    public function testValidPrecisionForQuickAddRow(int $precision, float $quantity)
+    {
+        $unitCode = 'item';
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects($this->once())
+            ->method('getPrecision')
+            ->willReturn($precision);
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn($unitPrecision);
+
+        $value = new QuickAddRow(1, 'SKU1', $quantity, $unitCode);
+        $value->setProduct($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->assertNoViolation();
+    }
+
+    public function testInvalidPrecisionForQuickAddRow()
+    {
+        $unitCode = 'item';
+        $precision = 2;
+        $quantity = 2.345;
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects($this->once())
+            ->method('getPrecision')
+            ->willReturn($precision);
+
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getUnitPrecision')
+            ->with($unitCode)
+            ->willReturn($unitPrecision);
+
+        $value = new QuickAddRow(1, 'SKU1', $quantity, $unitCode);
+        $value->setProduct($product);
+
+        $this->validator->validate($value, new QuantityUnitPrecision());
+
+        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+            ->setParameter('{{ unit }}', $unitCode)
             ->assertRaised();
     }
 
@@ -81,22 +396,18 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     public function validPrecisionProvider()
     {
         return [
-            'precision 0' => [
+            'precision 0'     => [
                 'precision' => 0,
-                'quantity' => 5
+                'quantity'  => 5
             ],
-            'precision 2' => [
+            'precision 2'     => [
                 'precision' => 2,
-                'quantity' => 5.55
+                'quantity'  => 5.55
+            ],
+            'string quantity' => [
+                'precision' => 2,
+                'quantity'  => '5.55'
             ]
         ];
-    }
-
-    /**
-     * @return QuantityUnitPrecisionValidator
-     */
-    protected function createValidator()
-    {
-        return new QuantityUnitPrecisionValidator();
     }
 }

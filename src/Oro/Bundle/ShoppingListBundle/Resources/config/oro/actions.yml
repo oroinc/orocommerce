@@ -240,6 +240,13 @@ operations:
             - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         button_options:
             class: btn--action
+        preactions:
+            - '@call_service_method':
+                attribute: $.result.isOneShoppingList
+                service: oro_shopping_list.manager.shopping_list_limit
+                method: isOnlyOneEnabled
+        preconditions:
+            '@equal': [$.result.isOneShoppingList, false]
         frontend_options:
             confirmation:
                 title: oro.frontend.shoppinglist.messages.delete_title

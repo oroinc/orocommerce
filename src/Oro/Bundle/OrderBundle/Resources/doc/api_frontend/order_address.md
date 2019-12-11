@@ -8,11 +8,106 @@ Retrieve a specific order address record.
 
 {@inheritdoc}
 
-### get_list
+### create
 
-Retrieve a collection of order address records.
+This resource describes an order address entity. It cannot be used independently to create addresses.
+Addresses can only be created together with an order via the order creation API resource.
+
+**Please note:**
+It is sufficient for the submitted order address to have at least one of the following:
+a customer user address, or a customer address, or filled in address fields.
 
 {@inheritdoc}
+
+## FIELDS
+
+### firstName
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either **organization** or **firstName** and **lastName** must be defined.*
+
+### lastName
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either **organization** or **firstName** and **lastName** must be defined.*
+
+### organization
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either **organization** or **firstName** and **lastName** must be defined.*
+
+### street
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### city
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### postalCode
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### country
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### region
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*State is required for some countries.*
+
+### customerUserAddress
+
+#### create
+
+{@inheritdoc}
+
+**If specified, data from this address will be copied to the order address.** 
+
+**This field can be passed only if other address fields are empty.**
+
+### customerAddress
+
+#### create
+
+{@inheritdoc}
+
+**If specified, data from this address will be copied to the order address.** 
+
+**This field can be passed only if other address fields are empty.**
 
 ## SUBRESOURCES
 

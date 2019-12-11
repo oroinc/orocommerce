@@ -1,8 +1,6 @@
 @regression
 @fixture-OroSaleBundle:QuotesGrid.yml
 @ticket-BAP-17648
-@skip
-#Unskip after fix BB-15481
 
 Feature: Quotes Grid
 

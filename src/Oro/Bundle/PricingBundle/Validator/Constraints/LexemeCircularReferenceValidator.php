@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
@@ -22,7 +22,7 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     protected $expressionParser;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $doctrine;
 
@@ -50,11 +50,11 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
 
     /**
      * @param ExpressionParser $expressionParser
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      */
     public function __construct(
         ExpressionParser $expressionParser,
-        RegistryInterface $doctrine
+        ManagerRegistry $doctrine
     ) {
         $this->expressionParser = $expressionParser;
         $this->doctrine = $doctrine;

@@ -1,0 +1,163 @@
+/* @theme: blank; */
+
+.cms-typography {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-bottom: $cms-typography-heading-offset;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    p,
+    address {
+        margin: $cms-typography-paragraph-offset;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    small {
+        font-size: $cms-typography-small-font-size;
+    }
+
+    address {
+        font-style: $cms-typography-address-font-style;
+    }
+
+    blockquote {
+        margin: $cms-typography-blockquote-offset;
+
+        font-size: $cms-typography-blockquote-font-size;
+        font-style: $cms-typography-blockquote-font-style;
+        font-weight: $cms-typography-blockquote-font-weight;
+
+        background-color: $cms-typography-blockquote-background-color;
+        padding: $cms-typography-blockquote-inner-offset;
+        line-height: $cms-typography-blockquote-line-height;
+
+        color: $cms-typography-blockquote-color;
+
+        position: relative;
+
+        @include fa-icon($icon: $cms-typography-blockquote-fa-icon, $extra-rules: true) {
+            position: absolute;
+            top: $cms-typography-blockquote-fa-icon-top;
+            left: $cms-typography-blockquote-fa-icon-left;
+            font-size: $cms-typography-blockquote-fa-icon-font-size;
+            color: $cms-typography-blockquote-fa-icon-color;
+        }
+
+        @include fa-icon($icon: $cms-typography-blockquote-fa-end-icon, $state: after, $extra-rules: true) {
+            position: absolute;
+            bottom: $cms-typography-blockquote-fa-icon-bottom;
+            right: $cms-typography-blockquote-fa-icon-right;
+            font-size: $cms-typography-blockquote-fa-icon-font-size;
+            color: $cms-typography-blockquote-fa-icon-color;
+        }
+    }
+
+    hr {
+        margin: $cms-typography-hr-offset;
+        border: none;
+        border-top: $cms-typography-border-top;
+    }
+
+    ul,
+    ol {
+        margin: $cms-typography-list-offset;
+        padding: $cms-typography-list-inner-offset;
+    }
+
+    ul {
+        list-style-type: $cms-typography-ul-list-style-type;
+    }
+
+    ol {
+        list-style-type: $cms-typography-ol-list-style-type;
+    }
+
+    dt {
+        font-weight: font-weight('bold');
+        margin-bottom: $offset-half;
+    }
+
+    dd {
+        margin-left: $offset-default;
+        margin-bottom: $offset-default;
+    }
+
+    img {
+        max-width: $cms-typography-img-max-width;
+        height: auto;
+        display: block;
+        margin: $cms-typography-img-offset;
+    }
+
+    figure {
+        display: flex;
+        margin: $cms-typography-figure-offset;
+        justify-content: center;
+        align-items: center;
+
+        position: relative;
+    }
+
+    figcaption {
+        display: flex;
+        margin: $cms-typography-figcaption-offset;
+
+        font-size: $cms-typography-figcaption-font-size;
+        text-align: $cms-typography-figcaption-text-align;
+        text-transform: $cms-typography-figcaption-text-transform;
+
+        align-items: $cms-typography-figcaption-align-items;
+        justify-content: $cms-typography-figcaption-justify-content;
+
+        position: $cms-typography-figcaption-position;
+
+        color: $cms-typography-figcaption-color;
+    }
+
+    strong,
+    b {
+        font-weight: bold;
+    }
+
+    em,
+    i {
+        font-style: italic;
+    }
+
+    code,
+    samp {
+        border-top: $cms-typography-code-border;
+        border-bottom: $cms-typography-code-border;
+        padding: $cms-typography-code-inner-offset;
+        margin: $cms-typography-code-offset;
+        display: block;
+
+        font-family: $cms-typography-code-font-family;
+        line-height: $cms-typography-code-line-height;
+    }
+
+    sub {
+        vertical-align: $cms-typography-sub-vertical-align;
+        font-size: $cms-typography-sub-font-size;
+    }
+
+    sup {
+        vertical-align: $cms-typography-sup-vertical-align;
+        font-size: $cms-typography-sup-font-size;
+    }
+
+    time {
+        color: $cms-typography-time-color;
+    }
+}

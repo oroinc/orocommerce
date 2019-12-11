@@ -67,13 +67,6 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, parentAction: create, priority: 20 }
 
-    oro_shopping_list.api.frontend.validate_line_item_quantity:
-        class: Oro\Bundle\ProductBundle\Api\Processor\ValidateQuantity
-        arguments:
-            - '@oro_product.service.quantity_rounding'
-        tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
-
     oro_shopping_list.api.frontend.add_new_line_item_to_shopping_list:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddNewLineItemToShoppingList
         tags:

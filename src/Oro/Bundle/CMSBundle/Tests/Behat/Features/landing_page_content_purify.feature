@@ -37,7 +37,7 @@ Feature: Landing Page content purify
       | Titles  | Other page                                                                              |
       | Content | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
     And I save and close form
-    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: Iframe" error message
     When I fill "CMS Page Form" with:
       | Content | <div>Some Content</div> |
     And I save and close form
@@ -54,3 +54,12 @@ Feature: Landing Page content purify
     When I save and close form
     Then I should see "Page has been saved" flash message
     And should see "Selective content"
+
+  Scenario: Create a new Landing Page with invalid twig
+    Given I go to Marketing / Landing Pages
+    And click "Create Landing Page"
+    And I fill "CMS Page Form" with:
+      | Titles  | Other page          |
+      | Content | {{ widget(\"\"\")}} |
+    When I save and close form
+    Then I should see only "The entered content contains invalid twig constructions." error message

@@ -68,3 +68,12 @@ Feature: Content Block
     Then I should see "LOREM IPSUM"
     When I signed in as NancyJSallee@example.org on the store frontend
     Then I should see "Test block"
+
+  Scenario: Block with incorrect twig
+    Given I proceed as the Admin
+    And login as administrator
+    And I go to Marketing/ Content Blocks
+    And I click "edit" on row "home-page-slider" in grid
+    And I fill in WYSIWYG "Content Variant 1 Content" with "{{ widget(\"\"\")}}"
+    When I save and close form
+    Then I should see only "The entered content contains invalid twig constructions." error message

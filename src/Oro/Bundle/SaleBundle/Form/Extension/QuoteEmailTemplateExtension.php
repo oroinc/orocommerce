@@ -78,8 +78,8 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return EmailType::class;
+        return [EmailType::class];
     }
 }

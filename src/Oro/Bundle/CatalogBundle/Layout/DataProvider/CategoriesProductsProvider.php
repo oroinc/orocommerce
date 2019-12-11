@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
+/**
+ * Layout data provider which provides count of products per category.
+ */
 class CategoriesProductsProvider
 {
     use DataProviderCacheTrait;
@@ -21,20 +25,18 @@ class CategoriesProductsProvider
     protected $searchRepository;
 
     /**
-     * @var CategoryRepository
+     * @var ManagerRegistry
      */
-    protected $categoryRepository;
+    protected $registry;
 
     /**
-     * @param CategoryRepository $categoryRepository
-     * @param ProductRepository  $searchRepository
+     * @param ManagerRegistry $registry
+     * @param ProductRepository $searchRepository
      */
-    public function __construct(
-        CategoryRepository $categoryRepository,
-        ProductRepository $searchRepository
-    ) {
+    public function __construct(ManagerRegistry $registry, ProductRepository $searchRepository)
+    {
+        $this->registry = $registry;
         $this->searchRepository = $searchRepository;
-        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -54,7 +56,10 @@ class CategoriesProductsProvider
             }
         }
 
-        $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
+        $categories = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->findBy(['id' => $categoriesIds]);
+
         $result = $this->searchRepository->getCategoriesCounts($categories);
 
         if (true === $useCache) {

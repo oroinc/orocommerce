@@ -28,8 +28,8 @@ class MappingConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('mappings');
+        $treeBuilder = new TreeBuilder('mappings');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->useAttributeAsKey('name')

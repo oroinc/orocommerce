@@ -1,19 +1,18 @@
-define(function(require) {
-    'use strict';
+import GrapesJS from 'grapesjs';
+import _ from 'underscore';
+import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
+import ComponentsModule from 'orocms/js/app/grapesjs/components/component-manager';
+import ImageExpression from 'orocms/js/app/grapesjs/plugins/components/image-expression';
 
-    const GrapesJS = require('grapesjs');
-    const _ = require('underscore');
-    const ComponentRestriction = require('orocms/js/app/grapesjs/plugins/components/component-restriction');
-    const ComponentsModule = require('orocms/js/app/grapesjs/components/component-manager');
+export default GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
+    editor.ComponentRestriction = new ComponentRestriction(editor, options);
+    editor.ComponentModule = new ComponentsModule(
+        _.extend({
+            builder: editor
+        }, _.pick(options, 'excludeContentBlockAlias', 'excludeContentWidgetAlias'))
+    );
 
-    return GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
-        editor.ComponentRestriction = new ComponentRestriction(editor, options);
-        editor.ComponentModule = new ComponentsModule(
-            _.extend({
-                builder: editor
-            }, _.pick(options, 'excludeContentBlockAlias', 'excludeContentWidgetAlias'))
-        );
+    new ImageExpression(editor);
 
-        editor.Panels.removeButton('options', 'preview');
-    });
+    editor.Panels.removeButton('options', 'preview');
 });

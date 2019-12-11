@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\SystemConfig;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +22,7 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertBeforeSave()
     {
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $converter = new ConsentConfigConverter($registry);
         $testData = $this->createConfigs(2);
 
@@ -49,7 +49,7 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertFromSavedNoConsentIds()
     {
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $converter = new ConsentConfigConverter($registry);
 
         $this->assertSame([], $converter->convertFromSaved([]));
@@ -82,7 +82,7 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
      */
     protected function getRegistryMockWithRepository()
     {
@@ -104,7 +104,7 @@ class ConsentConfigConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getRepository')
             ->willReturn($repository);
 
-        $registry = $this->createMock(RegistryInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
 
         $registry->expects($this->once())
             ->method('getManagerForClass')

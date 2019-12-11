@@ -10,7 +10,6 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
@@ -41,7 +40,14 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = new StubTranslator();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                static function (string $key) {
+                    return sprintf('[trans]%s[/trans]', $key);
+                }
+            );
 
         $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
 

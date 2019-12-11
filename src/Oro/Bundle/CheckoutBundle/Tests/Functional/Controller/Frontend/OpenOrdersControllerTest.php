@@ -15,6 +15,17 @@ class OpenOrdersControllerTest extends WebTestCase
         );
     }
 
+    public function testOpenOrdersWhenConfigIsOff()
+    {
+        $website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        self::getContainer()->get('oro_config.manager')->set('oro_checkout.frontend_show_open_orders', false, $website);
+        $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        self::getContainer()->get('oro_config.manager')->set('oro_checkout.frontend_show_open_orders', true, $website);
+    }
+
     public function testOpenOrders()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));

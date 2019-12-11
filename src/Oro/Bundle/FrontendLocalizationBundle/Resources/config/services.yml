@@ -15,7 +15,6 @@ services:
 
     oro_frontend_localization.manager.user_localization:
         class: 'Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@session'

@@ -3,15 +3,19 @@
 namespace Oro\Bundle\RedirectBundle\Cache\Dumper;
 
 use Doctrine\Common\Cache\FlushableCache;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
-use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
+/**
+ * Dumps sluggable urls to cache.
+ */
 class SluggableUrlDumper
 {
     /**
-     * @var SlugRepository
+     * @var ManagerRegistry
      */
-    private $slugRepository;
+    private $registry;
 
     /**
      * @var UrlCacheInterface
@@ -19,12 +23,12 @@ class SluggableUrlDumper
     private $cache;
 
     /**
-     * @param SlugRepository $slugRepository
+     * @param ManagerRegistry $registry
      * @param UrlCacheInterface $cache
      */
-    public function __construct(SlugRepository $slugRepository, UrlCacheInterface $cache)
+    public function __construct(ManagerRegistry $registry, UrlCacheInterface $cache)
     {
-        $this->slugRepository = $slugRepository;
+        $this->registry = $registry;
         $this->cache = $cache;
     }
 
@@ -34,7 +38,10 @@ class SluggableUrlDumper
      */
     public function dump($routeName, array $entityIds)
     {
-        foreach ($this->slugRepository->getSlugDataForDirectUrls($entityIds) as $slug) {
+        $repository = $this->registry->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class);
+
+        foreach ($repository->getSlugDataForDirectUrls($entityIds) as $slug) {
             $this->cache->setUrl(
                 $routeName,
                 $slug['routeParameters'],

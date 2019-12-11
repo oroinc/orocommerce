@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -32,6 +31,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
@@ -55,14 +55,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $this->setShoppingListLimit($this->originalShoppingListLimit);
         }
         $this->originalShoppingListLimit = null;
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.manager');
     }
 
     /**
@@ -232,7 +224,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(['entity' => 'shoppinglists']);
 
-        $expectedContent = $this->loadResponseData('cget_shopping_list.yml');
+        $expectedContent = $this->getResponseData('cget_shopping_list.yml');
         $expectedContent['data'][0]['attributes']['default'] = true;
         $expectedContent['data'][2]['attributes']['default'] = false;
         $this->assertResponseContains($expectedContent, $response);
@@ -258,7 +250,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -295,7 +287,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             ['entity' => 'shoppinglists', 'id' => 'default']
         );
 
-        $expectedContent = $this->loadResponseData('get_shopping_list.yml');
+        $expectedContent = $this->getResponseData('get_shopping_list.yml');
         $expectedContent['data']['attributes']['default'] = true;
         $this->assertResponseContains($expectedContent, $response);
     }
@@ -495,7 +487,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $shoppingListId = (int)$this->getResourceId($response);
-        $responseContent = $this->loadResponseData('create_shopping_list_empty.yml');
+        $responseContent = $this->getResponseData('create_shopping_list_empty.yml');
         $responseContent['data']['id'] = (string)$shoppingListId;
         $this->assertResponseContains($responseContent, $response);
 
@@ -1222,13 +1214,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title'  => 'product line item constraint',
-                    'detail' => 'The given product unit is not valid for given product.',
-                    'source' => ['pointer' => '/data/0/relationships/unit/data']
-                ],
+                'title'  => 'product unit exists constraint',
+                'detail' => 'The product unit does not exist for the product.',
+                'source' => ['pointer' => '/data/0/relationships/unit/data']
             ],
             $response
         );
@@ -1248,8 +1238,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'product line item constraint',
-                    'detail' => 'The given product unit is not valid for given product.',
+                    'title'  => 'product unit exists constraint',
+                    'detail' => 'The product unit does not exist for the product.',
                     'source' => ['pointer' => '/data/0/relationships/unit/data']
                 ],
             ],
@@ -1328,8 +1318,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "set" is not valid.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
@@ -1350,8 +1340,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'form constraint',
-                'detail' => 'The quantity is not valid.',
+                'title'  => 'quantity unit precision constraint',
+                'detail' => 'The precision for the unit "item" is not valid.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response

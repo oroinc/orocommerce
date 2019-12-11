@@ -1,0 +1,34 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  productName:
+    string: 'Product1'
+  shortDescr:
+    text: '\<strong\>Short description for default localization\<strong\>'
+  shortDescr_loc1:
+    text: '\<strong\>Short description for localization 1\<strong\>'
+    localization: '@localization1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@business_unit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setNames: [['@productName']]
+      - addShortDescription: ['@shortDescr']
+      - addShortDescription: ['@shortDescr_loc1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    featured: true

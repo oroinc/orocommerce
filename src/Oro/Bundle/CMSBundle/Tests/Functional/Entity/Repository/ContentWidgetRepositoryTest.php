@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentWidgetData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ContentWidgetRepositoryTest extends WebTestCase
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var ContentWidgetRepository */
@@ -31,6 +31,22 @@ class ContentWidgetRepositoryTest extends WebTestCase
 
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->repository = $this->doctrine->getRepository(ContentWidget::class);
+    }
+
+    public function testFindAllByNames(): void
+    {
+        $aclHelper = $this->getContainer()->get('oro_security.acl_helper');
+
+        $this->assertEquals(
+            [
+                $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_1),
+                $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_3)
+            ],
+            $this->repository->findAllByNames([
+                LoadContentWidgetData::CONTENT_WIDGET_1,
+                LoadContentWidgetData::CONTENT_WIDGET_3
+            ], $aclHelper)
+        );
     }
 
     public function testFindOneByName(): void

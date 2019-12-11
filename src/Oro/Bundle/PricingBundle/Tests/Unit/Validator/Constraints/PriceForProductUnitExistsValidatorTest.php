@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,6 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsVali
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
@@ -41,8 +41,8 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock(RegistryInterface::class);
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
         $form = $this->createMock(FormInterface::class);
@@ -107,8 +107,8 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock(RegistryInterface::class);
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
         $form = $this->createMock(FormInterface::class);
@@ -173,8 +173,8 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock(RegistryInterface::class);
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
         $form = $this->createMock(FormInterface::class);

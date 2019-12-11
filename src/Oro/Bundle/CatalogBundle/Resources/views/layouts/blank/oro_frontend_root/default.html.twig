@@ -68,5 +68,5 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__qty'
     }) %}
-    <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|transchoice(categoryProductsCount) }}</dd>
+    <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|trans({'%count%': categoryProductsCount}) }}</dd>
 {% endblock %}

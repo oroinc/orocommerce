@@ -55,7 +55,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
     public function testGetCountByCategories()
     {
         $provider = new CategoriesProductsProvider(
-            $this->categoryRepository,
+            $this->registry,
             $this->searchRepository
         );
 

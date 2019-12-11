@@ -33,9 +33,9 @@ class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->configureOptions($resolver);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(IntegerType::class, $this->extension->getExtendedType());
+        $this->assertEquals([IntegerType::class], IntegerExtension::getExtendedTypes());
     }
 
     /**

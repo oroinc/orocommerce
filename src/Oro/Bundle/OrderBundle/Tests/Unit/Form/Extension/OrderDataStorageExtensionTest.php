@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
@@ -126,5 +127,10 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->entity->getLineItems()->first();
         $this->assertEquals(1, $lineItem->getQuantity());
+    }
+
+    public function testGetExtendedTypes(): void
+    {
+        $this->assertEquals([OrderType::class], OrderDataStorageExtension::getExtendedTypes());
     }
 }

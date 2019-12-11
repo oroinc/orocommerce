@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Writer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\IntegrationBundle\ImportExport\Writer\PersistentBatchWriter;
@@ -9,7 +10,6 @@ use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceWriter extends PersistentBatchWriter
@@ -30,7 +30,7 @@ class ProductPriceWriter extends PersistentBatchWriter
     protected $listeners = [];
 
     /**
-     * @param RegistryInterface        $registry
+     * @param ManagerRegistry          $registry
      * @param EventDispatcherInterface $eventDispatcher
      * @param ContextRegistry          $contextRegistry
      * @param LoggerInterface          $logger
@@ -38,7 +38,7 @@ class ProductPriceWriter extends PersistentBatchWriter
      * @param OptionalListenerManager  $listenerManager
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
         ContextRegistry $contextRegistry,
         LoggerInterface $logger,

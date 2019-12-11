@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
@@ -71,12 +72,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->setFeatureChecker($this->featureChecker);
     }
 
-    public function testExtendedTypeAccessors()
+    public function testGetExtendedTypes(): void
     {
-        $extensionType = 'TestExtensionType';
-        $this->assertNull($this->extension->getExtendedType());
-        $this->extension->setExtendedType($extensionType);
-        $this->assertEquals($extensionType, $this->extension->getExtendedType());
+        $this->assertEquals([OrderType::class], OrderDataStorageExtension::getExtendedTypes());
     }
 
     /**

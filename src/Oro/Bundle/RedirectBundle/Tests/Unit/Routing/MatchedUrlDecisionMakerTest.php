@@ -20,12 +20,9 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider urlDataProvider
      */
-    public function testMatches(bool $isFrontend, array $skippedUrl, string $url, bool $expected)
+    public function testMatches(bool $isFrontend, array $skippedUrlPatterns, string $url, bool $expected)
     {
-        $maker = new MatchedUrlDecisionMaker($this->frontendHelper);
-        foreach ($skippedUrl as $urlPattern) {
-            $maker->addSkippedUrlPattern($urlPattern);
-        }
+        $maker = new MatchedUrlDecisionMaker($skippedUrlPatterns, $this->frontendHelper);
         $this->frontendHelper->expects($this->any())
             ->method('isFrontendUrl')
             ->with($url)
@@ -58,5 +55,22 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
                 false
             ],
         ];
+    }
+
+    public function testShouldResetInternalCacheWhenNewPatternIsAdded()
+    {
+        $this->frontendHelper->expects($this->any())
+            ->method('isFrontendUrl')
+            ->willReturn(true);
+
+        $maker = new MatchedUrlDecisionMaker(['/folder1/'], $this->frontendHelper);
+        $this->assertFalse($maker->matches('/folder1/file.html'));
+        $this->assertTrue($maker->matches('/folder2/file.html'));
+        $this->assertTrue($maker->matches('/folder3/file.html'));
+
+        $maker->addSkippedUrlPattern('/folder2/');
+        $this->assertFalse($maker->matches('/folder1/file.html'));
+        $this->assertFalse($maker->matches('/folder2/file.html'));
+        $this->assertTrue($maker->matches('/folder3/file.html'));
     }
 }

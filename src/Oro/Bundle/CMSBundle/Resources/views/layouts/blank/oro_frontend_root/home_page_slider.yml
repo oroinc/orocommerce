@@ -9,6 +9,8 @@ layout:
                         alias: home-page-slider
                         vars:
                             hideTitle: true
+                        attr:
+                            class: 'cms-typography'
             tree:
                 page_content:
                     hero_promo: ~

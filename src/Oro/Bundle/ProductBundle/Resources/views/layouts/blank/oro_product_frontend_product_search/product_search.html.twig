@@ -3,5 +3,5 @@
         '~class': ' category-title'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_title.title'|transchoice(text|length, {'%text%': text})|e }}</h1>
+    <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_title.title'|trans({'%count%': text|length, '%text%': text})|e }}</h1>
 {% endblock %}

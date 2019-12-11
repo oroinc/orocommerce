@@ -94,6 +94,8 @@ oro_form:
                         - data-toggle
                         - data-content
                         - tabindex
+                        - data-title
+                        - data-type
                 nav:
                     attributes:
                         - aria-label

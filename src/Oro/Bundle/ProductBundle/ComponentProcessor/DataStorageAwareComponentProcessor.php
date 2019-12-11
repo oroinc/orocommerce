@@ -233,10 +233,9 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         $skus = array_unique($skus);
 
-        $message = $this->translator->transChoice(
+        $message = $this->translator->trans(
             'oro.product.frontend.quick_add.messages.not_added_products',
-            count($skus),
-            ['%sku%' => implode(', ', $skus)]
+            ['%count%' => count($skus),'%sku%' => implode(', ', $skus)]
         );
         $this->session->getFlashBag()->add('warning', $message);
     }

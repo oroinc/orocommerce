@@ -194,7 +194,7 @@ oro_behat_extension:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
 
     Create Order:
-      selector: 'a[title="Create Order"]'
+      selector: '.order-checkout-widget a[title="Create Order"]'
 
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'

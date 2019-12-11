@@ -20,7 +20,7 @@ services:
         public: true
         arguments:
             - '@oro_catalog.handler.request_product'
-            - '@oro_catalog.repository.category'
+            - '@doctrine'
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_security.token_accessor'
         calls:
@@ -68,7 +68,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider'
         public: true
         arguments:
-            - "@oro_catalog.repository.category"
+            - "@doctrine"
             - "@oro_catalog.website_search.repository.product"
         calls:
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]

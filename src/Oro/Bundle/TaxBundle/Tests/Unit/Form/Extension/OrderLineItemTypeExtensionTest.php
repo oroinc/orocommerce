@@ -65,8 +65,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             $this->taxationSettingsProvider,
             $taxProviderRegistry,
             $this->totalProvider,
-            $this->sectionProvider,
-            OrderLineItemType::class
+            $this->sectionProvider
         );
     }
 
@@ -75,9 +74,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         unset($this->doctrineHelper);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
+        $this->assertEquals([OrderLineItemType::class], OrderLineItemTypeExtension::getExtendedTypes());
     }
 
     public function testFinishViewDisabledProvider()
@@ -136,7 +135,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->logicalAnd(
                     $this->isType('string'),
-                    $this->equalTo($this->extension->getExtendedType())
+                    $this->equalTo(OrderLineItemType::class)
                 ),
                 $this->logicalAnd(
                     $this->isType('array'),

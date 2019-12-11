@@ -17,9 +17,9 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
         return new CustomerTaxExtension($this->doctrineHelper, 'OroTaxBundle:CustomerTaxCode');
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(CustomerType::class, $this->getExtension()->getExtendedType());
+        $this->assertEquals([CustomerType::class], CustomerTaxExtension::getExtendedTypes());
     }
 
     public function testOnPostSubmitNewCustomer()

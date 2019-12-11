@@ -9,7 +9,7 @@ class LandingPageForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-
+        $this->enableVisitor();
         $this->loadFixtures([
             '@OroCMSBundle/Tests/Functional/Api/Frontend/DataFixtures/landing_page.yml'
         ]);

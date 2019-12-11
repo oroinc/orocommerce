@@ -9,10 +9,9 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Extension\CustomerFormExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
-use Symfony\Component\Form\Tests\Fixtures\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
@@ -31,7 +30,14 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = new StubTranslator();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                static function (string $key) {
+                    return sprintf('[trans]%s[/trans]', $key);
+                }
+            );
 
         $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()
@@ -50,7 +56,7 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(CustomerType::class, $this->extension->getExtendedType());
+        $this->assertEquals([CustomerType::class], CustomerFormExtension::getExtendedTypes());
     }
 
     public function testBuildFormWithoutData()
@@ -144,11 +150,11 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
         $field->expects($this->once())->method('getName')->willReturn('name');
         $type = $this->createMock(ResolvedFormTypeInterface::class);
         $field->expects($this->once())->method('getType')->willReturn($type);
-        $type->expects($this->once())->method('getInnerType')->willReturn(new Type());
+        $type->expects($this->once())->method('getInnerType')->willReturn(new FormType());
 
         $builder->expects($this->once())->method('add')->with(
             'name',
-            Type::class,
+            FormType::class,
             ['configs' => ['placeholder' => '[trans]oro.paymentterm.customer.customer_group_defined[/trans]']]
         );
 

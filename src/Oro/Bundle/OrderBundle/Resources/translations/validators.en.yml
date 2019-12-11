@@ -18,5 +18,11 @@ oro:
                 blank: 'Please choose Product.'
             product_price:
                 blank: 'No matching price found.'
+                not_match: 'The specified price must be equal to {{ expected_value }}.'
+            currency:
+                not_match: 'The specified currency must be equal to "{{ expected_value }}".'
             order:
                 changed: 'Line Item order cannot be changed once set.'
+        orderaddress:
+            multiple: 'Only order address fields, a customer user address or a customer address can be set.'
+            not_allowed: 'It is not allowed to use this address for the order.'

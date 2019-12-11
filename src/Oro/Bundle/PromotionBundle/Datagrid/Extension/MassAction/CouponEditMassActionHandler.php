@@ -90,9 +90,8 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
 
         return new MassActionResponse(
             $successful,
-            $this->translator->transChoice(
+            $this->translator->trans(
                 'oro.grid.mass_action.edit.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             ),
             $options

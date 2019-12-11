@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -22,31 +23,23 @@ class OrderLineItemsCollectionTypeExtension extends AbstractTypeExtension
     private $taxValueManager;
 
     /**
-     * @var string
-     */
-    private $extendedType;
-
-    /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxValueManager $taxValueManager
-     * @param string $extendedType
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
-        TaxValueManager $taxValueManager,
-        $extendedType
+        TaxValueManager $taxValueManager
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxValueManager = $taxValueManager;
-        $this->extendedType = (string)$extendedType;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [OrderLineItemsCollectionType::class];
     }
 
     /**

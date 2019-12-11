@@ -11,6 +11,11 @@
         @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
 
         border-bottom: 1px solid get-color('additional', 'light');
+
+        &--limit {
+            display: block;
+            padding: 0;
+        }
     }
 
     &__radio {
@@ -71,7 +76,7 @@
         display: block;
         margin-top: 4px;
 
-        color: darken(get-color('additional', 'middle'),20%);
+        color: darken(get-color('additional', 'middle'), 20%);
 
         &__item {
             display: block;
@@ -98,6 +103,105 @@
 
         line-height: 0.4;
         vertical-align: top;
+    }
+
+    &__info-container {
+        margin: 16px 0;
+        padding: 0 12px;
+        text-align: center;
+    }
+
+    &__info-container &__info {
+        display: inline-block;
+    }
+
+    &__empty-list {
+        text-align: center;
+        padding: 34px 12px;
+    }
+
+    &__footer {
+        border-top: 1px solid get-color('additional', 'light');
+    }
+
+    &__total {
+        text-align: center;
+        margin: 16px 0 12px;
+        padding: 0 12px;
+    }
+
+    &__order-container {
+        margin: 12px 0 16px;
+        padding: 0 12px;
+    }
+
+    &__product-list {
+        max-height: 425px;
+        overflow-y: auto;
+    }
+
+    &__product-item {
+        height: 85px;
+        padding: 12px;
+        display: flex;
+
+        &:not(:first-child) {
+            border-top: 1px solid get-color('additional', 'light');
+        }
+    }
+
+    &__product-img {
+        width: 60px;
+        border: 1px solid get-color('additional', 'light');
+
+        img {
+            width: 58px;
+            height: 58px;
+            display: block;
+        }
+    }
+
+    &__product-base {
+        width: calc(100% - 60px);
+        padding-left: 10px;
+    }
+
+    &__product-title {
+        height: 32px;
+        display: block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &__product-total {
+        float: right;
+        padding-left: 10px;
+    }
+
+    &__product-sku {
+        width: 100%;
+        margin-top: 12px;
+        clear: both;
+    }
+
+    &__product-sku-value {
+        color: get-color('primary', 'dark');
+    }
+}
+
+@include breakpoint('tablet') {
+    .shopping-list-dropdown {
+        &__item {
+            &--limit {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        &__product-list {
+            max-height: none;
+        }
     }
 }
 

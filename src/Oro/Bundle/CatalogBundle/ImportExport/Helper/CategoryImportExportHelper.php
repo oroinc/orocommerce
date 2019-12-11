@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\ImportExport\Helper;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Contains methods for Category import.
@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CategoryImportExportHelper
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var string */
@@ -23,9 +23,9 @@ class CategoryImportExportHelper
     private $escapedDelimiter;
 
     /**
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(RegistryInterface $doctrine)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
         $this->unescapedDelimiter = trim(Category::CATEGORY_PATH_DELIMITER);
@@ -148,7 +148,7 @@ class CategoryImportExportHelper
     private function getRepository(): CategoryRepository
     {
         return $this->doctrine
-            ->getEntityManagerForClass(Category::class)
+            ->getManagerForClass(Category::class)
             ->getRepository(Category::class);
     }
 }

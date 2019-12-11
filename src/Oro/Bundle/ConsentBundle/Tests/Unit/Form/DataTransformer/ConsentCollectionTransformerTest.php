@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
@@ -9,13 +10,12 @@ use Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var ConsentCollectionTransformer */
@@ -26,7 +26,7 @@ class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $consentConfigConverter = new ConsentConfigConverter($this->doctrine);
         $this->transformer = new ConsentCollectionTransformer($consentConfigConverter);

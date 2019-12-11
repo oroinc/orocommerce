@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -15,7 +16,6 @@ use Oro\Bundle\ConsentBundle\Tests\Unit\Stub\ConsentAcceptanceStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,7 +33,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $enabledConsentProvider;
 
-    /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /**
@@ -44,7 +44,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->consentContextProvider = $this->createMock(ConsentContextProviderInterface::class);
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
         $this->enabledConsentProvider = $this->createMock(EnabledConsentProvider::class);
-        $this->doctrine = $this->createMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->provider = new CustomerUserConsentProvider(
             $this->cmsPageHelper,
@@ -69,7 +69,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     ) {
         $entityManager = $this->createMock(EntityManager::class);
         $this->doctrine->expects($this->once())
-            ->method('getEntityManagerForClass')
+            ->method('getManagerForClass')
             ->with(ConsentAcceptance::class)
             ->willReturn($entityManager);
         $repository = $this->createMock(ConsentAcceptanceRepository::class);

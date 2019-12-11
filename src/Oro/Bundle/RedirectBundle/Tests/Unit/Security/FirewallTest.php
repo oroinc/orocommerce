@@ -4,17 +4,15 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Security;
 
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Security\Firewall;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
-use Symfony\Component\Security\Http\FirewallMapInterface;
 
 class FirewallTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,12 +38,6 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        /** @var FirewallMapInterface|\PHPUnit\Framework\MockObject\MockObject $map */
-        $map = $this->createMock(FirewallMapInterface::class);
-
-        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
-
         $this->baseFirewall = $this->getMockBuilder(FrameworkFirewall::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -57,8 +49,6 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->firewall = new Firewall(
-            $map,
-            $dispatcher,
             $this->matchedUrlDecisionMaker,
             $this->context
         );
@@ -81,8 +71,8 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->with($url)
             ->willReturn(true);
 
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
+        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->getMockBuilder(RequestEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->any())
@@ -119,8 +109,8 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->with($url)
             ->willReturn(false);
 
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
+        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->getMockBuilder(RequestEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->any())
@@ -150,8 +140,8 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $request->attributes->add($attributes);
 
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
+        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->getMockBuilder(RequestEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->any())
@@ -215,7 +205,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $newRequest->setLocale($request->getLocale());
         $newRequest->setDefaultLocale($request->getDefaultLocale());
 
-        $newEvent = new GetResponseEvent($kernel, $newRequest, $requestType);
+        $newEvent = new RequestEvent($kernel, $newRequest, $requestType);
         $this->baseFirewall->expects($this->once())
             ->method('onKernelRequest')
             ->with($newEvent);
@@ -233,8 +223,8 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->with($requestedUrl)
             ->willReturn(false);
 
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
+        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->getMockBuilder(RequestEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->atLeastOnce())
@@ -263,7 +253,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $this->baseFirewall->expects($this->once())
             ->method('onKernelRequest')
             ->willReturnCallback(
-                function (GetResponseEvent $event) use ($response) {
+                function (RequestEvent $event) use ($response) {
                     $event->setResponse($response);
                 }
             );
@@ -303,7 +293,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
             ->with('/slug')
             ->willReturn(true);
 
-        $getResponseEvent = new GetResponseEvent($kernel, $request, $requestType);
+        $getResponseEvent = new RequestEvent($kernel, $request, $requestType);
         $this->firewall->onKernelRequestAfterRouting($getResponseEvent);
 
         $event = new FinishRequestEvent($kernel, $request, $requestType);
@@ -333,7 +323,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject
+     * @return RequestEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareEvent()
     {
@@ -372,8 +362,8 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $kernel = $this->createMock(KernelInterface::class);
         $requestType = KernelInterface::MASTER_REQUEST;
 
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
+        /** @var RequestEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->getMockBuilder(RequestEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->atLeastOnce())

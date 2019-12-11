@@ -31,9 +31,8 @@ class MessageGenerator
      */
     public function getSuccessMessage($shoppingListId = null, $entitiesCount = 0, $transChoiceKey = null)
     {
-        $message = $this->translator->transChoice(
+        $message = $this->translator->trans(
             $transChoiceKey ?: 'oro.shoppinglist.actions.add_success_message',
-            $entitiesCount,
             ['%count%' => $entitiesCount]
         );
 

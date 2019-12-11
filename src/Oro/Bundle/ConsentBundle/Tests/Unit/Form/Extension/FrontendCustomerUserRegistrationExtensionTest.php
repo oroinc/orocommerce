@@ -35,9 +35,12 @@ class FrontendCustomerUserRegistrationExtensionTest extends FormIntegrationTestC
         $this->extension->setFeatureChecker($this->featureChecker);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(FrontendCustomerUserRegistrationType::class, $this->extension->getExtendedType());
+        $this->assertEquals(
+            [FrontendCustomerUserRegistrationType::class],
+            FrontendCustomerUserRegistrationExtension::getExtendedTypes()
+        );
     }
 
     public function testBuildForm()

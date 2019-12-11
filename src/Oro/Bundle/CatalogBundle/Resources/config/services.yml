@@ -19,7 +19,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider'
         public: false
         arguments:
-            - '@oro_catalog.repository.category'
+            - '@doctrine'
             - '@event_dispatcher'
             - '@oro_catalog.provider.master_catalog_root'
 
@@ -35,12 +35,6 @@ services:
         public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
-
-    oro_catalog.repository.category:
-        class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
-        parent: oro_entity.abstract_repository
-        arguments:
-            - '%oro_catalog.entity.category.class%'
 
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
@@ -62,6 +56,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuildProducts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
+
+    oro_catalog.event_listener.datagrid.export:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.import_export.before_get_ids, method: onBeforeExportGetIds }
 
     oro_catalog.event_listener.product_duplicate:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
@@ -116,7 +117,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener'
         arguments:
             - "@oro_catalog.handler.request_product"
-            - "@oro_catalog.repository.category"
+            - "@doctrine"
             - '@oro_catalog.provider.subcategory_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
@@ -301,7 +302,7 @@ services:
     oro_catalog.provider.master_catalog_root:
         class: 'Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider'
         arguments:
-            - '@oro_catalog.repository.category'
+            - '@doctrine'
             - '@oro_security.token_accessor'
 
     Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider:

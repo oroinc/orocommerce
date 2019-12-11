@@ -38,9 +38,11 @@ define(function(require) {
      */
     const ComponentRestriction = function(editor, options) {
         this.editor = editor;
-        this.allowTags = this._prepearAllowTagsCollection(options.allowTags);
+        this.allowTags = options.allowTags ? this._prepearAllowTagsCollection(options.allowTags) : false;
 
-        this.resolveRestriction();
+        if (options.allowTags) {
+            this.resolveRestriction();
+        }
     };
 
     ComponentRestriction.prototype = {
@@ -89,7 +91,7 @@ define(function(require) {
          * @returns {Array}
          */
         getTags: function(element) {
-            return getTags(element);
+            return _.uniq(getTags(element));
         },
 
         /**
@@ -107,6 +109,10 @@ define(function(require) {
          * @returns {*}
          */
         isAllow: function(tags) {
+            if (!this.editor.allow_tags) {
+                return true;
+            }
+
             if (_.isString(tags)) {
                 return this.isAllowedTag(tags);
             }
@@ -128,6 +134,22 @@ define(function(require) {
                 }
                 return isAllowed;
             }, this);
+        },
+
+        validate: function(template) {
+            const restricted = [];
+
+            try {
+                _.each(this.getTags($(template).get(0)), function(tag) {
+                    if (!this.isAllowedTag(tag)) {
+                        restricted.push(_.capitalize(tag));
+                    }
+                }, this);
+            } catch (e) {
+                return restricted;
+            }
+
+            return _.uniq(restricted);
         },
 
         /**

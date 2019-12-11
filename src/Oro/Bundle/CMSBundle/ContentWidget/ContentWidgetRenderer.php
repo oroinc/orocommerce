@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -9,7 +10,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Twig\Environment;
 
 /**
@@ -22,7 +22,7 @@ class ContentWidgetRenderer implements LoggerAwareInterface
     /** @var ContentWidgetTypeRegistry */
     private $contentWidgetTypeRegistry;
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     private $doctrine;
 
     /** @var Environment */
@@ -33,12 +33,12 @@ class ContentWidgetRenderer implements LoggerAwareInterface
 
     /**
      * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param Environment $twig
      */
     public function __construct(
         ContentWidgetTypeRegistry $contentWidgetTypeRegistry,
-        RegistryInterface $doctrine,
+        ManagerRegistry $doctrine,
         Environment $twig
     ) {
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;

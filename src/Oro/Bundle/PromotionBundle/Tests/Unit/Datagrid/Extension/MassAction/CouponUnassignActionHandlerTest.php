@@ -52,10 +52,9 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
     {
         $translatedMessage = $entitiesCount . ' processed';
         $this->translator->expects($this->once())
-            ->method('transChoice')
+            ->method('trans')
             ->with(
                 'oro.promotion.mass_action.unassign.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             )
             ->willReturn($translatedMessage);

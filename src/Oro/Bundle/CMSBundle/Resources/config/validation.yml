@@ -7,6 +7,7 @@ Oro\Bundle\CMSBundle\Entity\Page:
         slugPrototypes:
             - Valid: ~
         content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
 
 Oro\Bundle\CMSBundle\Entity\ContentBlock:
@@ -36,6 +37,9 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
             - NotBlank: ~
             - Length:
                   max: 255
+            - Regex:
+                  pattern: '/^[a-zA-Z0-9_\-]*$/'
+                  message: oro.cms.contentwidget.alias.regex.message
         widgetType:
             - NotBlank: ~
             - Length:
@@ -90,4 +94,5 @@ Oro\Bundle\CMSBundle\Entity\TextContentVariant:
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

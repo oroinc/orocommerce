@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -73,7 +73,7 @@ class AjaxPriceListController extends AbstractController
      */
     public function getPriceListCurrencyListAction(PriceList $priceList)
     {
-        $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->get(LocaleSettings::class)->getLocale());
+        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
 
         $currencies = array_intersect_key($currencyNames, array_fill_keys($priceList->getCurrencies(), null));
 

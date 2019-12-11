@@ -14,9 +14,9 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CustomerGroupType::class;
+        return [CustomerGroupType::class];
     }
 
     /**

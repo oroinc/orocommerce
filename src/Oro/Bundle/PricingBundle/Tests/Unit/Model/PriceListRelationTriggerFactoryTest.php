@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -9,7 +10,6 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListRelationTriggerFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,13 +19,13 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit\Framework\TestCase
     private $factory;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->factory = new PriceListRelationTriggerFactory($this->registry);
     }

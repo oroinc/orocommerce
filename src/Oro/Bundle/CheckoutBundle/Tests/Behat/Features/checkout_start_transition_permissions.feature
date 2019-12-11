@@ -53,4 +53,4 @@ Feature: Checkout start transition permissions
     And save form
     And I proceed as the User
     And reload the page
-    Then I should see "Create Order" button enabled
+    Then I should see "Create Order"

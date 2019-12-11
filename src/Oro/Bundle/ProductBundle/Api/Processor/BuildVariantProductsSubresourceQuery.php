@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\Subresource\Shared\AddParentEntityIdToQuery;
 use Oro\Bundle\ApiBundle\Processor\Subresource\SubresourceContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
@@ -40,12 +41,36 @@ class BuildVariantProductsSubresourceQuery implements ProcessorInterface
             return;
         }
 
+        $idFieldName = $this->getIdentifierFieldName($context->getConfig());
         $query = $this->doctrineHelper
             ->createQueryBuilder(Product::class, 'e')
             ->innerJoin(ProductVariantLink::class, 'links', Join::WITH, 'links.product = e')
-            ->where('links.parentProduct = :' . AddParentEntityIdToQuery::PARENT_ENTITY_ID_QUERY_PARAM_NAME)
             ->setParameter(AddParentEntityIdToQuery::PARENT_ENTITY_ID_QUERY_PARAM_NAME, $context->getParentId());
+        if ('id' === $idFieldName) {
+            $query->where('links.parentProduct = :' . AddParentEntityIdToQuery::PARENT_ENTITY_ID_QUERY_PARAM_NAME);
+        } else {
+            $query
+                ->innerJoin('links.parentProduct', 'parentProduct')
+                ->where(sprintf(
+                    'parentProduct.%s = :%s',
+                    $idFieldName,
+                    AddParentEntityIdToQuery::PARENT_ENTITY_ID_QUERY_PARAM_NAME
+                ));
+        }
 
         $context->setQuery($query);
+    }
+
+    /**
+     * @param EntityDefinitionConfig $config
+     *
+     * @return string
+     */
+    private function getIdentifierFieldName(EntityDefinitionConfig $config): string
+    {
+        $idFieldNames = $config->getIdentifierFieldNames();
+        $idFieldName = reset($idFieldNames);
+
+        return $config->getField($idFieldName)->getPropertyPath($idFieldName);
     }
 }

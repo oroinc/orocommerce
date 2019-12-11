@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
@@ -77,14 +76,6 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
 
         parent::tearDown();
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.global');
     }
 
     public function testGetList()

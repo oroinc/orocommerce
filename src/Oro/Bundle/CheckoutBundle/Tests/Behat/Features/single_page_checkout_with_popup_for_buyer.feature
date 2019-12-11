@@ -195,6 +195,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     And I should see "Amanda Cole"
     And I click on "Billing Address Select"
     And I click on "New Address Option"
@@ -271,6 +273,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Guria          |
       | Postal Code  | 67890          |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     When I click on "Shipping Address Select"
     And I click on "New Address Option"
     Then "New Address Popup Form" must contains values:
@@ -346,6 +350,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
@@ -365,6 +371,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Guria          |
       | Postal Code  | 67890          |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
     When I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
@@ -401,6 +409,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     When I check "Use billing address" on the checkout page
     And I click "Delete this shopping list after submitting order"
@@ -438,6 +448,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Cherkas'ka Oblast' |
       | Postal Code  | 12345              |
     And I click "Continue"
+    And I scroll to top
+    And I wait until all blocks on one step checkout page are reloaded
     When I check "Use billing address" on the checkout page
     Then There is no shipping method available for this order
     When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"

@@ -72,6 +72,8 @@ workflows:
                 type: boolean
             remove_source:
                 type: boolean
+            clear_source:
+                type: boolean
             auto_remove_source:
                 type: boolean
             source_remove_label:
@@ -205,6 +207,8 @@ workflows:
                           hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
+                init_entities:
+                    - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
 
             start_from_quickorderform:
@@ -1653,6 +1657,15 @@ workflows:
                                 - [$checkout.completedData.currency, $order.currency]
                                 - [$checkout.completedData.subtotal, $order.subtotalObject.value]
                                 - [$checkout.completedData.total, $order.totalObject.value]
+
+                    - '@clear_checkout_source_entity':
+                        conditions:
+                            '@and':
+                              - '@equal': [$auto_remove_source, false]
+                              - '@equal': [$allow_manual_source_remove, false]
+                              - '@equal': [$remove_source, false]
+                              - '@equal': [$clear_source, true]
+                        parameters: [$.checkout]
 
                     - '@remove_checkout_source_entity':
                         conditions:

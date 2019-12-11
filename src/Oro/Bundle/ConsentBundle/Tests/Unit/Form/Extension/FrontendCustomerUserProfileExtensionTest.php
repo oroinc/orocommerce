@@ -52,9 +52,12 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
         $this->extension->setFeatureChecker($this->featureChecker);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(FrontendCustomerUserProfileType::class, $this->extension->getExtendedType());
+        $this->assertEquals(
+            [FrontendCustomerUserProfileType::class],
+            FrontendCustomerUserProfileExtension::getExtendedTypes()
+        );
     }
 
     public function testBuildForm()

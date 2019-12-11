@@ -21,6 +21,15 @@ system_configuration:
             icon: 'fa-user-plus'
 
     fields:
+        oro_checkout.frontend_show_open_orders:
+            data_type: boolean
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 15
+            options:
+                label: oro.checkout.system_configuration.fields.frontend_show_open_orders.title
+                choices:
+                     No: 0
+                     Yes: 1
         oro_checkout.frontend_open_orders_separate_page:
             data_type: boolean
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -86,4 +95,5 @@ system_configuration:
                                 children:
                                     orders_history_open_orders:
                                         children:
+                                            - oro_checkout.frontend_show_open_orders
                                             - oro_checkout.frontend_open_orders_separate_page

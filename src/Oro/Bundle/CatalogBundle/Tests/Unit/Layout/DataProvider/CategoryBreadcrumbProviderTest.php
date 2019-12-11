@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -60,8 +62,20 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $categoryTreeProvider  = $this->createMock(CategoryTreeProvider::class);
         $tokenAccessor         = $this->createMock(TokenAccessorInterface::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($categoryRepository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
+
         $this->categoryProvider = $this->getMockBuilder(CategoryProvider::class)
-            ->setConstructorArgs([$requestProductHandler, $categoryRepository, $categoryTreeProvider, $tokenAccessor])
+            ->setConstructorArgs([$requestProductHandler, $registry, $categoryTreeProvider, $tokenAccessor])
             ->getMock();
 
         $this->categoryProvider

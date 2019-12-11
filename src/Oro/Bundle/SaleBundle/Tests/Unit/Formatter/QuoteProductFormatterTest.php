@@ -208,8 +208,9 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
         ;
 
         $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with($expectedData['transConstant'], $expectedData['transIndex'], [
+            ->method('trans')
+            ->with($expectedData['transConstant'], [
+                '%count%'   => $expectedData['transIndex'],
                 '{units}'   => $expectedData['formattedUnits'],
                 '{price}'   => $expectedData['formattedPrice'],
                 '{unit}'    => $expectedData['formattedUnit'],

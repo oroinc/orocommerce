@@ -34,9 +34,9 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentTermExtension($this->paymentTermProvider);
     }
 
-    public function testGetExtended()
+    public function testGetExtendedTypes()
     {
-        $this->assertSame(PaymentTermSelectType::class, $this->extension->getExtendedType());
+        $this->assertSame([PaymentTermSelectType::class], PaymentTermExtension::getExtendedTypes());
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -25,7 +24,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
     protected function tearDown()
     {
         if (false !== $this->originalWebCatalog) {
-            $configManager = $this->getConfigManager();
+            $configManager = $this->getConfigManager(null);
             $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->originalWebCatalog);
             $configManager->flush();
         }
@@ -54,7 +53,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
 
     protected function switchToWebCatalog()
     {
-        $configManager = $this->getConfigManager();
+        $configManager = $this->getConfigManager(null);
         $this->originalWebCatalog = $configManager->get(self::WEB_CATALOG_CONFIG_NAME);
         $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->getReference('catalog1')->getId());
         $configManager->flush();
@@ -62,7 +61,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
 
     protected function switchToMasterCatalog()
     {
-        $configManager = $this->getConfigManager();
+        $configManager = $this->getConfigManager(null);
         $configManager->set(self::WEB_CATALOG_CONFIG_NAME, null);
         $configManager->flush();
     }
@@ -84,13 +83,5 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
     protected function getCurrentLocalizationId()
     {
         return $this->getCurrentLocalization()->getId();
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    protected function getConfigManager(): ConfigManager
-    {
-        return self::getContainer()->get('oro_config.manager');
     }
 }

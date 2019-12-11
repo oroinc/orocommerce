@@ -3,12 +3,14 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Twig\Environment;
 
 class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
+    use LoggerAwareTraitTestTrait;
 
     /** @var TwigInVariablesExtension */
     private $extension;
@@ -25,13 +27,15 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
             ->getContainer($this);
 
         $this->extension = new TwigInVariablesExtension($container);
+
+        $this->setUpLoggerMock($this->extension);
     }
 
-    public function testRenderContent()
+    public function testRenderContent(): void
     {
         $renderedString = 'rendered string';
 
-        $template = $this->createMock(\Twig_Template::class);
+        $template = $this->createMock(\Twig\Template::class);
         $template->expects($this->once())
             ->method('render')
             ->with([])
@@ -42,6 +46,37 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $renderedString,
+            self::callTwigFilter($this->extension, 'render_content', ['{{placeholder}}'])
+        );
+    }
+
+    public function testRenderContentWhenEmpty(): void
+    {
+        $template = $this->createMock(\Twig\Template::class);
+        $template->expects($this->never())
+            ->method('render');
+        $this->twig->expects($this->never())
+            ->method('createTemplate');
+
+        $this->assertEmpty(
+            self::callTwigFilter($this->extension, 'render_content', [''])
+        );
+    }
+
+    public function testRenderContentWhenException(): void
+    {
+        $template = $this->createMock(\Twig\Template::class);
+        $template->expects($this->once())
+            ->method('render')
+            ->with([])
+            ->willThrowException(new \Exception('sample error'));
+        $this->twig->expects($this->once())
+            ->method('createTemplate')
+            ->willReturn($template);
+
+        $this->assertLoggerErrorMethodCalled();
+
+        $this->assertEmpty(
             self::callTwigFilter($this->extension, 'render_content', ['{{placeholder}}'])
         );
     }

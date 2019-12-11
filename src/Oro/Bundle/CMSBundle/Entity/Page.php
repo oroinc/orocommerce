@@ -139,6 +139,9 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      *          "dataaudit"={
      *              "auditable"=true
      *          },
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          },
      *          "draft"={
      *              "draftable"=true
      *          }

@@ -33,7 +33,7 @@ define(function(require) {
             'undo': _.__('oro.cms.wysiwyg.option_panel.undo'),
             'redo': _.__('oro.cms.wysiwyg.option_panel.redo'),
             'gjs-open-import-webpage': _.__('oro.cms.wysiwyg.option_panel.import'),
-            'canvas-clear': _.__('oro.cms.wysiwyg.option_panel.export')
+            'canvas-clear': _.__('oro.cms.wysiwyg.option_panel.clear_canvas')
         },
 
         /**

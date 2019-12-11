@@ -7,6 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SystemPageForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->enableVisitor();
+        $this->loadVisitor();
+    }
+
     public function testGetFrontendPage()
     {
         $response = $this->get(

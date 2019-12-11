@@ -6,21 +6,20 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\CustomerGroupTaxExtension;
-use Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension;
 
 class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 {
     /**
-     * @return CustomerTaxExtension
+     * @return CustomerGroupTaxExtension
      */
     protected function getExtension()
     {
         return new CustomerGroupTaxExtension($this->doctrineHelper, 'OroTaxBundle:CustomerTaxCode');
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(CustomerGroupType::class, $this->getExtension()->getExtendedType());
+        $this->assertEquals([CustomerGroupType::class], CustomerGroupTaxExtension::getExtendedTypes());
     }
 
     public function testOnPostSubmitNewCustomerGroup()

@@ -5,19 +5,52 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadOrderTaxesData;
+use Oro\Bundle\TaxBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadTaxesData;
 use Oro\DBAL\Types\MoneyType;
 
+/**
+ * @dbIsolationPerTest
+ */
 class OrderTaxesTest extends FrontendRestJsonApiTestCase
 {
+    /** @var string */
+    private $originalTaxationUseAsBaseOption;
+
     protected function setUp()
     {
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
-            LoadOrderTaxesData::class
+            LoadOrderTaxesData::class,
+            LoadTaxesData::class,
+            LoadPaymentTermData::class
         ]);
+
+        $configManager = $this->getConfigManager();
+        $this->originalTaxationUseAsBaseOption = $configManager->get('oro_tax.use_as_base_by_default');
+        $configManager->set('oro_tax.use_as_base_by_default', TaxationSettingsProvider::USE_AS_BASE_DESTINATION);
+        $configManager->flush();
+    }
+
+    protected function tearDown()
+    {
+        $configManager = $this->getConfigManager();
+        $configManager->set('oro_tax.use_as_base_by_default', $this->originalTaxationUseAsBaseOption);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    protected function postFixtureLoad()
+    {
+        parent::postFixtureLoad();
+        self::getContainer()->get('oro_payment_term.provider.payment_term_association')
+            ->setPaymentTerm($this->getReference('customer'), $this->getReference('payment_term_net_10'));
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -134,5 +167,16 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testCreateShouldCalculateTaxes()
+    {
+        $response = $this->post(
+            ['entity' => 'orders'],
+            '@OroOrderBundle/Tests/Functional/Api/Frontend/RestJsonApi/requests/create_order.yml'
+        );
+
+        $responseContent = $this->updateResponseContent('create_order.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
     }
 }

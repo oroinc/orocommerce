@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
@@ -11,7 +12,6 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
@@ -19,7 +19,7 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
     use CouponsTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -35,7 +35,7 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);
         $this->listener = new ActualizeCouponsStateListener($this->registry, $this->entityCouponsProvider);
     }

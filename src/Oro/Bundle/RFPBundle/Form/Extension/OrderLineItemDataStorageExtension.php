@@ -159,18 +159,20 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ($this->sectionProvider && $this->isApplicable()) {
-            $this->sectionProvider->addSections(
-                $this->getExtendedType(),
-                [
-                    self::OFFERS_DATA_KEY => [
-                        'data' => [
-                            self::OFFERS_DATA_KEY => [],
-                            OffersFormStorage::DATA_KEY => [],
+            foreach (self::getExtendedTypes() as $extendedType) {
+                $this->sectionProvider->addSections(
+                    $extendedType,
+                    [
+                        self::OFFERS_DATA_KEY => [
+                            'data' => [
+                                self::OFFERS_DATA_KEY => [],
+                                OffersFormStorage::DATA_KEY => [],
+                            ],
+                            'order' => 5,
                         ],
-                        'order' => 5,
-                    ],
-                ]
-            );
+                    ]
+                );
+            }
         }
     }
 
@@ -185,8 +187,8 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     }
 
     /** {@inheritdoc} */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return OrderLineItemType::class;
+        return [OrderLineItemType::class];
     }
 }

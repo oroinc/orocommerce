@@ -23,6 +23,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.editor = options;
             const ComponentId = 'content-block';
             const domComps = options.DomComponents;
             const commands = options.Commands;
@@ -31,18 +32,6 @@ define(function(require) {
             const dView = dType.view;
             const datagridName = 'cms-content-block-grid';
             const contentBlockAlias = options.Config.contentBlockAlias;
-
-            options.BlockManager.add(ComponentId, {
-                id: ComponentId,
-                label: _.__('oro.cms.wysiwyg.component.content_block'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-file-text-o'
-                },
-                content: {
-                    type: ComponentId
-                }
-            });
 
             commands.add('content-block-settings', function(editor, sender, event) {
                 const routeParams = {
@@ -148,8 +137,10 @@ define(function(require) {
 
                         this.listenTo(this, 'change:contentBlock', this.onContentBlockChange, this);
 
-                        options.off('canvas:drop').once('canvas:drop', function(DataTransfer, model) {
-                            options.Commands.run('content-block-settings', model);
+                        options.off('canvas:drop').once('canvas:drop', (DataTransfer, model) => {
+                            if (model.is(ComponentId)) {
+                                options.Commands.run('content-block-settings', model);
+                            }
                         });
                     },
 
@@ -192,6 +183,26 @@ define(function(require) {
                     }
                 })
             });
+
+            this.createComponentButton();
+        },
+
+        createComponentButton: function() {
+            if (this.editor.ComponentRestriction.isAllow([
+                'div'
+            ])) {
+                this.editor.BlockManager.add('content-block', {
+                    id: 'content-block',
+                    label: _.__('oro.cms.wysiwyg.component.content_block'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-file-text-o'
+                    },
+                    content: {
+                        type: 'content-block'
+                    }
+                });
+            }
         }
     });
 

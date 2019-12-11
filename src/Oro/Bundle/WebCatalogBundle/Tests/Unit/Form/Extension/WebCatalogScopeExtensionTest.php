@@ -68,9 +68,9 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(ScopeType::class, $this->extension->getExtendedType());
+        $this->assertEquals([ScopeType::class], WebCatalogScopeExtension::getExtendedTypes());
     }
 
     /**

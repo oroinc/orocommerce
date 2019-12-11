@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Sharding;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Constraint;
@@ -13,7 +14,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Manage shards for given class.
@@ -26,7 +26,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class ShardManager implements \Serializable
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -416,9 +416,9 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    public function setRegistry(RegistryInterface $registry)
+    public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }

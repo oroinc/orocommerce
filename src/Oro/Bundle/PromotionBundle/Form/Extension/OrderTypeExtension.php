@@ -32,8 +32,8 @@ class OrderTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return OrderType::class;
+        return [OrderType::class];
     }
 }

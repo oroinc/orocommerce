@@ -24,6 +24,7 @@ class ShoppingListForBuyerTest extends FrontendRestJsonApiTestCase
             LoadBuyerCustomerUserData::class,
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list.yml'
         ]);
+
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {

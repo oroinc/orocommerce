@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -18,7 +17,7 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-
+        $this->enableVisitor();
         $this->loadFixtures([
             LoadLocalizationData::class
         ]);
@@ -53,14 +52,6 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
 
         parent::tearDown();
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.global');
     }
 
     public function testGetList()

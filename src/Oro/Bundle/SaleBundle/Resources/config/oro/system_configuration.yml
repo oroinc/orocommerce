@@ -10,6 +10,8 @@ system_configuration:
             icon: 'fa-file-o'
         guest_quote:
             title: oro.sale.system_configuration.groups.guest_quote.title
+        general_quote:
+            title: oro.sale.system_configuration.groups.general_quote.title
     fields:
         oro_sale.backend_product_visibility:
             data_type: array
@@ -107,6 +109,12 @@ system_configuration:
             options:
                 label: oro.sale.system_configuration.fields.enable_guest_quote.label
                 tooltip: oro.sale.form.tooltip.enable_guest_quote
+        oro_sale.quote_frontend_feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 50
+            options:
+                label: oro.sale.system_configuration.fields.quote_frontend_feature_enabled.label
 
     tree:
         system_configuration:
@@ -132,6 +140,9 @@ system_configuration:
                                             - oro_sale.guest_contact_info_text
                             quotes:
                                 children:
+                                    general_quote:
+                                        children:
+                                            - oro_sale.quote_frontend_feature_enabled
                                     guest_quote:
                                         children:
                                             - oro_sale.enable_guest_quote

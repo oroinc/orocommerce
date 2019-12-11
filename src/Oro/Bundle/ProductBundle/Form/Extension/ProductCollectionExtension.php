@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -21,18 +22,11 @@ class ProductCollectionExtension extends AbstractTypeExtension
     private $translator;
 
     /**
-     * @var string
-     */
-    private $extendedType;
-
-    /**
      * @param TranslatorInterface $translator
-     * @param string $extendedType
      */
-    public function __construct(TranslatorInterface $translator, $extendedType)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-        $this->extendedType = $extendedType;
     }
 
     /**
@@ -83,8 +77,8 @@ class ProductCollectionExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [ContentVariantCollectionType::class];
     }
 }

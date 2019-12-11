@@ -5,6 +5,7 @@ define(function(require) {
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');
     const BaseTreeView = require('oroui/js/app/views/jstree/base-tree-view');
+    const tools = require('oroui/js/tools');
 
     const ProductSidebarView = BaseTreeView.extend({
         /**
@@ -63,6 +64,8 @@ define(function(require) {
             this.notCategorizedProductSelector = $(this.options.includeNotCategorizedProductSelector);
             this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
             this.notCategorizedProductSelector.on('change', _.bind(this.onIncludeNonCategorizedProductChange, this));
+
+            mediator.on('import-export:handleExport', this.onHandleExport, this);
         },
 
         onGridLoadComplete: function(collection) {
@@ -116,6 +119,23 @@ define(function(require) {
             this.triggerSidebarChanged();
         },
 
+        /**
+         * @param exportRouteOptions
+         */
+        onHandleExport: function(exportRouteOptions) {
+            const queryParams = tools.unpackFromQueryString(window.location.search);
+
+            if (queryParams.hasOwnProperty('categoryId')) {
+                exportRouteOptions.categoryId = queryParams['categoryId'];
+            }
+            if (queryParams.hasOwnProperty('includeSubcategories')) {
+                exportRouteOptions.includeSubcategories = queryParams['includeSubcategories'];
+            }
+            if (queryParams.hasOwnProperty('includeNotCategorizedProducts')) {
+                exportRouteOptions.includeNotCategorizedProducts = queryParams['includeNotCategorizedProducts'];
+            }
+        },
+
         triggerSidebarChanged: function() {
             const params = {
                 categoryId: this.selectedCategoryId ? this.selectedCategoryId : 0,
@@ -141,6 +161,8 @@ define(function(require) {
 
             this.subcategoriesSelector.off('change');
             ProductSidebarView.__super__.dispose.call(this);
+
+            mediator.off('import-export:handleExport', this.onHandleExport, this);
         }
     });
 

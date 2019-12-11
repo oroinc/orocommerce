@@ -30,14 +30,9 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
-        $listener = $this->createMock(CustomerListener::class);
-
-        $customerFormExtension = new CustomerFormExtension($listener);
-
-        $this->assertSame(CustomerType::class, $customerFormExtension->getExtendedType());
+        $this->assertSame([CustomerType::class], CustomerFormExtension::getExtendedTypes());
     }
 
     public function testSetRelationClass()

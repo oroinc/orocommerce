@@ -3,13 +3,11 @@
 namespace Oro\Bundle\RedirectBundle\Security;
 
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
-use Symfony\Component\Security\Http\FirewallMapInterface;
 
 /**
  * Decorate default framework firewall, perform token initialization before routing to make user available there.
@@ -38,15 +36,10 @@ class Firewall
     private $matchedUrlDecisionMaker;
 
     /**
-     * @param FirewallMapInterface $map
-     * @param EventDispatcherInterface $dispatcher
-     * @param FirewallFactory $firewallFactory
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      * @param RequestContext|null $context
      */
     public function __construct(
-        FirewallMapInterface $map,
-        EventDispatcherInterface $dispatcher,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         RequestContext $context = null
     ) {
@@ -67,9 +60,9 @@ class Firewall
     /**
      * Initialize request context by current request, call default firewall behaviour.
      *
-     * @param GetResponseEvent $event An GetResponseEvent instance
+     * @param RequestEvent $event An ResponseEvent instance
      */
-    public function onKernelRequestBeforeRouting(GetResponseEvent $event)
+    public function onKernelRequestBeforeRouting(RequestEvent $event)
     {
         if (!$this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo())) {
             return;
@@ -88,9 +81,9 @@ class Firewall
     /**
      * For Slugs perform additional authentication checks for detected route.
      *
-     * @param GetResponseEvent $event An GetResponseEvent instance
+     * @param RequestEvent $event An ResponseEvent instance
      */
-    public function onKernelRequestAfterRouting(GetResponseEvent $event)
+    public function onKernelRequestAfterRouting(RequestEvent $event)
     {
         if ($this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo())) {
             $request = $event->getRequest();
@@ -106,7 +99,7 @@ class Firewall
                 $this->baseFirewall->onKernelFinishRequest($finishRequestEvent);
 
                 $newRequest = $this->createSlugRequest($request);
-                $newEvent = new GetResponseEvent(
+                $newEvent = new RequestEvent(
                     $event->getKernel(),
                     $newRequest,
                     $event->getRequestType()

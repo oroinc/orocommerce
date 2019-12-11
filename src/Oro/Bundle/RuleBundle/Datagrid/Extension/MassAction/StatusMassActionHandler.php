@@ -135,11 +135,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
 
         return new MassActionResponse(
             $successful,
-            $this->translator->transChoice(
-                $responseMessage,
-                $entitiesCount,
-                ['%count%' => $entitiesCount]
-            ),
+            $this->translator->trans($responseMessage, ['%count%' => $entitiesCount]),
             $options
         );
     }

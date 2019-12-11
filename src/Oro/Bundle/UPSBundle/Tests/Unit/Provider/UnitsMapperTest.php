@@ -1,16 +1,16 @@
 <?php
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -21,7 +21,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(RegistryInterface::class)
+        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
         $this->mapper = new UnitsMapper($this->registry);
     }

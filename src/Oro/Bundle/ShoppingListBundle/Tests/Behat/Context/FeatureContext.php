@@ -28,7 +28,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     use PageObjectDictionary, KernelDictionary;
 
     /**
-     * @When /^Buyer is on (?P<shoppingListLabel>[\w\s]+)$/
+     * @When /^Buyer is on "(?P<shoppingListLabel>[\w\s]+)" shopping list$/
      *
      * @param string $shoppingListLabel
      */

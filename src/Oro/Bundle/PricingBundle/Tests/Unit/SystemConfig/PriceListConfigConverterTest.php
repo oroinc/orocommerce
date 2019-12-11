@@ -59,15 +59,15 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
      */
     protected function getRegistryMock()
     {
-        return $this->createMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        return $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
      */
     protected function getRegistryMockWithRepository()
     {

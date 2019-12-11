@@ -6,7 +6,7 @@ navigation:
                 route: 'oro_checkout_frontend_open_orders'
                 position: 65
                 extras:
-                    condition: 'config_value("oro_checkout.frontend_open_orders_separate_page")'
+                    condition: 'config_value("oro_checkout.frontend_show_open_orders") && config_value("oro_checkout.frontend_open_orders_separate_page")'
         tree:
             frontend_menu:
                 children:

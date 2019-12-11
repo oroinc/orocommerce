@@ -254,3 +254,42 @@
 .page-content-editor {
     margin: -12px;
 }
+
+.ui-dialog {
+    &--import-template {
+        .CodeMirror {
+            width: 820px;
+            height: 346px;
+        }
+
+        .ui-dialog-content {
+            padding: 18px;
+            overflow: hidden;
+        }
+
+        .ui-widget-content {
+            > div {
+                &.has-message {
+                    height: calc(100% - 40px);
+                    overflow: visible !important;
+
+                    .CodeMirror {
+                        height: 300px;
+                    }
+                }
+            }
+        }
+
+        .action-wrapper {
+            display: inline-block;
+        }
+
+        .btn:disabled {
+            pointer-events: none;
+        }
+
+        .validation-failed {
+            margin-top: 18px;
+        }
+    }
+}

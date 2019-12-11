@@ -61,7 +61,7 @@ Feature: Delete line item from shopping list for configurable products
   Scenario: Remove configurable product when it shown as matrix at shopping list
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
-    When Buyer is on Configurable products list 2
+    When Buyer is on "Configurable products list 2" shopping list
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see "ConfigurableProductA"
     And I should see "Item #: CNFA"
@@ -80,7 +80,7 @@ Feature: Delete line item from shopping list for configurable products
 
   Scenario: Remove configurable product when it shown as matrix at shopping list
     Given I proceed as the User
-    When Buyer is on Configurable products list 1
+    When Buyer is on "Configurable products list 1" shopping list
     Then I should not see an "One Dimensional Matrix Grid Form" element
     And I should see following line items in "Shopping List Line Items Table":
       | SKU  | Quantity | Unit |

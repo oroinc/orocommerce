@@ -95,18 +95,11 @@ class OrderTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title'  => 'line item product constraint',
-                    'detail' => 'Please choose Product.',
-                    'source' => ['pointer' => '/data/relationships/lineItems/data/0']
-                ],
-                [
-                    'title'  => 'line item product constraint',
-                    'detail' => 'Please choose Product.',
-                    'source' => ['pointer' => '/included/0/relationships/product/data']
-                ]
+                'title'  => 'line item product constraint',
+                'detail' => 'Please choose Product.',
+                'source' => ['pointer' => '/included/0/relationships/product/data']
             ],
             $response
         );

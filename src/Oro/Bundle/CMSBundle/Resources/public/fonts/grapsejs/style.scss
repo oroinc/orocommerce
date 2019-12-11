@@ -9,7 +9,8 @@
     font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+[class^="gjs-icon-"],
+[class*=" gjs-icon-"] {
     /* use !important to prevent issues with browser extensions that change fonts */
     font-family: '#{$icomoon-font-family}' !important;
     speak: none;
@@ -24,80 +25,80 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-flex-al-str {
+.gjs-icon-flex-al-str {
     &:before {
-        content: $icon-flex-al-str;
+        content: $gjs-icon-flex-al-str;
     }
 }
 
-.icon-flex-al-center {
+.gjs-icon-flex-al-center {
     &:before {
-        content: $icon-flex-al-center;
+        content: $gjs-icon-flex-al-center;
     }
 }
 
-.icon-flex-al-end {
+.gjs-icon-flex-al-end {
     &:before {
-        content: $icon-flex-al-end;
+        content: $gjs-icon-flex-al-end;
     }
 }
 
-.icon-flex-al-start {
+.gjs-icon-flex-al-start {
     &:before {
-        content: $icon-flex-al-start;
+        content: $gjs-icon-flex-al-start;
     }
 }
 
-.icon-flex-dir-col-rev {
+.gjs-icon-flex-dir-col-rev {
     &:before {
-        content: $icon-flex-dir-col-rev;
+        content: $gjs-icon-flex-dir-col-rev;
     }
 }
 
-.icon-flex-dir-col {
+.gjs-icon-flex-dir-col {
     &:before {
-        content: $icon-flex-dir-col;
+        content: $gjs-icon-flex-dir-col;
     }
 }
 
-.icon-flex-dir-row-rev {
+.gjs-icon-flex-dir-row-rev {
     &:before {
-        content: $icon-flex-dir-row-rev;
+        content: $gjs-icon-flex-dir-row-rev;
     }
 }
 
-.icon-flex-dir-row {
+.gjs-icon-flex-dir-row {
     &:before {
-        content: $icon-flex-dir-row;
+        content: $gjs-icon-flex-dir-row;
     }
 }
 
-.icon-flex-just-end {
+.gjs-icon-flex-just-end {
     &:before {
-        content: $icon-flex-just-end;
+        content: $gjs-icon-flex-just-end;
     }
 }
 
-.icon-flex-just-sp-ar {
+.gjs-icon-flex-just-sp-ar {
     &:before {
-        content: $icon-flex-just-sp-ar;
+        content: $gjs-icon-flex-just-sp-ar;
     }
 }
 
-.icon-flex-just-sp-bet {
+.gjs-icon-flex-just-sp-bet {
     &:before {
-        content: $icon-flex-just-sp-bet;
+        content: $gjs-icon-flex-just-sp-bet;
     }
 }
 
-.icon-flex-just-sp-cent {
+.gjs-icon-flex-just-sp-cent {
     &:before {
-        content: $icon-flex-just-sp-cent;
+        content: $gjs-icon-flex-just-sp-cent;
     }
 }
 
-.icon-flex-just-start {
+.gjs-icon-flex-just-start {
     &:before {
-        content: $icon-flex-just-start;
+        content: $gjs-icon-flex-just-start;
     }
 }

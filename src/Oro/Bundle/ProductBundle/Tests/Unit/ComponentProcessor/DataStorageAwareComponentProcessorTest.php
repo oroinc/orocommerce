@@ -453,11 +453,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setupErrorMessages($errorMessageSkus)
     {
         $this->translator->expects($this->any())
-            ->method('transChoice')
+            ->method('trans')
             ->with(
                 'oro.product.frontend.quick_add.messages.not_added_products',
-                count(explode(', ', $errorMessageSkus)),
-                ['%sku%' => $errorMessageSkus]
+                ['%count%' => count(explode(', ', $errorMessageSkus)), '%sku%' => $errorMessageSkus]
             );
 
         $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');

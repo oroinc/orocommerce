@@ -6,8 +6,9 @@
 
 {% block _cms_page_content_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " cms-page"
+        class: attr.class|default('') ~ " cms-page cms-typography"
     }) %}
+
     <div{{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
     </div>

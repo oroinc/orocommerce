@@ -104,7 +104,6 @@ services:
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
         arguments:
@@ -114,7 +113,6 @@ services:
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - "@doctrine"
@@ -399,7 +397,6 @@ services:
 
     oro_order.provider.configuration:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_config.manager'
@@ -497,3 +494,10 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    oro_order.validator.customer_or_user_address_granted:
+        class: 'Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGrantedValidator'
+        arguments:
+            - '@oro_order.order.provider.order_address'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }

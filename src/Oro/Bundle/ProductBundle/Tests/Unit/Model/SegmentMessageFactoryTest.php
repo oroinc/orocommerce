@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
     private $segmentRepository;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -31,7 +31,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->factory = new SegmentMessageFactory($this->registry);
     }
 

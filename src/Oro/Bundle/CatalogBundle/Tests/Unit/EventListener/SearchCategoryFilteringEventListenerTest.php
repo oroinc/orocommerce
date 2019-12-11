@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -65,9 +67,21 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $this->categoryProvider = $this->createMock(SubcategoryProvider::class);
         $this->config = $this->createMock(DatagridConfiguration::class);
 
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->repository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
+
         $this->listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->repository,
+            $registry,
             $this->categoryProvider
         );
     }

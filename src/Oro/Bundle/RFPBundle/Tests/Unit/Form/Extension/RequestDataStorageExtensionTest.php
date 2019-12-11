@@ -11,6 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -318,5 +319,10 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->extension->buildForm($this->getBuilderMock(true), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());
+    }
+
+    public function testGetExtendedTypes(): void
+    {
+        $this->assertEquals([RequestType::class], RequestDataStorageExtension::getExtendedTypes());
     }
 }

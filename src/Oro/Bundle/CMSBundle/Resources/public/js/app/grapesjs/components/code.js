@@ -48,17 +48,21 @@ define(function(require) {
         },
 
         createComponentButton: function() {
-            this.editor.BlockManager.add('code', {
-                id: 'code',
-                label: _.__('oro.cms.wysiwyg.component.code'),
-                category: 'Basic',
-                attributes: {
-                    'class': 'fa fa-code'
-                },
-                content: {
-                    type: 'code'
-                }
-            });
+            if (this.editor.ComponentRestriction.isAllow([
+                'code'
+            ])) {
+                this.editor.BlockManager.add('code', {
+                    id: 'code',
+                    label: _.__('oro.cms.wysiwyg.component.code'),
+                    category: 'Basic',
+                    attributes: {
+                        'class': 'fa fa-code'
+                    },
+                    content: {
+                        type: 'code'
+                    }
+                });
+            }
         }
     });
 

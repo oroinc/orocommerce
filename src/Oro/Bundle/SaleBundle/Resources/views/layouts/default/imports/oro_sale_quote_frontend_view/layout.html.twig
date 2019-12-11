@@ -1,9 +1,11 @@
 {% block _quote_view_controls_list_widget %}
+    {%  spaceless %}
     <ul class="controls-list">
         <li><a href="#"><i class="fa-reply"></i>Share</a></li>
         <li><a href="#"><i class="fa-print"></i>Print</a></li>
         <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
     </ul>
+    {% endspaceless %}
 {% endblock %}
 
 {% block _quote_view_customer_status_widget %}
