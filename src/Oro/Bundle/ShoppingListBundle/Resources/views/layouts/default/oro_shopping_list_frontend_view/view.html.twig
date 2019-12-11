@@ -94,7 +94,9 @@
         'data-name': "empty-items__hide"
     }) %}
     <div{{ block('block_attributes') }}>
+        {% spaceless %}
         {{ block_widget(block) }}
+        {%  endspaceless %}
     </div>
 {% endblock %}
 
