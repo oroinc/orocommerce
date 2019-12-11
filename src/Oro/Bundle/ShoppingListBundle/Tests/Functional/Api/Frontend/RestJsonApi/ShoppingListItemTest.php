@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -51,14 +50,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             $this->setShoppingListLimit($this->originalShoppingListLimit);
         }
         $this->originalShoppingListLimit = null;
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.manager');
     }
 
     /**

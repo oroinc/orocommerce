@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Brick\Math\BigDecimal;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadPaymentTermData;
@@ -52,14 +51,6 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($this->getReference('customer'), $this->getReference('payment_term_net_10'));
         $this->getEntityManager()->flush();
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.global');
     }
 
     /**

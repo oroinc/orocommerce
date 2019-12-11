@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,14 +35,6 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
         self::assertFalse(
             $this->getConfigManager()->get('oro_shopping_list.availability_for_guests')
         );
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager(): ConfigManager
-    {
-        return self::getClientInstance()->getContainer()->get('oro_config.manager');
     }
 
     public function testTryToGetList()
