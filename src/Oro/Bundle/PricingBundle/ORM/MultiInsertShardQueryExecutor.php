@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\ORM;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 
 /**
@@ -24,46 +25,54 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         $columns = $this->getColumns($className, $fields);
         $selectQuery = $selectQueryBuilder->getQuery();
         $selectQuery->useQueryCache(false);
-        $selectQuery->setMaxResults(static::BUFFER_SIZE);
         $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
         $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+
+        $iterator = new BufferedQueryResultIterator($selectQuery);
+        $iterator->setBufferSize(self::BUFFER_SIZE);
 
         $sql = sprintf('insert into %s (%s) values ', $insertToTableName, implode(',', $columns));
         $connection = $this->shardManager->getEntityManager()->getConnection();
 
         $total = 0;
-        do {
-            $rows = $selectQuery->getArrayResult();
-            $rowsCount = 0;
-            $values = [];
-            $columnsCount = count($columns);
-            $allTypes = [];
-            $types = [];
-            foreach ($rows as $row) {
-                $total++;
-                if (count($types) === 0) {
-                    $types = $this->prepareParametersTypes($row);
-                }
-                $values = array_merge($values, array_values($row));
-                $allTypes = array_merge($allTypes, array_values($types));
-                $rowsCount++;
-                if ($rowsCount % static::BUFFER_SIZE === 0) {
-                    $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
-                    $connection->executeUpdate($fullSql, $values, $allTypes);
-                    $rowsCount = 0;
-                    unset($values);
-                    unset($allTypes);
-                    $values = [];
-                    $allTypes = [];
-                }
+        $batches = [];
+        $rowsCount = 0;
+        $values = [];
+        $columnsCount = count($columns);
+        $allTypes = [];
+        $types = [];
+        foreach ($iterator as $row) {
+            $total++;
+            if (count($types) === 0) {
+                $types = $this->prepareParametersTypes($row);
             }
-            if ($rowsCount > 0) {
-                $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
-                $connection->executeUpdate($fullSql, $values, $allTypes);
-                unset($values);
-                unset($allTypes);
+            $values = array_merge($values, array_values($row));
+            $allTypes = array_merge($allTypes, array_values($types));
+            $rowsCount++;
+            if ($rowsCount % static::BUFFER_SIZE === 0) {
+                $batches[] = [
+                    $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount),
+                    $values,
+                    $allTypes
+                ];
+                $rowsCount = 0;
+                unset($values, $allTypes);
+                $values = [];
+                $allTypes = [];
             }
-        } while (count($rows) > 0);
+        }
+        if ($rowsCount > 0) {
+            $batches[] = [
+                $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount),
+                $values,
+                $allTypes
+            ];
+            unset($values, $allTypes);
+        }
+
+        foreach ($batches as $batch) {
+            $connection->executeUpdate(...$batch);
+        }
 
         return $total;
     }
@@ -105,7 +114,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
                 case is_float($value):
                     $types[] = Type::FLOAT;
                     break;
-                case is_integer($value):
+                case is_int($value):
                     $types[] = Type::INTEGER;
                     break;
                 default:
