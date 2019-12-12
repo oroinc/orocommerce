@@ -128,7 +128,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'shortDescriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultShortDescription|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
+                        'shortDescriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultShortDescription|render_content|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less'),
                     }
                 }
             ]
@@ -138,7 +138,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'descriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultDescription|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
+                        'descriptions': infoMessage ~ UI.renderCollapsibleHtml(entity.defaultDescription|render_content|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less'),
                     }
                 }
             ]

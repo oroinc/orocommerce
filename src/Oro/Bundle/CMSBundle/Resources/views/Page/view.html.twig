@@ -29,7 +29,7 @@
 
         <div class="row-fluid form-horizontal">
             <div class="cms-content">
-                {{ entity.content|oro_html_sanitize|raw }}
+                {{ entity.content|render_content|oro_html_sanitize|raw }}
             </div>
         </div>
     {% endset %}

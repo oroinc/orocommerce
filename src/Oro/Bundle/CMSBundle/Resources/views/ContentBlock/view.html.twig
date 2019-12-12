@@ -38,7 +38,7 @@
                 'oro.cms.page.content.label'|trans,
                 '<div class="control-label">' ~
                 infoMessage ~
-                variant.content|default('oro.ui.empty'|trans)|oro_html_sanitize|raw ~
+                variant.content|render_content|default('oro.ui.empty'|trans)|oro_html_sanitize|raw ~
                 '</div>')
             }}
 
