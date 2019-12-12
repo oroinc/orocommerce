@@ -29,18 +29,6 @@ class DataProviderCacheCleaner
      */
     public function clearCache()
     {
-        $keyBunch = $this->cache->fetch('_keyBunch');
-
-        if (!$keyBunch) {
-            return;
-        }
-
-        $keys = json_decode($keyBunch, true);
-
-        foreach ($keys as $key) {
-            $this->cache->delete($key);
-        }
-
-        $this->cache->delete('_keyBunch');
+        $this->cache->deleteAll();
     }
 }

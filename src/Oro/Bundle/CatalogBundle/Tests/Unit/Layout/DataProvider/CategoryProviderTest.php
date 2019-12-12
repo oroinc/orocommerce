@@ -241,7 +241,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
         $cache = $this->createMock(CacheProvider::class);
         $cache->expects($this->atLeastOnce())
-            ->method('fetch');
+            ->method('fetch')
+            ->willReturn(false);
 
         $this->categoryProvider->setCache($cache, 3600);
         $this->categoryProvider->getCategoryTreeArray($user);

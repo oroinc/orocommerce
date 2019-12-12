@@ -8,6 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
+/**
+ * Keeps cache with built pricing rule query
+ */
 class RuleCache implements Cache
 {
     const DQL_PARTS_KEY = 'dql_parts';
@@ -46,13 +49,11 @@ class RuleCache implements Cache
      */
     public function fetch($id)
     {
-        if ($this->contains($id)) {
-            $data = $this->cacheStorage->fetch($id);
-            if ($data
-                && (!empty($data[self::HASH]) && $this->getHash($data[self::DQL_PARTS_KEY]) === $data[self::HASH])
-            ) {
-                return $this->restoreQueryBuilder($data);
-            }
+        $data = $this->cacheStorage->fetch($id);
+        if (false !== $data
+            && (!empty($data[self::HASH]) && $this->getHash($data[self::DQL_PARTS_KEY]) === $data[self::HASH])
+        ) {
+            return $this->restoreQueryBuilder($data);
         }
 
         return false;

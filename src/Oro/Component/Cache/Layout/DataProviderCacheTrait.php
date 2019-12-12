@@ -88,8 +88,6 @@ trait DataProviderCacheTrait
             throw new \RuntimeException('Please init this cache first');
         }
 
-        $this->storeCacheKeyInBunch($this->cacheKey);
-
         $this->cache->save($this->cacheKey, $result, $this->cacheLifeTime);
     }
 
@@ -100,20 +98,11 @@ trait DataProviderCacheTrait
     {
         return $this->enabled;
     }
-    
+
     /**
      * @param string $key
      */
     private function storeCacheKeyInBunch($key)
     {
-        $keyBunch = $this->cache->fetch('_keyBunch');
-
-        $keyBunch = !$keyBunch ? [] : (array)json_decode($keyBunch, true);
-
-        $keyBunch[] = $key;
-
-        $keyBunch = json_encode($keyBunch);
-
-        $this->cache->save('_keyBunch', $keyBunch);
     }
 }

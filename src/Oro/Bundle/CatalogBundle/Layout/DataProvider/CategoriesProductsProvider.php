@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
+/**
+ * Layout data provider which provides count of products per category.
+ */
 class CategoriesProductsProvider
 {
     use DataProviderCacheTrait;
@@ -49,7 +52,7 @@ class CategoriesProductsProvider
         $useCache = $this->isCacheUsed();
         if (true === $useCache) {
             $result = $this->getFromCache();
-            if ($result) {
+            if (false !== $result) {
                 return $result;
             }
         }

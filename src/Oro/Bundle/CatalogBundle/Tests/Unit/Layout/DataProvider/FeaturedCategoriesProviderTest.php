@@ -78,6 +78,10 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
             $categories[] = $this->getEntity(Category::class, $categoryData);
         }
 
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->willReturn(false);
+
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->will($this->returnValue($token));
@@ -87,7 +91,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
             ->with($this->tokenStorage->getToken()->getUser())
             ->willReturn($categories);
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects($this->once())
             ->method('save');
 
         $actual = $this->featuredCategoriesProvider->getAll($categoryIds);
