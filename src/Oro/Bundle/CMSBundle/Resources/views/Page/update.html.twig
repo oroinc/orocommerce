@@ -11,6 +11,17 @@
 
 {% set formAction = entityId ? path('oro_cms_page_update', { 'id': entityId }) : path('oro_cms_page_create')  %}
 
+{% block breadcrumbs %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {{ parent() }}
+    {% if entity.draftUuid %}
+        <span class="page-title-draft">
+            {{ UI.badge('oro.draft.draft.label'|trans, 'tentatively') }}
+        </span>
+    {% endif %}
+{% endblock breadcrumbs %}
+
 {% block navButtons %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 

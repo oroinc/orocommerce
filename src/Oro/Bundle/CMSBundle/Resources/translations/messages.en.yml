@@ -25,6 +25,10 @@ oro.cms:
         draft_project.label: 'Draft Project'
         draft_source.label: 'Draft Source'
         draft_uuid.label: 'Draft ID'
+        draft:
+            entity_label:        'Landing Page Draft'
+            entity_plural_label: 'Landing Page Drafts'
+            owner.label:         'Owner'
 
     contentblock:
         entity_label: Content Block
@@ -171,6 +175,7 @@ oro.cms:
     sections:
         general: 'General'
         content: 'Content'
+        drafts: 'Drafts'
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'
