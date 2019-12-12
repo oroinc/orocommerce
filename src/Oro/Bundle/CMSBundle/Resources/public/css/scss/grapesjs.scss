@@ -79,14 +79,21 @@
 
     &sm-label {
         font-size: $base-font-size;
-        color: $primary-600;
+        color: $primary-200;
 
         &.#{$app-prefix}color-warn {
-            color: $primary-100;
+            color: $primary-200;
         }
 
         &.#{$app-prefix}four-color {
             color: $warning-darken;
+        }
+    }
+
+    &sm-composite,
+    &sm-stack {
+        > .#{$app-prefix}sm-label {
+            font-weight: 700;
         }
     }
 

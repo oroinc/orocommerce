@@ -201,7 +201,8 @@ define(function(require) {
                         if (!isToolbarCommandExist(toolbar, this.commandName)) {
                             toolbar.unshift({
                                 attributes: {
-                                    'class': 'fa fa-gear'
+                                    'class': 'fa fa-gear',
+                                    'label': _.__('oro.cms.wysiwyg.toolbar.widgetSetting')
                                 },
                                 command: this.commandName
                             });

@@ -332,6 +332,17 @@ const GrapesjsEditorView = BaseView.extend({
         this.builder.on('update', _.bind(this._onUpdatedBuilder, this));
         this.builder.on('component:update', _.debounce(_.bind(this._onComponentUpdatedBuilder, this), 100));
         this.builder.on('changeTheme', _.bind(this._updateTheme, this));
+        this.builder.on('component:selected', _.bind(this.componentSelected, this));
+
+        this.builder.editor.view.$el.find('.gjs-toolbar')
+            .off('mouseover')
+            .on('mouseover', '.gjs-toolbar-item', e => {
+                $(e.target).tooltip({
+                    title: $(e.target).attr('label') || ''
+                });
+
+                $(e.target).tooltip('show');
+            });
 
         // Fix reload form when click export to zip dialog
         this.builder.on('run:export-template', _.bind(function() {
@@ -351,6 +362,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (this.builder) {
             this.builder.off();
+            this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
     },
 
@@ -445,6 +457,31 @@ const GrapesjsEditorView = BaseView.extend({
         const comps = this.builder.getComponents();
 
         return comps.length ? JSON.stringify(this.builder.getComponents()) : '';
+    },
+
+    componentSelected(model) {
+        let toolbar = model.get('toolbar');
+
+        toolbar = toolbar.map(tool => {
+            switch (tool.command) {
+                case 'select-parent':
+                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.selectParent');
+                    break;
+                case 'tlb-move':
+                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.move');
+                    break;
+                case 'tlb-clone':
+                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.clone');
+                    break;
+                case 'tlb-delete':
+                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.delete');
+                    break;
+            }
+
+            return tool;
+        });
+
+        model.set('toolbar', toolbar);
     },
 
     /**

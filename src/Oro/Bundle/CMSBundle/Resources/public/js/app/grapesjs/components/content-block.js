@@ -127,7 +127,8 @@ define(function(require) {
                         if (!isToolbarComandExist(toolbar, 'content-block-settings')) {
                             toolbar.unshift({
                                 attributes: {
-                                    'class': 'fa fa-gear'
+                                    'class': 'fa fa-gear',
+                                    'label': _.__('oro.cms.wysiwyg.toolbar.blockSetting')
                                 },
                                 command: 'content-block-settings'
                             });

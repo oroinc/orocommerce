@@ -28,6 +28,7 @@ oro.cms:
             content_widget: 'Content Widget'
             code: 'Code'
             link_button: 'Link Button'
+            text_basic: 'Text Section'
             table: 'Table'
             digital_asset:
                 image: 'Image'
@@ -38,6 +39,13 @@ oro.cms:
             label: 'Paste here your HTML/CSS and click Import'
             title: 'Import'
             button: 'Import'
+        toolbar:
+            selectParent: 'Select Parent'
+            move: 'Move'
+            clone: 'Clone'
+            delete: 'Delete'
+            widgetSetting: 'Widget Settings'
+            blockSetting: 'Block Settings'
     change_type:
         confirmation:
             title: 'Change Type'
