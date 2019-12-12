@@ -12,14 +12,20 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category as CategoryDTO;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -46,6 +52,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     private $tokenAccessor;
 
     /**
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $cache;
+
+    /**
      * @var CategoryProvider
      */
     protected $categoryProvider;
@@ -59,6 +70,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->cache = $this->createMock(CacheProvider::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -76,8 +89,10 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             $this->requestProductHandler,
             $registry,
             $this->categoryTreeProvider,
-            $this->tokenAccessor
+            $this->tokenAccessor,
+            $this->localizationHelper
         );
+        $this->categoryProvider->setCache($this->cache, 3600);
     }
 
     public function testGetCurrentCategoryUsingMasterCatalogRoot()
@@ -250,10 +265,6 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->with($user, $rootCategory, null)
             ->willReturn([$mainCategory, $childCategory]);
 
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->localizationHelper
             ->expects($this->any())
             ->method('getLocalizedValue')
@@ -263,17 +274,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->categoryProvider->setLocalizationHelper($this->localizationHelper);
-
         return $user;
     }
 
     public function testGetCategoryTreeArray()
     {
-        $user = $this->prepareGetCategoryTreeArray();
-        $this->categoryProvider->setCache(null);
-        $actual = $this->categoryProvider->getCategoryTreeArray($user);
-
         $data = [
             [
                 'id' => '',
@@ -290,32 +295,54 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
+        $user = $this->prepareGetCategoryTreeArray();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with('category__0_0_0_')
+            ->willReturn(false);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with('category__0_0_0_', $data)
+            ->willReturn(false);
+
+        $actual = $this->categoryProvider->getCategoryTreeArray($user);
         $this->assertEquals($data, $actual);
     }
 
-    public function testGetCategoryTreeArrayNotCaching()
+    public function testGetCategoryTreeArrayCached()
     {
-        $user = $this->prepareGetCategoryTreeArray();
+        $data = [
+            [
+                'id' => '',
+                'title' => 'category_1_2',
+                'hasSublist' => 1,
+                'childCategories' => []
+            ]
+        ];
+        $user = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customer = $this->getEntity(Customer::class, ['id' => 2]);
+        $user->setCustomer($customer);
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 3]);
+        $customer->setGroup($customerGroup);
+        $organization = $this->getEntity(CustomerUser::class, ['id' => 4]);
+        $localization = $this->getEntity(Localization::class, ['id' => 5]);
 
-        $cache = $this->createMock(CacheProvider::class);
-        $cache->expects($this->never())
-            ->method('fetch');
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+        $this->localizationHelper->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
-        $this->categoryProvider->setCache($cache);
-        $this->categoryProvider->disableCache();
-        $this->categoryProvider->getCategoryTreeArray($user);
-    }
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with('category_1_5_2_3_4')
+            ->willReturn($data);
+        $this->cache->expects($this->never())
+            ->method('save');
 
-    public function testGetCategoryTreeArrayCaching()
-    {
-        $user = $this->prepareGetCategoryTreeArray();
-
-        $cache = $this->createMock(CacheProvider::class);
-        $cache->expects($this->atLeastOnce())
-            ->method('fetch');
-
-        $this->categoryProvider->setCache($cache, 3600);
-        $this->categoryProvider->getCategoryTreeArray($user);
+        $actual = $this->categoryProvider->getCategoryTreeArray($user);
+        $this->assertEquals($data, $actual);
     }
 
     public function testGetIncludeSubcategoriesChoice()

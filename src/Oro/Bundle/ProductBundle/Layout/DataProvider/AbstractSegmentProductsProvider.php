@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
@@ -13,7 +14,6 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -27,10 +27,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     const PARAMETERS = 'parameters';
     const HASH = 'hash';
     const HINTS = 'hints';
-
-    use DataProviderCacheTrait {
-        getFromCache as loadFromCache;
-    }
 
     /** @var SegmentManager */
     private $segmentManager;
@@ -55,6 +51,12 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
     /** @var AclHelper */
     private $aclHelper;
+
+    /** @var CacheProvider */
+    private $cache;
+
+    /** @var int */
+    private $cacheLifeTime;
 
     /**
      * @param SegmentManager $segmentManager
@@ -87,6 +89,16 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     }
 
     /**
+     * @param CacheProvider $cache
+     * @param int           $lifeTime
+     */
+    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
+
+    /**
      * @return int
      */
     abstract protected function getSegmentId();
@@ -116,14 +128,10 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
         $segment = $this->productSegmentProvider->getProductSegmentById($this->getSegmentId());
         if ($segment) {
-            $this->initCache($this->getCacheParts($segment));
-            $useCache = $this->isCacheUsed();
-
-            if (true === $useCache) {
-                $data = $this->getFromCache();
-                if ($data) {
-                    return $this->getResult($data);
-                }
+            $cacheKey = implode('_', $this->getCacheParts($segment));
+            $data = $this->cache->fetch($cacheKey);
+            if (is_array($data) && $this->checkCacheDataConsistency($data)) {
+                return $this->getResult($data);
             }
 
             $qb = $this->getQueryBuilder($segment);
@@ -133,29 +141,13 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
                     $qb->getParameters()->toArray(),
                     $qb->getEntityManager()->getConfiguration()->getDefaultQueryHints()
                 );
-                if (true === $useCache) {
-                    $this->saveToCache($data);
-                }
+                $this->cache->save($cacheKey, $data, $this->cacheLifeTime);
 
                 return $this->getResult($data);
             }
         }
 
         return [];
-    }
-
-    /**
-     * @return false|array
-     */
-    private function getFromCache()
-    {
-        $data = $this->loadFromCache();
-
-        if (is_array($data) && $this->checkCacheDataConsistency($data)) {
-            return $data;
-        }
-
-        return false;
     }
 
     /**

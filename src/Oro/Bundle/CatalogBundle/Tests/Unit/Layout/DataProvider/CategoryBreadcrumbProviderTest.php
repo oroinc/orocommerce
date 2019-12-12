@@ -8,12 +8,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
-use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -56,11 +53,8 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->category        = $this->createMock(Category::class);
-        $requestProductHandler = $this->createMock(RequestProductHandler::class);
-        $categoryRepository    = $this->createMock(CategoryRepository::class);
-        $categoryTreeProvider  = $this->createMock(CategoryTreeProvider::class);
-        $tokenAccessor         = $this->createMock(TokenAccessorInterface::class);
+        $this->category = $this->createMock(Category::class);
+        $categoryRepository = $this->createMock(CategoryRepository::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -74,9 +68,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($manager);
 
-        $this->categoryProvider = $this->getMockBuilder(CategoryProvider::class)
-            ->setConstructorArgs([$requestProductHandler, $registry, $categoryTreeProvider, $tokenAccessor])
-            ->getMock();
+        $this->categoryProvider = $this->createMock(CategoryProvider::class);
 
         $this->categoryProvider
             ->method('getCurrentCategory')

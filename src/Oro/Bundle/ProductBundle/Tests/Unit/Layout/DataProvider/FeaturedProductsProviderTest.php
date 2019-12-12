@@ -29,14 +29,6 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
         $this->getProductsWithInvalidCache($this->getQueryBuilder());
     }
 
-    public function testGetProductsWithDisabledCache()
-    {
-        $this->prepare();
-
-        $this->segmentProductsProvider->disableCache();
-        $this->getProductsWithDisabledCache($this->getQueryBuilder());
-    }
-
     public function testGetProductsWithoutSegment()
     {
         $this->configManager
@@ -77,7 +69,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'cacheVal_featured_products_0__1';
+        return 'featured_products_0__1';
     }
 
     private function prepare()

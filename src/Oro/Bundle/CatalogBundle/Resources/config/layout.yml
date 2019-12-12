@@ -23,8 +23,8 @@ services:
             - '@doctrine'
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_security.token_accessor'
+            - '@oro_locale.helper.localization'
         calls:
-            - [setLocalizationHelper, ['@oro_locale.helper.localization']]
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: category }
@@ -34,12 +34,6 @@ services:
         public: false
         calls:
             - [ setNamespace, [ 'oro_catalog_category' ] ]
-
-    oro_catalog.layout.data_provider.category.cache_cleaner:
-        class: 'Oro\Component\Cache\Layout\DataProviderCacheCleaner'
-        public: false
-        arguments:
-            - '@oro_catalog.layout.data_provider.category.cache'
 
     oro_catalog.layout.data_provider.category_breadcrumb:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider'

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -12,7 +13,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
  * Layout data provider that helps to build main navigation menu on the front store.
@@ -20,8 +20,6 @@ use Oro\Component\Cache\Layout\DataProviderCacheTrait;
  */
 class MenuDataProvider
 {
-    use DataProviderCacheTrait;
-
     const IDENTIFIER = 'identifier';
     const LABEL = 'label';
     const URL = 'url';
@@ -44,6 +42,12 @@ class MenuDataProvider
 
     /** @var WebsiteManager */
     private $websiteManager;
+
+    /** @var CacheProvider */
+    private $cache;
+
+    /** @var int */
+    private $cacheLifeTime;
 
     /** @var ContentNode */
     private $rootNode = false;
@@ -73,6 +77,16 @@ class MenuDataProvider
     }
 
     /**
+     * @param CacheProvider $cache
+     * @param int           $lifeTime
+     */
+    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
+
+    /**
      * @param int|null $maxNodesNestedLevel
      *
      * @return array
@@ -81,12 +95,11 @@ class MenuDataProvider
     {
         $scope = $this->requestWebContentScopeProvider->getScope();
         if (null !== $scope) {
-            $rootItem = $this->getCachedRootItem($scope, $maxNodesNestedLevel);
+            $cacheKey = $this->getCacheKey($scope, $maxNodesNestedLevel);
+            $rootItem = $this->cache->fetch($cacheKey);
             if (false === $rootItem) {
                 $rootItem = $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
-                if ($this->isCacheUsed()) {
-                    $this->saveToCache($rootItem);
-                }
+                $this->cache->save($cacheKey, $rootItem, $this->cacheLifeTime);
             }
 
             if (array_key_exists(self::CHILDREN, $rootItem)) {
@@ -121,31 +134,6 @@ class MenuDataProvider
         }
 
         return $rootItem;
-    }
-
-    /**
-     * @param Scope $scope
-     * @param int|null $maxNodesNestedLevel
-     *
-     * @return array|bool|false
-     */
-    private function getCachedRootItem(Scope $scope, int $maxNodesNestedLevel = null)
-    {
-        if ($this->isCacheUsed()) {
-            $rootNode = $this->getRootNode();
-            $localization = $this->localizationHelper->getCurrentLocalization();
-            $this->initCache([
-                'menu_items',
-                (string)$maxNodesNestedLevel,
-                $scope ? $scope->getId() : 0,
-                $rootNode ? $rootNode->getId() : 0,
-                $localization ? $localization->getId() : 0
-            ]);
-
-            return $this->getFromCache();
-        }
-
-        return false;
     }
 
     /**
@@ -196,5 +184,25 @@ class MenuDataProvider
     private function getContentNodeRepository()
     {
         return $this->doctrine->getRepository(ContentNode::class);
+    }
+
+    /**
+     * @param Scope    $scope
+     * @param int|null $maxNodesNestedLevel
+     *
+     * @return string
+     */
+    private function getCacheKey(Scope $scope, ?int $maxNodesNestedLevel): string
+    {
+        $rootNode = $this->getRootNode();
+        $localization = $this->localizationHelper->getCurrentLocalization();
+
+        return sprintf(
+            'menu_items_%s_%s_%s_%s',
+            (string)$maxNodesNestedLevel,
+            $scope ? $scope->getId() : 0,
+            $rootNode ? $rootNode->getId() : 0,
+            $localization ? $localization->getId() : 0
+        );
     }
 }
