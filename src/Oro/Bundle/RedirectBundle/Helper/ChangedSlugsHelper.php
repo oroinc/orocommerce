@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\RedirectBundle\Helper;
 
+use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
+use Oro\Bundle\DraftBundle\Helper\DraftHelper;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Responsible for the slug changing and preparation
+ */
 class ChangedSlugsHelper
 {
     /**
@@ -31,21 +36,29 @@ class ChangedSlugsHelper
     private $slugUrlDiffer;
 
     /**
+     * @var DraftHelper
+     */
+    private $draftHelper;
+
+    /**
      * @param FormFactoryInterface $formFactory
      * @param RequestStack $requestStack
      * @param SlugEntityGenerator $slugGenerator
      * @param SlugUrlDiffer $slugUrlDiffer
+     * @param DraftHelper $draftHelper
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         RequestStack $requestStack,
         SlugEntityGenerator $slugGenerator,
-        SlugUrlDiffer $slugUrlDiffer
+        SlugUrlDiffer $slugUrlDiffer,
+        DraftHelper $draftHelper
     ) {
         $this->formFactory = $formFactory;
         $this->requestStack = $requestStack;
         $this->slugGenerator = $slugGenerator;
         $this->slugUrlDiffer = $slugUrlDiffer;
+        $this->draftHelper = $draftHelper;
     }
 
     /**
@@ -55,6 +68,10 @@ class ChangedSlugsHelper
      */
     public function getChangedSlugsData(SluggableInterface $entity, $formType)
     {
+        if ($this->isUnsupportedEntity($entity)) {
+            return [];
+        }
+
         $request = $this->requestStack->getCurrentRequest();
 
         $oldSlugs = $this->slugGenerator->prepareSlugUrls($entity);
@@ -80,5 +97,16 @@ class ChangedSlugsHelper
         $newSlugs = $this->slugGenerator->prepareSlugUrls($entity);
 
         return $this->slugUrlDiffer->getSlugUrlsChanges($oldSlugs, $newSlugs);
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     *
+     * @return bool
+     */
+    private function isUnsupportedEntity(SluggableInterface $entity): bool
+    {
+        return ($entity instanceof DraftableInterface && DraftHelper::isDraft($entity))
+            || $this->draftHelper->isSaveAsDraftAction();
     }
 }

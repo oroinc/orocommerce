@@ -3,12 +3,16 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Helper;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
+use Oro\Bundle\DraftBundle\Helper\DraftHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -45,6 +49,11 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
+    /**
+     * @var DraftHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $draftHelper;
+
     protected function setUp()
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -56,6 +65,7 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->draftHelper = $this->createMock(DraftHelper::class);
         $this->request = new Request();
 
         $requestStack = new RequestStack();
@@ -65,8 +75,33 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
             $this->formFactory,
             $requestStack,
             $this->slugGenerator,
-            $this->slugUrlDiffer
+            $this->slugUrlDiffer,
+            $this->draftHelper
         );
+    }
+
+    public function testGetChangedSlugsJsonResponseWithIsSaveAsDraftAction(): void
+    {
+        $this->draftHelper
+            ->expects($this->once())
+            ->method('isSaveAsDraftAction')
+            ->willReturn(true);
+
+        $formType = 'FormType';
+        /** @var DraftableInterface|SluggableInterface $entity */
+        $entity = new Page();
+
+        $this->assertEmpty($this->helper->getChangedSlugsData($entity, $formType));
+    }
+
+    public function testGetChangedSlugsJsonResponseWithIsDraft(): void
+    {
+        $formType = 'FormType';
+        /** @var DraftableInterface|SluggableInterface $entity */
+        $entity = new Page();
+        $entity->setDraftUuid(UUIDGenerator::v4());
+
+        $this->assertEmpty($this->helper->getChangedSlugsData($entity, $formType));
     }
 
     public function testGetChangedSlugsJsonResponse()
