@@ -49,7 +49,7 @@ class ContentWidgetTypeStub implements ContentWidgetTypeInterface
      */
     public function getWidgetData(ContentWidget $contentWidget): array
     {
-        return [];
+        return ['settings' => $contentWidget->getSettings()];
     }
 
     /**
@@ -58,5 +58,13 @@ class ContentWidgetTypeStub implements ContentWidgetTypeInterface
     public function isInline(): bool
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
+    {
+        return '<b>default template</b>';
     }
 }

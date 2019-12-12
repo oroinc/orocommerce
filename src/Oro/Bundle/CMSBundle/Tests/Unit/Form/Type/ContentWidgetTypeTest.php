@@ -5,8 +5,10 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetLayoutSelectType;
 use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
 use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetTypeSelectType;
+use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
@@ -113,7 +115,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
             ->setWidgetType('testType1')
             ->setName('test name')
             ->setDescription('test description')
-            ->setTemplate('test template');
+            ->setLayout('template2');
 
         return [
             'inline created form without default data and without submitted data' => [
@@ -129,7 +131,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     'widgetType' => $expected->getWidgetType(),
                     'name' => $expected->getName(),
                     'description' => $expected->getDescription(),
-                    'template' => $expected->getTemplate(),
+                    'layout' => $expected->getLayout(),
                     'settings' => $expected->getSettings(),
                 ],
                 'expectedData' => $expected,
@@ -141,7 +143,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     'widgetType' => $expected->getWidgetType(),
                     'name' => $expected->getName(),
                     'description' => $expected->getDescription(),
-                    'template' => $expected->getTemplate(),
+                    'layout' => $expected->getLayout(),
                     'settings' => $expected->getSettings(),
                 ],
                 'expectedData' => $expected,
@@ -159,7 +161,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     'widgetType' => $expected->getWidgetType(),
                     'name' => $expected->getName(),
                     'description' => $expected->getDescription(),
-                    'template' => $expected->getTemplate(),
+                    'layout' => $expected->getLayout(),
                     'settings' => $expected->getSettings(),
                 ],
                 'expectedData' => $expected,
@@ -171,7 +173,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     'widgetType' => $expected->getWidgetType(),
                     'name' => $expected->getName(),
                     'description' => $expected->getDescription(),
-                    'template' => $expected->getTemplate(),
+                    'layout' => $expected->getLayout(),
                     'settings' => $expected->getSettings(),
                 ],
                 'expectedData' => $expected,
@@ -287,6 +289,16 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                 ]
             );
 
+        $widgetsProvider = $this->createMock(ContentWidgetLayoutProvider::class);
+        $widgetsProvider->expects($this->any())
+            ->method('getWidgetLayouts')
+            ->willReturn(['template1' => 'Template 1', 'template2' => 'Template 2']);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnArgument(0);
+
         return array_merge(
             parent::getExtensions(),
             [
@@ -294,6 +306,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                     [
                         $this->formType,
                         new ContentWidgetTypeSelectType($contentWidgetTypeProvider),
+                        new ContentWidgetLayoutSelectType($widgetsProvider, $translator),
                     ],
                     []
                 )

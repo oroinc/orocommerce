@@ -18,7 +18,7 @@ Feature: Configurable image slider
     And go to Marketing/Content Widgets
     And click "Create Content Widget"
     When fill "Content Widget Form" with:
-      | Widget Type                   | Image Slider      |
+      | Type                          | Image Slider      |
       | Name                          | test_image_slider |
       | Number of Slides to Show      | 1                 |
       | Number of Slides to Scroll    | 1                 |
@@ -44,7 +44,7 @@ Feature: Configurable image slider
     And click on cat1.jpg in grid
     And I save and close form
     Then I should see "Content widget has been saved" flash message
-    And I should see "Widget Type: Image Slider"
+    And I should see "Type: Image Slider"
     And I should see Content Widget with:
       | Name | test_image_slider |
 

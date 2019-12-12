@@ -73,12 +73,13 @@ oro.cms:
         created_at.label: Created At
         updated_at.label: Updated At
         organization.label: Organization
-        widget_type.label: Widget Type
-        template.label: Template
+        widget_type.label: Type
+        layout.label: Layout
         settings.label: Settings
 
         form:
             choose_content_widget_type: Choose a content widget type...
+            choose_content_widget_layout: Choose a content widget layout...
             no_available_content_widget_types: No content widget types available
 
         sections:

@@ -44,7 +44,7 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
             - NotBlank: ~
             - Length:
                   max: 255
-        template:
+        layout:
             - Length:
                   max: 255
         organization:

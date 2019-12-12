@@ -104,7 +104,7 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
      *      }
      * )
      */
-    protected $template;
+    protected $layout;
 
     /**
      * @var array
@@ -188,18 +188,18 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
     /**
      * @return null|string
      */
-    public function getTemplate(): ?string
+    public function getLayout(): ?string
     {
-        return $this->template;
+        return $this->layout;
     }
 
     /**
-     * @param string|null $template
+     * @param string|null $layout
      * @return ContentWidget
      */
-    public function setTemplate(?string $template): self
+    public function setLayout(?string $layout): self
     {
-        $this->template = $template;
+        $this->layout = $layout;
 
         return $this;
     }

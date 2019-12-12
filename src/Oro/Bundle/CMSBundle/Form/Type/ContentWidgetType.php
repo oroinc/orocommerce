@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -79,10 +80,10 @@ class ContentWidgetType extends AbstractType
                 ]
             )
             ->add(
-                'template',
-                TextType::class,
+                'layout',
+                ContentWidgetLayoutSelectType::class,
                 [
-                    'label' => 'oro.cms.contentwidget.template.label',
+                    'label' => 'oro.cms.contentwidget.layout.label',
                     'required' => false,
                     'block' => 'general',
                 ]
@@ -96,7 +97,10 @@ class ContentWidgetType extends AbstractType
                     return;
                 }
 
-                $this->buildSettingsField($event->getForm(), $data, $data->getWidgetType());
+                $form = $event->getForm();
+
+                FormUtils::replaceFieldOptionsRecursive($form, 'layout', ['widget_type' => $data->getWidgetType()]);
+                $this->buildSettingsField($form, $data, $data->getWidgetType());
             }
         );
 
@@ -120,6 +124,7 @@ class ContentWidgetType extends AbstractType
 
                 $form = $event->getForm();
 
+                FormUtils::replaceFieldOptionsRecursive($form, 'layout', ['widget_type' => $data['widgetType']]);
                 $this->buildSettingsField($form, $form->getData() ?: new ContentWidget(), $data['widgetType']);
             }
         );

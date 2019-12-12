@@ -22,7 +22,7 @@ class ContentWidgetTest extends \PHPUnit\Framework\TestCase
                 ['updatedAt', new \DateTime('now')],
                 ['organization', new Organization()],
                 ['widgetType', 'test_type'],
-                ['template', 'test_template'],
+                ['layout', 'test_layout'],
                 ['settings', ['param' => 'value']],
             ]
         );

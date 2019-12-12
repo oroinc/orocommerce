@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
+use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -18,15 +19,25 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
 
+    /** @var ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentWidgetLayoutProvider;
+
     /** @var ContentWidgetTypeExtension */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
+        $this->contentWidgetLayoutProvider = $this->createMock(ContentWidgetLayoutProvider::class);
 
-        $this->extension = new ContentWidgetTypeExtension($this->translator, $this->contentWidgetTypeRegistry);
+        $container = self::getContainerBuilder()
+            ->add(TranslatorInterface::class, $this->translator)
+            ->add(ContentWidgetTypeRegistry::class, $this->contentWidgetTypeRegistry)
+            ->add(ContentWidgetLayoutProvider::class, $this->contentWidgetLayoutProvider)
+            ->getContainer($this);
+
+        $this->extension = new ContentWidgetTypeExtension($container);
     }
 
     public function testGetContentWidgetTypeLabel(): void
@@ -71,6 +82,30 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             $type,
             self::callTwigFilter($this->extension, 'content_widget_type_label', [$type])
+        );
+    }
+
+    public function testGetContentWidgetLayoutLabel(): void
+    {
+        $type = ContentWidgetTypeStub::getName();
+        $layout = 'template1';
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturnCallback(
+                static function ($message) {
+                    return 'translated ' . $message;
+                }
+            );
+
+        $this->contentWidgetLayoutProvider->expects($this->once())
+            ->method('getWidgetLayoutLabel')
+            ->with($type, $layout)
+            ->willReturn('layout label');
+
+        $this->assertEquals(
+            'translated layout label',
+            self::callTwigFilter($this->extension, 'content_widget_layout_label', [$layout, $type])
         );
     }
 }

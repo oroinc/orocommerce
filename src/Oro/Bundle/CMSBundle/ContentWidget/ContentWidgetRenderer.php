@@ -4,13 +4,14 @@ namespace Oro\Bundle\CMSBundle\ContentWidget;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Component\Layout\LayoutContext;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Twig\Environment;
 
 /**
  * Renders content widget.
@@ -19,31 +20,23 @@ class ContentWidgetRenderer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var ContentWidgetTypeRegistry */
-    private $contentWidgetTypeRegistry;
-
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /** @var Environment */
-    private $twig;
+    /** @var LayoutManager */
+    private $layoutManager;
 
     /** @var TokenAccessorInterface|null */
     private $tokenAccessor;
 
     /**
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
      * @param ManagerRegistry $doctrine
-     * @param Environment $twig
+     * @param LayoutManager $layoutManager
      */
-    public function __construct(
-        ContentWidgetTypeRegistry $contentWidgetTypeRegistry,
-        ManagerRegistry $doctrine,
-        Environment $twig
-    ) {
-        $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
+    public function __construct(ManagerRegistry $doctrine, LayoutManager $layoutManager)
+    {
         $this->doctrine = $doctrine;
-        $this->twig = $twig;
+        $this->layoutManager = $layoutManager;
         $this->logger = new NullLogger();
     }
 
@@ -104,70 +97,33 @@ class ContentWidgetRenderer implements LoggerAwareInterface
      */
     private function renderWidget(ContentWidget $contentWidget): string
     {
-        $template = $this->getTemplate($contentWidget);
+        $layoutContext = new LayoutContext(
+            [
+                'data' => [
+                    'content_widget' => $contentWidget,
+                ],
+                'content_widget_type' => $contentWidget->getWidgetType(),
+                'content_widget_layout' => $contentWidget->getLayout(),
+            ],
+            ['content_widget_type', 'content_widget_layout']
+        );
 
         try {
-            return $this->twig->render($template, $this->getData($contentWidget));
+            $layoutBuilder = $this->layoutManager->getLayoutBuilder();
+            $layoutBuilder->add('content_widget_root', null, 'content_widget_root');
+
+            return $layoutBuilder->getLayout($layoutContext)
+                ->render();
         } catch (\Exception $exception) {
-            $this->logger->error(
-                sprintf('Error occurred while rendering content widget %s', $contentWidget->getName()),
-                ['exception' => $exception]
-            );
-
-            return '';
-        }
-    }
-
-    /**
-     * @param ContentWidget $contentWidget
-     *
-     * @return string
-     */
-    private function getTemplate(ContentWidget $contentWidget): string
-    {
-        // Make correct template resolving.
-        if ($contentWidget->getWidgetType() === 'copyright') {
-            return '@ACMECopyright/CopyrightContentWidget/widget.html.twig';
+            if ($this->logger) {
+                $this->logger->error(
+                    sprintf('Error occurred while rendering content widget %s', $contentWidget->getName()),
+                    ['exception' => $exception]
+                );
+            }
         }
 
-        if ($contentWidget->getWidgetType() === 'contact_us_form') {
-            return '@OroContactUsBridge/ContactUsFormContentWidget/widget.html.twig';
-        }
-
-        if ($contentWidget->getWidgetType() === 'image_slider') {
-            return '@OroCMS/ImageSliderContentWidget/widget.html.twig';
-        }
-
-        return (string) $contentWidget->getTemplate();
-    }
-
-    /**
-     * @param ContentWidget $contentWidget
-     *
-     * @return array
-     */
-    private function getData(ContentWidget $contentWidget): array
-    {
-        $contentWidgetType = $this->getType($contentWidget);
-
-        return $contentWidgetType ? $contentWidgetType->getWidgetData($contentWidget) : [];
-    }
-
-    /**
-     * @param ContentWidget $contentWidget
-     *
-     * @return ContentWidgetTypeInterface|null
-     */
-    private function getType(ContentWidget $contentWidget): ?ContentWidgetTypeInterface
-    {
-        $contentWidgetType = $this->contentWidgetTypeRegistry->getWidgetType($contentWidget->getWidgetType());
-        if (!$contentWidgetType) {
-            $this->logger->error(
-                sprintf('Content widget type %s is not registered', $contentWidget->getWidgetType())
-            );
-        }
-
-        return $contentWidgetType;
+        return '';
     }
 
     /**

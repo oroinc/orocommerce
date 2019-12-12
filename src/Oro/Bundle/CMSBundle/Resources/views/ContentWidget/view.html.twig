@@ -35,7 +35,7 @@
                 'data' : [
                     UI.renderProperty('oro.cms.contentwidget.name.label'|trans, entity.name),
                     UI.renderHtmlProperty('oro.cms.contentwidget.description.label'|trans, entity.description|escape|nl2br),
-                    UI.renderProperty('oro.cms.contentwidget.template.label'|trans, entity.template),
+                    UI.renderProperty('oro.cms.contentwidget.layout.label'|trans, entity.layout ? entity.layout|content_widget_layout_label(entity.widgetType) : 'N/A'|trans),
                 ]
             }]
         },
