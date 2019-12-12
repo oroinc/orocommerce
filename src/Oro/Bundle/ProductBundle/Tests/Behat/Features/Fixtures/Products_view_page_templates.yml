@@ -4,10 +4,28 @@ include:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_name:
         string: 'Green shirt L'
+    product1_meta_title:
+        string: 'Meta title for Green simple product'
+    product1_meta_description:
+        string: 'Meta description for Green simple product'
+    product1_meta_keywords:
+        string: 'Meta keywords for Green simple product'
     product2_name:
         string: 'Red shirt M'
+    product2_meta_title:
+        string: 'Meta title for Red simple product'
+    product2_meta_description:
+        string: 'Meta description for Red simple product'
+    product2_meta_keywords:
+        string: 'Meta keywords for Red simple product'
     configurable_product_name:
         string: 'Shirt_1'
+    configurable_meta_title:
+        string: 'Meta title for configurable product'
+    configurable_meta_description:
+        string: 'Meta description for configurable product'
+    configurable_meta_keywords:
+        string: 'Meta keywords for configurable product'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit_precision1:
@@ -41,6 +59,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         addAdditionalUnitPrecision: ['@unit_precision_additional1']
+        metaTitles: ['@product1_meta_title']
+        metaDescriptions: ['@product1_meta_description']
+        metaKeywords: ['@product1_meta_keywords']
     product2:
         type: 'simple'
         sku: 'rtsh_m'
@@ -52,6 +73,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         addAdditionalUnitPrecision: ['@unit_precision_additional2']
+        metaTitles: ['@product2_meta_title']
+        metaDescriptions: ['@product2_meta_description']
+        metaKeywords: ['@product2_meta_keywords']
     configurable_product:
         type: 'configurable'
         sku: 'shirt_main'
@@ -63,6 +87,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
         addAdditionalUnitPrecision: ['@unit_precision_additional3']
+        metaTitles: ['@configurable_meta_title']
+        metaDescriptions: ['@configurable_meta_description']
+        metaKeywords: ['@configurable_meta_keywords']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:
