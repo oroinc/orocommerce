@@ -19,7 +19,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/RestJsonApi/DataFixtures/product.yml',
         ]);
     }
 
@@ -167,5 +167,27 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         }
 
         $this->assertContains($productSimpleWhichWasChange->getId(), $simpleProductIds);
+    }
+
+    public function testChangeParentProduct()
+    {
+        $response = $this->patch(
+            ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product4_variant1_link->id)>'],
+            'update_partial_product_variant_link_fail_not_allow_rewrite_parent_product.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'status' => '400',
+                'title' => 'unchangeable field constraint',
+                'detail' => 'Field cannot be changed once set',
+                "source" => [
+                    "pointer" => "/data/relationships/parentProduct/data"
+                ]
+            ],
+            $response
+        );
     }
 }
