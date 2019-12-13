@@ -257,3 +257,10 @@ services:
             - "@oro_product.visibility.product_unit_fields_settings"
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
+
+    oro_product.form.type.product_mini_block_content_widget_settings:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type }
