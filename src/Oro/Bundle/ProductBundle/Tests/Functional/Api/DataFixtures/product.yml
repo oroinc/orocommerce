@@ -33,6 +33,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: 0
         conversionRate: 1
+    product6_precision:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_name:
@@ -45,6 +49,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 4'
     product5_name:
         string: 'Product 5'
+    product6_name:
+        string: 'Product 6'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product1:
@@ -64,6 +70,22 @@ Oro\Bundle\ProductBundle\Entity\Product:
         variantLinks:
             - '@configurable_product1_variant1_link'
             - '@configurable_product1_variant2_link'
+    configurable_product2:
+        sku: 'CPSKU2'
+        primaryUnitPrecision: '@product6_precision'
+        unitPrecisions: ['@product6_precision']
+        attributeFamily: '@default_product_family'
+        setNames: [['@product6_name']]
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        variantFields: ['testAttrInteger', 'testAttrFloat']
+        variantLinks:
+            - '@configurable_product2_variant1_link'
     simple_product1:
         sku: 'CVPSKU1'
         primaryUnitPrecision: '@product2_precision'
@@ -127,3 +149,6 @@ Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product1_variant2_link:
         parentProduct: '@configurable_product1'
         product: '@simple_product2'
+    configurable_product2_variant1_link:
+        parentProduct: '@configurable_product2'
+        product: '@simple_product1'
