@@ -1194,5 +1194,6 @@ oro_behat_extension:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroNavigationBundle::FeatureContext
+        - OroCMSBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
