@@ -19,7 +19,7 @@ use Oro\Component\Layout\Loader\LayoutUpdateLoaderInterface;
 class ContentWidgetExtension extends AbstractExtension
 {
     /** @var string */
-    private const EXTENSION_KEY = 'content_widget_type';
+    private const EXTENSION_KEY = 'content_widget';
 
     /** @var LayoutUpdateLoaderInterface */
     protected $loader;

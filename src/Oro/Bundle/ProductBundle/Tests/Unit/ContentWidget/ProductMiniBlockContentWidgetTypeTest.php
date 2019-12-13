@@ -93,7 +93,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->willReturn($product);
 
         $this->assertSame(
-            ['product' => $product],
+            ['product' => $product, 'instanceNumber' => 0],
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }
@@ -126,7 +126,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->method('render')
             ->with(
                 '@OroProduct/ProductMiniBlockContentWidget/options.html.twig',
-                ['product' => $product]
+                ['product' => $product, 'instanceNumber' => 0]
             )
             ->willReturn('rendered settings template');
 

@@ -1,0 +1,40 @@
+layout:
+    imports:
+        -
+            id: oro_product_list_item
+            root: content_widget_container
+
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'layout.html.twig'
+                - 'OroProductBundle:layouts:blank/page/layout.html.twig'
+
+        - '@setOption':
+            id: product
+            optionName: class_prefix
+            optionValue: gallery-view
+
+        - '@appendOption':
+            id: content_widget_container
+            optionName: vars.blockContext
+            optionValue:
+                product: '=data["product"]'
+                stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
+                matrixFormType: '=data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"], "gallery-view")'
+
+        - '@setOption':
+            id: product_line_item_form_fields
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
+
+        - '@setOption':
+            id: product_line_item_form_end
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
+
+        - '@appendOption':
+            id: product_line_item_form
+            optionName: vars
+            optionValue:
+                visible: '=data["show_add_button"]'

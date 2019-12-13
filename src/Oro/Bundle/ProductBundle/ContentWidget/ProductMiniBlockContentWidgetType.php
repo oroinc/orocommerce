@@ -19,6 +19,9 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     /** @var ManagerRegistry */
     private $registry;
 
+    /** @var int */
+    private $instanceNumber = 0;
+
     /**
      * @param ManagerRegistry $registry
      */
@@ -76,6 +79,7 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $data = $contentWidget->getSettings();
+        $data['instanceNumber'] = $this->instanceNumber++;
 
         $product = $data['product'] ?? null;
         if ($product) {
