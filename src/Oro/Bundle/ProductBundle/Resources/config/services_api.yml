@@ -149,16 +149,16 @@ services:
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\ProductBundle\Entity\Product, association: variantProducts, priority: -90 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\ProductBundle\Entity\Product, association: variantProducts, priority: -90 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: variantProducts, parentClass: Oro\Bundle\ProductBundle\Entity\Product, priority: -90 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: variantProducts, parentClass: Oro\Bundle\ProductBundle\Entity\Product, priority: -90 }
 
     oro_product.api.build_parent_products_subresource_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\BuildParentProductsSubresourceQuery
         arguments:
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\ProductBundle\Entity\Product, association: parentProducts, priority: -90 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\ProductBundle\Entity\Product, association: parentProducts, priority: -90 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: parentProducts, parentClass: Oro\Bundle\ProductBundle\Entity\Product, priority: -90 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: parentProducts, parentClass: Oro\Bundle\ProductBundle\Entity\Product, priority: -90 }
 
     oro_product.api.compute_product_attributes:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductAttributes
@@ -168,7 +168,7 @@ services:
             - '@oro_entity_extend.extend.field_type_helper'
             - '@oro_product.api.product_attribute_value_loader'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
 
     oro_product.api.product_attribute_value_loader:
         class: Oro\Bundle\ProductBundle\Api\ProductAttributeValueLoader
@@ -238,7 +238,7 @@ services:
             - '@oro_api.filter_names_registry'
             - '@router'
         tags:
-            - { name: oro.api.processor, action: get, group: normalize_result, requestType: frontend&rest&json_api, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, hateoas: true, priority: -43 }
+            - { name: oro.api.processor, action: get, group: normalize_result, requestType: frontend&rest&json_api, hateoas: true, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, priority: -43 }
 
     oro_product.api.product_collection.add_pagination_links_for_products_association:
         class: Oro\Bundle\ProductBundle\Api\Processor\AddPaginationLinksForProductCollectionProductsAssociation
@@ -247,7 +247,7 @@ services:
             - '@oro_api.filter_names_registry'
             - '@router'
         tags:
-            - { name: oro.api.processor, action: get_metadata, requestType: frontend&rest&json_api, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, extra: hateoas, priority: -209 }
+            - { name: oro.api.processor, action: get_metadata, extra: hateoas, requestType: frontend&rest&json_api, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, priority: -209 }
 
     oro_product.api.product_collection.expand_content_variant:
         class: Oro\Bundle\ProductBundle\Api\Processor\ExpandProductCollectionContentVariant
@@ -262,16 +262,16 @@ services:
         arguments:
             - '@oro_api.entity_serializer.serialization_helper'
         tags:
-            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, association: content, contentClass: Oro\Bundle\ProductBundle\Api\Model\ProductCollection }
-            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, association: content, contentClass: Oro\Bundle\ProductBundle\Api\Model\ProductCollection }
+            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, contentClass: Oro\Bundle\ProductBundle\Api\Model\ProductCollection }
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, contentClass: Oro\Bundle\ProductBundle\Api\Model\ProductCollection }
 
     oro_product.api.product_search.set_default_sorting:
         class: Oro\Bundle\ProductBundle\Api\Processor\SetDefaultProductSearchSorting
         arguments:
             - '@oro_api.filter_names_registry'
         tags:
-            - { name: oro.api.processor, action: get_list, group: initialize, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -94 }
-            - { name: oro.api.processor, action: get, group: initialize, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, priority: -94 }
+            - { name: oro.api.processor, action: get_list, group: initialize, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -94 }
+            - { name: oro.api.processor, action: get, group: initialize, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Api\Model\ProductCollection, priority: -94 }
 
     oro_product.api.product_search.configure_attributes:
         class: Oro\Bundle\ProductBundle\Api\Processor\ConfigureProductSearchAttributes
@@ -321,7 +321,7 @@ services:
             - '@oro_api.entity_serializer'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: 100 }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: 100 }
 
     oro_product.api.product_search.compute_images:
         class: Oro\Bundle\ProductBundle\Api\Processor\ComputeProductSearchImages
