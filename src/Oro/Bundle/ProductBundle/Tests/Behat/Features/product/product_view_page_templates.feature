@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9302
 @ticket-BB-10781
+@ticket-BB-18201
 @automatically-ticket-tagged
 @fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Product View Page Templates
@@ -48,6 +49,9 @@ Feature: Product View Page Templates
   #    color: Green
   #    size: L
   #    remark: Test text for Green simple product
+  #    Meta Title: Meta title for Green simple product
+  #    Meta Description: Meta description for Green simple product
+  #    Meta Keywords: Meta keywords for Green simple product
 
   #  Product2:
   #    type: Simple
@@ -63,6 +67,9 @@ Feature: Product View Page Templates
   #    color: Red
   #    size: M
   #    remark: Test text for Red simple product
+  #    Meta Title: Meta title for Red simple product
+  #    Meta Description: Meta description for Red simple product
+  #    Meta Keywords: Meta keywords for Red simple product
 
   #   Configurable product:
   #    variant fields: Size, Color
@@ -74,6 +81,9 @@ Feature: Product View Page Templates
   #    variant: Green shirt L
   #    variant: Red shirt M
   #    remark: Test text for configurable product
+  #    Meta Title: Meta title for configurable product
+  #    Meta Description: Meta description for configurable product
+  #    Meta Keywords: Meta keywords for configurable product
 
   Scenario: Feature Background
     Given sessions active:
@@ -183,7 +193,7 @@ Feature: Product View Page Templates
     And I click "Add to Shopping List"
     And I should see 'Shopping list "Shopping list" was updated successfully' flash message
 
-  Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
+  Scenario: Check SEO data on configurable product view when "No Matrix Form" enabled:
     Given I operate as the Admin
     And go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
@@ -192,15 +202,33 @@ Feature: Product View Page Templates
       | Product Page | Default template |
     And save form
     Then I should see "Configuration saved" flash message
-    Then I should see "Default template"
-    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I should see "Default template"
+    When I follow "Commerce/Product/Configurable Products" on configuration sidebar
     And uncheck "Use default" for "Product Views" field
     And I fill in "Product Views" with "No Matrix Form"
     And I save form
     Then I should see "Configuration saved" flash message
 
-    And I operate as the Buyer
-    When I open product with sku "gtsh_l" on the store frontend
+    When I operate as the Buyer
+    And I open product with sku "shirt_main" on the store frontend
+    And I wait for action
+    And I select "Please select option" from "Color"
+    Then Page meta keywords equals "Meta keywords for configurable product"
+    And Page meta description equals "Meta description for configurable product"
+    And Page meta title equals "Meta title for configurable product"
+    When I select "Green" from "Color"
+    And I select "L" from "Size"
+    Then Page meta keywords equals "Meta keywords for configurable product"
+    And Page meta description equals "Meta description for configurable product"
+    And Page meta title equals "Meta title for configurable product"
+    When I select "Red" from "Color"
+    And I select "M" from "Size"
+    Then Page meta keywords equals "Meta keywords for configurable product"
+    And Page meta description equals "Meta description for configurable product"
+    And Page meta title equals "Meta title for configurable product"
+
+  Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
+    Given I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     Then I should see "Item #: gtsh_l"
     Then I should see the following prices on "Default Page":

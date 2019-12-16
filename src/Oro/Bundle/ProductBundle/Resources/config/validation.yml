@@ -79,6 +79,8 @@ Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
                 type: boolean
         parentProduct:
             - NotBlank: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                groups: [ api ]
         product:
             - NotBlank: ~
 

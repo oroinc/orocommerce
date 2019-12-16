@@ -3,7 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -47,5 +50,43 @@ class ContentVariantRepository extends EntityRepository
         }
 
         return array_column($qb->getQuery()->getArrayResult(), 'id');
+    }
+
+    /**
+     * @param int $nodeId
+     * @param ScopeCriteria $criteria
+     * @param string $variantType
+     * @return int[] ['<nodeId>' => '<variantId>', ...]
+     */
+    public function findChildrenVariantIds(int $nodeId, ScopeCriteria $criteria, string $variantType): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('variant.id as v_id, node.id as n_id')
+            ->from(ContentNode::class, 'node')
+            ->leftJoin('node.scopes', 'node_scopes', Join::WITH)
+            ->innerJoin('node.contentVariants', 'variant')
+            ->innerJoin('variant.scopes', 'variant_scope')
+            ->where(
+                $qb->expr()->eq('IDENTITY(node.parentNode)', ':parentNodeId'),
+                $qb->expr()->eq('variant.type', ':variantType'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('node.parentScopeUsed', ':parentScopeUsed'),
+                    $qb->expr()->isNotNull('node_scopes.id')
+                )
+            )
+            ->setParameter('parentScopeUsed', true)
+            ->setParameter('variantType', $variantType)
+            ->setParameter('parentNodeId', $nodeId);
+        $criteria->applyToJoinWithPriority($qb, 'node_scopes');
+        $criteria->applyWhereWithPriority($qb, 'variant_scope');
+        $ids = [];
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            if (!isset($ids[$row['n_id']])) {
+                $ids[$row['n_id']] = $row['v_id'];
+            }
+        }
+
+        return $ids;
     }
 }

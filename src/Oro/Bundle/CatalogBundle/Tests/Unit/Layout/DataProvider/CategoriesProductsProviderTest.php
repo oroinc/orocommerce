@@ -52,7 +52,14 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->with([])
             ->willReturn(35);
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache
+            ->expects($this->once())
+            ->method('fetch')
+            ->with('cacheVal_categories_products_1_2_3')
+            ->willReturn(false);
+
+        $this->cache
+            ->expects($this->once())
             ->method('save');
 
         $actual = $this->categoriesProductsProvider->getCountByCategories([1, 2, 3]);

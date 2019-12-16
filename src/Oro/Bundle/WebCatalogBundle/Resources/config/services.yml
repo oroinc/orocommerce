@@ -247,6 +247,9 @@ services:
             - '@oro_web_catalog.content_node_tree_resolver.cache'
             - '@oro_web_catalog.cache.dumper.content_node_tree_dumper'
 
+    Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface:
+        alias: oro_web_catalog.content_node_tree_resolver
+
     oro_web_catalog.cache:
         parent: oro.cache.abstract
         calls:

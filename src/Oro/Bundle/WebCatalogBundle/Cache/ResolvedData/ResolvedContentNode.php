@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Represents Content node with resolved children and ContentVariants
+ */
 class ResolvedContentNode implements ContentNodeInterface
 {
     /**
@@ -122,5 +125,16 @@ class ResolvedContentNode implements ContentNodeInterface
     public function isRewriteVariantTitle()
     {
         return $this->rewriteVariantTitle;
+    }
+
+    /**
+     * @param ArrayCollection $childNodes
+     * @return ResolvedContentNode
+     */
+    public function setChildNodes(ArrayCollection $childNodes): self
+    {
+        $this->childNodes = $childNodes;
+
+        return $this;
     }
 }

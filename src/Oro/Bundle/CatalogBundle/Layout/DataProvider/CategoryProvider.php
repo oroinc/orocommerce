@@ -97,7 +97,7 @@ class CategoryProvider
 
         if (true === $useCache) {
             $result = $this->getFromCache();
-            if ($result) {
+            if (false !== $result) {
                 return $result;
             }
         }

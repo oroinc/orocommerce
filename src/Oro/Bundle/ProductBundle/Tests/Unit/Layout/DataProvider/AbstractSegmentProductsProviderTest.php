@@ -102,7 +102,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->willReturn($segment);
 
         $this->cache
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('fetch')
             ->with($this->getCacheKey())
             ->willReturn(null);
@@ -120,17 +120,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->willReturn($this->em);
 
         $this->cache
-            ->expects($this->at(1))
-            ->method('fetch')
-            ->with('_keyBunch');
-
-        $this->cache
-            ->expects($this->at(2))
-            ->method('save')
-            ->with('_keyBunch', sprintf('["%s"]', $this->getCacheKey()));
-
-        $this->cache
-            ->expects($this->at(3))
+            ->expects($this->once())
             ->method('save')
             ->with(
                 $this->getCacheKey(),
@@ -256,25 +246,17 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->willReturn($segment);
 
         $this->cache
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('fetch')
-            ->willReturnOnConsecutiveCalls(
-                [
-                    'dql' => $invalidDql,
-                    'parameters' => ['parameter' => 1],
-                    'hints' => ['hint' => 1],
-                    'hash' =>  sprintf('encrypt_%s', $hash)
-                ],
-                false
-            );
+            ->willReturn([
+                'dql' => $invalidDql,
+                'parameters' => ['parameter' => 1],
+                'hints' => ['hint' => 1],
+                'hash' =>  sprintf('encrypt_%s', $hash)
+            ]);
 
         $this->cache
-            ->expects($this->at(2))
-            ->method('save')
-            ->with('_keyBunch', sprintf('["%s"]', $this->getCacheKey()));
-
-        $this->cache
-            ->expects($this->at(3))
+            ->expects($this->once())
             ->method('save')
             ->with(
                 $this->getCacheKey(),
@@ -481,7 +463,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->willReturn($segment);
 
         $this->cache
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('fetch')
             ->with($this->getCacheKey())
             ->willReturn(null);
