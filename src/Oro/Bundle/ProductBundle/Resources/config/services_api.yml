@@ -109,14 +109,14 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product }
 
-    oro_product.api.frontend.product_status_query_modifier:
+    oro_product.api.product_status_query_modifier:
         class: Oro\Bundle\ProductBundle\Api\ProductStatusQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_product.api.frontend.product_inventory_status_query_modifier:
+    oro_product.api.product_inventory_status_query_modifier:
         class: Oro\Bundle\ProductBundle\Api\ProductInventoryStatusQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
@@ -125,7 +125,7 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_product.api.frontend.product_status_mandatory_field_provider:
+    oro_product.api.product_status_mandatory_field_provider:
         class: Oro\Bundle\ProductBundle\Api\ProductStatusMandatoryFieldProvider
         tags:
             - { name: oro.api.mandatory_field_provider, requestType: frontend }

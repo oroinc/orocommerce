@@ -147,7 +147,7 @@ services:
             - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
             - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
-    oro_pricing.update.load_normalized_entity:
+    oro_pricing.api.load_normalized_entity:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\LoadNormalizedProductPriceWithNormalizedId
         arguments:
             - '@oro_api.action_processor_bag'
