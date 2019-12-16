@@ -76,11 +76,78 @@
 {% endblock %}
 
 {% block image_slide_collection_row %}
-    <div class="oro-image-slide-collection">
-        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
-        {{ block('oro_collection_widget') }}
-    </div>
+        {% import _self as formFields %}
+        {% spaceless %}
+            {% if prototype is defined %}
+                {% set prototype_html = formFields.image_slide_collection_item_prototype(form) %}
+            {% endif %}
+            {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-image-slide-collection oro-options-collection oro-item-collection collection-fields-list' }) %}
+            {% set id = id ~ '_collection' %}
+            <div class="row-oro">
+                {% set prototype_name = form.vars.prototype_name %}
+                <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}"
+                    data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
+                >
+                    <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
+                    {% if form.children|length %}
+                        {% for child in form.children %}
+                            {{ formFields.image_slide_collection_item_prototype(child) }}
+                        {% endfor %}
+                    {% elseif show_form_when_empty and prototype_html is defined %}
+                        {% for i in 0..(form.vars.row_count_initial - 1) %}
+                            {{ prototype_html|replace({(prototype_name): i})|raw }}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% if allow_add %}
+                    <a class="btn add-list-item" href="#" role="button">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                {% endif %}
+            </div>
+        {% endspaceless %}
 {% endblock %}
+
+{% macro image_slide_collection_item_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+        {% set allow_delete = widget.vars.allow_delete %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+        {% set allow_delete = widget.parent.vars.allow_delete %}
+        {% if widget.vars.allow_delete is defined %}
+            {% set allow_delete = allow_delete and widget.vars.allow_delete %}
+        {% endif %}
+    {% endif %}
+    <div class="oro-collection-item"
+         data-content="{{ name }}"
+            {% if widget.parent.vars.skip_optional_validation_group is not defined %}
+                data-validation-optional-group
+                {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
+                    data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
+                {% endif %}
+            {% endif %}
+    >
+        <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
+            {% set text_fiels_html %}
+                {{ form_row(form.text) }}
+            {% endset %}
+                <div class="responsive-block">
+                    {{ form_rest(form) }}
+                </div>
+                <div class="responsive-block">
+                    {{ text_fiels_html }}
+                </div>
+            {% if allow_delete %}
+                <button class="removeRow btn btn-icon btn-square-light"
+                        aria-label="{{ 'oro.form.collection.remove'|trans }}"
+                        type="button"
+                        data-related="{{ name }}">
+                </button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
 
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
     {% spaceless %}
