@@ -36,7 +36,7 @@
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
-        <span class="cart-widget__icon" aria-hidden="true">
+        <span class="cart-widget__icon" {% if not isMobileVersion() %} aria-hidden="true" {% endif %}>
             {% if not is_one_shopping_list_enabled() %}
                 <span class="fa-clipboard"></span>
             {% else %}
@@ -147,7 +147,10 @@
                         {% endif %}
                     {% endfor %}
                 </span>
-                <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} <i class="fa-angle-right"></i></span>
+                <span class="shopping-list-dropdown__info">
+                    {{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }}
+                    <i class="fa-angle-right" aria-hidden="true"></i>
+                </span>
             </a>
         </div>
     {% else %}
@@ -217,7 +220,7 @@
                 {% endif %}
                 <div class="shopping-list-dropdown__info-container">
                     <a href="{{ path('oro_shopping_list_frontend_view') }}" class="shopping-list-dropdown__info">
-                        <span class="fa-shopping-cart"></span>
+                        <span class="fa-shopping-cart" aria-hidden="true"></span>
                         <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
                     </a>
                 </div>
