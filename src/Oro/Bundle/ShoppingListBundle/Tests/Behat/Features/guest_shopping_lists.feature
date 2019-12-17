@@ -1,6 +1,6 @@
 @regression
 @ticket-BB-10050
-@fixture-OroShoppingListBundle:ProductFixture.yml
+@fixture-OroShoppingListBundle:GuestShoppingListsFixture.yml
 Feature: Guest Shopping Lists
   In order to allow unregistered customers to select goods they want to purchase
   As a Sales rep
@@ -130,7 +130,7 @@ Feature: Guest Shopping Lists
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
-    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I should see "1 ea | $3.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
@@ -142,6 +142,10 @@ Feature: Guest Shopping Lists
     Then type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "In shopping list"
+
+  Scenario: Check shopping list widget
+    When I hover on "Shopping List Widget"
+    Then I should see "10 ea | $3.00" in the "Shopping List Widget" element
 
   Scenario: Add more products to shopping list from list page (search)
     Given I type "CONTROL1" in "search"

@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -38,6 +39,11 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     private $tokenAccessor;
 
+    /**
+     * @var LocalizationHelper
+     */
+    private $localizationHelper;
+
     protected function setUp()
     {
         $this->initClient();
@@ -53,6 +59,7 @@ class CategoryProviderTreeTest extends WebTestCase
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->tokenAccessor = $this->getContainer()->get('oro_security.token_accessor');
+        $this->localizationHelper = $this->getContainer()->get('oro_locale.helper.localization');
     }
 
     /**
@@ -72,7 +79,8 @@ class CategoryProviderTreeTest extends WebTestCase
             $requestProductHandler,
             $this->registry,
             $this->createMock(CategoryTreeProvider::class),
-            $this->tokenAccessor
+            $this->tokenAccessor,
+            $this->localizationHelper
         );
     }
 

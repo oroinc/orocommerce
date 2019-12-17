@@ -2,34 +2,31 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
  * Provides Featured Category data for layouts
  */
 class FeaturedCategoriesProvider
 {
-    use DataProviderCacheTrait;
-
-    /**
-     * @var CategoriesProvider
-     */
+    /** @var CategoriesProvider */
     private $categoryTreeProvider;
 
-    /**
-     * @var TokenAccessor
-     */
+    /** @var TokenAccessor */
     private $tokenAccessor;
 
-    /**
-     * @var LocalizationHelper
-     */
+    /** @var LocalizationHelper */
     private $localizationHelper;
+
+    /** @var CacheProvider */
+    private $cache;
+
+    /** @var int */
+    private $cacheLifeTime;
 
     /**
      * @param CategoriesProvider $categoryTreeProvider
@@ -47,64 +44,66 @@ class FeaturedCategoriesProvider
     }
 
     /**
+     * @param CacheProvider $cache
+     * @param int           $lifeTime
+     */
+    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
+
+    /**
      * @param array $categoryIds
-     * @return Category[]
+     *
+     * @return array [['id' => id, 'title' => title, 'small_image' => image], ...]
      */
     public function getAll(array $categoryIds = [])
     {
         $user = $this->getCurrentUser();
-        $customer = $user ? $user->getCustomer() : null;
-        $customerGroup = $customer ? $customer->getGroup() : null;
-        $organization = $this->tokenAccessor->getOrganization();
+        $cacheKey = $this->getCacheKey($categoryIds, $user);
 
-        $this->initCache([
-            'featured_categories',
-            $user ? $user->getId() : 0,
-            $this->getCurrentLocalizationId(),
-            $customer ? $customer->getId() : 0,
-            $customerGroup ? $customerGroup->getId() : 0,
-            implode('_', $categoryIds),
-            $organization->getId()
-        ]);
-
-        return $this->getCategories($categoryIds, $user);
-    }
-
-    /**
-     * Retrieve data in format [['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]
-     *
-     * @param array $categoryIds
-     * @param CustomerUser|null $user
-     * @return Category[]
-     */
-    private function getCategories(array $categoryIds = [], CustomerUser $user = null)
-    {
-        $useCache = $this->isCacheUsed();
-        if (true === $useCache) {
-            $result = $this->getFromCache();
-            if ($result) {
-                return $result;
-            }
+        $result = $this->cache->fetch($cacheKey);
+        if (false !== $result) {
+            return $result;
         }
 
-        $data = [];
-
+        $result = [];
         $categories = $this->categoryTreeProvider->getCategories($user);
         foreach ($categories as $category) {
             if ($category->getLevel() !== 0 && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
-                $data[] = [
+                $result[] = [
                     'id' => $category->getId(),
                     'title' => (string) $this->localizationHelper->getLocalizedValue($category->getTitles()),
                     'small_image' => $category->getSmallImage(),
                 ];
             }
         }
+        $this->cache->save($cacheKey, $result, $this->cacheLifeTime);
 
-        if (true === $useCache) {
-            $this->saveToCache($data);
-        }
+        return $result;
+    }
 
-        return $data;
+    /**
+     * @param int[]             $categoryIds
+     * @param CustomerUser|null $user
+     *
+     * @return string
+     */
+    private function getCacheKey(array $categoryIds, ?CustomerUser $user): string
+    {
+        $customer = $user ? $user->getCustomer() : null;
+        $customerGroup = $customer ? $customer->getGroup() : null;
+
+        return sprintf(
+            'featured_categories_%s_%s_%s_%s_%s_%s',
+            $user ? $user->getId() : 0,
+            $this->getCurrentLocalizationId(),
+            $customer ? $customer->getId() : 0,
+            $customerGroup ? $customerGroup->getId() : 0,
+            implode('_', $categoryIds),
+            $this->tokenAccessor->getOrganization()->getId()
+        );
     }
 
     /**
@@ -125,9 +124,8 @@ class FeaturedCategoriesProvider
      */
     private function getCurrentLocalizationId()
     {
-        $localizationId = ($this->localizationHelper && $this->localizationHelper->getCurrentLocalization()) ?
-            $this->localizationHelper->getCurrentLocalization()->getId() : 0;
+        $localization = $this->localizationHelper->getCurrentLocalization();
 
-        return $localizationId;
+        return $localization ? $localization->getId() : 0;
     }
 }

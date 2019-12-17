@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
 class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_KEY = 'oro_product.display_simple_variations';
 
-    /** @var  DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheClearer;
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $productCache;
 
-    /** @var  DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
-    protected $categoryCacheClearer;
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $categoryCache;
 
     /** @var  DisplaySimpleVariationsListener */
     protected $eventListener;
@@ -24,25 +24,13 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->cacheClearer = $this->createMock(DataProviderCacheCleaner::class);
-        $this->categoryCacheClearer = $this->createMock(DataProviderCacheCleaner::class);
+        $this->productCache = $this->createMock(CacheProvider::class);
+        $this->categoryCache = $this->createMock(CacheProvider::class);
 
         $this->eventListener = new DisplaySimpleVariationsListener(
-            $this->cacheClearer,
-            $this->categoryCacheClearer,
+            $this->productCache,
+            $this->categoryCache,
             self::CONFIG_KEY
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown()
-    {
-        unset(
-            $this->cacheClearer,
-            $this->categoryCacheClearer,
-            $this->eventListener
         );
     }
 
@@ -54,11 +42,11 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->with(self::CONFIG_KEY)
             ->willReturn(true);
 
-        $this->cacheClearer->expects($this->once())
-            ->method('clearCache');
+        $this->productCache->expects($this->once())
+            ->method('deleteAll');
 
-        $this->categoryCacheClearer->expects($this->once())
-            ->method('clearCache');
+        $this->categoryCache->expects($this->once())
+            ->method('deleteAll');
 
         $this->eventListener->onUpdateAfter($event);
     }
@@ -71,11 +59,11 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->with(self::CONFIG_KEY)
             ->willReturn(false);
 
-        $this->cacheClearer->expects($this->never())
-            ->method('clearCache');
+        $this->productCache->expects($this->never())
+            ->method('deleteAll');
 
-        $this->categoryCacheClearer->expects($this->never())
-            ->method('clearCache');
+        $this->categoryCache->expects($this->never())
+            ->method('deleteAll');
 
         $this->eventListener->onUpdateAfter($event);
     }

@@ -2,29 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Symfony\Component\HttpFoundation\Request;
 
 class CategoriesProductsProviderTest extends FrontendWebTestCase
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var CategoryRepository */
-    protected $categoryRepository;
-
-    /** @var ProductRepository */
-    protected $searchRepository;
-
     /**
      * @inheritdoc
      */
@@ -46,19 +33,10 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');
-
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->categoryRepository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->searchRepository = $this->getContainer()->get('oro_catalog.website_search.repository.product');
     }
 
     public function testGetCountByCategories()
     {
-        $provider = new CategoriesProductsProvider(
-            $this->registry,
-            $this->searchRepository
-        );
-
         $categoryIds = [
             $this->getCategoryId(LoadCategoryData::FIRST_LEVEL),
             $this->getCategoryId(LoadCategoryData::SECOND_LEVEL1),
@@ -69,6 +47,8 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2),
         ];
 
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        $provider = $this->getContainer()->get('oro_catalog.layout.data_provider.featured_categories_products');
         $result = $provider->getCountByCategories($categoryIds);
 
         $expectedResult = [

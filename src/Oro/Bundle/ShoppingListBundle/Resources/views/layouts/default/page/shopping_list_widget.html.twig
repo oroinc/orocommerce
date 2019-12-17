@@ -159,8 +159,8 @@
             <div class="shopping-list-dropdown__product-list">
                 {% for lineItem in shoppingList.lineItems|default([]) %}
                     {% set product = lineItem.product %}
-                    {% set productMatchedPrice = productsMatchedPrices[product.id][lineItem.productUnit.code] is not empty ? productsMatchedPrices[product.id][lineItem.unit.code] : null %}
-
+                    {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code] is defined ? productsMatchedPrices[shoppingList.id][product.id][lineItem.unit.code] : null %}
+                    
                     <div class="shopping-list-dropdown__product-item">
                         <div class="shopping-list-dropdown__product-img">
                             {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
@@ -180,7 +180,7 @@
                                         {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
                                     </span>
                                 {% else %}
-                                    <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
+                                    <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
                                 {% endif %}
                             </div>
                             {% set routeOptions = {'id': product.id} %}

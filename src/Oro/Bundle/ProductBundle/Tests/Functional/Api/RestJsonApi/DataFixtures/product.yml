@@ -2,7 +2,7 @@ dependencies:
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
-    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadFrontendApiWebsiteData
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
@@ -43,6 +43,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     configurable_product3_precision:
         unit: '@item'
         precision: 0
+    configurable_product4_precision:
+        unit: '@item'
+        precision: 0
     configurable_product1_variant1_precision:
         unit: '@item'
         precision: 0
@@ -59,6 +62,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: 0
     configurable_product3_variant2_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product4_variant1_precision:
         unit: '@item'
         precision: 0
 
@@ -135,6 +141,12 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Configurable Product 3 Short Description'
     configurable_product3_description:
         wysiwyg: 'Configurable Product 3 Description'
+    configurable_product4_name:
+        string: 'Configurable Product 4'
+    configurable_product4_short_description:
+        string: 'Configurable Product 4 Short Description'
+    configurable_product4_description:
+        wysiwyg: 'Configurable Product 4 Description'
     configurable_product1_variant1_name:
         string: 'Variant 1 for Configurable Product 1'
     configurable_product1_variant1_short_description:
@@ -171,6 +183,12 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Variant 2 for Configurable Product 3 Short Description'
     configurable_product3_variant2_description:
         wysiwyg: 'Variant 2 for Configurable Product 3 Description'
+    configurable_product4_variant1_name:
+        string: 'Variant 1 for Configurable Product 4'
+    configurable_product4_variant1_short_description:
+        string: 'Variant 1 for Configurable Product 4 Short Description'
+    configurable_product4_variant1_description:
+        wysiwyg: 'Variant 1 for Configurable Product 4 Description'
 
 Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
     product1_is_upcoming_fallback:
@@ -197,6 +215,8 @@ Extend\Entity\EV_Test_Prod_Attr_Enum:
         __construct: ['option4', 'Option 4', 4, true]
     productAttrEnum_option5:
         __construct: ['option5', 'Option 5', 5, true]
+    productAttrEnum_option6:
+        __construct: ['option6', 'Option 6', 6, true]
 
 Extend\Entity\EV_Test_Prod_Attr_M_Enum:
     productAttrMultiEnum_option1:
@@ -229,6 +249,11 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@user'
     customer5:
         name: 'Company 5'
+        parent: '@customer'
+        organization: '@organization'
+        owner: '@user'
+    customer6:
+        name: 'Company 6'
         parent: '@customer'
         organization: '@organization'
         owner: '@user'
@@ -462,6 +487,30 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - '@configurable_product3_variant1_link'
             - '@configurable_product3_variant2_link'
             - '@configurable_product3_variant3_link'
+    configurable_product4:
+        sku: 'CPSKU4'
+        primaryUnitPrecision: '@configurable_product4_precision'
+        unitPrecisions: ['@configurable_product4_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            -   addName: ['@configurable_product4_name']
+            -   addShortDescription: ['@configurable_product4_short_description']
+            -   addDescription: ['@configurable_product4_description']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        testAttrBoolean: false
+        testAttrInteger: 3
+        testAttrFloat: 1.0
+        testAttrManyToOne: '@customer6'
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        variantFields: ['testAttrEnum']
+        testAttrEnum: '@productAttrEnum_option6'
+        variantLinks:
+            - '@configurable_product4_variant1_link'
     configurable_product1_variant1:
         sku: 'CVPSKU1'
         primaryUnitPrecision: '@configurable_product1_variant1_precision'
@@ -580,6 +629,25 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrBoolean: true
         testAttrEnum: '@productAttrEnum_option2'
         parentVariantLinks: ['@configurable_product3_variant2_link']
+    configurable_product4_variant1:
+        sku: 'CVPSKU7'
+        primaryUnitPrecision: '@configurable_product4_variant1_precision'
+        unitPrecisions: ['@configurable_product4_variant1_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            -   addName: ['@configurable_product4_variant1_name']
+            -   addShortDescription: ['@configurable_product4_variant1_short_description']
+            -   addDescription: ['@configurable_product4_variant1_description']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrString: 'Variant 1 for CPSKU4'
+        testAttrBoolean: true
+        testAttrEnum: '@productAttrEnum_option6'
+        parentVariantLinks: ['@configurable_product4_variant1_link']
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product1_variant1_link:
@@ -603,6 +671,9 @@ Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product3_variant3_link:
         parentProduct: '@configurable_product3'
         product: '@configurable_product1_variant1'
+    configurable_product4_variant1_link:
+        parentProduct: '@configurable_product4'
+        product: '@configurable_product4_variant1'
 
 Oro\Bundle\AttachmentBundle\Entity\File:
     file_product1_image1:

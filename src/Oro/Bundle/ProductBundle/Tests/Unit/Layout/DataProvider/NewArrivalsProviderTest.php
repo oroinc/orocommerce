@@ -29,14 +29,6 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
         $this->getProductsWithInvalidCache($this->getQueryBuilder());
     }
 
-    public function testGetProductsWithDisabledCache()
-    {
-        $this->prepare();
-
-        $this->segmentProductsProvider->disableCache();
-        $this->getProductsWithDisabledCache($this->getQueryBuilder());
-    }
-
     public function testGetProductsWithoutSegment()
     {
         $this->configManager->expects($this->at(2))
@@ -81,7 +73,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'cacheVal_new_arrivals_products_0__1';
+        return 'new_arrivals_products_0__1';
     }
 
     private function prepare()

@@ -19,7 +19,7 @@ services:
             - '@oro_tax.api.order_taxes_provider'
             - '@oro_api.value_transformer'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
 
     oro_tax.api.compute_order_line_item_taxes:
         class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderLineItemTaxes
@@ -27,4 +27,4 @@ services:
             - '@oro_tax.api.order_line_item_taxes_provider'
             - '@oro_api.value_transformer'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }

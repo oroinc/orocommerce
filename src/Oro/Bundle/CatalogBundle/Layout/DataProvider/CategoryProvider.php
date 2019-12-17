@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -11,15 +12,12 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
  * Provides Category data for layouts
  */
 class CategoryProvider
 {
-    use DataProviderCacheTrait;
-
     /** @var Category[] */
     protected $categories = [];
 
@@ -35,36 +33,47 @@ class CategoryProvider
     /** @var CategoryTreeProvider */
     protected $categoryTreeProvider;
 
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
+
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    /** @var CacheProvider */
+    protected $cache;
+
+    /** @var int */
+    protected $cacheLifeTime;
 
     /**
      * @param RequestProductHandler  $requestProductHandler
      * @param ManagerRegistry        $registry
      * @param CategoryTreeProvider   $categoryTreeProvider
      * @param TokenAccessorInterface $tokenAccessor
+     * @param LocalizationHelper     $localizationHelper
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
         CategoryTreeProvider $categoryTreeProvider,
-        TokenAccessorInterface $tokenAccessor
+        TokenAccessorInterface $tokenAccessor,
+        LocalizationHelper $localizationHelper
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->registry = $registry;
         $this->categoryTreeProvider = $categoryTreeProvider;
         $this->tokenAccessor = $tokenAccessor;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
-     * @param LocalizationHelper $localizationHelper
+     * @param CacheProvider $cache
+     * @param int           $lifeTime
      */
-    public function setLocalizationHelper(LocalizationHelper $localizationHelper)
+    public function setCache(CacheProvider $cache, $lifeTime = 0)
     {
-        $this->localizationHelper = $localizationHelper;
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
     }
 
     /**
@@ -90,44 +99,15 @@ class CategoryProvider
      */
     public function getCategoryTreeArray(CustomerUser $user = null)
     {
-        $customer = $user ? $user->getCustomer() : null;
-        $customerGroup = $customer ? $customer->getGroup() : null;
-        $currentOrganization = $this->tokenAccessor->getOrganization();
+        $cacheKey = $this->getCacheKey($user);
 
-        $this->initCache([
-            'category',
-            $user ? $user->getId() : 0,
-            $this->getCurrentLocalization(),
-            $customer ? $customer->getId() : 0,
-            $customerGroup ? $customerGroup->getId() : 0,
-            $currentOrganization ? $currentOrganization->getId() : 0
-        ]);
-
-        return $this->fetchFromCache($user);
-    }
-
-    /**
-     * @param CustomerUser|null $user
-     * @return array|false
-     */
-    private function fetchFromCache(CustomerUser $user = null)
-    {
-        $useCache = $this->isCacheUsed();
-
-        if (true === $useCache) {
-            $result = $this->getFromCache();
-            if ($result) {
-                return $result;
-            }
+        $result = $this->cache->fetch($cacheKey);
+        if (false !== $result) {
+            return $result;
         }
 
-        $result = $this->categoryTreeToArray(
-            $this->getCategoryTree($user)
-        );
-
-        if (true === $useCache) {
-            $this->saveToCache($result);
-        }
+        $result = $this->categoryTreeToArray($this->getCategoryTree($user));
+        $this->cache->save($cacheKey, $result, $this->cacheLifeTime);
 
         return $result;
     }
@@ -240,10 +220,30 @@ class CategoryProvider
      */
     protected function getCurrentLocalization()
     {
-        $localization_id = ($this->localizationHelper && $this->localizationHelper->getCurrentLocalization()) ?
-            $this->localizationHelper->getCurrentLocalization()->getId() : 0;
+        $localization = $this->localizationHelper->getCurrentLocalization();
 
-        return $localization_id;
+        return $localization ? $localization->getId() : 0;
+    }
+
+    /**
+     * @param CustomerUser|null $user
+     *
+     * @return string
+     */
+    protected function getCacheKey(?CustomerUser $user): string
+    {
+        $customer = $user ? $user->getCustomer() : null;
+        $customerGroup = $customer ? $customer->getGroup() : null;
+        $currentOrganization = $this->tokenAccessor->getOrganization();
+
+        return sprintf(
+            'category_%s_%s_%s_%s_%s',
+            $user ? $user->getId() : 0,
+            $this->getCurrentLocalization(),
+            $customer ? $customer->getId() : 0,
+            $customerGroup ? $customerGroup->getId() : 0,
+            $currentOrganization ? $currentOrganization->getId() : 0
+        );
     }
 
     /**

@@ -2,38 +2,36 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener\Config;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
+/**
+ * Clears caches for product and category layout data providers
+ * when a specified configuration option is changed.
+ */
 class DisplaySimpleVariationsListener
 {
-    /**
-     * @var DataProviderCacheCleaner
-     */
-    protected $cacheCleaner;
+    /** @var CacheProvider */
+    private $productCache;
+
+    /** @var CacheProvider */
+    private $categoryCache;
+
+    /** @var string */
+    private $configParameter;
 
     /**
-     * @var DataProviderCacheCleaner
-     */
-    protected $categoryCacheCleaner;
-
-    /**
-     * @var string
-     */
-    protected $configParameter;
-
-    /**
-     * @param DataProviderCacheCleaner $cacheCleaner
-     * @param DataProviderCacheCleaner $categoryCacheCleaner
-     * @param string $configParameter
+     * @param CacheProvider $productCache
+     * @param CacheProvider $categoryCache
+     * @param string        $configParameter
      */
     public function __construct(
-        DataProviderCacheCleaner $cacheCleaner,
-        DataProviderCacheCleaner $categoryCacheCleaner,
+        CacheProvider $productCache,
+        CacheProvider $categoryCache,
         $configParameter
     ) {
-        $this->cacheCleaner    = $cacheCleaner;
-        $this->categoryCacheCleaner = $categoryCacheCleaner;
+        $this->productCache = $productCache;
+        $this->categoryCache = $categoryCache;
         $this->configParameter = $configParameter;
     }
 
@@ -43,8 +41,8 @@ class DisplaySimpleVariationsListener
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged($this->configParameter)) {
-            $this->cacheCleaner->clearCache();
-            $this->categoryCacheCleaner->clearCache();
+            $this->productCache->deleteAll();
+            $this->categoryCache->deleteAll();
         }
     }
 }

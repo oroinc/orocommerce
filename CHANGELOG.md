@@ -2,6 +2,15 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.1.0
+
+### Removed
+
+#### Config component
+* The trait `Oro\Component\Cache\Layout\DataProviderCacheTrait` was removed as it added additional complexity
+  to cacheable layout data providers instead of simplify them.
+* The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
+
 ## 4.1.0-beta
 
 ### Added
