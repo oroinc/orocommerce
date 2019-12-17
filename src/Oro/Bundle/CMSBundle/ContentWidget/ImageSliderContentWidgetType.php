@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
@@ -211,7 +212,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
             $contentWidget->getSettings(),
             [
                 'pageComponentName' => $contentWidget->getName() . ($this->pointer++ ?: ''),
-                'imageSlides' => $this->getImageSlides($contentWidget)
+                'imageSlides' => new ArrayCollection($this->getImageSlides($contentWidget))
             ]
         );
     }
