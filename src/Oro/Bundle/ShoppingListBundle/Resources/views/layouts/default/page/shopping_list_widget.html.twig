@@ -36,7 +36,7 @@
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
-        <span class="cart-widget__icon" {% if not isMobileVersion() %} aria-hidden="true" {% endif %}>
+        <span class="cart-widget__icon" aria-hidden="true">
             {% if not is_one_shopping_list_enabled() %}
                 <span class="fa-clipboard"></span>
             {% else %}
