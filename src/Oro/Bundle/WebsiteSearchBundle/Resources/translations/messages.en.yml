@@ -1,3 +1,4 @@
 oro.website_search:
     search_field_placeholder: Search for a product
     search_label: Search
+    search_submit_btn: Search submit button
