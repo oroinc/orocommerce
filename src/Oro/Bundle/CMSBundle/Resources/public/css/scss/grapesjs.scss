@@ -259,7 +259,7 @@
 
 // Additional styles for fullscreen mode
 .page-content-editor {
-    margin: -12px;
+    margin: -$grapesjs-content-editor-offset;
 }
 
 .ui-dialog {
