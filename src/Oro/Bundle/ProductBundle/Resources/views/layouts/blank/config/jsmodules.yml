@@ -1,5 +1,5 @@
 aliases:
-    jquery-elevatezoom$: bowerassets/elevatezoom3/jquery.elevatezoom
+    jquery-elevatezoom$: npmassets/@oroinc/elevatezoom/jquery.elevatezoom
     oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}

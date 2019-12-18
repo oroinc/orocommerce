@@ -72,8 +72,8 @@ services:
         calls:
             - [setSourceEntityClass, ['Oro\Bundle\CatalogBundle\Entity\Category']]
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: path, priority: -140 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: path, priority: -140 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
 
     oro_catalog.api.subresource.add_parent_сategory_node_id_to_parent_query:
         class: Oro\Bundle\CatalogBundle\Api\Processor\AddParentEntityIdToCategoryNodeSubresourceQuery
@@ -81,16 +81,16 @@ services:
             - '@oro_api.entity_id_helper'
             - 'parentCategory'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: parent, priority: -140 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: parent, priority: -140 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: parent, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: parent, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
 
     oro_catalog.api.subresource.add_parent_сategory_node_id_to_category_query:
         class: Oro\Bundle\CatalogBundle\Api\Processor\AddParentEntityIdToCategoryNodeCategorySubresourceQuery
         arguments:
             - '@oro_api.entity_id_helper'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: category, priority: -140 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, association: category, priority: -140 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: category, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: category, parentClass: Oro\Bundle\CatalogBundle\Api\Model\CategoryNode, priority: -140 }
 
     oro_catalog.api.subresource.validate_parent_сategory_node_access:
         class: Oro\Bundle\CatalogBundle\Api\Processor\ValidateParentCategoryNodeAccess
@@ -131,8 +131,8 @@ services:
             - '@stof_doctrine_extensions.listener.tree'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Entity\Category, association: categoryPath, priority: -140 }
-            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, parentClass: Oro\Bundle\CatalogBundle\Entity\Category, association: categoryPath, priority: -140 }
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: categoryPath, parentClass: Oro\Bundle\CatalogBundle\Entity\Category, priority: -140 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: categoryPath, parentClass: Oro\Bundle\CatalogBundle\Entity\Category, priority: -140 }
 
     oro_catalog.api.hide_invisible_product_category:
         class: Oro\Bundle\CatalogBundle\Api\Processor\HideInvisibleProductCategories
@@ -140,4 +140,4 @@ services:
             - '@oro_api.query_acl_helper'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product }

@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const ThemeSelectorView = require('orocms/js/app/grapesjs/controls/theme-selector-view');
+    const settingsTemplate = require('tpl-loader!orocms/templates/grapesjs-settings.html');
     const $ = require('jquery');
     const _ = require('underscore');
 
@@ -25,6 +26,8 @@ define(function(require) {
 
         themes: [],
 
+        settingsTemplate: settingsTemplate,
+
         optionButtonTooltips: {
             'sw-visibility': _.__('oro.cms.wysiwyg.option_panel.show_borders'),
             'preview': _.__('oro.cms.wysiwyg.option_panel.preview'),
@@ -44,6 +47,8 @@ define(function(require) {
             this._moveSettings();
             this._addOptionButtonTooltips();
             this.createThemeSelector();
+
+            this.builder.on('component:selected', _.bind(this.componentSelected, this));
         },
 
         createThemeSelector: function() {
@@ -77,21 +82,18 @@ define(function(require) {
          * @private
          */
         _moveSettings: function() {
-            const $ = this.builder.$;
-
             const Panels = this.builder.Panels;
+            const builderEl = this.builder.editor.view.$el;
 
             const openTmBtn = Panels.getButton('views', 'open-tm');
             openTmBtn && openTmBtn.set('active', 1);
             const openSm = Panels.getButton('views', 'open-sm');
             openSm && openSm.set('active', 1);
 
-            const traitsSector = $('<div class="gjs-sm-sector no-select">'+
-                '<div class="gjs-sm-title"><span class="fa fa-cog"></span> Settings</div>' +
-                '<div class="gjs-sm-properties" style="display: none;"></div></div>');
+            const traitsSector = $(this.settingsTemplate());
             const traitsProps = traitsSector.find('.gjs-sm-properties');
-            traitsProps.append($('.gjs-trt-traits'));
-            $('.gjs-sm-sectors').before(traitsSector);
+            $(Panels.getPanelsEl()).find('.gjs-sm-sectors').before(traitsSector);
+            traitsProps.append(builderEl.find('.gjs-trt-traits'));
 
             traitsSector.find('.gjs-sm-title').on('click', function() {
                 const traitStyle = traitsProps.get(0).style;
@@ -106,9 +108,16 @@ define(function(require) {
 
             Panels.removeButton('views', 'open-tm');
 
-            this.builder.$('#gjs-clm-tags-field').on('click', '[data-tag-status]', function(e) {
+            builderEl.find('#gjs-clm-tags-field').on('click', '[data-tag-status]', function(e) {
                 e.stopPropagation();
             });
+        },
+
+        componentSelected(model) {
+            const builderEl = this.builder.editor.view.$el;
+
+            $(builderEl.find('.gjs-settings'))
+                .toggle(!!model.get('traits').length);
         }
     };
 

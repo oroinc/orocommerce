@@ -6,7 +6,7 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductInventoryStatuses
-    - Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadProductAttributesData
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductAttributesData
     - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
     - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData
 

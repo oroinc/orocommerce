@@ -1,0 +1,10 @@
+data:
+  type: productvariantlinks
+  id: '<toString(@configurable_product4_variant1_link->id)>'
+  attributes:
+    visible: true
+  relationships:
+    parentProduct:
+      data:
+        type: 'products'
+        id: '<toString(@configurable_product1->id)>'

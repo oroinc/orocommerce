@@ -271,7 +271,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {*}
      */
     initContainer: function() {
-        this.$container = $('<div class="grapesjs" />');
+        this.$container = $('<div class="grapesjs" data-skip-input-widgets />');
         this.$container.insertAfter(this.$el);
     },
 

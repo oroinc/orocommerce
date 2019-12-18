@@ -3,9 +3,11 @@
 @import "oroui/css/scss/variables";
 @import "oroui/css/scss/oro/variables/form-variables";
 
+@import "variables";
+
 @import "./pages";
 @import "./loginPage";
-@import "./imageSlide";
+@import "./image-slide";
 @import "./cms-content";
 
 // GrapesJs styles
@@ -23,4 +25,6 @@
 @import "grapesjs/grapesjs-layer";
 @import "grapesjs/grapesjs-views";
 @import "grapesjs/grapesjs-tag";
+
+@import "mobile/main";
 

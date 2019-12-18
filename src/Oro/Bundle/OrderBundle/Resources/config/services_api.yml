@@ -1,5 +1,5 @@
 services:
-    oro_order.api.frontend.order_address_query_modifier:
+    oro_order.api.order_address_query_modifier:
         class: Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
@@ -24,7 +24,7 @@ services:
             - '@oro_order.manager.order_address'
             - '@translator'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_submit|pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderAddress }
 
     oro_order.api.add_discount_to_order:
         class: Oro\Bundle\OrderBundle\Api\Processor\AddDiscountToOrder
@@ -39,7 +39,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_payment.formatter.payment_status_label'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
 
     oro_order.api.compute_order_payment_method:
         class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentMethod
@@ -47,7 +47,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_payment.formatter.payment_method_label'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
 
     oro_order.api.compute_order_shipping:
         class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
@@ -74,12 +74,12 @@ services:
     oro_order.api.handle_order_line_item_empty_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderLineItemEmptyPrice
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_submit, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 10 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_submit, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 10 }
 
     oro_order.api.remember_order_line_item_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\RememberOrderLineItemPrice
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 200 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 200 }
 
     oro_order.api.set_website_to_order:
         class: Oro\Bundle\WebsiteBundle\Api\Processor\SetWebsite
@@ -87,7 +87,7 @@ services:
             - '@oro_api.form_property_accessor'
             - '@oro_website.manager'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: 20 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 20 }
 
     oro_order.api.set_currency_to_order:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\SetCurrency
@@ -95,7 +95,7 @@ services:
             - '@oro_api.form_property_accessor'
             - '@oro_locale.settings'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: 15 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 15 }
 
     oro_order.api.set_currency_to_order_line_item:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\SetCurrency
@@ -103,7 +103,7 @@ services:
             - '@oro_api.form_property_accessor'
             - '@oro_locale.settings'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, parentAction: create, priority: 15 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 15 }
 
     oro_order.api.set_customer_to_order:
         class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomer
@@ -111,7 +111,7 @@ services:
             - '@oro_api.form_property_accessor'
             - '@oro_security.token_accessor'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: 10 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 10 }
 
     oro_order.api.set_customer_user_to_order:
         class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomerUser
@@ -119,7 +119,7 @@ services:
             - '@oro_api.form_property_accessor'
             - '@oro_security.token_accessor'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: 10 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 10 }
 
     oro_order.api.fill_order_line_item_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderLineItemPrice
@@ -128,14 +128,14 @@ services:
             - '@oro_pricing.model.product_price_scope_criteria_factory'
             - '@translator'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
 
     oro_order.api.fill_order_totals:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderTotals
         arguments:
             - '@oro_order.order.total.total_helper'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -30 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -30 }
 
     oro_order.api.fill_payment_method.payment_term:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderPaymentMethod
@@ -144,14 +144,14 @@ services:
             - '@oro_payment.method.provider.method_provider'
             - 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: -90 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -90 }
 
     oro_order.api.validate_payment_method_exists:
         class: Oro\Bundle\OrderBundle\Api\Processor\ValidatePaymentMethodExists
         arguments:
             - '@translator'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, parentAction: create, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -100 }
 
     oro_order.api.place_order:
         class: Oro\Bundle\OrderBundle\Api\Processor\PlaceOrder

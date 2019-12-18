@@ -147,7 +147,7 @@ services:
             - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
             - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
-    oro_pricing.update.load_normalized_entity:
+    oro_pricing.api.load_normalized_entity:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\LoadNormalizedProductPriceWithNormalizedId
         arguments:
             - '@oro_api.action_processor_bag'
@@ -227,7 +227,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_api.value_transformer'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product }
 
     oro_pricing.api.product_search.update_depends_on_config_for_minimal_price_field:
         class: Oro\Bundle\PricingBundle\Api\Processor\UpdateDependsOnConfigForMinimalPriceField

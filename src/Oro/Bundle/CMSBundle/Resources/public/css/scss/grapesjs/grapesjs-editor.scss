@@ -34,8 +34,13 @@
         }
 
         &-cont {
-            padding: 12px;
+            padding: $grapesjs-content-editor-offset;
             background: $primary-inverse;
+
+            .editor-without-offset &,
+            &.editor-without-offset {
+                padding: 0;
+            }
         }
     }
 

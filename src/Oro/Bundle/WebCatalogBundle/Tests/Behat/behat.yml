@@ -50,6 +50,10 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
                         element: Select2Entity
+                    Product:
+                        type: css
+                        locator: 'div[id^="oro_web_catalog_content_node_contentVariants_0_productPageProduct-"]'
+                        element: Select2Entity
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

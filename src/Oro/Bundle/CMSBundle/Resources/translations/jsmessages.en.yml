@@ -28,7 +28,6 @@ oro.cms:
             content_widget: 'Content Widget'
             code: 'Code'
             link_button: 'Link Button'
-            text_basic: 'Text Section'
             table: 'Table'
             digital_asset:
                 image: 'Image'
@@ -46,6 +45,8 @@ oro.cms:
             delete: 'Delete'
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
+        settings:
+            label: 'Settings'
     change_type:
         confirmation:
             title: 'Change Type'

@@ -104,7 +104,7 @@ Feature: Create product with dialog widget
 
   Scenario: Select simple product from product selection grid
     Given I proceed as the Admin
-    When I open select entity popup for field "Product"
+    When I open select entity popup for field "Product" in form "Content Node Form"
     Then I should see following grid:
       | SKU   |
       | 1GB83 |
@@ -115,7 +115,7 @@ Feature: Create product with dialog widget
 
   Scenario: Select configurable product from product selection grid
     Given I proceed as the Admin
-    When I open select entity popup for field "Product"
+    When I open select entity popup for field "Product" in form "Content Node Form"
     Then I should see following grid:
       | SKU   |
       | 1GB83 |
