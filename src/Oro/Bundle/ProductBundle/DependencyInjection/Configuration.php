@@ -65,6 +65,7 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
     const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
+    const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
 
     /**
      * {@inheritDoc}
@@ -161,6 +162,7 @@ class Configuration implements ConfigurationInterface
                     'value' => true,
                 ],
                 static::DISABLE_FILTERS_ON_PRODUCT_LISTING => ['type' => 'boolean', 'value' => false],
+                static::ORIGINAL_FILE_NAMES_ENABLED => ['type' => 'boolean', 'value' => false]
             ]
         );
 
