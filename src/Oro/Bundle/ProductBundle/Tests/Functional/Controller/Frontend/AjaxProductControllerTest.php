@@ -96,7 +96,7 @@ class AjaxProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('isInitial', $data[0]);
         $this->assertArrayHasKey('product_gallery_popup', $data[0]);
         $this->assertStringMatchesFormat(
-            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1',
+            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1.jpg',
             $data[0]['product_gallery_popup']
         );
     }
