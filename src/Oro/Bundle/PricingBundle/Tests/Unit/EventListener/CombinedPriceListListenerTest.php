@@ -32,4 +32,16 @@ class CombinedPriceListListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onCreate(new CombinedPriceListCreateEvent($combinedPriceList));
     }
+
+    public function testOnCreateSkibActivationPlanBuild()
+    {
+        $combinedPriceList = new CombinedPriceList();
+
+        $this->activationPlanBuilder->expects($this->never())
+            ->method('buildByCombinedPriceList');
+
+        $event = new CombinedPriceListCreateEvent($combinedPriceList);
+        $event->setOptions([CombinedPriceListActivationPlanBuilder::SKIP_ACTIVATION_PLAN_BUILD => true]);
+        $this->listener->onCreate($event);
+    }
 }

@@ -15,4 +15,16 @@ class CombinedPriceListCreateEventTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($combinedPriceList, $event->getCombinedPriceList());
     }
+
+    public function testGetCombinedPriceListWithOptions()
+    {
+        $combinedPriceList = new CombinedPriceList();
+        $options = ['test' => true];
+
+        $event = new CombinedPriceListCreateEvent($combinedPriceList);
+        $event->setOptions($options);
+
+        $this->assertSame($combinedPriceList, $event->getCombinedPriceList());
+        $this->assertSame($options, $event->getOptions());
+    }
 }
