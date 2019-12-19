@@ -32,7 +32,7 @@ class AjaxLocalizationController extends Controller
 
         $result = false;
         if (array_key_exists($localization->getId(), $userLocalizationManager->getEnabledLocalizations())) {
-            $userLocalizationManager->setCurrentLocalization($localization);
+            $userLocalizationManager->setCurrentLocalization($localization, null, true);
             $result = true;
         }
 

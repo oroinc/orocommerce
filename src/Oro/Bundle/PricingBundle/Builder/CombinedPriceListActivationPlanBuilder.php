@@ -8,19 +8,26 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelperInterface;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
 /**
  * Generate activation plans for Combined Price Lists based on Price Lists Schedules.
+ * Full Chain CPL - is a CPL which consists of all Price Lists in the chain.
+ * Active CPL - is a CPL which consists of Price Lists active at the moment.
+ * Activation plan may exists only for Full Chain CPLs that are assigned to some level" Config, Website, Group, Customer
  */
 class CombinedPriceListActivationPlanBuilder
 {
+    public const SKIP_ACTIVATION_PLAN_BUILD = 'skip_activation_plan_build';
+
     /**
      * @var DoctrineHelper
      */
@@ -62,6 +69,11 @@ class CombinedPriceListActivationPlanBuilder
     protected $manager;
 
     /**
+     * @var CombinedPriceListRelationHelperInterface
+     */
+    protected $relationHelper;
+
+    /**
      * @var array
      */
     protected $processedPriceLists = [];
@@ -75,15 +87,18 @@ class CombinedPriceListActivationPlanBuilder
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListScheduleResolver $schedulerResolver
      * @param CombinedPriceListProvider $combinedPriceListProvider
+     * @param CombinedPriceListRelationHelperInterface $relationHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListScheduleResolver $schedulerResolver,
-        CombinedPriceListProvider $combinedPriceListProvider
+        CombinedPriceListProvider $combinedPriceListProvider,
+        CombinedPriceListRelationHelperInterface $relationHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->schedulerResolver = $schedulerResolver;
         $this->combinedPriceListProvider = $combinedPriceListProvider;
+        $this->relationHelper = $relationHelper;
     }
 
     /**
@@ -97,7 +112,10 @@ class CombinedPriceListActivationPlanBuilder
         $cplIterator = $this->getCombinedPriceListRepository()->getCombinedPriceListsByPriceList($priceList);
 
         foreach ($cplIterator as $cpl) {
-            $this->buildByCombinedPriceList($cpl);
+            // Activation plan should be built only for Full Chain CPLs
+            if ($this->relationHelper->isFullChainCpl($cpl)) {
+                $this->buildByCombinedPriceList($cpl);
+            }
         }
         $this->addPriceListProcessed($priceList);
     }
@@ -166,7 +184,10 @@ class CombinedPriceListActivationPlanBuilder
                 );
             }
         }
-        return $this->combinedPriceListProvider->getCombinedPriceList($sequence);
+        return $this->combinedPriceListProvider->getCombinedPriceList(
+            $sequence,
+            [self::SKIP_ACTIVATION_PLAN_BUILD => true]
+        );
     }
 
     /**
@@ -176,7 +197,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->combinedPriceListRepository) {
             $this->combinedPriceListRepository = $this->doctrineHelper
-                ->getEntityRepository('OroPricingBundle:CombinedPriceList');
+                ->getEntityRepository(CombinedPriceList::class);
         }
 
         return $this->combinedPriceListRepository;
@@ -189,7 +210,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->priceListScheduleRepository) {
             $this->priceListScheduleRepository = $this->doctrineHelper
-                ->getEntityRepository('OroPricingBundle:PriceListSchedule');
+                ->getEntityRepository(PriceListSchedule::class);
         }
 
         return $this->priceListScheduleRepository;
@@ -202,7 +223,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->CPLToPriceListRepository) {
             $this->CPLToPriceListRepository = $this->doctrineHelper
-                ->getEntityRepository('OroPricingBundle:CombinedPriceListToPriceList');
+                ->getEntityRepository(CombinedPriceListToPriceList::class);
         }
 
         return $this->CPLToPriceListRepository;
@@ -215,7 +236,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->CPLActivationRuleRepository) {
             $this->CPLActivationRuleRepository = $this->doctrineHelper
-                ->getEntityRepository('OroPricingBundle:CombinedPriceListActivationRule');
+                ->getEntityRepository(CombinedPriceListActivationRule::class);
         }
         return $this->CPLActivationRuleRepository;
     }
@@ -227,7 +248,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->manager) {
             $this->manager = $this->doctrineHelper
-                ->getEntityManagerForClass('OroPricingBundle:CombinedPriceListActivationRule');
+                ->getEntityManagerForClass(CombinedPriceListActivationRule::class);
         }
 
         return $this->manager;

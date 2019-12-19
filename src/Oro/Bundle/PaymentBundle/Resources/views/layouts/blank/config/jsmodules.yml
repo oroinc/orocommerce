@@ -1,5 +1,5 @@
 aliases:
-    oropayment/js/lib/jquery-credit-card-validator$: npmassets/jquery-creditcardvalidator/jquery.creditCardValidator
+    oropayment/js/lib/jquery-credit-card-validator$: npmassets/@oroinc/jquery-creditcardvalidator/jquery.creditCardValidator
 dynamic-imports:
     oropayment:
         - oropayment/js/app/components/payment-method-component

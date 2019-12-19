@@ -11,6 +11,7 @@ import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
 /**
  * Create GrapesJS content builder
@@ -296,7 +297,9 @@ const GrapesjsEditorView = BaseView.extend({
             , {
                 avoidInlineStyle: 1,
                 container: this.$container.get(0),
-                components: !_.isEmpty(this.JSONcomponents) ? this.JSONcomponents : escapeWrapper(this.$el.val())
+                components: !_.isEmpty(this.JSONcomponents)
+                    ? this.JSONcomponents
+                    : escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
 
@@ -655,7 +658,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: _.keys(this.builderPlugins),
+            plugins: [ContentParser, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

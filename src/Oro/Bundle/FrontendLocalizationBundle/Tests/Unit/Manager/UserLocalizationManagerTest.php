@@ -450,6 +450,34 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->userLocalizationManager->setCurrentLocalization($localization);
     }
 
+    public function testSetCurrentLocalizationForceSessionStart()
+    {
+        /** @var Localization|\PHPUnit\Framework\MockObject\MockObject $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 1]);
+        $sessionLocalizations = [2 => 3];
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 4]);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(false);
+        $this->session->expects($this->once())
+            ->method('get')
+            ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
+            ->willReturn($sessionLocalizations);
+        $this->session->expects($this->once())
+            ->method('set')
+            ->with(
+                UserLocalizationManager::SESSION_LOCALIZATIONS,
+                [2 => 3, $website->getId() => $localization->getId()]
+            );
+
+        $this->userLocalizationManager->setCurrentLocalization($localization, null, true);
+    }
+
     /**
      * @return array
      */

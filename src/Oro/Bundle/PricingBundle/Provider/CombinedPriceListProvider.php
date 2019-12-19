@@ -53,9 +53,10 @@ class CombinedPriceListProvider
 
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
+     * @param array $eventOptions
      * @return CombinedPriceList
      */
-    public function getCombinedPriceList(array $priceListsRelations)
+    public function getCombinedPriceList(array $priceListsRelations, array $eventOptions = [])
     {
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
@@ -67,7 +68,7 @@ class CombinedPriceListProvider
 
             $this->eventDispatcher->dispatch(
                 CombinedPriceListCreateEvent::NAME,
-                new CombinedPriceListCreateEvent($combinedPriceList)
+                new CombinedPriceListCreateEvent($combinedPriceList, $eventOptions)
             );
         }
 
