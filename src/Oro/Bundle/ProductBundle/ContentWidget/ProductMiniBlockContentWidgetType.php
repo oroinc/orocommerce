@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 
 /**
@@ -22,12 +23,17 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     /** @var int */
     private $instanceNumber = 0;
 
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
+
     /**
      * @param ManagerRegistry $registry
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->registry = $registry;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /** {@inheritdoc} */
@@ -86,6 +92,10 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
             $data['product'] = $this->registry->getManagerForClass(Product::class)
                 ->getRepository(Product::class)
                 ->find($product);
+
+            if (!$this->authorizationChecker->isGranted('VIEW', $data['product'])) {
+                $data['product'] = null;
+            }
         }
 
         return $data;

@@ -37,6 +37,9 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
 
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
     /** @var ProductMiniBlockContentWidgetType */
     private $contentWidgetType;
 
@@ -58,7 +61,9 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->with(Product::class)
             ->willReturn($this->manager);
 
-        $this->contentWidgetType = new ProductMiniBlockContentWidgetType($registry);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $this->contentWidgetType = new ProductMiniBlockContentWidgetType($registry, $this->authorizationChecker);
     }
 
     public function testGetName(): void
@@ -79,7 +84,11 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertFalse($this->contentWidgetType->isInline());
     }
 
-    public function testGetWidgetData(): void
+    /**
+     * @dataProvider permissionDataProvider
+     * @param bool $isGranted
+     */
+    public function testGetWidgetData(bool $isGranted): void
     {
         $contentWidget = new ContentWidget();
         $contentWidget->setName('test_name');
@@ -92,8 +101,13 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->with(42)
             ->willReturn($product);
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $product)
+            ->willReturn($isGranted);
+
         $this->assertSame(
-            ['product' => $product, 'instanceNumber' => 0],
+            ['product' => $isGranted ? $product : null, 'instanceNumber' => 0],
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }
@@ -108,7 +122,11 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetBackOfficeViewSubBlocks(): void
+    /**
+     * @dataProvider permissionDataProvider
+     * @param bool $isGranted
+     */
+    public function testGetBackOfficeViewSubBlocks(bool $isGranted): void
     {
         $contentWidget = new ContentWidget();
         $contentWidget->setName('test_name');
@@ -121,12 +139,17 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->with(42)
             ->willReturn($product);
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $product)
+            ->willReturn($isGranted);
+
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
             ->with(
                 '@OroProduct/ProductMiniBlockContentWidget/options.html.twig',
-                ['product' => $product, 'instanceNumber' => 0]
+                ['product' => $isGranted ? $product : null, 'instanceNumber' => 0]
             )
             ->willReturn('rendered settings template');
 
@@ -139,6 +162,17 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ],
             $this->contentWidgetType->getBackOfficeViewSubBlocks($contentWidget, $twig)
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function permissionDataProvider(): array
+    {
+        return [
+            'allowed' => [true],
+            'denied' => [false],
+        ];
     }
 
     public function testGetDefaultTemplate(): void

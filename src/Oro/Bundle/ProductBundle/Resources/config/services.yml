@@ -1645,5 +1645,6 @@ services:
         class: Oro\Bundle\ProductBundle\ContentWidget\ProductMiniBlockContentWidgetType
         arguments:
             - '@doctrine'
+            - '@security.authorization_checker'
         tags:
             - { name: oro_cms.content_widget.type }
