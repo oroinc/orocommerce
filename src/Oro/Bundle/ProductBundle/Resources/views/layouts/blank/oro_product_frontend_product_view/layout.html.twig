@@ -317,3 +317,15 @@
 {% block product_view_attribute_multifiles_widget %}
     {{ block_widget(block) }}
 {% endblock %}
+
+{% block attribute_group_rest_attribute_widget %}
+    <div class="tab-content__wrapper">
+        {% if 'attribute_collection' in block_prefixes %}
+            {{ block('product_view_attribute_collection_widget') }}
+        {% elseif 'attribute_image' in block_prefixes %}
+            {{ block('product_view_attribute_image_widget') }}
+        {% else %}
+            {{ block('attribute_label_widget') }} {{ block_widget(block) }}
+        {% endif %}
+    </div>
+{% endblock %}
