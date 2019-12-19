@@ -15,6 +15,9 @@ class CombinedPriceListCreateEvent extends Event
     /** @var CombinedPriceList */
     private $combinedPriceList;
 
+    /** @var array */
+    private $options = [];
+
     /**
      * @param CombinedPriceList $combinedPriceList
      */
@@ -24,10 +27,26 @@ class CombinedPriceListCreateEvent extends Event
     }
 
     /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    /**
      * @return CombinedPriceList
      */
     public function getCombinedPriceList(): CombinedPriceList
     {
         return $this->combinedPriceList;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }

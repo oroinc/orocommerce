@@ -27,6 +27,12 @@ class CombinedPriceListListener
      */
     public function onCreate(CombinedPriceListCreateEvent $event)
     {
-        $this->activationPlanBuilder->buildByCombinedPriceList($event->getCombinedPriceList());
+        // Skip CPLs that consists of Price Lists sub-chains that are not connected to any entity
+        // Example: Full chain 1,2,3. There is no 1,2 chain associated to any entity but it is active at the moment and
+        // CPL for it was created.
+        // Such chain (1,2) should not have it`s own activation plan, because sub-chains will be never assigned
+        if (empty($event->getOptions()[CombinedPriceListActivationPlanBuilder::SKIP_ACTIVATION_PLAN_BUILD])) {
+            $this->activationPlanBuilder->buildByCombinedPriceList($event->getCombinedPriceList());
+        }
     }
 }

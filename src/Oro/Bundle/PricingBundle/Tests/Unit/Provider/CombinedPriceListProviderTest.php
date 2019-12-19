@@ -134,6 +134,34 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testGetCombinedPriceListWithEventOptions()
+    {
+        $options = ['test' => true];
+
+        $this->repository->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willReturnCallback(
+                function (string $eventName, CombinedPriceListCreateEvent $event) use ($options) {
+                    $this->assertEquals(CombinedPriceListCreateEvent::NAME, $eventName);
+                    $this->assertInstanceOf(CombinedPriceList::class, $event->getCombinedPriceList());
+                    $this->assertEquals($options, $event->getOptions());
+                }
+            );
+
+        $priceListsRelations = $this->getPriceListsRelationMocks([
+            [
+                'price_list_id' => 1,
+                'currencies' => ['USD'],
+                'mergeAllowed' => true,
+            ]
+        ]);
+        $this->provider->getCombinedPriceListWithEventOptions($priceListsRelations, $options);
+    }
+
     public function testActualizeCurrencies()
     {
         $pl1 = new PriceList();

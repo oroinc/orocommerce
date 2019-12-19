@@ -980,6 +980,7 @@ oro_behat_extension:
       options:
         mapping:
           File: 'product_images[oro_product___product_image_watermark_file][value][file]'
+          Use Default: 'product_images[oro_product___product_image_watermark_file][use_parent_scope_value]'
 
     Product Form Images Section:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

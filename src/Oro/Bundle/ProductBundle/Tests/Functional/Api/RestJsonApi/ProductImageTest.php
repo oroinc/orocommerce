@@ -90,6 +90,31 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
+    public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled()
+    {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_product.original_file_names_enabled', true);
+        $configManager->flush();
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var ProductImage $productImage */
+        $productImage = $product->getImages()->first();
+        $productImageId = $productImage->getId();
+        $fileId = $productImage->getImage()->getId();
+
+        $response = $this->get(
+            ['entity' => 'productimages', 'id' => (string)$productImageId],
+            ['include' => 'image', 'fields[files]' => 'filePath']
+        );
+
+        $expectedData = self::updateExpectedData(
+            $this->loadResponseData('get_product_image_include_path_only_with_original_names.yml'),
+            $fileId
+        );
+        $this->assertResponseContains($expectedData, $response);
+    }
+
     public function testDeleteAction()
     {
         /** @var Product $product */

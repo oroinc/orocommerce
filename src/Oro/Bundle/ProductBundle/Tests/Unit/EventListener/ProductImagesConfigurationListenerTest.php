@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener;
-use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -19,12 +18,12 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
     const SCOPE_APP = 'app';
 
     /**
-     * @var TranslatorInterface
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
     /**
-     * @var Session
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $session;
 
@@ -35,30 +34,63 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->translator = $this->prophesize(TranslatorInterface::class);
-        $this->session = $this->prophesize(Session::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->session = $this->createMock(Session::class);
 
         $this->listener = new ProductImagesConfigurationListener(
-            $this->session->reveal(),
-            $this->translator->reveal()
+            $this->session,
+            $this->translator
         );
     }
 
     public function testBeforeSaveAddsMessageForProductImagesSection()
     {
-        $this->translator->trans(Argument::type('string'))->willReturn(self::MESSAGE);
-        $this->session->getFlashBag()->willReturn($this->prepareFlashBag()->reveal());
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($str) {
+                return $str . ' TR';
+            });
+        $this->session->expects($this->any())
+            ->method('getFlashBag')
+            ->willReturn($this->prepareFlashBag());
 
         $this->listener->afterUpdate($this->prepareEvent([
             'oro_product.product_image_watermark_size' => ['old' => 20, 'new' => 21],
+            'oro_product.original_file_names_enabled' => ['old' => false, 'new' => true],
             'oro_product.product_image_watermark_position' => ['old' => 'center', 'new' => 'top_left'],
             'oro_product.product_image_watermark_file' => ['old' => 'file1', 'new' => 'file2']
         ]));
     }
 
+    public function testBeforeSaveAddsMessageForProductImagesSectionFileNames()
+    {
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($str) {
+                return $str . ' TR';
+            });
+
+        $flashBag = $this->createMock(FlashBag::class);
+        $flashBag->expects($this->once())
+            ->method('add')
+            ->with(
+                ProductImagesConfigurationListener::MESSAGE_TYPE,
+                ProductImagesConfigurationListener::SPACE_NOTICE_TEXT_TRANS_KEY . ' TR'
+            );
+
+        $this->session->expects($this->any())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+
+        $this->listener->afterUpdate($this->prepareEvent([
+            'oro_product.original_file_names_enabled' => ['old' => false, 'new' => true]
+        ]));
+    }
+
     public function testBeforeSaveDoesNothingForNonProductImagesSection()
     {
-        $this->translator->trans(Argument::type('string'))->shouldNotBeCalled();
+        $this->translator->expects($this->never())
+            ->method('trans');
 
         $this->listener->afterUpdate($this->prepareEvent([
             'oro_product.product_unit' => ['old' => 'something', 'new' => 'saomething2'],
@@ -76,16 +108,24 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \Prophecy\Prophecy\ObjectProphecy
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareFlashBag()
     {
-        $flashBag = $this->prophesize(FlashBag::class);
-        $flashBag
-            ->add(
-                ProductImagesConfigurationListener::MESSAGE_TYPE,
-                self::MESSAGE . ' <code>' . ProductImagesConfigurationListener::COMMAND . '</code>'
-            )->shouldBeCalledTimes(1);
+        $flashBag = $this->createMock(FlashBag::class);
+        $flashBag->expects($this->exactly(2))
+            ->method('add')
+            ->withConsecutive(
+                [
+                    ProductImagesConfigurationListener::MESSAGE_TYPE,
+                    ProductImagesConfigurationListener::NOTICE_TEXT_TRANS_KEY
+                    . ' TR <code>' . ProductImagesConfigurationListener::COMMAND . '</code>'
+                ],
+                [
+                    ProductImagesConfigurationListener::MESSAGE_TYPE,
+                    ProductImagesConfigurationListener::SPACE_NOTICE_TEXT_TRANS_KEY . ' TR'
+                ]
+            );
 
         return $flashBag;
     }

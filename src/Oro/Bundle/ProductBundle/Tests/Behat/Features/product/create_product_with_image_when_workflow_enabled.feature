@@ -1,4 +1,5 @@
 @ticket-BB-14928
+@ticket-BB-18135
 @fixture-OroProductBundle:ProductWorkflowFixture.yml
 
 Feature: Create product with image when workflow enabled
@@ -9,8 +10,14 @@ Feature: Create product with image when workflow enabled
   Scenario: Feature Background
     Given complete workflow fixture loading
 
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | User  | second_session |
+
   Scenario: Create a Product With Image
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And go to Products/Products
     And click "Create Product"
     And fill form with:
@@ -28,8 +35,36 @@ Feature: Create product with image when workflow enabled
     And I should see "Product Workflow"
     And I should see "cat1.jpg"
 
+  Scenario: Check product image URL at store front
+    Given I proceed as the User
+    And I am on the homepage
+    When type "PSKU1" in "search"
+    And click "Search Button"
+    Then should see "Uploaded Product Image" for "PSKU1" product
+    When click "View Details" for "PSKU1" product
+    Then I should see an "Uploaded Product Image" element
+    And "Uploaded Product Image" element "src" attribute should not contain "-cat1.jpg"
+    And should not see an "Empty Product Image" element
+
+  Scenario: Enable original product image file names
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Product/Product Images" on configuration sidebar
+    And uncheck "Use default" for "Enable Original File Names" field
+    And I check "Enable Original File Names"
+    And click "Save settings"
+    And should see "Configuration saved" flash message
+
+  Scenario: Check if there Product Images with original file names on frontend
+    Given I proceed as the User
+    When I reload the page
+    Then I should see an "Uploaded Product Image" element
+    And "Uploaded Product Image" element "src" attribute should contain "-cat1.jpg"
+    And should not see an "Empty Product Image" element
+
   Scenario: Import Products
-    Given I go to Products/ Products
+    Given I proceed as the Admin
+    And I go to Products/ Products
     When I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
       | attributeFamily.code | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | names.default.value |
@@ -67,8 +102,33 @@ Feature: Create product with image when workflow enabled
     And I should see following product images:
       | dog1.jpg |  |  | 1 |
 
+  Scenario: Check if there Product Images with original file names on frontend on frontend
+    Given I proceed as the User
+    And I am on the homepage
+    When type "PSKU2" in "search"
+    And click "Search Button"
+    Then should see "Uploaded Product Image" for "PSKU2" product
+    When click "View Details" for "PSKU2" product
+    Then I should see an "Uploaded Product Image" element
+    And "Uploaded Product Image" element "src" attribute should contain "-dog1.jpg"
+
+  Scenario: Disable original product image file names
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Product/Product Images" on configuration sidebar
+    And I uncheck "Enable Original File Names"
+    And click "Save settings"
+    And should see "Configuration saved" flash message
+
+  Scenario: Check if there Product Images without original file names on frontend
+    Given I proceed as the User
+    When I reload the page
+    Then I should see an "Uploaded Product Image" element
+    And "Uploaded Product Image" element "src" attribute should not contain "-dog1.jpg"
+
   Scenario: Import Product Images second time
-    Given I go to Products/ Products
+    Given I proceed as the Admin
+    And I go to Products/ Products
     And I open "Product Images" import tab
     When I download "Product Images" Data Template file
     And fill template with data:

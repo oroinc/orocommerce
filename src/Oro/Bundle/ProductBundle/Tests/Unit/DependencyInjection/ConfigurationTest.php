@@ -215,6 +215,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'product_image_placeholder' => [
                     'value' => null,
                     'scope' => 'app',
+                ],
+                'original_file_names_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
                 ]
             ]
         ];

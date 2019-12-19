@@ -1,6 +1,9 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
     variables:
+        Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper:
+            isFullChainCpl:
+                relation: true
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             applyPriceListLimitations:
                 rootAlias: true
