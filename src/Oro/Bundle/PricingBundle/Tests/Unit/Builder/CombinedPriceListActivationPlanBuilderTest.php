@@ -2,53 +2,47 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelperInterface;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
-     * @var DoctrineHelper
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var PriceListScheduleResolver
+     * @var PriceListScheduleResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $schedulerResolver;
 
     /**
-     * @var CombinedPriceListProvider
+     * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListProvider;
 
     /**
-     * @var CombinedPriceListRepository
+     * @var CombinedPriceListRelationHelperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $combinedPriceListRepository;
-
-    /**
-     * @var PriceListScheduleRepository
-     */
-    protected $priceListScheduleRepository;
-
-    /**
-     * @var CombinedPriceListToPriceListRepository
-     */
-    protected $CPLToPriceListRepository;
-
-    /**
-     * @var CombinedPriceListActivationRuleRepository
-     */
-    protected $CPLActivationRuleRepository;
+    protected $relationHelper;
 
     /**
      * @var CombinedPriceListActivationPlanBuilder
@@ -57,104 +51,156 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
 
     public function setUp()
     {
-        $this->createCombinedPriceListProviderMock();
-        $this->createCombinedPriceListRepositoryMock();
-        $this->schedulerResolverMock();
-        $this->createPriceListScheduleRepositoryMock();
-        $this->createCombinedPriceListToPriceListRepositoryMock();
-
-        $this->CPLActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
-
-        $this->createDoctrineHelperMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->schedulerResolver = $this->createMock(PriceListScheduleResolver::class);
+        $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
+        $this->relationHelper = $this->createMock(CombinedPriceListRelationHelperInterface::class);
 
         $this->builder = new CombinedPriceListActivationPlanBuilder(
             $this->doctrineHelper,
             $this->schedulerResolver,
-            $this->combinedPriceListProvider
+            $this->combinedPriceListProvider,
+            $this->relationHelper
         );
     }
 
     public function testBuildByPriceList()
     {
-        $this->builder->buildByPriceList(new PriceList());
-    }
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        /** @var CombinedPriceList $cpl1 */
+        $cpl1 = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl1->setName(md5('1_2'));
+        /** @var CombinedPriceList $cpl2 */
+        $cpl2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $cpl2->setName(md5('1'));
 
-    protected function schedulerResolverMock()
-    {
-        $className = 'Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver';
-        $this->schedulerResolver = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $priceListId = 1;
-        $timestamp = 100;
-        $this->schedulerResolver->method('mergeSchedule')->willReturn([
-            $timestamp => [
-                PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
-                PriceListScheduleResolver::EXPIRE_AT_KEY => null,
-                PriceListScheduleResolver::PRICE_LISTS_KEY => [$priceListId],
-            ]
-        ]);
-    }
-
-    protected function createCombinedPriceListRepositoryMock()
-    {
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';
-        $this->combinedPriceListRepository = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->combinedPriceListRepository
+        $combinedPriceListRepository = $this->createMock(CombinedPriceListRepository::class);
+        $combinedPriceListRepository
             ->method('getCombinedPriceListsByPriceList')
-            ->willReturn([new CombinedPriceList()]);
-    }
+            ->willReturn([$cpl1, $cpl2]);
 
-    protected function createPriceListScheduleRepositoryMock()
-    {
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository';
-        $this->priceListScheduleRepository = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceListScheduleRepository->method('getSchedulesByCPL')->willReturn([]);
-    }
-
-    protected function createCombinedPriceListToPriceListRepositoryMock()
-    {
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository';
-        $this->CPLToPriceListRepository = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->CPLToPriceListRepository->method('getPriceListRelations')->willReturn([]);
-    }
-
-    protected function createDoctrineHelperMock()
-    {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $priceListScheduleRepository = $this->createMock(PriceListScheduleRepository::class);
+        $cplToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $cplActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
         $this->doctrineHelper->method('getEntityRepository')
             ->willReturnMap([
-                ['OroPricingBundle:CombinedPriceListActivationRule', $this->CPLActivationRuleRepository],
-                ['OroPricingBundle:CombinedPriceListToPriceList', $this->CPLToPriceListRepository],
-                ['OroPricingBundle:PriceListSchedule', $this->priceListScheduleRepository],
-                ['OroPricingBundle:CombinedPriceList', $this->combinedPriceListRepository],
+                [CombinedPriceListActivationRule::class, $cplActivationRuleRepository],
+                [CombinedPriceListToPriceList::class, $cplToPriceListRepository],
+                [PriceListSchedule::class, $priceListScheduleRepository],
+                [CombinedPriceList::class, $combinedPriceListRepository],
             ]);
-        /** @var \Doctrine\ORM\EntityManager| \PHPUnit\Framework\MockObject\MockObject $manager */
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $manager->expects($this->once())->method('persist');
-        $manager->expects($this->once())->method('flush');
-        $this->doctrineHelper->method('getEntityManagerForClass')->willReturn($manager);
+
+        $this->relationHelper->expects($this->exactly(2))
+            ->method('isFullChainCpl')
+            ->withConsecutive(
+                [$cpl1],
+                [$cpl2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                true,
+                false
+            );
+        $this->assertBuildByCombinedPriceList(
+            $priceList,
+            $cpl1,
+            $cplActivationRuleRepository,
+            $priceListScheduleRepository,
+            $cplToPriceListRepository
+        );
+
+        $this->builder->buildByPriceList($priceList);
     }
 
-    protected function createCombinedPriceListProviderMock()
+    public function testBuildByCombinedPriceList()
     {
-        $className = 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider';
-        $this->combinedPriceListProvider = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->combinedPriceListProvider->method('getCombinedPriceList')
-            ->with([])
-            ->willReturn(new CombinedPriceList());
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 7]);
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 15]);
+        $cpl->setName(md5('7'));
+
+        $priceListScheduleRepository = $this->createMock(PriceListScheduleRepository::class);
+        $cplToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $cplActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
+        $this->doctrineHelper->method('getEntityRepository')
+            ->willReturnMap([
+                [CombinedPriceListActivationRule::class, $cplActivationRuleRepository],
+                [CombinedPriceListToPriceList::class, $cplToPriceListRepository],
+                [PriceListSchedule::class, $priceListScheduleRepository]
+            ]);
+
+        $this->assertBuildByCombinedPriceList(
+            $priceList,
+            $cpl,
+            $cplActivationRuleRepository,
+            $priceListScheduleRepository,
+            $cplToPriceListRepository
+        );
+
+        $this->builder->buildByCombinedPriceList($cpl);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param CombinedPriceList $cpl
+     * @param \PHPUnit\Framework\MockObject\MockObject $cplActivationRuleRepository
+     * @param \PHPUnit\Framework\MockObject\MockObject $priceListScheduleRepository
+     * @param \PHPUnit\Framework\MockObject\MockObject $cplToPriceListRepository
+     * @param array $repositoryMap
+     */
+    private function assertBuildByCombinedPriceList(
+        PriceList $priceList,
+        CombinedPriceList $cpl,
+        \PHPUnit\Framework\MockObject\MockObject $cplActivationRuleRepository,
+        \PHPUnit\Framework\MockObject\MockObject $priceListScheduleRepository,
+        \PHPUnit\Framework\MockObject\MockObject $cplToPriceListRepository
+    ): void {
+        $cplActivationRuleRepository->expects($this->once())
+            ->method('deleteRulesByCPL')
+            ->with($cpl);
+
+        /** @var PriceListSchedule $schedule */
+        $schedule = $this->getEntity(PriceListSchedule::class, ['id' => 42]);
+        $schedule->setPriceList($priceList);
+        $schedules = [$schedule];
+        $priceListScheduleRepository->expects($this->once())
+            ->method('getSchedulesByCPL')
+            ->willReturn($schedules);
+        /** @var CombinedPriceListToPriceList $relation */
+        $relation = $this->getEntity(CombinedPriceListToPriceList::class, ['id' => 5]);
+        $relation->setCombinedPriceList($cpl);
+        $relation->setPriceList($priceList);
+        $relation->setMergeAllowed(false);
+        $relations = [$relation];
+        $cplToPriceListRepository->expects($this->once())
+            ->method('getPriceListRelations')
+            ->willReturn($relations);
+
+        $timestamp = 100;
+        $this->schedulerResolver->expects($this->once())
+            ->method('mergeSchedule')
+            ->with($schedules, $relations)
+            ->willReturn([
+                $timestamp => [
+                    PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                    PriceListScheduleResolver::EXPIRE_AT_KEY => null,
+                    PriceListScheduleResolver::PRICE_LISTS_KEY => [$priceList->getId()],
+                ]
+            ]);
+
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $manager */
+        $manager = $this->createMock(EntityManager::class);
+        $manager->expects($this->once())->method('persist');
+        $manager->expects($this->once())->method('flush');
+        $this->doctrineHelper
+            ->method('getEntityManagerForClass')
+            ->willReturn($manager);
+
+        $sequenceMember = new PriceListSequenceMember($priceList, false);
+        $this->combinedPriceListProvider->expects($this->once())
+            ->method('getCombinedPriceList')
+            ->with([$sequenceMember], [CombinedPriceListActivationPlanBuilder::SKIP_ACTIVATION_PLAN_BUILD => true])
+            ->willReturn($cpl);
     }
 }
