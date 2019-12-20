@@ -21,7 +21,7 @@
     {{ parent() }}
     {% if entity.draftUuid %}
         <span class="page-title-draft">
-            {{ UI.badge('oro.draft.draft.label'|trans, 'tentatively') }}
+            {{ UI.badge('oro.draft.label'|trans, 'tentatively') }}
         </span>
     {% endif %}
 {% endblock breadcrumbs %}
