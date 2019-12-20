@@ -20,8 +20,8 @@ layout:
             optionName: vars.blockContext
             optionValue:
                 product: '=data["product"]'
-                stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
-                matrixFormType: '=data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"], "gallery-view")'
+                stickers: '=data["product"] ? data["oro_product_stickers"].getStickers(data["product"]) : []'
+                matrixFormType: '=data["product"] ? data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"], "gallery-view") : null'
 
         - '@setOption':
             id: product_line_item_form_fields

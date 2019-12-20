@@ -93,6 +93,10 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         );
         $this->assertEquals(
             ['pageComponentName' => 'test_name1', 'imageSlides' => new ArrayCollection($data)],
+            $this->contentWidgetType->getWidgetData(clone $contentWidget)
+        );
+        $this->assertEquals(
+            ['pageComponentName' => 'test_name', 'imageSlides' => new ArrayCollection($data)],
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }

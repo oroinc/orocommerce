@@ -4,8 +4,8 @@ layout:
             id: content_widget_container
             optionName: vars.blockContext
             optionValue:
-                productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'
-                isPriceUnitsVisible: '=data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(data["product"])'
+                productPrices: '=data["product"] ? data["frontend_product_prices"].getByProduct(data["product"]) : []'
+                isPriceUnitsVisible: '=data["product"] ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(data["product"]) : false'
 
         - '@appendOption':
             id: product_price_container

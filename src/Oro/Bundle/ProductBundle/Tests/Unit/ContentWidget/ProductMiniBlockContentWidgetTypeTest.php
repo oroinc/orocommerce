@@ -7,10 +7,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager as Configuration;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
@@ -43,6 +45,9 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ProductMiniBlockContentWidgetType */
     private $contentWidgetType;
 
+    /** @var Configuration|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -63,7 +68,13 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->contentWidgetType = new ProductMiniBlockContentWidgetType($registry, $this->authorizationChecker);
+        $this->configManager = $this->createMock(Configuration::class);
+
+        $this->contentWidgetType = new ProductMiniBlockContentWidgetType(
+            $registry,
+            $this->authorizationChecker,
+            $this->configManager
+        );
     }
 
     public function testGetName(): void
@@ -94,7 +105,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget->setName('test_name');
         $contentWidget->setSettings(['product' => 42]);
 
-        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $product = $this->getEntity(\Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product::class, ['id' => 42]);
 
         $this->repository->expects($this->any())
             ->method('find')
@@ -108,6 +119,70 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
 
         $this->assertSame(
             ['product' => $isGranted ? $product : null, 'instanceNumber' => 0],
+            $this->contentWidgetType->getWidgetData($contentWidget)
+        );
+    }
+
+    public function testGetWidgetDataInventoryDisabled(): void
+    {
+        $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+        $contentWidget->setSettings(['product' => 42]);
+
+        $product = $this->getEntity(\Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product::class, ['id' => 42]);
+        $productInventotyStatus = new TestEnumValue('in_stock', 'in_stock');
+        $product->setInventoryStatus($productInventotyStatus);
+
+        $this->repository->expects($this->any())
+            ->method('find')
+            ->with(42)
+            ->willReturn($product);
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $product)
+            ->willReturn(true);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn([]);
+
+
+        $this->assertSame(
+            ['product' => null, 'instanceNumber' => 0],
+            $this->contentWidgetType->getWidgetData($contentWidget)
+        );
+    }
+
+    public function testGetWidgetDataInventoryEnabled(): void
+    {
+        $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+        $contentWidget->setSettings(['product' => 42]);
+
+        $product = $this->getEntity(\Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product::class, ['id' => 42]);
+        $productInventotyStatus = new TestEnumValue('in_stock', 'in_stock');
+        $product->setInventoryStatus($productInventotyStatus);
+
+        $this->repository->expects($this->any())
+            ->method('find')
+            ->with(42)
+            ->willReturn($product);
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $product)
+            ->willReturn(true);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.general_frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
+
+        $this->assertSame(
+            ['product' => $product, 'instanceNumber' => 0],
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }
@@ -132,7 +207,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget->setName('test_name');
         $contentWidget->setSettings(['product' => 42]);
 
-        $product = new Product();
+        $product = new \Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product();
 
         $this->repository->expects($this->any())
             ->method('find')

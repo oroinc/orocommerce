@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ContentWidget;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,14 +27,22 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
+    /**@var ConfigManager */
+    private $configManager;
+
     /**
      * @param ManagerRegistry $registry
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param ConfigManager $configManager
      */
-    public function __construct(ManagerRegistry $registry, AuthorizationCheckerInterface $authorizationChecker)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        AuthorizationCheckerInterface $authorizationChecker,
+        ConfigManager $configManager
+    ) {
         $this->registry = $registry;
         $this->authorizationChecker = $authorizationChecker;
+        $this->configManager = $configManager;
     }
 
     /** {@inheritdoc} */
@@ -93,12 +102,27 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
                 ->getRepository(Product::class)
                 ->find($product);
 
-            if (!$this->authorizationChecker->isGranted('VIEW', $data['product'])) {
+            if (!$this->authorizationChecker->isGranted('VIEW', $data['product']) ||
+                !$this->isInventoryStatusVisible($data['product'])
+            ) {
                 $data['product'] = null;
             }
         }
 
         return $data;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    private function isInventoryStatusVisible(Product $product): bool
+    {
+        $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
+
+        return $product->getInventoryStatus() ?
+            \in_array($product->getInventoryStatus()->getId(), $allowedStatuses, true) :
+            true;
     }
 
     /**

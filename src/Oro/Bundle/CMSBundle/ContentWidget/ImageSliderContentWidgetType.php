@@ -29,6 +29,9 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
     /** @var int */
     private $pointer = 0;
 
+    /** @var array */
+    private $widgetData = [];
+
     /**
      * @param ManagerRegistry $registry
      */
@@ -208,13 +211,19 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
      */
     public function getWidgetData(ContentWidget $contentWidget): array
     {
-        return array_merge(
-            $contentWidget->getSettings(),
-            [
-                'pageComponentName' => $contentWidget->getName() . ($this->pointer++ ?: ''),
-                'imageSlides' => new ArrayCollection($this->getImageSlides($contentWidget))
-            ]
-        );
+        $key = spl_object_hash($contentWidget);
+
+        if (!isset($this->widgetData[$key])) {
+            $this->widgetData[$key] = array_merge(
+                $contentWidget->getSettings(),
+                [
+                    'pageComponentName' => $contentWidget->getName() . ($this->pointer++ ?: ''),
+                    'imageSlides' => new ArrayCollection($this->getImageSlides($contentWidget))
+                ]
+            );
+        }
+
+        return $this->widgetData[$key];
     }
 
     /**

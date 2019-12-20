@@ -1646,5 +1646,6 @@ services:
         arguments:
             - '@doctrine'
             - '@security.authorization_checker'
+            - "@oro_config.manager"
         tags:
             - { name: oro_cms.content_widget.type }
