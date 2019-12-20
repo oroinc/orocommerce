@@ -48,6 +48,12 @@
 
     &select-control {
         margin-#{$end}: 5px;
+
+        .dropdown-menu {
+            &[x-out-of-boundaries] {
+                display: block;
+            }
+        }
     }
 
     &pn-views-container {
@@ -267,6 +273,10 @@
         .CodeMirror {
             width: 820px;
             height: 346px;
+
+            &-lines {
+                font-size: 12px;
+            }
         }
 
         .ui-dialog-content {
