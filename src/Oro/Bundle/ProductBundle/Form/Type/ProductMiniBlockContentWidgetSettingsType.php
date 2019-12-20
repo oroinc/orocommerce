@@ -43,6 +43,7 @@ class ProductMiniBlockContentWidgetSettingsType extends AbstractType
             [
                 'label' => 'oro.product.entity_label',
                 'required' => true,
+                'create_enabled' => false,
                 'block' => 'options',
                 'block_config' => [
                     'options' => [
