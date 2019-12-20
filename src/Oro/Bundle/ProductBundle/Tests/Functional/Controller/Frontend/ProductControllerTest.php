@@ -96,7 +96,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->assertStringMatchesFormat(
-            '%s/product_large/%s/' . $images[0]->getImage()->getId() . '/product-1',
+            '%s/product_large/%s/' . $images[0]->getImage()->getId() . '/product-1.jpg',
             $firstProductImage->attr('src')
         );
     }

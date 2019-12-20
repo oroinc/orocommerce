@@ -69,10 +69,12 @@
 {% endblock %}
 
 {% block wysiwyg_value_widget %}
+    <div class="editor-without-offset">
     {% for child in form.children %}
         {{ form_widget(child) }}
         {{ form_errors(child) }}
     {% endfor %}
+    </div>
 {% endblock %}
 
 {% block image_slide_collection_row %}
@@ -171,11 +173,11 @@
              }|json_encode }}"
              data-layout="separate"
         >
-            <h5 class="content-variant-item-title">
+            <label class="h5 content-variant-item-title">
                 {{ form_widget(form.default) }}
                 <span class="label label-info content-variant-item-default-label">{{ "oro.cms.contentblock.content_variants.default.label"|trans }}</span>
                 <span class="label content-variant-item-make-default-label">{{ "oro.cms.contentblock.content_variants.make_default.label"|trans }}</span>
-            </h5>
+            </label>
 
             {{ form_widget(form, {disabled: disabled}) }}
 

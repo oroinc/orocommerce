@@ -154,9 +154,14 @@ class UserLocalizationManager
     /**
      * @param Localization $localization
      * @param Website|null $website
+     * @param bool $forceSessionStart Sets localization to the session even if it was not started.
+     *  Enabled for ajax action but not for API to remain it stateless
      */
-    public function setCurrentLocalization(Localization $localization, Website $website = null)
-    {
+    public function setCurrentLocalization(
+        Localization $localization,
+        Website $website = null,
+        $forceSessionStart = false
+    ) {
         $website = $this->getWebsite($website);
         if (!$website) {
             return;
@@ -171,7 +176,7 @@ class UserLocalizationManager
             }
             $userWebsiteSettings->setLocalization($localization);
             $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
-        } elseif ($this->session->isStarted()) {
+        } elseif ($this->session->isStarted() || $forceSessionStart) {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
             $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);

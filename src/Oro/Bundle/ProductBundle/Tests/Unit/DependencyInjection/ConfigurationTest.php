@@ -219,6 +219,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'filters_display_settings_state' => [
                     'value' => 'collapsed',
                     'scope' => 'app'
+                ],
+                'original_file_names_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
                 ]
             ]
         ];

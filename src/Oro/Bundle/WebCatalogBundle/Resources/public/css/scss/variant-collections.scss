@@ -3,7 +3,7 @@
 .oro-content-variant-collection {
     .content-variant-item {
         position: relative;
-        padding: 10px 40px;
+        padding: 24px;
         background: $primary-900;
         border-radius: 4px;
 
@@ -31,8 +31,10 @@
     }
 
     .content-variant-item-title {
-        padding-bottom: 10px;
-        border-bottom: rgb(230, 230, 230) solid 1px;
+        display: block;
+        padding-bottom: 24px;
+        margin-bottom: 24px;
+        border-bottom: $additional-extra-lighten solid 1px;
 
         input[type="radio"] {
             margin-top: -2px;
@@ -59,7 +61,7 @@
             display: block !important;
 
             .row-oro {
-                background: $primary-inverse !important;
+                background: $primary-860 !important;
             }
         }
     }

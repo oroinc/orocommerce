@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
+    const DefaultComponent = require('orocms/js/app/grapesjs/components/default');
     const ContentBlockComponent = require('orocms/js/app/grapesjs/components/content-block');
     const DigitalAssetsComponent = require('orocms/js/app/grapesjs/components/digital-assets');
     const ContentWidgetComponent = require('orocms/js/app/grapesjs/components/content-widget');
@@ -205,6 +206,7 @@ define(function(require) {
          * Add components
          */
         addComponents: function() {
+            new DefaultComponent(this.builder);
             new TableComponents(this.builder);
             new TableResponsiveComponent(this.builder);
             new LinkButtonComponent(this.builder);

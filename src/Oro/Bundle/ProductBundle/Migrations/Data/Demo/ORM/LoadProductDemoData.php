@@ -176,7 +176,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
             $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-            $this->addImageToProduct($product, $manager, $locator, $row['sku'], $allImageTypes);
+            $this->addImageToProduct($product, $manager, $locator, $row['sku'], $row['name'], $allImageTypes);
 
             $manager->persist($product);
             $loadedProducts[] = $product;
@@ -227,17 +227,21 @@ class LoadProductDemoData extends AbstractFixture implements
      * @param ObjectManager $manager
      * @param FileLocator $locator
      * @param string $sku
+     * @param string $name
      * @param array|null $types
      * @return null|ProductImage
      */
-    protected function getProductImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku, $types)
+    protected function getProductImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku, $name, $types)
     {
         $productImage = null;
 
         $user = $this->getFirstUser($manager);
 
         try {
-            $imagePath = $locator->locate(sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            $fileName = $this->getImageFileName($sku, $name);
+            $imagePath = $locator->locate(
+                sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $fileName)
+            );
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
@@ -264,7 +268,7 @@ class LoadProductDemoData extends AbstractFixture implements
             $manager->persist($image);
             $manager->flush();
 
-            $this->writeFilteredDigitalAssets($file, $locator, $sku);
+            $this->writeFilteredDigitalAssets($file, $locator, $sku, $name);
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
@@ -296,7 +300,7 @@ class LoadProductDemoData extends AbstractFixture implements
     protected function getProductUnit(EntityManager $manager, $code)
     {
         if (!array_key_exists($code, $this->productUnits)) {
-            $this->productUnits[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
+            $this->productUnits[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 
         return $this->productUnits[$code];
@@ -314,23 +318,25 @@ class LoadProductDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param Product       $product
+     * @param Product $product
      * @param ObjectManager $manager
-     * @param FileLocator   $locator
-     * @param string        $sku
-     * @param array         $allImageTypes
+     * @param FileLocator $locator
+     * @param string $sku
+     * @param string $name
+     * @param array $allImageTypes
      */
     private function addImageToProduct(
         $product,
         $manager,
         $locator,
         $sku,
+        $name,
         $allImageTypes
     ) {
         $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
         $publicMediaCacheManager = $this->container->get('oro_attachment.manager.public_mediacache');
 
-        $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $allImageTypes);
+        $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $name, $allImageTypes);
         $imageDimensionsProvider = $this->container->get('oro_product.provider.product_images_dimensions');
         if ($productImage) {
             $product->addImage($productImage);
@@ -339,7 +345,7 @@ class LoadProductDemoData extends AbstractFixture implements
                 $filterName = $dimension->getName();
                 $filesystem = $this->getFilesystem($locator, $filterName);
 
-                $filteredImage = $this->getResizedProductImageFile($filesystem, $sku);
+                $filteredImage = $this->getResizedProductImageFile($filesystem, $sku, $name);
                 if (!$filteredImage) {
                     continue;
                 }
@@ -355,8 +361,9 @@ class LoadProductDemoData extends AbstractFixture implements
      * @param AttachmentFile $file
      * @param FileLocator $locator
      * @param string $sku
+     * @param string $name
      */
-    private function writeFilteredDigitalAssets(AttachmentFile $file, $locator, $sku): void
+    private function writeFilteredDigitalAssets(AttachmentFile $file, $locator, $sku, $name): void
     {
         $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
         $cacheManager = $this->container->get('oro_attachment.manager.protected_mediacache');
@@ -369,7 +376,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
             $filesystem = $this->getFilesystem($locator, $filter);
 
-            $filteredImage = $this->getResizedProductImageFile($filesystem, $sku);
+            $filteredImage = $this->getResizedProductImageFile($filesystem, $sku, $name);
             if (!$filteredImage) {
                 continue;
             }
@@ -399,14 +406,15 @@ class LoadProductDemoData extends AbstractFixture implements
     /**
      * @param Filesystem $filesystem
      * @param string $sku
+     * @param string $name
      * @return null|File
      */
-    protected function getResizedProductImageFile(Filesystem $filesystem, $sku)
+    protected function getResizedProductImageFile(Filesystem $filesystem, $sku, $name)
     {
         $file = null;
 
         try {
-            $file = $filesystem->get(sprintf('%s.jpeg', $sku));
+            $file = $filesystem->get(sprintf('%s.jpeg', $this->getImageFileName($sku, $name)));
         } catch (\Exception $e) {
             //image not found
         }
@@ -434,5 +442,15 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         return $this->filesystems[$filterName];
+    }
+
+    /**
+     * @param string $sku
+     * @param string $name
+     * @return string
+     */
+    protected function getImageFileName($sku, $name): string
+    {
+        return trim($sku . '-' . preg_replace('/\W+/', '-', $name), '-');
     }
 }

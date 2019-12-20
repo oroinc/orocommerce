@@ -11,10 +11,10 @@ Feature: Pricing Localization
 
   Scenario: Check translation of product unit in product catalog
     Given I am on the homepage
-    And I click "Localization Switcher"
-    And I select "Localization 1" localization
     When type "PSKU1" in "search"
     And I click "Search Button"
+    And I click "Localization Switcher"
+    When I select "Localization 1" localization
     Then I should see "Listed Price: US$6.00 / item (lang1)" for "PSKU1" product
     And I should see "Your Price: US$6.00 / item (lang1)" for "PSKU1" product
 

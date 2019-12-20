@@ -354,7 +354,11 @@ oro:
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
                 filters_display_settings.title: 'Display Settings'
+                images_general.title: 'General'
             fields:
+                original_file_names_enabled:
+                    label: 'Enable Original File Names'
+                    tooltip: 'When enabled, the original image file name will be appended to the system-generated hash value.'
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -514,6 +518,9 @@ oro:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
                    In order to update the existing images please run the following command:
+                storage_check_space: >
+                    This configuration option may affect application disk space usage, please check with your
+                    system administrator if you have enough space available.
         grid:
             action:
                 duplicate: Duplicate
