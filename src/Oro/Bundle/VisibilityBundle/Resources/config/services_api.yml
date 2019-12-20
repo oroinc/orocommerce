@@ -1,5 +1,5 @@
 services:
-    oro_visibility.api.frontend.product_visibility_query_modifier:
+    oro_visibility.api.product_visibility_query_modifier:
         class: Oro\Bundle\VisibilityBundle\Api\ProductVisibilityQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
@@ -7,7 +7,7 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_visibility.api.frontend.category_visibility_query_modifier:
+    oro_visibility.api.category_visibility_query_modifier:
         class: Oro\Bundle\VisibilityBundle\Api\CategoryVisibilityQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'

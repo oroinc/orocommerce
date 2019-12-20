@@ -6,6 +6,8 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -86,5 +88,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $textAndElementPresentedOnPage,
             sprintf('text or element "%s" for product with SKU "%s" is present or visible', $text, $Name)
         );
+    }
+
+    /**
+     * @Then /^tree level of category "(?P<category>[^"]*)" is (?P<level>[0-9]+)$/
+     *
+     * @param string $category
+     * @param int $level
+     */
+    public function treeLevelOfCategoryIs(string $category, int $level): void
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        /** @var Organization $organization */
+        $organization = $doctrine->getManagerForClass(Organization::class)
+            ->getRepository(Organization::class)
+            ->getFirst();
+
+        $entityManager = $doctrine->getManagerForClass(Category::class);
+
+        /** @var Category $category */
+        $category = $entityManager
+            ->getRepository(Category::class)
+            ->findOneByDefaultTitle($category, $organization);
+
+        $entityManager->refresh($category);
+
+        $this->assertNotNull($category, sprintf('Category %s not found', $category));
+
+        $this->assertEquals($level, $category->getLevel());
     }
 }

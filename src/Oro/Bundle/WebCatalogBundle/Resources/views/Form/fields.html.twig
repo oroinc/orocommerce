@@ -13,11 +13,11 @@
          }|json_encode }}"
          data-layout="separate"
     >
-        <h5 class="content-variant-item-title">
+        <label class="h5 content-variant-item-title">
             {{ form_widget(form.default) }}
             {{ oro_web_catalog_content_variant_title(form.type.vars.data)|trans }}
             <span class="label label-info content-variant-item-default-label">{{ "oro.webcatalog.contentvariant.default.label"|trans }}</span>
-        </h5>
+        </label>
 
         {{ form_widget(form, {disabled: disabled}) }}
 

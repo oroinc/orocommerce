@@ -31,6 +31,7 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->searchRepository = $this->createMock(ProductRepository::class);
+        $this->cache = $this->createMock(CacheProvider::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -38,49 +39,60 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager);
 
         $this->categoriesProductsProvider = new CategoriesProductsProvider(
-            $registry,
+            $doctrine,
             $this->searchRepository
         );
-
-        $this->cache = $this->createMock(CacheProvider::class);
         $this->categoriesProductsProvider->setCache($this->cache);
     }
 
     public function testGetCountByCategories()
     {
+        $categoriesIds = [1, 2, 3];
+        $result = [1 => 35];
+
         $this->categoryRepository
             ->expects($this->once())
             ->method('findBy')
-            ->with(['id' => [1, 2, 3]])
+            ->with(['id' => $categoriesIds])
             ->willReturn([]);
 
         $this->searchRepository
             ->expects($this->once())
             ->method('getCategoriesCounts')
             ->with([])
-            ->willReturn(35);
+            ->willReturn($result);
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache
+            ->expects($this->once())
+            ->method('fetch')
+            ->with('categories_products_1_2_3')
+            ->willReturn(false);
+
+        $this->cache
+            ->expects($this->once())
             ->method('save');
 
-        $actual = $this->categoriesProductsProvider->getCountByCategories([1, 2, 3]);
-        $this->assertEquals(35, $actual);
+        $actual = $this->categoriesProductsProvider->getCountByCategories($categoriesIds);
+        $this->assertEquals($result, $actual);
     }
 
     public function testGetCountByCategoriesCached()
     {
+        $categoriesIds = [1, 2, 3];
+        $result = [1 => 35];
+
         $this->cache
             ->expects($this->once())
             ->method('fetch')
-            ->with('cacheVal_categories_products_1_2_3')
-            ->willReturn(35);
+            ->with('categories_products_1_2_3')
+            ->willReturn($result);
 
         $this->categoryRepository
             ->expects($this->never())
@@ -94,7 +106,7 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('save');
 
-        $actual = $this->categoriesProductsProvider->getCountByCategories([1, 2, 3]);
-        $this->assertEquals(35, $actual);
+        $actual = $this->categoriesProductsProvider->getCountByCategories($categoriesIds);
+        $this->assertEquals($result, $actual);
     }
 }

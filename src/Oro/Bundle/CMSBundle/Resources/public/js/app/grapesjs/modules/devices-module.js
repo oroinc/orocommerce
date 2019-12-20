@@ -6,6 +6,17 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const viewportManager = require('oroui/js/viewport-manager');
 
+    function titleCase(str) {
+        const splitStr = str.toLowerCase().split(' ');
+        for (let i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
+
     /**
      * Create panel manager instance
      * @param options
@@ -184,7 +195,7 @@ define(function(require) {
          * @returns {string}
          */
         concatTitle: function(breakpoint, options) {
-            let str = breakpoint.name + ' view';
+            let str = titleCase(breakpoint.name.replace('-', ' '));
 
             if (breakpoint.max) {
                 str += ': ' + breakpoint.max;

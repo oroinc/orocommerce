@@ -12,4 +12,4 @@ services:
         arguments:
             - '@oro_locale.manager.localization'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\LocaleBundle\Entity\Localization }

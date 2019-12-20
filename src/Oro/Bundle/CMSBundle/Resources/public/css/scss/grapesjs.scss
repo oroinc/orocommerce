@@ -79,14 +79,21 @@
 
     &sm-label {
         font-size: $base-font-size;
-        color: $primary-600;
+        color: $primary-200;
 
         &.#{$app-prefix}color-warn {
-            color: $primary-100;
+            color: $primary-200;
         }
 
         &.#{$app-prefix}four-color {
             color: $warning-darken;
+        }
+    }
+
+    &sm-composite,
+    &sm-stack {
+        > .#{$app-prefix}sm-label {
+            font-weight: 700;
         }
     }
 
@@ -252,7 +259,7 @@
 
 // Additional styles for fullscreen mode
 .page-content-editor {
-    margin: -12px;
+    margin: -$grapesjs-content-editor-offset;
 }
 
 .ui-dialog {

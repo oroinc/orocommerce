@@ -29,6 +29,11 @@ $canvas-pattern-position: 0 0, 0 10px, 10px -10px, -10px 0px !default;
 
 $leftWidth: 23%;
 
-$fontSizeS: 0.9rem;
+$mainFont: $font-family-sans-serif;
+$fontSizeS: $base-font-size;
 
 $paddElClm: 3px 5px;
+
+$colorYell: $extra;
+
+$grapesjs-content-editor-offset: 24px !default;

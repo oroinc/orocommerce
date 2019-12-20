@@ -67,6 +67,7 @@ class Configuration implements ConfigurationInterface
     const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
     const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
     const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
+    const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
 
     /**
      * {@inheritDoc}
@@ -167,6 +168,10 @@ class Configuration implements ConfigurationInterface
                 'filters_display_settings_state' => [
                     'type' => 'string',
                     'value' => static::FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED
+                ],
+                static::ORIGINAL_FILE_NAMES_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
                 ]
             ]
         );

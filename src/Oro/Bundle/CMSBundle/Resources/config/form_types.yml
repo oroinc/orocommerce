@@ -56,6 +56,14 @@ services:
         tags:
             - { name: form.type }
 
+    oro_cms.form.type.content_widget_layout_select:
+        class: 'Oro\Bundle\CMSBundle\Form\Type\ContentWidgetLayoutSelectType'
+        arguments:
+            - '@oro_cms.provider.content_widget_layout'
+            - '@translator'
+        tags:
+            - { name: form.type }
+
     oro_cms.form.handler.content_widget:
         class: 'Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler'
         arguments:

@@ -1,0 +1,25 @@
+data:
+    type: productimages
+    id: '<toString(@product-1->images->first->id)>'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        types:
+            data:
+                -
+                    type: productimagetypes
+                    id: '<toString(@product-1->images->first->types->first->id)>'
+        image:
+            data:
+                type: files
+                id: '{fileId}'
+included:
+    -
+        type: files
+        id: '{fileId}'
+        attributes:
+            filePath:
+                product_small: '/media/cache/attachment/resize/product_small/09499886b9fe19ea2560622082d43093/{fileId}/product-1-product-1-original.jpg'
+                product_large: '/media/cache/attachment/resize/product_large/f8ad5f04db8a20c593bca34d27fd6799/{fileId}/product-1-product-1-original.jpg'

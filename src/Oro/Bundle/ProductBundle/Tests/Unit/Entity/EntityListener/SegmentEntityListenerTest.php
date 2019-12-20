@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\EntityListener;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
 class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
-    private $productCacheCleaner;
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productCache;
 
     /** @var SegmentEntityListener */
     private $entityListener;
@@ -20,25 +20,25 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->productCacheCleaner = $this->createMock(DataProviderCacheCleaner::class);
+        $this->productCache = $this->createMock(CacheProvider::class);
 
-        $this->entityListener = new SegmentEntityListener($this->productCacheCleaner);
+        $this->entityListener = new SegmentEntityListener($this->productCache);
     }
 
     public function testPreRemove()
     {
-        $this->productCacheCleaner
+        $this->productCache
             ->expects($this->once())
-            ->method('clearCache');
+            ->method('deleteAll');
 
         $this->entityListener->preRemove(new Segment());
     }
 
     public function testPostPersist()
     {
-        $this->productCacheCleaner
+        $this->productCache
             ->expects($this->once())
-            ->method('clearCache');
+            ->method('deleteAll');
 
         $this->entityListener->postPersist(new Segment());
     }
@@ -50,9 +50,9 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityChangeSet')
             ->willReturn([1]);
 
-        $this->productCacheCleaner
+        $this->productCache
             ->expects($this->once())
-            ->method('clearCache');
+            ->method('deleteAll');
 
         $this->entityListener->preUpdate(new Segment(), $eventArgs);
     }
@@ -64,9 +64,9 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityChangeSet')
             ->willReturn([]);
 
-        $this->productCacheCleaner
+        $this->productCache
             ->expects($this->never())
-            ->method('clearCache');
+            ->method('deleteAll');
 
         $this->entityListener->preUpdate(new Segment(), $eventArgs);
     }

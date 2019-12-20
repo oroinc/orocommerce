@@ -17,10 +17,6 @@
         "oro/customer-portal": "4.0.*",
         "box/spout": "2.7.*",
         "myclabs/deep-copy": "1.8.*",
-        "npm-asset/grapesjs": "0.15.3-RC.2",
-        "npm-asset/grapesjs-preset-webpage": "0.1.11",
-        "bower-asset/jquery-creditcardvalidator": "1.0",
-        "bower-asset/elevatezoom3": "3.0.8.1",
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
@@ -46,15 +42,17 @@
         "oro": {
             "type": "composer",
             "url": "https://packagist.orocrm.com"
-        },
-        "asset-packagist": {
-            "type": "composer",
-            "url": "https://asset-packagist.orocrm.com"
         }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
+        "npm": {
+            "grapesjs": "0.15.3-rc.2",
+            "grapesjs-preset-webpage": "0.1.11",
+            "@oroinc/jquery-creditcardvalidator": "1.1",
+            "@oroinc/elevatezoom": "3.0.81"
+        },
         "symfony": {
             "require": "4.4.*"
         },

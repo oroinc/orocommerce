@@ -313,7 +313,7 @@ Example:
       "productType": "simple",
       "featured": true,
       "newArrival": false,
-      "availability_date": "01-01-2018"
+      "availability_date": "2018-01-01"
     },
     "relationships": {
       "owner": {

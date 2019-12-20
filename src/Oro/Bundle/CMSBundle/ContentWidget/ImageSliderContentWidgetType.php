@@ -234,4 +234,12 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
     {
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
+    {
+        return $twig->render('@OroCMS/ImageSliderContentWidget/widget.html.twig', $this->getWidgetData($contentWidget));
+    }
 }

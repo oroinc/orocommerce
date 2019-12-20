@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CMSBundle\Twig;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
+use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -11,22 +14,17 @@ use Twig\TwigFilter;
  * Provides a Twig filter to render a content widget type label:
  *   - content_widget_type_label
  */
-class ContentWidgetTypeExtension extends AbstractExtension
+class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var ContentWidgetTypeRegistry */
-    private $contentWidgetTypeRegistry;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
+     * @param ContainerInterface $container
      */
-    public function __construct(TranslatorInterface $translator, ContentWidgetTypeRegistry $contentWidgetTypeRegistry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->translator = $translator;
-        $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
+        $this->container = $container;
     }
 
     /**
@@ -36,6 +34,7 @@ class ContentWidgetTypeExtension extends AbstractExtension
     {
         return [
             new TwigFilter('content_widget_type_label', [$this, 'getContentWidgetTypeLabel']),
+            new TwigFilter('content_widget_layout_label', [$this, 'getContentWidgetLayoutLabel']),
         ];
     }
 
@@ -50,8 +49,36 @@ class ContentWidgetTypeExtension extends AbstractExtension
             return $widgetType;
         }
 
-        $contentWidgetType = $this->contentWidgetTypeRegistry->getWidgetType($widgetType);
+        $contentWidgetType = $this->container->get(ContentWidgetTypeRegistry::class)
+            ->getWidgetType($widgetType);
 
-        return $contentWidgetType ? $this->translator->trans($contentWidgetType->getLabel()) : $widgetType;
+        return $contentWidgetType
+            ? $this->container->get(TranslatorInterface::class)->trans($contentWidgetType->getLabel())
+            : $widgetType;
+    }
+
+    /**
+     * @param string $widgetType
+     * @param string $layout
+     *
+     * @return string
+     */
+    public function getContentWidgetLayoutLabel(string $layout, string $widgetType): string
+    {
+        $label = $this->container->get(ContentWidgetLayoutProvider::class)->getWidgetLayoutLabel($widgetType, $layout);
+
+        return $this->container->get(TranslatorInterface::class)->trans($label);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices(): array
+    {
+        return [
+            TranslatorInterface::class,
+            ContentWidgetTypeRegistry::class,
+            ContentWidgetLayoutProvider::class,
+        ];
     }
 }

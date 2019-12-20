@@ -73,6 +73,10 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
             $categories[] = $this->getEntity(Category::class, $categoryData);
         }
 
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->willReturn(false);
+
         $user = new CustomerUser();
         $organization = $this->getEntity(Organization::class, ['id' => 7]);
 
@@ -89,7 +93,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
             ->with($user)
             ->willReturn($categories);
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects($this->once())
             ->method('save');
 
         $actual = $this->featuredCategoriesProvider->getAll($categoryIds);
@@ -102,7 +106,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->cache->expects($this->once())
             ->method('fetch')
-            ->with('cacheVal_featured_categories__0_0_0_1_7')
+            ->with('featured_categories__0_0_0_1_7')
             ->willReturn($result);
 
         $user = new CustomerUser();

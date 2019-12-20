@@ -1,4 +1,6 @@
 css:
     inputs:
+        # Disable FA from platform
+        # It have used FA from GJS instead 
         - 'bundles/npmassets/font-awesome/scss/font-awesome.scss': ~
         - 'bundles/orocms/css/scss/main.scss'

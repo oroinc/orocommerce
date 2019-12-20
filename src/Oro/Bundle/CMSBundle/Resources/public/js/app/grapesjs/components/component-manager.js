@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
+    const DefaultComponent = require('orocms/js/app/grapesjs/components/default');
     const ContentBlockComponent = require('orocms/js/app/grapesjs/components/content-block');
     const DigitalAssetsComponent = require('orocms/js/app/grapesjs/components/digital-assets');
     const ContentWidgetComponent = require('orocms/js/app/grapesjs/components/content-widget');
@@ -9,6 +10,7 @@ define(function(require) {
     const TableResponsiveComponent = require('orocms/js/app/grapesjs/components/table-responsive');
     const LinkButtonComponent = require('orocms/js/app/grapesjs/components/link-button');
     const CodeComponent = require('orocms/js/app/grapesjs/components/code');
+    const TextBasicComponent = require('orocms/js/app/grapesjs/components/text-basic');
     const selectTemplate = require('tpl-loader!orocms/templates/grapesjs-select-action.html');
 
     /**
@@ -57,6 +59,7 @@ define(function(require) {
         RichTextEditor: null,
 
         editorFormats: [
+            'link',
             'formatBlock',
             'insertOrderedList',
             'insertUnorderedList',
@@ -141,6 +144,23 @@ define(function(require) {
                 }
             });
 
+            this.RichTextEditor.add('link', {
+                icon: '<i class="fa fa-link"></i>',
+                name: 'link',
+                attributes: {
+                    title: 'Link'
+                },
+                result: rte => {
+                    const anchor = rte.selection().anchorNode;
+                    const nextSibling = anchor && anchor.nextSibling;
+                    if (nextSibling && nextSibling.nodeName === 'A') {
+                        rte.exec('unlink');
+                    } else {
+                        rte.insertHTML(`<a class="link" href="">${rte.selection()}</a>`);
+                    }
+                }
+            });
+
             this.RichTextEditor.add('insertOrderedList', {
                 icon: '<i class="fa fa-list-ol"></i>',
                 attributes: {
@@ -186,6 +206,7 @@ define(function(require) {
          * Add components
          */
         addComponents: function() {
+            new DefaultComponent(this.builder);
             new TableComponents(this.builder);
             new TableResponsiveComponent(this.builder);
             new LinkButtonComponent(this.builder);
@@ -197,6 +218,7 @@ define(function(require) {
                 exclude: this.excludeContentWidgetAlias
             });
             new DigitalAssetsComponent(this.builder);
+            new TextBasicComponent(this.builder);
         }
     };
 

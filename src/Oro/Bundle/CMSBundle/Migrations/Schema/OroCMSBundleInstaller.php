@@ -51,7 +51,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -371,7 +371,7 @@ class OroCMSBundleInstaller implements
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('widget_type', 'string', ['length' => 255]);
-        $table->addColumn('template', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('layout', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('settings', 'array');
         $table->addUniqueIndex(['organization_id', 'name'], 'uidx_oro_cms_content_widget');
         $table->setPrimaryKey(['id']);

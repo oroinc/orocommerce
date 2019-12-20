@@ -46,4 +46,11 @@ interface ContentWidgetTypeInterface
      * @return bool
      */
     public function isInline(): bool;
+
+    /**
+     * @param ContentWidget $contentWidget
+     * @param Environment $twig
+     * @return string
+     */
+    public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string;
 }

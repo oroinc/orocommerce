@@ -2,29 +2,33 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
+/**
+ * Schedules product reindex and clears a cache for category layout data provider
+ * when a Category entity is created, removed or changed.
+ */
 class CategoryEntityListener
 {
     /** @var ProductIndexScheduler */
     private $productIndexScheduler;
 
-    /** @var DataProviderCacheCleaner */
-    private $categoryCacheCleaner;
+    /** @var CacheProvider */
+    private $categoryCache;
 
     /**
      * @param ProductIndexScheduler $productIndexScheduler
-     * @param DataProviderCacheCleaner $cacheCleaner
+     * @param CacheProvider $categoryCache
      */
     public function __construct(
         ProductIndexScheduler $productIndexScheduler,
-        DataProviderCacheCleaner $cacheCleaner
+        CacheProvider $categoryCache
     ) {
         $this->productIndexScheduler = $productIndexScheduler;
-        $this->categoryCacheCleaner = $cacheCleaner;
+        $this->categoryCache = $categoryCache;
     }
 
     /**
@@ -33,7 +37,7 @@ class CategoryEntityListener
     public function preRemove(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCacheCleaner->clearCache();
+        $this->categoryCache->deleteAll();
     }
 
     /**
@@ -42,7 +46,7 @@ class CategoryEntityListener
     public function postPersist(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCacheCleaner->clearCache();
+        $this->categoryCache->deleteAll();
     }
 
     /**
@@ -53,7 +57,7 @@ class CategoryEntityListener
     {
         if ($eventArgs->getEntityChangeSet()) {
             $this->productIndexScheduler->scheduleProductsReindex([$category]);
-            $this->categoryCacheCleaner->clearCache();
+            $this->categoryCache->deleteAll();
         }
     }
 }

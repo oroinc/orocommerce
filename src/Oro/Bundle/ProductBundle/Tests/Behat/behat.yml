@@ -591,6 +591,14 @@ oro_behat_extension:
             type: css
             locator: 'div[data-ftid="oro_web_catalog_content_node_scopes"] input[data-name="field__customer"]'
             element: Select2Entity
+          Landing Page:
+            type: css
+            locator: 'div.content-variant-item:first-child input[data-name="field__cms-page"]'
+            element: Select2Entity
+          Product:
+            type: css
+            locator: 'div.content-variant-item:first-child input[data-name="field__product-page-product"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition .btn-close'
@@ -732,7 +740,7 @@ oro_behat_extension:
     Product Collection Variant Label:
       selector:
         type: 'xpath'
-        locator: '//h5[contains(., "Product Collection")]'
+        locator: '//label[contains(@class,"content-variant-item-title") and contains(., "Product Collection")]'
 
     Edit within Web Catalog:
       selector: 'a.operation-button[title="Edit within Web Catalog"]'
@@ -1068,6 +1076,7 @@ oro_behat_extension:
       options:
         mapping:
           File: 'product_images[oro_product___product_image_watermark_file][value][file]'
+          Use Default: 'product_images[oro_product___product_image_watermark_file][use_parent_scope_value]'
 
     Product Form Images Section:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

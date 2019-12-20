@@ -212,7 +212,7 @@ datagrids:
                     - contentWidget.name
                     - contentWidget.description
                     - contentWidget.widgetType
-                    - contentWidget.template
+                    - contentWidget.layout
                     - contentWidget.createdAt
                     - contentWidget.updatedAt
                 from:
@@ -228,9 +228,12 @@ datagrids:
             widgetType:
                 label: oro.cms.contentwidget.widget_type.label
                 frontend_type: select
-                choices:       '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
-            template:
-                label: oro.cms.contentwidget.template.label
+                choices: '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
+            layout:
+                label: oro.cms.contentwidget.layout.label
+                type: twig
+                frontend_type: html
+                template: OroCMSBundle:ContentWidget:Datagrid/layout.html.twig
             createdAt:
                 label: oro.cms.contentwidget.created_at.label
                 frontend_type: datetime
@@ -245,8 +248,8 @@ datagrids:
                     data_name: contentWidget.description
                 widgetType:
                     data_name: contentWidget.widgetType
-                template:
-                    data_name: contentWidget.template
+                layout:
+                    data_name: contentWidget.layout
                 createdAt:
                     data_name: contentWidget.createdAt
                 updatedAt:
@@ -266,9 +269,6 @@ datagrids:
                     data_name: contentWidget.widgetType
                     autocomplete_alias: oro_cms_content_widget_types
                     renderedPropertyName: 'label'
-                template:
-                    type: string
-                    data_name: contentWidget.template
                 createdAt:
                     type: datetime
                     data_name: contentWidget.createdAt

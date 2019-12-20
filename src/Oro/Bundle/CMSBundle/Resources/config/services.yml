@@ -44,6 +44,39 @@ services:
             - { name: layout.data_provider, alias: content_block }
             - { name: monolog.logger, channel: oro_cms }
 
+    oro_cms.layout_theme_config_extension.widgets:
+        class: 'Oro\Bundle\CMSBundle\Layout\Extension\WidgetsThemeConfigurationExtension'
+        tags:
+            - { name: layout.theme_config_extension }
+
+    oro_cms.loader.content_widget_path_provider:
+        class: Oro\Bundle\CMSBundle\Layout\PathProvider\ContentWidgetPathProvider
+        arguments:
+            - '@oro_layout.theme_manager'
+        tags:
+            - { name: layout.resource.path_provider }
+
+    oro_cms.layout_extension.content_widget:
+        class: Oro\Bundle\CMSBundle\Layout\Extension\ContentWidgetExtension
+        arguments:
+            - '@oro_layout.loader'
+            - '@oro_layout.dependency_initializer'
+            - '@oro_layout.loader.path_provider'
+            - '@oro_layout.theme_extension.resource_provider.theme'
+        calls:
+            - [addVisitor, ['@oro_layout.theme_extension.visitor.import']]
+
+    oro_rfp.layout.data_provider.content_widget:
+        class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\ContentWidgetDataProvider'
+        arguments:
+            - '@oro_cms.content_widget.type_registry'
+            - '@twig'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: layout.data_provider, alias: content_widget_data }
+            - { name: monolog.logger, channel: oro_cms }
+
     oro_cms.content_variant_type.cms_page:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
         public: false
@@ -110,8 +143,7 @@ services:
     oro_cms.twig.content_widget_type_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
         arguments:
-            - '@translator'
-            - '@oro_cms.content_widget.type_registry'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -230,6 +262,20 @@ services:
             - '@oro_cms.content_widget.type_registry'
             - '@translator'
 
+    oro_cms.provider.content_widget_entity_name:
+        class: Oro\Bundle\CMSBundle\Provider\ContentWidgetEntityNameProvider
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_cms.provider.content_widget_layout:
+        class: Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro.cache.memory_cache_chain'
+
+    Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider:
+        alias: oro_cms.provider.content_widget_layout
+
     oro_cms.acl.voter.frontend_quote_permission_voter:
         class: Oro\Bundle\CMSBundle\Acl\Voter\ContentWidgetVoter
         arguments:
@@ -247,12 +293,17 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
+    oro_cms.layout_factory_builder:
+        synthetic: true
+
+    oro_cms.layout_manager:
+        synthetic: true
+
     oro_cms.content_widget.renderer:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer
         arguments:
-            - '@oro_cms.content_widget.type_registry'
             - '@doctrine'
-            - '@twig'
+            - '@oro_cms.layout_manager'
         calls:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setLogger, ['@logger']]

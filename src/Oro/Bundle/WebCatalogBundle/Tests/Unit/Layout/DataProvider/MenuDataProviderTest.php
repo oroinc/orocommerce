@@ -58,6 +58,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolver::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->cache = $this->createMock(CacheProvider::class);
 
         $this->menuDataProvider = new MenuDataProvider(
             $this->doctrine,
@@ -67,9 +68,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->requestWebContentScopeProvider,
             $this->websiteManager
         );
-
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
-        $this->menuDataProvider->setCache($this->cacheProvider);
+        $this->menuDataProvider->setCache($this->cache);
     }
 
     /**
@@ -132,7 +131,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->cacheProvider->expects($this->any())
+        $this->cache->expects($this->any())
             ->method('fetch')
             ->willReturn(false);
 
@@ -190,7 +189,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->cacheProvider->expects($this->any())
+        $this->cache->expects($this->any())
             ->method('fetch')
             ->willReturn(false);
 
@@ -232,10 +231,10 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($website)
             ->willReturn($rootNode);
 
-        $this->cacheProvider->expects($this->at(0))
+        $this->cache->expects($this->at(0))
             ->method('fetch')
             ->with(sprintf(
-                'cacheVal_menu_items_%s_1_77_42',
+                'menu_items_%s_1_77_42',
                 null !== $maxNodesNestedLevel ? (string)$maxNodesNestedLevel : ''
             ))
             ->willReturn([MenuDataProvider::CHILDREN => $expectedData]);

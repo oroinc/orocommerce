@@ -61,10 +61,6 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->with(serialize($parts))
             ->willReturn('encrypted');
 
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($id)
-            ->willReturn(true);
         $storedData = [
             RuleCache::DQL_PARTS_KEY => $parts,
             RuleCache::PARAMETERS_KEY => ['testParam' => 1],
@@ -101,15 +97,12 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->with(serialize($parts))
             ->willReturn('encrypted');
 
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($id)
-            ->willReturn(true);
         $storedData = [
             RuleCache::DQL_PARTS_KEY => $parts,
             RuleCache::PARAMETERS_KEY => ['testParam' => 1],
             RuleCache::HASH => md5('incorrect')
         ];
+
         $this->cache->expects($this->once())
             ->method('fetch')
             ->with($id)
@@ -124,21 +117,14 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     {
         $id = 'test';
         $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($id)
+            ->method('fetch')
             ->willReturn(false);
-        $this->cache->expects($this->never())
-            ->method('fetch');
         $this->assertFalse($this->ruleCache->fetch($id));
     }
 
     public function testFetchIncorrectData()
     {
         $id = 'test';
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($id)
-            ->willReturn(true);
         $this->cache->expects($this->once())
             ->method('fetch')
             ->willReturn(['unknown' => 'data']);

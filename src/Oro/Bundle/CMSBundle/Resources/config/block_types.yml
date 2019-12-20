@@ -29,6 +29,25 @@ services:
         tags:
              - { name: layout.block_type, alias: content_block }
 
+    oro_cms.layout.block_type.content_widget_root:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setName, ['content_widget_root']]
+        tags:
+            - { name: layout.block_type, alias: content_widget_root }
+
+    oro_cms.layout.block_type.content_widget_default_template:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['content_widget_default_template']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        defaultTemplate: {required: true}
+        tags:
+            - { name: layout.block_type, alias: content_widget_default_template }
+
     oro_cms.layout.block_type.text_with_placeholders:
         parent: oro_layout.block_type.abstract_configurable
         calls:

@@ -113,8 +113,7 @@ class ImageSlideType extends AbstractType
                 'wysiwyg_options' => [
                     'statusbar' => true,
                     'resize' => false,
-                    'width' => 600,
-                    'height' => 298,
+                    'height' => 300,
                 ],
             ]
         );

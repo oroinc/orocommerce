@@ -2,69 +2,68 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
  * Layout data provider which provides count of products per category.
  */
 class CategoriesProductsProvider
 {
-    use DataProviderCacheTrait;
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /** @var ProductRepository */
+    private $searchRepository;
+
+    /** @var CacheProvider */
+    private $cache;
+
+    /** @var int */
+    private $cacheLifeTime;
 
     /**
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $searchRepository;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry   $doctrine
      * @param ProductRepository $searchRepository
      */
-    public function __construct(ManagerRegistry $registry, ProductRepository $searchRepository)
+    public function __construct(ManagerRegistry $doctrine, ProductRepository $searchRepository)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->searchRepository = $searchRepository;
     }
 
     /**
-     * @param array $categoriesIds
+     * @param CacheProvider $cache
+     * @param int           $lifeTime
+     */
+    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
+
+    /**
+     * @param int[] $categoriesIds
      *
-     * @return array
+     * @return array [category id => number of products, ...]
      */
     public function getCountByCategories($categoriesIds)
     {
-        $this->initCache(['categories_products', implode('_', $categoriesIds)]);
+        $cacheKey = 'categories_products_' . implode('_', $categoriesIds);
 
-        $useCache = $this->isCacheUsed();
-        if (true === $useCache) {
-            $result = $this->getFromCache();
-            if ($result) {
-                return $result;
-            }
+        $result = $this->cache->fetch($cacheKey);
+        if (false !== $result) {
+            return $result;
         }
 
-        $categories = $this->registry->getManagerForClass(Category::class)
+        $categories = $this->doctrine->getManagerForClass(Category::class)
             ->getRepository(Category::class)
             ->findBy(['id' => $categoriesIds]);
 
         $result = $this->searchRepository->getCategoriesCounts($categories);
-
-        if (true === $useCache) {
-            $this->saveToCache($result);
-        }
+        $this->cache->save($cacheKey, $result, $this->cacheLifeTime);
 
         return $result;
     }
