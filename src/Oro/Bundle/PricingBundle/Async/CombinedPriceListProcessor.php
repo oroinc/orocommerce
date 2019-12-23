@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
@@ -75,8 +74,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     public function process(MessageInterface $message, SessionInterface $session)
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(CombinedPriceList::class);
-        $em->beginTransaction();
         $this->triggerHandler->startCollect();
 
         try {
@@ -85,16 +82,13 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
             $this->handlePriceListRelationTrigger($trigger);
             $this->combinedPriceListsBuilderFacade->dispatchEvents();
             $this->triggerHandler->commit();
-            $em->commit();
         } catch (InvalidArgumentException $e) {
             $this->triggerHandler->rollback();
-            $em->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
             $this->triggerHandler->rollback();
-            $em->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
                 ['exception' => $e]
