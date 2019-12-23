@@ -230,6 +230,9 @@ services:
             - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.website_combined_price_list_builder'
+        calls:
+            - [setRegistry, ['@doctrine']]
+            - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
 
     oro_pricing.builder.combined_price_list_builder_facade:
         class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade

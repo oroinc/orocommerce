@@ -10,6 +10,8 @@ use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Updates or creates combined price lists for customer scope
+ *
  * @method PriceListToCustomerRepository getPriceListToEntityRepository()
  */
 class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
@@ -22,7 +24,9 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     public function build(Website $website, Customer $customer, $forceTimestamp = null)
     {
         if (!$this->isBuiltForCustomer($website, $customer)) {
-            $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
+            $this->wrapInTransaction(function () use ($website, $customer, $forceTimestamp) {
+                $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
+            });
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->setBuiltForCustomer($website, $customer);
         }
@@ -41,7 +45,9 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
                 ->getCustomerIteratorByDefaultFallback($customerGroup, $website, $fallback);
 
             foreach ($customers as $customer) {
-                $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
+                $this->wrapInTransaction(function () use ($website, $customer, $forceTimestamp) {
+                    $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
+                });
             }
             $this->setBuiltForCustomerGroup($website, $customerGroup);
         }

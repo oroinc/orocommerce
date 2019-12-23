@@ -11,12 +11,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyFallbackAwareInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
 {
     use EntityTrait;
@@ -31,7 +36,7 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
      */
     protected function getPriceListToEntityRepositoryClass()
     {
-        return 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository';
+        return PriceListToCustomerRepository::class;
     }
 
     /**
@@ -65,6 +70,56 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
     }
 
     /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage test exception
+     */
+    public function testBuildWithException()
+    {
+        $website = new Website();
+        $customer = new Customer();
+        $this->priceListToEntityRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $this->combinedPriceListEm
+            ->expects($this->once())
+            ->method('beginTransaction');
+
+        $this->combinedPriceListEm
+            ->expects($this->never())
+            ->method('commit');
+
+        $this->combinedPriceListEm
+            ->expects($this->once())
+            ->method('rollback');
+
+        $this->garbageCollector
+            ->expects($this->never())
+            ->method('cleanCombinedPriceLists');
+
+        $this->fallbackRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(new PriceListToCustomer())
+        ;
+
+        $this->combinedPriceListToEntityRepository
+            ->expects($this->once())
+            ->method('delete');
+
+        $this->priceListCollectionProvider
+            ->expects($this->once())
+            ->method('getPriceListsByCustomer')
+            ->with($customer, $website)
+            ->will(
+                $this->throwException(new \Exception('test exception'))
+            );
+
+        $this->builder->build($website, $customer);
+    }
+
+    /**
      * @dataProvider buildDataProvider
      * @param PriceListToCustomer $priceListByCustomer
      */
@@ -77,7 +132,11 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             ->method('findOneBy')
             ->willReturn($priceListByCustomer);
         $callExpects = 1;
-        $this->garbageCollector->expects($this->exactly($callExpects))
+
+        $this->configureTransactionWrappingForOneCall();
+
+        $this->garbageCollector
+            ->expects($this->exactly($callExpects))
             ->method('cleanCombinedPriceLists');
 
         $this->fallbackRepository->expects($this->exactly($callExpects))->method('findOneBy');
@@ -134,6 +193,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             ->expects($this->any())
             ->method('findOneBy')
             ->willReturn($priceListByCustomerGroup);
+
+        $this->configureTransactionWrappingForOneCall();
 
         $fallback = $force ? null : PriceListCustomerFallback::ACCOUNT_GROUP;
 
@@ -195,6 +256,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $forceTimestamp = null;
         $fallback = $this->getEntity(PriceListCustomerFallback::class);
 
+        $this->configureTransactionWrappingForOneCall();
+
         $this->configurePriceListToEntityRepositoryMock($customer, $website);
         $this->configureFallbackRepositoryMock($customer, $website, $fallback);
 
@@ -245,6 +308,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $customer->setGroup($customerGroup);
         $forceTimestamp = null;
         $fallback = null;
+
+        $this->configureTransactionWrappingForOneCall();
 
         $this->configurePriceListToEntityRepositoryMock($customer, $website);
         $this->configureFallbackRepositoryMock($customer, $website, $fallback);
@@ -325,6 +390,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $fallback = null;
         $forceTimestamp = null;
 
+        $this->configureTransactionWrappingForOneCall();
+
         $this->configureFallbackRepositoryMock($customer, $website, $fallback);
         $this->configurePriceListToEntityRepositoryMock($customer, $website);
 
@@ -389,6 +456,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $customer->setGroup($customerGroup);
         $forceTimestamp = null;
         $fallback = null;
+
+        $this->configureTransactionWrappingForOneCall();
 
         $this->configurePriceListToEntityRepositoryMock($customer, $website);
         $this->configureFallbackRepositoryMock($customer, $website, $fallback);
@@ -455,6 +524,8 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
         $customer->setGroup($customerGroup);
         $forceTimestamp = null;
         $fallback = null;
+
+        $this->configureTransactionWrappingForOneCall();
 
         $this->configurePriceListToEntityRepositoryMock($customer, $website);
         $this->configureFallbackRepositoryMock($customer, $website, $fallback);
