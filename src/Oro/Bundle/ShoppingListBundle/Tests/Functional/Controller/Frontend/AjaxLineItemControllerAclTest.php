@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItemUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +36,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
         $this->loadFixtures([
             LoadShoppingListACLData::class,
+            LoadShoppingListLineItemUserACLData::class,
             LoadFrontendProductVisibilityData::class,
         ]);
 
@@ -73,6 +76,40 @@ class AjaxLineItemControllerAclTest extends WebTestCase
             )
         );
 
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+    }
+
+    public function testRemoveLineItemAction()
+    {
+        $shoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL);
+        $lineItem = $shoppingList->getLineItems()->first();
+
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_shopping_list_frontend_remove_line_item',
+                [
+                    'lineItemId' => $lineItem->getId(),
+                ]
+            )
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_shopping_list_frontend_remove_line_item',
+                [
+                    'lineItemId' => $lineItem->getId(),
+                ]
+            ),
+            [],
+            [],
+            $this->generateBasicAuthHeader(
+                LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
+            )
+        );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
     }
 
