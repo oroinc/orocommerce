@@ -22,6 +22,7 @@ layout:
                 product: '=data["product"]'
                 stickers: '=data["product"] ? data["oro_product_stickers"].getStickers(data["product"]) : []'
                 matrixFormType: '=data["product"] ? data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"], "gallery-view") : null'
+                isTargetBlank: '=is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User")'
 
         - '@setOption':
             id: product_line_item_form_fields
@@ -37,4 +38,5 @@ layout:
             id: product_line_item_form
             optionName: vars
             optionValue:
-                visible: '=data["show_add_button"]'
+                # additional user check to correctly render the widget on the backend
+                visible: '=data["show_add_button"] and (is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User") === false)'
