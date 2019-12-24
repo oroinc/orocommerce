@@ -50,13 +50,13 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $customerGroup = $this->getReference(LoadGroups::GROUP1);
 
-        $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1t_3t_2t');
+        $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1_2_3');
 
         $this->runCommand(CombinedPriceListScheduleCommand::NAME);
 
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);
-        $expectedPriceListName = sprintf('%dt_%dt', $priceList3->getId(), $priceList2->getId());
+        $expectedPriceListName = sprintf('%d_%d', $priceList2->getId(), $priceList3->getId());
         $this->assertCustomerGroupActiveCPL($website, $customerGroup, $expectedPriceListName);
 
         $this->assertMessageCollectorContainsRightMessagesOnReindex();
