@@ -36,6 +36,8 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_page[content]"]'
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Meta Title: 'oro_cms_page[metaTitles][values][default]'
+                    Meta Description: 'oro_cms_page[metaDescriptions][values][default]'
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
@@ -155,6 +157,10 @@ oro_behat_extension:
         CMS Page Content:
             selector: "textarea[name='oro_cms_page[content]']"
 
+        CMS Page Drafts Grid:
+            selector: 'div[data-page-component-name="cms-page-drafts-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     suites:
         OroCMSBundle:
             contexts:
@@ -166,7 +172,12 @@ oro_behat_extension:
                 - OroApplicationBundle::CommerceMainContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - OroNavigationBundle::TabContext
+                - OroNavigationBundle::FeatureContext
                 - OroSecurityBundle::ACLContext
                 - OroUserBundle::FeatureContext
+                - OroActionBundle::OroActionContext
+                - OroConfigBundle::FeatureContext
+                - OroFrontendBundle::FrontendMenuContext
+                - OroSearchBundle::SearchContext
             paths:
                 - '@OroCMSBundle/Tests/Behat/Features'
