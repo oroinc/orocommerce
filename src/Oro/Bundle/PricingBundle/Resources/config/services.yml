@@ -101,6 +101,17 @@ services:
         tags:
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
+    oro_pricing.migrations.minimal_strategy_naming_migration:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\MinimalStrategyNamingMigration
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
+            - '@oro_pricing.combined_price_list_relation_helper'
+
     oro_pricing.provider.combined_product_price:
         alias: oro_pricing.provider.product_price
 
@@ -119,6 +130,7 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
 
     oro_pricing.provider.dependent_price_lists:
         class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider

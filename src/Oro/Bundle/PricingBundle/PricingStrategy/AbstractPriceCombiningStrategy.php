@@ -17,6 +17,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Abstract implementation of price combining strategy
+ */
 abstract class AbstractPriceCombiningStrategy implements
     PriceCombiningStrategyInterface,
     InsertFromSelectExecutorAwareInterface,
@@ -154,6 +157,11 @@ abstract class AbstractPriceCombiningStrategy implements
             && !empty($this->builtList[$startTimestamp][$combinedPriceList->getId()])
         ) {
             //this CPL was recalculated at this go
+            return;
+        }
+        // CPL cannot be fallback for itself, just skip, no calculations required.
+        // Example. Minimal strategy. Fallback is 1,2 (CPL 1_2), Current CPL is 1,2,1 (same CPL 1_2)
+        if ($combinedPriceList->getId() === $fallbackLevelCpl->getId()) {
             return;
         }
 
