@@ -41,7 +41,7 @@
         (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled')
     }) %}
 
-    <i {{ block('block_attributes') }}></i>
+    <span {{ block('block_attributes') }} aria-hidden="true"></span>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}
