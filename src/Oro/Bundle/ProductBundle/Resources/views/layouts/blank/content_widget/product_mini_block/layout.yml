@@ -40,3 +40,8 @@ layout:
             optionValue:
                 # additional user check to correctly render the widget on the backend
                 visible: '=data["show_add_button"] and (is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User") === false)'
+
+        - '@setOption':
+            id: product
+            optionName: visible
+            optionValue: '=data["product"] ? true : false'

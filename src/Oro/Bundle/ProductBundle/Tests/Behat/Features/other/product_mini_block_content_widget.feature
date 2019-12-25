@@ -1,5 +1,5 @@
 @ticket-BB-17550
-@fixture-OroProductBundle:products.yml
+@fixture-OroProductBundle:product_with_price.yml
 
 Feature: Product mini-block content widget
   In order to have product mini-block displayed on the storefront
@@ -35,7 +35,7 @@ Feature: Product mini-block content widget
     Given I go to Marketing/Landing Pages
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Product Mini-Block Page"
-    And I fill in WYSIWYG "CMS Page Content" with "<div class=\"row\"><div class=\"cell\"><div class=\"row\"><div class=\"cell\"><div data-title=\"product_mini_block\" data-type=\"product_mini_block\" class=\"content-widget content-placeholder\">{{ widget(\"product_mini_block\") }}</div></div><div class=\"cell\"></div></div></div><div class=\"cell\"></div></div>"
+    And I fill in WYSIWYG "CMS Page Content" with "<div class=\"row\"><div class=\"cell\"><h1>Additional test data</h1><div class=\"row\"><div class=\"cell\"><div data-title=\"product_mini_block\" data-type=\"product_mini_block\" class=\"content-widget content-placeholder\">{{ widget(\"product_mini_block\") }}</div></div><div class=\"cell\"></div></div></div><div class=\"cell\"></div></div>"
     When I save form
     Then I should see "Page has been saved" flash message
     And I should see URL Slug field filled with "product-mini-block-page"
@@ -57,7 +57,7 @@ Feature: Product mini-block content widget
     When I click "Product Mini-Block Page"
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
-    And I should see "Price not available"
+    And I should see "Your Price: $10.00 / item" for "PSKU1" product
     And I should see "Add to Shopping List"
 
   Scenario: Check add button
@@ -67,7 +67,25 @@ Feature: Product mini-block content widget
       | Title | Product1 |
     And I close ui dialog
 
-  Scenario: Disable rendering prices
+  Scenario: Add price list restriction to guest customer group
+    Given I proceed as the Admin
+    And go to Customers/ Customer Groups
+    And I click Edit Non-Authenticated Visitors in grid
+    And fill form with:
+      | Fallback | Current customer group only |
+    When I save and close form
+    Then I should see "Customer group has been saved" flash message
+
+  Scenario: Check prices is not available for guest with restricted price list but enabled in widget
+    Given I proceed as the Buyer
+    And I click "Sign Out"
+    When I click "Product Mini-Block Page"
+    Then Page title equals to "Product Mini-Block Page"
+    And I should see "Product1"
+    And I should not see "Your Price: $10.00 / item" for "PSKU1" product
+    And I should see "Price not available"
+
+  Scenario: Disable rendering prices via widget option
     Given I proceed as the Admin
     And go to Marketing/Content Widgets
     And click "Edit" on row "product_mini_block" in grid
@@ -76,11 +94,13 @@ Feature: Product mini-block content widget
     And I save and close form
     Then I should see "Content widget has been saved" flash message
 
-  Scenario: Disable rendering prices of storefront
+  Scenario: Check rendering prices on storefront disabled for logged user
     Given I proceed as the Buyer
-    When reload the page
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I click "Product Mini-Block Page"
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
+    And I should not see "Your Price: $10.00 / item" for "PSKU1" product
     And I should not see "Price not available"
     And I should see "In Shopping List"
     And I should see "Update Shopping List"
@@ -102,3 +122,59 @@ Feature: Product mini-block content widget
     And I should not see "Price not available"
     And I should not see "In Shopping List"
     And I should not see "Update Shopping List"
+
+  Scenario: As the admin disable product
+    Given I proceed as the Admin
+    And I go to Products/Products
+    And click "edit" on row "PSKU1" in grid
+    And fill form with:
+      | Status | Disabled |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+
+  Scenario: Check content widget on storefront is not rendered for disabled product
+    Given I proceed as the Buyer
+    When I click "Product Mini-Block Page"
+    Then Page title equals to "Product Mini-Block Page"
+    And I should not see "Product1"
+    And I should see "Additional test data"
+
+  Scenario: As the admin set inventory status which should hide product
+    Given I proceed as the Admin
+    And I go to Products/Products
+    And click "edit" on row "PSKU1" in grid
+    And fill form with:
+      | Status           | Enabled      |
+      | Inventory Status | Discontinued |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+
+  Scenario: Check content widget on storefront is not rendered for disabled inventory status
+    Given I proceed as the Buyer
+    When I click "Product Mini-Block Page"
+    Then Page title equals to "Product Mini-Block Page"
+    And I should not see "Product1"
+    And I should see "Additional test data"
+
+  Scenario: As the admin set product visibility config option to to hidden
+    Given I proceed as the Admin
+    And I go to Products/Products
+    And click "edit" on row "PSKU1" in grid
+    And fill form with:
+      | Inventory Status | In Stock |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+    And go to System / Configuration
+    And follow "Commerce/Customer/Visibility" on configuration sidebar
+    And fill "Visibility Settings Form" with:
+      | Product Visibility Use Default | false  |
+      | Product Visibility             | hidden |
+    When I save setting
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check content widget on storefront is not rendered for hidden product visibility
+    Given I proceed as the Buyer
+    When I click "Product Mini-Block Page"
+    Then Page title equals to "Product Mini-Block Page"
+    And I should not see "Product1"
+    And I should see "Additional test data"
