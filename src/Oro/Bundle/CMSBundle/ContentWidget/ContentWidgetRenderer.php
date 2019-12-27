@@ -26,17 +26,25 @@ class ContentWidgetRenderer implements LoggerAwareInterface
     /** @var LayoutManager */
     private $layoutManager;
 
+    /** @var ContentWidgetTypeRegistry */
+    private $contentWidgetTypeRegistry;
+
     /** @var TokenAccessorInterface|null */
     private $tokenAccessor;
 
     /**
      * @param ManagerRegistry $doctrine
      * @param LayoutManager $layoutManager
+     * @param ContentWidgetTypeRegistry $contentWidgetTypeRegistry
      */
-    public function __construct(ManagerRegistry $doctrine, LayoutManager $layoutManager)
-    {
+    public function __construct(
+        ManagerRegistry $doctrine,
+        LayoutManager $layoutManager,
+        ContentWidgetTypeRegistry $contentWidgetTypeRegistry
+    ) {
         $this->doctrine = $doctrine;
         $this->layoutManager = $layoutManager;
+        $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
         $this->logger = new NullLogger();
     }
 
@@ -97,15 +105,17 @@ class ContentWidgetRenderer implements LoggerAwareInterface
      */
     private function renderWidget(ContentWidget $contentWidget): string
     {
+        $type = $this->contentWidgetTypeRegistry->getWidgetType($contentWidget->getWidgetType());
+        if (!$type) {
+            return '';
+        }
+
         $layoutContext = new LayoutContext(
             [
-                'data' => [
-                    'content_widget' => $contentWidget,
-                ],
-                'content_widget_type' => $contentWidget->getWidgetType(),
-                'content_widget_layout' => $contentWidget->getLayout(),
+                'data' => $type->getWidgetData($contentWidget),
+                'content_widget' => $contentWidget,
             ],
-            ['content_widget_type', 'content_widget_layout']
+            ['content_widget']
         );
 
         try {

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\PathProvider;
 
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Component\Layout\ContextAwareInterface;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
@@ -41,8 +42,8 @@ class ContentWidgetPathProvider implements PathProviderInterface, ContextAwareIn
     public function getPaths(array $existingPaths): array
     {
         $themeName = $this->context->getOr('theme');
-        $widgetType = $this->context->getOr('content_widget_type');
-        if ($themeName && $widgetType) {
+        $contentWidget = $this->context->getOr('content_widget');
+        if ($themeName && $contentWidget instanceof ContentWidget && $contentWidget->getWidgetType()) {
             $existingPaths = [];
 
             $themes = $this->getThemesHierarchy($themeName);
@@ -50,7 +51,7 @@ class ContentWidgetPathProvider implements PathProviderInterface, ContextAwareIn
                 $existingPath = implode(self::DELIMITER, [$theme->getDirectory(), 'content_widget']);
 
                 $existingPaths[] = $existingPath;
-                $existingPaths[] = implode(self::DELIMITER, [$existingPath, $widgetType]);
+                $existingPaths[] = implode(self::DELIMITER, [$existingPath, $contentWidget->getWidgetType()]);
             }
         }
 
