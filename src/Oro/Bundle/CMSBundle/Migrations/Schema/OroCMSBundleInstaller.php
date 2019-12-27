@@ -120,8 +120,30 @@ class OroCMSBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
-        $table->addColumn('content_style', 'wysiwyg_style', ['notnull' => false]);
-        $table->addColumn('content_properties', 'wysiwyg_properties', ['notnull' => false]);
+        $table->addColumn(
+            'content_style',
+            'wysiwyg_style',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'draft' => ['draftable' => true],
+                ],
+            ]
+        );
+        $table->addColumn(
+            'content_properties',
+            'wysiwyg_properties',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'draft' => ['draftable' => true],
+                ],
+            ]
+        );
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('draft_project_id', 'integer', ['notnull' => false]);
