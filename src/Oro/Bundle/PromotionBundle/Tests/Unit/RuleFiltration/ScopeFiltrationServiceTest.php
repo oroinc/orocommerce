@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
@@ -54,7 +54,10 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope]));
 
-        $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], new ClassMetadata(Scope::class));
+        $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria(
+            [],
+            $this->createMock(ClassMetadataFactory::class)
+        );
 
         $this->scopeManager->expects($this->any())
             ->method('isScopeMatchCriteria')
@@ -88,7 +91,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope2, $scope3]));
 
-        $criteria = new ScopeCriteria([], new ClassMetadata(Scope::class));
+        $criteria = new ScopeCriteria([], $this->createMock(ClassMetadataFactory::class));
         $context[ContextDataConverterInterface::CRITERIA] = $criteria;
 
         $this->scopeManager->expects($this->any())
@@ -118,7 +121,10 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
     {
         $promotion = new AppliedPromotionData();
 
-        $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], new ClassMetadata(Scope::class));
+        $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria(
+            [],
+            $this->createMock(ClassMetadataFactory::class)
+        );
 
         $this->scopeManager
             ->expects($this->never())
