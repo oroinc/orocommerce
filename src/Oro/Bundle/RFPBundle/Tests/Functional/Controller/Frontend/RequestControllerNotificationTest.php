@@ -70,46 +70,57 @@ class RequestControllerNotificationTest extends WebTestCase
 
     public function testNotifyOnlyUniqueUsers()
     {
+        /** @var CustomerUser $customerUser */
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $saleRep = $customerUser->getOwner();
         $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
-        $this->createRequest();
 
-        $this->assertEmailSent([$saleRep], 1);
+        $recipientEmails = [$saleRep->getEmail()];
+        $this->createRequest();
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
     public function testCreateRequestEmailNotification()
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->addSalesRepresentative($saleRep1);
         $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
-        $this->createRequest();
 
-        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
+        $recipientEmails = [$saleRep1->getEmail(), $saleRep2->getEmail()];
+        $this->createRequest();
+        $this->assertEmailSent($recipientEmails, 3);
     }
 
     public function testCreateRequestEmailNotifySalesRepsOfCustomer()
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->addSalesRepresentative($saleRep1);
         $customer->addSalesRepresentative($saleRep2);
         $this->em->flush();
+
+        $recipientEmails = [$saleRep1->getEmail(), $saleRep2->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
+        $this->assertEmailSent($recipientEmails, 3);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerSalesReps()
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->addSalesRepresentative($saleRep1);
 
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->addSalesRepresentative($saleRep2);
@@ -122,30 +133,33 @@ class RequestControllerNotificationTest extends WebTestCase
         );
         $this->configManager->flush($this->website);
 
+        $recipientEmails = [$saleRep2->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep2], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
     public function testCreateRequestShouldNotifyCustomerOwner()
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->setOwner($owner);
         $this->em->flush();
 
+        $recipientEmails = [$owner->getEmail()];
         $this->createRequest();
-        $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerOwner()
     {
-        $saleRepresentative = $this->getReference(LoadUserData::USER2);
+        /** @var User $saleRep */
+        $saleRep = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
-        $customer->addSalesRepresentative($saleRepresentative);
+        $customer->addSalesRepresentative($saleRep);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $customerUser->addSalesRepresentative($saleRepresentative);
+        $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
         $this->configManager->set(
@@ -155,27 +169,31 @@ class RequestControllerNotificationTest extends WebTestCase
         );
         $this->configManager->flush($this->website);
 
+        $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();
         // should notify only sale representative, not owner
-        $this->assertEmailSent([$saleRepresentative], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
     public function testCreateRequestShouldNotifyCustomerUserOwner()
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1);
         $customerUser->setOwner($owner);
         $this->em->flush();
 
+        $recipientEmails = [$owner->getEmail()];
         $this->createRequest();
-        $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerUserOwner()
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep */
         $saleRep = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->setOwner($owner);
@@ -189,26 +207,27 @@ class RequestControllerNotificationTest extends WebTestCase
         );
         $this->configManager->flush($this->website);
 
+        $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
     /**
-     * @param array $usersToSendTo
+     * @param string[] $recipientEmails
      * @param int $numberOfMessagesExpected
      */
-    protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)
+    protected function assertEmailSent(array $recipientEmails, $numberOfMessagesExpected)
     {
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
         $emailMessages = $emailLogger->getMessages();
-        $actualUsersSentTo = [];
+        $actualSentToEmails = [];
         foreach ($emailMessages as $message) {
-            $actualUsersSentTo = array_merge($actualUsersSentTo, array_keys($message->getTo()));
+            $actualSentToEmails = array_merge($actualSentToEmails, array_keys($message->getTo()));
         }
 
-        foreach ($usersToSendTo as $userToSendTo) {
-            $this->assertTrue(in_array($userToSendTo->getEmail(), $actualUsersSentTo));
+        foreach ($recipientEmails as $recipientEmail) {
+            $this->assertTrue(in_array($recipientEmail, $actualSentToEmails));
         }
         $this->assertCount($numberOfMessagesExpected, $emailMessages);
     }
