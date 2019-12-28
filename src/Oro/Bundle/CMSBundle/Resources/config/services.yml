@@ -213,7 +213,7 @@ services:
         class: 'Oro\Bundle\CMSBundle\WYSIWYG\ChainTwigFunctionProcessor'
         public: true
         arguments:
-            - !tagged oro_cms.wysiwyg.twig_function_processor
+            - !tagged_iterator oro_cms.wysiwyg.twig_function_processor
 
     oro_cms.wysiwyg.content_widget_twig_function_processor:
         class: 'Oro\Bundle\CMSBundle\WYSIWYG\ContentWidgetTwigFunctionProcessor'
@@ -251,7 +251,7 @@ services:
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
         arguments:
-            - !tagged oro_cms.content_widget.type
+            - !tagged_iterator oro_cms.content_widget.type
 
     Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
         alias: oro_cms.content_widget.type_registry

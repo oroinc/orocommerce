@@ -90,7 +90,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
         public: false
         arguments:
-            - !tagged oro_pricing.current_currency_provider
+            - !tagged_iterator oro_pricing.current_currency_provider
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
