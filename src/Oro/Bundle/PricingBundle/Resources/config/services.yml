@@ -883,6 +883,7 @@ services:
 
     oro_pricing.builder.product_price_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.orm.insert_from_select_query_executor'
@@ -892,6 +893,7 @@ services:
 
     oro_pricing.builder.price_list_product_assignment_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
@@ -1168,6 +1170,7 @@ services:
 
     oro_pricing.orm.multi_insert_shard_query_executor:
         class: Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor
+        shared: false
         arguments:
            - '@oro_entity.orm.native_query_executor_helper'
            - '@oro_pricing.shard_manager'

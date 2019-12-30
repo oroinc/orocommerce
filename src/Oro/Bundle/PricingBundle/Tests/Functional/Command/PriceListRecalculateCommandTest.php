@@ -126,6 +126,30 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
                 'expectedMessages' => 5,
             ],
+            'all with triggers off with insert-select' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--disable-triggers', '--use-insert-select'],
+                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                'expectedMessages' => 5,
+            ],
+            'all with insert-select' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--use-insert-select'],
+                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                'expectedMessages' => 5,
+            ],
+            'all with triggers off with insert-select' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--disable-triggers', '--use-insert-select'],
+                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                'expectedMessages' => 5,
+            ],
+            'all with insert-select' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--use-insert-select'],
+                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                'expectedMessages' => 5,
+            ],
             'empty run' => [
                 'expected_message' => 'ATTENTION',
                 'params' => [],

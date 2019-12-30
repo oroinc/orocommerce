@@ -36,6 +36,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const USE_INSERT_SELECT = 'use-insert-select';
     const INCLUDE_DEPENDENT = 'include-dependent';
 
+    /** @var ProductPriceBuilder */
+    private $priceBuilder;
+
+    /** @var PriceListProductAssignmentBuilder */
+    private $assignmentBuilder;
+
     /**
      * {@inheritdoc}
      */
@@ -98,6 +104,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var ProductPriceBuilder $priceBuilder */
+        $this->priceBuilder = $this->getContainer()->get('oro_pricing.builder.product_price_builder');
+        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
+        $this->assignmentBuilder = $this->getContainer()
+            ->get('oro_pricing.builder.price_list_product_assignment_builder');
+
         /** @var CombinedPriceListTriggerHandler $triggerHandler */
         $triggerHandler = $this->getContainer()->get('oro_pricing.model.combined_price_list_trigger_handler');
         $triggerHandler->startCollect();
@@ -234,15 +246,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function buildPriceRulesByPriceLists($priceLists)
     {
-        /** @var ProductPriceBuilder $priceBuilder */
-        $priceBuilder = $this->getContainer()->get('oro_pricing.builder.product_price_builder');
-        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
-        $assignmentBuilder = $this->getContainer()
-            ->get('oro_pricing.builder.price_list_product_assignment_builder');
-
         foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
-            $priceBuilder->buildByPriceListWithoutTriggers($priceList);
+            $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
     }
 
@@ -361,6 +367,22 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         ) {
             $queryExecutor = $container->get('oro_pricing.orm.insert_from_select_query_executor');
             $currentStrategy->setInsertSelectExecutor($queryExecutor);
+        }
+
+        if ($input->getOption(self::USE_INSERT_SELECT)) {
+            $this->assignmentBuilder->setInsertQueryExecutor(
+                $container->get('oro_entity.orm.insert_from_select_query_executor')
+            );
+            $this->priceBuilder->setShardInsertQueryExecutor(
+                $container->get('oro_pricing.orm.insert_from_select_query_executor')
+            );
+        } else {
+            $this->assignmentBuilder->setInsertQueryExecutor(
+                $container->get('oro_entity.orm.multi_insert_query_executor')
+            );
+            $this->priceBuilder->setShardInsertQueryExecutor(
+                $container->get('oro_pricing.orm.multi_insert_shard_query_executor')
+            );
         }
     }
 }
