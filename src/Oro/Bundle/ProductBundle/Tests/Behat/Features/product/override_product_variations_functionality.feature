@@ -179,6 +179,7 @@ Feature: Override product variations functionality
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "TEST"
+    And I click on "First Content Variant Expand Button"
     And I uncheck "Override Product Variant Configuration"
     When I save form
     Then I should see "Content Node has been saved" flash message
@@ -203,6 +204,7 @@ Feature: Override product variations functionality
 
   Scenario: Add manually added products to show these simple products on storefront regardless override option
     When I proceed as the Admin
+    And I click on "First Content Variant Expand Button"
     And type "1GB81" in "value"
     And I click on "Add Button"
     And I check 1GB82 record in "Add Products Popup" grid
@@ -254,6 +256,7 @@ Feature: Override product variations functionality
 
   Scenario: Show that excluded products are not shown in product collection regardless of the override option
     When I proceed as the Admin
+    And I click on "First Content Variant Expand Button"
     And I check "Override Product Variant Configuration"
     And type "1GB" in "value"
     And I click "Excluded"
@@ -297,6 +300,7 @@ Feature: Override product variations functionality
     And I should see "1GB83" product
 
     When I proceed as the Admin
+    And I click on "First Content Variant Expand Button"
     And I check "Override Product Variant Configuration"
     And I save form
     Then I should see "Content Node has been saved" flash message
@@ -350,6 +354,7 @@ Feature: Override product variations functionality
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "TEST"
+    And I click on "First Content Variant Expand Button"
     And I uncheck "Override Product Variant Configuration"
     And I click "Excluded"
     And I click Remove on 1GB82 in grid "Active Grid"
@@ -358,6 +363,7 @@ Feature: Override product variations functionality
     And I save form
     Then I should see "Content Node has been saved" flash message
     When I click "TEST-2"
+    And I click on "First Content Variant Expand Button"
     And I uncheck "Override Product Variant Configuration"
     And I save form
     Then I should see "Content Node has been saved" flash message

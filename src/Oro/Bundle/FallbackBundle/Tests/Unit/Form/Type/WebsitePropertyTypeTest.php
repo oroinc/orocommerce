@@ -123,9 +123,9 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     WebsitePropertyType::FIELD_DEFAULT => 't',
                     WebsitePropertyType::FIELD_WEBSITES => [
-                        1 => ['fallback' => FallbackType::SYSTEM],
-                        2 => ['fallback' => ''],
-                        3 => ['fallback' => FallbackType::SYSTEM],
+                        1 => ['fallback' => FallbackType::SYSTEM, 'use_fallback' => true],
+                        2 => ['fallback' => '', 'use_fallback' => true],
+                        3 => ['fallback' => FallbackType::SYSTEM, 'use_fallback' => true],
                     ]
                 ],
                 'expectedData' => [

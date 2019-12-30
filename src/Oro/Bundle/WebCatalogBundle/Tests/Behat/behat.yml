@@ -88,6 +88,12 @@ oro_behat_extension:
         Inherit Parent:
             selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
 
+        First Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][0]"] .btn-toggle-variant'
+
+        Second Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
+
     suites:
         OroWebCatalogBundle:
             contexts:

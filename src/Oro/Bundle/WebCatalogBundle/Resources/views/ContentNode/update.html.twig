@@ -57,7 +57,10 @@
     {% endif %}
 
     {{ UI.cancelButton(cancelPath) }}
-    {{ UI.saveAndStayButton() }}
+    {{ UI.saveAndStayButton({
+        'route': 'oro_content_node_update',
+        'params': {'id': '$id'}
+    }) }}
 {% endblock navButtons %}
 
 {% block content_data %}
@@ -119,7 +122,14 @@
             'title': 'oro.webcatalog.contentvariant.entity_plural_label'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [form_widget(form.contentVariants)]
+                'data': [
+                    form_widget(
+                        form.contentVariants,
+                        {
+                            'expandedContentVariantForms': expandedContentVariantForms is defined ? expandedContentVariantForms : []
+                        }
+                    )
+                ]
             }]
         }
     ] %}

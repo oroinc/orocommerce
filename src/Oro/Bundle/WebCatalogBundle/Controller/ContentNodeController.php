@@ -169,26 +169,13 @@ class ContentNodeController extends Controller
     {
         $form = $this->createForm(ContentNodeType::class, $node);
 
-        $saveRedirectHandler = function (ContentNode $node) {
-            if ($node->getParentNode()) {
-                return [
-                    'route' => 'oro_content_node_update',
-                    'parameters' => ['id' => $node->getId()]
-                ];
-            } else {
-                return [
-                    'route' => 'oro_content_node_update_root',
-                    'parameters' => ['id' => $node->getWebCatalog()->getId()]
-                ];
-            }
-        };
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('oro_form.update_handler')->update(
             $node,
             $form,
-            $saveRedirectHandler,
-            $saveRedirectHandler,
-            $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message')
+            $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message'),
+            null,
+            $this->get('oro_web_catalog.handler.content_node_handler'),
+            $this->get('oro_web_catalog.form.content_node_form_template_data_provider')
         );
     }
 

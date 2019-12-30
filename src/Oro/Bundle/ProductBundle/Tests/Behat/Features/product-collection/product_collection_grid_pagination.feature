@@ -32,6 +32,7 @@ Feature: Product collection grid pagination
     And I click on "Preview Results"
     And I save form
     And I click "Content Variants"
+    And I click on "First Content Variant Expand Button"
     And Grid Pagination field should has 1 value
     Then I press next page button in grid "Active Grid"
     And Grid Pagination field should has 2 value

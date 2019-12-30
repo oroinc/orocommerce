@@ -1,37 +1,76 @@
-{% macro oro_web_catalog_content_variant_collection_item_prototype(form, name, disabled) %}
-    {% spaceless %}
-    <div data-content="{{ name }}"
-         data-role="content-variant-item"
-         class="content-variant-item {% if form.default.vars.data %}content-variant-item-default{% endif %}"
-         data-page-component-module="oroui/js/app/components/view-component"
-         data-page-component-options="{{ {
-             view: 'oroscope/js/app/views/scope-toggle-view',
-             selectors: {
-                 useParentScopeSelector: '#' ~ form.default.vars.id,
-                 scopesSelector: '.scope-elements'
-             }
-         }|json_encode }}"
-         data-layout="separate"
-    >
-        <h5 class="content-variant-item-title">
-            {{ form_widget(form.default) }}
-            {{ oro_web_catalog_content_variant_title(form.type.vars.data)|trans }}
-            <span class="label label-info content-variant-item-default-label">{{ "oro.webcatalog.contentvariant.default.label"|trans }}</span>
-        </h5>
-
+{% macro oro_web_catalog_content_variant_prototype_body(form, disabled, expanded) %}
+    <div class="content-variant-item-content__body">
         {{ form_widget(form, {disabled: disabled}) }}
+        {{ form_widget(form.expanded) }}
 
-        <div class="scope-elements">
-            <h5>{{ form.scopes.vars.label|trans }}</h5>
-            {{ form_widget(form.scopes) }}
-            {{ form_errors(form.scopes) }}
+        <div data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroscope/js/app/views/scope-toggle-view',
+                selectors: {
+                    useParentScopeSelector: '#' ~ form.default.vars.id,
+                    scopesSelector: '.scope-elements',
+                    containerSelector: '.content-variant-item'
+                }
+            }|json_encode }}"
+            data-layout="separate"
+        >
+            <div class="scope-elements">
+                <h5>{{ form.scopes.vars.label|trans }}</h5>
+                {{ form_widget(form.scopes) }}
+                {{ form_errors(form.scopes) }}
+            </div>
         </div>
 
         <div class="hide">
             {{ form_rest(form) }}
         </div>
+    </div>
+{% endmacro %}
 
-        <button class="removeVariantBtn btn btn-icon btn-square-light" type="button" data-related="{{ name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
+{% macro oro_web_catalog_content_variant_collection_item_prototype(form, name, disabled, expanded) %}
+    {% import _self as fields %}
+
+    {% spaceless %}
+    {% set expanded = expanded|default(false) %}
+    <div data-content="{{ name }}"
+         data-role="content-variant-item"
+         class="content-variant-item {% if form.default.vars.data %}content-variant-item-default{% endif %}"
+    >
+        <button class="btn-toggle-variant btn btn-icon btn-square-light"
+                type="button"
+                data-toggle="collapse"
+                data-target="[data-content=&quot;{{ name }}&quot;]>.content-variant-item-content"
+                data-related="{{ name }}"
+                aria-expanded="{{ expanded }}"
+                title="{{ expanded ? 'Collapse'|trans : 'Expand'|trans }}"
+                data-collapsed-title="{{ 'Expand'|trans }}"
+                data-expanded-title="{{ 'Collapse'|trans }}">
+            <span class="fa-icon oro-collapse-icon" aria-hidden="true"></span>
+        </button>
+
+        <h5 class="content-variant-item-title">
+            {{ form_widget(form.default) }}
+            {{ form_widget(form.type) }}
+            {{ oro_web_catalog_content_variant_title(form.type.vars.data)|trans }}
+            <span class="label label-info content-variant-item-default-label">{{ "oro.webcatalog.contentvariant.default.label"|trans }}</span>
+        </h5>
+
+        <div class="content-variant-item-content collapse"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orowebcatalog/js/app/views/variant-body-view',
+                expanded: expanded,
+                selectors: {
+                    container: '.content-variant-item-content',
+                    trigger: '.btn-toggle-variant',
+                    body: '.content-variant-item-content__body'
+                }
+            }|json_encode }}"
+            data-layout="separate"
+            data-body-prototype="{{ fields.oro_web_catalog_content_variant_prototype_body(form, disabled, expanded)|escape }}"
+        ></div>
+
+        <button class="btn-remove-variant btn btn-icon btn-square-light" type="button" data-related="{{ name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
     </div>
     {% endspaceless %}
 {% endmacro %}
@@ -42,7 +81,8 @@
         {% set contentVariantPrototypeFormHtml = _self.oro_web_catalog_content_variant_collection_item_prototype(
             contentVariantPrototypeForm,
             contentVariantPrototypeForm.vars.name,
-            form.vars.disabled
+            form.vars.disabled,
+            true
         ) %}
         data-prototype-{{ contentVarientTypeName }}="{{ contentVariantPrototypeFormHtml|escape }}"
     {% endfor %}
@@ -110,7 +150,18 @@
             >
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled) }}
+                        {% set expanded = false %}
+
+                        {# Expand only defined content variant forms #}
+                        {% if expandedContentVariantForms is defined %}
+                            {% for expandedForm in expandedContentVariantForms %}
+                                {% if expandedForm == child %}
+                                    {% set expanded = true %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled, expanded) }}
                     {% endfor %}
                 {% endif %}
             </div>

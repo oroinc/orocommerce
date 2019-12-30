@@ -27,8 +27,7 @@
     }
 
     .content-variant-item-title {
-        padding-bottom: 10px;
-        border-bottom: rgb(230, 230, 230) solid 1px;
+        margin-bottom: 0;
 
         input[type="radio"] {
             margin-top: -2px;
@@ -40,14 +39,28 @@
         }
     }
 
+    .content-variant-item-content {
+        &__body {
+            margin-top: 10px;
+            border-top: rgb(230, 230, 230) solid 1px;
+            padding-top: 8px;
+        }
+    }
+
     .content-variant-add-btn-container {
         margin-bottom: $content-padding-medium;
     }
 
-    .removeVariantBtn {
+    .btn-remove-variant {
         position: absolute;
-        top: 4px;
-        #{$end}: 4px;
+        top: 5px;
+        #{$end}: 5px;
+    }
+
+    .btn-toggle-variant {
+        position: absolute;
+        top: 5px;
+        #{$start}: 5px;
     }
 
     .scope-collection {

@@ -435,3 +435,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
+    oro_web_catalog.handler.content_node_handler:
+        class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
+        parent: oro_form.form.handler.default
+
+    oro_web_catalog.form.content_node_form_template_data_provider:
+        class: Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider
