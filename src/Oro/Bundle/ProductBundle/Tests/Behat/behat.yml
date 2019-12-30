@@ -612,10 +612,10 @@ oro_behat_extension:
           Product Page: 'theme[oro_frontend___page_templates][value][oro_product_frontend_product_view]'
 
     Remove Variant Button:
-      selector: 'button.removeVariantBtn'
+      selector: 'button.btn-remove-variant'
 
     Remove First Product Collection Variant Button:
-      selector: 'button.removeVariantBtn[data-related="oro_web_catalog_content_node[contentVariants][0]"]'
+      selector: 'button.btn-remove-variant[data-related="oro_web_catalog_content_node[contentVariants][0]"]'
 
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'

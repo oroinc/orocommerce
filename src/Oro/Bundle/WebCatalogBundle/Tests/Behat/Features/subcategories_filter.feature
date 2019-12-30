@@ -164,7 +164,7 @@ Feature: Sub-Categories filter
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
-Scenario: Hide filter
+  Scenario: Hide filter
     Given I hide filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
     When I filter Text as contains "Product1"
     Then I should not see an "Subcategories Filter" element
@@ -186,6 +186,7 @@ Scenario: Hide filter
   Scenario: Change type to "Do not include"
     Given I proceed as the Admin
     And I click "Lighting Products"
+    And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Sub-Categories | Do not include |
     And I save form
@@ -202,6 +203,7 @@ Scenario: Hide filter
 
   Scenario: Change type to "Include, show as filter"
     Given I proceed as the Admin
+    And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Sub-Categories | Include, show as filter |
     And I save form

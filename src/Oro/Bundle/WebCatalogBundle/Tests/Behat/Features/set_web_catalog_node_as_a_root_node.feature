@@ -33,10 +33,11 @@ Feature: Set web catalog node as a root node
     And I click on "Clearance"
     When I save form
     Then I should see "Content Node has been saved" flash message
-    And I click on "By Brand"
+    When I click on "By Brand"
+    And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    When I save form
+    And I save form
     Then I should see "Content Node has been saved" flash message
     And I click "Create Content Node"
     And I fill "Content Node" with:
