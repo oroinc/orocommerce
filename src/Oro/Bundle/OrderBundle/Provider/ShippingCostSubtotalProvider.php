@@ -16,7 +16,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
-    const NAME = 'oro_order.subtotal_shipping_cost';
     const SUBTOTAL_SORT_ORDER = 200;
 
     /**
@@ -43,14 +42,6 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
 
         $this->translator = $translator;
         $this->rounding = $rounding;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

@@ -72,11 +72,6 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertSame(SubtotalProvider::NAME, $this->provider->getName());
-    }
-
     public function testIsSupported()
     {
         $order2 = new Order();

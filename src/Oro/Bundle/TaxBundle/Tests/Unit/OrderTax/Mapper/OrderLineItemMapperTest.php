@@ -67,11 +67,6 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         unset($this->mapper);
     }
 
-    public function testGetProcessingClassName()
-    {
-        $this->assertEquals('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $this->mapper->getProcessingClassName());
-    }
-
     public function testMap()
     {
         $lineItem = $this->createLineItem(self::ITEM_ID, self::ITEM_QUANTITY, self::ITEM_PRICE_VALUE);

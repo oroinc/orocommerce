@@ -10,10 +10,12 @@ use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for taxes.
+ */
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
     const TYPE = 'tax';
-    const NAME = 'oro_tax.subtotal_tax';
     const SUBTOTAL_ORDER = 500;
 
     /**
@@ -52,14 +54,6 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxFactory = $taxFactory;
         $this->taxationSettingsProvider = $taxationSettingsProvider;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

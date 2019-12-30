@@ -623,7 +623,7 @@ services:
             - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.checkout.subtotals.checkout_subtotal }
 
     oro_checkout.model.checkout_subtotal_updater:
         class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater'

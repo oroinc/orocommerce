@@ -184,9 +184,4 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $supported = $this->provider->isSupported($order);
         $this->assertFalse($supported);
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(DiscountSubtotalProvider::NAME, $this->provider->getName());
-    }
 }

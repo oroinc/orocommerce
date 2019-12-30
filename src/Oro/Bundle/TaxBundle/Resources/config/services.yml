@@ -192,6 +192,8 @@ services:
     oro_tax.provider.tax_provider_registry:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry'
         arguments:
+            - [] # provider names
+            - ~ # service locator
             - '@oro_config.manager'
 
     oro_tax.provider.built_in_tax_provider:
@@ -200,7 +202,7 @@ services:
         arguments:
             - '@oro_tax.manager.tax_manager'
         tags:
-            - { name: oro_tax.tax_provider, priority: 255 }
+            - { name: oro_tax.tax_provider, alias: built_in, priority: 255 }
 
     oro_tax.transformer.tax_value:
         class: 'Oro\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer'
@@ -245,6 +247,8 @@ services:
     oro_tax.factory.tax:
         class: 'Oro\Bundle\TaxBundle\Factory\TaxFactory'
         public: false
+        arguments:
+            - ~ # service locator
 
     oro_tax.factory.tax_base_exclusion:
         class: 'Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory'
@@ -264,11 +268,9 @@ services:
         arguments:
             - '@oro_tax.event.context_event_dispatcher'
             - '@oro_tax.provider.taxation_address_provider'
-            - '%oro_order.entity.order.class%'
-        calls:
-            - [setOrderLineItemMapper,  ["@oro_tax.order_tax.mapper.order_line_item_mapper"]]
+            - '@oro_tax.order_tax.mapper.order_line_item_mapper'
         tags:
-            - { name: oro_tax.tax_mapper }
+            - { name: oro_tax.tax_mapper, class: '%oro_order.entity.order.class%' }
 
     oro_tax.order_tax.mapper.order_line_item_mapper:
         class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper'
@@ -276,9 +278,8 @@ services:
         arguments:
             - '@oro_tax.event.context_event_dispatcher'
             - '@oro_tax.provider.taxation_address_provider'
-            - '%oro_order.entity.order_line_item.class%'
         tags:
-            - { name: oro_tax.tax_mapper }
+            - { name: oro_tax.tax_mapper, class: '%oro_order.entity.order_line_item.class%' }
 
     oro_tax.order_tax.context_handler.order_line_item_handler:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
@@ -533,11 +534,14 @@ services:
             - '@oro_tax.factory.tax'
             - '@oro_tax.provider.taxation_settings_provider'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 20 }
+            - { name: oro_pricing.subtotal_provider, alias: oro_tax.subtotal_tax, priority: 20 }
 
     oro_tax.address_matcher_registry:
         class: 'Oro\Bundle\TaxBundle\Matcher\AddressMatcherRegistry'
         public: false
+        arguments:
+            - [] # resolvable types
+            - ~ # service locator
 
     oro_tax.repository.product_tax_code:
         class: 'Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository'

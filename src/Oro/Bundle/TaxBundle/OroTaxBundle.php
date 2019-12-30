@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle;
 
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\AddressMatcherRegistryPass;
 use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
 use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
-use Oro\Component\DependencyInjection\Compiler\PriorityTaggedServiceViaAddMethodCompilerPass;
+use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
+use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -20,14 +19,22 @@ class OroTaxBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new PriorityTaggedServiceViaAddMethodCompilerPass(
+        $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
             'oro_tax.provider.tax_provider_registry',
-            'addProvider',
-            'oro_tax.tax_provider'
+            'oro_tax.tax_provider',
+            'alias'
         ));
-        $container->addCompilerPass(new TaxMapperPass());
+        $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
+            'oro_tax.address_matcher_registry',
+            'oro_tax.address_matcher',
+            'type'
+        ));
+        $container->addCompilerPass(new PriorityTaggedLocatorCompilerPass(
+            'oro_tax.factory.tax',
+            'oro_tax.tax_mapper',
+            'class'
+        ));
         $container->addCompilerPass(new ResolverEventConnectorPass());
-        $container->addCompilerPass(new AddressMatcherRegistryPass());
     }
 
     /** {@inheritdoc} */

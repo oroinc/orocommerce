@@ -2,24 +2,24 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * The registry of shipping method providers.
+ */
 class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
 {
-    /**
-     * @var ShippingMethodProviderInterface[]
-     */
-    private $providers = [];
+    /** @var iterable|ShippingMethodProviderInterface[] */
+    private $providers;
 
     /**
-     * @param ShippingMethodProviderInterface $provider
+     * @param iterable|ShippingMethodProviderInterface[] $providers
      */
-    public function addProvider(ShippingMethodProviderInterface $provider)
+    public function __construct(iterable $providers)
     {
-        $this->providers[] = $provider;
+        $this->providers = $providers;
     }
 
     /**
-     * @param string $identifier
-     * @return null|ShippingMethodInterface
+     * {@inheritDoc}
      */
     public function getShippingMethod($identifier)
     {
@@ -28,24 +28,28 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
                 return $provider->getShippingMethod($identifier);
             }
         }
+
         return null;
     }
 
     /**
-     * @return ShippingMethodInterface[]
+     * {@inheritDoc}
      */
     public function getShippingMethods()
     {
-        $result = [];
+        $items = [];
         foreach ($this->providers as $provider) {
-            $result = array_merge($result, $provider->getShippingMethods());
+            $items[] = $provider->getShippingMethods();
         }
-        return $result;
+        if ($items) {
+            $items = array_merge(...$items);
+        }
+
+        return $items;
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasShippingMethod($name)
     {
@@ -54,6 +58,7 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
                 return true;
             }
         }
+
         return false;
     }
 }

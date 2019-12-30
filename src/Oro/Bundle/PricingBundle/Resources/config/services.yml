@@ -791,6 +791,8 @@ services:
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
         public: false
+            - [] # provider names
+            - ~ # service locator
 
     oro_pricing.subtotal_processor.total_processor_provider:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
@@ -810,7 +812,7 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.subtotal }
 
     Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider:
         alias: oro_pricing.subtotal_processor.provider.subtotal_line_item
@@ -830,7 +832,7 @@ services:
             - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.not_priced_subtotal, priority: 0 }
 
     oro_pricing.price_list_with_priority_collection.handler:
         class: 'Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler'

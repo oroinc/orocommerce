@@ -68,7 +68,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider([]);
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();

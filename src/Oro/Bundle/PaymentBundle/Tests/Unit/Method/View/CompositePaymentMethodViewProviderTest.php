@@ -8,16 +8,6 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CompositePaymentMethodViewProvider
-     */
-    protected $registry;
-
-    protected function setUp()
-    {
-        $this->registry = new CompositePaymentMethodViewProvider();
-    }
-
     public function testGetPaymentMethodViews()
     {
         $testView = $this->getTypeMock('test_method_view');
@@ -29,9 +19,9 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
             ->with(['test_method_view', 'test_method_view2'])
             ->will($this->returnValue([$testView, $testView2]));
 
-        $this->registry->addProvider($viewProvider);
+        $registry = new CompositePaymentMethodViewProvider([$viewProvider]);
 
-        $views = $this->registry->getPaymentMethodViews(['test_method_view', 'test_method_view2']);
+        $views = $registry->getPaymentMethodViews(['test_method_view', 'test_method_view2']);
         $this->assertCount(2, $views);
         $this->assertEquals([$testView, $testView2], $views);
     }
@@ -49,9 +39,9 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
             ->with('test_method_view')
             ->will($this->returnValue(true));
 
-        $this->registry->addProvider($viewProvider);
+        $registry = new CompositePaymentMethodViewProvider([$viewProvider]);
 
-        $paymentMethodView = $this->registry->getPaymentMethodView($testView->getPaymentMethodIdentifier());
+        $paymentMethodView = $registry->getPaymentMethodView($testView->getPaymentMethodIdentifier());
 
         $this->assertEquals($paymentMethodView, $testView);
     }
@@ -62,7 +52,8 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetPaymentMethodViewExceptionTriggered()
     {
-        $this->registry->getPaymentMethodView('not_exists_payment_method');
+        $registry = new CompositePaymentMethodViewProvider([]);
+        $registry->getPaymentMethodView('not_exists_payment_method');
     }
 
     /**

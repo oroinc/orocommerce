@@ -3,43 +3,37 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\TaxBundle\Form\Type\TaxProviderType;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxProviderType
-     */
-    protected $formType;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderRegistry */
+    private $registry;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderRegistry
-     */
-    protected $registry;
+    /** @var TaxProviderType */
+    private $formType;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(TaxProviderRegistry::class);
 
         $this->formType = new TaxProviderType($this->registry);
     }
 
     /**
-     * @param string $name
      * @param string $label
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     *
+     * @return TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function getProviderMock($name, $label)
+    private function getProviderMock($label)
     {
-        $mock = $this->createMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
-        $mock->expects($this->once())->method('getName')->willReturn($name);
+        $mock = $this->createMock(TaxProviderInterface::class);
         $mock->expects($this->once())->method('getLabel')->willReturn($label);
 
         return $mock;
@@ -47,14 +41,12 @@ class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigureOptions()
     {
-        $choices = [
-            $this->getProviderMock('name1', 'label1'),
-            $this->getProviderMock('name2', 'label2'),
-        ];
-
         $this->registry->expects($this->once())
             ->method('getProviders')
-            ->willReturn($choices);
+            ->willReturn([
+                'name1' => $this->getProviderMock('label1'),
+                'name2' => $this->getProviderMock('label2')
+            ]);
 
         $resolver = new OptionsResolver();
 

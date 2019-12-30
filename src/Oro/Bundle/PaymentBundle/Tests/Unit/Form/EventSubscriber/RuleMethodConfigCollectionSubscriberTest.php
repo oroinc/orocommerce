@@ -44,7 +44,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->paymentMethodProvider = new CompositePaymentMethodProvider();
+        $this->paymentMethodProvider = new CompositePaymentMethodProvider([]);
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->paymentMethodProvider);
@@ -115,8 +115,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var CompositePaymentMethodViewProvider $methodViewProvider */
-        $methodViewProvider = new CompositePaymentMethodViewProvider();
+        $methodViewProvider = new CompositePaymentMethodViewProvider([]);
 
         return [
             new PreloadedExtension(

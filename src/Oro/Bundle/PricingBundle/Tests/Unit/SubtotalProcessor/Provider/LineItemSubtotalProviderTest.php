@@ -86,7 +86,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
             );
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(LineItemSubtotalProvider::NAME . '.label')
+            ->with(LineItemSubtotalProvider::LABEL)
             ->willReturn('test');
 
         $entity = new EntityStub();
@@ -188,7 +188,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(LineItemSubtotalProvider::NAME . '.label')
+            ->with(LineItemSubtotalProvider::LABEL)
             ->willReturn('test');
 
         /** @var SubtotalEntityStub|\PHPUnit\Framework\MockObject\MockObject $entityMock */
@@ -213,11 +213,6 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($entityMock->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(123456.0, $subtotal->getAmount());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(LineItemSubtotalProvider::NAME, $this->provider->getName());
     }
 
     public function testIsSupported()
