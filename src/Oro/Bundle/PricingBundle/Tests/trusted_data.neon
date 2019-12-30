@@ -4,6 +4,10 @@ trusted_data:
         Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper:
             isFullChainCpl:
                 relation: true
+        Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository:
+            deleteUnlinkedRules:
+                alias: true
+                entityName: true
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             applyPriceListLimitations:
                 rootAlias: true

@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
@@ -23,15 +24,12 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $className = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $this->manager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className);
-        $this->repository = $this->manager->getRepository($className);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-            ]
-        );
+            ->getManagerForClass(CombinedPriceListActivationRule::class);
+        $this->repository = $this->manager->getRepository(CombinedPriceListActivationRule::class);
+        $this->loadFixtures([
+            LoadCombinedPriceLists::class,
+        ]);
     }
 
     public function testDeleteRulesByCPL()
@@ -127,6 +125,41 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->assertTrue($rules[1]->isActive());
     }
 
+    public function testDeleteUnlinkedRules()
+    {
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+        $this->prepareUnlinkedRulesData();
+
+        $this->repository->deleteUnlinkedRules();
+        // Check second call processed correctly (all rules already removed)
+        $this->repository->deleteUnlinkedRules();
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertCount(0, $rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
+    }
+
+    public function testDeleteUnlinkedRulesSkipPriceList()
+    {
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+        $this->prepareUnlinkedRulesData();
+        $this->repository->deleteUnlinkedRules([$cpl1]);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertNotEmpty($rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
+    }
+
     /**
      * @param array $rulesData
      */
@@ -149,5 +182,31 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
             $this->manager->persist($rule);
         }
         $this->manager->flush();
+    }
+
+    private function prepareUnlinkedRulesData(): void
+    {
+        $data = [
+            [
+                'fullCPLName' => '2t_3t',
+                'cplName' => '2f'
+            ],
+            [
+                'fullCPLName' => '2f',
+                'cplName' => '2f'
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertNotEmpty($rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
     }
 }
