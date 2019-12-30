@@ -44,8 +44,8 @@ class OroProductBundle extends Bundle
             ->addCompilerPass(new TwigSandboxConfigurationPass())
             ->addCompilerPass(new PriorityTaggedServiceViaAddMethodCompilerPass(
                 'oro_product.provider.default_product_unit_provider.chain',
-                'addProvider',
-                'oro_product.default_product_unit_provider'
+                'oro_product.default_product_unit_provider',
+                'addProvider'
             ))
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Product::class => [
