@@ -18,7 +18,7 @@ class SubtotalProviderRegistry implements ResetInterface
     private $providerContainer;
 
     /** @var SubtotalProviderInterface[]|null */
-    protected $providers;
+    private $providers;
 
     /**
      * @param string[]           $providerNames

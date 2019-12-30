@@ -791,6 +791,7 @@ services:
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
         public: false
+        arguments:
             - [] # provider names
             - ~ # service locator
 
