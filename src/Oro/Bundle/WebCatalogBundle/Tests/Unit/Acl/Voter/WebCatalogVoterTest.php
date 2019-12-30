@@ -48,10 +48,6 @@ class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
     {
         $object = $this->getEntity(WebCatalog::class, ['id' => 1]);
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(get_class($object)));
         $this->voter->setClassName(WebCatalog::class);
 
         $this->doctrineHelper->expects($this->any())
@@ -76,10 +72,6 @@ class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
     {
         $object = $this->getEntity(WebCatalog::class, ['id' => 1]);
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(get_class($object)));
         $this->voter->setClassName(WebCatalog::class);
 
         $this->doctrineHelper->expects($this->any())

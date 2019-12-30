@@ -49,10 +49,6 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function testVote($object, $expected)
     {
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(get_class($object)));
         $this->voter->setClassName(get_class($object));
 
         $this->doctrineHelper->expects($this->any())

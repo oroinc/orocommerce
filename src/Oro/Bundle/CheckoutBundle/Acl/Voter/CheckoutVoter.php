@@ -2,34 +2,31 @@
 
 namespace Oro\Bundle\CheckoutBundle\Acl\Voter;
 
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\SecurityBundle\Acl\Voter\EntityClassResolverUtil;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterface
+/**
+ * Checks whether it is allowed to create the Checkout entity
+ * from an entity that implements CheckoutSourceEntityInterface.
+ */
+class CheckoutVoter implements VoterInterface
 {
-    use ContainerAwareTrait;
-
     const ATTRIBUTE_CREATE = 'CHECKOUT_CREATE';
 
-    /**
-     * @var array
-     */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_CREATE
-    ];
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
     /**
-     * {@inheritdoc}
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    protected function supportsClass($class)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        return is_a($class, CheckoutSourceEntityInterface::class, true);
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -37,13 +34,7 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if (!$object || !is_object($object)) {
-            return self::ACCESS_ABSTAIN;
-        }
-
-        $authorizationChecker = $this->getAuthorizationChecker();
-        $class = $this->getEntityClass($object);
-        if (!$this->supportsClass($class)) {
+        if (!is_object($object)) {
             return self::ACCESS_ABSTAIN;
         }
 
@@ -51,43 +42,18 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($authorizationChecker->isGranted(BasicPermissionMap::PERMISSION_VIEW, $object)
-            && $authorizationChecker->isGranted(sprintf(
-                '%s;entity:OroCheckoutBundle:Checkout',
-                BasicPermissionMap::PERMISSION_CREATE
-            ))
+        if (!is_a(EntityClassResolverUtil::getEntityClass($object), CheckoutSourceEntityInterface::class, true)) {
+            return self::ACCESS_ABSTAIN;
+        }
+
+        if ($this->authorizationChecker->isGranted(BasicPermissionMap::PERMISSION_VIEW, $object)
+            && $this->authorizationChecker->isGranted(
+                BasicPermissionMap::PERMISSION_CREATE . ';entity:' . Checkout::class
+            )
         ) {
             return self::ACCESS_GRANTED;
         }
 
         return self::ACCESS_DENIED;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPermissionForAttribute($class, $identifier, $attribute)
-    {
-        return self::ACCESS_ABSTAIN;
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer()
-    {
-        if (!$this->container) {
-            throw new \InvalidArgumentException('ContainerInterface not injected');
-        }
-
-        return $this->container;
-    }
-
-    /**
-     * @return AuthorizationCheckerInterface
-     */
-    protected function getAuthorizationChecker()
-    {
-        return $this->getContainer()->get('security.authorization_checker');
     }
 }

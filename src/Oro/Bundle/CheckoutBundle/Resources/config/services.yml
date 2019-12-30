@@ -459,11 +459,8 @@ services:
 
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
-        public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
-        calls:
-            - [setContainer, ["@service_container"]]
+            - '@security.authorization_checker'
         tags:
             - { name: security.voter }
 

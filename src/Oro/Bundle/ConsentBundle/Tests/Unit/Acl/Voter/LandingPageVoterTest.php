@@ -30,29 +30,11 @@ class LandingPageVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->voter);
-        unset($this->doctrineHelper);
-    }
-
-    /**
      * @dataProvider attributesDataProvider
-     *
-     * @param string $attribute
-     * @param $hasConsents
-     * @param $expected
      */
-    public function testVote($attribute, $hasConsents, $expected)
+    public function testVote(string $attribute, bool $hasConsents, int $expected)
     {
-        $object = $this->createMock(Page::class);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(Page::class));
+        $object = new Page();
 
         $this->voter->setClassName(Page::class);
 
