@@ -202,8 +202,6 @@ services:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
-        calls:
-            - [setCombinedPriceListClass, ['%oro_pricing.entity.combined_price_list.class%']]
 
     oro_pricing.builder.abstract_combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
