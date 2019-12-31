@@ -2,255 +2,161 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\RedirectBundle\Entity\Redirect;
-use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
-use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RedirectRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $repository;
+    /** @var SlugRedirectMatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $redirectMatcher;
 
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $scopeManager;
-
-    /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject */
     private $matchedUrlDecisionMaker;
 
-    /**
-     * @var RedirectExceptionListener
-     */
+    /** @var RedirectExceptionListener */
     private $listener;
 
     protected function setUp()
     {
-        $this->repository = $this->createMock(RedirectRepository::class);
-        $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->redirectMatcher = $this->createMock(SlugRedirectMatcher::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
 
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->with(Redirect::class)
-            ->willReturn($this->repository);
-
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Redirect::class)
-            ->willReturn($manager);
-
         $this->listener = new RedirectExceptionListener(
-            $registry,
-            $this->scopeManager,
+            $this->redirectMatcher,
             $this->matchedUrlDecisionMaker
         );
     }
 
     /**
-     * @dataProvider skipDataProvider
-     * @param bool $hasResponse
-     * @param bool $isMaster
+     * @param Request    $request
+     * @param bool       $isMaster
      * @param \Exception $exception
+     *
+     * @return GetResponseForExceptionEvent
      */
-    public function testOnKernelExceptionNoProcessed($hasResponse, $isMaster, \Exception  $exception)
+    private function getEvent(Request $request, $isMaster, \Exception $exception)
     {
-        $event = $this->getEvent(Request::create('/test'), $hasResponse, $isMaster, $exception);
-        $event->expects($this->never())
-            ->method('setResponse');
-        $this->matchedUrlDecisionMaker->expects($this->any())
-            ->method('matches')
-            ->willReturn(true);
+        return new GetResponseForExceptionEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            $isMaster ? HttpKernelInterface::MASTER_REQUEST : HttpKernelInterface::SUB_REQUEST,
+            $exception
+        );
+    }
+
+    public function testOnKernelExceptionForNotMasterRequest()
+    {
+        $event = $this->getEvent(Request::create('/test'), false, new NotFoundHttpException());
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method('matches');
 
         $this->listener->onKernelException($event);
+        $this->assertFalse($event->hasResponse());
     }
 
-    /**
-     * @return array
-     */
-    public function skipDataProvider()
+    public function testOnKernelExceptionWhenResponseAlreadySet()
     {
-        return [
-            'non master' => [false, false, new NotFoundHttpException()],
-            'has response' => [true, true, new NotFoundHttpException()],
-            'unsupported exception' => [false, true, new \Exception()]
-        ];
+        $event = $this->getEvent(Request::create('/test'), true, new NotFoundHttpException());
+        $response = $this->createMock(Response::class);
+        $event->setResponse($response);
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method('matches');
+
+        $this->listener->onKernelException($event);
+        $this->assertSame($response, $event->getResponse());
     }
 
-    public function testOnKernelExceptionNotMatchedUrl()
+    public function testOnKernelExceptionForUnsupportedException()
     {
-        $event = $this->getEvent(Request::create('/test'), false, true, new NotFoundHttpException());
-        $event->expects($this->never())
-            ->method('setResponse');
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $event = $this->getEvent(Request::create('/test'), true, new \Exception());
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method('matches');
+
+        $this->listener->onKernelException($event);
+        $this->assertFalse($event->hasResponse());
+    }
+
+    public function testOnKernelExceptionWhenUrlIsNotMatched()
+    {
+        $event = $this->getEvent(Request::create('/test'), true, new NotFoundHttpException());
+
+        $this->matchedUrlDecisionMaker->expects($this->once())
             ->method('matches')
             ->willReturn(false);
 
         $this->listener->onKernelException($event);
+        $this->assertFalse($event->hasResponse());
     }
 
-    public function testOnKernelExceptionNoRedirect()
+    public function testOnKernelExceptionWhenNoRedirect()
     {
-        $request = Request::create('/test');
-        $event = $this->getEvent($request, false, true, new NotFoundHttpException());
-        $event->expects($this->never())
-            ->method('setResponse');
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $event = $this->getEvent(Request::create('/test'), true, new NotFoundHttpException());
+
+        $this->matchedUrlDecisionMaker->expects($this->once())
             ->method('matches')
             ->with('/test')
             ->willReturn(true);
-
-        $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeManager->expects($this->once())
-            ->method('getCriteria')
-            ->with('web_content')
-            ->willReturn($scopeCriteria);
-        $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/test', $scopeCriteria)
+        $this->redirectMatcher->expects($this->once())
+            ->method('match')
+            ->with('/test')
             ->willReturn(null);
 
         $this->listener->onKernelException($event);
+        $this->assertFalse($event->hasResponse());
     }
 
-    public function testOnKernelExceptionRedirectByPrototype()
+    public function testOnKernelExceptionForRedirect()
     {
-        $url = '/context/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/test';
+        $event = $this->getEvent(Request::create('/test'), true, new NotFoundHttpException());
 
-        $request = Request::create($url);
-        $event = $this->getEvent($request, false, true, new NotFoundHttpException());
-        $this->matchedUrlDecisionMaker->expects($this->any())
-            ->method('matches')
-            ->with($url)
-            ->willReturn(true);
-
-        $scopeCriteria = $this->createMock(ScopeCriteria::class);
-
-        $this->scopeManager->expects($this->once())
-            ->method('getCriteria')
-            ->with('web_content')
-            ->willReturn($scopeCriteria);
-
-        $contextRedirect = new Redirect();
-        $contextRedirect->setTo('/context-new');
-        $contextRedirect->setType(301);
-
-        $this->repository->expects($this->any())
-            ->method('findByUrl')
-            ->willReturnMap(
-                [
-                    [$url, $scopeCriteria, null],
-                    ['/context', $scopeCriteria, $contextRedirect],
-                ]
-            );
-
-        $prototypeRedirect = new Redirect();
-        $prototypeRedirect->setToPrototype('test-new');
-        $prototypeRedirect->setType(301);
-
-        $this->repository->expects($this->any())
-            ->method('findByPrototype')
-            ->with('test', $scopeCriteria)
-            ->willReturn($prototypeRedirect);
-
-        $event->expects($this->once())
-            ->method('setResponse')
-            ->willReturnCallback(
-                function (RedirectResponse $response) {
-                    $this->assertEquals(301, $response->getStatusCode());
-                    $this->assertEquals(
-                        '/context-new/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/test-new',
-                        $response->getTargetUrl()
-                    );
-                }
-            );
-
-        $this->listener->onKernelException($event);
-    }
-
-    public function testOnKernelException()
-    {
-        $request = Request::create('/test');
-        $event = $this->getEvent($request, false, true, new NotFoundHttpException());
-        $this->matchedUrlDecisionMaker->expects($this->any())
+        $this->matchedUrlDecisionMaker->expects($this->once())
             ->method('matches')
             ->with('/test')
             ->willReturn(true);
-
-        $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeManager->expects($this->once())
-            ->method('getCriteria')
-            ->with('web_content')
-            ->willReturn($scopeCriteria);
-
-        $redirect = new Redirect();
-        $redirect->setTo('/test-new');
-        $redirect->setType(301);
-        $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/test', $scopeCriteria)
-            ->willReturn($redirect);
-
-        $event->expects($this->once())
-            ->method('setResponse')
-            ->willReturnCallback(
-                function (RedirectResponse $response) {
-                    $this->assertEquals(301, $response->getStatusCode());
-                    $this->assertEquals(
-                        '/test-new',
-                        $response->getTargetUrl()
-                    );
-                }
-            );
+        $this->redirectMatcher->expects($this->once())
+            ->method('match')
+            ->with('/test')
+            ->willReturn(['pathInfo' => '/test-new', 'statusCode' => 301]);
 
         $this->listener->onKernelException($event);
+        $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+        /** @var RedirectResponse $response */
+        $response = $event->getResponse();
+        $this->assertEquals('/test-new', $response->getTargetUrl());
+        $this->assertSame(301, $response->getStatusCode());
     }
 
-    /**
-     * @param Request $request
-     * @param bool $hasResponse
-     * @param bool $isMaster
-     * @param \Exception $exception
-     * @return GetResponseForExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getEvent(Request $request, $hasResponse, $isMaster, \Exception  $exception)
+    public function testOnKernelExceptionForRedirectWithBaseUrl()
     {
-        $event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-        $event->expects($this->any())
-            ->method('hasResponse')
-            ->willReturn($hasResponse);
-        $event->expects($this->any())
-            ->method('isMasterRequest')
-            ->willReturn($isMaster);
-        $event->expects($this->any())
-            ->method('getException')
-            ->willReturn($exception);
+        $request = Request::create('/index.php/test');
+        $request->server->set('SCRIPT_FILENAME', 'index.php');
+        $request->server->set('SCRIPT_NAME', 'index.php');
+        $event = $this->getEvent($request, true, new NotFoundHttpException());
 
-        return $event;
+        $this->matchedUrlDecisionMaker->expects($this->once())
+            ->method('matches')
+            ->with('/test')
+            ->willReturn(true);
+        $this->redirectMatcher->expects($this->once())
+            ->method('match')
+            ->with('/test')
+            ->willReturn(['pathInfo' => '/test-new', 'statusCode' => 301]);
+
+        $this->listener->onKernelException($event);
+        $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+        /** @var RedirectResponse $response */
+        $response = $event->getResponse();
+        $this->assertEquals('/index.php/test-new', $response->getTargetUrl());
+        $this->assertSame(301, $response->getStatusCode());
     }
 }

@@ -7,6 +7,10 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
  * Represents a content variant type for web catalog content nodes.
+ *
+ * See {@see \Oro\Bundle\FrontendBundle\Api\ResourceTypeResolverInterface}
+ * and {@see \Oro\Bundle\FrontendBundle\Api\ResourceApiUrlResolverInterface}
+ * to provide a resource type and API URL for a content variant.
  */
 interface ContentVariantTypeInterface
 {

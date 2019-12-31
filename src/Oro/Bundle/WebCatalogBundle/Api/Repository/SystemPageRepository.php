@@ -4,7 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Api\Repository;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage;
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Component\Routing\UrlMatcherUtil;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouterInterface;
@@ -35,99 +36,66 @@ class SystemPageRepository
     /**
      * Gets a system page by its route if the given route is available on the storefront.
      *
-     * @param string $route
+     * @param string $routeName
      *
      * @return SystemPage|null
      */
-    public function findSystemPage(string $route): ?SystemPage
+    public function findSystemPage(string $routeName): ?SystemPage
     {
         try {
-            $url = $this->getUrl($route);
+            $url = $this->getUrl($routeName);
         } catch (RoutingException $e) {
             return null;
         }
 
-        return new SystemPage($route, $url);
+        return new SystemPage($routeName, $url);
     }
 
     /**
-     * @param string $route
+     * @param string $routeName
      *
      * @return string
      *
      * @throws RoutingException if the URL cannot be retrieved
      */
-    private function getUrl(string $route): string
+    private function getUrl(string $routeName): string
     {
-        $pathinfo = $this->getPathInfo($this->router->generate($route));
-        if (!$this->isFrontendUrl($pathinfo)) {
+        $url = $this->router->generate($routeName);
+        if (!$this->isFrontendUrl(UrlUtil::getPathInfo($url, $this->router->getContext()->getBaseUrl()))) {
             throw new RouteNotFoundException(sprintf(
                 'The route "%s" is not allowed on the storefront.',
-                $route
+                $routeName
             ));
-        }
-
-        return $pathinfo;
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
-    private function getPathInfo(string $url): string
-    {
-        $baseUrl = $this->router->getContext()->getBaseUrl();
-        if ($baseUrl && 0 === strpos($url, $baseUrl)) {
-            $url = substr($url, strlen($baseUrl));
         }
 
         return $url;
     }
 
     /**
-     * @param string $pathinfo
+     * @param string $pathInfo
      *
      * @return bool
      */
-    private function isFrontendUrl(string $pathinfo): bool
+    private function isFrontendUrl(string $pathInfo): bool
     {
         return
-            $this->frontendHelper->isFrontendUrl($pathinfo)
-            && $this->isGetMethodAllowed($pathinfo);
+            $this->frontendHelper->isFrontendUrl($pathInfo)
+            && $this->isGetMethodAllowed($pathInfo);
     }
 
     /**
-     * @param string $pathinfo
+     * @param string $pathInfo
      *
      * @return bool
      */
-    private function isGetMethodAllowed(string $pathinfo): bool
+    private function isGetMethodAllowed(string $pathInfo): bool
     {
         try {
-            $this->matchUrlWithGetMethod($pathinfo);
+            UrlMatcherUtil::matchForGetMethod($pathInfo, $this->router);
         } catch (RoutingException $e) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * @param string $pathinfo
-     */
-    private function matchUrlWithGetMethod(string $pathinfo): void
-    {
-        $context = $this->router->getContext();
-        $originalMethod = $context->getMethod();
-        $originalPathinfo = $context->getPathInfo();
-        $context->setMethod(Request::METHOD_GET);
-        $context->setPathInfo($pathinfo);
-        try {
-            $this->router->match($pathinfo);
-        } finally {
-            $context->setMethod($originalMethod);
-            $context->setPathInfo($originalPathinfo);
-        }
     }
 }

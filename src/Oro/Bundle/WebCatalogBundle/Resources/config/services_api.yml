@@ -12,6 +12,17 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_api.entity_serializer'
 
+    oro_web_catalog.api.resource_api_url_resolver.system_page:
+        class: Oro\Bundle\WebCatalogBundle\Api\SystemPageResourceResolver
+        arguments:
+            - '@oro_web_catalog.api.system_page_repository'
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, requestType: rest, priority: -200 }
+            - { name: oro_frontend.api.resource_api_url_resolver, requestType: rest, priority: -200 }
+
     oro_web_catalog.api.load_system_page:
         class: Oro\Bundle\WebCatalogBundle\Api\Processor\LoadSystemPage
         arguments:
@@ -70,6 +81,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_locale.helper.localization'
             - '@oro_config.manager'
+            - '@router'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
 
