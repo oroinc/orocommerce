@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-8594
+@ticket-BB-17545
 @automatically-ticket-tagged
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Minimum Price Selection Strategies

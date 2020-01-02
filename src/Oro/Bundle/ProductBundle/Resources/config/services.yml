@@ -1648,3 +1648,12 @@ services:
             - '@translator'
             - '@oro_entity_config.manager.attribute_group_manager'
         public: true
+
+    oro_product.content_widget_type.product_mini_block:
+        class: Oro\Bundle\ProductBundle\ContentWidget\ProductMiniBlockContentWidgetType
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - "@oro_config.manager"
+        tags:
+            - { name: oro_cms.content_widget.type }

@@ -71,7 +71,7 @@ define(function(require) {
                         throw new TypeError('Missing required option: routeName');
                     }
 
-                    this.dialog = this._openChooseDialog();
+                    this.dialog = this._openChooseDialog(editor);
                     this.dialog.on('grid-row-select', this._onGridRowSelect.bind(this));
                     this.dialog.render();
 
@@ -94,10 +94,14 @@ define(function(require) {
                     this.dialog.remove();
                 },
 
-                _openChooseDialog: function() {
+                _openChooseDialog: function(editor) {
                     return new DigitalAssetDialogWidget({
                         title: this.options.title,
-                        url: routing.generate(this.options.routeName, this.options.routeParams || {})
+                        url: routing.generate(this.options.routeName, this.options.routeParams || {}),
+                        loadingElement: editor.getEl(),
+                        dialogOptions: {
+                            appendTo: editor.getEl()
+                        }
                     });
                 }
             });

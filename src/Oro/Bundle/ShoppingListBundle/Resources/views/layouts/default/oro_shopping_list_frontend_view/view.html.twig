@@ -469,33 +469,35 @@
 {% block _shopping_list_line_items_list_actions_remove_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% set moduleOptions = {
-        removeClass: 'shopping-list-line-items__item-wrapper',
-        confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
-    } %}
+    {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
+        {% set moduleOptions = {
+            removeClass: 'shopping-list-line-items__item-wrapper',
+            confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+            successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+        } %}
 
-    {% if matrixForm != 'none' %}
-        {% set moduleOptions = moduleOptions|merge({
-            route: 'oro_shopping_list_frontend_remove_line_item',
-            requestMethod: 'DELETE',
-            routeParams: {
-                'lineItemId': lineItem.id
-            }
-        }) %}
-    {% else %}
-        {% set moduleOptions = moduleOptions|merge({
-            route: 'oro_api_shopping_list_frontend_delete_line_item',
-            routeParams: {'id': lineItem.id}
-        }) %}
+        {% if matrixForm != 'none' %}
+            {% set moduleOptions = moduleOptions|merge({
+                route: 'oro_shopping_list_frontend_remove_line_item',
+                requestMethod: 'DELETE',
+                routeParams: {
+                    'lineItemId': lineItem.id
+                }
+            }) %}
+        {% else %}
+            {% set moduleOptions = moduleOptions|merge({
+                route: 'oro_api_shopping_list_frontend_delete_line_item',
+                routeParams: {'id': lineItem.id}
+            }) %}
+        {% endif %}
+
+        <button class="item-remove btn btn--plain" {{ UI.renderPageComponentAttributes({
+                module: 'orofrontend/js/app/components/delete-item-component',
+                options: moduleOptions
+            }) }} >
+            <i class="fa-trash-o fa--x-large fa--no-offset"></i>
+        </button>
     {% endif %}
-
-    <button class="item-remove btn btn--plain" {{ UI.renderPageComponentAttributes({
-            module: 'orofrontend/js/app/components/delete-item-component',
-            options: moduleOptions
-        }) }} >
-        <i class="fa-trash-o fa--x-large fa--no-offset"></i>
-    </button>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_errors_widget %}

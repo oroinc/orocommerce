@@ -6,6 +6,7 @@ use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
 use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
+use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 
 class FreightClassesProviderTest extends MeasureUnitProviderTest
 {
@@ -41,8 +42,8 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
             ->with(self::CONFIG_ENTRY_NAME, false)
             ->willReturn($inputData['configUnits']);
 
-        foreach ($inputData['extensions'] as $name => $extension) {
-            $this->provider->addExtension($name, $extension);
+        if (null !== $inputData['extensions']) {
+            $this->provider->setExtensions($inputData['extensions']);
         }
 
         $this->assertEquals($expectedData, array_values($this->provider->getFreightClasses($inputData['options'])));
@@ -56,7 +57,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
         return [
             'no providers' => [
                 'input' => [
-                    'extensions' => [],
+                    'extensions' => null,
                     'options' => new ProductShippingOptions(),
                     'configUnits' => ['class50', 'class55'],
                     'units' => [
@@ -71,10 +72,13 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
             ],
             'existing extensions' => [
                 'input' => [
-                    'extensions' => [
-                        'extension1' => $this->getClassesExtension(['class50']),
-                        'extension2' => $this->getClassesExtension(['class60']),
-                    ],
+                    'extensions' => new RewindableGenerator(
+                        function () {
+                            yield $this->getClassesExtension(['class50']);
+                            yield $this->getClassesExtension(['class60']);
+                        },
+                        2
+                    ),
                     'options' => new ProductShippingOptions(),
                     'configUnits' => ['class50', 'class55', 'class60'],
                     'units' => [

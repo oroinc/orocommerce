@@ -19,3 +19,10 @@ acls:
         permission: ASSIGN
         category: "shopping"
         group_name: "commerce"
+
+    oro_shopping_list_line_item_frontend_delete:
+        type: entity
+        class: OroShoppingListBundle:LineItem
+        permission: DELETE
+        category: "shopping"
+        group_name: "commerce"

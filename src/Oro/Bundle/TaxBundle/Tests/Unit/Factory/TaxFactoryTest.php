@@ -6,53 +6,44 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class TaxFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxFactory
-     */
-    protected $factory;
+    /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $mapper1;
+
+    /** @var TaxFactory */
+    private $factory;
 
     protected function setUp()
     {
-        $this->factory = new TaxFactory();
+        $this->mapper1 = $this->createMock(TaxMapperInterface::class);
+
+        $mappers = TestContainerBuilder::create()
+            ->add(Order::class, $this->mapper1)
+            ->getContainer($this);
+
+        $this->factory = new TaxFactory($mappers);
     }
 
-    protected function tearDown()
+    public function testCreate()
     {
-        unset($this->factory);
-    }
-
-    public function testAddMapperAndCreate()
-    {
-        /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject $mapper */
-        $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
-        $mapper
-            ->expects($this->once())
-            ->method('getProcessingClassName')
-            ->willReturn('Oro\Bundle\OrderBundle\Entity\Order');
-
-        $mapper
-            ->expects($this->exactly(2))
-            ->method('map')
-            ->willReturnCallback(
-                function () {
-                    return new Taxable();
-                }
-            );
-
-        $this->factory->addMapper($mapper);
         $object = new Order();
 
-        $object->setSubtotal(45.5);
+        $this->mapper1->expects($this->exactly(2))
+            ->method('map')
+            ->with($this->identicalTo($object))
+            ->willReturnCallback(function () {
+                return new Taxable();
+            });
+
         $taxable = $this->factory->create($object);
-        $this->assertInstanceOf('\Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertInstanceOf(Taxable::class, $taxable);
 
-        $object->setSubtotal(50);
         $anotherTaxable = $this->factory->create($object);
+        $this->assertInstanceOf(Taxable::class, $anotherTaxable);
 
-        $this->assertInstanceOf('\Oro\Bundle\TaxBundle\Model\Taxable', $anotherTaxable);
         $this->assertNotSame($taxable, $anotherTaxable);
     }
 
@@ -67,16 +58,7 @@ class TaxFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testSupports()
     {
+        $this->assertTrue($this->factory->supports(new Order()));
         $this->assertFalse($this->factory->supports(new \stdClass()));
-
-        /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject $mapper */
-        $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
-        $mapper
-            ->expects($this->once())
-            ->method('getProcessingClassName')
-            ->willReturn('stdClass');
-
-        $this->factory->addMapper($mapper);
-        $this->assertTrue($this->factory->supports(new \stdClass()));
     }
 }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
@@ -148,8 +149,40 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'changedAndApplicable' => [
-                'changeSet' => ['some', 'changes'],
+                'changeSet' => [
+                    Configuration::getConfigKeyByName(Configuration::DEFAULT_PRICE_LISTS) => [
+                        'new' => [
+                            [
+                                'priceList' => 1,
+                                'sort_order' => 100
+                            ],
+                            [
+                                'priceList' => 2,
+                                'sort_order' => 200
+                            ]
+                        ],
+                        'old' => [
+                            [
+                                'priceList' => 1,
+                                'sort_order' => 200
+                            ],
+                            [
+                                'priceList' => 2,
+                                'sort_order' => 100
+                            ]
+                        ]
+                    ]
+                ],
                 'dispatch' => true,
+            ],
+            'changedAndNotApplicable' => [
+                'changeSet' => [
+                    Configuration::getConfigKeyByName('some_option') => [
+                        'new' => 'yes',
+                        'old' => 'no'
+                    ]
+                ],
+                'dispatch' => false,
             ],
             'notChangedAndApplicable' => [
                 'changeSet' => [],
@@ -163,6 +196,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->changeTriggerHandler
             ->expects($this->never())
             ->method('handleConfigChange');
+
         $this->subscriber->updateAfter(new ConfigUpdateEvent([]));
     }
 

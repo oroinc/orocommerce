@@ -6,26 +6,28 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * The factory that creates {@see \Oro\Bundle\TaxBundle\Model\Taxable} objects.
+ */
 class TaxFactory
 {
-    /**
-     * @var TaxMapperInterface[]
-     */
-    protected $mappers = [];
+    /** @var ContainerInterface */
+    private $mappers;
 
     /**
-     * Add Tax Mapper
-     *
-     * @param TaxMapperInterface $mapper
+     * @param ContainerInterface $mappers
      */
-    public function addMapper(TaxMapperInterface $mapper)
+    public function __construct(ContainerInterface $mappers)
     {
-        $this->mappers[$mapper->getProcessingClassName()] = $mapper;
+        $this->mappers = $mappers;
     }
 
     /**
      * @param object $object
+     *
      * @return Taxable
      */
     public function create($object)
@@ -35,34 +37,30 @@ class TaxFactory
 
     /**
      * @param object $object
-     * @return TaxMapperInterface
-     * @throws UnmappableArgumentException if Tax Mapper for $object can't be found
-     */
-    protected function getMapper($object)
-    {
-        $objectClassName = ClassUtils::getClass($object);
-        if (!array_key_exists($objectClassName, $this->mappers)) {
-            throw new UnmappableArgumentException(
-                sprintf('Can\'t find Tax Mapper for object "%s"', $objectClassName)
-            );
-        }
-
-        return $this->mappers[$objectClassName];
-    }
-
-    /**
-     * @param object $object
+     *
      * @return bool
      */
     public function supports($object)
     {
+        return $this->mappers->has(ClassUtils::getClass($object));
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return TaxMapperInterface
+     *
+     * @throws UnmappableArgumentException if Tax Mapper for $object can't be found
+     */
+    private function getMapper($object): TaxMapperInterface
+    {
+        $className = ClassUtils::getClass($object);
         try {
-            $this->getMapper($object);
-
-            return true;
-        } catch (UnmappableArgumentException $e) {
+            return $this->mappers->get($className);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new UnmappableArgumentException(
+                sprintf('Can\'t find Tax Mapper for object "%s"', $className)
+            );
         }
-
-        return false;
     }
 }

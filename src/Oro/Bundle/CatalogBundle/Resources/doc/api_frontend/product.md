@@ -6,6 +6,12 @@
 
 The master catalog category.
 
+## FILTERS
+
+### rootCategory
+
+Filter products by child master catalog categories for a category with the specified ID, independing on the nesting level of them. Use 'gt' operator to filter by child categories without the specified category. Use 'gte' operator to filter by the specified category and its child categories.
+
 ## SUBRESOURCES
 
 ### category

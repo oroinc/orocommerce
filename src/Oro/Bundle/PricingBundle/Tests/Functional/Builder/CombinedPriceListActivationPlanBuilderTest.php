@@ -8,6 +8,8 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsForActivationPlan;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
@@ -36,17 +38,18 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        // Switch to merge by priority strategy to use old CPL naming
+        $this->getContainer()->get('oro_config.global')
+            ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->cplActivationPlanBuilder = $this->getContainer()
             ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');
         $this->now = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedPriceListsForActivationPlan::class,
+        ]);
         $this->manager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('Oro\Bundle\PricingBundle\Entity\PriceListSchedule');
+            ->getManagerForClass(PriceListSchedule::class);
     }
 
     /**
@@ -149,15 +152,13 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     protected function comparePlan($combinedPriceListsChanges)
     {
         foreach ($combinedPriceListsChanges as $cplKey => $plan) {
-            $totalRules = 0;
-            $cpl = $this->getReference($cplKey);
             /** @var CombinedPriceListActivationRule[] $rules */
             $rules = $this->getActivationRulesRepository()->findBy(
-                ['fullChainPriceList' => $cpl],
+                [],
                 ['id' => 'ASC']
             );
+            $this->assertCount(count($combinedPriceListsChanges[$cplKey]), $rules);
             foreach ($rules as $i => $rule) {
-                $totalRules++;
                 $expectedData = $plan[$i];
                 $activeAt = null;
                 if ($expectedData['activateAt']) {
@@ -172,12 +173,11 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 $currentCPLName = $rule->getCombinedPriceList()->getName();
                 $expectedCplName = $this->getCplName($expectedData['priceLists']);
                 $this->assertSame($expectedCplName, $currentCPLName);
+                $this->assertEquals(md5($cplKey), $rule->getFullChainPriceList()->getName());
                 $this->assertEquals($rule->isActive(), $expectedData['active']);
                 $this->assertEquals($rule->getActivateAt(), $activeAt);
                 $this->assertEquals($rule->getExpireAt(), $expireAt);
             }
-
-            $this->assertSame(count($combinedPriceListsChanges[$cplKey]), $totalRules);
         }
     }
 
@@ -188,7 +188,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     {
         if (!$this->activationRulesRepository) {
             $this->activationRulesRepository = $this->manager
-                ->getRepository('OroPricingBundle:CombinedPriceListActivationRule');
+                ->getRepository(CombinedPriceListActivationRule::class);
         }
 
         return $this->activationRulesRepository;
@@ -208,6 +208,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 $name[] = $this->getReference($priceList)->getId() . 'f';
             }
         }
+
         return md5(implode('_', $name));
     }
 }

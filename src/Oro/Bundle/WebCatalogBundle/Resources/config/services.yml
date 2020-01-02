@@ -443,3 +443,10 @@ services:
             - '@oro_web_catalog.content_node_tree_handler'
         tags:
             - { name: form.type }
+
+    Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler:
+        class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
+        parent: oro_form.form.handler.default
+
+    Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider:
+        class: Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider

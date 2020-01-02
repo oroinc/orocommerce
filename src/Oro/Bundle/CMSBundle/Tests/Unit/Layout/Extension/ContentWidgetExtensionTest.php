@@ -222,7 +222,7 @@ class ContentWidgetExtensionTest extends \PHPUnit\Framework\TestCase
     private function getLayoutItem(string $id, ?string $theme = null): LayoutItemInterface
     {
         $context = new LayoutContext();
-        $context->set('content_widget_type', $theme);
+        $context->set('content_widget', $theme);
 
         $layoutItem = new LayoutItem(new RawLayoutBuilder(), $context);
         $layoutItem->initialize($id);

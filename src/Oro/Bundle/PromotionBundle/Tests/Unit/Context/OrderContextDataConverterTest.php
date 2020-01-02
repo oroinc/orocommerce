@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Context;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -23,7 +23,6 @@ use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -227,7 +226,7 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             'customerGroup' => $customerGroup,
             'website' => $website
         ];
-        $scopeCriteria = new ScopeCriteria([], new ClassMetadata(Scope::class));
+        $scopeCriteria = new ScopeCriteria([], $this->createMock(ClassMetadataFactory::class));
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with('promotion', $scopeContext)

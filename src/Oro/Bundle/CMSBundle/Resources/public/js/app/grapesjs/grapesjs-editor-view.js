@@ -11,6 +11,7 @@ import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
 /**
  * Create GrapesJS content builder
@@ -30,6 +31,12 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     autoRender: true,
+
+    /**
+     * Active style theme for iframe
+     * @property {String}
+     */
+    activeTheme: null,
 
     /**
      * @property {GrapesJS.Instance}
@@ -203,6 +210,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
         this.$propertiesInputElement = this.$parent.find(this.propertiesInputSelector);
         this.setAlternativeFields();
+        this.setActiveTheme(this.getCurrentTheme());
 
         if (this.allow_tags) {
             this.builderPlugins['grapesjs-components'] = _.extend({},
@@ -296,7 +304,9 @@ const GrapesjsEditorView = BaseView.extend({
             , {
                 avoidInlineStyle: 1,
                 container: this.$container.get(0),
-                components: !_.isEmpty(this.JSONcomponents) ? this.JSONcomponents : escapeWrapper(this.$el.val())
+                components: !_.isEmpty(this.JSONcomponents)
+                    ? this.JSONcomponents
+                    : escapeWrapper(this.$el.val())
             }
             , this._prepareBuilderOptions()));
 
@@ -517,7 +527,6 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _onUpdatedBuilder: function() {
-        this._getCSSBreakpoint();
         mediator.trigger('grapesjs:updated', this.builder);
     },
 
@@ -543,20 +552,40 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _updateTheme: function(selected) {
         if (!_.isUndefined(this.activeTheme) && this.activeTheme.name === selected) {
+            this.setActiveTheme(selected);
             return false;
         }
+
+        this.setActiveTheme(selected);
+        this.builder.activeDevice = this.builder.getDevice();
 
         _.each(this.themes, function(theme) {
             theme.active = theme.name === selected;
         });
 
+        const activeTheme = this.activeTheme;
+        const head = this.builder.Canvas.getFrameEl().contentDocument.head;
+        const style = head.querySelector('link');
+        const styleClone = style.cloneNode();
+
+        styleClone.setAttribute('href', this.activeTheme.stylesheet);
+        styleClone.onload = function(e) {
+            style.remove();
+            mediator.trigger('grapesjs:theme:change', activeTheme);
+        };
+
+        head.appendChild(styleClone);
+    },
+
+    /**
+     * Set active theme name
+     * @param theme {String}
+     * @private
+     */
+    setActiveTheme: function(theme) {
         this.activeTheme = _.find(this.themes, function(theme) {
             return theme.active;
         });
-
-        const style = this.builder.Canvas.getFrameEl().contentDocument.head.querySelector('link');
-
-        style.href = this.activeTheme.stylesheet;
     },
 
     /**
@@ -655,7 +684,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: _.keys(this.builderPlugins),
+            plugins: [ContentParser, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

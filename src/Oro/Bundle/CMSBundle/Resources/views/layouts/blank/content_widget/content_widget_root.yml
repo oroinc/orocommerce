@@ -9,7 +9,7 @@ layout:
                   content_widget_default_template:
                       blockType: content_widget_default_template
                       options:
-                          defaultTemplate: '=data["content_widget_data"].getDefaultTemplate(data["content_widget"])'
+                          defaultTemplate: '=data["content_widget_data"].getDefaultTemplate(context["content_widget"])'
               tree:
                   content_widget_root:
                       content_widget_container:

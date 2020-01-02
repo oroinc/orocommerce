@@ -10,6 +10,10 @@ use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
+/**
+ * Normalize and denormalize part of data displayed in Pricing section,
+ * tracking changes in configs from this section to handle changes that required rebuilding combined price lists
+ */
 class PriceListSystemConfigSubscriber
 {
     /**
@@ -36,7 +40,6 @@ class PriceListSystemConfigSubscriber
         $this->converter = $converter;
         $this->triggerHandler = $triggerHandler;
     }
-
 
     /**
      * @param ConfigSettingsUpdateEvent $event
@@ -72,10 +75,30 @@ class PriceListSystemConfigSubscriber
      */
     public function updateAfter(ConfigUpdateEvent $event)
     {
-        if ($this->wasChanged && $event->getChangeSet()) {
-            $this->wasChanged = false;
+        if (!$this->wasChanged) {
+            return;
+        }
+
+        $handledConfigChanges = \array_intersect_key(
+            $event->getChangeSet(),
+            \array_flip($this->getConfigNamesRelatedToCombinedPls())
+        );
+
+        if ($handledConfigChanges) {
             $this->triggerHandler->handleConfigChange();
         }
+        $this->wasChanged = false;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfigNamesRelatedToCombinedPls(): array
+    {
+        return [
+            Configuration::getConfigKeyByName(Configuration::DEFAULT_PRICE_LISTS),
+            Configuration::getConfigKeyByName(Configuration::PRICE_LIST_STRATEGIES)
+        ];
     }
 
     /**
@@ -84,14 +107,12 @@ class PriceListSystemConfigSubscriber
      */
     protected function getSettingsKey($separator)
     {
-        $settingsKey = implode(
+        return implode(
             $separator,
             [
                 OroPricingExtension::ALIAS,
                 Configuration::DEFAULT_PRICE_LISTS,
             ]
         );
-
-        return $settingsKey;
     }
 }

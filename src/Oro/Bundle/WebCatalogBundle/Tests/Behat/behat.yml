@@ -103,6 +103,12 @@ oro_behat_extension:
                 type: xpath
                 locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
 
+        First Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][0]"] .btn-toggle-variant'
+
+        Second Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
+
     suites:
         OroWebCatalogBundle:
             contexts:

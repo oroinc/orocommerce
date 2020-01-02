@@ -220,10 +220,14 @@ services:
     oro_payment.payment_method.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
         public: true
+        arguments:
+            - !tagged_iterator oro_payment.payment_method_provider
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
         public: true
+        arguments:
+            - !tagged_iterator oro_payment.payment_method_view_provider
 
     oro_payment.context.doctrine_line_item_collection_factory:
         class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory'
@@ -286,10 +290,9 @@ services:
 
     oro_payment.context.factory.composite_supports_entity:
         class: 'Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory'
-        arguments:
-            - []
         public: false
-        lazy: true
+        arguments:
+            - !tagged_iterator oro_payment.supports_entity_payment_context_factory
 
     oro_payment.context.factory.transaction_payment_context:
         class: 'Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory'

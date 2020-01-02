@@ -112,6 +112,45 @@ _Class:_ `Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent`
 
 This is the most important event because it collects the data that should be persisted to the search index. This event contains a batch of entities that have to be indexed, and you (being a developer) extract the information for the index from entities or other sources, and feed it to the event and put to the search index on the later stage. To make data collection faster and more efficient, the entities are passed in batches (default batch size is 100 entities). In most cases, you can get all the required information using just one request instead of triggering a separate request for every entity. The event also supports work with placeholders, so you can get all the related information and put it into the search index according to the specified placeholders.
 
+#### Configure a new plaheholder type
+
+If you need to add another placeholder type which is not declared yet, you will need to declare it by implementing  `AbstractPlaceholder` and register it with the `website_search.placeholder` tag.
+
+```php
+namespace AppBundle\WebsiteSearch;
+
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
+
+class FooPlaceholder extends AbstractPlaceholder
+{
+    const NAME = 'FOO_ID';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPlaceholder()
+    {
+        return self::NAME;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultValue()
+    {
+        return '0';
+    }
+}
+```
+
+```yaml
+services:
+    app.website_search.foo_placeholder:
+        class: 'AppBundle\WebsiteSearch\FooPlaceholder'
+        tags:
+            - { name: website_search.placeholder }
+```
+
 
 ### Asynchronous search indexer
 

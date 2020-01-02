@@ -97,6 +97,10 @@
     .controls {
         margin-#{$start}: $pricing-price-list-controls-offset !important;
     }
+
+    &__option-cell {
+        white-space: nowrap;
+    }
 }
 
 .price-list-grid-form {
@@ -115,8 +119,10 @@
 
     }
 
-    .price-list-grid-form__option-cell {
+    &__option-cell {
         width: 1px;
+
+        white-space: nowrap;
     }
 }
 

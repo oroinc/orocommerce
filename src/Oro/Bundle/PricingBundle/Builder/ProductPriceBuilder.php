@@ -32,7 +32,7 @@ class ProductPriceBuilder
     /**
      * @var ShardQueryExecutorInterface
      */
-    protected $insertFromSelectQueryExecutor;
+    protected $shardInsertQueryExecutor;
 
     /**
      * @var PriceListRuleCompiler
@@ -50,24 +50,32 @@ class ProductPriceBuilder
     protected $priceListTriggerHandler;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param PriceListRuleCompiler $ruleCompiler
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ShardManager $shardManager
+     * @param ManagerRegistry             $registry
+     * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
+     * @param PriceListRuleCompiler       $ruleCompiler
+     * @param PriceListTriggerHandler     $priceListTriggerHandler
+     * @param ShardManager                $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $shardInsertQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
         PriceListTriggerHandler $priceListTriggerHandler,
         ShardManager $shardManager
     ) {
         $this->registry = $registry;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
+     */
+    public function setShardInsertQueryExecutor(ShardQueryExecutorInterface $shardInsertQueryExecutor)
+    {
+        $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
     }
 
     /**
@@ -102,7 +110,7 @@ class ProductPriceBuilder
      */
     protected function applyRule(PriceRule $priceRule, array $products = [])
     {
-        $this->insertFromSelectQueryExecutor->execute(
+        $this->shardInsertQueryExecutor->execute(
             ProductPrice::class,
             $this->ruleCompiler->getOrderedFields(),
             $this->ruleCompiler->compile($priceRule, $products)

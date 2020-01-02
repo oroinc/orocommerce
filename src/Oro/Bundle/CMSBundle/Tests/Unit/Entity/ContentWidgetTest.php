@@ -27,4 +27,20 @@ class ContentWidgetTest extends \PHPUnit\Framework\TestCase
             ]
         );
     }
+
+    public function testToString(): void
+    {
+        $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+
+        $this->assertEquals('name:test_name', $contentWidget->toString());
+    }
+
+    public function testGetHash(): void
+    {
+        $contentWidget = new ContentWidget();
+        $contentWidget->setName('test_name');
+
+        $this->assertEquals('0fe1d212bc31c0eb10b7836616fb8a02', $contentWidget->getHash());
+    }
 }

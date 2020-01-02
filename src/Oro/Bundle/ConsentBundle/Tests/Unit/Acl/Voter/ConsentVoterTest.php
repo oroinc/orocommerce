@@ -36,28 +36,20 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $attribute
-     * @param int $expected
      * @dataProvider voteForNotExistingConsentDataProvider
      */
-    public function testVoteForNotExistingConsent($attribute, $expected)
+    public function testVoteForNotExistingConsent(string $attribute, int $expected)
     {
         $this->voter->setClassName(Consent::class);
 
-        /** @var Consent $consent */
         $consent = $this->getEntity(Consent::class, ['id' => 32]);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($consent)
-            ->willReturn(Consent::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($consent, false)
             ->willReturn($consent->getId());
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with(Consent::class, $consent->getId())
             ->willReturn($consent);
@@ -103,10 +95,6 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
         $this->voter->setClassName(Consent::class);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($consent)
-            ->willReturn(Consent::class);
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($consent, false)
             ->willReturn($consent->getId());
@@ -116,8 +104,7 @@ class ConsentVoterTest extends \PHPUnit\Framework\TestCase
             ->with(ConsentAcceptance::class)
             ->willReturn($this->repository);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with(Consent::class, $consent->getId())
             ->willReturn($consent);

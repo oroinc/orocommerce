@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "oro/platform": "4.0.x-dev",
-        "oro/platform-serialised-fields": "4.0.x-dev",
-        "oro/calendar-bundle": "4.0.x-dev",
-        "oro/marketing": "4.0.x-dev",
-        "oro/customer-portal": "4.0.x-dev",
+        "oro/platform": "4.1.x-dev",
+        "oro/platform-serialised-fields": "4.1.x-dev",
+        "oro/calendar-bundle": "4.1.x-dev",
+        "oro/marketing": "4.1.x-dev",
+        "oro/customer-portal": "4.1.x-dev",
         "box/spout": "2.7.*",
         "myclabs/deep-copy": "1.8.*",
         "besimple/soap-client": "^0.2.6"
@@ -54,14 +54,14 @@
         "npm": {
             "grapesjs": "0.15.3-rc.2",
             "grapesjs-preset-webpage": "0.1.11",
-            "jquery-creditcardvalidator": "1.0",
+            "@oroinc/jquery-creditcardvalidator": "1.1",
             "@oroinc/elevatezoom": "3.0.81"
         },
         "symfony": {
             "require": "4.4.*"
         },
         "branch-alias": {
-            "dev-master": "4.0-dev"
+            "dev-master": "4.1-dev"
         }
     },
     "autoload": {

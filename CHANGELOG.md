@@ -11,7 +11,11 @@ The current file describes significant changes in the code that may affect the u
   to cacheable layout data providers instead of simplify them.
 * The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
 
-## 4.1.0-beta
+## 4.1.0-rc (2019-12-10)
+[Show detailed list of changes](incompatibilities-4-1-rc.md)
+
+## 4.1.0-beta (2019-09-30)
+[Show detailed list of changes](incompatibilities-4-1-beta.md)
 
 ### Added
 #### CMSBundle

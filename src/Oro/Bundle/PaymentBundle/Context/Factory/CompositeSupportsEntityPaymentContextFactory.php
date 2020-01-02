@@ -4,17 +4,18 @@ namespace Oro\Bundle\PaymentBundle\Context\Factory;
 
 use Oro\Bundle\PaymentBundle\Context\Factory\Exception\UnsupportedEntityException;
 
+/**
+ * Delegates creation of the payment context to child factories.
+ */
 class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaymentContextFactoryInterface
 {
-    /**
-     * @var SupportsEntityPaymentContextFactoryInterface[]
-     */
+    /** @var iterable|SupportsEntityPaymentContextFactoryInterface[] */
     private $factories;
 
     /**
-     * @param array $factories
+     * @param iterable|SupportsEntityPaymentContextFactoryInterface[] $factories
      */
-    public function __construct(array $factories)
+    public function __construct(iterable $factories)
     {
         $this->factories = $factories;
     }
@@ -42,14 +43,14 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
     }
 
     /**
-     * @param $entityClass
-     * @param $entityId
+     * @param string $entityClass
+     * @param mixed  $entityId
      *
      * @return SupportsEntityPaymentContextFactoryInterface
      *
      * @throws UnsupportedEntityException
      */
-    protected function getFactory($entityClass, $entityId)
+    private function getFactory($entityClass, $entityId)
     {
         foreach ($this->factories as $factory) {
             if ($factory->supports($entityClass, $entityId)) {
@@ -57,11 +58,10 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
             }
         }
 
-        $msg = sprintf(
+        throw new UnsupportedEntityException(sprintf(
             'Could not find payment context factory for given entity class (%s) and id (%d)',
             $entityClass,
             $entityId
-        );
-        throw new UnsupportedEntityException($msg);
+        ));
     }
 }

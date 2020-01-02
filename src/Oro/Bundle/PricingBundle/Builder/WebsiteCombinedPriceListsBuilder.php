@@ -7,6 +7,8 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Updates or creates combined price lists for website scope
+ *
  * @method PriceListToWebsiteRepository getPriceListToEntityRepository()
  */
 class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
@@ -42,7 +44,10 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             }
 
             foreach ($websites as $website) {
-                $this->updatePriceListsOnCurrentLevel($website, $forceTimestamp);
+                $this->wrapInTransaction(function () use ($website, $forceTimestamp) {
+                    $this->updatePriceListsOnCurrentLevel($website, $forceTimestamp);
+                });
+
                 $this->customerGroupCombinedPriceListsBuilder->build($website, null, $forceTimestamp);
             }
 

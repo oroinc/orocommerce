@@ -103,7 +103,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
             );
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(LineItemNotPricedSubtotalProvider::NAME . '.label')
+            ->with(LineItemNotPricedSubtotalProvider::LABEL)
             ->willReturn('test');
 
         $prices = [];
@@ -230,7 +230,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(LineItemNotPricedSubtotalProvider::NAME . '.label')
+            ->with(LineItemNotPricedSubtotalProvider::LABEL)
             ->willReturn('test');
 
         $entity = new EntityNotPricedStub();
@@ -248,11 +248,6 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetSubtotalWithWrongEntity()
     {
         $this->assertNull($this->provider->getSubtotal(new EntityStub()));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(LineItemNotPricedSubtotalProvider::NAME, $this->provider->getName());
     }
 
     public function testIsSupported()

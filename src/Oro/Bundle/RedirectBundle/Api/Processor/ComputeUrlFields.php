@@ -10,6 +10,8 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
+use Oro\Component\Routing\UrlUtil;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Computes values of "url" and "urls" fields for a sluggable entity.
@@ -25,6 +27,9 @@ class ComputeUrlFields implements ProcessorInterface
     /** @var ConfigManager */
     protected $configManager;
 
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
+
     /** @var string */
     protected $urlField;
 
@@ -32,22 +37,25 @@ class ComputeUrlFields implements ProcessorInterface
     protected $urlsField;
 
     /**
-     * @param DoctrineHelper     $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
-     * @param ConfigManager      $configManager
-     * @param string             $urlField
-     * @param string             $urlsField
+     * @param DoctrineHelper        $doctrineHelper
+     * @param LocalizationHelper    $localizationHelper
+     * @param ConfigManager         $configManager
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param string                $urlField
+     * @param string                $urlsField
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         LocalizationHelper $localizationHelper,
         ConfigManager $configManager,
+        UrlGeneratorInterface $urlGenerator,
         string $urlField = 'url',
         string $urlsField = 'urls'
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->localizationHelper = $localizationHelper;
         $this->configManager = $configManager;
+        $this->urlGenerator = $urlGenerator;
         $this->urlField = $urlField;
         $this->urlsField = $urlsField;
     }
@@ -87,7 +95,7 @@ class ComputeUrlFields implements ProcessorInterface
                 $currentUrl = null;
                 $otherUrls = [];
             } else {
-                list($currentUrl, $otherUrls) = $this->getUrlFieldsData(
+                [$currentUrl, $otherUrls] = $this->getUrlFieldsData(
                     $urls[$ownerId],
                     $enabledLocalizationIds,
                     $currentLocalizationId
@@ -127,7 +135,7 @@ class ComputeUrlFields implements ProcessorInterface
 
         $notLocalizedUrl = null;
         $foundLocalizations = [];
-        foreach ($urls as list($url, $localizationId)) {
+        foreach ($urls as [$url, $localizationId]) {
             if (null === $localizationId) {
                 $notLocalizedUrl = $url;
             } else {
@@ -184,13 +192,17 @@ class ComputeUrlFields implements ProcessorInterface
         $qb = $this->getQueryForLoadUrls($ownerEntityClass, $ownerEntityIdFieldName, $ownerIds, $localizationIds);
 
         $result = [];
+        $baseUrl = $this->urlGenerator->getContext()->getBaseUrl();
         $rows = $qb->getQuery()->getArrayResult();
         foreach ($rows as $row) {
             $localizationId = $row['localizationId'];
             if (null !== $localizationId) {
                 $localizationId = (int)$localizationId;
             }
-            $result[$row['ownerId']][] = [$row['url'], $localizationId];
+            $result[$row['ownerId']][] = [
+                UrlUtil::getAbsolutePath((string)$row['url'], $baseUrl),
+                $localizationId
+            ];
         }
 
         return $result;

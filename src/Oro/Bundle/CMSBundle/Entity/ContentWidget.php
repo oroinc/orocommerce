@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
+use Oro\Component\Layout\ContextItemInterface;
 
 /**
  * Holds content widget information.
@@ -43,7 +44,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *     }
  * )
  */
-class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
+class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, ContextItemInterface
 {
     use DatesAwareTrait;
     use OrganizationAwareTrait;
@@ -221,5 +222,21 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface
         $this->settings = $settings;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        return 'name:' . $this->getName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHash(): string
+    {
+        return md5($this->toString());
     }
 }

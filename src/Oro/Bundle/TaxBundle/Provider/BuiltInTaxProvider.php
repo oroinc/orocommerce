@@ -6,11 +6,10 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 
 /**
- * Tax provider allows to use built-in tax logic
+ * Tax provider allows to use built-in TAX logic.
  */
 class BuiltInTaxProvider implements TaxProviderInterface
 {
-    const NAME = 'built_in';
     const LABEL = 'oro.tax.providers.built_in.label';
 
     /** @var TaxManager $taxManager */
@@ -22,14 +21,6 @@ class BuiltInTaxProvider implements TaxProviderInterface
     public function __construct(TaxManager $taxManager)
     {
         $this->taxManager = $taxManager;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

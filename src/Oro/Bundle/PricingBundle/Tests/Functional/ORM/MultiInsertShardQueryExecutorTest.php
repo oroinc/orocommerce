@@ -21,6 +21,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class MultiInsertShardQueryExecutorTest extends WebTestCase
 {
+    private const BATCH_SIZE = 1;
+
     /**
      * @var MultiInsertShardQueryExecutor
      */
@@ -41,6 +43,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $this->initClient();
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
         $this->insertSelectExecutor = $this->getContainer()->get('oro_pricing.orm.multi_insert_shard_query_executor');
+        $this->insertSelectExecutor->setBatchSize(self::BATCH_SIZE);
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
@@ -151,7 +154,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
     {
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         $unit = $this->getReference('product_unit.liter');
-        for ($i = 1; $i <= MultiInsertShardQueryExecutor::BUFFER_SIZE + 1; $i++) {
+        for ($i = 1; $i <= self::BATCH_SIZE + 1; $i++) {
             $productPrice = new ProductPrice();
             $productPrice
                 ->setPriceList($priceListFrom)

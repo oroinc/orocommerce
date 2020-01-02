@@ -1,6 +1,10 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
     variables:
+        Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository:
+            deleteUnlinkedRules:
+                alias: true
+                entityName: true
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             applyPriceListLimitations:
                 rootAlias: true

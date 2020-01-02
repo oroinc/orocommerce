@@ -4,64 +4,83 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class SubtotalProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    public function testRegistry()
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider1;
+
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider2;
+
+    /** @var SubtotalProviderRegistry */
+    private $registry;
+
+    public function setUp()
     {
-        $name = 'provider';
-        $providerMock = $this->getProviderMock($name);
+        $this->provider1 = $this->createMock(SubtotalProviderInterface::class);
+        $this->provider2 = $this->createMock(SubtotalProviderInterface::class);
 
-        $registry = new SubtotalProviderRegistry();
+        $providerContainer = TestContainerBuilder::create()
+            ->add('provider1', $this->provider1)
+            ->add('provider2', $this->provider2)
+            ->getContainer($this);
 
-        $this->assertEmpty($registry->getProviders());
-        $this->assertNull($registry->getProviderByName($name));
-
-        $registry->addProvider($providerMock);
-
-        $this->assertCount(1, $registry->getProviders());
-        $this->assertTrue($registry->hasProvider($name));
-        $this->assertEquals($providerMock, $registry->getProviderByName($name));
+        $this->registry = new SubtotalProviderRegistry(
+            ['provider1', 'provider2'],
+            $providerContainer
+        );
     }
 
-    public function testRegistryGetSupportedProviders()
+    public function testGetProviders()
+    {
+        $providers = $this->registry->getProviders();
+        $this->assertCount(2, $providers);
+        $this->assertSame($this->provider1, $providers['provider1']);
+        $this->assertSame($this->provider2, $providers['provider2']);
+    }
+
+    public function testGetSupportedProviders()
     {
         $entity = new \stdClass();
-        $name = 'provider';
-        $providerMock1 = $this->getProviderMock($name);
-        $providerMock2 = $this->getProviderMock('provider2');
-        $providerMock1->expects($this->once())
+
+        $this->provider1->expects($this->once())
             ->method('isSupported')
-            ->willReturn(true);
-        $providerMock2->expects($this->once())
-            ->method('isSupported')
+            ->with($this->identicalTo($entity))
             ->willReturn(false);
+        $this->provider2->expects($this->once())
+            ->method('isSupported')
+            ->with($this->identicalTo($entity))
+            ->willReturn(true);
 
-        $registry = new SubtotalProviderRegistry();
-
-        $this->assertEmpty($registry->getSupportedProviders($entity));
-        $this->assertNull($registry->getProviderByName($name));
-
-        $registry->addProvider($providerMock1);
-        $registry->addProvider($providerMock2);
-
-        $this->assertCount(1, $registry->getSupportedProviders($entity));
-        $this->assertTrue($registry->hasProvider($name));
-        $this->assertEquals($providerMock1, $registry->getProviderByName($name));
+        $providers = $this->registry->getSupportedProviders($entity);
+        $this->assertCount(1, $providers);
+        $this->assertSame($this->provider2, $providers['provider2']);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderInterface
-     */
-    protected function getProviderMock($name)
+    public function testGetProviderByNameWhenProvidersCollectionIsNotInitializedYet()
     {
-        $provider = $this->createMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
-        $provider->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue($name));
+        $this->assertSame($this->provider1, $this->registry->getProviderByName('provider1'));
+    }
 
-        return $provider;
+    public function testGetProviderByNameWhenProvidersCollectionIsAlreadyInitialized()
+    {
+        // initialize providers collection
+        $this->registry->getProviders();
+
+        $this->assertSame($this->provider1, $this->registry->getProviderByName('provider1'));
+    }
+
+    public function testGetProviderByNameForNotExistingProvider()
+    {
+        $this->assertNull($this->registry->getProviderByName('not_existing'));
+    }
+
+    public function testHasProvider()
+    {
+        $this->assertTrue($this->registry->hasProvider('provider1'));
+        $this->assertTrue($this->registry->hasProvider('provider2'));
+        $this->assertFalse($this->registry->hasProvider('not_existing'));
     }
 }

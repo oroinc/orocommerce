@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -37,7 +36,6 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
     {
         return [
             LoadSegmentData::class,
-            LoadScopeData::class,
             LoadOrders::class,
             LoadPromotionData::class
         ];
@@ -48,6 +46,7 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
      */
     public function load(ObjectManager $manager)
     {
+        $scope = $this->container->get('oro_scope.scope_manager')->findDefaultScope();
         foreach (self::$appliedPromotions as $reference => $appliedPromotion) {
             /** @var Promotion $promotion */
             $promotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
@@ -58,7 +57,6 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
             $appliedPromotion->setSourcePromotionId($promotion->getId());
             $appliedPromotion->setConfigOptions($promotion->getDiscountConfiguration()->getOptions());
             $appliedPromotion->setType($promotion->getDiscountConfiguration()->getType());
-            $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
             /** @var Segment $segment */
             $segment = $this->getReference(LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT);
 

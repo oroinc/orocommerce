@@ -8,18 +8,20 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * Prevents removal of web catalogs that are in use.
+ */
 class WebCatalogVoter extends AbstractEntityVoter
 {
     const ATTRIBUTE_DELETE = 'DELETE';
 
-    /**
-     * @var WebCatalog
-     */
+    /** @var array */
+    protected $supportedAttributes = [self::ATTRIBUTE_DELETE];
+
+    /** @var WebCatalog */
     protected $object;
 
-    /**
-     * @var WebCatalogUsageProviderInterface
-     */
+    /** @var WebCatalogUsageProviderInterface */
     protected $usageProvider;
 
     /**
@@ -31,8 +33,6 @@ class WebCatalogVoter extends AbstractEntityVoter
         WebCatalogUsageProviderInterface $usageProvider
     ) {
         parent::__construct($doctrineHelper);
-
-        $this->supportedAttributes = [self::ATTRIBUTE_DELETE];
         $this->usageProvider = $usageProvider;
     }
 
