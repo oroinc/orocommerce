@@ -160,6 +160,8 @@ services:
             - '@oro_shipping.repository.freight_class'
             - '@oro_config.manager'
             - 'oro_shipping.freight_classes'
+        calls:
+            - [setExtensions, [ !tagged_iterator oro_shipping.extension.freight_classes ]]
 
     oro_shipping.provider.measure_units.conversion:
         class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion'

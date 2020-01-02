@@ -8,36 +8,28 @@ use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
+/**
+ * The base class for services that create {@see \Oro\Bundle\TaxBundle\Model\Taxable} object
+ * and fills it with data from a given object.
+ */
 abstract class AbstractOrderMapper implements TaxMapperInterface
 {
-    /**
-     * @var ContextEventDispatcher
-     */
+    /** @var ContextEventDispatcher */
     protected $contextEventDispatcher;
 
-    /**
-     * @var TaxationAddressProvider
-     */
+    /** @var TaxationAddressProvider */
     protected $addressProvider;
-
-    /**
-     * @var string
-     */
-    protected $className;
 
     /**
      * @param ContextEventDispatcher $contextEventDispatcher
      * @param TaxationAddressProvider $addressProvider
-     * @param string $className
      */
     public function __construct(
         ContextEventDispatcher $contextEventDispatcher,
-        TaxationAddressProvider $addressProvider,
-        $className
+        TaxationAddressProvider $addressProvider
     ) {
         $this->contextEventDispatcher = $contextEventDispatcher;
         $this->addressProvider = $addressProvider;
-        $this->className = (string)$className;
     }
 
     /**
@@ -65,13 +57,5 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
     protected function getContext($mappingObject)
     {
         return $this->contextEventDispatcher->dispatch($mappingObject);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProcessingClassName()
-    {
-        return $this->className;
     }
 }

@@ -22,7 +22,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalCacheAwareInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'oro.pricing.subtotals.subtotal';
+    const LABEL = 'oro.pricing.subtotals.subtotal.label';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -43,14 +43,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         parent::__construct($arguments);
         $this->translator = $translator;
         $this->rounding = $rounding;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -93,7 +85,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     protected function createSubtotal($entity, $amount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
+        $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setType(self::TYPE);
         $subtotal->setVisible($amount > 0);
         $subtotal->setAmount($amount);

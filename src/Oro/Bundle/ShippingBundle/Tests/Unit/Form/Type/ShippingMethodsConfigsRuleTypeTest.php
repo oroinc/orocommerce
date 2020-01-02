@@ -80,8 +80,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
-        $this->shippingMethodProvider->addProvider(new ShippingMethodProviderStub());
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider([new ShippingMethodProviderStub()]);
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();

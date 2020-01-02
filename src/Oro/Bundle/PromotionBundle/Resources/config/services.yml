@@ -392,7 +392,7 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro_promotion.subtotal_discount }
 
     oro_promotion.event_listener.payment_discount_surcharge:
         class: Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener

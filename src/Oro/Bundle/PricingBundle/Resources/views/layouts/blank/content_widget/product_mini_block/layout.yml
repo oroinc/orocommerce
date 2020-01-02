@@ -1,0 +1,14 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: content_widget_container
+            optionName: vars.blockContext
+            optionValue:
+                productPrices: '=data["product"] ? data["frontend_product_prices"].getByProduct(data["product"]) : []'
+                isPriceUnitsVisible: '=data["product"] ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(data["product"]) : false'
+
+        - '@appendOption':
+            id: product_price_container
+            optionName: vars
+            optionValue:
+                visible: '=data["show_prices"]'

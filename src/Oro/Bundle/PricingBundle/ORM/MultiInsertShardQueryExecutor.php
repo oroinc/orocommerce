@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\ORM;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 
 /**
@@ -14,7 +14,18 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
  */
 class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
 {
-    const BUFFER_SIZE = 200; //use the same value as iterator
+    /**
+     * @var int
+     */
+    private $batchSize = 200; //use the same value as iterator
+
+    /**
+     * @param int $batchSize
+     */
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
+    }
 
     /**
      * {@inheritDoc}
@@ -28,8 +39,8 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
         $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
-        $iterator = new BufferedQueryResultIterator($selectQuery);
-        $iterator->setBufferSize(self::BUFFER_SIZE);
+        $iterator = new BufferedIdentityQueryResultIterator($selectQuery);
+        $iterator->setBufferSize($this->batchSize);
 
         $sql = sprintf('insert into %s (%s) values ', $insertToTableName, implode(',', $columns));
         $connection = $this->shardManager->getEntityManager()->getConnection();
@@ -49,7 +60,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
             $values = array_merge($values, array_values($row));
             $allTypes = array_merge($allTypes, array_values($types));
             $rowsCount++;
-            if ($rowsCount % static::BUFFER_SIZE === 0) {
+            if ($rowsCount % $this->batchSize === 0) {
                 $batches[] = [
                     $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount),
                     $values,

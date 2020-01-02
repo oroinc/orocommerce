@@ -6,35 +6,37 @@ use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
 
+/**
+ * The provider for freight classes.
+ */
 class FreightClassesProvider extends MeasureUnitProvider
 {
-    /** @var array|FreightClassesExtensionInterface[] */
-    protected $extensions = [];
+    /** @var iterable|FreightClassesExtensionInterface[]|null */
+    private $extensions;
 
     /**
-     * @param string $name
-     * @param FreightClassesExtensionInterface $extension
+     * @param iterable|FreightClassesExtensionInterface[] $extensions
      */
-    public function addExtension($name, FreightClassesExtensionInterface $extension)
+    public function setExtensions(iterable $extensions)
     {
-        $this->extensions[$name] = $extension;
+        $this->extensions = $extensions;
     }
 
     /**
      * @param ProductShippingOptions $options
+     *
      * @return FreightClass[]
      */
     public function getFreightClasses(ProductShippingOptions $options = null)
     {
         $sourceUnits = $this->getUnits();
 
-        if (!$this->extensions) {
+        if (!$this->hasExtensions()) {
             return $sourceUnits;
         }
 
         return array_filter($sourceUnits, function (FreightClass $class) use ($options) {
             foreach ($this->extensions as $extension) {
-                /* @var $extension FreightClassesExtensionInterface */
                 if ($extension->isApplicable($class, $options ?: new ProductShippingOptions())) {
                     return true;
                 }
@@ -42,5 +44,19 @@ class FreightClassesProvider extends MeasureUnitProvider
 
             return false;
         });
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasExtensions(): bool
+    {
+        if (null !== $this->extensions) {
+            foreach ($this->extensions as $extension) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

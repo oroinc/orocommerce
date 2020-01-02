@@ -206,10 +206,6 @@ TERM;
      */
     private function getScopeId($scopeType)
     {
-        $scope = $this->scopeManager->find($scopeType);
-
-        return null !== $scope
-            ? $scope->getId()
-            : 0;
+        return $this->scopeManager->findId($scopeType) ?? 0;
     }
 }

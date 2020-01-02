@@ -3,7 +3,7 @@
 .oro-content-variant-collection {
     .content-variant-item {
         position: relative;
-        padding: 24px;
+        padding: 10px 40px;
         background: $primary-900;
         border-radius: 4px;
 
@@ -31,10 +31,7 @@
     }
 
     .content-variant-item-title {
-        display: block;
-        padding-bottom: 24px;
-        margin-bottom: 24px;
-        border-bottom: $additional-extra-lighten solid 1px;
+        margin-bottom: 0px;
 
         input[type="radio"] {
             margin-top: -2px;
@@ -46,14 +43,28 @@
         }
     }
 
+    .content-variant-item-content {
+        &__body {
+            margin-top: 10px;
+            border-top: rgb(230, 230, 230) solid 1px;
+            padding-top: 8px;
+        }
+    }
+
     .content-variant-add-btn-container {
         margin-bottom: $content-padding-medium;
     }
 
-    .removeVariantBtn {
+    .btn-remove-variant {
         position: absolute;
-        top: 4px;
-        #{$end}: 4px;
+        top: 5px;
+        #{$end}: 5px;
+    }
+
+    .btn-toggle-variant {
+        position: absolute;
+        top: 5px;
+        #{$start}: 5px;
     }
 
     .scope-collection {

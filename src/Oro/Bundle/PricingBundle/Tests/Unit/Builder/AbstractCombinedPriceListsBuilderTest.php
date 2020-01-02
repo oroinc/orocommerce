@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -15,6 +16,7 @@ use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 /**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
 abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
@@ -100,6 +102,11 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
     protected $combiningStrategy;
 
     /**
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $combinedPriceListEm;
+
+    /**
      * @return string
      */
     abstract protected function getPriceListToEntityRepositoryClass();
@@ -153,8 +160,8 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
             ->with($this->fallbackClass)
             ->will($this->returnValue($this->fallbackRepository));
 
-        $combinedPriceListEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
-        $combinedPriceListEm->expects($this->any())
+        $this->combinedPriceListEm = $this->createMock(EntityManager::class);
+        $this->combinedPriceListEm->expects($this->any())
             ->method('getRepository')
             ->with($this->combinedPriceListClass)
             ->will($this->returnValue($this->combinedPriceListRepository));
@@ -183,7 +190,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
             ->will(
                 $this->returnValueMap(
                     [
-                        [$this->combinedPriceListClass, $combinedPriceListEm],
+                        [$this->combinedPriceListClass, $this->combinedPriceListEm],
                         [$this->priceListToEntityClass, $priceListToEntityEm],
                         [$this->combinedPriceListToEntityClass, $combinedPriceListToEntityEm],
                         [$this->fallbackClass, $fallbackEm],
@@ -211,5 +218,20 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
         return $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember')
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    protected function configureTransactionWrappingForOneCall()
+    {
+        $this->combinedPriceListEm
+            ->expects($this->once())
+            ->method('beginTransaction');
+
+        $this->combinedPriceListEm
+            ->expects($this->once())
+            ->method('commit');
+
+        $this->combinedPriceListEm
+            ->expects($this->never())
+            ->method('rollback');
     }
 }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ConsentBundle\GuestAccess\Provider;
 use Oro\Bundle\ConsentBundle\Builder\CmsPageDataBuilder;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\FrontendBundle\GuestAccess\Provider\GuestAccessAllowedUrlsProviderInterface;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\Routing\RequestContext;
 
 /**
@@ -65,7 +66,7 @@ class GuestAccessAllowedUrlsProvider implements GuestAccessAllowedUrlsProviderIn
             if (null === $cmsPageData) {
                 continue;
             }
-            $allowedUrlsByConsents[] = '^' . \str_replace($baseUrl, '', $cmsPageData->getUrl()) . '$';
+            $allowedUrlsByConsents[] = '^' . UrlUtil::getPathInfo($cmsPageData->getUrl(), $baseUrl) . '$';
         }
 
         return \array_merge($this->allowedUrls, $allowedUrlsByConsents);

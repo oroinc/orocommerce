@@ -5,8 +5,10 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository;
+use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -21,15 +23,18 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
     use LoggerAwareTraitTestTrait;
 
     private const SAMPLE_WIDGET = 'sample-widget';
-    private const SAMPLE_WIDGET_TYPE = 'sample-widget-type';
     private const SAMPLE_RESULT = 'sample-result';
     private const SAMPLE_TEMPLATE = 'sample-template';
+    private const SAMPLE_SETTINGS = ['param' => 'value'];
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var LayoutManager|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutManager;
+
+    /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentWidgetTypeRegistry;
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
@@ -44,10 +49,24 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->layoutManager = $this->createMock(LayoutManager::class);
+
+        $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
+        $this->contentWidgetTypeRegistry->expects($this->any())
+            ->method('getWidgetType')
+            ->willReturnMap(
+                [
+                    [ContentWidgetTypeStub::getName(), new ContentWidgetTypeStub()]
+                ]
+            );
+
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->renderer = new ContentWidgetRenderer($this->doctrine, $this->layoutManager);
+        $this->renderer = new ContentWidgetRenderer(
+            $this->doctrine,
+            $this->layoutManager,
+            $this->contentWidgetTypeRegistry
+        );
 
         $this->setUpLoggerMock($this->renderer);
     }
@@ -111,12 +130,11 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
                 new LayoutContext(
                     [
                         'data' => [
-                            'content_widget' => $contentWidget,
+                            'settings' => self::SAMPLE_SETTINGS,
                         ],
-                        'content_widget_type' => self::SAMPLE_WIDGET_TYPE,
-                        'content_widget_layout' => self::SAMPLE_TEMPLATE,
+                        'content_widget' => $contentWidget,
                     ],
-                    ['content_widget_type', 'content_widget_layout']
+                    ['content_widget']
                 )
             )
             ->willReturn($layoutContext);
@@ -148,12 +166,11 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
                 new LayoutContext(
                     [
                         'data' => [
-                            'content_widget' => $contentWidget,
+                            'settings' => self::SAMPLE_SETTINGS,
                         ],
-                        'content_widget_type' => self::SAMPLE_WIDGET_TYPE,
-                        'content_widget_layout' => self::SAMPLE_TEMPLATE,
+                        'content_widget' => $contentWidget,
                     ],
-                    ['content_widget_type', 'content_widget_layout']
+                    ['content_widget']
                 )
             )
             ->willReturn($layoutContext);
@@ -205,11 +222,15 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
         $contentWidget = $this->createMock(ContentWidget::class);
         $contentWidget
             ->method('getWidgetType')
-            ->willReturn(self::SAMPLE_WIDGET_TYPE);
+            ->willReturn(ContentWidgetTypeStub::getName());
 
         $contentWidget
             ->method('getLayout')
             ->willReturn(self::SAMPLE_TEMPLATE);
+
+        $contentWidget
+            ->method('getSettings')
+            ->willReturn(self::SAMPLE_SETTINGS);
 
         return $contentWidget;
     }

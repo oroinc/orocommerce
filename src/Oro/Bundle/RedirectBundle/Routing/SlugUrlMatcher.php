@@ -8,6 +8,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
@@ -324,14 +325,10 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     protected function getResolvedUrl($routeName, array $routeParameters = [])
     {
-        $baseUrl = $this->getContext()->getBaseUrl();
-        $url = $this->router->generate($routeName, $routeParameters);
-
-        if ($baseUrl && strpos($url, $baseUrl) === 0) {
-            $url = substr($url, strlen($baseUrl));
-        }
-
-        return '/' . ltrim($url, '/');
+        return UrlUtil::getPathInfo(
+            $this->router->generate($routeName, $routeParameters),
+            $this->getContext()->getBaseUrl()
+        );
     }
 
     /**

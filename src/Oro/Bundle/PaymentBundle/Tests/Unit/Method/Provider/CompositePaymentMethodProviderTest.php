@@ -8,45 +8,35 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class CompositePaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const IDENTIFIER1 = 'test1';
-    const IDENTIFIER2 = 'test2';
-    const WRONG_IDENTIFIER = 'wrong';
+    private const IDENTIFIER1 = 'test1';
+    private const IDENTIFIER2 = 'test2';
+    private const WRONG_IDENTIFIER = 'wrong';
 
-    /**
-     * @var CompositePaymentMethodProvider
-     */
+    /** @var CompositePaymentMethodProvider */
     private $compositeProvider;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $methods;
 
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $firstProvider;
 
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $secondProvider;
 
     protected function setUp()
     {
-        $this->compositeProvider = new CompositePaymentMethodProvider();
-
-        $this->methods =
-            [
-                self::IDENTIFIER1 => $this->getMethodMock(self::IDENTIFIER1),
-                self::IDENTIFIER2 => $this->getMethodMock(self::IDENTIFIER2),
-            ];
+        $this->methods = [
+            self::IDENTIFIER1 => $this->getMethodMock(self::IDENTIFIER1),
+            self::IDENTIFIER2 => $this->getMethodMock(self::IDENTIFIER2),
+        ];
 
         $this->firstProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->secondProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
-        $this->compositeProvider->addProvider($this->firstProvider);
-        $this->compositeProvider->addProvider($this->secondProvider);
+        $this->compositeProvider = new CompositePaymentMethodProvider(
+            [$this->firstProvider, $this->secondProvider]
+        );
     }
 
     public function testGetPaymentMethods()

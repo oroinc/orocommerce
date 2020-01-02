@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
-use Oro\Component\DependencyInjection\ServiceLink;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -44,21 +43,8 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /**
-         * @var \PHPUnit\Framework\MockObject\MockObject|ServiceLink
-         */
-        $entityFieldProviderLink = $this
-            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityFieldProviderLink
-            ->expects($this->any())
-            ->method('getService')
-            ->willReturn($this->entityFieldProvider);
-
         $this->fieldsProvider = new FieldsProvider(
-            $entityFieldProviderLink,
+            $this->entityFieldProvider,
             $this->doctrineHelper
         );
     }

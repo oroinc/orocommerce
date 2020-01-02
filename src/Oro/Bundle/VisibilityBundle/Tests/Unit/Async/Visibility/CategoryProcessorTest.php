@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
@@ -127,14 +126,10 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $scope = $this->getMockBuilder(Scope::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->scopeManager->expects($this->once())
             ->method('findRelatedScopes')
             ->with(ProductVisibility::VISIBILITY_TYPE)
-            ->willReturn($scope);
+            ->willReturn(new \ArrayIterator([]));
 
         $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)
             ->disableOriginalConstructor()

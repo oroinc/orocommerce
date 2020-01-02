@@ -56,6 +56,16 @@ services:
         tags:
             - { name: layout.resource.path_provider }
 
+    oro_cms.theme_extension.visitor.import:
+        class: Oro\Component\Layout\Extension\Theme\Visitor\ImportVisitor
+        arguments:
+            - '@oro_layout.loader'
+            - '@oro_layout.dependency_initializer'
+            - '@oro_layout.theme_extension.resource_provider.theme'
+            - '@oro_layout.theme_manager'
+        calls:
+            - [setRootName, ['content_widget_root']]
+
     oro_cms.layout_extension.content_widget:
         class: Oro\Bundle\CMSBundle\Layout\Extension\ContentWidgetExtension
         arguments:
@@ -64,7 +74,7 @@ services:
             - '@oro_layout.loader.path_provider'
             - '@oro_layout.theme_extension.resource_provider.theme'
         calls:
-            - [addVisitor, ['@oro_layout.theme_extension.visitor.import']]
+            - [addVisitor, ['@oro_cms.theme_extension.visitor.import']]
 
     oro_rfp.layout.data_provider.content_widget:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\ContentWidgetDataProvider'
@@ -203,7 +213,7 @@ services:
         class: 'Oro\Bundle\CMSBundle\WYSIWYG\ChainTwigFunctionProcessor'
         public: true
         arguments:
-            - !tagged oro_cms.wysiwyg.twig_function_processor
+            - !tagged_iterator oro_cms.wysiwyg.twig_function_processor
 
     oro_cms.wysiwyg.content_widget_twig_function_processor:
         class: 'Oro\Bundle\CMSBundle\WYSIWYG\ContentWidgetTwigFunctionProcessor'
@@ -241,7 +251,7 @@ services:
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
         arguments:
-            - !tagged oro_cms.content_widget.type
+            - !tagged_iterator oro_cms.content_widget.type
 
     Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
         alias: oro_cms.content_widget.type_registry
@@ -304,6 +314,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_cms.layout_manager'
+            - '@oro_cms.content_widget.type_registry'
         calls:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setLogger, ['@logger']]
@@ -425,4 +436,3 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_cms.provider.attachment_entity_config.inner'
-

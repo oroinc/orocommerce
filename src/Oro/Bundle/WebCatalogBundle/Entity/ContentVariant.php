@@ -107,6 +107,11 @@ class ContentVariant extends ExtendContentVariant implements
     protected $overrideVariantConfiguration = false;
 
     /**
+     * @var boolean
+     */
+    protected $expanded = false;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -263,5 +268,24 @@ class ContentVariant extends ExtendContentVariant implements
     public function isOverrideVariantConfiguration()
     {
         return $this->overrideVariantConfiguration;
+    }
+
+    /**
+     * @param bool|mixed $expanded
+     * @return $this
+     */
+    public function setExpanded($expanded)
+    {
+        $this->expanded = (bool) $expanded;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpanded(): bool
+    {
+        return $this->expanded;
     }
 }

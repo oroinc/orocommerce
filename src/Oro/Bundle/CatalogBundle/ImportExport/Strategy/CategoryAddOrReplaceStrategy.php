@@ -71,15 +71,17 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         $category = parent::afterProcessEntity($category);
 
         if ($category) {
-            // Sets dummy values to Gedmo tree columns. These columns will be properly filled in CategoryWriter.
-            $category->setLevel(0);
+            // Sets dummy values to tree columns to make Gedmo recalculate them.
+            // These columns will be properly filled in CategoryWriter.
+            $category
+                ->setLevel(0)
+                ->setRight(0);
             if (!$category->getId()) {
                 $organization = $this->getOrganization($category);
                 $category
                     // We have to set numbers correlating with rows to keep proper ordering. At the same time we should
                     // not interfere with existing ordering - the value should be greater than any of already existing.
                     ->setLeft($this->getLeftOffset())
-                    ->setRight(0)
                     ->setRoot($this->getRootCategory($organization)->getId());
             }
         }

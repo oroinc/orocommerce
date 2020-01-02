@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider;
+use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
@@ -171,26 +173,13 @@ class ContentNodeController extends AbstractController
     {
         $form = $this->createForm(ContentNodeType::class, $node);
 
-        $saveRedirectHandler = function (ContentNode $node) {
-            if ($node->getParentNode()) {
-                return [
-                    'route' => 'oro_content_node_update',
-                    'parameters' => ['id' => $node->getId()]
-                ];
-            } else {
-                return [
-                    'route' => 'oro_content_node_update_root',
-                    'parameters' => ['id' => $node->getWebCatalog()->getId()]
-                ];
-            }
-        };
-
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $node,
             $form,
-            $saveRedirectHandler,
-            $saveRedirectHandler,
-            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.contentnode.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.contentnode.saved.message'),
+            null,
+            $this->get(ContentNodeHandler::class),
+            $this->get(ContentNodeFormTemplateDataProvider::class)
         );
     }
 
@@ -211,8 +200,10 @@ class ContentNodeController extends AbstractController
             SlugGenerator::class,
             SlugUrlDiffer::class,
             ContentNodeTreeHandler::class,
-            UpdateHandler::class,
+            UpdateHandlerFacade::class,
             TranslatorInterface::class,
+            ContentNodeHandler::class,
+            ContentNodeFormTemplateDataProvider::class,
         ]);
     }
 }

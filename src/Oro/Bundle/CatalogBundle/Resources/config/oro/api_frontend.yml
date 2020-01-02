@@ -164,6 +164,13 @@ api:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product.md'
             fields:
                 category: ~
+            filters:
+                fields:
+                    rootCategory:
+                        data_type: integer
+                        type: nestedTree
+                        options:
+                            field: category
 
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product_search.md'

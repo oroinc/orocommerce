@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -12,35 +12,34 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
+/**
+ * Provides a set of methods to help resolving visibilities of categories.
+ */
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
-    const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
+    public const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
+
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /** @var ConfigManager */
+    private $configManager;
+
+    /** @var ScopeManager */
+    private $scopeManager;
 
     /**
-     * @var ScopeManager
+     * @param ManagerRegistry $doctrine
+     * @param ConfigManager   $configManager
+     * @param ScopeManager    $scopeManager
      */
-    protected $scopeManager;
-
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @param Registry $registry
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     */
-    public function __construct(Registry $registry, ConfigManager $configManager, ScopeManager $scopeManager)
+    public function __construct(ManagerRegistry $doctrine, ConfigManager $configManager, ScopeManager $scopeManager)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
         $this->scopeManager = $scopeManager;
     }
@@ -50,9 +49,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisible(Category $category)
     {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+        return $this->getCategoryRepository()
             ->isCategoryVisible($category, $this->getCategoryVisibilityConfigValue());
     }
 
@@ -61,9 +58,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getVisibleCategoryIds()
     {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+        return $this->getCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $this->getCategoryVisibilityConfigValue()
@@ -75,9 +70,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getHiddenCategoryIds()
     {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+        return $this->getCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $this->getCategoryVisibilityConfigValue()
@@ -85,20 +78,19 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param Category $category
+     * @param Category      $category
      * @param CustomerGroup $customerGroup
+     *
      * @return bool
      */
     public function isCategoryVisibleForCustomerGroup(Category $category, CustomerGroup $customerGroup)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+        return $this->getCustomerGroupCategoryRepository()
             ->isCategoryVisible(
                 $category,
                 $this->getCategoryVisibilityConfigValue(),
@@ -108,18 +100,17 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param CustomerGroup $customerGroup
+     *
      * @return array
      */
     public function getVisibleCategoryIdsForCustomerGroup(CustomerGroup $customerGroup)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+        return $this->getCustomerGroupCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $scope,
@@ -129,18 +120,17 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param CustomerGroup $customerGroup
+     *
      * @return array
      */
     public function getHiddenCategoryIdsForCustomerGroup(CustomerGroup $customerGroup)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+        return $this->getCustomerGroupCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $scope,
@@ -151,37 +141,35 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     /**
      * @param Category $category
      * @param Customer $customer
+     *
      * @return bool
      */
     public function isCategoryVisibleForCustomer(Category $category, Customer $customer)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerCategoryVisibility::VISIBILITY_TYPE,
             ['customer' => $customer]
         );
         $customerGroupScope = $this->getGroupScopeByCustomer($customer);
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+        return $this->getCustomerCategoryRepository()
             ->isCategoryVisible($category, $this->getCategoryVisibilityConfigValue(), $scope, $customerGroupScope);
     }
 
     /**
      * @param Customer $customer
+     *
      * @return array
      */
     public function getVisibleCategoryIdsForCustomer(Customer $customer)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerCategoryVisibility::VISIBILITY_TYPE,
             ['customer' => $customer]
         );
         $groupScope = $this->getGroupScopeByCustomer($customer);
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+        return $this->getCustomerCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $this->getCategoryVisibilityConfigValue(),
@@ -192,19 +180,18 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param Customer $customer
+     *
      * @return array
      */
     public function getHiddenCategoryIdsForCustomer(Customer $customer)
     {
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScope(
             CustomerCategoryVisibility::VISIBILITY_TYPE,
             ['customer' => $customer]
         );
         $groupScope = $this->getGroupScopeByCustomer($customer);
 
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+        return $this->getCustomerCategoryRepository()
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $this->getCategoryVisibilityConfigValue(),
@@ -216,7 +203,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     /**
      * @return int
      */
-    protected function getCategoryVisibilityConfigValue()
+    private function getCategoryVisibilityConfigValue()
     {
         return ($this->configManager->get(self::OPTION_CATEGORY_VISIBILITY) === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
@@ -224,18 +211,85 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param Customer $customer
-     * @return null|Scope
+     * @param string $scopeType
+     * @param array  $context
+     *
+     * @return Scope|null
      */
-    protected function getGroupScopeByCustomer(Customer $customer)
+    private function findScope(string $scopeType, array $context): ?Scope
     {
-        $customerGroupScope = null;
-        if ($customer->getGroup()) {
-            $customerGroupScope = $this->scopeManager->find(
-                CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
-                ['customerGroup' => $customer->getGroup()]
+        // by performance reasons, use findId() + getReference() instead of find()
+        $scopeId = $this->scopeManager->findId($scopeType, $context);
+        if (null === $scopeId) {
+            return null;
+        }
+
+        return $this->doctrine->getManagerForClass(Scope::class)->getReference(Scope::class, $scopeId);
+    }
+
+    /**
+     * @param string $scopeType
+     * @param array  $context
+     *
+     * @return Scope
+     */
+    private function getScope(string $scopeType, array $context): Scope
+    {
+        // by performance reasons, use findId() + createScopeByCriteria() instead of findOrCreate()
+        $scope = $this->findScope($scopeType, $context);
+        if (null === $scope) {
+            $scope = $this->scopeManager->createScopeByCriteria(
+                $this->scopeManager->getCriteria($scopeType, $context)
             );
         }
-        return $customerGroupScope;
+
+        return $scope;
+    }
+
+    /**
+     * @param Customer $customer
+     *
+     * @return Scope|null
+     */
+    private function getGroupScopeByCustomer(Customer $customer)
+    {
+        if (!$customer->getGroup()) {
+            return null;
+        }
+
+        return $this->findScope(
+            CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $customer->getGroup()]
+        );
+    }
+
+    /**
+     * @return Repository\CategoryRepository
+     */
+    private function getCategoryRepository(): Repository\CategoryRepository
+    {
+        return $this->doctrine
+            ->getManagerForClass(VisibilityResolved\CategoryVisibilityResolved::class)
+            ->getRepository(VisibilityResolved\CategoryVisibilityResolved::class);
+    }
+
+    /**
+     * @return Repository\CustomerGroupCategoryRepository
+     */
+    private function getCustomerGroupCategoryRepository(): Repository\CustomerGroupCategoryRepository
+    {
+        return $this->doctrine
+            ->getManagerForClass(VisibilityResolved\CustomerGroupCategoryVisibilityResolved::class)
+            ->getRepository(VisibilityResolved\CustomerGroupCategoryVisibilityResolved::class);
+    }
+
+    /**
+     * @return Repository\CustomerCategoryRepository
+     */
+    private function getCustomerCategoryRepository(): Repository\CustomerCategoryRepository
+    {
+        return $this->doctrine
+            ->getManagerForClass(VisibilityResolved\CustomerCategoryVisibilityResolved::class)
+            ->getRepository(VisibilityResolved\CustomerCategoryVisibilityResolved::class);
     }
 }

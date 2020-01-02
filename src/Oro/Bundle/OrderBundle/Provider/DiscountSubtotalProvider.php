@@ -15,10 +15,12 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstruc
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for discounts.
+ */
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'discount';
-    const NAME = 'oro_order.subtotal_discount_cost';
     const SUBTOTAL_SORT_ORDER = 50;
 
     /** @var TranslatorInterface */
@@ -53,14 +55,6 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $this->rounding = $rounding;
         $this->lineItemSubtotal = $lineItemSubtotal;
         $this->tokenAccessor = $tokenAccessor;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

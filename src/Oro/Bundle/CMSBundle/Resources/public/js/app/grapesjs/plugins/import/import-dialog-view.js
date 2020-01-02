@@ -126,6 +126,7 @@ define(function(require) {
                 autoRender: true,
                 el: this.el,
                 title: this.modalImportTitle,
+                loadingElement: this.editor.getEl(),
                 dialogOptions: {
                     autoResize: false,
                     resizable: false,
@@ -135,6 +136,7 @@ define(function(require) {
                     maxHeight: 435,
                     minWidth: 856,
                     maxWidth: 856,
+                    appendTo: this.editor.getEl(),
                     dialogClass: 'ui-dialog--import-template',
                     close: _.bind(function() {
                         this.dispose();

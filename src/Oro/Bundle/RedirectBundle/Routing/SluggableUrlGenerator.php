@@ -7,6 +7,7 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
@@ -96,17 +97,14 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
 
         $localizationId = $this->getLocalizationId();
 
-        $url = null;
-
         $this->sluggableUrlProvider->setContextUrl($contextUrl);
 
         $url = $this->sluggableUrlProvider->getUrl($name, $parameters, $localizationId);
-        // Fallback to default localization
+        // fallback to default localization
         if (!$url) {
             $url = $this->sluggableUrlProvider->getUrl($name, $parameters, self::DEFAULT_LOCALIZATION_ID);
         }
-
-        // If no Slug based URL is available - generate URL with base generator logic
+        // if no Slug based URL is available - generate URL with base generator logic
         if (!$url) {
             $url = $this->generator->generate($name, $parameters);
         }
@@ -159,26 +157,17 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
 
     /**
      * @param string $url
-     * @param string $contextUrl
+     * @param string|null $contextUrl
      * @return string
      */
     private function addContextUrl($url, $contextUrl)
     {
         $baseUrl = $this->getContext()->getBaseUrl();
-        if ($baseUrl) {
-            if (strpos($url, $baseUrl) === 0) {
-                $url = substr($url, strlen($baseUrl));
-            }
-            $urlParts = [trim($baseUrl, '/')];
-        }
-
         if ($contextUrl) {
-            $urlParts[] = trim($contextUrl, '/');
-            $urlParts[] = self::CONTEXT_DELIMITER;
+            $url = UrlUtil::join($contextUrl, self::CONTEXT_DELIMITER, UrlUtil::getPathInfo($url, $baseUrl));
         }
-        $urlParts[] = ltrim($url, '/');
 
-        return '/' . implode('/', $urlParts);
+        return UrlUtil::getAbsolutePath($url, $baseUrl);
     }
 
     /**

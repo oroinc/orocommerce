@@ -2,21 +2,20 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
+/**
+ * The registry of payment method view providers.
+ */
 class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /**
-     * @var PaymentMethodViewProviderInterface[]
-     */
-    private $providers = [];
+    /** @var iterable|PaymentMethodViewProviderInterface[] */
+    private $providers;
 
     /**
-     * Add payment method type to the registry
-     *
-     * @param PaymentMethodViewProviderInterface $provider
+     * @param iterable|PaymentMethodViewProviderInterface[] $providers
      */
-    public function addProvider(PaymentMethodViewProviderInterface $provider)
+    public function __construct(iterable $providers)
     {
-        $this->providers[] = $provider;
+        $this->providers = $providers;
     }
 
     /**
@@ -24,12 +23,15 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
      */
     public function getPaymentMethodViews(array $identifiers)
     {
-        $result = [];
+        $items = [];
         foreach ($this->providers as $provider) {
-            $result = array_merge($result, $provider->getPaymentMethodViews($identifiers));
+            $items[] = $provider->getPaymentMethodViews($identifiers);
         }
-        
-        return $result;
+        if ($items) {
+            $items = array_merge(...$items);
+        }
+
+        return $items;
     }
 
     /**

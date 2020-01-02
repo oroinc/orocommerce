@@ -5,9 +5,19 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
+/**
+ * Remove unused Combined Price Lists.
+ * Combined Price List considered as unused when it is not associated with any entity and has no actual activation plan
+ */
 class CombinedPriceListGarbageCollector
 {
     /**
@@ -19,16 +29,6 @@ class CombinedPriceListGarbageCollector
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $combinedPriceListClass;
-
-    /**
-     * @var CombinedPriceListRepository
-     */
-    protected $combinedPriceListsRepository;
 
     /**
      * @var ConfigManager
@@ -52,54 +52,83 @@ class CombinedPriceListGarbageCollector
 
     public function cleanCombinedPriceLists()
     {
-        $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
+        $this->deleteInvalidRelations();
+        $this->cleanActivationRules();
+        $this->scheduleUnusedPriceListsRemoval();
+    }
+
+    private function deleteInvalidRelations(): void
+    {
         $manager = $this->registry->getManager();
-        $manager->getRepository('OroPricingBundle:CombinedPriceListToCustomer')->deleteInvalidRelations();
-        $manager->getRepository('OroPricingBundle:CombinedPriceListToCustomerGroup')->deleteInvalidRelations();
-        $manager->getRepository('OroPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
-        $exceptPriceLists = [];
-        if ($configCombinedPriceList) {
-            $exceptPriceLists[] = $configCombinedPriceList;
-        }
-        $priceListsForDelete = $this->getCombinedPriceListsRepository()->getUnusedPriceListsIds($exceptPriceLists);
+        $manager->getRepository(CombinedPriceListToCustomer::class)->deleteInvalidRelations();
+        $manager->getRepository(CombinedPriceListToCustomerGroup::class)->deleteInvalidRelations();
+        $manager->getRepository(CombinedPriceListToWebsite::class)->deleteInvalidRelations();
+    }
+
+    private function cleanActivationRules()
+    {
+        /** @var CombinedPriceListActivationRuleRepository $repo */
+        $repo = $this->registry
+            ->getManagerForClass(CombinedPriceListActivationRule::class)
+            ->getRepository(CombinedPriceListActivationRule::class);
+
+        $repo->deleteExpiredRules(new \DateTime('now', new \DateTimeZone('UTC')));
+
+        $exceptPriceLists = $this->getConfigFullChainPriceLists();
+        $repo->deleteUnlinkedRules($exceptPriceLists);
+    }
+
+    private function scheduleUnusedPriceListsRemoval(): void
+    {
+        /** @var CombinedPriceListRepository $cplRepository */
+        $cplRepository = $this->registry
+            ->getManagerForClass(CombinedPriceList::class)
+            ->getRepository(CombinedPriceList::class);
+
+        $exceptPriceLists = $this->getAllConfigPriceLists();
+        $priceListsForDelete = $cplRepository->getUnusedPriceListsIds($exceptPriceLists);
         $this->triggerHandler->startCollect();
         $this->triggerHandler->massProcess($priceListsForDelete);
-        $this->getCombinedPriceListsRepository()->deletePriceLists($priceListsForDelete);
+        $cplRepository->deletePriceLists($priceListsForDelete);
         $this->triggerHandler->commit();
     }
 
     /**
-     * @param string $combinedPriceListClass
+     * @return array
      */
-    public function setCombinedPriceListClass($combinedPriceListClass)
+    private function getConfigFullChainPriceLists(): array
     {
-        $this->combinedPriceListClass = $combinedPriceListClass;
-        $this->combinedPriceListsRepository = null;
+        $exceptPriceLists = [];
+        $configFullCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToFullPriceList());
+        if ($configFullCombinedPriceList) {
+            $exceptPriceLists[] = $configFullCombinedPriceList;
+        }
+
+        return $exceptPriceLists;
     }
 
     /**
-     * @return CombinedPriceListRepository
+     * @return array
      */
-    protected function getCombinedPriceListsRepository()
+    private function getConfigPriceLists(): array
     {
-        if (!$this->combinedPriceListsRepository) {
-            $this->combinedPriceListsRepository = $this->registry->getManagerForClass($this->combinedPriceListClass)
-                ->getRepository($this->combinedPriceListClass);
+        $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
+        $exceptPriceLists = [];
+        if ($configCombinedPriceList) {
+            $exceptPriceLists[] = $configCombinedPriceList;
         }
 
-        return $this->combinedPriceListsRepository;
+        return $exceptPriceLists;
     }
 
     /**
-     * @return CombinedPriceListRepository
+     * @return array
      */
-    protected function getCombinedPriceListRelationRepository()
+    private function getAllConfigPriceLists(): array
     {
-        if (!$this->combinedPriceListsRepository) {
-            $this->combinedPriceListsRepository = $this->registry->getManagerForClass($this->combinedPriceListClass)
-                ->getRepository($this->combinedPriceListClass);
-        }
-
-        return $this->combinedPriceListsRepository;
+        return array_merge(
+            $this->getConfigPriceLists(),
+            $this->getConfigFullChainPriceLists()
+        );
     }
 }

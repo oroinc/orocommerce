@@ -38,6 +38,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
         $this->assertTrue($form->has('default'));
+        $this->assertTrue($form->has('expanded'));
 
         $submittedData = $this->createMock(ContentVariantInterface::class);
         $submittedData->expects($this->once())->method('setType')->with($pageContentVariantType);

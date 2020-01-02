@@ -31,6 +31,12 @@ services:
     Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
         alias: oro_redirect.routing.slug_url_matcher
 
+    oro_redirect.routing.slug_redirect_matcher:
+        class: Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher
+        arguments:
+            - '@doctrine'
+            - '@oro_scope.scope_manager'
+
     oro_redirect.slug.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -385,8 +391,7 @@ services:
     oro_redirect.event_listener.redirect_exception_listener:
         class: Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener
         arguments:
-            - '@doctrine'
-            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.slug_redirect_matcher'
             - '@oro_redirect.routing.matched_url_decision_maker'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
