@@ -14,7 +14,7 @@ define(function(require) {
 
         setDependentSlide: function(e) {
             if (e) {
-                let index = $(e.currentTarget).data('gallery-image-index');
+                const index = $(e.currentTarget).data('gallery-image-index');
                 this.$gallery.slick('slickGoTo', index, true);
                 if (this.useThumb()) {
                     this.$thumbnails.slick('slickGoTo', index, true);
