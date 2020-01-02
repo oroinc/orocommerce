@@ -8,7 +8,7 @@ define(function(require) {
      * Extension for jsTree view from @entity-tree-select-form-type-component
      * Add new way for update and re-render tree from response data
      */
-    const ConsentEntityTreeSelectFormView = EntityTreeSelectFormTypeView.extend({
+    const ContentNodeFromWebCatalogFormView = EntityTreeSelectFormTypeView.extend({
         optionNames: EntityTreeSelectFormTypeView.prototype.optionNames.concat([
             'updateApiAccessor', 'chooseWebCatalogMessage', 'loadingMask'
         ]),
@@ -16,7 +16,7 @@ define(function(require) {
         /**
          * @property {String}
          */
-        chooseWebCatalogMessage: _.__('oro.consent.jstree.please_choose_web_catalog'),
+        chooseWebCatalogMessage: _.__('oro.webcatalog.jstree.please_choose_web_catalog'),
 
         /**
          * @property {View}
@@ -26,8 +26,8 @@ define(function(require) {
         /**
          * @constructor
          */
-        constructor: function ConsentEntityTreeSelectFormView(options) {
-            ConsentEntityTreeSelectFormView.__super__.constructor.call(this, options);
+        constructor: function ContentNodeFromWebCatalogFormView(options) {
+            ContentNodeFromWebCatalogFormView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -36,7 +36,7 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            ConsentEntityTreeSelectFormView.__super__.initialize.call(this, options);
+            ContentNodeFromWebCatalogFormView.__super__.initialize.call(this, options);
             this.$fieldSelector.on('update:field', _.bind(this._onUpdateFieldValue, this));
         },
 
@@ -54,17 +54,16 @@ define(function(require) {
                 return;
             }
 
-            console.log(event.updatedData);
             this.updateTree({
                 entity: 'webcatalogs',
                 id: event.updatedData.id
             });
 
-            this.isEmptyTreeMessage = _.__('oro.consent.jstree.web_catlog_is_empty',
+            this.isEmptyTreeMessage = _.__('oro.webcatalog.jstree.web_catalog_is_empty',
                 {webCatalog: event.updatedData.name}
             );
         }
     });
 
-    return ConsentEntityTreeSelectFormView;
+    return ContentNodeFromWebCatalogFormView;
 });

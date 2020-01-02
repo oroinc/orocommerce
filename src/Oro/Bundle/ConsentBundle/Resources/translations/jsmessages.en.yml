@@ -1,8 +1,5 @@
 oro:
     consent:
-        jstree:
-            please_choose_web_catalog: "Please choose a Web Catalog"
-            web_catlog_is_empty: "{{ webCatalog }} doesn't have content nodes"
         frontend:
             dialog:
                 accept.label: "Agree"

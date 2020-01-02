@@ -135,8 +135,9 @@ Feature: Override product variations functionality
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title  | ALL PRODUCTS         |
-      | URI    | /catalog/allproducts |
+      | Title       | ALL PRODUCTS         |
+      | Target Type | URI                  |
+      | URI         | /catalog/allproducts |
     And save form
     Then I should see "Menu item saved successfully" flash message
 

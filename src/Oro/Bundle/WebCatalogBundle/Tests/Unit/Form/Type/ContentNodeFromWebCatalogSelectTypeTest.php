@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ConsentBundle\Form\Type\ContentNodeSelectType;
 use Oro\Bundle\FormBundle\Form\Type\EntityTreeSelectType;
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 
-class ContentNodeSelectTypeTest extends \PHPUnit\Framework\TestCase
+class ContentNodeFromWebCatalogSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentNodeSelectType
+     * @var ContentNodeFromWebCatalogSelectType
      */
     protected $formType;
 
@@ -25,12 +25,12 @@ class ContentNodeSelectTypeTest extends \PHPUnit\Framework\TestCase
     {
         $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);
 
-        $this->formType = new ContentNodeSelectType($this->treeHandler);
+        $this->formType = new ContentNodeFromWebCatalogSelectType($this->treeHandler);
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals('oro_consent_web_catalog_content_node_select', $this->formType->getBlockPrefix());
+        $this->assertEquals('oro_web_catalog_content_node_from_web_catalog_select', $this->formType->getBlockPrefix());
     }
 
     public function testGetParent()

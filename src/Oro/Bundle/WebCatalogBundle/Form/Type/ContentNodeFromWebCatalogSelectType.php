@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ConsentBundle\Form\Type;
+namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityTreeSelectType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -11,9 +11,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Form type that allows to select Content Node for a Consent
+ * Form type that allows to select Content Node from chosen WebCatalog
  */
-class ContentNodeSelectType extends AbstractType
+class ContentNodeFromWebCatalogSelectType extends AbstractType
 {
     /**
      * @var ContentNodeTreeHandler
@@ -37,17 +37,18 @@ class ContentNodeSelectType extends AbstractType
         $resolver->setAllowedTypes('web_catalog', [WebCatalog::class]);
         $resolver->setDefaults([
             'class' => ContentNode::class,
-            'tree_key' => 'consent-content-node',
+            'tree_key' => 'web-catalog-content-node',
             'tree_data' => [],
             'auto_initialize' => false,
-            'page_component_module' => 'oroconsent/js/app/views/consent-entity-tree-select-form',
+            'page_component_module' => 'orowebcatalog/js/app/views/content-node-from-webcatalog-form-view',
             'page_component_options' => [
                 'updateApiAccessor' => [
                     'http_method' => 'GET',
                     'route' => 'oro_rest_api_item',
                     'routeQueryParameterNames' => ['entity', 'id']
                 ]
-            ]
+            ],
+            'error_bubbling' => false,
         ]);
 
         $resolver->setNormalizer(
@@ -73,7 +74,7 @@ class ContentNodeSelectType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'oro_consent_web_catalog_content_node_select';
+        return 'oro_web_catalog_content_node_from_web_catalog_select';
     }
 
     /**

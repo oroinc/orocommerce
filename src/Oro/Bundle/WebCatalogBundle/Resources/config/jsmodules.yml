@@ -4,3 +4,5 @@ dynamic-imports:
         - orowebcatalog/js/app/views/default-variant-collection-view
         - orowebcatalog/js/app/views/variants-collection-view
         - orowebcatalog/js/app/views/web-catalog-tree-view
+        - orowebcatalog/js/app/views/content-node-from-webcatalog-form-view
+        - orowebcatalog/js/app/views/content-node-from-webcatalog-view
