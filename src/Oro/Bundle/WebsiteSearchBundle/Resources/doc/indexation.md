@@ -114,7 +114,7 @@ This is the most important event because it collects the data that should be per
 
 #### Configure a new plaheholder type
 
-If you need to add another placeholder type which is not already declared, you will need to declare it by implementing an `AbstractPlaceholder` and register it with a `website_search.placeholder` tag.
+If you need to add another placeholder type which is not declared yet, you will need to declare it by implementing  `AbstractPlaceholder` and register it with the `website_search.placeholder` tag.
 
 ```php
 namespace AppBundle\WebsiteSearch;
