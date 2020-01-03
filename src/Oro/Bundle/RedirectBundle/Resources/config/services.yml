@@ -142,6 +142,7 @@ services:
         arguments:
             - "@doctrine"
             - '@oro_security.acl_helper'
+            - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -384,6 +385,7 @@ services:
             - '@request_stack'
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.generator.slug_url_differ'
+            - '@oro_draft.helper.draft_helper'
 
     Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper:
         alias: oro_redirect.helper.changed_slugs_helper
@@ -402,3 +404,10 @@ services:
             - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }
+
+    oro_redirect.event_listener.draft_restrict_slug_increment_listener:
+        class: Oro\Bundle\RedirectBundle\EventListener\DraftRestrictSlugIncrementListener
+        arguments:
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_redirect.event.restrict_slug_increment, method: onRestrictSlugIncrementEvent }

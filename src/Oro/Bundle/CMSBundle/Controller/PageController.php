@@ -126,7 +126,9 @@ class PageController extends AbstractController
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
-            $this->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
+            $page->getDraftUuid()
+                ? $this->get(TranslatorInterface::class)->trans('oro.draft.operations.create.success')
+                : $this->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
         );
     }
 

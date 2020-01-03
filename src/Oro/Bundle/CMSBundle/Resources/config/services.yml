@@ -436,3 +436,9 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_cms.provider.attachment_entity_config.inner'
+
+    oro_cms.provider.draftable_fields_exclusion:
+        class: Oro\Bundle\CMSBundle\Provider\DraftableFieldsExclusionProvider
+        public: false
+        tags:
+            - { name: oro_draft.provider.draftable_fields_exclusion }
