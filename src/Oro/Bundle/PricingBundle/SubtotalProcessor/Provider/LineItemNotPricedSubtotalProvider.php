@@ -24,7 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'oro.pricing.subtotals.not_priced_subtotal';
     const LABEL = 'oro.pricing.subtotals.not_priced_subtotal.label';
 
     /** @var TranslatorInterface */
@@ -66,14 +65,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

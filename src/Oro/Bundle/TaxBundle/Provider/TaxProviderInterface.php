@@ -6,67 +6,66 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
- * TaxProvider provides a way to interact with taxation system and load/calculate/save tax information
+ * Represents a service that provides a way to interact with taxation system
+ * and load/calculate/save TAX information.
  */
 interface TaxProviderInterface
 {
     /**
-     * Check if provider can be used
+     * Checks if this provider can be used.
      *
      * @return bool
      */
     public function isApplicable();
 
     /**
-     * Get provider name
-     *
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * Return label key
+     * Returns the translation key for the provider label.
      *
      * @return string
      */
     public function getLabel();
 
     /**
-     * Load tax and return Result by object
+     * Loads TAX and returns TAX information for the given object.
      *
      * @param object $object
      *
      * @return Result
-     * @throws TaxationDisabledException if taxation disabled in system configuration
+     *
+     * @throws TaxationDisabledException if taxation disabled in the system configuration
      */
     public function loadTax($object);
 
     /**
-     * Get calculated tax result by object
+     * Gets calculated TAX information for the given object.
      *
      * @param object $object
      *
      * @return Result
-     * @throws TaxationDisabledException if taxation disabled in system configuration
+     *
+     * @throws TaxationDisabledException if taxation disabled in the system configuration
      */
     public function getTax($object);
 
     /**
-     * Save tax and return Result by object
+     * Saves TAX and returns TAX information for the given object.
      *
      * @param object $object
+     *
      * @return Result|null
-     * @throws TaxationDisabledException if taxation disabled in system configuration
+     *
+     * @throws TaxationDisabledException if taxation disabled in the system configuration
      */
     public function saveTax($object);
 
     /**
-     * Remove tax information assigned to object
+     * Removes TAX information assigned to the given object.
      *
      * @param object $object
      *
-     * @return boolean
-     * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @return bool
+     *
+     * @throws TaxationDisabledException if taxation disabled in the system configuration
      */
     public function removeTax($object);
 }

@@ -298,6 +298,7 @@ oro:
             related_products: Related Products
             limit_filters_sorters: Limit Filters and Sorters
             upsellItems: Up-sell items
+            options: Options
 
         tabs:
             relatedProducts: Related Products
@@ -680,6 +681,13 @@ oro:
         override_variant_configuration:
             label: Override Product Variant Configuration
             tooltip: If selected, all simple product variants included into this product collection will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration. Please note that this applies only to the products included via "Advanced Filter", as both "Manually Added" and "Excluded" products do not depend on this configuration option.
+
+        content_widget_type:
+            product_mini_block:
+                label: Product Mini-Block
+                options:
+                    show_prices.label: Show Prices
+                    show_add_button.label: Show Add Button
 
     product_unit.each:
         label:

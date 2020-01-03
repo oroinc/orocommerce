@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -15,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class CombinedPriceListProvider
 {
-    const GLUE = '_';
+    const GLUE = CombinedPriceListIdentifierProviderInterface::GLUE;
     const MERGE_NOT_ALLOWED_FLAG = 'f';
     const MERGE_ALLOWED_FLAG = 't';
 
@@ -40,15 +41,23 @@ class CombinedPriceListProvider
     protected $repository;
 
     /**
+     * @var StrategyRegister
+     */
+    protected $strategyRegister;
+
+    /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
+     * @param StrategyRegister $strategyRegister
      */
     public function __construct(
         ManagerRegistry $registry,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        StrategyRegister $strategyRegister
     ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->strategyRegister = $strategyRegister;
     }
 
     /**
@@ -89,6 +98,20 @@ class CombinedPriceListProvider
      * @return string
      */
     protected function getCombinedPriceListIdentifier(array $priceListsRelations)
+    {
+        $strategy = $this->strategyRegister->getCurrentStrategy();
+        if ($strategy instanceof CombinedPriceListIdentifierProviderInterface) {
+            return $strategy->getCombinedPriceListIdentifier($priceListsRelations);
+        }
+
+        return $this->getDefaultCombinedPriceListIdentifier($priceListsRelations);
+    }
+
+    /**
+     * @param array $priceListsRelations
+     * @return string
+     */
+    private function getDefaultCombinedPriceListIdentifier(array $priceListsRelations): string
     {
         $key = [];
         foreach ($priceListsRelations as $priceListSequenceMember) {

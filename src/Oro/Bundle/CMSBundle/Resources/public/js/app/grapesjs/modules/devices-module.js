@@ -53,7 +53,7 @@ define(function(require) {
             this.$builderIframe = this.builder.Canvas.getFrameEl();
 
             this.initButtons();
-            this.builder.on('changeTheme', _.bind(this.initButtons, this));
+            mediator.on('grapesjs:theme:change', _.bind(this.initButtons, this));
             this.builder.on('rteToolbarPosUpdate', _.bind(this.updateRtePosition, this));
         },
 
@@ -64,7 +64,7 @@ define(function(require) {
         },
 
         /**
-         * Fetch brakpoints from theme stylesheet
+         * Fetch breakpoints from theme stylesheet
          * @private
          */
         _getCSSBreakpoint: function() {

@@ -77,11 +77,6 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         unset($this->translator, $this->provider, $this->taxManager);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(TaxSubtotalProvider::NAME, $this->provider->getName());
-    }
-
     public function testGetSubtotal()
     {
         $this->taxationSettingsProvider->expects($this->once())

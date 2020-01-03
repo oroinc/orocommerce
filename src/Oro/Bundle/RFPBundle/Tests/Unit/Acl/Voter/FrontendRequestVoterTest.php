@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Acl\Voter;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
@@ -35,9 +34,6 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->willReturnCallback([ClassUtils::class, 'getClass']);
 
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);

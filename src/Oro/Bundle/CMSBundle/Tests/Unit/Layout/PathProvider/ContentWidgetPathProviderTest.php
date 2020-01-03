@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\PathProvider;
 
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Layout\PathProvider\ContentWidgetPathProvider;
 use Oro\Component\Layout\Extension\Theme\Model\PageTemplate;
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
@@ -34,9 +35,14 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetPaths(?string $theme, ?string $contentWidgetType, array $expectedResults): void
     {
+        $contentWidget = new ContentWidget();
+        if ($contentWidgetType) {
+            $contentWidget->setWidgetType($contentWidgetType);
+        }
+
         $context = new LayoutContext();
         $context->set('theme', $theme);
-        $context->set('content_widget_type', $contentWidgetType);
+        $context->set('content_widget', $contentWidget);
 
         $this->setUpThemeManager(
             [

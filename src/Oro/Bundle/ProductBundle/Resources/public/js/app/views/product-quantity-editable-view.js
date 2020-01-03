@@ -285,13 +285,12 @@ define(function(require) {
 
         onSaveError: function(jqXHR) {
             const errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+            const errors = 'responseJSON' in jqXHR ? jqXHR.responseJSON.errors.errors : [];
 
             this.restoreSavedState();
-
-            const errors = jqXHR.responseJSON.errors.errors || [];
             switch (errorCode) {
                 case 400:
-                    const jqXHRerrors = jqXHR.responseJSON.errors.children;
+                    const jqXHRerrors = 'responseJSON' in jqXHR ? jqXHR.responseJSON.errors.children : [];
                     for (const i in jqXHRerrors) {
                         if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
                             errors.push(..._.values(jqXHRerrors[i].errors));
@@ -302,7 +301,7 @@ define(function(require) {
                     }
                     break;
                 case 403:
-                    errors.push(__('You do not have permission to perform this action.'));
+                    errors.push(__('oro.ui.forbidden_error'));
                     break;
                 default:
                     errors.push(__('oro.ui.unexpected_error'));

@@ -139,7 +139,8 @@ Feature: Create product with dialog widget
 
   Scenario: Select configurable product using select autocomplete
     Given I proceed as the Admin
-    When I fill "Content Variant" with:
+    When I click on "First Content Variant Expand Button"
+    And I fill "Content Variant" with:
       | Product | 1GB83 |
     Then I should see "1GB83 - Slip-On Clog"
     And I save form

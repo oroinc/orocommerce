@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensio
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * The CatalogBundle bundle class.
+ */
 class OroCatalogBundle extends Bundle
 {
     /**
@@ -15,18 +18,13 @@ class OroCatalogBundle extends Bundle
     {
         parent::build($container);
 
-        $container
-            ->addCompilerPass(
-                new DefaultFallbackExtensionPass(
-                    [
-                        'Oro\Bundle\CatalogBundle\Entity\Category' => [
-                            'title' => 'titles',
-                            'shortDescription' => 'shortDescriptions',
-                            'longDescription' => 'longDescriptions',
-                            'slugPrototype' => 'slugPrototypes',
-                        ]
-                    ]
-                )
-            );
+        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+            'Oro\Bundle\CatalogBundle\Entity\Category' => [
+                'title' => 'titles',
+                'shortDescription' => 'shortDescriptions',
+                'longDescription' => 'longDescriptions',
+                'slugPrototype' => 'slugPrototypes'
+            ]
+        ]));
     }
 }

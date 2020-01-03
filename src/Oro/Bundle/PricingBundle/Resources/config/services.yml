@@ -90,7 +90,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
         public: false
         arguments:
-            - !tagged oro_pricing.current_currency_provider
+            - !tagged_iterator oro_pricing.current_currency_provider
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
@@ -100,6 +100,17 @@ services:
             - '@oro_pricing.model.price_list_tree_handler'
         tags:
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
+
+    oro_pricing.migrations.minimal_strategy_naming_migration:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\MinimalStrategyNamingMigration
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
+            - '@oro_pricing.combined_price_list_relation_helper'
 
     oro_pricing.provider.combined_product_price:
         alias: oro_pricing.provider.product_price
@@ -119,6 +130,7 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
 
     oro_pricing.provider.dependent_price_lists:
         class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
@@ -190,8 +202,6 @@ services:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
-        calls:
-            - [setCombinedPriceListClass, ['%oro_pricing.entity.combined_price_list.class%']]
 
     oro_pricing.builder.abstract_combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
@@ -238,6 +248,7 @@ services:
     oro_pricing.builder.combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder'
         arguments:
+            - '@doctrine'
             - '@oro_config.global'
             - '@oro_pricing.provider.price_list_collection'
             - '@oro_pricing.provider.combined_price_list'
@@ -246,6 +257,8 @@ services:
             - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.website_combined_price_list_builder'
+        calls:
+            - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
 
     oro_pricing.builder.combined_price_list_builder_facade:
         class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
@@ -776,6 +789,9 @@ services:
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
         public: false
+        arguments:
+            - [] # provider names
+            - ~ # service locator
 
     oro_pricing.subtotal_processor.total_processor_provider:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
@@ -795,7 +811,7 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.subtotal }
 
     Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider:
         alias: oro_pricing.subtotal_processor.provider.subtotal_line_item
@@ -815,7 +831,7 @@ services:
             - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.not_priced_subtotal, priority: 0 }
 
     oro_pricing.price_list_with_priority_collection.handler:
         class: 'Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler'
@@ -909,6 +925,7 @@ services:
 
     oro_pricing.builder.product_price_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.orm.insert_from_select_query_executor'
@@ -918,6 +935,7 @@ services:
 
     oro_pricing.builder.price_list_product_assignment_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
@@ -1199,6 +1217,7 @@ services:
 
     oro_pricing.orm.multi_insert_shard_query_executor:
         class: Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor
+        shared: false
         arguments:
            - '@oro_entity.orm.native_query_executor_helper'
            - '@oro_pricing.shard_manager'

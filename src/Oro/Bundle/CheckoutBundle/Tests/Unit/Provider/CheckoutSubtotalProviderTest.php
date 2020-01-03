@@ -320,11 +320,6 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertFalse($subtotal->isVisible());
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CheckoutSubtotalProvider::NAME, $this->provider->getName());
-    }
-
     public function testIsSupported()
     {
         $entity = new Checkout();

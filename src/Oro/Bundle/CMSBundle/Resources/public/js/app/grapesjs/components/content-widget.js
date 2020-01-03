@@ -88,10 +88,12 @@ define(function(require) {
                         'oro_datagrid_widget',
                         routeParams
                     ),
+                    loadingElement: options.getEl(),
                     dialogOptions: {
                         modal: true,
                         resizable: true,
                         autoResize: true,
+                        appendTo: options.getEl(),
                         close: function() {
                             if (event.cid && !event.get('contentWidget')) {
                                 event.remove();
@@ -131,10 +133,12 @@ define(function(require) {
                         'oro_datagrid_widget',
                         routeParams
                     ),
+                    loadingElement: options.getEl(),
                     dialogOptions: {
                         modal: true,
                         resizable: true,
-                        autoResize: true
+                        autoResize: true,
+                        appendTo: options.getEl()
                     }
                 });
 

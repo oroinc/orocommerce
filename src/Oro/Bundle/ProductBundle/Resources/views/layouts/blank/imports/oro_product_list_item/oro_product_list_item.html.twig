@@ -68,8 +68,13 @@
 
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': "orofrontend/js/app/components/popup-gallery-widget",
-            'data-page-component-options': options|json_encode
+            'data-page-component-options': options|json_encode,
+
         }) %}
+
+        {% if isTargetBlank is defined and isTargetBlank %}
+            {% set attr = attr|merge({'target': '_blank'}) %}
+        {% endif %}
     {% endif %}
 
     <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" {{ block('block_attributes') }}>
@@ -130,6 +135,7 @@
            class="view-product"
            itemprop="url"
            title="{{ productName|e('html_attr') }}"
+           {% if isTargetBlank is defined and isTargetBlank %}target="_blank"{% endif %}
            data-page-component-line-clamp><span itemprop="name">{{ productName }}</span></a>
     </h3>
 {% endblock %}
@@ -205,7 +211,7 @@
     '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="link view-product">
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="link view-product"{% if isTargetBlank is defined and isTargetBlank %} target="_blank"{% endif %}>
             {{ 'oro.product.frontend.index.view_details'|trans }}
         </a>
     </div>

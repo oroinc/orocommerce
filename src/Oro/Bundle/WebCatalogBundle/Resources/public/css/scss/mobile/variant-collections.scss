@@ -1,0 +1,13 @@
+/* @theme: admin.oro; */
+
+.oro-content-variant-collection {
+    .btn-remove-variant {
+        top: 0;
+        #{$end}: 0;
+    }
+
+    .btn-toggle-variant {
+        top: 0;
+        #{$start}: 0;
+    }
+}

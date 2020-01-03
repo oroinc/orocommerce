@@ -3,101 +3,80 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
+use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SubtotalProviderPass */
-    protected $compilerPass;
+    /** @var ContainerBuilder */
+    private $container;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder */
-    protected $container;
+    /** @var SubtotalProviderPass */
+    private $compiler;
 
     protected function setUp()
     {
-        $this->container = $this
-            ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->getMock();
-
-        $this->compilerPass = new SubtotalProviderPass();
+        $this->container = new ContainerBuilder();
+        $this->compiler = new SubtotalProviderPass();
     }
 
-    protected function tearDown()
+    public function testProcessWhenNoTaggedServices()
     {
-        unset($this->container, $this->compilerPass);
+        $registry = $this->container->register(
+            'oro_pricing.subtotal_processor.subtotal_provider_registry',
+            SubtotalProviderRegistry::class
+        );
+
+        $this->compiler->process($this->container);
+
+        self::assertEquals([], $registry->getArgument(0));
+
+        $serviceLocatorReference = $registry->getArgument(1);
+        self::assertInstanceOf(Reference::class, $serviceLocatorReference);
+        $serviceLocatorDef = $this->container->getDefinition((string)$serviceLocatorReference);
+        self::assertEquals(ServiceLocator::class, $serviceLocatorDef->getClass());
+        self::assertEquals([], $serviceLocatorDef->getArgument(0));
     }
 
-    public function testServiceNotExists()
+    public function testProcessWithTaggedServices()
     {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(false));
+        $registry = $this->container->register(
+            'oro_pricing.subtotal_processor.subtotal_provider_registry',
+            SubtotalProviderRegistry::class
+        );
 
-        $this->container->expects($this->never())
-            ->method('getDefinition');
+        $this->container->setDefinition('service_name_1', new Definition())
+            ->addTag('oro_pricing.subtotal_provider', ['alias' => 'provider1', 'priority' => 1]);
+        $this->container->setDefinition('service_name_2', new Definition())
+            ->addTag('oro_pricing.subtotal_provider', ['alias' => 'provider2']);
+        $this->container->setDefinition('service_name_3', new Definition())
+            ->addTag('oro_pricing.subtotal_provider', ['alias' => 'provider3', 'priority' => -255]);
+        $this->container->setDefinition('service_name_4', new Definition())
+            ->addTag('oro_pricing.subtotal_provider', ['alias' => 'provider4', 'priority' => 255]);
 
-        $this->container->expects($this->never())
-            ->method('findTaggedServiceIds');
+        $this->compiler->process($this->container);
 
-        $this->compilerPass->process($this->container);
-    }
+        self::assertEquals(
+            ['provider3', 'provider2', 'provider1', 'provider4'],
+            $registry->getArgument(0)
+        );
 
-    public function testServiceExistsNotTaggedServices()
-    {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(true));
-
-        $this->container->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with($this->equalTo(SubtotalProviderPass::TAG))
-            ->will($this->returnValue([]));
-
-        $this->container->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->container);
-    }
-
-    public function testServiceExistsWithTaggedServices()
-    {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
-            ->will($this->returnValue(true));
-
-        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
-
-        $this->container->expects($this->once())
-            ->method('getDefinition')
-            ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
-            ->will($this->returnValue($definition));
-
-        $taggedServices = [
-            'service.name.1' => [['priority' => 1]],
-            'service.name.2' => [[]],
-            'service.name.3' => [['priority' => -255]],
-            'service.name.4' => [['priority' => 255]],
-        ];
-
-        $definition
-            ->expects($this->exactly(4))
-            ->method('addMethodCall')
-            ->withConsecutive(
-                ['addProvider', [new Reference('service.name.3')]],
-                ['addProvider', [new Reference('service.name.2')]],
-                ['addProvider', [new Reference('service.name.1')]],
-                ['addProvider', [new Reference('service.name.4')]]
-            );
-
-        $this->container->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with($this->equalTo(SubtotalProviderPass::TAG))
-            ->will($this->returnValue($taggedServices));
-
-        $this->compilerPass->process($this->container);
+        $serviceLocatorReference = $registry->getArgument(1);
+        self::assertInstanceOf(Reference::class, $serviceLocatorReference);
+        $serviceLocatorDef = $this->container->getDefinition((string)$serviceLocatorReference);
+        self::assertEquals(ServiceLocator::class, $serviceLocatorDef->getClass());
+        self::assertEquals(
+            [
+                'provider1' => new ServiceClosureArgument(new Reference('service_name_1')),
+                'provider2' => new ServiceClosureArgument(new Reference('service_name_2')),
+                'provider3' => new ServiceClosureArgument(new Reference('service_name_3')),
+                'provider4' => new ServiceClosureArgument(new Reference('service_name_4'))
+            ],
+            $serviceLocatorDef->getArgument(0)
+        );
     }
 }

@@ -24,6 +24,25 @@ services:
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.manager.guest_shopping_list'
 
+    oro_shopping_list.api.resource_type_resolver.shopping_list:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'shopping_list'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_shopping_list_frontend_view }
+
+    oro_shopping_list.api.resource_api_url_resolver.default_shopping_list:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceRestApiGetActionUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        calls:
+            - [setDefaultEntityId, ['default']]
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_shopping_list_frontend_view, requestType: rest }
+
     oro_shopping_list.api.subresources.ensure_default_shopping_list_exists:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\EnsureDefaultShoppingListExistsForParent
         arguments:

@@ -2,24 +2,49 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CombinedPriceListsBuilder
      */
     protected $builder;
+
+    /**
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $em;
+
+    /**
+     * @var string
+     */
+    protected $combinedPriceListClassName = 'CombinedPriceListClassName';
 
     /**
      * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
@@ -63,40 +88,30 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->registry = $this->createMock(Registry::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
-        $this->priceListCollectionProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->with($this->combinedPriceListClassName)
+            ->willReturn($this->em);
 
-        $this->combinedPriceListProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->garbageCollector = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->websiteBuilder = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->priceListCollectionProvider = $this->createMock(PriceListCollectionProvider::class);
+        $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
+        $this->garbageCollector = $this->createMock(CombinedPriceListGarbageCollector::class);
+        $this->websiteBuilder = $this->createMock(WebsiteCombinedPriceListsBuilder::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
-        $this->cplScheduleResolver = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $priceResolver = self::createMock(MergePricesCombiningStrategy::class);
+        $this->cplScheduleResolver = $this->createMock($className);
+        $priceResolver = $this->createMock(MergePricesCombiningStrategy::class);
         $strategyRegister = new StrategyRegister($this->configManager);
         $strategyRegister->add(MergePricesCombiningStrategy::NAME, $priceResolver);
 
         $this->builder = new CombinedPriceListsBuilder(
+            $this->registry,
             $this->configManager,
             $this->priceListCollectionProvider,
             $this->combinedPriceListProvider,
@@ -106,6 +121,8 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
             $this->triggerHandler,
             $this->websiteBuilder
         );
+
+        $this->builder->setCombinedPriceListClassName($this->combinedPriceListClassName);
     }
 
     /**
@@ -117,14 +134,9 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuild($configCPLId, $actualCPLId, $force = false)
     {
         $callExpects = 1;
-        $combinedPriceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
-        $combinedPriceList->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue($actualCPLId));
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => $actualCPLId]);
         $priceListsCollection = [
-            $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember')
-                ->disableOriginalConstructor()
-                ->getMock()
+            $this->createMock(PriceListSequenceMember::class)
         ];
 
         $this->priceListCollectionProvider->expects($this->exactly($callExpects))
@@ -160,10 +172,20 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('build')
             ->with(null, $force);
 
+        $this->em->expects($this->exactly($callExpects))
+            ->method('beginTransaction');
+        $this->em->expects($this->exactly($callExpects))
+            ->method('commit');
+        $this->triggerHandler
+            ->expects($this->never())
+            ->method('rollback');
+
         $this->triggerHandler->expects($this->exactly($callExpects))
             ->method('startCollect');
         $this->triggerHandler->expects($this->exactly($callExpects))
             ->method('commit');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
 
         $this->builder->build($force);
         $this->builder->build($force);
@@ -205,5 +227,120 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
                 'force' => true
             ],
         ];
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Exception while update price list
+     */
+    public function testBuildWithExceptionWhileUpdatePriceLists()
+    {
+        $priceListsCollection = [
+            $this->createMock(PriceListSequenceMember::class)
+        ];
+
+        $this->triggerHandler
+            ->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler
+            ->expects($this->once())
+            ->method('rollback');
+        $this->triggerHandler
+            ->expects($this->never())
+            ->method('commit');
+
+        $this->em
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $this->em
+            ->expects($this->once())
+            ->method('rollback');
+        $this->em
+            ->expects($this->never())
+            ->method('commit');
+
+        $this->priceListCollectionProvider
+            ->expects($this->once())
+            ->method('getPriceListsByConfig')
+            ->will($this->returnValue($priceListsCollection));
+
+        $this->combinedPriceListProvider
+            ->expects($this->once())
+            ->method('getCombinedPriceList')
+            ->with($priceListsCollection)
+            ->will(
+                $this->throwException(new \Exception('Exception while update price list'))
+            );
+
+        $this->builder->build();
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Exception while build website combined pl
+     */
+    public function testBuildWithExceptionWhileDoNestedBuild()
+    {
+        $configCPLId = 1;
+        $actualCPLId = 1;
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => $configCPLId]);
+        $priceListsCollection = [
+            $this->createMock(PriceListSequenceMember::class)
+        ];
+
+        $this->triggerHandler
+            ->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler
+            ->expects($this->once())
+            ->method('rollback');
+        $this->triggerHandler
+            ->expects($this->never())
+            ->method('commit');
+
+        $this->em
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $this->em
+            ->expects($this->once())
+            ->method('commit');
+        $this->em
+            ->expects($this->never())
+            ->method('rollback');
+
+        $this->priceListCollectionProvider
+            ->expects($this->once())
+            ->method('getPriceListsByConfig')
+            ->will($this->returnValue($priceListsCollection));
+
+        $this->combinedPriceListProvider
+            ->expects($this->once())
+            ->method('getCombinedPriceList')
+            ->with($priceListsCollection)
+            ->willReturn($combinedPriceList);
+
+        $fullKey = Configuration::getConfigKeyToFullPriceList();
+        $key = Configuration::getConfigKeyToPriceList();
+        //1 from register + 2 from strategy
+        $this->configManager->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnMap([
+                [$fullKey, false, false, null, $configCPLId],
+                [$key, false, false, null, $actualCPLId],
+                ['oro_pricing.price_strategy', false, false, null, MergePricesCombiningStrategy::NAME],
+            ]);
+
+        $this->configManager
+            ->expects($this->never())
+            ->method('set');
+
+        $this->websiteBuilder
+            ->expects($this->once())
+            ->method('build')
+            ->will(
+                $this->throwException(new \Exception('Exception while build website combined pl'))
+            );
+
+        $this->builder->build();
     }
 }

@@ -7,12 +7,14 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListIdentifierProviderInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 /**
  * Implements combining price strategy based on PriceList priority and minimal prices
  */
-class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
+class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy implements
+    CombinedPriceListIdentifierProviderInterface
 {
     const NAME = 'minimal_prices';
 
@@ -66,5 +68,23 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $combinedPriceList,
             $relatedCombinedPriceList
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCombinedPriceListIdentifier(array $priceListsRelations): string
+    {
+        $key = [];
+        // Minimal strategy does not use merge flag, skip it and collect only IDs to create identifier
+        foreach ($priceListsRelations as $priceListSequenceMember) {
+            $key[] = $priceListSequenceMember->getPriceList()->getId();
+        }
+        // Minimal prices will be added once from each PL, duplicates should be removed.
+        $key = array_unique($key);
+        // Minimal prices will be added independently on order so we can sort IDs to get same CPL
+        sort($key);
+
+        return md5(implode(self::GLUE, $key));
     }
 }

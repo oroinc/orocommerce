@@ -51,8 +51,6 @@ define(function(require) {
                     .prepend(nextItemHtml)
                     .trigger('content:changed');
                 this.$el.data('last-index', ++index);
-
-                this.validateContainer();
             }
 
             mediator.trigger('webcatalog:content-variant-collection:add', this.$el);
@@ -65,14 +63,6 @@ define(function(require) {
             item.remove();
 
             mediator.trigger('webcatalog:content-variant-collection:remove', this.$el);
-        },
-
-        validateContainer: function() {
-            const $validationField = this.$el.find('[data-name="collection-validation"]:first');
-            const $form = $validationField.closest('form');
-            if ($form.data('validator')) {
-                $form.validate().element($validationField.get(0));
-            }
         }
     });
 

@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'low_inventory.html.twig'
+        - '@add':
+            id: product_low_inventory_label
+            parentId: product_specification
+            blockType: container
+            prepend: true

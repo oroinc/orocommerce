@@ -6,20 +6,23 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider;
 
+/**
+ * Uses registered matchers to finds TaxRules by address.
+ */
 class ResolvableMatcher implements MatcherInterface
 {
-    /** @var AddressMatcherRegistryInterface */
+    /** @var AddressMatcherRegistry */
     protected $addressMatcherRegistry;
 
     /** @var AddressResolverSettingsProvider */
     protected $settingsProvider;
 
     /**
-     * @param AddressMatcherRegistryInterface $addressMatcherRegistry
+     * @param AddressMatcherRegistry          $addressMatcherRegistry
      * @param AddressResolverSettingsProvider $taxationSettingsProvider
      */
     public function __construct(
-        AddressMatcherRegistryInterface $addressMatcherRegistry,
+        AddressMatcherRegistry $addressMatcherRegistry,
         AddressResolverSettingsProvider $taxationSettingsProvider
     ) {
         $this->addressMatcherRegistry = $addressMatcherRegistry;
@@ -27,21 +30,11 @@ class ResolvableMatcher implements MatcherInterface
     }
 
     /**
-     * @return string
-     */
-    private function getGranularity()
-    {
-        return $this->settingsProvider->getAddressResolverGranularity();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function match(AbstractAddress $address, TaxCodes $taxCodes)
     {
-        $configuredMatcher = $this->getMatcherFromRegistry();
-
-        return $configuredMatcher->match($address, $taxCodes);
+        return $this->getMatcherFromRegistry()->match($address, $taxCodes);
     }
 
     /**
@@ -49,6 +42,8 @@ class ResolvableMatcher implements MatcherInterface
      */
     private function getMatcherFromRegistry()
     {
-        return $this->addressMatcherRegistry->getMatcherByType($this->getGranularity());
+        return $this->addressMatcherRegistry->getMatcherByType(
+            $this->settingsProvider->getAddressResolverGranularity()
+        );
     }
 }

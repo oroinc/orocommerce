@@ -16,8 +16,6 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ENTITY_CLASS = Localization::class;
-
     /** @var LocalizationRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
@@ -36,13 +34,6 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->willReturnCallback(
-                function ($object) {
-                    return get_class($object);
-                }
-            );
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->willReturnCallback(
@@ -52,7 +43,7 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->voter = new LocalizationVoter($this->doctrineHelper);
-        $this->voter->setClassName(self::ENTITY_CLASS);
+        $this->voter->setClassName(Localization::class);
     }
 
     /**

@@ -8,60 +8,119 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class CompositeShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CompositeShippingMethodProvider
-     */
-    protected $shippingMethodProvider;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider1;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $provider;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider2;
+
+    /** @var CompositeShippingMethodProvider */
+    private $shippingMethodProvider;
 
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
+        $this->provider1 = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->provider2 = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->provider = $this->getMockBuilder(ShippingMethodProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider(
+            [$this->provider1, $this->provider2]
+        );
     }
 
-    public function testGetMethods()
+    public function testGetShippingMethods()
     {
-        $shippingMethods = $this->shippingMethodProvider->getShippingMethods();
-        $this->assertInternalType('array', $shippingMethods);
-        $this->assertEmpty($shippingMethods);
-    }
+        $method1 = $this->createMock(ShippingMethodInterface::class);
+        $method2 = $this->createMock(ShippingMethodInterface::class);
+        $method3 = $this->createMock(ShippingMethodInterface::class);
+        $method4 = $this->createMock(ShippingMethodInterface::class);
 
-    public function testRegistry()
-    {
-        $method = $this->createMock(ShippingMethodInterface::class);
-
-        $this->provider->expects($this->once())
+        $this->provider1->expects($this->once())
             ->method('getShippingMethods')
-            ->willReturn(['test_name' => $method]);
+            ->willReturn([
+                'method1' => $method1,
+                'method2' => $method2
+            ]);
+        $this->provider2->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn([
+                'method2' => $method3,
+                'method4' => $method4
+            ]);
 
-        $this->provider->expects($this->once())
-            ->method('getShippingMethod')
-            ->with('test_name')
-            ->willReturn($method);
-
-        $this->provider->expects($this->once())
-            ->method('hasShippingMethod')
-            ->with('test_name')
-            ->willReturn(true);
-
-        $this->shippingMethodProvider->addProvider($this->provider);
-        $this->assertEquals($method, $this->shippingMethodProvider->getShippingMethod('test_name'));
-        $this->assertEquals(['test_name' => $method], $this->shippingMethodProvider->getShippingMethods());
+        $this->assertSame(
+            [
+                'method1' => $method1,
+                'method2' => $method3,
+                'method4' => $method4
+            ],
+            $this->shippingMethodProvider->getShippingMethods()
+        );
     }
 
-    public function testRegistryWrongMethod()
+    public function testGetShippingMethodWhenOneOfProvidersReturnRequestedShippingMethod()
     {
-        $this->assertNull($this->shippingMethodProvider->getShippingMethod('wrong_name'));
+        $method1 = $this->createMock(ShippingMethodInterface::class);
+
+        $this->provider1->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(true);
+        $this->provider1->expects($this->once())
+            ->method('getShippingMethod')
+            ->with('method1')
+            ->willReturn($method1);
+        $this->provider2->expects($this->never())
+            ->method('hasShippingMethod');
+        $this->provider2->expects($this->never())
+            ->method('getShippingMethod');
+
+        $this->assertSame($method1, $this->shippingMethodProvider->getShippingMethod('method1'));
+    }
+
+    public function testGetShippingMethodWhenAllProvidersDoNotReturnRequestedShippingMethod()
+    {
+        $this->provider1->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(false);
+        $this->provider1->expects($this->never())
+            ->method('getShippingMethod');
+        $this->provider2->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(false);
+        $this->provider2->expects($this->never())
+            ->method('getShippingMethod');
+
+        $this->assertNull($this->shippingMethodProvider->getShippingMethod('method1'));
+    }
+
+    public function testHasShippingMethodWhenOneOfProvidersReturnTrue()
+    {
+        $this->provider1->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(true);
+        $this->provider2->expects($this->never())
+            ->method('hasShippingMethod');
+
+        $this->assertTrue($this->shippingMethodProvider->hasShippingMethod('method1'));
+    }
+
+    public function testHasShippingMethodWhenAllProvidersReturnFalse()
+    {
+        $this->provider1->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(false);
+        $this->provider2->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('method1')
+            ->willReturn(false);
+
+        $this->assertFalse($this->shippingMethodProvider->hasShippingMethod('method1'));
     }
 }

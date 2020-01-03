@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
@@ -49,8 +50,17 @@ class PriceListRecalculateCommand extends Command
     /** @var ProductPriceBuilder */
     private $priceBuilder;
 
+    /** @var InsertQueryExecutorInterface */
+    private $insertQueryExecutorInsertSelectMode;
+
     /** @var ShardQueryExecutorInterface */
-    private $queryExecutor;
+    private $shardInsertQueryExecutorInsertSelectMode;
+
+    /** @var InsertQueryExecutorInterface */
+    private $insertQueryExecutorMultiInsertMode;
+
+    /** @var ShardQueryExecutorInterface */
+    private $shardInsertQueryExecutorMultiInsertMode;
 
     /** @var DependentPriceListProvider */
     private $dependentPriceListProvider;
@@ -73,7 +83,6 @@ class PriceListRecalculateCommand extends Command
     /**
      * @param ManagerRegistry $registry
      * @param ProductPriceBuilder $priceBuilder
-     * @param ShardQueryExecutorInterface $queryExecutor
      * @param DependentPriceListProvider $dependentPriceListProvider
      * @param CombinedPriceListTriggerHandler $triggerHandler
      * @param StrategyRegister $strategyRegister
@@ -84,7 +93,6 @@ class PriceListRecalculateCommand extends Command
     public function __construct(
         ManagerRegistry $registry,
         ProductPriceBuilder $priceBuilder,
-        ShardQueryExecutorInterface $queryExecutor,
         DependentPriceListProvider $dependentPriceListProvider,
         CombinedPriceListTriggerHandler $triggerHandler,
         StrategyRegister $strategyRegister,
@@ -94,7 +102,6 @@ class PriceListRecalculateCommand extends Command
     ) {
         $this->registry = $registry;
         $this->priceBuilder = $priceBuilder;
-        $this->queryExecutor = $queryExecutor;
         $this->dependentPriceListProvider = $dependentPriceListProvider;
         $this->triggerHandler = $triggerHandler;
         $this->strategyRegister = $strategyRegister;
@@ -103,6 +110,25 @@ class PriceListRecalculateCommand extends Command
         $this->assignmentBuilder = $assignmentBuilder;
 
         parent::__construct();
+    }
+
+    /**
+     * @param InsertQueryExecutorInterface $insertQueryExecutor
+     * @param ShardQueryExecutorInterface  $shardInsertQueryExecutor
+     * @param bool                         $applyOnInsertSelectMode
+     */
+    public function setInsertQueryExecutors(
+        InsertQueryExecutorInterface $insertQueryExecutor,
+        ShardQueryExecutorInterface $shardInsertQueryExecutor,
+        bool $applyOnInsertSelectMode
+    ) {
+        if ($applyOnInsertSelectMode) {
+            $this->insertQueryExecutorInsertSelectMode = $insertQueryExecutor;
+            $this->shardInsertQueryExecutorInsertSelectMode = $shardInsertQueryExecutor;
+        } else {
+            $this->insertQueryExecutorMultiInsertMode = $insertQueryExecutor;
+            $this->shardInsertQueryExecutorMultiInsertMode = $shardInsertQueryExecutor;
+        }
     }
 
     /**
@@ -404,7 +430,15 @@ class PriceListRecalculateCommand extends Command
         if ($input->getOption(self::USE_INSERT_SELECT)
             && $currentStrategy instanceof InsertFromSelectExecutorAwareInterface
         ) {
-            $currentStrategy->setInsertSelectExecutor($this->queryExecutor);
+            $currentStrategy->setInsertSelectExecutor($this->shardInsertQueryExecutorInsertSelectMode);
+        }
+
+        if ($input->getOption(self::USE_INSERT_SELECT)) {
+            $this->assignmentBuilder->setInsertQueryExecutor($this->insertQueryExecutorInsertSelectMode);
+            $this->priceBuilder->setShardInsertQueryExecutor($this->shardInsertQueryExecutorInsertSelectMode);
+        } else {
+            $this->assignmentBuilder->setInsertQueryExecutor($this->insertQueryExecutorMultiInsertMode);
+            $this->priceBuilder->setShardInsertQueryExecutor($this->shardInsertQueryExecutorMultiInsertMode);
         }
     }
 }

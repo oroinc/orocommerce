@@ -1,9 +1,27 @@
 services:
-    oro_cms.api.compute_landingpage_urls:
+    oro_cms.api.resource_type_resolver.landing_page:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'landing_page'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_cms_frontend_page_view }
+
+    oro_cms.api.resource_api_url_resolver.landing_page:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceRestApiGetActionUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+            - Oro\Bundle\CMSBundle\Entity\Page
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_cms_frontend_page_view, requestType: rest }
+
+    oro_cms.api.compute_landing_page_urls:
         class: Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields
         arguments:
             - '@oro_api.doctrine_helper'
             - '@oro_locale.helper.localization'
             - '@oro_config.manager'
+            - '@router'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CMSBundle\Entity\Page }

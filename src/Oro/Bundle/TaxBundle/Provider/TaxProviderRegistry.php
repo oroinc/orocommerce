@@ -3,80 +3,110 @@
 namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class TaxProviderRegistry
+/**
+ * The registry of tax providers.
+ */
+class TaxProviderRegistry implements ResetInterface
 {
-    /**
-     * @var ConfigManager
-     */
+    /** @var string[] */
+    private $providerNames;
+
+    /** @var ContainerInterface */
+    private $providerContainer;
+
+    /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @var TaxProviderInterface[]
-     */
-    protected $providers = [];
+    /** @var TaxProviderInterface[]|null */
+    private $providers;
 
     /**
-     * @param ConfigManager $configManager
+     * @param string[]           $providerNames
+     * @param ContainerInterface $providerContainer
+     * @param ConfigManager      $configManager
      */
-    public function __construct(ConfigManager $configManager)
-    {
+    public function __construct(
+        array $providerNames,
+        ContainerInterface $providerContainer,
+        ConfigManager $configManager
+    ) {
+        $this->providerNames = $providerNames;
+        $this->providerContainer = $providerContainer;
         $this->configManager = $configManager;
     }
 
     /**
-     * Add provider to the registry
-     *
-     * @param TaxProviderInterface $provider
+     * {@inheritDoc}
      */
-    public function addProvider(TaxProviderInterface $provider)
+    public function reset()
     {
-        if (array_key_exists($provider->getName(), $this->providers)) {
-            throw new \LogicException(
-                sprintf('Tax provider with name "%s" already registered', $provider->getName())
-            );
-        }
-
-        if ($provider->isApplicable()) {
-            $this->providers[$provider->getName()] = $provider;
-        }
+        $this->providers = null;
     }
 
     /**
-     * @return TaxProviderInterface[]
+     * Gets all tax providers.
+     *
+     * @return TaxProviderInterface[] [provider name => provider, ...]
      */
-    public function getProviders()
+    public function getProviders(): array
     {
+        if (null === $this->providers) {
+            $this->providers = [];
+            foreach ($this->providerNames as $name) {
+                /** @var TaxProviderInterface $provider */
+                $provider = $this->providerContainer->get($name);
+                if ($provider->isApplicable()) {
+                    $this->providers[$name] = $provider;
+                }
+            }
+        }
+
         return $this->providers;
     }
 
     /**
-     * Get provider by name
+     * Gets a tax provider by its name.
      *
      * @param string $name
+     *
      * @return TaxProviderInterface
-     * @throws \LogicException Throw exception when provider with specified name not found
+     *
+     * @throws \LogicException if a provider with the given name not found
      */
-    public function getProvider($name)
+    public function getProvider(string $name): TaxProviderInterface
     {
-        if (!array_key_exists($name, $this->providers)) {
+        $provider = null;
+        if (null === $this->providers) {
+            if ($this->providerContainer->has($name)) {
+                /** @var TaxProviderInterface $foundProvider */
+                $foundProvider = $this->providerContainer->get($name);
+                if ($foundProvider->isApplicable()) {
+                    $provider = $foundProvider;
+                }
+            }
+        } elseif (isset($this->providers[$name])) {
+            $provider = $this->providers[$name];
+        }
+
+        if (null === $provider) {
             throw new \LogicException(
                 sprintf('Tax provider with name "%s" does not exist', $name)
             );
         }
 
-        return $this->providers[$name];
+        return $provider;
     }
 
     /**
-     * Retrieve tax provider, currently enabled in system config
+     * Retrieves a tax provider, currently enabled in the system config.
      *
      * @return TaxProviderInterface
      */
-    public function getEnabledProvider()
+    public function getEnabledProvider(): TaxProviderInterface
     {
-        $name = $this->configManager->get('oro_tax.tax_provider');
-
-        return $this->getProvider($name);
+        return $this->getProvider($this->configManager->get('oro_tax.tax_provider'));
     }
 }

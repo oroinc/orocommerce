@@ -2,44 +2,27 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass;
 
+use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Registers all subtotal providers.
+ */
 class SubtotalProviderPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'oro_pricing.subtotal_processor.subtotal_provider_registry';
-    const TAG = 'oro_pricing.subtotal_provider';
-    const PRIORITY = 'priority';
+    use PriorityTaggedLocatorTrait;
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition(self::REGISTRY_SERVICE)) {
-            return;
-        }
+        $services = $this->findAndInverseSortTaggedServices('oro_pricing.subtotal_provider', 'alias', $container);
 
-        $taggedServices = $container->findTaggedServiceIds(self::TAG);
-
-        if (empty($taggedServices)) {
-            return;
-        }
-
-        $providers      = [];
-        foreach ($taggedServices as $serviceId => $tags) {
-            $priority = isset($tags[0][self::PRIORITY]) ? $tags[0][self::PRIORITY] : 0;
-            $providers[$priority][] = $serviceId;
-        }
-
-        ksort($providers);
-        $providers = call_user_func_array('array_merge', $providers);
-
-        $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
-
-        foreach ($providers as $provider) {
-            $registryDefinition->addMethodCall('addProvider', [new Reference($provider)]);
-        }
+        $container->getDefinition('oro_pricing.subtotal_processor.subtotal_provider_registry')
+            ->setArgument(0, array_keys($services))
+            ->setArgument(1, ServiceLocatorTagPass::register($container, $services));
     }
 }

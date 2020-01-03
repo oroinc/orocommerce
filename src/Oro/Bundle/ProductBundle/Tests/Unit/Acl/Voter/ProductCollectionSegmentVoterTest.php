@@ -42,11 +42,6 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
         $segment = new Segment();
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
             ->will($this->returnValue(1));
@@ -65,12 +60,7 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function testAbstainOnUnsupportedClass($attributes)
     {
-        $object = new \StdClass;
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(\StdClass::class));
+        $object = new \stdClass;
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -93,11 +83,6 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
     {
         $segment = new Segment();
         $segmentId = 1;
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -132,11 +117,6 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
         $segmentId = 1;
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
             ->will($this->returnValue($segmentId));
@@ -165,11 +145,6 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
 
         $segment = new Segment();
         $segmentId = 1;
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
 
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')

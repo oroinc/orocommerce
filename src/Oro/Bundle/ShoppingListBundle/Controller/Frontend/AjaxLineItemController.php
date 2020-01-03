@@ -109,6 +109,10 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeLineItemAction(LineItem $lineItem)
     {
+        if (!$this->isGranted('DELETE', $lineItem)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $shoppingListManager = $this->get(ShoppingListManager::class);
         $isRemoved = $shoppingListManager->removeLineItem($lineItem);
         if ($isRemoved > 0) {
