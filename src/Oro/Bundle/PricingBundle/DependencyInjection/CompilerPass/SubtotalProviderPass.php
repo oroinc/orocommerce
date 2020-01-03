@@ -19,7 +19,7 @@ class SubtotalProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $services = $this->findAndSortTaggedServices('oro_pricing.subtotal_provider', 'alias', $container, true);
+        $services = $this->findAndInverseSortTaggedServices('oro_pricing.subtotal_provider', 'alias', $container);
 
         $container->getDefinition('oro_pricing.subtotal_processor.subtotal_provider_registry')
             ->setArgument(0, array_keys($services))
