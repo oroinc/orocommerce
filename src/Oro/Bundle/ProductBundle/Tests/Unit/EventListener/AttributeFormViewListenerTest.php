@@ -21,6 +21,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -61,17 +64,42 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityConfigProvider = $this->createMock(ConfigProvider::class);
         $this->entityConfigProvider->expects($this->any())
             ->method('getConfig')
-            ->with(Product::class, 'wysiwyg')
-            ->willReturn(new Config(
-                new FieldConfigId('attachment', Product::class, 'wysiwyg', WYSIWYGType::TYPE),
-                ['label' => 'wysiwyg field label']
-            ));
+            ->will($this->returnValueMap([
+                [
+                    Product::class,
+                    'wysiwyg',
+                    new Config(
+                        new FieldConfigId('attachment', Product::class, 'wysiwyg', WYSIWYGType::TYPE),
+                        ['label' => 'wysiwyg field label']
+                    )
+                ],
+                [
+                    Product::class,
+                    'multiFileField',
+                    new Config(
+                        new FieldConfigId('extend', Product::class, 'multiFileField', 'multiFile'),
+                        ['label' => 'multiFile field label']
+                    )
+                ],
+                [
+                    Product::class,
+                    'multiImageField',
+                    new Config(
+                        new FieldConfigId('extend', Product::class, 'multiImageField', 'multiImage'),
+                        ['label' => 'multiImage field label']
+                    )
+                ],
+            ]));
+
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->with('wysiwyg field label')
-            ->willReturn('translated wysiwyg field label');
+            ->will($this->returnValueMap([
+                ['wysiwyg field label', [], null, null, 'translated wysiwyg field label'],
+                ['multiFile field label', [], null, null, 'translated multiFile field label'],
+                ['multiImage field label', [], null, null, 'translated multiImage field label'],
+            ]));
 
         $this->listener = new AttributeFormViewListener(
             $this->attributeManager,
@@ -107,8 +135,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getGroupsWithAttributes')
             ->willReturn($groupsData);
 
-        $scrollData = new ScrollData($scrollData);
-        $listEvent = new BeforeListRenderEvent($this->environment, $scrollData, $entity);
+        $listEvent = new BeforeListRenderEvent($this->environment, new ScrollData($scrollData), $entity);
         $this->listener->onViewList($listEvent);
 
         $this->assertEquals($expectedData, $listEvent->getScrollData()->getData());
@@ -434,6 +461,146 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
+            'move multiFile attribute field to own group' => [
+                'groupsData' => [
+                    [
+                        'group' => $this->getEntity(
+                            AttributeGroupStub::class,
+                            [
+                                'code' => 'group1',
+                                'label' => $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title'])
+                            ]
+                        ),
+                        'attributes' => [
+                            $this->getEntity(
+                                FieldConfigModel::class,
+                                [
+                                    'id' => 1,
+                                    'fieldName' => 'multiFileField',
+                                    'type' => 'multiFile',
+                                    'data' => [
+                                        'view' => ['is_displayable' => true],
+                                        'form' => ['is_enabled' => true],
+                                    ],
+                                ]
+                            ),
+                        ]
+                    ],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'templateHtml' => 'expected template data',
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template'
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'multiFileField' => [
+                            'title' => 'translated multiFile field label',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'multiFileField' => 'expected template data'
+                                    ],
+                                ],
+                            ],
+                            'priority' => 501,
+                        ],
+                    ],
+                ],
+            ],
+            'move multiImage attribute field to own group' => [
+                'groupsData' => [
+                    [
+                        'group' => $this->getEntity(
+                            AttributeGroupStub::class,
+                            [
+                                'code' => 'group1',
+                                'label' => $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title'])
+                            ]
+                        ),
+                        'attributes' => [
+                            $this->getEntity(
+                                FieldConfigModel::class,
+                                [
+                                    'id' => 1,
+                                    'fieldName' => 'multiImageField',
+                                    'type' => 'multiImage',
+                                    'data' => [
+                                        'view' => ['is_displayable' => true],
+                                        'form' => ['is_enabled' => true],
+                                    ],
+                                ]
+                            ),
+                        ]
+                    ],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'templateHtml' => 'expected template data',
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template'
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'multiImageField' => [
+                            'title' => 'translated multiImage field label',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'multiImageField' => 'expected template data'
+                                    ],
+                                ],
+                            ],
+                            'priority' => 501,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -724,6 +891,148 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 [
                                     'data' => [
                                         'wysiwyg' => 'expected template data'
+                                    ],
+                                ],
+                            ],
+                            'priority' => 501,
+                        ],
+                    ],
+                ],
+            ],
+            'move multiFile attribute field to own group' => [
+                'groupsData' => [
+                    [
+                        'group' => $this->getEntity(
+                            AttributeGroupStub::class,
+                            [
+                                'code' => 'group1',
+                                'label' => $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title'])
+                            ]
+                        ),
+                        'attributes' => [
+                            $this->getEntity(
+                                FieldConfigModel::class,
+                                [
+                                    'id' => 1,
+                                    'fieldName' => 'multiFileField',
+                                    'type' => 'multiFile',
+                                    'data' => [
+                                        'view' => ['is_displayable' => true],
+                                        'form' => ['is_enabled' => true],
+                                    ],
+                                ]
+                            ),
+                        ]
+                    ],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fieldName' => 'multiFileField',
+                'templateHtml' => 'expected template data',
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template'
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'multiFileField' => [
+                            'title' => 'translated multiFile field label',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'multiFileField' => 'expected template data'
+                                    ],
+                                ],
+                            ],
+                            'priority' => 501,
+                        ],
+                    ],
+                ],
+            ],
+            'move multiImage attribute field to own group' => [
+                'groupsData' => [
+                    [
+                        'group' => $this->getEntity(
+                            AttributeGroupStub::class,
+                            [
+                                'code' => 'group1',
+                                'label' => $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title'])
+                            ]
+                        ),
+                        'attributes' => [
+                            $this->getEntity(
+                                FieldConfigModel::class,
+                                [
+                                    'id' => 1,
+                                    'fieldName' => 'multiImageField',
+                                    'type' => 'multiImage',
+                                    'data' => [
+                                        'view' => ['is_displayable' => true],
+                                        'form' => ['is_enabled' => true],
+                                    ],
+                                ]
+                            ),
+                        ]
+                    ],
+                ],
+                'scrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fieldName' => 'multiImageField',
+                'templateHtml' => 'expected template data',
+                'expectedData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'existingGroup' => [
+                            'title' => 'Group1Title',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'someField' => 'field template'
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'multiImageField' => [
+                            'title' => 'translated multiImage field label',
+                            'useSubBlockDivider' => true,
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'multiImageField' => 'expected template data'
                                     ],
                                 ],
                             ],

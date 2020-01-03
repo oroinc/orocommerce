@@ -33,6 +33,7 @@ dynamic-imports:
         - oroproduct/js/app/views/quick-add-import-form-view
         - oroproduct/js/app/views/quick-add-item-view
         - oroproduct/js/app/views/quick-add-view
+        - oroproduct/js/app/widget/product-popup-gallery-widget
         - oroproduct/js/content-processor/product-add-to-dropdown-button
         - oroproduct/js/widget/zoom-widget
 shim:

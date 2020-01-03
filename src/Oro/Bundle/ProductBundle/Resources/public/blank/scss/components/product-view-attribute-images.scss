@@ -1,0 +1,9 @@
+// @theme: blank
+
+.product-view {
+    &__attribute-images {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: $product-view-attribute-images-margin-bottom;
+    }
+}

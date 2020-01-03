@@ -60,6 +60,18 @@ services:
         arguments:
             - '@oro_website_search.searchable_attribute_type.image.inner'
 
+    oro_website_search.searchable_attribute_type.multifile:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType'
+        decorates: oro_entity_config.attribute_type.multifile
+        arguments:
+            - '@oro_website_search.searchable_attribute_type.multifile.inner'
+
+    oro_website_search.searchable_attribute_type.multiimage:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType'
+        decorates: oro_entity_config.attribute_type.multiimage
+        arguments:
+            - '@oro_website_search.searchable_attribute_type.multiimage.inner'
+
     oro_website_search.searchable_attribute_type.integer:
         class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType'
         decorates: oro_entity_config.attribute_type.integer
