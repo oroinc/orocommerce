@@ -6,14 +6,12 @@ use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPa
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\LayoutManagerPass;
-use Oro\Bundle\CMSBundle\Entity\ContentBlock;
-use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * OroCMS bundle class.
+ * The CMSBundle bundle class.
  */
 class OroCMSBundle extends Bundle
 {
@@ -30,11 +28,11 @@ class OroCMSBundle extends Bundle
             ->addCompilerPass(new AttributeBlockTypeMapperPass())
             ->addCompilerPass(new LayoutManagerPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
-                Page::class => [
+                'Oro\Bundle\CMSBundle\Entity\Page' => [
                     'slugPrototype' => 'slugPrototypes',
                     'title' => 'titles'
                 ],
-                ContentBlock::class => [
+                'Oro\Bundle\CMSBundle\Entity\ContentBlock' => [
                     'title' => 'titles'
                 ]
             ]));
