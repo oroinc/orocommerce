@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionC
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
-use Oro\Component\DependencyInjection\Compiler\PriorityTaggedServiceViaAddMethodCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -39,11 +38,6 @@ class OroProductBundle extends Bundle
         $container->addCompilerPass(new ComponentProcessorPass());
         $container->addCompilerPass(new ProductDataStorageSessionBagPass());
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
-        $container->addCompilerPass(new PriorityTaggedServiceViaAddMethodCompilerPass(
-            'oro_product.provider.default_product_unit_provider.chain',
-            'oro_product.default_product_unit_provider',
-            'addProvider'
-        ));
         $container->addCompilerPass(new DefaultFallbackExtensionPass([
             'Oro\Bundle\ProductBundle\Entity\Product' => [
                 'name' => 'names',

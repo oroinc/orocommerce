@@ -111,7 +111,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
         public: false
         tags:
-            - {name: oro_product.default_product_unit_provider, priority: 10}
+            - { name: oro_product.default_product_unit_provider, priority: 10 }
 
     oro_catalog.event_listener.datagrid.category_filtering:
         class: 'Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener'
