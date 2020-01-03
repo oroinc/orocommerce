@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\ConnectionException;
-use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
@@ -15,11 +14,11 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -61,6 +60,11 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
     protected $repository;
 
     /**
+     * @var CombinedPriceListActivationStatusHelperInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $activationStatusHelper;
+
+    /**
      * @var PriceListProcessor
      */
     protected $priceRuleProcessor;
@@ -68,12 +72,12 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
-        $this->priceResolver = $this->createMock(MergePricesCombiningStrategy::class);
         $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->repository = $this->createMock(CombinedPriceListRepository::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
+        $this->activationStatusHelper = $this->createMock(CombinedPriceListActivationStatusHelperInterface::class);
 
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
@@ -82,6 +86,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->triggerHandler
         );
+        $this->priceRuleProcessor->setActivationStatusHelper($this->activationStatusHelper);
     }
 
     public function testProcessInvalidArgumentException()
@@ -226,23 +231,35 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($data)
             ->willReturn($trigger);
 
-        $cpl = new CombinedPriceList();
+        $cpl1 = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
 
         $repository = $this->assertEntityManagerCalled();
         $repository->method('getCombinedPriceListsByActualPriceLists')
             ->with([$priceList->getId()])
-            ->willReturn([$cpl]);
+            ->willReturn([$cpl1, $cpl2]);
+        $this->activationStatusHelper->expects($this->exactly(2))
+            ->method('isReadyForBuild')
+            ->withConsecutive(
+                [$cpl1],
+                [$cpl2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                true,
+                false
+            );
+
         $repository->method('getPriceListIdsByCpls')
-            ->with([$cpl])
+            ->with([$cpl1])
             ->willReturn([$priceList->getId()]);
 
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)
-            ->willReturn([$cpl]);
+            ->willReturn([$cpl1]);
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
             ->method('rebuild')
-            ->with([$cpl], $productIds);
+            ->with([$cpl1], $productIds);
         $this->combinedPriceListsBuilderFacade->expects($this->once())
             ->method('dispatchEvents');
 
@@ -277,6 +294,10 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $repository->method('getCombinedPriceListsByActualPriceLists')
             ->with([$priceListId])
             ->willReturn([$cpl]);
+        $this->activationStatusHelper->expects($this->once())
+            ->method('isReadyForBuild')
+            ->with($cpl)
+            ->willReturn(true);
         $repository->method('getPriceListIdsByCpls')
             ->with([$cpl])
             ->willReturn([$priceListId]);

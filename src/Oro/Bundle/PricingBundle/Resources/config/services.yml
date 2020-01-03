@@ -1022,6 +1022,12 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
+    oro_pricing.combined_price_list_activation_status_helper:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelper
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+
     oro_bundle_pricing.async.price_list_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
         arguments:
@@ -1030,6 +1036,8 @@ services:
             - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
+        calls:
+            - ['setActivationStatusHelper', ['@oro_pricing.combined_price_list_activation_status_helper']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

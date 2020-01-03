@@ -42,7 +42,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
     /**
      * @param CombinedPriceList $cpl
      * @param \DateTime $now
-     * @return \Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule
+     * @return CombinedPriceListActivationRule|null
      */
     public function getActualRuleByCpl(CombinedPriceList $cpl, \DateTime $now)
     {
@@ -51,6 +51,37 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->setParameter('cpl', $cpl);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     * @param \DateTime $activateDate
+     * @return CombinedPriceListActivationRule|null
+     */
+    public function getActiveRuleByScheduledCpl(
+        CombinedPriceList $cpl,
+        \DateTime $activateDate
+    ): ?CombinedPriceListActivationRule {
+        $qb = $this->getActualRuleQb($activateDate)
+            ->andWhere('rule.combinedPriceList = :cpl')
+            ->setParameter('cpl', $cpl);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     * @return bool
+     */
+    public function hasActivationRules(CombinedPriceList $cpl): bool
+    {
+        $existenceQB = $this->createQueryBuilder('rule')
+            ->select('rule.id')
+            ->where('rule.fullChainPriceList = :cpl')
+            ->setMaxResults(1)
+            ->setParameter('cpl', $cpl);
+
+        return (bool)$existenceQB->getQuery()->getOneOrNullResult();
     }
 
     /**

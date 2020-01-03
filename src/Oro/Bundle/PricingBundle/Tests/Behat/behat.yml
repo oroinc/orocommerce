@@ -179,3 +179,19 @@ oro_behat_extension:
       options:
         mapping:
           Price: 'oro_pricing_price_list_product_price[price][value]'
+
+    Price List Form:
+      selector: 'form[name="oro_pricing_price_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_pricing_price_list[name]'
+          Currencies: 'oro_pricing_price_list[currencies][]'
+          Active: 'oro_pricing_price_list[active]'
+          Activate At (first):
+            type: 'xpath'
+            locator: '//input[contains(@name,"date_selector_oro_pricing_price_list_schedules_0_activeAt-uid")]'
+          Deactivate At (first):
+            type: 'xpath'
+            locator: '//input[contains(@name,"date_selector_oro_pricing_price_list_schedules_0_deactivateAt-uid")]'
+          Rule: 'oro_pricing_price_list[productAssignmentRule]'

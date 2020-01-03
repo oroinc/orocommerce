@@ -1,0 +1,7 @@
+services:
+    # This service marked as public (origin private) for compatibility with Symfony 3.4 and higher
+    oro_pricing.pricing_strategy.strategy_register:
+        class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
+        public: true
+        arguments:
+            - '@oro_config.manager'
