@@ -10,7 +10,6 @@ use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyProvider;
 use Oro\Bundle\TranslationBundle\Tests\Functional\DataFixtures\LoadStrategyLanguages;
 use Oro\Bundle\TranslationBundle\Tests\Functional\Stub\Strategy\TranslationStrategy;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
@@ -38,15 +37,8 @@ class TranslatorTest extends FrontendWebTestCase
 
         $this->translator = $this->getContainer()->get('translator');
 
-        $this->provider = new TranslationStrategyProvider();
-        $this->provider->addStrategy($this->createStrategy());
-        self::getContainer()->set('oro_translation.strategy.provider.test', $this->provider);
-        // Update translation strategy provider's service link for translator
-        // to ensure that old strategy provider is not in local cache
-        $this->translator->setStrategyProviderLink(new ServiceLink(
-            self::getContainer(),
-            'oro_translation.strategy.provider'
-        ));
+        $this->provider = new TranslationStrategyProvider([$this->createStrategy()]);
+        $this->translator->setStrategyProvider($this->provider);
 
         $this->cacheDir = $this->getContainer()->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'translations';
     }
@@ -114,7 +106,7 @@ class TranslatorTest extends FrontendWebTestCase
      */
     public function testTransWithDifferentLocaleAfterSomeLocaleIsLoadedFromCache(array $data)
     {
-        list($key, $enValue) = $data;
+        [$key, $enValue] = $data;
         $lang1Value = uniqid('TEST_VALUE1_', true);
 
         /** @var $manager TranslationManager */
