@@ -11,6 +11,16 @@ The current file describes significant changes in the code that may affect the u
   to cacheable layout data providers instead of simplify them.
 * The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
 
+#### PricingBundle
+* The `getName()` method was removed from `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface`.
+  Use the `alias` attribute of the `oro_pricing.subtotal_provider` DIC tag instead.
+
+#### TaxBundle
+* The `getProcessingClassName()` method was removed from `Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface`.
+  Use the `class` attribute of the `oro_tax.tax_mapper` DIC tag instead.
+* The `getName()` method was removed from `Oro\Bundle\TaxBundle\Provider\TaxProviderInterface`.
+  Use the `alias` attribute of the `oro_tax.tax_provider` DIC tag instead.
+
 ## 4.1.0-rc (2019-12-10)
 [Show detailed list of changes](incompatibilities-4-1-rc.md)
 
