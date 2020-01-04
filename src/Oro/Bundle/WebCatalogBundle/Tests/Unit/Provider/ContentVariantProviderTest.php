@@ -1,36 +1,14 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider;
-use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
+use Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContentVariantProviderRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $providerRegistry;
-
-    /**
-     * @var ContentVariantProvider
-     */
-    protected $contentVariantProvider;
-
-    protected function setUp()
-    {
-        $this->providerRegistry = $this->createMock(ContentVariantProviderRegistry::class);
-        $this->contentVariantProvider = new ContentVariantProvider($this->providerRegistry);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->providerRegistry, $this->contentVariantProvider);
-    }
-
     public function testSupportedClass()
     {
         $className = 'stdClass';
@@ -47,14 +25,8 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($className)
             ->willReturn(true);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
-        $this->assertTrue($this->contentVariantProvider->isSupportedClass($className));
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
+        $this->assertTrue($contentVariantProvider->isSupportedClass($className));
     }
 
     public function testNotSupportedClass()
@@ -73,14 +45,8 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($className)
             ->willReturn(false);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
-        $this->assertFalse($this->contentVariantProvider->isSupportedClass($className));
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
+        $this->assertFalse($contentVariantProvider->isSupportedClass($className));
     }
 
     public function testModifyNodeQueryBuilderByEntities()
@@ -109,14 +75,8 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
         $provider2->expects($this->never())
             ->method('modifyNodeQueryBuilderByEntities');
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
-        $this->contentVariantProvider->modifyNodeQueryBuilderByEntities($queryBuilder, $entityClass, $entities);
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
+        $contentVariantProvider->modifyNodeQueryBuilderByEntities($queryBuilder, $entityClass, $entities);
     }
 
     public function testGetValues()
@@ -136,16 +96,10 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($node)
             ->willReturn(['second' => 2]);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
         $this->assertEquals(
             ['first' => 1, 'second' => 2],
-            $this->contentVariantProvider->getValues($node)
+            $contentVariantProvider->getValues($node)
         );
     }
 
@@ -166,16 +120,10 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($node)
             ->willReturn(['second' => 2]);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
         $this->assertEquals(
             ['first' => 1, 'second' => 2],
-            $this->contentVariantProvider->getLocalizedValues($node)
+            $contentVariantProvider->getLocalizedValues($node)
         );
     }
 
@@ -196,14 +144,8 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($item)
             ->willReturn($id);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([
-                $provider1,
-                $provider2
-            ]);
-
-        $this->assertEquals($id, $this->contentVariantProvider->getRecordId($item));
+        $contentVariantProvider = new ContentVariantProvider([$provider1, $provider2]);
+        $this->assertEquals($id, $contentVariantProvider->getRecordId($item));
     }
 
     public function testGetRecordIdNoId()
@@ -216,10 +158,7 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
             ->with($item)
             ->willReturn(null);
 
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviders')
-            ->willReturn([$provider1]);
-
-        $this->assertNull($this->contentVariantProvider->getRecordId($item));
+        $contentVariantProvider = new ContentVariantProvider([$provider1]);
+        $this->assertNull($contentVariantProvider->getRecordId($item));
     }
 }

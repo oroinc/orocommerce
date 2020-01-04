@@ -1,24 +1,25 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\ContentVariantProvider;
+namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Delegates the getting information about a content variant to child providers.
+ */
 class ContentVariantProvider implements ContentVariantProviderInterface
 {
-    /**
-     * @var ContentVariantProviderRegistry
-     */
-    protected $providerRegistry;
+    /** @var iterable|ContentVariantProviderInterface[] */
+    private $providers;
 
     /**
-     * @param ContentVariantProviderRegistry $providerRegistry
+     * @param iterable|ContentVariantProviderInterface[] $providers
      */
-    public function __construct(ContentVariantProviderRegistry $providerRegistry)
+    public function __construct(iterable $providers)
     {
-        $this->providerRegistry = $providerRegistry;
+        $this->providers = $providers;
     }
 
     /**
@@ -26,7 +27,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
      */
     public function isSupportedClass($className)
     {
-        foreach ($this->providerRegistry->getProviders() as $provider) {
+        foreach ($this->providers as $provider) {
             if ($provider->isSupportedClass($className)) {
                 return true;
             }
@@ -40,7 +41,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
      */
     public function modifyNodeQueryBuilderByEntities(QueryBuilder $queryBuilder, $entityClass, array $entities)
     {
-        foreach ($this->providerRegistry->getProviders() as $provider) {
+        foreach ($this->providers as $provider) {
             if ($provider->isSupportedClass($entityClass)) {
                 $provider->modifyNodeQueryBuilderByEntities($queryBuilder, $entityClass, $entities);
             }
@@ -53,11 +54,11 @@ class ContentVariantProvider implements ContentVariantProviderInterface
     public function getValues(ContentNodeInterface $node)
     {
         $values = [];
-        foreach ($this->providerRegistry->getProviders() as $provider) {
-            $values = array_merge(
-                $values,
-                $provider->getValues($node)
-            );
+        foreach ($this->providers as $provider) {
+            $values[] = $provider->getValues($node);
+        }
+        if ($values) {
+            $values = array_merge(...$values);
         }
 
         return $values;
@@ -69,11 +70,11 @@ class ContentVariantProvider implements ContentVariantProviderInterface
     public function getLocalizedValues(ContentNodeInterface $node)
     {
         $values = [];
-        foreach ($this->providerRegistry->getProviders() as $provider) {
-            $values = array_merge(
-                $values,
-                $provider->getLocalizedValues($node)
-            );
+        foreach ($this->providers as $provider) {
+            $values[] = $provider->getLocalizedValues($node);
+        }
+        if ($values) {
+            $values = array_merge(...$values);
         }
 
         return $values;
@@ -84,7 +85,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
      */
     public function getRecordId(array $item)
     {
-        foreach ($this->providerRegistry->getProviders() as $provider) {
+        foreach ($this->providers as $provider) {
             $recordId = $provider->getRecordId($item);
             if ($recordId) {
                 return $recordId;
