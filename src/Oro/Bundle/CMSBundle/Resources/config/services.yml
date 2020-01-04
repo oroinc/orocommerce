@@ -363,7 +363,7 @@ services:
         arguments:
             - '@oro_ui.html_tag_helper'
         tags:
-             - { name: oro_entity_config.attribute_type }
+             - { name: oro_entity_config.attribute_type, type: wysiwyg }
 
     oro_cms.form.type.wysiwyg:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType

@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Attribute\Type;
 
-use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 /**
- * Attribute type provides metadata about WYSIWYG attribute.
+ * Provides metadata about WYSIWYG attribute type.
  */
 class WYSIWYGAttributeType implements AttributeTypeInterface
 {
@@ -22,14 +21,6 @@ class WYSIWYGAttributeType implements AttributeTypeInterface
     public function __construct(HtmlTagHelper $htmlTagHelper)
     {
         $this->htmlTagHelper = $htmlTagHelper;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
-    {
-        return WYSIWYGType::TYPE;
     }
 
     /**

@@ -26,14 +26,6 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function getType()
-    {
-        return $this->attributeType->getType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isSearchable(FieldConfigModel $attribute = null)
     {
         return $this->attributeType->isSearchable($attribute);
