@@ -19,6 +19,7 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Container\ContainerInterface;
 
 class SluggableUrlGeneratorTest extends WebTestCase
 {
@@ -158,9 +159,14 @@ class SluggableUrlGeneratorTest extends WebTestCase
             );
         }
 
+        $contextUrlProviders = $this->createMock(ContainerInterface::class);
+        $contextUrlProviders->expects($this->any())
+            ->method('has')
+            ->willReturn(false);
+
         $urlGenerator = new SluggableUrlGenerator(
             $urlProvider,
-            new ContextUrlProviderRegistry(),
+            new ContextUrlProviderRegistry($contextUrlProviders),
             $localizationManager,
             $this->getContainer()->get('oro_config.manager')
         );

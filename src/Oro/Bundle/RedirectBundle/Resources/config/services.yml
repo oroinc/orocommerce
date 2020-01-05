@@ -72,10 +72,15 @@ services:
     oro_redirect.provider.routing_information_provider:
         class: Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider
         public: false
+        arguments:
+            - [] # entity classes that have a routing information provider
+            - ~ # service locator for routing information providers
 
     oro_redirect.provider.context_url_provider_registry:
         class: Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry
         public: false
+        arguments:
+            - ~ # service locator for context url providers
 
     oro_redirect.migration.demo_data_fixtures_listener.update_marketing_list:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
