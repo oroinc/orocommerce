@@ -134,6 +134,8 @@ services:
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
         public: false
+        arguments:
+            - !tagged_iterator oro_promotion.discount_context_converter
 
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
@@ -176,6 +178,8 @@ services:
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
         public: false
+        arguments:
+            - !tagged_iterator oro_promotion.promotion_context_converter
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
@@ -221,6 +225,9 @@ services:
     oro_promotion.discount.strategy_registry:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry
         public: false
+        arguments:
+            - [] # strategy aliases
+            - ~ # service locator for strategies
 
     oro_promotion.discount.strategy_provider:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider

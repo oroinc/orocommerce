@@ -15,6 +15,14 @@ The current file describes significant changes in the code that may affect the u
 * The `getName()` method was removed from `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface`.
   Use the `alias` attribute of the `oro_pricing.subtotal_provider` DIC tag instead.
 
+#### PromotionBundle
+* The handling of `priority` attribute for `oro_promotion.discount_context_converter`,
+  `oro_promotion.promotion_context_converter` and `oro_promotion.discount_strategy` DIC tags
+  was changed to correspond Symfony recommendations.
+  If you have services with these tags, change the sign of the priority value for them.
+  E.g. `{ name: oro_promotion.discount_context_converter, priority: 100 }` should be changed to
+  `{ name: oro_promotion.discount_context_converter, priority: -100 }`
+
 #### TaxBundle
 * The `getProcessingClassName()` method was removed from `Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface`.
   Use the `class` attribute of the `oro_tax.tax_mapper` DIC tag instead.

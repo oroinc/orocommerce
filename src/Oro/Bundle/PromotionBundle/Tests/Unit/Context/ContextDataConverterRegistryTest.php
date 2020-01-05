@@ -11,7 +11,7 @@ class ContextDataConverterRegistryTest extends \PHPUnit\Framework\TestCase
     public function testSupports()
     {
         $entity = new \stdClass();
-        $registry = new ContextDataConverterRegistry();
+        $registry = new ContextDataConverterRegistry([]);
         $this->assertFalse($registry->supports($entity));
 
         /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
@@ -21,14 +21,13 @@ class ContextDataConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn(true);
 
-        $registry->registerConverter($converter);
+        $registry = new ContextDataConverterRegistry([$converter]);
         $this->assertTrue($registry->supports($entity));
     }
 
     public function testConvert()
     {
         $entity = new \stdClass();
-        $registry = new ContextDataConverterRegistry();
         $context = [];
 
         /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
@@ -42,14 +41,13 @@ class ContextDataConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn($context);
 
-        $registry->registerConverter($converter);
+        $registry = new ContextDataConverterRegistry([$converter]);
         $this->assertSame($context, $registry->getContextData($entity));
     }
 
     public function testConvertWithNotSupportedEntity()
     {
         $entity = new \stdClass();
-        $registry = new ContextDataConverterRegistry();
 
         /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(ContextDataConverterInterface::class);
@@ -61,7 +59,7 @@ class ContextDataConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('getContextData')
             ->with($entity);
 
-        $registry->registerConverter($converter);
+        $registry = new ContextDataConverterRegistry([$converter]);
 
         $this->expectException(UnsupportedSourceEntityException::class);
         $registry->getContextData($entity);
