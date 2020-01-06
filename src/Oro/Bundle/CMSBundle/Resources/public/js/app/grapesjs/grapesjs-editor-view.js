@@ -516,6 +516,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         this.setActiveButton('options', 'sw-visibility');
+        this.setActiveButton('views', 'open-blocks');
         this._addClassForFrameWrapper();
 
         mediator.trigger('grapesjs:loaded', this.builder);

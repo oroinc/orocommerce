@@ -32,6 +32,7 @@ oro.cms:
             digital_asset:
                 image: 'Image'
                 file: 'File'
+            text_basic: 'Text Section'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
