@@ -6,7 +6,6 @@ services:
             - 'oro_status_shipping_rule_massaction'
             - true
         shared: false
-        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: shippingruleenable }
 
@@ -17,7 +16,6 @@ services:
             - 'oro_status_shipping_rule_massaction'
             - false
         shared: false
-        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: shippingruledisable }
 
