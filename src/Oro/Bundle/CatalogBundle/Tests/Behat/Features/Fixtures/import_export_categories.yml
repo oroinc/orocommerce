@@ -11,6 +11,10 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         addMetaTitles: ['@localizedFallbackValueMetaTitles21']
         addSlugPrototype: ['@localizedFallbackValueSlugPrototype21']
 
+    categoryWithTreeLevel1:
+        addTitle: ['@localizedFallbackValueTitle24']
+        setParentCategory: [1]
+
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localizedFallbackValueTitle{1..21}:
         string: 'existing category <current()>'
@@ -32,3 +36,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
     localizedFallbackValueSlugPrototype21:
         string: 'existing-category-filled'
+
+    localizedFallbackValueTitle24:
+        string: 'category with tree level 1'

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -17,6 +19,16 @@ use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 class CombinedPriceListsBuilder
 {
     const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
+
+    /**
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $combinedPriceListClassName;
 
     /**
      * @var PriceListCollectionProvider
@@ -99,12 +111,36 @@ class CombinedPriceListsBuilder
     public function build($forceTimestamp = null)
     {
         if (!$this->isBuilt()) {
+            /** @var EntityManagerInterface $em */
+            $em = $this->registry->getManagerForClass(
+                $this->combinedPriceListClassName
+            );
+
+            $isChangesCommittedToEm = false;
+            $isChangesCommittedToHandler = false;
             $this->triggerHandler->startCollect();
-            $this->updatePriceListsOnCurrentLevel($forceTimestamp);
-            $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
-            $this->triggerHandler->commit();
-            $this->garbageCollector->cleanCombinedPriceLists();
-            $this->built = true;
+            $em->beginTransaction();
+            try {
+                $this->updatePriceListsOnCurrentLevel($forceTimestamp);
+                $em->commit();
+                $isChangesCommittedToEm = true;
+
+                $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
+                $this->triggerHandler->commit();
+                $isChangesCommittedToHandler = true;
+                $this->garbageCollector->cleanCombinedPriceLists();
+                $this->built = true;
+            } catch (\Exception $e) {
+                if (false === $isChangesCommittedToHandler) {
+                    $this->triggerHandler->rollback();
+                }
+
+                if (false === $isChangesCommittedToEm) {
+                    $em->rollback();
+                }
+
+                throw $e;
+            }
         }
     }
 
@@ -163,5 +199,27 @@ class CombinedPriceListsBuilder
     public function isBuilt()
     {
         return $this->built;
+    }
+
+    /**
+     * @param Registry $registry
+     * @return $this
+     */
+    public function setRegistry(Registry $registry)
+    {
+        $this->registry = $registry;
+
+        return $this;
+    }
+
+    /**
+     * @param string $combinedPriceListClassName
+     * @return $this
+     */
+    public function setCombinedPriceListClassName($combinedPriceListClassName)
+    {
+        $this->combinedPriceListClassName = $combinedPriceListClassName;
+
+        return $this;
     }
 }

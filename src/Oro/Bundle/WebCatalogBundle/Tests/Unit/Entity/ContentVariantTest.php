@@ -23,6 +23,7 @@ class ContentVariantTest extends \PHPUnit\Framework\TestCase
             ['node', new ContentNode()],
             ['default', true],
             ['overrideVariantConfiguration', true],
+            ['expanded', true],
         ]);
 
         $this->assertPropertyCollections(new ContentVariant(), [

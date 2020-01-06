@@ -15,9 +15,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 class CombinedPriceListRelationHelper implements CombinedPriceListRelationHelperInterface
 {
     public const RELATIONS = [
-        CombinedPriceListToCustomer::class,
-        CombinedPriceListToCustomerGroup::class,
-        CombinedPriceListToWebsite::class
+        'cpl2c' => CombinedPriceListToCustomer::class,
+        'cpl2cg' => CombinedPriceListToCustomerGroup::class,
+        'cpl2w' => CombinedPriceListToWebsite::class
     ];
 
     /**

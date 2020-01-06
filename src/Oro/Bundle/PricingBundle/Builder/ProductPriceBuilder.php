@@ -71,6 +71,14 @@ class ProductPriceBuilder
     }
 
     /**
+     * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
+     */
+    public function setShardInsertQueryExecutor(ShardQueryExecutorInterface $shardInsertQueryExecutor)
+    {
+        $this->insertFromSelectQueryExecutor = $shardInsertQueryExecutor;
+    }
+
+    /**
      * @param PriceList $priceList
      * @param array|Product[] $products
      */

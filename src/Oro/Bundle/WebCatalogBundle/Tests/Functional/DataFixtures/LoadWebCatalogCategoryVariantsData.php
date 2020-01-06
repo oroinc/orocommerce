@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
+use Oro\Bundle\ScopeBundle\Tests\Functional\DataFixtures\LoadScopeData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
 class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements DependentFixtureInterface

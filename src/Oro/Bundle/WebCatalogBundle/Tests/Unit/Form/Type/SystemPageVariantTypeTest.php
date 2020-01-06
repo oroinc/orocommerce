@@ -9,6 +9,7 @@ use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -54,7 +55,9 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
                         ]
                     )
                 ],
-                []
+                [
+                    SystemPageVariantType::class => [new PageVariantTypeExtension()],
+                ]
             )
         ];
     }

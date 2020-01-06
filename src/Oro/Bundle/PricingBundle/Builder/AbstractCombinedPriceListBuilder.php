@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -19,6 +20,8 @@ use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Provides base methods and initialize parameters for combined price builders
+ *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
 abstract class AbstractCombinedPriceListBuilder
@@ -244,6 +247,27 @@ abstract class AbstractCombinedPriceListBuilder
         $this->builtList = [];
 
         return $this;
+    }
+
+    /**
+     * @param callable $transactionalCallback
+     *
+     * @throws \Exception
+     */
+    protected function wrapInTransaction(callable $transactionalCallback)
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass($this->combinedPriceListClassName);
+
+        $em->beginTransaction();
+        try {
+            $transactionalCallback();
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+
+            throw $e;
+        }
     }
 
     /**

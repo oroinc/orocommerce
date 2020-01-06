@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -51,6 +52,11 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $logger;
 
     /**
+     * @var CombinedPriceListActivationStatusHelperInterface
+     */
+    protected $activationStatusHelper;
+
+    /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
      * @param CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade
@@ -72,6 +78,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
+     * @param CombinedPriceListActivationStatusHelperInterface $activationStatusHelper
+     */
+    public function setActivationStatusHelper(CombinedPriceListActivationStatusHelperInterface $activationStatusHelper)
+    {
+        $this->activationStatusHelper = $activationStatusHelper;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
@@ -89,8 +103,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
             $allProducts = $trigger->getProducts();
 
-            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
-            foreach ($cpls as $cpl) {
+            foreach ($this->getActiveCPlsByPls($cpl2plRepository, $allProducts) as $cpl) {
                 $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
 
                 $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
@@ -141,5 +154,22 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public static function getSubscribedTopics()
     {
         return [Topics::RESOLVE_COMBINED_PRICES];
+    }
+
+    /**
+     * @param CombinedPriceListToPriceListRepository $cpl2plRepository
+     * @param array $allProducts
+     * @return \Generator
+     */
+    protected function getActiveCPlsByPls(
+        CombinedPriceListToPriceListRepository $cpl2plRepository,
+        array $allProducts
+    ): ?\Generator {
+        $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+        foreach ($cpls as $cpl) {
+            if ($this->activationStatusHelper->isReadyForBuild($cpl)) {
+                yield $cpl;
+            }
+        }
     }
 }

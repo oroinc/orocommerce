@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Extension;
 
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -15,6 +16,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extension adds fields for all Content Variant types
+ */
 class PageVariantTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -58,6 +62,13 @@ class PageVariantTypeExtension extends AbstractTypeExtension
                 [
                     'required' => true
                 ]
+            )
+            ->add(
+                'expanded',
+                HiddenType::class,
+                [
+                    'data' => true,
+                ]
             );
 
         $builder->addEventListener(
@@ -67,6 +78,24 @@ class PageVariantTypeExtension extends AbstractTypeExtension
                 if ($data instanceof ContentVariantInterface) {
                     $data->setType($pageContentVariantTypeName);
                 }
+            }
+        );
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!\is_array($data)) {
+                    return;
+                }
+
+                if (!empty($data['expanded']) && !isset($data['scopes'])) {
+                    $data['scopes'] = [];
+                }
+                if (!isset($data['default'])) {
+                    $data['default'] = false;
+                }
+
+                $event->setData($data);
             }
         );
     }

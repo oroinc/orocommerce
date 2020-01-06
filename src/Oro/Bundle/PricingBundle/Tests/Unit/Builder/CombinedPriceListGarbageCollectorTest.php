@@ -3,17 +3,23 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
 class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var string
-     */
-    protected $combinedPriceListClass;
-
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
      */
@@ -36,114 +42,80 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->combinedPriceListClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceList';
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var  $registry */
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->registry = $this->createMock(Registry::class);
+        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->garbageCollector = new CombinedPriceListGarbageCollector(
             $this->registry,
             $this->configManager,
             $this->triggerHandler
         );
-        $this->garbageCollector->setCombinedPriceListClass($this->combinedPriceListClass);
+        $this->garbageCollector->setCombinedPriceListClass(CombinedPriceList::class);
     }
 
-    /**
-     * @dataProvider getCleanCombinedPriceListsProvider
-     * @param int $configCombinedPriceListId
-     * @param array $expectedParams
-     */
-    public function testCleanCombinedPriceLists($configCombinedPriceListId, $expectedParams)
+    public function testCleanCombinedPriceLists()
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->atLeastOnce())
             ->method('get')
-            ->willReturn($configCombinedPriceListId);
+            ->willReturnMap([
+                ['oro_pricing.combined_price_list', false, false, null, 1],
+                ['oro_pricing.full_combined_price_list', false, false, null, 2]
+            ]);
 
-        $repository = $this->assertRepositoryCall();
-        $invalidCPLs = [1];
-        $repository->expects($this->once())
+        $invalidCPLs = [42, 45];
+        $cplRepository = $this->createMock(CombinedPriceListRepository::class);
+        $cplRepository->expects($this->once())
             ->method('getUnusedPriceListsIds')
-            ->with($expectedParams)
+            ->with([1, 2])
             ->willReturn($invalidCPLs);
-        $repository->expects($this->once())
+        $cplRepository->expects($this->once())
             ->method('deletePriceLists')
             ->with($invalidCPLs);
 
-        $this->triggerHandler->expects($this->once())->method('startCollect');
-        $this->triggerHandler->expects($this->once())->method('massProcess')->with($invalidCPLs);
-        $this->triggerHandler->expects($this->once())->method('commit');
+        $customerRelationRepository = $this->createMock(CombinedPriceListToCustomerRepository::class);
+        $customerRelationRepository->expects($this->once())
+            ->method('deleteInvalidRelations');
+        $customerGroupRelationRepository = $this->createMock(CombinedPriceListToCustomerGroupRepository::class);
+        $customerGroupRelationRepository->expects($this->once())
+            ->method('deleteInvalidRelations');
+        $websiteRelationRepository = $this->createMock(CombinedPriceListToWebsiteRepository::class);
+        $websiteRelationRepository->expects($this->once())
+            ->method('deleteInvalidRelations');
 
-        $this->garbageCollector->cleanCombinedPriceLists();
-    }
+        $cplActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
+        $cplActivationRuleRepository->expects($this->once())
+            ->method('deleteExpiredRules')
+            ->with($this->isInstanceOf(\DateTime::class));
+        $cplActivationRuleRepository->expects($this->once())
+            ->method('deleteUnlinkedRules')
+            ->with([2]);
 
-    /**
-     * @return array
-     */
-    public function getCleanCombinedPriceListsProvider()
-    {
-        return [
-            'testWithoutCPL' => [
-                'configCombinedPriceListId' => null,
-                'expectedParams' => [],
-            ],
-            'testWithCPL' => [
-                'configCombinedPriceListId' => 1,
-                'expectedParams' => [1],
-            ],
-        ];
-    }
-
-    /**
-     * @return Registry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function assertRepositoryCall()
-    {
-        $repository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerRelationRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerGroupRelationRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $websiteRelationRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $em = $this->createMock(EntityManager::class);
         $em->method('getRepository')
             ->willReturnMap([
-                ['Oro\Bundle\PricingBundle\Entity\CombinedPriceList', $repository],
-                ['OroPricingBundle:CombinedPriceListToCustomer', $customerRelationRepository],
-                ['OroPricingBundle:CombinedPriceListToCustomerGroup', $customerGroupRelationRepository],
-                ['OroPricingBundle:CombinedPriceListToWebsite', $websiteRelationRepository],
+                [CombinedPriceList::class, $cplRepository],
+                [CombinedPriceListToCustomer::class, $customerRelationRepository],
+                [CombinedPriceListToCustomerGroup::class, $customerGroupRelationRepository],
+                [CombinedPriceListToWebsite::class, $websiteRelationRepository],
+                [CombinedPriceListActivationRule::class, $cplActivationRuleRepository],
             ]);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with($this->combinedPriceListClass)
             ->willReturn($em);
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->any())
             ->method('getManager')
             ->willReturn($em);
 
-        return $repository;
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->once())
+            ->method('massProcess')
+            ->with($invalidCPLs);
+        $this->triggerHandler->expects($this->once())
+            ->method('commit');
+
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 }

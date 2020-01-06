@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -30,7 +31,7 @@ class PriceListProductAssignmentBuilder
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var InsertQueryExecutorInterface
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -46,7 +47,7 @@ class PriceListProductAssignmentBuilder
 
     /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param InsertQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param ProductAssignmentRuleCompiler $ruleCompiler
      * @param EventDispatcherInterface $eventDispatcher
      * @param ShardManager $shardManager
@@ -63,6 +64,14 @@ class PriceListProductAssignmentBuilder
         $this->ruleCompiler = $ruleCompiler;
         $this->eventDispatcher = $eventDispatcher;
         $this->shardManager = $shardManager;
+    }
+
+    /**
+     * @param InsertQueryExecutorInterface $insertQueryExecutor
+     */
+    public function setInsertQueryExecutor(InsertQueryExecutorInterface $insertQueryExecutor)
+    {
+        $this->insertFromSelectQueryExecutor = $insertQueryExecutor;
     }
 
     /**
