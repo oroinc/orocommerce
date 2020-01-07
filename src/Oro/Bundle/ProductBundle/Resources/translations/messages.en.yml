@@ -77,6 +77,7 @@ oro:
         anything.label: Any Text
         featured_products.label: Featured Products
         new_arrivals.label: New Arrivals
+        read_more_description.label: Read More Description
         featured:
             label: Is Featured
             description: Specifies if the product is featured or not.
