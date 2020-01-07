@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler as Compiler;
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
+use Oro\Component\DependencyInjection\Compiler\InverseTaggedIteratorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Loads additional extensions
+ * The CheckoutBundle bundle class.
  */
 class OroCheckoutBundle extends Bundle
 {
@@ -17,11 +18,14 @@ class OroCheckoutBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new Compiler\CheckoutCompilerPass());
-        $container->addCompilerPass(new Compiler\TwigSandboxConfigurationPass());
-        $container->addCompilerPass(new Compiler\CheckoutStateDiffCompilerPass());
-        $container->addCompilerPass(new Compiler\CheckoutLineItemConverterPass());
         parent::build($container);
+
+        $container->addCompilerPass(new Compiler\TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new InverseTaggedIteratorCompilerPass(
+            'oro_checkout.workflow_state.mapper.registry.checkout_state_diff',
+            'checkout.workflow_state.mapper'
+        ));
+        $container->addCompilerPass(new Compiler\CheckoutLineItemConverterPass());
     }
 
     /**

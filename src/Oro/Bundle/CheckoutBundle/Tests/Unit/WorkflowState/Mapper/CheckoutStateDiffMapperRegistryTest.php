@@ -7,79 +7,53 @@ use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegist
 
 class CheckoutStateDiffMapperRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutStateDiffMapperRegistry */
-    protected $registry;
-
-    protected function setUp()
-    {
-        $this->registry = new CheckoutStateDiffMapperRegistry();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->registry);
-    }
-
     public function testEmptyGetMappers()
     {
-        $mappers = $this->registry->getMappers();
-        $this->assertInternalType('array', $mappers);
-        $this->assertEmpty($mappers);
-    }
-
-    public function testAddMapper()
-    {
-        $mapper = $this->getMapper();
-        $mapper->expects($this->once())
-            ->method('getName')
-            ->willReturn('test_name');
-
-        $this->registry->addMapper($mapper);
-
-        $mappers = $this->registry->getMappers();
-
-        $this->assertCount(1, $mappers);
-        $this->assertContains($mapper, $mappers);
-
-        $mapper2 = $this->getMapper();
-        $mapper2->expects($this->once())
-            ->method('getName')
-            ->willReturn('test_other_name');
-
-        $this->registry->addMapper($mapper2);
-
-        $mappers = $this->registry->getMappers();
-
-        $this->assertCount(2, $mappers);
-        $this->assertContains($mapper, $mappers);
+        $registry = new CheckoutStateDiffMapperRegistry([]);
+        $this->assertSame([], $registry->getMappers());
     }
 
     public function testRegistry()
     {
-        $mapper = $this->getMapper();
+        $mapper = $this->createMock(CheckoutStateDiffMapperInterface::class);
         $mapper->expects($this->once())
             ->method('getName')
             ->willReturn('test_name');
 
-        $this->registry->addMapper($mapper);
-        $this->assertEquals($mapper, $this->registry->getMapper('test_name'));
-        $this->assertEquals(['test_name' => $mapper], $this->registry->getMappers());
+        $registry = new CheckoutStateDiffMapperRegistry([$mapper]);
+        $this->assertSame($mapper, $registry->getMapper('test_name'));
+        $this->assertEquals(['test_name' => $mapper], $registry->getMappers());
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Mapper "wrong_name" is missing. Registered mappers are ""
+     * @expectedExceptionMessage Mapper "wrong_name" is missing. Registered mappers: test1, test2.
      */
     public function testRegistryException()
     {
-        $this->registry->getMapper('wrong_name');
+        $mapper1 = $this->createMock(CheckoutStateDiffMapperInterface::class);
+        $mapper1->expects($this->once())
+            ->method('getName')
+            ->willReturn('test1');
+        $mapper2 = $this->createMock(CheckoutStateDiffMapperInterface::class);
+        $mapper2->expects($this->once())
+            ->method('getName')
+            ->willReturn('test2');
+
+        $registry = new CheckoutStateDiffMapperRegistry([$mapper1, $mapper2]);
+        $registry->getMapper('wrong_name');
     }
 
-    /**
-     * @return CheckoutStateDiffMapperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getMapper()
+    public function testReset()
     {
-        return $this->createMock(CheckoutStateDiffMapperInterface::class);
+        $mapper = $this->createMock(CheckoutStateDiffMapperInterface::class);
+        $mapper->expects($this->exactly(2))
+            ->method('getName')
+            ->willReturn('test_name');
+
+        $registry = new CheckoutStateDiffMapperRegistry([$mapper]);
+        $this->assertSame($mapper, $registry->getMapper('test_name'));
+        $registry->reset();
+        $this->assertSame($mapper, $registry->getMapper('test_name'));
     }
 }
