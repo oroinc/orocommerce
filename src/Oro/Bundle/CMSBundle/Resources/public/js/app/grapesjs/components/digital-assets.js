@@ -42,6 +42,8 @@ define(function(require) {
          * Adds open-digital-assets command which opens digital asset manager modal dialog.
          */
         _addOpenAssetsCommand: function() {
+            const editor = this.editor;
+
             this.editor.Commands.add('open-digital-assets', {
                 options: {
                     title: null,
@@ -73,14 +75,14 @@ define(function(require) {
 
                     this.dialog = this._openChooseDialog(editor);
                     this.dialog.on('grid-row-select', this._onGridRowSelect.bind(this));
+                    this.dialog.on('close', () => editor.stopCommand(this.id));
                     this.dialog.render();
 
                     return this;
                 },
 
                 stop: function(editor) {
-                    this.dialog.remove();
-
+                    this.dialog.dispose();
                     return this;
                 },
 
@@ -90,8 +92,7 @@ define(function(require) {
                  */
                 _onGridRowSelect: function(data) {
                     this.options.onSelect(data.model, this);
-
-                    this.dialog.remove();
+                    editor.stopCommand(this.id);
                 },
 
                 _openChooseDialog: function(editor) {

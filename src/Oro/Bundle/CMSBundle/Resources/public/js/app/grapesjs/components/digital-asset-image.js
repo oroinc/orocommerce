@@ -88,7 +88,7 @@ define(function(require) {
                     /**
                      * @inheritDoc
                      */
-                    openModal: function(e) {
+                    onActive: function(e) {
                         e && e.stopPropagation();
 
                         if (self.editor && this.model.get('editable')) {
