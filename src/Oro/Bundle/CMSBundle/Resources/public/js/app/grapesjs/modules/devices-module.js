@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const BaseClass = require('oroui/js/base-class');
     const _ = require('underscore');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
@@ -19,16 +20,8 @@ define(function(require) {
 
     /**
      * Create panel manager instance
-     * @param options
-     * @constructor
      */
-    const DevicesModule = function(options) {
-        _.extend(this, _.pick(options, ['builder']));
-
-        this.init();
-    };
-
-    DevicesModule.prototype = {
+    const DevicesModule = BaseClass.extend({
         /**
          * @property {DOM.Element}
          */
@@ -45,47 +38,86 @@ define(function(require) {
         canvasEl: null,
 
         /**
-         * Run device manager
+         * @inheritDoc
          */
-        init: function() {
-            this.rte = this.builder.RichTextEditor;
-            this.canvasEl = this.builder.Canvas.getElement();
-            this.$builderIframe = this.builder.Canvas.getFrameEl();
-
-            this.initButtons();
-            mediator.on('grapesjs:theme:change', _.bind(this.initButtons, this));
-            this.builder.on('rteToolbarPosUpdate', _.bind(this.updateRtePosition, this));
+        constructor: function DevicesModule(options) {
+            DevicesModule.__super__.constructor.call(this, options);
         },
 
-        initButtons: function() {
-            this.getBreakpoints().then(_.bind(function() {
-                this.createButtons();
-            }, this));
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            if (!options.builder) {
+                throw new Error('Required option builder not found.');
+            } else {
+                this.builder = options.builder;
+            }
+
+            this.rte = this.builder.RichTextEditor;
+            this.canvasEl = this.builder.Canvas.getElement();
+            this.$builderIframe = $(this.builder.Canvas.getFrameEl());
+
+            this.initButtons();
+
+            this.listenTo(mediator, 'grapesjs:theme:change', this.initButtons.bind(this));
+            this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
+            this.listenTo(this.builder, 'change:device', this.updateSelectedElement.bind(this));
+        },
+
+        initButtons() {
+            this.getBreakpoints()
+                .then(() => this.createButtons());
         },
 
         /**
          * Fetch breakpoints from theme stylesheet
          * @private
          */
-        _getCSSBreakpoint: function() {
-            const frameHead = this.$builderIframe.contentDocument.head;
-            const breakpoints = mediator.execute('fetch:head:computedVars', frameHead);
+        _getCSSBreakpoint() {
+            if (this.disposed) {
+                return;
+            }
 
-            this.breakpoints = _.filter(viewportManager._collectCSSBreakpoints(breakpoints), function(breakpoint) {
-                return breakpoint.name.indexOf('strict') === -1;
-            });
+            const contentDocument = this.$builderIframe[0].contentDocument;
+
+            // If the iframe and the iframe's parent document are Same Origin, returns a Document else returns null.
+            if (contentDocument === null) {
+                return;
+            }
+
+            const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
+
+            this.breakpoints = viewportManager._collectCSSBreakpoints(breakpoints)
+                .filter(breakpoint => breakpoint.name.indexOf('strict') === -1)
+                .map(breakpoint => {
+                    breakpoint = {...breakpoint};
+
+                    const width = this.calculateDeviceWidth( breakpoint.max ? breakpoint.max + 'px' : false);
+
+                    breakpoint['widthDevice'] = width;
+
+                    if (breakpoint.name.includes('landscape')) {
+                        breakpoint['height'] = this.calculateDeviceHeight(width, true);
+                        breakpoint['widthMedia'] = width;
+                    } else {
+                        breakpoint['height'] = this.calculateDeviceHeight(width);
+                    }
+
+                    return breakpoint;
+                });
         },
 
-        getBreakpoints: function() {
+        getBreakpoints() {
             const defer = $.Deferred();
-            const inter = setInterval(_.bind(function() {
+            this._intervalId = setInterval(() => {
                 this._getCSSBreakpoint();
 
                 if (this.breakpoints.length) {
-                    clearInterval(inter);
+                    clearInterval(this._intervalId);
                     defer.resolve();
                 }
-            }, this), 50);
+            }, 50);
 
             return defer.promise();
         },
@@ -93,11 +125,21 @@ define(function(require) {
         /**
          * Create buttons controls via breakpoints
          */
-        createButtons: function() {
+        createButtons() {
             const devicePanel = this.builder.Panels.getPanel('devices-c');
             const deviceButton = devicePanel.get('buttons');
             const DeviceManager = this.builder.DeviceManager;
             const Commands = this.builder.Commands;
+            const activeBtn = deviceButton.where({active: true});
+            let activeBtnId = 'desktop';
+
+            if (activeBtn.length) {
+                const breakpoint = this.breakpoints.find(el => el.name === activeBtn[0].attributes.id);
+
+                if (breakpoint !== void 0) {
+                    activeBtnId = breakpoint.name;
+                }
+            }
 
             deviceButton.reset();
             DeviceManager.getAll().reset();
@@ -121,35 +163,24 @@ define(function(require) {
                     this.canvasEl.classList.add(breakpoint.name);
                 }
 
-                let width = breakpoint.max ? breakpoint.max + 'px' : false;
-                width = this.calculateDeviceWidth(width);
-                let options = {
-                    height: this.calculateDeviceHeight(width)
-                };
-
-                if (breakpoint.name.indexOf('landscape') !== -1) {
-                    options = {
-                        height: this.calculateDeviceHeight(width, true),
-                        widthMedia: width
-                    };
-                }
-
-                DeviceManager.add(breakpoint.name, width, options);
+                DeviceManager.add(breakpoint.name, breakpoint.widthDevice, breakpoint);
 
                 deviceButton.add({
                     id: breakpoint.name,
                     command: 'setDevice',
                     togglable: false,
                     className: breakpoint.name,
-                    active: breakpoint.name === 'desktop',
+                    active: breakpoint.name === activeBtnId,
                     attributes: {
                         'data-toggle': 'tooltip',
-                        'title': this.concatTitle(breakpoint, options)
+                        'title': this.concatTitle(breakpoint)
                     }
                 });
 
                 $(devicePanel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
             }, this);
+
+            this.builder.CssComposer.render();
         },
 
         /**
@@ -158,7 +189,7 @@ define(function(require) {
          * @param invert
          * @returns {string}
          */
-        calculateDeviceHeight: function(width, invert) {
+        calculateDeviceHeight(width, invert) {
             if (!width) {
                 return '';
             }
@@ -176,7 +207,7 @@ define(function(require) {
             return Math.round(height) + 'px';
         },
 
-        calculateDeviceWidth: function(width, invert) {
+        calculateDeviceWidth(width) {
             if (!width) {
                 return '';
             }
@@ -191,30 +222,29 @@ define(function(require) {
         /**
          * Concat title device
          * @param breakpoint
-         * @param options
          * @returns {string}
          */
-        concatTitle: function(breakpoint, options) {
+        concatTitle(breakpoint) {
             let str = titleCase(breakpoint.name.replace('-', ' '));
 
             if (breakpoint.max) {
                 str += ': ' + breakpoint.max;
             }
 
-            if (options.height) {
-                str += 'x' + options.height;
+            if (breakpoint.height) {
+                str += 'x' + breakpoint.height;
             }
 
             return str;
         },
 
-        updateRtePosition: function(pos) {
+        updateRtePosition(pos) {
             if (pos.targetHeight !== 0) {
-                const style = window.getComputedStyle(this.$builderIframe);
+                const style = window.getComputedStyle(this.$builderIframe[0]);
                 const borderTopSize = parseInt(style['border-top-width']);
                 const borderLeftSize = parseInt(style['border-left-width']);
                 const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
-                const builderIframeWidth = $(this.$builderIframe).innerWidth();
+                const builderIframeWidth = this.$builderIframe.innerWidth();
                 let positionLeft = pos.left;
 
                 if (builderIframeWidth <= (pos.left + pos.targetWidth)) {
@@ -224,8 +254,37 @@ define(function(require) {
                 pos.left = positionLeft += borderLeftSize;
                 pos.top = pos.elementTop + pos.elementHeight + borderTopSize;
             }
+        },
+
+        updateSelectedElement() {
+            const selected = this.builder.getSelected();
+
+            if (selected) {
+                this.$builderIframe.one('transitionend.' + this.cid, () => {
+                    this.builder.selectRemove(selected);
+                    this.builder.selectAdd(selected);
+                });
+            }
+        },
+
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            clearInterval(this._intervalId);
+
+            this.$builderIframe.off('.' + this.cid);
+
+            delete this.builder;
+            delete this.breakpoints;
+            delete this.rte;
+            delete this.canvasEl;
+            delete this.$builderIframe;
+
+            DevicesModule.__super__.dispose.call(this);
         }
-    };
+    });
 
     return DevicesModule;
 });

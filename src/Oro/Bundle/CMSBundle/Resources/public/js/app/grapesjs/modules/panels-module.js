@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const BaseClass = require('oroui/js/base-class');
     const ThemeSelectorView = require('orocms/js/app/grapesjs/controls/theme-selector-view');
     const settingsTemplate = require('tpl-loader!orocms/templates/grapesjs-settings.html');
     const $ = require('jquery');
@@ -8,20 +9,8 @@ define(function(require) {
 
     /**
      * Create panel manager instance
-     * @param options
-     * @constructor
      */
-    const PanelManagerModule = function(options) {
-        _.extend(this, _.pick(options, ['builder', 'themes']));
-
-        this.init();
-    };
-
-    /**
-     * Reposition and change builder panels
-     * @type {{builder: null, init: init}}
-     */
-    PanelManagerModule.prototype = {
+    const PanelManagerModule = BaseClass.extend({
         builder: null,
 
         themes: [],
@@ -40,28 +29,38 @@ define(function(require) {
         },
 
         /**
-         * Run panels reformat
-         * @initialize
+         * @inheritDoc
          */
-        init: function() {
+        constructor: function PanelManagerModule(options) {
+            PanelManagerModule.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            _.extend(this, _.pick(options, ['builder', 'themes']));
+
+            if (!this.builder) {
+                throw new Error('Required option builder not found.');
+            }
+
             this._moveSettings();
             this._addOptionButtonTooltips();
             this.createThemeSelector();
 
-            this.builder.on('component:selected', _.bind(this.componentSelected, this));
+            this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
         },
 
         createThemeSelector: function() {
             const pn = this.builder.Panels.getPanel('options');
 
-            const themeSelector = new ThemeSelectorView({
+            this.themeSelector = new ThemeSelectorView({
                 editor: this.builder,
                 themes: this.themes
             });
 
-            pn.view.$el.prepend(
-                themeSelector.$el
-            );
+            pn.view.$el.prepend(this.themeSelector.$el);
         },
 
         _addOptionButtonTooltips: function() {
@@ -118,8 +117,23 @@ define(function(require) {
 
             $(builderEl.find('.gjs-settings'))
                 .toggle(!!model.get('traits').length);
+        },
+
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.themeSelector.dispose();
+
+            delete this.themeSelector;
+            delete this.themes;
+            delete this.builder;
+            delete this.settingsTemplate;
+
+            PanelManagerModule.__super__.dispose.call(this);
         }
-    };
+    });
 
     return PanelManagerModule;
 });

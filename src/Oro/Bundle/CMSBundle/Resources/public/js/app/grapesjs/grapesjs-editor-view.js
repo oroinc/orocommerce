@@ -1,9 +1,11 @@
 import $ from 'jquery';
 import _ from 'underscore';
-import GrapesJS from 'grapesjs';
+import grapesJS from 'grapesjs';
 
 import BaseView from 'oroui/js/app/views/base/view';
-import ModuleManager from 'orocms/js/app/grapesjs/modules/module-manager';
+import styleManagerModule from 'orocms/js/app/grapesjs/modules/style-manager-module';
+import PanelManagerModule from 'orocms/js/app/grapesjs/modules/panels-module';
+import DevicesModule from 'orocms/js/app/grapesjs/modules/devices-module';
 import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
@@ -14,7 +16,7 @@ import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isola
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
 /**
- * Create GrapesJS content builder
+ * Create grapesJS content builder
  * @type {*|void}
  */
 const GrapesjsEditorView = BaseView.extend({
@@ -39,7 +41,7 @@ const GrapesjsEditorView = BaseView.extend({
     activeTheme: null,
 
     /**
-     * @property {GrapesJS.Instance}
+     * @property {grapesJS.Instance}
      */
     builder: null,
 
@@ -241,8 +243,17 @@ const GrapesjsEditorView = BaseView.extend({
             return;
         }
 
-        this.disableEditor();
+        if (this._panelManagerModule) {
+            this._panelManagerModule.dispose();
+            delete this._panelManagerModule;
+        }
 
+        if (this._devicesModule) {
+            this._devicesModule.dispose();
+            delete this._devicesModule;
+        }
+
+        this.disableEditor();
         GrapesjsEditorView.__super__.dispose.call(this);
     },
 
@@ -299,7 +310,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Initialize builder instance
      */
     initBuilder: function() {
-        this.builder = GrapesJS.init(_.extend(
+        this.builder = grapesJS.init(_.extend(
             {}
             , {
                 avoidInlineStyle: 1,
@@ -311,7 +322,7 @@ const GrapesjsEditorView = BaseView.extend({
             , this._prepareBuilderOptions()));
 
         // Ensures all changes to sectors, properties and types are applied.
-        this.builder.StyleManager.getSectors().reset(ModuleManager.getModule('style-manager'));
+        this.builder.StyleManager.getSectors().reset(styleManagerModule);
 
         this.builder.setIsolatedStyle(
             this.$stylesInputElement.val()
@@ -329,20 +340,20 @@ const GrapesjsEditorView = BaseView.extend({
         this.$el.closest('form')
             .on(
                 'keyup' + this.eventNamespace() + ' keypress' + this.eventNamespace()
-                , _.bind(function(e) {
+                , e => {
                     const keyCode = e.keyCode || e.which;
                     if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
                         e.preventDefault();
                         return false;
                     }
-                }, this))
-            .on('submit', _.bind(this.contentValidate, this));
+                })
+            .on('submit', this.contentValidate.bind(this));
 
-        this.builder.on('load', _.bind(this._onLoadBuilder, this));
-        this.builder.on('update', _.bind(this._onUpdatedBuilder, this));
-        this.builder.on('component:update', _.debounce(_.bind(this._onComponentUpdatedBuilder, this), 100));
-        this.builder.on('changeTheme', _.bind(this._updateTheme, this));
-        this.builder.on('component:selected', _.bind(this.componentSelected, this));
+        this.builder.on('load', this._onLoadBuilder.bind(this));
+        this.builder.on('update', this._onUpdatedBuilder.bind(this));
+        this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
+        this.builder.on('changeTheme', this._updateTheme.bind(this));
+        this.builder.on('component:selected', this.componentSelected.bind(this));
 
         this.builder.editor.view.$el.find('.gjs-toolbar')
             .off('mouseover')
@@ -355,12 +366,12 @@ const GrapesjsEditorView = BaseView.extend({
             });
 
         // Fix reload form when click export to zip dialog
-        this.builder.on('run:export-template', _.bind(function() {
+        this.builder.on('run:export-template', () => {
             $(this.builder.Modal.getContentEl())
-                .find('.gjs-btn-prim').bind('click', _.bind(function(e) {
+                .find('.gjs-btn-prim').on('click', e => {
                     e.preventDefault();
-                }, this));
-        }, this));
+                });
+        });
     },
 
     /**
@@ -506,14 +517,12 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _onLoadBuilder: function() {
-        ModuleManager.call('panel-manager', {
+        this._panelManagerModule = new PanelManagerModule({
             builder: this.builder,
             themes: this.themes
         });
 
-        ModuleManager.call('devices', {
-            builder: this.builder
-        });
+        this._devicesModule = new DevicesModule({builder: this.builder});
 
         this.setActiveButton('options', 'sw-visibility');
         this.setActiveButton('views', 'open-blocks');
