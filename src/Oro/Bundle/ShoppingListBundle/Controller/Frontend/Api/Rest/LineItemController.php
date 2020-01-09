@@ -53,9 +53,11 @@ class LineItemController extends RestController implements ClassResourceInterfac
             } else {
                 $view = $this->view(null, Codes::HTTP_FORBIDDEN);
             }
+        } else {
+            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
         }
 
-        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $lineItem->getId(), 'success' => $success]);
+        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $id, 'success' => $success]);
     }
 
     /**
