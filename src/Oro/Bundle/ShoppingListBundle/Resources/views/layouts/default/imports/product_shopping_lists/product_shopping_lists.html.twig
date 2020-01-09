@@ -102,6 +102,9 @@
                                 <ul class="shopping-lists-modify hidden"
                                     data-role="line-item-edit">
                                     <li class="shopping-lists-modify__text">
+                                        <label class="sr-only"
+                                               for="product_line_item_quantity_input_edit"
+                                               aria-required="true">{{ 'oro.product.lineitem.quantity.enter'|trans }}</label>
                                         <input class="shopping-lists-modify__input input input--size-s"
                                                type="number"
                                                min="1"
@@ -109,6 +112,7 @@
                                                name="quantity"
                                                data-role="field__quantity"
                                                disabled="disabled"
+                                               id="product_line_item_quantity_input_edit"
                                                required
                                             <% if (precision) { %>
                                                 data-precision="<%- precision %>"
@@ -187,10 +191,14 @@
                         <ul class="shopping-lists-modify"
                             data-role="line-item-edit">
                             <li class="shopping-lists-modify__text">
+                                <label class="sr-only"
+                                       for="product_line_item_quantity_input"
+                                       aria-required="true">{{ 'oro.product.lineitem.quantity.enter'|trans }}</label>
                                 <input class="shopping-lists-modify__input input input--size-s"
                                        type="number"
                                        min="1"
                                        value="1"
+                                       id="product_line_item_quantity_input"
                                        name="oro_product_frontend_line_item[quantity]"
                                        data-role="add-form-qty">
                             </li>
