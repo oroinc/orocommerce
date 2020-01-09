@@ -326,7 +326,14 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        if (!method_exists($context, 'getTotal')) {
+            return true;
+        }
+
+        $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
+        $zeroAmount = round(0, self::AMOUNT_PRECISION);
+
+        return !($amount === $zeroAmount);
     }
 
     /**
