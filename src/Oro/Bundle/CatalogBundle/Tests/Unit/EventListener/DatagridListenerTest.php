@@ -29,8 +29,11 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         'source' => [
             'query' => [
                 'select' => [
-                    'IDENTITY(product.category) as ' . DatagridListener::CATEGORY_COLUMN
-                ]
+                    'category.denormalizedDefaultTitle as ' . DatagridListener::CATEGORY_COLUMN
+                ],
+                'join' => [
+                    'left' => [['join' => 'product.category', 'alias' => 'category']]
+                ],
             ],
         ],
         'columns' => [
