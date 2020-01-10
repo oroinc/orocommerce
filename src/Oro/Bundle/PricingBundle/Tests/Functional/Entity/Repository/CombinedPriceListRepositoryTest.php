@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -26,7 +27,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
+                LoadCombinedPriceListsActivationRules::class,
             ]
         );
     }
@@ -342,6 +343,21 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertCount(7, $cPriceLists);
     }
 
+    public function testGetCPLsForPriceCollectByTimeOffsetCount()
+    {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getReference('2f');
+        $cpl->setPricesCalculated(true);
+        $this->getManager()->flush();
+
+        $cpl = $this->getReference('1f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
+
+        $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffsetCount(24);
+        $this->assertEquals(2, $cPriceLists);
+    }
+
     /**
      * @dataProvider getCPLsForPriceCollectByTimeOffsetDataProvider
      * @param $offsetHours
@@ -351,11 +367,13 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     {
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2f');
-        $cpl->setPricesCalculated(false);
+        $cpl->setPricesCalculated(true);
         $this->getManager()->flush();
+
         $cpl = $this->getReference('1f');
         $cpl->setPricesCalculated(false);
         $this->getManager()->flush();
+
         $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset($offsetHours);
         $this->assertCount($result, $cPriceLists);
     }
@@ -368,11 +386,11 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         return [
             [
                 'offsetHours' => 11,
-                'result' => 1
+                'result' => 0
             ],
             [
                 'offsetHours' => 7 * 24,
-                'result' => 2
+                'result' => 1
             ]
         ];
     }
@@ -397,7 +415,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:CombinedPriceList');
+        return $this->getContainer()->get('doctrine')->getRepository(CombinedPriceList::class);
     }
 
     /**
@@ -405,6 +423,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      */
     protected function getManager()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:CombinedPriceList');
+        return $this->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
     }
 }

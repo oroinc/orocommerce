@@ -4,6 +4,10 @@ services:
         parent: 'oro_pricing.database_triggers.manager.combined_prices'
         public: true
 
+    oro_pricing.tests.combined_price_list_schedule_command:
+        alias: Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand
+        public: true
+
     oro_pricing.tests.api.skipped_entity_provider:
         class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
         decorates: 'oro_api.tests.skipped_entity_provider'

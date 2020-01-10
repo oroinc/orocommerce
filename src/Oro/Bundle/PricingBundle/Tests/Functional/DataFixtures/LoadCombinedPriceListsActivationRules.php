@@ -82,7 +82,7 @@ class LoadCombinedPriceListsActivationRules extends AbstractFixture implements D
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
+            LoadCombinedPriceLists::class
         ];
     }
 }
