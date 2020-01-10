@@ -1,7 +1,6 @@
 services:
     oro_product.importexport.data_converter.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter'
-        public: false
         parent: oro_locale.importexport.data_converter.localized_fallback_value_aware
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
@@ -10,36 +9,41 @@ services:
 
     oro_product.importexport.data_converter.product_image:
         class: 'Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductImageDataConverter'
-        public: false
         parent: oro_importexport.data_converter.configurable
         calls:
             - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
 
     oro_product.importexport.data_converter.product_template:
-        public: false
         parent: oro_product.importexport.data_converter.product
         calls:
             - [setRelationCalculator, ['@oro_importexport.data_converter.template_fixture.relation_calculator']]
 
     oro_product.importexport.data_converter.product_image_template:
-        public: false
         parent: oro_product.importexport.data_converter.product_image
+
+    oro_product.importexport.data_converter.related_product:
+        parent: oro_importexport.data_converter.configurable
+        class: 'Oro\Bundle\ProductBundle\ImportExport\DataConverter\RelatedProductDataConverter'
+
+    oro_product.importexport.data_converter.related_product_template:
+        parent: oro_product.importexport.data_converter.related_product
 
     oro_product.importexport.strategy.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy'
-        public: false
         parent: oro_locale.importexport.strategy.localized_fallback_value_aware
         calls:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setVariantLinkClass, ['%oro_product.entity.product_variant_link.class%']]
 
+    oro_product.importexport.strategy.related_product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Strategy\RelatedProductStrategy'
+        parent: oro_importexport.strategy.configurable_add_or_replace
+
     oro_product.importexport.strategy.product_image:
-        public: false
         parent: oro_importexport.strategy.configurable_add_or_replace
 
     oro_product.importexport.normalizer.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'
-        public: false
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
@@ -49,7 +53,6 @@ services:
 
     oro_product.importexport.normalizer.product_image:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer'
-        public: false
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
             - [setProductImageClass, ['%oro_product.entity.product_image.class%']]
@@ -61,30 +64,36 @@ services:
 
     oro_product.importexport.normalizer.product_image_type:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageTypeNormalizer'
-        public: false
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
             - [setProductImageTypeClass, ['%oro_product.entity.product_image_type.class%']]
         tags:
             - { name: oro_importexport.normalizer }
 
+    oro_product.importexport.normalizer.related_product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\RelatedProductNormalizer'
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        tags:
+            - { name: oro_importexport.normalizer }
+
     # Template Fixture
     oro_product.importexport.template_fixture.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture'
-        public: false
         tags:
             - { name: oro_importexport.template_fixture }
 
     oro_product.importexport.template_fixture.product_image:
         class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductImageFixture'
-        public: false
         tags:
             - { name: oro_importexport.template_fixture }
 
+    oro_product.importexport.template_fixture.related_product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\RelatedProductFixture'
+        tags:
+            - { name: oro_importexport.template_fixture }
 
     # Import processor
     oro_product.importexport.processor.import.product:
-        public: false
         parent: oro_importexport.processor.import_abstract
         class: Oro\Bundle\ProductBundle\ImportExport\Processor\ProductImportProcessor
         calls:
@@ -95,7 +104,6 @@ services:
             - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product.class%', alias: oro_product_product.add_or_replace }
 
     oro_product.importexport.processor.import.product_image:
-        public: false
         parent: oro_importexport.processor.import_abstract
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product_image']]
@@ -104,9 +112,24 @@ services:
             - { name: oro_importexport.processor, type: import, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image.add_or_replace }
 
+    oro_product.importexport.processor.import.related_product:
+        parent: oro_importexport.processor.import_abstract
+        class: Oro\Bundle\ProductBundle\ImportExport\Processor\RelatedProductImportProcessor
+        arguments:
+            - '@doctrine'
+            - '@translator'
+            - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_importexport.strategy.import.helper'
+            - '@oro_security.acl_helper'
+        calls:
+            - [setDataConverter, ['@oro_product.importexport.data_converter.related_product']]
+            - [setStrategy, ['@oro_product.importexport.strategy.related_product']]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct', alias: oro_product_related_product.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct', alias: oro_product_related_product.add_or_replace }
+
     # Export processor
     oro_product.importexport.processor.export.product:
-        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product']]
@@ -114,7 +137,6 @@ services:
             - { name: oro_importexport.processor, type: export, entity: '%oro_product.entity.product.class%', alias: oro_product_product }
 
     oro_product.importexport.processor.export_template.product:
-        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product_template']]
@@ -122,12 +144,18 @@ services:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product_product_export_template }
 
     oro_product.importexport.processor.export_template.product_image:
-        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product_image_template']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image_export_template }
+
+    oro_product.importexport.processor.export_template.related_product:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_product.importexport.data_converter.related_product_template']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct', alias: oro_product_related_product_export_template }
 
     oro_product.event_listener.product_normalizer:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener'
@@ -151,9 +179,32 @@ services:
         tags:
             - { name: oro_importexport.normalizer }
 
+    oro_product.importexport.processor.export.related_product:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_product.importexport.data_converter.related_product']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct', alias: oro_product_related_product }
+
+    oro_product.importexport.reader.related_product.entity:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Reader\RelatedProductEntityReader'
+        arguments:
+            - '@oro_importexport.context_registry'
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_product.related_item.related_product.config_provider'
+
+    oro_product.importexport.writer.related_product.entity:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Writer\RelatedProductEntityWriter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_importexport.writer.entity_detach_fixer'
+            - '@oro_importexport.context_registry'
+        tags:
+            - { name: oro_importexport.writer, alias: related_product_entity }
+
     # Export template
     oro_product.importexport.processor.export_template.inventory_status_only:
-        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@oro_product.importexport.inventory_status_converter']]
@@ -185,5 +236,14 @@ services:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\FilteredProductsExportConfigurationProvider'
         arguments:
             - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }
+
+    oro_product.importexport.configuration_provider.related_products:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\RelatedProductsImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+            - '@security.authorization_checker'
+            - '@oro_product.related_item.helper.config_helper'
         tags:
             - { name: oro_importexport.configuration, alias: oro_product_index }
