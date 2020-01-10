@@ -48,9 +48,11 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
         $triggerHandler = $container->get('oro_pricing.model.combined_price_list_trigger_handler');
         $triggerHandler->startCollect();
 
+        // Build not calculated CPLs before switch
+        $this->combinePricesForScheduledCPL();
+        // Switch to scheduled CPLs according to activation schedule
         $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
 
-        $this->combinePricesForScheduledCPL();
         $triggerHandler->commit();
     }
 

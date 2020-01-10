@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
@@ -20,8 +21,11 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Component\MessageQueue\Client\Message;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CombinedPriceListScheduleCommandTest extends WebTestCase
@@ -33,20 +37,54 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         self::getContainer()->get('oro_config.global')
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
+    }
 
+    /**
+     * @dataProvider activeDataProvider
+     * @param bool $pricesCalculated
+     */
+    public function testIsActiveNoSchedules($pricesCalculated)
+    {
         $this->loadFixtures(
             [
-                LoadPriceListSchedulesSimplified::class,
                 LoadProductPrices::class,
                 LoadCombinedPriceListsSimplified::class
             ]
         );
         $this->buildActivationPlans();
         $this->prepareMessageCollector();
+        $this->updatePricesCalculatedForAllCpls($pricesCalculated);
+
+        $this->assertFalse($this->getCommand()->isActive());
+    }
+
+    /**
+     * @dataProvider activeDataProvider
+     * @param bool $pricesCalculated
+     */
+    public function testIsActive($pricesCalculated)
+    {
+        $this->loadFixturesWithSchedules();
+        $this->updatePricesCalculatedForAllCpls($pricesCalculated);
+
+        $this->assertTrue($this->getCommand()->isActive());
+    }
+
+    /**
+     * @return array
+     */
+    public function activeDataProvider(): array
+    {
+        return [
+            'calculated' => [true],
+            'not calculated' => [false]
+        ];
     }
 
     public function testCommand()
     {
+        $this->loadFixturesWithSchedules();
+
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $customerGroup = $this->getReference(LoadGroups::GROUP1);
 
@@ -131,5 +169,43 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     {
         $this->getMessageCollector()->clear();
         $this->assertCount(0, $this->getSentMessages());
+    }
+
+    protected function loadFixturesWithSchedules(): void
+    {
+        $this->loadFixtures(
+            [
+                LoadProductPrices::class,
+                LoadCombinedPriceListsSimplified::class,
+                LoadPriceListSchedulesSimplified::class
+            ]
+        );
+        $this->buildActivationPlans();
+        $this->prepareMessageCollector();
+    }
+
+    /**
+     * @param bool $pricesCalculated
+     */
+    protected function updatePricesCalculatedForAllCpls($pricesCalculated): void
+    {
+        self::getContainer()->get('doctrine')
+            ->getManagerForClass(CombinedPriceList::class)
+            ->createQueryBuilder()
+            ->update(CombinedPriceList::class, 'cpl')
+            ->set('cpl.pricesCalculated', ':pricesCalculated')
+            ->setParameter('pricesCalculated', $pricesCalculated)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @return Command
+     */
+    protected function getCommand(): Command
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+        return $application->find(CombinedPriceListScheduleCommand::NAME);
     }
 }
