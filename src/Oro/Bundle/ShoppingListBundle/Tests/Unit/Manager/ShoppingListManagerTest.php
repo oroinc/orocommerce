@@ -773,6 +773,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->lineItemRepository->expects($this->once())
             ->method('deleteItemsByShoppingListAndInventoryStatuses')
             ->with($shoppingList, $allowedStatuses);
+        $this->lineItemRepository->expects($this->once())
+            ->method('deleteDisabledItemsByShoppingList')
+            ->with($shoppingList);
 
         $this->manager->actualizeLineItems($shoppingList);
     }
