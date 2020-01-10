@@ -238,4 +238,32 @@ DQL;
             ->where($deleteQb->expr()->in('li.id', ':ids'));
         $deleteQb->getQuery()->execute(['ids' => $ids]);
     }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    public function deleteDisabledItemsByShoppingList(ShoppingList $shoppingList)
+    {
+        $whereQb = $this->createQueryBuilder('l');
+        $whereQb->select('l.id')
+            ->join('l.product', 'p')
+            ->where($whereQb->expr()->eq('p.status', ':status'))
+            ->andWhere($whereQb->expr()->eq('l.shoppingList', ':shoppingList'))
+            ->setParameter('status', Product::STATUS_DISABLED)
+            ->setParameter('shoppingList', $shoppingList);
+        $whereQuery = $whereQb->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $whereQuery
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+        $ids = $whereQuery->getResult($identifierHydrationMode);
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete()
+            ->from($this->getEntityName(), 'li')
+            ->where($qb->expr()->in('li.id', ':ids'))
+            ->getQuery()->execute(['ids' => $ids]);
+    }
 }
