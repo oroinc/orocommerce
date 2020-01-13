@@ -135,6 +135,8 @@ function parseNodes(el, config, ct = '', parent = false) {
                             obj = {type: compType.id};
                         }
                         break;
+                    } else if (obj === 0) {
+                        throw new Error();
                     }
                 }
 

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import grapesJS from 'grapesjs';
 
 import BaseView from 'oroui/js/app/views/base/view';
@@ -207,6 +208,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @param options
      */
     initialize: function(options) {
+        this.builderOptions = {...this.builderOptions};
         this.setCurrentContentAlias();
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
@@ -262,6 +264,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     disableEditor: function() {
         if (this.builder) {
+            this.builder.trigger('destroy');
             this.builderUndelegateEvents();
             this.builder.destroy();
 
@@ -310,16 +313,14 @@ const GrapesjsEditorView = BaseView.extend({
      * Initialize builder instance
      */
     initBuilder: function() {
-        this.builder = grapesJS.init(_.extend(
-            {}
-            , {
-                avoidInlineStyle: 1,
-                container: this.$container.get(0),
-                components: !_.isEmpty(this.JSONcomponents)
-                    ? this.JSONcomponents
-                    : escapeWrapper(this.$el.val())
-            }
-            , this._prepareBuilderOptions()));
+        const components = _.isEmpty(this.JSONcomponents) ? escapeWrapper(this.$el.val()) : this.JSONcomponents;
+
+        this.builder = grapesJS.init({
+            avoidInlineStyle: 1,
+            container: this.$container.get(0),
+            components,
+            ...this._prepareBuilderOptions()
+        });
 
         // Ensures all changes to sectors, properties and types are applied.
         this.builder.StyleManager.getSectors().reset(styleManagerModule);
@@ -442,7 +443,7 @@ const GrapesjsEditorView = BaseView.extend({
         const _res = this.builder.ComponentRestriction.validate(
             this.builder.getIsolatedHtml(this.$el.val())
         );
-        const validationMessage = _.__('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
+        const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
         if (_res.length) {
             e.preventDefault();
@@ -474,10 +475,10 @@ const GrapesjsEditorView = BaseView.extend({
      * Get editor components
      * @returns {Object}
      */
-    getEditorComponents: function() {
-        const comps = this.builder.getComponents();
+    getEditorComponents() {
+        const components = this.builder.getComponents();
 
-        return comps.length ? JSON.stringify(this.builder.getComponents()) : '';
+        return components.length ? JSON.stringify(components) : '';
     },
 
     componentSelected(model) {
@@ -486,16 +487,16 @@ const GrapesjsEditorView = BaseView.extend({
         toolbar = toolbar.map(tool => {
             switch (tool.command) {
                 case 'select-parent':
-                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.selectParent');
+                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
                     break;
                 case 'tlb-move':
-                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.move');
+                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
                     break;
                 case 'tlb-clone':
-                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.clone');
+                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
                     break;
                 case 'tlb-delete':
-                    tool.attributes.label = _.__('oro.cms.wysiwyg.toolbar.delete');
+                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
                     break;
             }
 

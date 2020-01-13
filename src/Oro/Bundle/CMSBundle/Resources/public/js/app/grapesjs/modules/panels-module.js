@@ -6,6 +6,7 @@ define(function(require) {
     const settingsTemplate = require('tpl-loader!orocms/templates/grapesjs-settings.html');
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
 
     /**
      * Create panel manager instance
@@ -18,14 +19,14 @@ define(function(require) {
         settingsTemplate: settingsTemplate,
 
         optionButtonTooltips: {
-            'sw-visibility': _.__('oro.cms.wysiwyg.option_panel.show_borders'),
-            'preview': _.__('oro.cms.wysiwyg.option_panel.preview'),
-            'fullscreen': _.__('oro.cms.wysiwyg.option_panel.fullscreen'),
-            'export-template': _.__('oro.cms.wysiwyg.option_panel.export'),
-            'undo': _.__('oro.cms.wysiwyg.option_panel.undo'),
-            'redo': _.__('oro.cms.wysiwyg.option_panel.redo'),
-            'gjs-open-import-webpage': _.__('oro.cms.wysiwyg.option_panel.import'),
-            'canvas-clear': _.__('oro.cms.wysiwyg.option_panel.clear_canvas')
+            'sw-visibility': __('oro.cms.wysiwyg.option_panel.show_borders'),
+            'preview': __('oro.cms.wysiwyg.option_panel.preview'),
+            'fullscreen': __('oro.cms.wysiwyg.option_panel.fullscreen'),
+            'export-template': __('oro.cms.wysiwyg.option_panel.export'),
+            'undo': __('oro.cms.wysiwyg.option_panel.undo'),
+            'redo': __('oro.cms.wysiwyg.option_panel.redo'),
+            'gjs-open-import-webpage': __('oro.cms.wysiwyg.option_panel.import'),
+            'canvas-clear': __('oro.cms.wysiwyg.option_panel.clear_canvas')
         },
 
         /**
