@@ -347,6 +347,9 @@ class CombinedPriceListRepository extends BasePriceListRepository
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
         $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+        // Return only not calculated CPLs withing offset hours
+        $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
+            ->setParameter('pricesCalculated', false);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setBufferSize(self::CPL_BATCH_SIZE);
@@ -384,17 +387,13 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
             )
-            ->where($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
-            ->andWhere(
+            ->where(
                 $qb->expr()->orX(
                     $qb->expr()->lt('combinedPriceListActivationRule.activateAt', ':activateData'),
                     $qb->expr()->isNull('combinedPriceListActivationRule.activateAt')
                 )
             )
-            ->setParameters([
-                'pricesCalculated' => false,
-                'activateData' => $activateDate
-            ]);
+            ->setParameter('activateData', $activateDate);
 
         return $qb;
     }
