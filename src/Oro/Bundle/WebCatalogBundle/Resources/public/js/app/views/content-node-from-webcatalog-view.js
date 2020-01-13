@@ -7,7 +7,7 @@ define(function(require) {
     /**
      * Unification and networking between fields
      */
-    const ConsentUpdateContentNodesView = BaseView.extend({
+    const ContentNodeFromWebCatalogView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
             'listenedFieldName', 'triggeredFieldName',
             'listenedElement', 'triggeredElement'
@@ -36,8 +36,8 @@ define(function(require) {
         /**
          * @constructor
          */
-        constructor: function ConsentUpdateContentNodesView(options) {
-            ConsentUpdateContentNodesView.__super__.constructor.call(this, options);
+        constructor: function ContentNodeFromWebCatalogView(options) {
+            ContentNodeFromWebCatalogView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -46,7 +46,7 @@ define(function(require) {
          * @param options
          */
         initialize: function(options) {
-            ConsentUpdateContentNodesView.__super__.initialize.call(this, options);
+            ContentNodeFromWebCatalogView.__super__.initialize.call(this, options);
             this._initElements();
             this._bindEvents();
             this._triggerUpdateAction();
@@ -88,5 +88,5 @@ define(function(require) {
         }
     });
 
-    return ConsentUpdateContentNodesView;
+    return ContentNodeFromWebCatalogView;
 });

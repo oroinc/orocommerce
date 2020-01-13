@@ -1,4 +1,0 @@
-dynamic-imports:
-    oroconsent:
-        - oroconsent/js/app/views/consent-entity-tree-select-form
-        - oroconsent/js/app/views/consent-update-content-nodes-view
