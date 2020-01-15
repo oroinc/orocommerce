@@ -193,6 +193,10 @@ oro.cms:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
+    privilege:
+        category:
+            cms.label: CMS
+
 oro.entity_extend.form.data_type:
     wysiwyg: WYSIWYG
     wysiwyg_style: WYSIWYG Style

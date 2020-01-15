@@ -442,3 +442,8 @@ services:
         public: false
         tags:
             - { name: oro_draft.provider.draftable_fields_exclusion }
+
+    oro_cms.provider.privilege_category_provider:
+        class: Oro\Bundle\CMSBundle\Provider\PrivilegeCategoryProvider
+        tags:
+            - { name: oro_user.privilege_category }
