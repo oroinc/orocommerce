@@ -145,7 +145,7 @@ oro:
                 default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
                 shopping_list_limit.tooltip: 'Set the number of shopping lists allowed per customer. The default value is zero, which means that no limit of shopping lists is applied.'
                 availability_for_guests:
-                    label: 'Enable guest shopping list'
+                    label: 'Enable Guest Shopping List'
                     tooltip: 'Allows guests to create a shopping list'
                 mass_adding_on_product_listing_enabled:
                     label: 'Enable Mass Adding on Product Listing'

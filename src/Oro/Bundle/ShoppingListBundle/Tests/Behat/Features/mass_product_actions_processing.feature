@@ -96,7 +96,7 @@ Feature: Mass Product Actions processing
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then "Shopping List Config" must contains values:
       | Enable Guest Shopping List | false |
-    When uncheck "Use default" for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable Guest Shopping List" field
     And I fill form with:
       | Enable Guest Shopping List | true |
     And I save setting

@@ -350,8 +350,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 #    And I proceed as the Admin
 #    And I go to System/ Configuration
 #    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-#    And uncheck "Use default" for "Enable guest shopping list" field
-#    And check "Enable guest shopping list"
+#    And uncheck "Use default" for "Enable Guest Shopping List" field
+#    And check "Enable Guest Shopping List"
 #    And I save form
 #    And I proceed as the User
 #    And type "CNFB" in "search"
