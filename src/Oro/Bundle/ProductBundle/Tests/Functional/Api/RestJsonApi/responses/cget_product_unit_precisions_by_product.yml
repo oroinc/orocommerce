@@ -1,0 +1,49 @@
+data:
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.liter->id)>'
+        attributes:
+            precision: 3
+            conversionRate: 5
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+        attributes:
+            precision: 2
+            conversionRate: 3
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'
