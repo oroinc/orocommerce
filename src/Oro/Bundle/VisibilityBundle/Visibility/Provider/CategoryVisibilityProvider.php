@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserInterface;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 
@@ -30,11 +30,11 @@ class CategoryVisibilityProvider
     }
 
     /**
-     * @param CustomerUser|null $customerUser
+     * @param CustomerUserInterface|null $customerUser
      *
      * @return int[]
      */
-    public function getHiddenCategoryIds(?CustomerUser $customerUser): array
+    public function getHiddenCategoryIds(?CustomerUserInterface $customerUser): array
     {
         $customer = $this->customerUserRelationsProvider->getCustomer($customerUser);
         if ($customer) {

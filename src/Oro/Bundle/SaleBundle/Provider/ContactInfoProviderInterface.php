@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserInterface;
 use Oro\Bundle\SaleBundle\Model\ContactInfo;
 
 /**
@@ -11,9 +11,9 @@ use Oro\Bundle\SaleBundle\Model\ContactInfo;
 interface ContactInfoProviderInterface
 {
     /**
-     * @param CustomerUser|null $customerUser
+     * @param CustomerUserInterface|null $customerUser
      *
      * @return ContactInfo
      */
-    public function getContactInfo(CustomerUser $customerUser = null);
+    public function getContactInfo(CustomerUserInterface $customerUser = null);
 }
