@@ -15,16 +15,3 @@ The entire functionality of this bundle can be disabled through a feature toggle
 * [Add the customer consents field to a form](./Resources/doc/add_form_field.md)
 * [Add the Agreements Step to a Custom Checkout Based on the Default Checkout Workflow](./Resources/doc/default_checkout.md)
 * [Add the Agreements Section to a Custom Checkout Based on the Single Page Checkout Workflow](./Resources/doc/single_page_checkout.md)
-
-## Dependencies
-
-* `Oro\Bundle\EntityBundle`
-* `Oro\Bundle\ConfigBundle`
-* `Oro\Bundle\FeatureToggleBundle`
-* `Oro\Bundle\SecurityBundle`
-* `Oro\Bundle\FormBundle`
-* `Oro\Bundle\LocaleBundle`
-* `Oro\Bundle\CMSBundle`
-* `Oro\Bundle\WebCatalogBundle`
-* `Oro\Bundle\CustomerBundle`
-* `Oro\Bundle\RFPBundle`
