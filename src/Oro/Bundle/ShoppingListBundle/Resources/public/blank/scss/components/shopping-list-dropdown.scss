@@ -26,6 +26,8 @@
         display: block;
         width: calc(100% - #{$shopping-list-dropdown-radio-width});
         padding-left: 5px;
+
+        @include focus-visible(shopping-list-dropdown__info, false);
     }
 
     &__link,
@@ -66,10 +68,6 @@
 
     &__details {
         text-align: right;
-    }
-
-    &__info {
-        display: block;
     }
 
     &__products {

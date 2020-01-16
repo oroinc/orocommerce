@@ -11,6 +11,8 @@
     .add-product-from-view-component {
         font-size: $font-size-base;
 
+        padding-bottom: $base-padding-bottom-for-shadow;
+
         @include clearfix();
     }
 
