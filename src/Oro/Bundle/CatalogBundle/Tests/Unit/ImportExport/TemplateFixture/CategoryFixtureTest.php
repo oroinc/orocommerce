@@ -9,6 +9,7 @@ use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateEntityRegistry;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateEntityRepositoryInterface;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateManager;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
@@ -22,12 +23,16 @@ class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryFixture */
     private $fixture;
 
+    /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $localizationManager;
+
     protected function setUp()
     {
         $this->templateManager = $this->createMock(TemplateManager::class);
         $this->masterCatalogRootProvider = $this->createMock(MasterCatalogRootProvider::class);
 
-        $this->fixture = new CategoryFixture();
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
+        $this->fixture = new CategoryFixture($this->localizationManager);
         $this->fixture->setMasterCatalogRootProvider($this->masterCatalogRootProvider);
         $this->fixture->setTemplateManager($this->templateManager);
     }

@@ -3,6 +3,8 @@ services:
         class: Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture\CategoryFixture
         calls:
             - ['setMasterCatalogRootProvider', ['@oro_catalog.provider.master_catalog_root']]
+        arguments:
+            - '@oro_locale.manager.localization'
         tags:
             - { name: oro_importexport.template_fixture }
 
