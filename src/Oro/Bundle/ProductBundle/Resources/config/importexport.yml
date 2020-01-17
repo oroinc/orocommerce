@@ -73,6 +73,8 @@ services:
     oro_product.importexport.template_fixture.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture'
         public: false
+        calls:
+            - ['setLocalizationManager', ['@oro_locale.manager.localization']]
         tags:
             - { name: oro_importexport.template_fixture }
 
