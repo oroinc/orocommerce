@@ -13,6 +13,7 @@ import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -69,7 +70,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     builderOptions: {
-        height: '2000px',
+        height: '700px',
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
@@ -188,7 +189,8 @@ const GrapesjsEditorView = BaseView.extend({
         },
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
-        'grapesjs-import': {}
+        'grapesjs-import': {},
+        'grapesjs-panel-scrolling-hints': {}
     },
 
     events: {
