@@ -1658,3 +1658,9 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: oro_cms.content_widget.type }
+
+    oro_product.delete_handler_extension.product_unit_precision:
+        class: Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision }
