@@ -155,13 +155,13 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     public function tearDown()
     {
         unset(
-            $availabilityProvider,
-            $productRepository,
-            $qb,
-            $query,
-            $customFieldProvider,
-            $enumHandler,
-            $dispatcher
+            $this->availabilityProvider,
+            $this->productRepository,
+            $this->qb,
+            $this->query,
+            $this->customFieldProvider,
+            $this->enumHandler,
+            $this->dispatcher
         );
     }
 
