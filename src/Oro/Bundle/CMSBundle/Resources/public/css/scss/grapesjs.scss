@@ -57,8 +57,12 @@
     }
 
     &pn-views-container {
+        $offset: 40px;
+
+        height: calc(100% - #{$offset});
+        margin-top: $offset;
+
         box-shadow: none;
-        padding-top: 40px;
     }
 
     &pn-commands,
