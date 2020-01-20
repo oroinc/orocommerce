@@ -71,7 +71,5 @@
         top: $shopping-lists-text-area-trigger-top;
 
         cursor: $shopping-lists-text-area-trigger-cursor;
-
-        @include focus-visible();
     }
 }

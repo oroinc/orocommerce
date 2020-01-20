@@ -6,8 +6,6 @@
     color: $featured-category-color;
     text-decoration: $featured-category-text-decoration;
 
-    @include focus-visible(featured-category__name, false);
-
     &__image {
         display: $featured-category-image-display;
         max-width: $featured-category-image-max-width;
