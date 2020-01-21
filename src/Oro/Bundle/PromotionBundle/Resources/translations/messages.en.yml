@@ -49,6 +49,7 @@ oro:
         all_label: All Promotions
         entity_label: Promotion
         entity_plural_label: Promotions
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents promotion information
         id.label: ID
         coupons.label: Coupons
@@ -126,6 +127,7 @@ oro:
         discountconfiguration:
             entity_label: Discount Configuration
             entity_plural_label: Discount Configurations
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             type:
                 label: Type
@@ -139,6 +141,7 @@ oro:
         promotionschedule:
             entity_label: Promotion Schedule
             entity_plural_label: Promotion Schedules
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             promotion.label: Promotion
             active_at.label: Activate At
@@ -184,6 +187,7 @@ oro:
         applieddiscount:
             entity_label: Applied Discount
             entity_plural_label: Applied Discounts
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             applied_promotion.label: Applied Promotion
             amount.label: Amount
@@ -195,6 +199,7 @@ oro:
         coupon:
             entity_label: Coupon
             entity_plural_label: Coupons
+            entity_grid_all_view_label: All %entity_plural_label%
             organization.label: Organization
             owner.label: Owner
             id.label: Id
@@ -255,6 +260,7 @@ oro:
         appliedpromotion:
             entity_label: Applied Promotion
             entity_plural_label: Applied Promotions
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             active:
                 label: Active
@@ -287,6 +293,7 @@ oro:
         appliedcoupon:
             entity_label: Applied Coupon
             entity_plural_label: Applied Coupons
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             applied_promotion.label: Applied Promotion
             coupon_code.label: Coupon Code
