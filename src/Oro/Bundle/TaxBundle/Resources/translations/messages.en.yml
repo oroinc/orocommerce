@@ -3,6 +3,7 @@ oro.tax:
     description.label: 'Description'
     entity_label: 'Tax'
     entity_plural_label: 'Taxes'
+    entity_grid_all_view_label: 'All %entity_plural_label%'
     id.label: 'id'
     rate.label: 'Rate'
     taxcode.label: 'Tax Code'
@@ -17,6 +18,7 @@ oro.tax:
     producttaxcode:
         entity_label:         'Product Tax Code'
         entity_plural_label:  'Product Tax Codes'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_description:   Product tax code is an identifier that labels the products that taxed in a particular way (e.g. Medical Products, Non-Taxable Prodcuts, Taxable Products, etc.)
         list:
             description:      'List of Product Tax Codes'
@@ -32,6 +34,7 @@ oro.tax:
     customertaxcode:
         entity_label: 'Customer Tax Code'
         entity_plural_label: 'Customer Tax Codes'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Customer Tax Codes'
         customers.label: 'Customers'
         customer_groups.label: 'Customer Groups'
@@ -45,6 +48,7 @@ oro.tax:
     taxrule:
         entity_label: 'Tax Rule'
         entity_plural_label: 'Tax Rules'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Rules'
         description.label: 'Description'
         id.label: 'ID'
@@ -56,6 +60,7 @@ oro.tax:
     taxjurisdiction:
         entity_label: 'Tax Jurisdiction'
         entity_plural_label: 'Tax Jurisdictions'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Jurisdictions'
         id.label: 'ID'
         code.label: 'Code'
@@ -69,6 +74,7 @@ oro.tax:
     zipcode:
         entity_label: 'Zip Code'
         entity_plural_label: 'Zip Codes'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label: 'ID'
         zip_code.label: 'Zip Code'
         zip_range_start.label: 'Range start'

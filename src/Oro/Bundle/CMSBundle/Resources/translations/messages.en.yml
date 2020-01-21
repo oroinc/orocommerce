@@ -2,6 +2,7 @@ oro.cms:
     page:
         entity_label:           'Landing Page'
         entity_plural_label:    'Landing Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label:               'ID'
         titles:
             label:              'Titles'
@@ -24,6 +25,7 @@ oro.cms:
     contentblock:
         entity_label: Content Block
         entity_plural_label: Content Blocks
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: Id
         alias.label: Alias
         createdat.label: Created At
@@ -31,6 +33,7 @@ oro.cms:
         content_variants:
             label: Content Variant
             entity_plural_label: Content Variants
+            entity_grid_all_view_label: All %entity_plural_label%
             no_content_variants.label: No content variants
             default:
                 label: Default Variant
@@ -64,6 +67,7 @@ oro.cms:
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
+        entity_grid_all_view_label: All %entity_plural_label%
         content.label: Content
         default.label: Default
         id.label: Id
@@ -86,6 +90,7 @@ oro.cms:
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_label: 'Customer Login Page'
         id.label: 'Id'
         top_content.label: 'Top content'

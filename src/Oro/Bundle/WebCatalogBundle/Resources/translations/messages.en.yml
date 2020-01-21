@@ -2,6 +2,7 @@ oro:
     webcatalog:
         entity_label: Web Catalog
         entity_plural_label: Web Catalogs
+        entity_grid_all_view_label: All %entity_plural_label%
         description:
             label: Description
             description: Short meaningful description of the web catalog record.
@@ -16,6 +17,7 @@ oro:
         contentnode:
             entity_label: Content Node
             entity_plural_label: Content Nodes
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             left.label: Tree left index
             level.label: Tree level
@@ -39,6 +41,7 @@ oro:
         contentvariant:
             entity_label: Content Variant
             entity_plural_label: Content Variants
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             system_page_route.label: System Page Route
