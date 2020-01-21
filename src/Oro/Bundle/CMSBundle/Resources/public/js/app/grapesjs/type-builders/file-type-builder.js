@@ -39,7 +39,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             'type': 'file',
             'tagName': 'a',
-            'classes': ['digital-asset-file'],
+            'classes': ['digital-asset-file', 'no-hash'],
             'activeOnRender': 1,
             'void': 0,
             'droppable': 1,
