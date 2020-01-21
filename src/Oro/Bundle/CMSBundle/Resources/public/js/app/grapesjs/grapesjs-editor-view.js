@@ -13,6 +13,7 @@ import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 import 'grapesjs-preset-webpage';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -69,10 +70,11 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     builderOptions: {
-        height: '2000px',
+        height: '700px',
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
+        pasteStyles: false,
 
         /**
          * Color picker options
@@ -188,7 +190,8 @@ const GrapesjsEditorView = BaseView.extend({
         },
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
-        'grapesjs-import': {}
+        'grapesjs-import': {},
+        'grapesjs-panel-scrolling-hints': {}
     },
 
     events: {
@@ -373,6 +376,12 @@ const GrapesjsEditorView = BaseView.extend({
                     e.preventDefault();
                 });
         });
+
+        $(this.builder.Canvas.getBody()).on(
+            'paste',
+            '[contenteditable="true"]',
+            this.onPasteContent.bind(this)
+        );
     },
 
     /**
@@ -386,6 +395,8 @@ const GrapesjsEditorView = BaseView.extend({
             this.builder.off();
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
+
+        $(this.builder.Canvas.getBody()).off();
     },
 
     /**
@@ -511,6 +522,15 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _addClassForFrameWrapper: function() {
         $(this.builder.Canvas.getFrameEl().contentDocument).find('#wrapper').addClass(this.contextClass);
+    },
+
+    onPasteContent(e) {
+        if (!this.builderOptions.pasteStyles) {
+            e.preventDefault();
+            const text = e.originalEvent.clipboardData.getData('text');
+
+            e.target.ownerDocument.execCommand('insertText', false, text);
+        }
     },
 
     /**

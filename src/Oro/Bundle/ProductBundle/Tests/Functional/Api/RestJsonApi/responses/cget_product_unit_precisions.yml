@@ -1,0 +1,161 @@
+data:
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-3.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-4.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-5.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-5->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-6.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-6->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.продукт-7.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@продукт-7->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-8.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-8->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.продукт-9.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@продукт-9->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.liter->id)>'
+        attributes:
+            precision: 3
+            conversionRate: 5
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
