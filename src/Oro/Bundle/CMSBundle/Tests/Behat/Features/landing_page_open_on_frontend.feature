@@ -22,8 +22,9 @@ Feature: Landing page open on frontend
     And click view commerce_main_menu in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title | Other page |
-      | URI   | other-page |
+      | Title       | Other page |
+      | Target Type | URI        |
+      | URI         | other-page |
     And I save form
     Then I should see "Menu item saved successfully" flash message
     When I proceed as the Buyer
