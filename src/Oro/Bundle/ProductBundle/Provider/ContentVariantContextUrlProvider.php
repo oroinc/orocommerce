@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -24,19 +24,19 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
     private $cache;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
     /**
      * @param RequestStack $requestStack
      * @param UrlCacheInterface $cache
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManager $userLocalizationManager
+        UserLocalizationManagerInterface $userLocalizationManager
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
