@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Extension;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Extension\CurrentLocalizationExtensionInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -17,18 +17,16 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
     protected $tokenStorage;
 
     /**
-     * @var UserLocalizationManagerInterface
+     * @var UserLocalizationManager
      */
     protected $localizationManager;
 
     /**
      * @param TokenStorageInterface $tokenStorage
-     * @param UserLocalizationManagerInterface $localizationManager
+     * @param UserLocalizationManager $localizationManager
      */
-    public function __construct(
-        TokenStorageInterface $tokenStorage,
-        UserLocalizationManagerInterface $localizationManager
-    ) {
+    public function __construct(TokenStorageInterface $tokenStorage, UserLocalizationManager $localizationManager)
+    {
         $this->tokenStorage = $tokenStorage;
         $this->localizationManager = $localizationManager;
     }

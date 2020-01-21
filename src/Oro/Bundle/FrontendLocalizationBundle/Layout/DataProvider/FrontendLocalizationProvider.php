@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 
 class FrontendLocalizationProvider
 {
     /**
-     * @var UserLocalizationManagerInterface
+     * @var UserLocalizationManager
      */
     protected $userLocalizationManager;
 
     /**
-     * @param UserLocalizationManagerInterface $userLocalizationManager
+     * @param UserLocalizationManager $userLocalizationManager
      */
-    public function __construct(UserLocalizationManagerInterface $userLocalizationManager)
+    public function __construct(UserLocalizationManager $userLocalizationManager)
     {
         $this->userLocalizationManager = $userLocalizationManager;
     }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Layout\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -25,7 +25,7 @@ class LocalizedLinksDataProvider
     private $configManager;
 
     /**
-     * @var UserLocalizationManagerInterface
+     * @var UserLocalizationManager
      */
     private $userLocalizationManager;
 
@@ -37,13 +37,13 @@ class LocalizedLinksDataProvider
     /**
      * @param CanonicalUrlGenerator $urlGenerator
      * @param ConfigManager $configManager
-     * @param UserLocalizationManagerInterface $userLocalizationManager
+     * @param UserLocalizationManager $userLocalizationManager
      * @param ValidatorInterface $validator
      */
     public function __construct(
         CanonicalUrlGenerator $urlGenerator,
         ConfigManager $configManager,
-        UserLocalizationManagerInterface $userLocalizationManager,
+        UserLocalizationManager $userLocalizationManager,
         ValidatorInterface $validator
     ) {
         $this->urlGenerator = $urlGenerator;
