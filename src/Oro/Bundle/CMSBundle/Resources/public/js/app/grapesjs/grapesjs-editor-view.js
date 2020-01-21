@@ -495,26 +495,28 @@ const GrapesjsEditorView = BaseView.extend({
     componentSelected(model) {
         let toolbar = model.get('toolbar');
 
-        toolbar = toolbar.map(tool => {
-            switch (tool.command) {
-                case 'select-parent':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
-                    break;
-                case 'tlb-move':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
-                    break;
-                case 'tlb-clone':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
-                    break;
-                case 'tlb-delete':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
-                    break;
-            }
+        if (_.isArray(toolbar)) {
+            toolbar = toolbar.map(tool => {
+                switch (tool.command) {
+                    case 'select-parent':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
+                        break;
+                    case 'tlb-move':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
+                        break;
+                    case 'tlb-clone':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
+                        break;
+                    case 'tlb-delete':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
+                        break;
+                }
 
-            return tool;
-        });
+                return tool;
+            });
 
-        model.set('toolbar', toolbar);
+            model.set('toolbar', toolbar);
+        }
     },
 
     /**
