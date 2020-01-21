@@ -71,15 +71,6 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
         );
     }
 
-    public function testGetType()
-    {
-        $type = 'test_attribute_type';
-
-        $this->attributeType->expects($this->once())->method('getType')->willReturn($type);
-
-        $this->assertSame($type, $this->getSearchableAttributeType()->getType());
-    }
-
     /**
      * @dataProvider configurationMethodsProvider
      *

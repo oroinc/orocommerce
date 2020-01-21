@@ -160,11 +160,6 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit\Framework\TestCas
     private function assertDoctrineHelperCalls($object, $id)
     {
         $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->willReturn(get_class($object));
-
-        $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
             ->willReturn($id);

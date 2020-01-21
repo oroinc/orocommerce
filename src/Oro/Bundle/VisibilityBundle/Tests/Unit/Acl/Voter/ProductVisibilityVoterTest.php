@@ -183,11 +183,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
             ->with($product, false)
             ->willReturn($productId);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
-
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
@@ -251,11 +246,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepository')
             ->with(Product::class)
             ->willReturn($repository);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

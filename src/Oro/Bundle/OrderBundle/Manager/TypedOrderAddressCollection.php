@@ -6,6 +6,9 @@ use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
+/**
+ * Provides default address of addresses array
+ */
 class TypedOrderAddressCollection
 {
     /** @var CustomerUser */
@@ -77,15 +80,36 @@ class TypedOrderAddressCollection
                 $this->defaultAddressKey = $key;
                 $this->defaultAddress = $address;
 
-                $frontendOwner = $address->getFrontendOwner();
-
-                if ($address instanceof CustomerUserAddress &&
-                    $frontendOwner &&
-                    $frontendOwner->getId() === $this->customerUser->getId()
-                ) {
+                if ($this->isAddressCustomerUserApplicable($address)) {
                     break;
                 }
             }
         }
+
+        if (!isset($this->defaultAddress)) {
+            $this->ensureFirstApplicableAddressAsDefault($addresses);
+        }
+    }
+
+    /**
+     * @param AbstractDefaultTypedAddress[] $addresses
+     */
+    protected function ensureFirstApplicableAddressAsDefault(array $addresses)
+    {
+        $this->defaultAddressKey = array_key_first($addresses);
+        $this->defaultAddress = $addresses[$this->defaultAddressKey];
+    }
+
+    /**
+     * @param AbstractDefaultTypedAddress $address
+     * @return bool
+     */
+    protected function isAddressCustomerUserApplicable(AbstractDefaultTypedAddress $address): bool
+    {
+        $frontendOwner = $address->getFrontendOwner();
+
+        return $address instanceof CustomerUserAddress &&
+            $frontendOwner &&
+            $frontendOwner->getId() === $this->customerUser->getId();
     }
 }

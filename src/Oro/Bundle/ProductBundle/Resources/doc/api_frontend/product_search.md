@@ -114,7 +114,7 @@ The `allText` is a particular field that can be used to do an overall full-text 
 contains values of all text fields.
 
 The `minimalPrice_{unit}` means that `{unit}` can be replaced with any
-[product unit](https://oroinc.com/b2b-ecommerce/doc/current/user-guide/product-units).
+[product unit](https://doc.oroinc.com/user/back-office/products/products/product-units/).
 E.g., to specify the minimal price for the `set` product unit, the field name will be `minimalPrice_set`.
 
 #### **aggregations** filter

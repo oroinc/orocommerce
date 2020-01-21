@@ -98,6 +98,6 @@ api:
             fields:
                 filePath:
                     data_type: array
-                    depends_on: [filename,mimeType]
+                    depends_on: [filename,mimeType,originalFilename,extension,parentEntityClass]
                     form_options:
                         mapped: false

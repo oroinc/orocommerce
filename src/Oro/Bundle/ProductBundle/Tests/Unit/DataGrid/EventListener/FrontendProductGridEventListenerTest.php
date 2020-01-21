@@ -277,22 +277,22 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     public function onPreBuildDataProvider()
     {
         $stringAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 101, 'fieldName' => 'sku']);
-        $stringAttribute->setEntity(new EntityConfigModel());
+        $stringAttribute->setEntity(new EntityConfigModel(Product::class));
         $stringSearchAttributeType = new SearchableType\StringSearchableAttributeType(new Type\StringAttributeType());
 
         $enumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 202, 'fieldName' => 'internalStatus']);
-        $enumAttribute->setEntity(new EntityConfigModel())
+        $enumAttribute->setEntity(new EntityConfigModel(Product::class))
             ->fromArray('extend', ['target_entity' => StubEnumValue::class]);
         $enumSearchAttributeType = new SearchableType\EnumSearchableAttributeType(new Type\EnumAttributeType());
 
         $decimalAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 303, 'fieldName' => 'weight']);
-        $decimalAttribute->setEntity(new EntityConfigModel());
+        $decimalAttribute->setEntity(new EntityConfigModel(Product::class));
         $decimalSearchAttributeType = new SearchableType\DecimalSearchableAttributeType(
             new Type\DecimalAttributeType('decimal')
         );
 
         $multiEnumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 404, 'fieldName' => 'internalStatus']);
-        $multiEnumAttribute->setEntity(new EntityConfigModel());
+        $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class));
         $multiEnumSearchAttributeType = new SearchableType\MultiEnumSearchableAttributeType(
             new Type\MultiEnumAttributeType()
         );
@@ -311,7 +311,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 505, 'fieldName' => 'names']);
-        $manyToManyAttribute->setEntity(new EntityConfigModel());
+        $manyToManyAttribute->setEntity(new EntityConfigModel(Product::class));
 
         $manyToManyAttributeLocalizable = clone $manyToManyAttribute;
         $manyToManyAttributeLocalizable->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
@@ -321,13 +321,13 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         $manyToOneAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 606, 'fieldName' => 'manytoone']);
-        $manyToOneAttribute->setEntity(new EntityConfigModel());
+        $manyToOneAttribute->setEntity(new EntityConfigModel(Product::class));
         $manyToOneSearchAttributeType = new SearchableType\ManyToOneSearchableAttributeType(
             new Type\ManyToOneAttributeType($entityNameResolver, $doctrineHelper)
         );
 
         $fileAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 707, 'fieldName' => 'image']);
-        $fileAttribute->setEntity(new EntityConfigModel());
+        $fileAttribute->setEntity(new EntityConfigModel(Product::class));
 
         $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType('file'));
 

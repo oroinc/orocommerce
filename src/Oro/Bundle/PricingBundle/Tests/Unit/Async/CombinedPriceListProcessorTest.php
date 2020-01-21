@@ -5,12 +5,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Exception\DeadlockException;
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
@@ -24,6 +22,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -68,9 +67,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->triggerFactory = $this->getMockBuilder(PriceListRelationTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->triggerFactory = $this->createMock(PriceListRelationTriggerFactory::class);
 
         $this->registry = $this->createMock(ManagerRegistry::class);
 
@@ -96,29 +93,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcess(PriceListRelationTrigger $trigger, string $expectedMethod)
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->never()))
-            ->method('rollback');
-
-        $em->expects(($this->once()))
-            ->method('commit');
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CombinedPriceList::class)
-            ->willReturn($em);
-
         $this->combinedPriceListsBuilderFacade->expects($this->once())
             ->method($expectedMethod);
 
@@ -147,28 +121,12 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcessWithException($exception, $isDeadlockCheck, $isDeadlock, $result)
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $em->expects(($this->never()))
-            ->method('commit');
-
         $this->triggerHandler->expects($this->once())
             ->method('startCollect');
         $this->triggerHandler->expects($this->once())
             ->method('rollback');
         $this->triggerHandler->expects($this->never())
             ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CombinedPriceList::class)
-            ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -218,7 +176,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $customer = $this->createMock(Customer::class);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerGroup $customerGroup */
-        $customerGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
+        $customerGroup = $this->createMock(CustomerGroup::class);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|Website $website */
         $website = $this->createMock(Website::class);
@@ -423,22 +381,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareMocksForEvents()
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->never()))
-            ->method('rollback');
-
-        $em->expects(($this->once()))
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CombinedPriceList::class)
-            ->willReturn($em);
-
         $this->triggerHandler->expects($this->once())
             ->method('startCollect');
         $this->triggerHandler->expects($this->never())

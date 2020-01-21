@@ -37,6 +37,59 @@ services:
         tags:
             - { name: oro.api.documentation_provider, requestType: frontend_sku, priority: 250 }
 
+    oro_product.api.resource_type_resolver.product:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'product'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_product_frontend_product_view }
+
+    oro_product.api.resource_api_url_resolver.product:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceRestApiGetActionUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+            - Oro\Bundle\ProductBundle\Entity\Product
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_product_frontend_product_view, requestType: rest }
+
+    oro_product.api.resource_type_resolver.product_collection:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'product_collection'
+            - ['contentVariantId']
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_product_frontend_product_index }
+
+    oro_product.api.resource_api_url_resolver.product_collection:
+        class: Oro\Bundle\ProductBundle\Api\ProductCollectionRestResourceApiUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_product_frontend_product_index, requestType: rest }
+
+    oro_product.api.resource_type_resolver.all_products_collection:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'products'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_product_frontend_product_index, priority: -100 }
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_catalog_frontend_product_allproducts, priority: -100 }
+
+    oro_product.api.resource_api_url_resolver.all_products_collection:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceRestApiGetListActionUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+            - Oro\Bundle\ProductBundle\Entity\Product
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_product_frontend_product_index, requestType: rest, priority: -100 }
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_catalog_frontend_product_allproducts, requestType: rest, priority: -100 }
+
     oro_product.api.check_request_type.frontend_sku:
         class: Oro\Bundle\ProductBundle\Api\Processor\CheckFrontendSkuRequestType
         tags:
@@ -106,17 +159,18 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_locale.helper.localization'
             - '@oro_config.manager'
+            - '@router'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product }
 
-    oro_product.api.frontend.product_status_query_modifier:
+    oro_product.api.product_status_query_modifier:
         class: Oro\Bundle\ProductBundle\Api\ProductStatusQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_product.api.frontend.product_inventory_status_query_modifier:
+    oro_product.api.product_inventory_status_query_modifier:
         class: Oro\Bundle\ProductBundle\Api\ProductInventoryStatusQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'
@@ -125,7 +179,7 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_product.api.frontend.product_status_mandatory_field_provider:
+    oro_product.api.product_status_mandatory_field_provider:
         class: Oro\Bundle\ProductBundle\Api\ProductStatusMandatoryFieldProvider
         tags:
             - { name: oro.api.mandatory_field_provider, requestType: frontend }

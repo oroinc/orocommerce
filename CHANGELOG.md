@@ -11,7 +11,29 @@ The current file describes significant changes in the code that may affect the u
   to cacheable layout data providers instead of simplify them.
 * The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
 
-## 4.1.0-beta
+#### PricingBundle
+* The `getName()` method was removed from `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface`.
+  Use the `alias` attribute of the `oro_pricing.subtotal_provider` DIC tag instead.
+
+#### PromotionBundle
+* The handling of `priority` attribute for `oro_promotion.discount_context_converter`,
+  `oro_promotion.promotion_context_converter` and `oro_promotion.discount_strategy` DIC tags
+  was changed to correspond Symfony recommendations.
+  If you have services with these tags, change the sign of the priority value for them.
+  E.g. `{ name: oro_promotion.discount_context_converter, priority: 100 }` should be changed to
+  `{ name: oro_promotion.discount_context_converter, priority: -100 }`
+
+#### TaxBundle
+* The `getProcessingClassName()` method was removed from `Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface`.
+  Use the `class` attribute of the `oro_tax.tax_mapper` DIC tag instead.
+* The `getName()` method was removed from `Oro\Bundle\TaxBundle\Provider\TaxProviderInterface`.
+  Use the `alias` attribute of the `oro_tax.tax_provider` DIC tag instead.
+
+## 4.1.0-rc (2019-12-10)
+[Show detailed list of changes](incompatibilities-4-1-rc.md)
+
+## 4.1.0-beta (2019-09-30)
+[Show detailed list of changes](incompatibilities-4-1-beta.md)
 
 ### Added
 #### CMSBundle

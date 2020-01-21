@@ -2,19 +2,20 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
+/**
+ * The registry of payment method providers.
+ */
 class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
 {
-    /**
-     * @var PaymentMethodProviderInterface[]
-     */
-    private $providers = [];
+    /** @var iterable|PaymentMethodProviderInterface[] */
+    private $providers;
 
     /**
-     * @param PaymentMethodProviderInterface $provider
+     * @param iterable|PaymentMethodProviderInterface[] $providers
      */
-    public function addProvider(PaymentMethodProviderInterface $provider)
+    public function __construct(iterable $providers)
     {
-        $this->providers[] = $provider;
+        $this->providers = $providers;
     }
 
     /**
@@ -22,12 +23,15 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
      */
     public function getPaymentMethods()
     {
-        $result = [];
+        $items = [];
         foreach ($this->providers as $provider) {
-            $result = array_merge($result, $provider->getPaymentMethods());
+            $items[] = $provider->getPaymentMethods();
+        }
+        if ($items) {
+            $items = array_merge(...$items);
         }
 
-        return $result;
+        return $items;
     }
 
     /**

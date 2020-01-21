@@ -2,6 +2,10 @@ styles:
     inputs:
         - 'bundles/oroproduct/blank/scss/variables/product-view-attributes-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-box-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-title-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-image-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-images-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-images-item-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-list-config.scss'

@@ -5,6 +5,7 @@ define(function(require) {
     const template = require('tpl-loader!orocms/templates/grapesjs-import-dialog-template.html');
     const DialogWidget = require('oro/dialog-widget');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     const $ = require('jquery');
 
     const ImportDialogView = BaseView.extend({
@@ -48,17 +49,17 @@ define(function(require) {
         /**
          * @property {String}
          */
-        modalImportLabel: _.__('oro.cms.wysiwyg.import.label'),
+        modalImportLabel: __('oro.cms.wysiwyg.import.label'),
 
         /**
          * @property {String}
          */
-        modalImportTitle: _.__('oro.cms.wysiwyg.import.title'),
+        modalImportTitle: __('oro.cms.wysiwyg.import.title'),
 
         /**
          * @property {String}
          */
-        modalImportButton: _.__('oro.cms.wysiwyg.import.button'),
+        modalImportButton: __('oro.cms.wysiwyg.import.button'),
 
         /**
          * @property {Object}
@@ -126,6 +127,7 @@ define(function(require) {
                 autoRender: true,
                 el: this.el,
                 title: this.modalImportTitle,
+                loadingElement: this.editor.getEl(),
                 dialogOptions: {
                     autoResize: false,
                     resizable: false,
@@ -135,6 +137,7 @@ define(function(require) {
                     maxHeight: 435,
                     minWidth: 856,
                     maxWidth: 856,
+                    appendTo: this.editor.getEl(),
                     dialogClass: 'ui-dialog--import-template',
                     close: _.bind(function() {
                         this.dispose();
@@ -169,7 +172,10 @@ define(function(require) {
                 return;
             }
 
-            this.editor.stopCommand(this.commandId);
+            if (this.commandId) {
+                this.editor.stopCommand(this.commandId);
+            }
+
             this.unbindEvents();
 
             ImportDialogView.__super__.dispose.call(this);
@@ -186,7 +192,7 @@ define(function(require) {
             this.clearStyleTags();
 
             const _res = this.content === '' ? [] : this.editor.ComponentRestriction.validate(this.isolatedContent);
-            const validationMessage = _.__('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
+            const validationMessage = __('oro.cms.wysiwyg.validation.import', {tags: _res.join(', ')});
 
             this.validationMessage(_res.length ? validationMessage : false);
 

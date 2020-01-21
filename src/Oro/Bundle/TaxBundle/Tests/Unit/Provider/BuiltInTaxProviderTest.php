@@ -36,11 +36,6 @@ class BuiltInTaxProviderTest extends \PHPUnit\Framework\TestCase
         unset($this->provider);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('built_in', $this->provider->getName());
-    }
-
     public function testGetLabel()
     {
         $this->assertEquals('oro.tax.providers.built_in.label', $this->provider->getLabel());

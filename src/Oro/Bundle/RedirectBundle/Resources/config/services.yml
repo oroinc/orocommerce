@@ -31,6 +31,12 @@ services:
     Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
         alias: oro_redirect.routing.slug_url_matcher
 
+    oro_redirect.routing.slug_redirect_matcher:
+        class: Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher
+        arguments:
+            - '@doctrine'
+            - '@oro_scope.scope_manager'
+
     oro_redirect.slug.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -66,10 +72,15 @@ services:
     oro_redirect.provider.routing_information_provider:
         class: Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider
         public: false
+        arguments:
+            - [] # entity classes that have a routing information provider
+            - ~ # service locator for routing information providers
 
     oro_redirect.provider.context_url_provider_registry:
         class: Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry
         public: false
+        arguments:
+            - ~ # service locator for context url providers
 
     oro_redirect.migration.demo_data_fixtures_listener.update_marketing_list:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
@@ -136,6 +147,7 @@ services:
         arguments:
             - "@doctrine"
             - '@oro_security.acl_helper'
+            - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -378,6 +390,7 @@ services:
             - '@request_stack'
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.generator.slug_url_differ'
+            - '@oro_draft.helper.draft_helper'
 
     Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper:
         alias: oro_redirect.helper.changed_slugs_helper
@@ -385,8 +398,7 @@ services:
     oro_redirect.event_listener.redirect_exception_listener:
         class: Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener
         arguments:
-            - '@doctrine'
-            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.slug_redirect_matcher'
             - '@oro_redirect.routing.matched_url_decision_maker'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
@@ -397,3 +409,10 @@ services:
             - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }
+
+    oro_redirect.event_listener.draft_restrict_slug_increment_listener:
+        class: Oro\Bundle\RedirectBundle\EventListener\DraftRestrictSlugIncrementListener
+        arguments:
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_redirect.event.restrict_slug_increment, method: onRestrictSlugIncrementEvent }

@@ -5,6 +5,7 @@ oro:
                 title: '{0} All Products|[1,Inf] Search Results for "%text%"'
         entity_label: Product
         entity_plural_label: Products
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents product information.
         id.label: Id
         sku_uppercase:
@@ -171,6 +172,7 @@ oro:
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description: Represents product units information.
             code.label: Code
             default_precision:
@@ -182,6 +184,7 @@ oro:
         productunitprecision:
             entity_label: 'Product Unit Precision'
             entity_plural_label: 'Product Unit Precisions'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: 'Precision represents a number of digits after the decimal point for the number of products that a customer can order or add to the shopping list.'
             id.label: 'Id'
             product:
@@ -212,6 +215,7 @@ oro:
         productvariantlink:
             entity_label: Product Variant Link
             entity_plural_label: Product Variant Links
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             visible.label: Visible
             parent_product.label: Parent Product
@@ -220,6 +224,7 @@ oro:
         productimage:
             entity_label: Product Image
             entity_plural_label: Product Images
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             types.label: Types
             product.label: Product
@@ -236,6 +241,7 @@ oro:
         productimagetype:
             entity_label: Product Image Type
             entity_plural_label: Product Image Types
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             product_image.label: Type
@@ -246,6 +252,21 @@ oro:
         upsell_products:
             label: Up-sell Products
             no_entities: No records found
+
+        relateditem:
+            relatedproduct:
+                entity_label: Related Product
+                entity_plural_label: Related Products
+                id.label: Id
+                product.label: Product
+                related_item.label: Related Item
+
+            upsellproduct:
+                entity_label: Related Product
+                entity_plural_label: Related Products
+                id.label: Id
+                product.label: Product
+                related_item.label: Related Item
 
         lineitem:
             unit.label: Unit
@@ -298,6 +319,7 @@ oro:
             related_products: Related Products
             limit_filters_sorters: Limit Filters and Sorters
             upsellItems: Up-sell items
+            options: Options
 
         tabs:
             relatedProducts: Related Products
@@ -353,7 +375,11 @@ oro:
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
                 filters_display_settings.title: 'Display Settings'
+                images_general.title: 'General'
             fields:
+                original_file_names_enabled:
+                    label: 'Enable Original File Names'
+                    tooltip: 'When enabled, the original image file name will be appended to the system-generated hash value.'
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -513,6 +539,9 @@ oro:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
                    In order to update the existing images please run the following command:
+                storage_check_space: >
+                    This configuration option may affect application disk space usage, please check with your
+                    system administrator if you have enough space available.
         grid:
             action:
                 duplicate: Duplicate
@@ -588,11 +617,14 @@ oro:
             inventory_status_only: "Inventory statuses only"
             button.label: 'Export Products'
             filtered_products.label: 'Export Filtered Products'
+            related_products.label: 'Export Related Products'
         import:
             popup.title: 'Import Products'
             entity.label: 'Products'
+            related_products.label: 'Related Products'
         import_validation:
             button.label: 'Validate Products File'
+            related_products.label: 'Validate Related Products File'
 
         variant_field:
             default.tooltip: "Enable the fields to be able to group products by these fields"
@@ -617,6 +649,7 @@ oro:
             description:          Brand of the product
             entity_label:         Brand
             entity_plural_label:  Brands
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   The brand is a combination of the name and visual identity that is aimed to mark products or product lines of a single firm or manufacturer. Brand identifies the product and distinguishes it from the competition.
             descriptions:
                 label:    Description
@@ -657,6 +690,7 @@ oro:
 
             menu:
                 entity_plural_label:  Product Brands
+                entity_grid_all_view_label: All %entity_plural_label%
                 description:          Product Brands
 
             form:
@@ -673,6 +707,13 @@ oro:
         override_variant_configuration:
             label: Override Product Variant Configuration
             tooltip: If selected, all simple product variants included into this product collection will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration. Please note that this applies only to the products included via "Advanced Filter", as both "Manually Added" and "Excluded" products do not depend on this configuration option.
+
+        content_widget_type:
+            product_mini_block:
+                label: Product Mini-Block
+                options:
+                    show_prices.label: Show Prices
+                    show_add_button.label: Show Add Button
 
     product_unit.each:
         label:

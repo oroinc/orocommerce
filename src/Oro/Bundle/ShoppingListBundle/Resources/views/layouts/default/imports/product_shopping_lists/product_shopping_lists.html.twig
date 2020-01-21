@@ -75,25 +75,27 @@
                                                     <i class="actions-row__icon fa-pencil"></i>
                                                 </button>
                                             </li>
-                                            <li class="actions-row__item actions-row__item--separate-light">
-                                                <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
-                                                        {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
-                                                            module: 'orofrontend/js/app/components/delete-item-component',
-                                                            options: {
-                                                                route: 'oro_api_shopping_list_frontend_delete_line_item',
-                                                                routeParams: {
-                                                                    id: '<%= lineItem.id %>'
-                                                                },
-                                                                triggerData: {
-                                                                    lineItemId: '<%= lineItem.id %>'
-                                                                },
-                                                                confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                                successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
-                                                            }
-                                                        })) }}>
-                                                        <i class="actions-row__icon fa-trash-o"></i>
-                                                </button>
-                                            </li>
+                                            {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
+                                                <li class="actions-row__item actions-row__item--separate-light">
+                                                    <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
+                                                            {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
+                                                                module: 'orofrontend/js/app/components/delete-item-component',
+                                                                options: {
+                                                                    route: 'oro_api_shopping_list_frontend_delete_line_item',
+                                                                    routeParams: {
+                                                                        id: '<%= lineItem.id %>'
+                                                                    },
+                                                                    triggerData: {
+                                                                        lineItemId: '<%= lineItem.id %>'
+                                                                    },
+                                                                    confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                                                    successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+                                                                }
+                                                            })) }}>
+                                                            <i class="actions-row__icon fa-trash-o"></i>
+                                                    </button>
+                                                </li>
+                                            {% endif %}
                                         </ul>
                                     </div>
                                 </div>

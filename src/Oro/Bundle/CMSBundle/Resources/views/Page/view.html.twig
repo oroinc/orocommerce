@@ -1,6 +1,9 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%title%": entity.defaultTitle.string }}) %}
+
+{% set gridName = 'cms-page-drafts-grid' %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -11,6 +14,17 @@
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
+
+{% block breadcrumbs %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {{ parent() }}
+    {% if entity.draftUuid %}
+        <span class="page-title-draft">
+            {{ UI.badge('oro.draft.label'|trans, 'tentatively') }}
+        </span>
+    {% endif %}
+{% endblock breadcrumbs %}
 
 {% block content_data %}
     {% set pageInfo %}
@@ -46,6 +60,16 @@
             'subblocks': [{'data' : [pageContent]}]
         }
     ] %}
+
+    {% if entity.draftUuid is null %}
+        {% set draftsGrid = dataGrid.renderGrid(gridName, {draft_source_id: entity.id}, { cssClass: 'inner-grid' }) %}
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title': 'oro.cms.sections.drafts'|trans,
+                'subblocks': [{'data' : [draftsGrid]}]
+            }
+        ]) %}
+    {% endif %}
 
     {% set id = 'page-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

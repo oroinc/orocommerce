@@ -151,9 +151,10 @@
                                         ) %></span>
                                     <% } %>
                                     <div class="shopping-lists-units__actions">
-                                            <button class="button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
-                                                <i class="fa-pencil"></i>
-                                            </button>
+                                        <button class="button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
+                                            <i class="fa-pencil"></i>
+                                        </button>
+                                        {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
                                             <button class="button" type="button" title="{{ 'Delete'|trans }}"
                                                 {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                                     module: 'orofrontend/js/app/components/delete-item-component',
@@ -171,6 +172,7 @@
                                                 })) }}>
                                                 <i class="fa-trash-o"></i>
                                             </button>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <ul class="shopping-lists-modify hidden"

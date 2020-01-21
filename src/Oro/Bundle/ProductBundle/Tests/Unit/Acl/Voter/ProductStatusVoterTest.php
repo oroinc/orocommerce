@@ -47,11 +47,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($product, false)
             ->willReturn(1);
@@ -79,11 +74,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $object = new \stdClass;
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(\stdClass::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
             ->willReturn(1);
@@ -109,9 +99,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     public function testAbstainWithNonFrontendRequest($attributes)
     {
         $object = new Product();
-
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityClass');
 
         $this->doctrineHelper->expects($this->never())
             ->method('getSingleEntityIdentifier');
@@ -143,9 +130,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $object = new Product();
 
         $this->doctrineHelper->expects($this->never())
-            ->method('getEntityClass');
-
-        $this->doctrineHelper->expects($this->never())
             ->method('getSingleEntityIdentifier');
 
         $this->doctrineHelper->expects($this->never())
@@ -167,11 +151,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $product->setStatus(Product::STATUS_ENABLED);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -214,11 +193,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $product->setStatus(Product::STATUS_DISABLED);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($product, false)
             ->willReturn(2);
@@ -257,11 +231,6 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     {
         $product = $this->getEntity(Product::class, ['id' => 9999]);
         $product->setStatus(Product::STATUS_ENABLED);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($product)
-            ->will($this->returnValue(Product::class));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

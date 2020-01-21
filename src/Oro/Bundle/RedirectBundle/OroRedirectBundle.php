@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\RedirectBundle;
 
-use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\ContextUrlProviderCompilerPass;
-use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\RoutingInformationProviderCompilerPass;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\SecurityFirewallCompilerPass;
+use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
+use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * The RedirectBundle bundle class.
+ */
 class OroRedirectBundle extends Bundle
 {
     /**
@@ -15,8 +18,16 @@ class OroRedirectBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new RoutingInformationProviderCompilerPass());
-        $container->addCompilerPass(new ContextUrlProviderCompilerPass());
+        $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
+            'oro_redirect.provider.routing_information_provider',
+            'oro_redirect.routing_information_provider',
+            'alias'
+        ));
+        $container->addCompilerPass(new PriorityTaggedLocatorCompilerPass(
+            'oro_redirect.provider.context_url_provider_registry',
+            'oro_redirect.context_url_provider',
+            'alias'
+        ));
         $container->addCompilerPass(new SecurityFirewallCompilerPass());
     }
 }

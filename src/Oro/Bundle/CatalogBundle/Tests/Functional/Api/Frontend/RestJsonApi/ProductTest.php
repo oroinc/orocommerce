@@ -22,6 +22,66 @@ class ProductTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    public function testGetListFilteredByCategory()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter[category]' => '<toString(@category1->id)>', 'fields[products]' => 'sku,category']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant2->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByRootCategoryIncludingRootCategory()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter[rootCategory][gte]' => '<toString(@category1->id)>', 'fields[products]' => 'sku,category']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@configurable_product1_variant2->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByRootCategoryExcludingRootCategory()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter[rootCategory][gt]' => '<toString(@category1->id)>', 'fields[products]' => 'sku,category']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'products', 'id' => '<toString(@product3->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testGet()
     {
         $response = $this->get(

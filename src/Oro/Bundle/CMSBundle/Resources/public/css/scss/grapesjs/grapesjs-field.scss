@@ -24,38 +24,39 @@
             background-color: none;
             border-radius: 0;
 
+            .#{$app-prefix}chk-icon {
+                transform: none;
+                height: 16px;
+                margin: auto;
+                width: 16px;
+                border: 2px solid $primary-750;
+                background-color: $primary-inverse;
+                border-radius: 3px;
+            }
+
+            input[type="checkbox"]:checked {
+                + .#{$app-prefix}chk-icon {
+                    border-color: $secondary;
+                    background-color: $secondary;
+
+                    &:before {
+                        content: $fa-var-check;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 12px;
+                        margin-left: -1px;
+                        line-height: 1;
+                        color: $primary-inverse;
+                        font-family: FontAwesome;
+                    }
+                }
+            }
+
             .#{$app-prefix}input-holder {
                 height: 16px;
                 width: 16px;
-
-                .#{$app-prefix}chk-icon {
-                    transform: none;
-                    height: 16px;
-                    margin: auto;
-                    width: 16px;
-                    border: 2px solid $primary-750;
-                    background-color: $primary-inverse;
-                    border-radius: 3px;
-                }
-
-                input[type="checkbox"]:checked {
-                    + .#{$app-prefix}chk-icon {
-                        border-color: $secondary;
-                        background-color: $secondary;
-
-                        &:before {
-                            content: $fa-var-check;
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            font-size: $base-font-size;
-                            line-height: 1;
-                            color: $primary-inverse;
-                            font-family: FontAwesome;
-                        }
-                    }
-                }
             }
         }
     }

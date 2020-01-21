@@ -19,12 +19,11 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstruc
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Get Subtotal for the Checkout entity in the given currency
+ * Subtotal provider for the Checkout entity.
  */
 class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'oro.checkout.subtotals.checkout_subtotal';
     const LABEL = 'oro.checkout.subtotals.checkout_subtotal.label';
 
     /** @var TranslatorInterface */
@@ -71,14 +70,6 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->featureChecker = $featureChecker;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

@@ -39,6 +39,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         public: false
         arguments:
+            - !tagged_iterator checkout.data_provider.line_item
             - '@oro_checkout.data_provider.converter.checkout_line_items'
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
@@ -231,6 +232,8 @@ services:
     oro_checkout.workflow_state.mapper.registry.checkout_state_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
         public: false
+        arguments:
+            - [] # mappers
 
     oro_checkout.workflow_state.mapper.workflow_step:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper'
@@ -459,11 +462,8 @@ services:
 
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
-        public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
-        calls:
-            - [setContainer, ["@service_container"]]
+            - '@security.authorization_checker'
         tags:
             - { name: security.voter }
 
@@ -577,6 +577,7 @@ services:
     oro_checkout.line_item.converter_registry:
         class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry'
         arguments:
+            - [] # converters
             - '@logger'
 
     oro_checkout.line_items.factory:
@@ -623,7 +624,7 @@ services:
             - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.checkout.subtotals.checkout_subtotal }
 
     oro_checkout.model.checkout_subtotal_updater:
         class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater'

@@ -2,20 +2,22 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+use Psr\Container\ContainerInterface;
+
+/**
+ * The registry of context url providers.
+ */
 class ContextUrlProviderRegistry
 {
-    /**
-     * @var array|ContextUrlProviderInterface[]
-     */
-    private $providers = [];
+    /** @var ContainerInterface */
+    private $providers;
 
     /**
-     * @param ContextUrlProviderInterface $provider
-     * @param string $type
+     * @param ContainerInterface $providers
      */
-    public function registerProvider(ContextUrlProviderInterface $provider, $type)
+    public function __construct(ContainerInterface $providers)
     {
-        $this->providers[$type] = $provider;
+        $this->providers = $providers;
     }
 
     /**
@@ -25,10 +27,13 @@ class ContextUrlProviderRegistry
      */
     public function getUrl($type, $data)
     {
-        if (array_key_exists($type, $this->providers)) {
-            return $this->providers[$type]->getUrl($data);
+        if (!$this->providers->has($type)) {
+            return null;
         }
 
-        return null;
+        /** @var ContextUrlProviderInterface $provider */
+        $provider = $this->providers->get($type);
+
+        return $provider->getUrl($data);
     }
 }

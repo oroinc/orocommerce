@@ -21,7 +21,6 @@ use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -44,7 +43,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->paymentMethodProvider = new CompositePaymentMethodProvider();
+        $this->paymentMethodProvider = new CompositePaymentMethodProvider([]);
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->paymentMethodProvider);
@@ -115,8 +114,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var CompositePaymentMethodViewProvider $methodViewProvider */
-        $methodViewProvider = new CompositePaymentMethodViewProvider();
+        $methodViewProvider = new CompositePaymentMethodViewProvider([]);
 
         return [
             new PreloadedExtension(
@@ -140,7 +138,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    new StripTagsExtensionStub($this),
                 ]]
             ),
             $this->getValidatorExtension(true)

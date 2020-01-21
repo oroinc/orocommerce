@@ -2,30 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
+/**
+ * Represents a service that is used to get subtotals.
+ */
 interface SubtotalProviderInterface
 {
     /**
-     * Get provider name
+     * Gets entity subtotal.
      *
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * Get entity subtotal
-     *
-     * @param $entity
+     * @param object $entity
      *
      * @return Subtotal[]|Subtotal
      */
     public function getSubtotal($entity);
 
     /**
-     * Check to support provider entity
+     * Checks if this provider supports the given entity.
      *
-     * @param $entity
+     * @param object $entity
      *
-     * @return boolean
+     * @return bool
      */
     public function isSupported($entity);
 }

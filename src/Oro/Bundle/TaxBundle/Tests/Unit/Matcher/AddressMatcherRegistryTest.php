@@ -3,76 +3,83 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\TaxBundle\Matcher\AddressMatcherRegistry;
+use Oro\Bundle\TaxBundle\Matcher\MatcherInterface;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    const REGION = 'region';
-    const COUNTRY = 'country';
+    private const REGION  = 'region';
+    private const COUNTRY = 'country';
 
-    /**
-     * @var AddressMatcherRegistry
-     */
-    protected $matcherRegistry;
+    /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $regionMatcher;
+
+    /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $countryMatcher;
+
+    /** @var AddressMatcherRegistry */
+    private $matcherRegistry;
 
     public function setUp()
     {
-        $this->matcherRegistry = new AddressMatcherRegistry();
+        $this->regionMatcher = $this->createMock(MatcherInterface::class);
+        $this->countryMatcher = $this->createMock(MatcherInterface::class);
+
+        $matcherContainer = TestContainerBuilder::create()
+            ->add(self::REGION, $this->regionMatcher)
+            ->add(self::COUNTRY, $this->countryMatcher)
+            ->getContainer($this);
+
+        $this->matcherRegistry = new AddressMatcherRegistry(
+            [self::REGION, self::COUNTRY],
+            $matcherContainer
+        );
     }
 
-    public function testAddGetMatcher()
+    public function testGetMatchers()
     {
-        $regionMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\RegionMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matcherRegistry->addMatcher(self::REGION, $regionMatcher);
-        $storedMatchers = $this->matcherRegistry->getMatchers();
-        $this->equalTo(1, count($storedMatchers));
-        $this->assertEquals($regionMatcher, $storedMatchers[self::REGION]);
+        $matchers = $this->matcherRegistry->getMatchers();
+        $this->assertCount(2, $matchers);
+        $this->assertEquals($this->regionMatcher, $matchers[self::REGION]);
+        $this->assertEquals($this->countryMatcher, $matchers[self::COUNTRY]);
     }
 
-    public function testGetMatcherByType()
+    public function testGetMatcherByTypeWhenMatchersCollectionIsNotInitializedYet()
     {
-        $countryMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matcherRegistry->addMatcher(self::COUNTRY, $countryMatcher);
+        $this->assertEquals($this->regionMatcher, $this->matcherRegistry->getMatcherByType(self::REGION));
+        $this->assertEquals($this->countryMatcher, $this->matcherRegistry->getMatcherByType(self::COUNTRY));
+    }
 
-        $regionMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\RegionMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
+    public function testGetMatcherByTypeWhenMatchersCollectionIsAlreadyInitialized()
+    {
+        // initialize matchers collection
+        $this->matcherRegistry->getMatchers();
 
-        $this->matcherRegistry->addMatcher(self::REGION, $regionMatcher);
-        $storedMatchers = $this->matcherRegistry->getMatchers();
+        $this->assertEquals($this->regionMatcher, $this->matcherRegistry->getMatcherByType(self::REGION));
+        $this->assertEquals($this->countryMatcher, $this->matcherRegistry->getMatcherByType(self::COUNTRY));
+    }
 
-        $this->assertEquals(2, count($storedMatchers));
-
-        $this->assertEquals($countryMatcher, $this->matcherRegistry->getMatcherByType(self::COUNTRY));
-        $this->assertEquals($regionMatcher, $this->matcherRegistry->getMatcherByType(self::REGION));
+    // @codingStandardsIgnoreStart
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Address Matcher for type "not_existing" is missing. Registered address matchers are "region, country".
+     */
+    // @codingStandardsIgnoreEnd
+    public function testGetMatcherByTypeForNotExistingType()
+    {
+        $this->matcherRegistry->getMatcherByType('not_existing');
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Address Matcher for type "country" is missing.
+     * @expectedExceptionMessage Address Matcher for type "not_existing" is missing.
      */
-    public function testGetMatcherByTypeWithEmptyMatchers()
+    public function testGetMatcherByTypeForNotExistingTypeAndNoRefisteredMatchers()
     {
-        $this->assertEquals([], $this->matcherRegistry->getMatchers());
-
-        $this->matcherRegistry->getMatcherByType(self::COUNTRY);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Address Matcher for type "region" is missing. Registered address matchers are "country"
-     */
-    public function testGetMatcherByTypeWithoutMatching()
-    {
-        $countryMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matcherRegistry->addMatcher(self::COUNTRY, $countryMatcher);
-
-        $this->matcherRegistry->getMatcherByType(self::REGION);
+        $matcherRegistry = new AddressMatcherRegistry(
+            [],
+            TestContainerBuilder::create()->getContainer($this)
+        );
+        $matcherRegistry->getMatcherByType('not_existing');
     }
 }

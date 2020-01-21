@@ -195,7 +195,7 @@ To render `Add Content Variant` dropdown button with all available content varia
 
 If your content variant is represented by an ORM entity (like the blog post described in this example),
 enable the storefront API for it using the `Resources/config/oro/api_frontend.yml` configuration file.
-For more details, see [Frontend REST API](../../../../../customer-portal/src/Oro/Bundle/FrontendBundle/Resources/doc/frontend-api.md).
+For more details, see [Storefront REST API](https://doc.oroinc.com/backend/api/storefront/).
 
 If your content variant is represented by a non-ORM entity, enabling storefront API may be more time-consuming. As an example you can investigate how it is done for the system page content variant:
 

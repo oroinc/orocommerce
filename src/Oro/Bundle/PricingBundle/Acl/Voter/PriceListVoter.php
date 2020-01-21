@@ -8,18 +8,20 @@ use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * Prevents removal of default and referential price lists.
+ */
 class PriceListVoter extends AbstractEntityVoter
 {
     const ATTRIBUTE_DELETE = 'DELETE';
 
-    /**
-     * @var PriceList
-     */
+    /** @var array */
+    protected $supportedAttributes = [self::ATTRIBUTE_DELETE];
+
+    /** @var PriceList */
     protected $object;
 
-    /**
-     * @var PriceListReferenceChecker
-     */
+    /** @var PriceListReferenceChecker */
     protected $priceListReferenceChecker;
 
     /**
@@ -31,8 +33,6 @@ class PriceListVoter extends AbstractEntityVoter
         PriceListReferenceChecker $priceListReferenceChecker
     ) {
         parent::__construct($doctrineHelper);
-
-        $this->supportedAttributes = [self::ATTRIBUTE_DELETE];
         $this->priceListReferenceChecker = $priceListReferenceChecker;
     }
 

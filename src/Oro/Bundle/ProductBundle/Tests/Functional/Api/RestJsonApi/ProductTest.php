@@ -463,11 +463,19 @@ class ProductTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
-                'source' => ['pointer' => '/included/0/relationships/unit/data']
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'This value is not valid.',
+                    'source' => ['pointer' => '/included/0/relationships/unit/data']
+                ],
+                [
+                    'title' => 'primary product unit precision constraint',
+                    'detail' => 'A primary product unit precision should be in the collection'
+                        . ' of product unit precisions.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ]
             ],
             $response
         );
@@ -485,11 +493,19 @@ class ProductTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'not blank constraint',
-                'detail' => 'Unit should not be blank.',
-                'source' => ['pointer' => '/included/0/relationships/unit/data']
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'Unit should not be blank.',
+                    'source' => ['pointer' => '/included/0/relationships/unit/data']
+                ],
+                [
+                    'title' => 'primary product unit precision constraint',
+                    'detail' => 'A primary product unit precision should be in the collection'
+                        . ' of product unit precisions.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ]
             ],
             $response
         );
@@ -507,11 +523,19 @@ class ProductTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'Unit precision "bottle" already exists for this product.',
-                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'Unit precision "bottle" already exists for this product.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ],
+                [
+                    'title' => 'primary product unit precision constraint',
+                    'detail' => 'A primary product unit precision should be in the collection'
+                        . ' of product unit precisions.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ]
             ],
             $response
         );
@@ -534,6 +558,12 @@ class ProductTest extends RestJsonApiTestCase
                 [
                     'title' => 'form constraint',
                     'detail' => 'Unit precision "liter" already exists for this product.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ],
+                [
+                    'title' => 'primary product unit precision constraint',
+                    'detail' => 'A primary product unit precision should be in the collection'
+                        . ' of product unit precisions.',
                     'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
                 ],
                 [
@@ -601,6 +631,50 @@ class ProductTest extends RestJsonApiTestCase
             5,
             $updatedUnitPrecisionData['attributes']['precision'],
             'update attribute for unit precision'
+        );
+    }
+
+    public function testDeleteProductUnitPrecisionRelationship()
+    {
+        $precisionId = $this->getReference('product_unit_precision.product-1.liter')->getId();
+
+        $this->deleteRelationship(
+            ['entity' => 'products', 'id' => '<toString(@product-1->id)>', 'association' => 'unitPrecisions'],
+            [
+                'data' => [
+                    [
+                        'type' => 'productunitprecisions',
+                        'id' => (string)$precisionId
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertNull($this->getEntityManager()->find(ProductUnitPrecision::class, $precisionId));
+    }
+
+    public function testTryToDeletePrimaryProductUnitPrecisionRelationship()
+    {
+        $response = $this->deleteRelationship(
+            ['entity' => 'products', 'id' => '<toString(@product-1->id)>', 'association' => 'unitPrecisions'],
+            [
+                'data' => [
+                    [
+                        'type' => 'productunitprecisions',
+                        'id' => '<toString(@product_unit_precision.product-1.milliliter->id)>'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'primary product unit precision constraint',
+                'detail' => 'A primary product unit precision should be in the collection of product unit precisions.',
+            ],
+            $response
         );
     }
 

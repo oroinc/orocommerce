@@ -9,16 +9,17 @@ With the corresponding configuration of the bundle, customers can view applied t
 The bundle also provides an interface that enables developers to implement integrations with additional third-party tax providers to the OroCommerce applications.
 
 ## Table of Contents
+
  - [Create Custom Tax Provider](#create-custom-tax-provider)
  
 ## Create Custom Tax Provider
 
 You can add your own custom tax logic with custom tax provider.
-Create tax provider that implements `Oro\Bundle\TaxBundle\Provider\TaxProviderInterface` interface.
+
+1. Create tax provider that implements [TaxProviderInterface](./Provider/TaxProviderInterface) interface:
 
 ```php
 <?php
-// src/Acme/Bundle/DemoBundle/Provider/DemoTaxProvider.php
 
 namespace Acme\Bundle\DemoBundle\Provider;
 
@@ -26,16 +27,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 
 class DemoTaxProvider implements TaxProviderInterface
 {
-    const NAME = 'demo';
     const LABEL = 'acme.demo.providers.demo.label';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
-    }
 
     /**
      * {@inheritdoc}
@@ -51,14 +43,6 @@ class DemoTaxProvider implements TaxProviderInterface
     public function isApplicable()
     {
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createTaxValue($object)
-    {
-        // implement your createTaxValue() method.
     }
 
     /**
@@ -93,10 +77,10 @@ class DemoTaxProvider implements TaxProviderInterface
         // implement your removeTax() method.
     }
 }
-
 ```
 
-Register your own tax provider using **oro_tax.tax_provider** tag
+2. Register your own tax provider in the service container using **oro_tax.tax_provider** tag with **alias** attribute
+   that contains unique name of a tax provider:
 
 ```yml
 # src/Acme/Bundle/DemoBundle/Resources/config/services.yml
@@ -104,10 +88,9 @@ Register your own tax provider using **oro_tax.tax_provider** tag
 services:
     acme_demo.tax_provider.demo:
         class: 'Acme\Bundle\DemoBundle\Provider\DemoTaxProvider'
-        public: false
         tags:
-            - { name: oro_tax.tax_provider, priority: 10 }
+            - { name: oro_tax.tax_provider, alias: demo, priority: 10 }
 
 ```
 
-Go to admin panel **System/Configuration/Taxation/Tax Calculation** and chose your own **Tax Provider** in the choice list.
+3. Go to admin panel **System/Configuration/Taxation/Tax Calculation** and chose your own **Tax Provider** in the choice list.

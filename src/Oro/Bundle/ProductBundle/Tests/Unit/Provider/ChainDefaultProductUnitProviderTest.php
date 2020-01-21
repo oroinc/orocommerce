@@ -8,83 +8,62 @@ use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ChainDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ChainDefaultProductUnitProvider
-     */
-    protected $chainProvider;
+    /** @var ChainDefaultProductUnitProvider */
+    private $chainProvider;
 
-    /**
-     * @var DefaultProductUnitProviderInterface
-     */
-    protected $highPriorityProvider;
+    /** @var DefaultProductUnitProviderInterface */
+    private $highPriorityProvider;
 
-    /**
-     * @var DefaultProductUnitProviderInterface
-     */
-    protected $lowPriorityProvider;
+    /** @var DefaultProductUnitProviderInterface */
+    private $lowPriorityProvider;
 
-    /**
-     * @var ProductUnitPrecision
-     */
-    protected $unitPrecision;
+    /** @var ProductUnitPrecision */
+    private $unitPrecision;
 
     protected function setUp()
     {
-        $this->chainProvider = new ChainDefaultProductUnitProvider();
         $this->unitPrecision = new ProductUnitPrecision();
 
-        $this->highPriorityProvider = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
-            ->disableOriginalConstructor()
-            ->setMockClassName('HighPriorityProvider')
-            ->getMock();
-        $this->lowPriorityProvider = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
-            ->disableOriginalConstructor()
-            ->setMockClassName('LowPriorityProvider')
-            ->getMock();
+        $this->highPriorityProvider = $this->createMock(DefaultProductUnitProviderInterface::class);
+        $this->lowPriorityProvider = $this->createMock(DefaultProductUnitProviderInterface::class);
 
-        $this->chainProvider->addProvider($this->highPriorityProvider);
-        $this->chainProvider->addProvider($this->lowPriorityProvider);
+        $this->chainProvider = new ChainDefaultProductUnitProvider([
+            $this->highPriorityProvider,
+            $this->lowPriorityProvider
+        ]);
     }
 
     public function testGetDefaultProductUnitPrecisionByHighPriorityProvider()
     {
-        $this->highPriorityProvider
-            ->expects($this->once())
+        $this->highPriorityProvider->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue($this->unitPrecision));
-        $this->lowPriorityProvider
-            ->expects($this->never())
+            ->willReturn($this->unitPrecision);
+        $this->lowPriorityProvider->expects($this->never())
             ->method('getDefaultProductUnitPrecision');
 
-        $this->assertEquals($this->unitPrecision, $this->chainProvider->getDefaultProductUnitPrecision());
+        $this->assertSame($this->unitPrecision, $this->chainProvider->getDefaultProductUnitPrecision());
     }
 
     public function testGetDefaultProductUnitPrecisionByLowPriorityProvider()
     {
-        $this->highPriorityProvider
-            ->expects($this->once())
+        $this->highPriorityProvider->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue(null));
-        $this->lowPriorityProvider
-            ->expects($this->once())
+            ->willReturn(null);
+        $this->lowPriorityProvider->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue($this->unitPrecision));
+            ->willReturn($this->unitPrecision);
 
-        $this->assertEquals($this->unitPrecision, $this->chainProvider->getDefaultProductUnitPrecision());
+        $this->assertSame($this->unitPrecision, $this->chainProvider->getDefaultProductUnitPrecision());
     }
 
     public function testGetDefaultProductUnitPrecisionNone()
     {
-        $this->highPriorityProvider
-            ->expects($this->once())
+        $this->highPriorityProvider->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue(null));
-        $this->lowPriorityProvider
-            ->expects($this->once())
+            ->willReturn(null);
+        $this->lowPriorityProvider->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $this->assertNull($this->chainProvider->getDefaultProductUnitPrecision());
     }

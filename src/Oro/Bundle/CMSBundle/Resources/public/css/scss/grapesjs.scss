@@ -48,11 +48,21 @@
 
     &select-control {
         margin-#{$end}: 5px;
+
+        .dropdown-menu {
+            &[x-out-of-boundaries] {
+                display: block;
+            }
+        }
     }
 
     &pn-views-container {
+        $offset: 40px;
+
+        height: calc(100% - #{$offset});
+        margin-top: $offset;
+
         box-shadow: none;
-        padding-top: 40px;
     }
 
     &pn-commands,
@@ -259,7 +269,7 @@
 
 // Additional styles for fullscreen mode
 .page-content-editor {
-    margin: -12px;
+    margin: -$grapesjs-content-editor-offset;
 }
 
 .ui-dialog {
@@ -267,6 +277,10 @@
         .CodeMirror {
             width: 820px;
             height: 346px;
+
+            &-lines {
+                font-size: 12px;
+            }
         }
 
         .ui-dialog-content {

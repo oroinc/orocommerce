@@ -7,6 +7,7 @@ use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Symfony\Component\Form\AbstractType;
@@ -155,7 +156,7 @@ class ConsentType extends AbstractType
 
         $form->add(
             'content_node',
-            ContentNodeSelectType::class,
+            ContentNodeFromWebCatalogSelectType::class,
             $contentNodeOptions
         );
     }

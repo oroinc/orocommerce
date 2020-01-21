@@ -68,6 +68,8 @@ services:
     oro_inventory.importexport.template_fixture.inventory_level:
         class: 'Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture\InventoryLevelFixture'
         public: false
+        arguments:
+            - '@oro_locale.manager.localization'
         tags:
             - { name: oro_importexport.template_fixture }
 

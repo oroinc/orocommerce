@@ -134,9 +134,10 @@ services:
     oro_paypal.method.provider.express_checkout.composite:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
         public: false
-        calls:
-            - [addProvider, ['@oro_paypal.method.provider.payflow_gateway.express_checkout']]
-            - [addProvider, ['@oro_paypal.method.provider.payments_pro.express_checkout']]
+        arguments:
+            -
+                - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
+                - '@oro_paypal.method.provider.payments_pro.express_checkout'
 
     oro_paypal.method.factory.credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalCreditCardPaymentMethodFactory'

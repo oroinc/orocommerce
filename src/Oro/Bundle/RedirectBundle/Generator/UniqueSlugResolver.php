@@ -4,11 +4,14 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Keep slug URLs unique per entity by adding suffix on duplicates.
@@ -30,6 +33,11 @@ class UniqueSlugResolver
     private $aclHelper;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * Store URLs processed in the current batch to increment suffixes for entities withing same transaction.
      *
      * @var array
@@ -39,11 +47,16 @@ class UniqueSlugResolver
     /**
      * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        AclHelper $aclHelper,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -146,6 +159,7 @@ class UniqueSlugResolver
         }
 
         $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
+        $qb = $this->getRestrictedOneDirectUrlBySlugQueryBuilder($qb, $entity);
 
         return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
     }
@@ -199,6 +213,21 @@ class UniqueSlugResolver
     {
         return !empty($this->processedUrls[$slug])
             && $this->processedUrls[$slug] !== $this->getEntityIdentifier($entity);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param SluggableInterface $entity
+     * @return QueryBuilder
+     */
+    private function getRestrictedOneDirectUrlBySlugQueryBuilder(
+        QueryBuilder $qb,
+        SluggableInterface $entity
+    ): QueryBuilder {
+        $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($qb, $entity);
+        $this->eventDispatcher->dispatch(RestrictSlugIncrementEvent::NAME, $restrictSlugIncrementEvent);
+
+        return $restrictSlugIncrementEvent->getQueryBuilder();
     }
 
     /**

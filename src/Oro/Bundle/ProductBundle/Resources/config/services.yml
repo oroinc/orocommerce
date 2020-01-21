@@ -373,6 +373,8 @@ services:
     oro_product.provider.default_product_unit_provider.chain:
         class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
         public: false
+        arguments:
+            - !tagged_iterator oro_product.default_product_unit_provider
 
     oro_product.provider.default_product_unit_provider.system:
         class: 'Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider'
@@ -381,7 +383,7 @@ services:
             - "@oro_config.manager"
             - "@oro_entity.doctrine_helper"
         tags:
-            - {name: oro_product.default_product_unit_provider, priority: 0}
+            - { name: oro_product.default_product_unit_provider }
 
     oro_product.provider.default_product_unit_provider.single_unit:
         class: 'Oro\Bundle\ProductBundle\Provider\SingleUnitDefaultProductUnitProvider'
@@ -390,7 +392,7 @@ services:
             - "@oro_product.service.single_unit_mode"
             - "@oro_product.provider.default_product_unit_provider.system"
         tags:
-            - {name: oro_product.default_product_unit_provider, priority: 240}
+            - { name: oro_product.default_product_unit_provider, priority: 240 }
 
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
@@ -1335,7 +1337,6 @@ services:
     oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
         shared: false
-        public: true
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
 
@@ -1402,6 +1403,14 @@ services:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'
         arguments:
             - '@oro_layout.provider.image_type'
+
+    oro_product.provider.product_image_file_name_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
+        decorates: oro_attachment.provider.attachment_file_name_provider
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_product.provider.product_image_file_name_provider.inner'
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
@@ -1640,3 +1649,18 @@ services:
             - '@translator'
             - '@oro_entity_config.manager.attribute_group_manager'
         public: true
+
+    oro_product.content_widget_type.product_mini_block:
+        class: Oro\Bundle\ProductBundle\ContentWidget\ProductMiniBlockContentWidgetType
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - "@oro_config.manager"
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_product.delete_handler_extension.product_unit_precision:
+        class: Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision }

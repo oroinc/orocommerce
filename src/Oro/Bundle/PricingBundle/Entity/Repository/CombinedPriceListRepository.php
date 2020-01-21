@@ -11,11 +11,13 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -156,35 +158,40 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $selectQb = $this->createQueryBuilder('priceList')
             ->select('priceList.id');
-
-        $relations = [
-            'priceListToWebsite' => 'OroPricingBundle:CombinedPriceListToWebsite',
-            'priceListToCustomerGroup' => 'OroPricingBundle:CombinedPriceListToCustomerGroup',
-            'priceListToCustomer' => 'OroPricingBundle:CombinedPriceListToCustomer',
-        ];
-
-        foreach ($relations as $alias => $entityName) {
+        foreach (CombinedPriceListRelationHelper::RELATIONS as $alias => $entityName) {
             $selectQb->leftJoin(
                 $entityName,
                 $alias,
                 Join::WITH,
-                $selectQb->expr()->orX(
-                    $selectQb->expr()->eq($alias . '.priceList', 'priceList.id'),
-                    $selectQb->expr()->eq($alias . '.fullChainPriceList', 'priceList.id')
-                )
+                $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
             );
-            $selectQb->andWhere($alias . '.priceList IS NULL');
+            $selectQb->andWhere($selectQb->expr()->isNull($alias . '.priceList'));
+
+            $fcAlias = $alias . 'fc';
+            $selectQb->leftJoin(
+                $entityName,
+                $fcAlias,
+                Join::WITH,
+                $selectQb->expr()->eq($fcAlias . '.fullChainPriceList', 'priceList.id')
+            );
+            $selectQb->andWhere($selectQb->expr()->isNull($fcAlias . '.fullChainPriceList'));
         }
         $selectQb->leftJoin(
-            'OroPricingBundle:CombinedPriceListActivationRule',
+            CombinedPriceListActivationRule::class,
             'rule',
             Join::WITH,
-            $selectQb->expr()->orX(
-                $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id'),
-                $selectQb->expr()->eq('rule.fullChainPriceList', 'priceList.id')
-            )
+            $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
         );
         $selectQb->andWhere($selectQb->expr()->isNull('rule.combinedPriceList'));
+
+        $selectQb->leftJoin(
+            CombinedPriceListActivationRule::class,
+            'rulefc',
+            Join::WITH,
+            $selectQb->expr()->eq('rulefc.fullChainPriceList', 'priceList.id')
+        );
+        $selectQb->andWhere($selectQb->expr()->isNull('rulefc.fullChainPriceList'));
+
         if ($exceptPriceLists) {
             $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
                 ->setParameter('exceptPriceLists', $exceptPriceLists);
@@ -260,12 +267,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
      */
     public function hasOtherRelations(BaseCombinedPriceListRelation $exceptRelation)
     {
-        $relationsClasses = [
-            'customerCpl' => CombinedPriceListToCustomer::class,
-            'customerGroupCpl' => CombinedPriceListToCustomerGroup::class,
-            'websiteCpl' => CombinedPriceListToWebsite::class,
-        ];
-
         $mainQb = $this->createQueryBuilder('cpl');
         $mainQb->select('1')
             ->where('cpl = :cpl')
@@ -273,7 +274,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
             ->setParameter('website', $exceptRelation->getWebsite());
 
         $expr = $mainQb->expr()->orX();
-        foreach ($relationsClasses as $alias => $class) {
+        foreach (CombinedPriceListRelationHelper::RELATIONS as $alias => $class) {
             $subQb = $this->getEntityManager()->createQueryBuilder();
             $subQb->select('1')
                 ->from($class, $alias)
@@ -346,6 +347,9 @@ class CombinedPriceListRepository extends BasePriceListRepository
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
         $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+        // Return only not calculated CPLs withing offset hours
+        $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
+            ->setParameter('pricesCalculated', false);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setBufferSize(self::CPL_BATCH_SIZE);
@@ -383,17 +387,13 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
             )
-            ->where($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
-            ->andWhere(
+            ->where(
                 $qb->expr()->orX(
                     $qb->expr()->lt('combinedPriceListActivationRule.activateAt', ':activateData'),
                     $qb->expr()->isNull('combinedPriceListActivationRule.activateAt')
                 )
             )
-            ->setParameters([
-                'pricesCalculated' => false,
-                'activateData' => $activateDate
-            ]);
+            ->setParameter('activateData', $activateDate);
 
         return $qb;
     }

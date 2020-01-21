@@ -25,12 +25,12 @@ Feature: Shopping list without permissions
     And I login as administrator
     Given I go to System/ Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    Then the "Enable Guest Shopping List" checkbox should not be checked
+    When uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And I save setting
     Then I should see "Configuration saved" flash message
-    And the "Enable guest shopping list" checkbox should be checked
+    And the "Enable Guest Shopping List" checkbox should be checked
 
   Scenario: Ensure that shopping list block is visible for guest by default
     Given I proceed as the Guest

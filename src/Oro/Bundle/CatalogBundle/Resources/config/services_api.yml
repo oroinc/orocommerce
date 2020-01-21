@@ -7,6 +7,23 @@ services:
             - '@oro_api.criteria_connector'
             - '@oro_api.query_acl_helper'
 
+    oro_catalog.api.resource_type_resolver.category_product_collection:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'master_catalog_category_product_collection'
+            - ['categoryId']
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_product_frontend_product_index }
+
+    oro_catalog.api.resource_api_url_resolver.category_products_collection:
+        class: Oro\Bundle\CatalogBundle\Api\CategoryProductsRestJsonApiResourceApiUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_product_frontend_product_index, requestType: rest&json_api }
+
     oro_catalog.api.remove_not_available_category_node_from_parent_filter:
         class: Oro\Bundle\CatalogBundle\Api\Processor\RemoveNotAvailableCategoryNodeFromFilter
         arguments:
@@ -106,6 +123,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_locale.helper.localization'
             - '@oro_config.manager'
+            - '@router'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CatalogBundle\Entity\Category }
 

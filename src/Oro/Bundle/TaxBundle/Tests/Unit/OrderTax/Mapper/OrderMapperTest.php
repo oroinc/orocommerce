@@ -70,19 +70,13 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         $this->mapper = new OrderMapper(
             $this->eventDispatcher,
             $this->addressProvider,
-            'Oro\Bundle\OrderBundle\Entity\Order'
+            $this->orderLineItemMapper
         );
-        $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
     }
 
     protected function tearDown()
     {
         unset($this->mapper, $this->orderLineItemMapper);
-    }
-
-    public function testGetProcessingClassName()
-    {
-        $this->assertEquals('Oro\Bundle\OrderBundle\Entity\Order', $this->mapper->getProcessingClassName());
     }
 
     public function testMap()

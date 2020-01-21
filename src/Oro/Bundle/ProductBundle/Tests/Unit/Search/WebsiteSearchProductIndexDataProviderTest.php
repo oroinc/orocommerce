@@ -143,12 +143,12 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     public function getIndexDataProvider()
     {
         $enumAttribute = new FieldConfigModel('inventoryStatus');
-        $enumAttribute->setEntity(new EntityConfigModel());
+        $enumAttribute->setEntity(new EntityConfigModel(Product::class));
         $enumAttributeType = new EnumAttributeType();
         $enumSearchAttributeType = new EnumSearchableAttributeType($enumAttributeType);
 
         $stringAttribute = new FieldConfigModel('sku');
-        $stringAttribute->setEntity(new EntityConfigModel());
+        $stringAttribute->setEntity(new EntityConfigModel(Product::class));
         $stringAttributeType = new StringAttributeType();
         $stringSearchAttributeType = new StringSearchableAttributeType($stringAttributeType);
 
@@ -166,13 +166,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = new FieldConfigModel('descriptions');
-        $manyToManyAttribute->setEntity(new EntityConfigModel())
+        $manyToManyAttribute->setEntity(new EntityConfigModel(Product::class))
             ->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
         $manyToManyAttributeType = new ManyToManyAttributeType($entityNameResolver, $doctrineHelper);
         $manyToManySearchAttributeType = new ManyToManySearchableAttributeType($manyToManyAttributeType);
 
         $multiEnumAttribute = new FieldConfigModel('flags');
-        $multiEnumAttribute->setEntity(new EntityConfigModel());
+        $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class));
         $multiEnumAttributeType = new MultiEnumAttributeType();
         $multiEnumSearchAttributeType = new MultiEnumSearchableAttributeType($multiEnumAttributeType);
 

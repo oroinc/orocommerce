@@ -1,5 +1,5 @@
 services:
-    oro_order.api.frontend.order_address_query_modifier:
+    oro_order.api.order_address_query_modifier:
         class: Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier
         arguments:
             - '@oro_entity.orm.entity_class_resolver'

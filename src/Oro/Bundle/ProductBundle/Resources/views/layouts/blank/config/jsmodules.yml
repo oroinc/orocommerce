@@ -1,5 +1,5 @@
 aliases:
-    jquery-elevatezoom$: bowerassets/elevatezoom3/jquery.elevatezoom
+    jquery-elevatezoom$: npmassets/@oroinc/elevatezoom/jquery.elevatezoom
     oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}
@@ -33,6 +33,7 @@ dynamic-imports:
         - oroproduct/js/app/views/quick-add-import-form-view
         - oroproduct/js/app/views/quick-add-item-view
         - oroproduct/js/app/views/quick-add-view
+        - oroproduct/js/app/widget/product-popup-gallery-widget
         - oroproduct/js/content-processor/product-add-to-dropdown-button
         - oroproduct/js/widget/zoom-widget
 shim:

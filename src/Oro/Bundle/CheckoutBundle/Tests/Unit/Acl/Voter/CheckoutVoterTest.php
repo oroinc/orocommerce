@@ -3,9 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -13,70 +12,34 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutVoter
-     */
-    protected $voter;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $authorizationChecker;
+    /** @var CheckoutVoter */
+    private $voter;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $services = [
-            'security.authorization_checker' => $this->authorizationChecker,
-        ];
-
-        /* @var $container ContainerInterface|\PHPUnit\Framework\MockObject\MockObject */
-        $container = $this->createMock(ContainerInterface::class);
-        $container->expects($this->any())
-            ->method('get')
-            ->willReturnCallback(function ($id) use ($services) {
-                return $services[$id];
-            });
-
-        $this->voter = new CheckoutVoter($this->doctrineHelper);
-        $this->voter->setContainer($container);
+        $this->voter = new CheckoutVoter($this->authorizationChecker);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage ContainerInterface not injected
+     * @return ObjectIdentity
      */
-    public function testWithoutContainer()
+    private function getIdentity()
     {
-        $object = $this->createMock(CheckoutSourceEntityInterface::class);
-
-        /* @var $token TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
-        $token = $this->createMock(TokenInterface::class);
-
-        $voter = new CheckoutVoter($this->doctrineHelper);
-        $voter->vote($token, $object, [CheckoutVoter::ATTRIBUTE_CREATE]);
+        return new ObjectIdentity('entity', 'commerce@Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface');
     }
 
     /**
-     * @param array $inputData
-     * @param int $expectedResult
-     *
      * @dataProvider voteProvider
      */
-    public function testVote(array $inputData, $expectedResult)
+    public function testVote(array $inputData, int $expectedResult)
     {
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
@@ -90,11 +53,6 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                 return null;
             });
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($inputData['object'])
-            ->willReturn($inputData['object']);
-
         /* @var $token TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
         $token = $this->createMock(TokenInterface::class);
 
@@ -106,14 +64,11 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function voteProvider()
     {
         $object = $this->createMock(CheckoutSourceEntityInterface::class);
-
-        $permissionCreate = 'CREATE;entity:OroCheckoutBundle:Checkout';
+        $permissionCreate = 'CREATE;entity:' . Checkout::class;
 
         return [
             '!Entity' => [
@@ -190,13 +145,5 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                 'expected' => CheckoutVoter::ACCESS_ABSTAIN
             ],
         ];
-    }
-
-    /**
-     * @return ObjectIdentity
-     */
-    protected function getIdentity()
-    {
-        return new ObjectIdentity('entity', 'commerce@Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface');
     }
 }

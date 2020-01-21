@@ -47,3 +47,32 @@ operations:
                     - '@blank': $.requestRoute
                     - '@and':
                         - '@not_blank': $.routes[name]
+
+    CMS_CREATE_DRAFT:
+        extends: CREATE_DRAFT
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\Page
+
+    CMS_PUBLISH_DRAFT:
+        extends: PUBLISH_DRAFT
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\Page
+        datagrids:
+            - cms-page-drafts-grid
+
+    CMS_DUPLICATE_DRAFT:
+        extends: DUPLICATE_DRAFT
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\Page
+        datagrids:
+            - cms-page-drafts-grid
+
+    CMS_UPDATE_DRAFT:
+        extends: UPDATE_DRAFT
+        datagrids:
+            - cms-page-drafts-grid
+
+    CMS_DELETE_DRAFT:
+        extends: DELETE_DRAFT
+        datagrids:
+            - cms-page-drafts-grid

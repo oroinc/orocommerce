@@ -12,7 +12,7 @@ class LoadCombinedPriceListsSimplified extends AbstractCombinedPriceListsFixture
      */
     protected $data = [
         [
-            'name' => '1t_3t_2t',
+            'name' => '1_2_3',
             'enabled' => true,
             'calculated' => true,
             'priceListsToCustomers' => [],

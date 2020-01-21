@@ -31,6 +31,7 @@ oro:
         product_shipping_options:
             entity_label: Shipping Option
             entity_plural_label: Shipping Options
+            entity_grid_all_view_label: All %entity_plural_label%
             add_label: Add Options
             product_unit.label: Unit
             weight.label: Weight
@@ -39,20 +40,24 @@ oro:
         weightunit:
             entity_label: Unit Of Weight
             entity_plural_label: Units Of Weight
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
             conversion_rates.label: Conversion Rates
         lengthunit:
             entity_label: Unit Of Length
             entity_plural_label: Units Of Length
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
             conversion_rates.label: Conversion Rates
         freightclass:
             entity_label: Freight Class
             entity_plural_label: Freight Classes
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
         shippingmethodsconfigsrule:
             entity_label: Shipping Rule
             entity_plural_label: Shipping Rules
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             rule.label: Rule
             destinations.label: Destinations
@@ -66,6 +71,7 @@ oro:
             disabled: Disabled
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             method.label: Method
             options.label: Options
@@ -74,6 +80,7 @@ oro:
         shippingmethodtypeconfig:
             entity_label: Shipping Rule Method Type Config
             entity_plural_label: Shipping Rule Method Types Configs
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             enabled.label: Enabled

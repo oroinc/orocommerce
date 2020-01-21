@@ -78,6 +78,8 @@ system_configuration:
             title: oro.product.system_configuration.groups.disable_filters.title
         filters_display_settings:
             title: oro.product.system_configuration.groups.filters_display_settings.title
+        images_general:
+            title: oro.product.system_configuration.groups.images_general.title
 
     fields:
         oro_product.related_products_enabled:
@@ -574,6 +576,14 @@ system_configuration:
                     oro.product.system_configuration.fields.filters_display_settings.options.collapsed: collapsed
                     oro.product.system_configuration.fields.filters_display_settings.options.expanded: expanded
 
+        oro_product.original_file_names_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.original_file_names_enabled.label
+                tooltip: oro.product.system_configuration.fields.original_file_names_enabled.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -640,6 +650,9 @@ system_configuration:
                             product_images:
                                 priority: 200
                                 children:
+                                    images_general:
+                                        children:
+                                            - oro_product.original_file_names_enabled
                                     product_image_watermark:
                                         children:
                                             - oro_product.product_image_watermark_file
@@ -740,6 +753,12 @@ system_configuration:
                                             - oro_product.upsell_products_use_slider_on_mobile
                     product:
                         children:
+                            product_images:
+                                children:
+                                    images_general:
+                                        priority: 500
+                                        children:
+                                            - oro_product.original_file_names_enabled
                             configurable_products:
                                 priority: 50
                                 children:

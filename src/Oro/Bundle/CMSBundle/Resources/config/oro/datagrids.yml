@@ -355,3 +355,62 @@ datagrids:
                     enabled: false
                 updatedAt:
                     enabled: false
+
+    cms-page-drafts-grid:
+        extends: cms-page-grid
+        source:
+            query:
+                select:
+                    - page.createdAt
+                    - page.updatedAt
+                    - CONCAT(draftOwner.firstName, ' ', draftOwner.lastName) as ownerName
+                join:
+                    left:
+                        - { join: page.draftOwner, alias: draftOwner }
+                where:
+                    and:
+                        - page.draftSource = :draft_source_id
+                        - page.draftUuid IS NOT NULL
+            bind_parameters:
+                - draft_source_id
+        options:
+            entityHint: oro.cms.page.draft.entity_plural_label
+            showDrafts: true
+            gridViews:
+                allLabel: oro.cms.page.draft.entity_grid_all_view_label
+        columns:
+            slug:
+                label: oro.cms.page.slugs.singular_label
+            ownerName:
+                label:         oro.cms.page.draft.owner.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            slug:
+                type: localized_value
+                data_name: slugPrototypes
+        sorters:
+            columns:
+                createdAt:
+                    data_name: page.createdAt
+                updatedAt:
+                    data_name: page.updatedAt
+                slug:
+                    data_name: slug
+            default:
+                id: ASC
+        filters:
+            columns:
+                slug:
+                    type: string
+                    data_name: slug
+                createdAt:
+                    type: datetime
+                    data_name: page.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: page.updatedAt

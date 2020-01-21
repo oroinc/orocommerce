@@ -2,6 +2,7 @@ oro.pricing:
     priceattributeproductprice:
         entity_label: 'Price Attribute Product Price'
         entity_plural_label: 'Price Attribute Product Prices'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label: 'Id'
         currency:
             label: 'Currency'
@@ -39,6 +40,7 @@ oro.pricing:
     pricelist:
         entity_label: 'Price List'
         entity_plural_label: 'Price Lists'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_description: 'A price list is a list of product quantities with their prices in the base or additional currencies. Price lists are used to determine prices for catalog products in the store front.'
         id.label: 'Id'
         actual:
@@ -105,6 +107,7 @@ oro.pricing:
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: 'Price attributes are custom parameters where you can store the product price-related information (e.g. MRSP) that may be used in the rule-based price lists to calculate the price for the buyer.'
         name:
             label: 'Price Attribute'
@@ -125,6 +128,7 @@ oro.pricing:
     pricerule:
         entity_label: Price Calculation Rule
         entity_plural_label: Price Calculation Rules
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents a price calculation rule and conditions when it is applicable.
         currency:
             label: Currency
@@ -180,6 +184,7 @@ oro.pricing:
     productprice:
         entity_label: Product Price
         entity_plural_label: Product Prices
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents product price
         id.label: ID
         product.label: Product
@@ -214,6 +219,7 @@ oro.pricing:
     priceattributeprice:
         entity_label: Product Attribute Price
         entity_plural_label: Product Attributes Prices
+        entity_grid_all_view_label: All %entity_plural_label%
 
     price_type:
         bundled: 'bundle'
@@ -325,6 +331,7 @@ oro.pricing:
         product_prices:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
+            price_not_found.short_label: N/A
         product:
             quantity:
                 short_label: 'Qty'

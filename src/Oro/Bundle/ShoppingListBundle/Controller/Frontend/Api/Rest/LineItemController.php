@@ -46,15 +46,17 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
         if ($lineItem) {
-            if (!$this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $view = $this->view(null, Response::HTTP_FORBIDDEN);
-            } else {
+            if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
                 $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
                 $success = true;
+            } else {
+                $view = $this->view(null, Response::HTTP_FORBIDDEN);
             }
+        } else {
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
-        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $lineItem->getId(), 'success' => $success]);
+        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $id, 'success' => $success]);
     }
 
     /**
@@ -77,27 +79,27 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $entity = $this->getManager()->find($id);
 
         if ($entity) {
-            $form = $this->createForm(FrontendLineItemType::class, $entity, ['csrf_protection' => false]);
+            if ($this->isGranted('EDIT', $entity) && $this->isGranted('EDIT', $entity->getShoppingList())) {
+                $form = $this->createForm(FrontendLineItemType::class, $entity, ['csrf_protection' => false]);
 
-            $handler = new LineItemHandler(
-                $form,
-                $request,
-                $this->getDoctrine(),
-                $this->get('oro_shopping_list.manager.shopping_list'),
-                $this->get('oro_shopping_list.manager.current_shopping_list'),
-                $this->get('validator')
-            );
-            $isFormHandled = $handler->process($entity);
-            if ($isFormHandled) {
-                $view = $this->view(
-                    ['unit' => $entity->getUnit()->getCode(), 'quantity' => $entity->getQuantity()],
-                    Response::HTTP_OK
+                $handler = new LineItemHandler(
+                    $form,
+                    $request,
+                    $this->getDoctrine(),
+                    $this->get('oro_shopping_list.manager.shopping_list'),
+                    $this->get('oro_shopping_list.manager.current_shopping_list'),
+                    $this->get('validator')
                 );
+                $isFormHandled = $handler->process($entity);
+                if ($isFormHandled) {
+                    $view = $this->view(
+                        ['unit' => $entity->getUnit()->getCode(), 'quantity' => $entity->getQuantity()],
+                        Response::HTTP_OK
+                    );
+                } else {
+                    $view = $this->view($form, Response::HTTP_BAD_REQUEST);
+                }
             } else {
-                $view = $this->view($form, Response::HTTP_BAD_REQUEST);
-            }
-
-            if (!$this->isGranted('EDIT', $entity->getShoppingList())) {
                 $view = $this->view(null, Response::HTTP_FORBIDDEN);
             }
         } else {

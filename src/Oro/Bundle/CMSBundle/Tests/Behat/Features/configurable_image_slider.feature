@@ -101,8 +101,9 @@ Feature: Configurable image slider
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title | Image slider page |
-      | URI   | image-slider-page |
+      | Title       | Image slider page |
+      | Target Type | URI               |
+      | URI         | image-slider-page |
     And I save form
     Then I should see "Menu item saved successfully" flash message
 

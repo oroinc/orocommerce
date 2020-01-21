@@ -26,13 +26,15 @@ oro.cms:
         component:
             content_block: 'Content Block'
             content_widget: 'Content Widget'
-            code: 'Code'
+            code:
+                label: 'Code'
+                placeholder: 'Type code here'
             link_button: 'Link Button'
-            text_basic: 'Text Section'
             table: 'Table'
             digital_asset:
                 image: 'Image'
                 file: 'File'
+            text_basic: 'Text Section'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
@@ -46,6 +48,8 @@ oro.cms:
             delete: 'Delete'
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
+        settings:
+            label: 'Settings'
     change_type:
         confirmation:
             title: 'Change Type'

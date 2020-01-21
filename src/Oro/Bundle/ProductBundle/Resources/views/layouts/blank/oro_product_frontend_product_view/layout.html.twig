@@ -208,10 +208,16 @@
     {% set fieldName = block.vars.fieldName|lower %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' product-view__' ~ fieldName} ) %}
     <div {{ block('block_attributes') }}>
-        {% if label|trans|first != '_' %}
-            <span class="product-view-attribute">{{ label|trans }}:</span>
+        {% if 'attribute_collection' in block_prefixes %}
+            {{ block('product_view_attribute_collection_widget') }}
+        {% elseif 'attribute_image' in block_prefixes %}
+            {{ block('product_view_attribute_image_widget') }}
+        {% else %}
+            {% if label|trans|first != '_' %}
+                <span class="product-view-attribute">{{ label|trans }}:</span>
+            {% endif %}
+            <span>{{ block_widget(block) }}</span>
         {% endif %}
-        <span>{{ block_widget(block) }}</span>
     </div>
 {% endblock %}
 
@@ -243,4 +249,83 @@
             {{ children|raw }}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block product_view_attribute_collection_widget %}
+    {% if value|length > 0 %}
+        {% if label|trans|first != '_' %}
+            <div class="product-view__attribute-title">{{ label|trans }}</div>
+        {% endif %}
+        {{ block('product_view_' ~ block_type ~ '_widget') }}
+    {% endif %}
+{% endblock %}
+
+{% block product_view_attribute_multiimages_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set collection = value %}
+    {% set galleryImages = [] %}
+    {% for item in collection %}
+        {% set galleryImages = galleryImages|merge([{
+            src: Image.url(item.file, 'product_gallery_popup'),
+            alt: ''
+        }]) %}
+    {% endfor %}
+
+    {% set popupGalleryAttr = {
+        'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
+        'data-page-component-options': {
+            bindWithSlider: false,
+            galleryImages: galleryImages
+        }|json_encode
+    } %}
+
+    <div class="product-view__attribute-images" {{ UI.attributes(popupGalleryAttr) }}>
+        {%- for item in collection -%}
+        <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
+            <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+        </div>
+        {%- endfor -%}
+    </div>
+{% endblock %}
+
+{% block product_view_attribute_image_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set popupGalleryAttr = {
+        'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
+        'data-page-component-options': {
+            bindWithSlider: false,
+            galleryImages: [{
+                src: Image.url(value, 'product_gallery_popup'),
+            }]
+        }|json_encode
+    } %}
+
+    <div {{ UI.attributes(popupGalleryAttr) }}>
+        {% if label|trans|first != '_' %}
+            <span class="product-view-attribute">{{ label|trans }}:</span>
+        {% endif %}
+        <span class="product-view__attribute-images-item" data-trigger-gallery-open>
+            <img class="product-view__attribute-image" src="{{ Image.url(value, 'product_small') }}"/>
+        </span>
+    </div>
+{% endblock %}
+
+{% block product_view_attribute_multifiles_widget %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block attribute_group_rest_attribute_widget %}
+    <div class="tab-content__wrapper">
+        {% if 'attribute_collection' in block_prefixes %}
+            {{ block('product_view_attribute_collection_widget') }}
+        {% elseif 'attribute_image' in block_prefixes %}
+            {{ block('product_view_attribute_image_widget') }}
+        {% else %}
+            {{ block('attribute_label_widget') }} {{ block_widget(block) }}
+        {% endif %}
+    </div>
 {% endblock %}

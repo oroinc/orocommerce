@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\AttachmentBundle\Helper\FieldConfigHelper;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -129,7 +130,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
 
             /** @var FieldConfigModel $attribute */
             foreach ($group['attributes'] as $attribute) {
-                if ($attribute->getType() !== WYSIWYGType::TYPE) {
+                if (!$this->isSeparateGroup($attribute->getType())) {
                     continue;
                 }
 
@@ -152,7 +153,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         parent::addAttributeEditBlocks($event, $group, $attributes);
 
         foreach ($attributes as $attribute) {
-            if ($attribute->getType() !== WYSIWYGType::TYPE) {
+            if (!$this->isSeparateGroup($attribute->getType())) {
                 continue;
             }
 
@@ -165,7 +166,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
      */
     protected function renderAttributeEditData(Environment $twig, FormView $attributeView, FieldConfigModel $attribute)
     {
-        return $attribute->getType() === WYSIWYGType::TYPE
+        return $this->isSeparateGroup($attribute->getType())
             ? $twig->render('OroEntityConfigBundle:Attribute:widget.html.twig', ['child' => $attributeView])
             : parent::renderAttributeEditData($twig, $attributeView, $attribute);
     }
@@ -178,7 +179,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         parent::addAttributeViewBlocks($event, $group, $attributes);
 
         foreach ($attributes as $attribute) {
-            if ($attribute->getType() !== WYSIWYGType::TYPE) {
+            if (!$this->isSeparateGroup($attribute->getType())) {
                 continue;
             }
 
@@ -194,7 +195,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
      */
     protected function renderAttributeViewData(Environment $twig, $entity, FieldConfigModel $attribute)
     {
-        if ($attribute->getType() === WYSIWYGType::TYPE) {
+        if ($this->isSeparateGroup($attribute->getType())) {
             return $twig->render(
                 'OroEntityConfigBundle:Attribute:attributeCollapsibleView.html.twig',
                 ['entity' => $entity, 'field' => $attribute]
@@ -202,5 +203,22 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         }
 
         return parent::renderAttributeViewData($twig, $entity, $attribute);
+    }
+
+    /**
+     * @param string|null $type
+     * @return bool
+     */
+    protected function isSeparateGroup(?string $type): bool
+    {
+        return in_array(
+            (string)$type,
+            [
+                WYSIWYGType::TYPE,
+                FieldConfigHelper::MULTI_FILE_TYPE,
+                FieldConfigHelper::MULTI_IMAGE_TYPE
+            ],
+            true
+        );
     }
 }

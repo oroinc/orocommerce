@@ -30,7 +30,6 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidation
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -68,7 +67,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider([]);
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
@@ -217,7 +216,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
+                    new StripTagsExtensionStub($this)
                 ]]
             ),
             $this->getValidatorExtension(true)

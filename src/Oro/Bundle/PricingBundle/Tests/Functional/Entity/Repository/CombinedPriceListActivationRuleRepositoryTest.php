@@ -6,8 +6,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 {
     /**
@@ -23,15 +27,12 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $className = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $this->manager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className);
-        $this->repository = $this->manager->getRepository($className);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-            ]
-        );
+            ->getManagerForClass(CombinedPriceListActivationRule::class);
+        $this->repository = $this->manager->getRepository(CombinedPriceListActivationRule::class);
+        $this->loadFixtures([
+            LoadCombinedPriceLists::class,
+        ]);
     }
 
     public function testDeleteRulesByCPL()
@@ -90,6 +91,21 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 
     public function testDeleteExpiredRules()
     {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f',
+                'expiredAt' => $pastTime
+            ],
+            [
+                'cplName' => '1f',
+                'fullCPLName' => '2f',
+                'activateAt' => $now
+            ],
+        ];
+        $this->createRules($data);
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2f');
         $rules = $this->repository->findBy(['fullChainPriceList' => $cpl]);
@@ -127,6 +143,41 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->assertTrue($rules[1]->isActive());
     }
 
+    public function testDeleteUnlinkedRules()
+    {
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+        $this->prepareUnlinkedRulesData();
+
+        $this->repository->deleteUnlinkedRules();
+        // Check second call processed correctly (all rules already removed)
+        $this->repository->deleteUnlinkedRules();
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertCount(0, $rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
+    }
+
+    public function testDeleteUnlinkedRulesSkipPriceList()
+    {
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+        $this->prepareUnlinkedRulesData();
+        $this->repository->deleteUnlinkedRules([$cpl1]);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertNotEmpty($rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
+    }
+
     /**
      * @param array $rulesData
      */
@@ -149,5 +200,100 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
             $this->manager->persist($rule);
         }
         $this->manager->flush();
+    }
+
+    private function prepareUnlinkedRulesData(): void
+    {
+        $data = [
+            [
+                'fullCPLName' => '2t_3t',
+                'cplName' => '2f'
+            ],
+            [
+                'fullCPLName' => '2f',
+                'cplName' => '2f'
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl1 = $this->getReference('2t_3t');
+        $cpl2 = $this->getReference('2f');
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules1 = $this->repository->findBy(['fullChainPriceList' => $cpl1]);
+        $this->assertNotEmpty($rules1);
+
+        /** @var CombinedPriceListActivationRule[] $rules1 */
+        $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
+        $this->assertNotEmpty($rules2);
+    }
+
+    public function testHasActivationRules()
+    {
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f',
+            ],
+        ];
+        $this->createRules($data);
+        $cpl = $this->getReference('2f');
+        $this->assertTrue($this->repository->hasActivationRules($cpl));
+    }
+
+    public function testHasActivationRulesFalse()
+    {
+        $cpl = $this->getReference('2f_1t_3t');
+        $this->assertFalse($this->repository->hasActivationRules($cpl));
+    }
+
+    public function testGetActualRuleByCpl()
+    {
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $futureTime = new \DateTime('+ 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl = $this->getReference('2f');
+        $fullCpl = $this->getReference('2f_1t_3t');
+        $rule = $this->repository->getActualRuleByCpl($fullCpl, $now);
+        $this->assertInstanceOf(CombinedPriceListActivationRule::class, $rule);
+        $this->assertSame($fullCpl, $rule->getFullChainPriceList());
+        $this->assertSame($cpl, $rule->getCombinedPriceList());
+        $this->assertEquals($pastTime, $rule->getActivateAt());
+        $this->assertEquals($futureTime, $rule->getExpireAt());
+    }
+
+    public function testGetActiveRuleByScheduledCpl()
+    {
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $futureTime = new \DateTime('+ 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl = $this->getReference('2f');
+        $fullCpl = $this->getReference('2f_1t_3t');
+        $rule = $this->repository->getActiveRuleByScheduledCpl($cpl, $now);
+        $this->assertInstanceOf(CombinedPriceListActivationRule::class, $rule);
+        $this->assertSame($fullCpl, $rule->getFullChainPriceList());
+        $this->assertSame($cpl, $rule->getCombinedPriceList());
+        $this->assertEquals($pastTime, $rule->getActivateAt());
+        $this->assertEquals($futureTime, $rule->getExpireAt());
     }
 }

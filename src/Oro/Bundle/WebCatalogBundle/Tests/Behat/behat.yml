@@ -50,6 +50,10 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
                         element: Select2Entity
+                    Product:
+                        type: css
+                        locator: 'div[id^="oro_web_catalog_content_node_contentVariants_0_productPageProduct-"]'
+                        element: Select2Entity
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -98,6 +102,12 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
+
+        First Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][0]"] .btn-toggle-variant'
+
+        Second Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
 
     suites:
         OroWebCatalogBundle:

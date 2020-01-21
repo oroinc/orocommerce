@@ -8,21 +8,6 @@ use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
 class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContentVariantTypeRegistry
-     */
-    protected $registry;
-
-    protected function setUp()
-    {
-        $this->registry = new ContentVariantTypeRegistry();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->registry);
-    }
-
     public function testAddPageType()
     {
         $pageTypeName = 'test_type';
@@ -34,9 +19,9 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('getName')
             ->willReturn($pageTypeName);
 
-        $this->registry->addContentVariantType($pageType);
+        $registry = new ContentVariantTypeRegistry([$pageType]);
 
-        $this->assertEquals([$pageTypeName => $pageType], $this->registry->getContentVariantTypes());
+        $this->assertEquals([$pageTypeName => $pageType], $registry->getContentVariantTypes());
     }
 
     public function testGetPageType()
@@ -48,9 +33,9 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('getName')
             ->willReturn('test_type');
 
-        $this->registry->addContentVariantType($pageType);
+        $registry = new ContentVariantTypeRegistry([$pageType]);
 
-        $actualPageType = $this->registry->getContentVariantType($pageType->getName());
+        $actualPageType = $registry->getContentVariantType($pageType->getName());
         $this->assertSame($pageType, $actualPageType);
     }
 
@@ -60,8 +45,9 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('Content variant type "%s" is not known.', $unknownPageType));
-        
-        $this->registry->getContentVariantType($unknownPageType);
+
+        $registry = new ContentVariantTypeRegistry([]);
+        $registry->getContentVariantType($unknownPageType);
     }
 
     public function testGetPageTypes()
@@ -83,17 +69,16 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('getName')
             ->willReturn($pageType2Name);
 
-        $this->registry->addContentVariantType($pageType1);
-        $this->registry->addContentVariantType($pageType2);
+        $registry = new ContentVariantTypeRegistry([$pageType1, $pageType2]);
 
-        $this->assertInternalType('array', $this->registry->getContentVariantTypes());
+        $this->assertInternalType('array', $registry->getContentVariantTypes());
 
         $this->assertEquals(
             [
                 $pageType1Name => $pageType1,
                 $pageType2Name => $pageType2
             ],
-            $this->registry->getContentVariantTypes()
+            $registry->getContentVariantTypes()
         );
     }
 
@@ -122,16 +107,15 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('isAllowed')
             ->willReturn(false);
 
-        $this->registry->addContentVariantType($pageType1);
-        $this->registry->addContentVariantType($pageType2);
+        $registry = new ContentVariantTypeRegistry([$pageType1, $pageType2]);
 
-        $this->assertInternalType('array', $this->registry->getAllowedContentVariantTypes());
+        $this->assertInternalType('array', $registry->getAllowedContentVariantTypes());
 
         $this->assertEquals(
             [
                 $pageType1Name => $pageType1
             ],
-            $this->registry->getAllowedContentVariantTypes()
+            $registry->getAllowedContentVariantTypes()
         );
     }
 
@@ -152,9 +136,8 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('getFormType')
             ->willReturn('form.type');
 
-        $this->registry->addContentVariantType($type1);
-        $this->registry->addContentVariantType($type2);
+        $registry = new ContentVariantTypeRegistry([$type1, $type2]);
 
-        $this->assertEquals('form.type', $this->registry->getFormTypeByType('type2'));
+        $this->assertEquals('form.type', $registry->getFormTypeByType('type2'));
     }
 }
