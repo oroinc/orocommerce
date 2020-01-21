@@ -29,7 +29,7 @@ Example:
 {
   "data": {
     "type": "orderaddresses",
-      "attributes": {
+    "attributes": {
       "phone": "1234567890",
       "label": "Address 01",
       "street": "1215 Caldwell Road",
@@ -72,8 +72,8 @@ Example:
 {
   "data": {
     "type": "orderaddresses",
-      "id": "1",
-      "attributes": {
+    "id": "1",
+    "attributes": {
       "phone": "1234567890",
       "label": "Address 01",
       "street": "1215 Caldwell Road",
