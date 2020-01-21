@@ -134,9 +134,9 @@
             {%- endif -%}
             {{ description|render_content }}
         </div>
-        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon fa-chevron-down"></i>
-        </a>
+        <button class="collapse-view__trigger" data-collapse-trigger>
+            <span class="collapse-view__trigger-icon fa-chevron-down" aria-hidden="true"></span>
+        </button>
     </div>
     {% endif %}
 {% endblock %}

@@ -71,13 +71,15 @@
                                     <div class="shopping-lists-units__actions">
                                         <ul class="actions-row">
                                             <li class="actions-row__item actions-row__item--separate-light">
-                                                <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
-                                                    <i class="actions-row__icon fa-pencil"></i>
+                                                <button class="actions-row__button" type="button"
+                                                        aria-label="{{ 'Edit'|trans }}" data-role="edit">
+                                                    <span class="actions-row__icon fa-pencil" aria-hidden="true"></span>
                                                 </button>
                                             </li>
                                             {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
                                                 <li class="actions-row__item actions-row__item--separate-light">
-                                                    <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
+                                                    <button class="actions-row__button" type="button"
+                                                            aria-label="{{ 'Delete'|trans }}"
                                                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                                                 module: 'orofrontend/js/app/components/delete-item-component',
                                                                 options: {
@@ -92,7 +94,7 @@
                                                                     successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
                                                                 }
                                                             })) }}>
-                                                            <i class="actions-row__icon fa-trash-o"></i>
+                                                        <span class="actions-row__icon fa-trash-o" aria-hidden="true"></span>
                                                     </button>
                                                 </li>
                                             {% endif %}
@@ -109,6 +111,7 @@
                                                name="quantity"
                                                data-role="field__quantity"
                                                disabled="disabled"
+                                               aria-label="{{ 'oro.product.lineitem.quantity.enter'|trans }}"
                                                required
                                             <% if (precision) { %>
                                                 data-precision="<%- precision %>"
@@ -142,18 +145,18 @@
                                         <span class="shopping-lists-modify__edit">
                                             <button class="shopping-lists-modify__button"
                                                     type="button"
-                                                    title="{{ 'Accept'|trans }}"
+                                                    aria-label="{{ 'Accept'|trans }}"
                                                     disabled
                                                     data-role="accept">
-                                                    <i class="shopping-lists-modify__icon fa-check"></i>
+                                                <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
                                             </button>
                                         </span>
                                         <span class="shopping-lists-modify__edit">
                                             <button class="shopping-lists-modify__button reset"
                                                     type="button"
-                                                    title="{{ 'Decline'|trans }}"
+                                                    aria-label="{{ 'Decline'|trans }}"
                                                     data-role="decline">
-                                                    <i class="shopping-lists-modify__icon fa-close"></i>
+                                                <span class="shopping-lists-modify__icon fa-close" aria-hidden="true"></span>
                                             </button>
                                         </span>
                                     </li>
@@ -192,7 +195,8 @@
                                        min="1"
                                        value="1"
                                        name="oro_product_frontend_line_item[quantity]"
-                                       data-role="add-form-qty">
+                                       data-role="add-form-qty"
+                                       aria-label="{{ 'oro.product.lineitem.quantity.enter'|trans }}" >
                             </li>
                             <li class="shopping-lists-modify__select">
                                 <% if (singleUnitMode && applySingleUnitMode) { %>
@@ -216,17 +220,17 @@
                                 <span class="shopping-lists-modify__edit">
                                     <button class="shopping-lists-modify__button"
                                             type="button"
-                                            title="{{ 'Accept'|trans }}"
+                                            aria-label="{{ 'Accept'|trans }}"
                                             data-role="add-form-accept">
-                                            <i class="shopping-lists-modify__icon fa-check"></i>
+                                        <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
                                     </button>
                                 </span>
                                 <span class="shopping-lists-modify__edit">
                                     <button class="shopping-lists-modify__button reset"
                                             type="reset"
-                                            title="{{ 'Decline'|trans }}"
+                                            aria-label="{{ 'Decline'|trans }}"
                                             data-role="add-form-reset">
-                                            <i class="shopping-lists-modify__icon fa-close"></i>
+                                        <span class="shopping-lists-modify__icon fa-close" aria-hidden="true"></span>
                                     </button>
                                 </span>
                             </li>
