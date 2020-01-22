@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
@@ -15,6 +14,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 {
     protected function setUp()
@@ -161,19 +165,17 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider getPriceListIteratorDataProvider
-     * @param string $website
-     * @param int|null $fallback
-     * @param array $expectedCustomerGroups
-     */
-    public function testGetCustomerGroupIteratorByFallback($website, $fallback, $expectedCustomerGroups)
+    public function testGetCustomerGroupIteratorWithDefaultFallback()
     {
         /** @var $website Website */
-        $website = $this->getReference($website);
+        $website = $this->getReference('US');
+        $expectedCustomerGroups = [
+            'Non-Authenticated Visitors',
+            'customer_group.group1',
+            'customer_group.group3',
+        ];
 
-        $iterator = $this->getRepository()
-            ->getCustomerGroupIteratorByDefaultFallback($website, $fallback);
+        $iterator = $this->getRepository()->getCustomerGroupIteratorWithDefaultFallback($website);
 
         $actualSiteMap = [];
         foreach ($iterator as $customerGroup) {
@@ -182,32 +184,21 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         $this->assertSame($expectedCustomerGroups, $actualSiteMap);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListIteratorDataProvider()
+    public function testGetCustomerGroupIteratorWithSelfFallback()
     {
-        return [
-            'with fallback' => [
-                'website' => 'US',
-                'fallback' => PriceListCustomerGroupFallback::WEBSITE,
-                'expectedCustomerGroups' => [
-                    'Non-Authenticated Visitors',
-                    'customer_group.group1',
-                    'customer_group.group3',
-                ]
-            ],
-            'without fallback' => [
-                'website' => 'US',
-                'fallback' => null,
-                'expectedCustomerGroups' => [
-                    'Non-Authenticated Visitors',
-                    'customer_group.group1',
-                    'customer_group.group2',
-                    'customer_group.group3',
-                ]
-            ],
+        /** @var $website Website */
+        $website = $this->getReference('US');
+        $expectedCustomerGroups = [
+            'customer_group.group2',
         ];
+
+        $iterator = $this->getRepository()->getCustomerGroupIteratorWithSelfFallback($website);
+
+        $actualSiteMap = [];
+        foreach ($iterator as $customerGroup) {
+            $actualSiteMap[] = $customerGroup->getName();
+        }
+        $this->assertSame($expectedCustomerGroups, $actualSiteMap);
     }
 
     public function testGetAllWebsiteIds()
@@ -308,7 +299,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceListToCustomerGroup');
+        return $this->getContainer()->get('doctrine')->getRepository(PriceListToCustomerGroup::class);
     }
 
     public function testDelete()
@@ -328,5 +319,32 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
             0,
             $this->getRepository()->findBy(['customerGroup' => $customerGroup, 'website' => $website])
         );
+    }
+
+    /**
+     * @dataProvider assignedPriceListsDataProvider
+     * @param string $websiteReference
+     * @param string $customerGroupReference
+     * @param bool $expected
+     */
+    public function testHasAssignedPriceLists($websiteReference, $customerGroupReference, $expected)
+    {
+        /** @var Website $website */
+        $website = $this->getReference($websiteReference);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference($customerGroupReference);
+
+        $this->assertEquals($expected, $this->getRepository()->hasAssignedPriceLists($website, $customerGroup));
+    }
+
+    /**
+     * @return array
+     */
+    public function assignedPriceListsDataProvider(): array
+    {
+        return [
+            ['US', 'customer_group.group1', true],
+            ['CA', 'customer_group.group1', false]
+        ];
     }
 }

@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -52,11 +51,6 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
     protected $configManager;
 
     /**
-     * @var CombinedPriceListGarbageCollector|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $garbageCollector;
-
-    /**
      * @var PriceListCollectionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListCollectionProvider;
@@ -100,12 +94,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListCollectionProvider = $this->createMock(PriceListCollectionProvider::class);
         $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
-        $this->garbageCollector = $this->createMock(CombinedPriceListGarbageCollector::class);
         $this->websiteBuilder = $this->createMock(WebsiteCombinedPriceListsBuilder::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
-        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
-        $this->cplScheduleResolver = $this->createMock($className);
+        $this->cplScheduleResolver = $this->createMock(CombinedPriceListScheduleResolver::class);
         $priceResolver = $this->createMock(MergePricesCombiningStrategy::class);
         $strategyRegister = new StrategyRegister($this->configManager);
         $strategyRegister->add(MergePricesCombiningStrategy::NAME, $priceResolver);
@@ -115,7 +107,6 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
             $this->configManager,
             $this->priceListCollectionProvider,
             $this->combinedPriceListProvider,
-            $this->garbageCollector,
             $this->cplScheduleResolver,
             $strategyRegister,
             $this->triggerHandler,

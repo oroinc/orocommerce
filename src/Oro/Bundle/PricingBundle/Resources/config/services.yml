@@ -211,7 +211,6 @@ services:
             - '@doctrine'
             - '@oro_pricing.provider.price_list_collection'
             - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
             - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
@@ -252,7 +251,6 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.provider.price_list_collection'
             - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
             - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
@@ -270,6 +268,8 @@ services:
             - '@oro_pricing.builder.combined_price_list_builder'
             - '@event_dispatcher'
             - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+            - '@oro_config.global'
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
