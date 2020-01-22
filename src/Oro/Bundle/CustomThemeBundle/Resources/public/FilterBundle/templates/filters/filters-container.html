@@ -1,14 +1,14 @@
 <% if (!_.isEmpty(filters)) { %>
     <% if (renderMode === 'toggle-mode') { %>
-        <div class="filter-box toggle-mode" <%= attributes %>>
+        <div class="filter-box toggle-mode" <%- attributes %>>
             <div class="filter-container">
                 <div data-filters-items>
                     <div class="filter-items-hint">
                         <button type="button"
                                 class="btn btn--size-s btn--link reset-filter-button"
                         >
-                            <span class="fa-close"></span>
-                            <%= _.__('oro.filter.reset.label') %>
+                            <span class="fa-close" aria-hidden="true"></span>
+                            <%- _.__('oro.filter.reset.label') %>
                         </button>
                     </div>
                     <div class="filter-items"></div>
@@ -25,16 +25,16 @@
             </div>
         </div>
     <% } else if (renderMode == 'collapse-mode') { %>
-        <div class="filter-box collapse-mode" <%= attributes %> >
+        <div class="filter-box collapse-mode" <%- attributes %> >
             <div class="filters-box-collapse"
                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                  data-page-component-options="{&quot;widgetModule&quot;:&quot;oroui/js/widget/collapse-widget&quot;,&quot;open&quot;:false}"
             >
                 <div class="filters-box-collapse__trigger" data-collapse-trigger>
                     <%- _.__('oro.product.product_filters.collapse.label')  %>
-                    <div class="filters-box-collapse__icon">
-                        <i class="fa-plus"></i>
-                        <i class="fa-minus"></i>
+                    <div class="filters-box-collapse__icon" aria-hidden="true">
+                        <span class="fa-plus"></span>
+                        <span class="fa-minus"></span>
                     </div>
                 </div>
                 <div class="filter-container">
@@ -59,15 +59,15 @@
                         <button type="button"
                                 class="btn btn--size-s btn--link reset-filter-button"
                         >
-                            <span class="fa-close"></span>
-                            <%= _.__('oro.filter.reset.label') %>
+                            <span class="fa-close" aria-hidden="true"></span>
+                            <%- _.__('oro.filter.reset.label') %>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     <% } else { %>
-        <div class="filter-box dropdown-mode" <%= attributes %> >
+        <div class="filter-box dropdown-mode" <%- attributes %> >
             <div class="filter-container">
                 <select data-action="add-filter-select"
                         data-skip-input-widgets
@@ -84,10 +84,10 @@
                 <div class="filter-items"></div>
                 <div class="filter-items-hint">
                     <button type="button"
-                            class="btn btn--link reset-filter-button"
+                            class="btn btn--link btn--size-s reset-filter-button"
                     >
-                        <span class="fa-close"></span>
-                        <%= _.__('oro.filter.reset.label') %>
+                        <span class="fa-close" aria-hidden="true"></span>
+                        <%- _.__('oro.filter.reset.label') %>
                     </button>
                 </div>
             </div>
