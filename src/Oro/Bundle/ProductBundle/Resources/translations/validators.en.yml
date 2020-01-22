@@ -42,6 +42,7 @@ oro:
 
         unit_precisions_items:
             blank: 'Please add one or more product units.'
+            primary_precision_not_in_collection: 'A primary product unit precision should be in the collection of product unit precisions.'
 
         frontend:
             quick_add:

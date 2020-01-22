@@ -5,8 +5,8 @@ namespace Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -17,12 +17,23 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
     /** @var RegistryInterface */
     private $doctrine;
 
+    /** @var LocalizationManager */
+    private $localizationManager;
+
     /**
      * @param RegistryInterface $doctrine
      */
     public function setDoctrine(RegistryInterface $doctrine): void
     {
         $this->doctrine = $doctrine;
+    }
+
+    /**
+     * @param LocalizationManager $localizationManager
+     */
+    public function setLocalizationManager(LocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
     }
 
     /**
@@ -60,8 +71,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
                 ->getEntityManagerForClass(Category::class)
                 ->getRepository(Category::class)
                 ->getMasterCatalogRoot();
-            $localization = new Localization();
-            $localization->setName('English');
+            $localization = $this->localizationManager->getDefaultLocalization();
             $entity
                 ->setParentCategory($rootCategory)
                 ->addTitle((new LocalizedFallbackValue())->setString('Sample Category'))

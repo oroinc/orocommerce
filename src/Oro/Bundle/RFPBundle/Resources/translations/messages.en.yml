@@ -6,6 +6,7 @@ oro:
             entity_label:               'Request For Quote'
             entity_label_short:         'Request'
             entity_plural_label:        'Requests For Quote'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The document used for negotiations on a better price, more convenient quantities of products, or additional services.
             id.label:                   'RFQ #'
             first_name:
@@ -83,6 +84,7 @@ oro:
         requestproduct:
             entity_label:               'Request Product'
             entity_plural_label:        'Request Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The product that the RFQ is made for.
             add_label:                  'Add Line Item'
             id.label:                   'ID'
@@ -106,6 +108,7 @@ oro:
             item:                       '{units}, {price} per {unit}'
             entity_label:               'Request Product Line'
             entity_plural_label:        'Request Product Lines'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The product line item added to the request for quote. That is, price per unit for a specific quantity of a selected product.
             add_label:                  'Add Request Item'
             id.label:                   'ID'
@@ -131,6 +134,7 @@ oro:
         requestadditionalnote:
             entity_label: 'Request Additional Note'
             entity_plural_label: 'Request Additional Notes'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: 'Notes added to the RFQ by the sales person as a Request More Information note or by the buyer as a Provide More Information note.'
             id.label: 'ID'
             request:
@@ -259,6 +263,7 @@ oro:
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
+                entity_grid_all_view_label: 'All %entity_plural_label%'
                 create_title.label: 'Request A Quote'
                 edit_title.label: 'Request For Quote #%id%'
                 id.label: 'RFQ #'

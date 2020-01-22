@@ -115,6 +115,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
 
+    oro_web_catalog.request_web_content_scope_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.matched_url_decision_maker'
+
     oro_web_catalog.event_listener.request_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\RequestListener
         arguments:

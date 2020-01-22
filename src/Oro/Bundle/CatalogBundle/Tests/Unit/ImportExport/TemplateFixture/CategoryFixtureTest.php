@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture\CategoryFixture;
 use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateEntityRegistry;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateManager;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
@@ -20,12 +21,17 @@ class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryFixture */
     private $fixture;
 
+    /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $localizationManager;
+
     protected function setUp()
     {
         $this->templateManager = $this->createMock(TemplateManager::class);
         $this->doctrine = $this->createMock(RegistryInterface::class);
 
         $this->fixture = new CategoryFixture();
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
+        $this->fixture->setLocalizationManager($this->localizationManager);
         $this->fixture->setDoctrine($this->doctrine);
         $this->fixture->setTemplateManager($this->templateManager);
     }

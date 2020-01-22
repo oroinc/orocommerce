@@ -6,18 +6,21 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeProducts:
         addTitle: ['@localValueProducts']
         addSlugPrototype: ['@localValueProductsSlug']
+        addLocalizedUrl: ['@localValueProductsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeNewArrivals:
         addTitle: ['@localValueNewArrivals']
         addSlugPrototype: ['@localValueNewArrivalsSlug']
+        addLocalizedUrl: ['@localValueNewArrivalsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeClearance:
         addTitle: ['@localValueClearance']
         addSlugPrototype: ['@localValueClearanceSlug']
+        addLocalizedUrl: ['@localValueClearanceSlug']
         addContentVariant: ['@clearanceVariant']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
@@ -25,6 +28,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeByBrand:
         addTitle: ['@localValueByBrand']
         addSlugPrototype: ['@localValueByBrandSlug']
+        addLocalizedUrl: ['@localValueByBrandSlug']
         addContentVariant: ['@brandVariant']
         ParentNode: '@nodeClearance'
         webCatalog: '@webCatalog'

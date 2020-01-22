@@ -10,6 +10,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes:
             groups: [product_create_step_one]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision: ~
     properties:
         sku:
             - NotBlank:

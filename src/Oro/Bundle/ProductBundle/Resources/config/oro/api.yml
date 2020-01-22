@@ -2,6 +2,7 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
+            delete_handler: oro_product.delete_handler.product_unit_precision
         Oro\Bundle\ProductBundle\Entity\ProductUnit:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
             fields:

@@ -5,6 +5,7 @@ oro:
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
@@ -137,6 +138,7 @@ oro:
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
@@ -172,6 +174,7 @@ oro:
             item_bundled: '{0}{units}, {price} for every {units}|{1}{units} or more, {price} for every {units}'
             entity_label: 'Quote Product Offer'
             entity_plural_label: 'Quote Product Offers'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Offer'
             id.label: 'ID'
             quantity.label: 'Quantity'
@@ -195,6 +198,7 @@ oro:
             item: '{units}, {price} per {unit}'
             entity_label: 'Quote Product Request'
             entity_plural_label: 'Quote Product Requests'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Request'
             id.label: 'ID'
             quantity.label: 'Requested Qty'
@@ -212,6 +216,7 @@ oro:
         quoteaddress:
             entity_label: Quote Address
             entity_plural_label: Quote Addresses
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             customer_address.label: Customer address
             customer_user_address.label: Customer user address
@@ -240,6 +245,7 @@ oro:
         quotedemand:
             entity_label: 'Quote Demand'
             entity_plural_label: 'Quote Demands'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'Id'
             quote.label: 'Quote'
             total.label: 'Total'
@@ -302,6 +308,7 @@ oro:
                 label: 'Sales'
             quote:
                 entity_plural_label: Quotes
+                entity_grid_all_view_label: All %entity_plural_label%
                 qid.label: 'Quote #'
                 customer_user.label: 'Owner'
                 customer_status.label: 'Status'

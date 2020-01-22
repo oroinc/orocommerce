@@ -18,6 +18,7 @@ oro:
         inventorylevel:
             entity_label:         Inventory Level
             entity_plural_label:  Inventory Levels
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   Inventory Level is a product quantity that is availabile in a warehouse.
             id.label:             Id
             quantity:
@@ -41,6 +42,7 @@ oro:
         inventory_level_save.flash.success: Inventory Level has been saved
         inventory:
             entity_plural_label: Inventories
+            entity_grid_all_view_label: All %entity_plural_label%
         low_inventory:
             label: Low Inventory
             message: This item is running low on inventory

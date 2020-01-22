@@ -3,6 +3,7 @@ services:
         class: Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture\CategoryFixture
         calls:
             - ['setDoctrine', ['@doctrine']]
+            - ['setLocalizationManager', ['@oro_locale.manager.localization']]
         tags:
             - { name: oro_importexport.template_fixture }
 
