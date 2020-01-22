@@ -58,6 +58,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
     }
 
     /**
+     * @deprecated use getCustomerIteratorWithDefaultFallback instead
      * @param CustomerGroup $customerGroup
      * @param Website $website
      * @param int|null $fallback
@@ -107,6 +108,68 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         }
 
         return new BufferedIdentityQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     * @param Website $website
+     * @return \Iterator|Customer[]
+     */
+    public function getCustomerIteratorWithDefaultFallback(
+        CustomerGroup $customerGroup,
+        Website $website
+    ) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('distinct customer.id')
+            ->from(Customer::class, 'customer')
+            ->leftJoin(
+                PriceListToCustomer::class,
+                'plToCustomer',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('plToCustomer.website', ':website'),
+                    $qb->expr()->eq('plToCustomer.customer', 'customer')
+                )
+            )
+            ->leftJoin(
+                PriceListCustomerFallback::class,
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.website', ':website'),
+                    $qb->expr()->eq('priceListFallBack.customer', 'customer')
+                )
+            )
+            ->where($qb->expr()->eq('customer.group', ':customerGroup'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
+            ->orderBy('customer.id');
+
+        $qb->setParameters([
+            'website' => $website,
+            'customerGroup' => $customerGroup,
+            'fallbackToGroup' => PriceListCustomerFallback::ACCOUNT_GROUP
+        ]);
+
+        $em = $this->getEntityManager();
+        $iterator = new BufferedQueryResultIterator($qb->getQuery());
+        $iterator->setPageLoadedCallback(
+            static function ($rows) use ($em) {
+                $entities = [];
+                foreach ($rows as $row) {
+                    $entities[] = $em->getReference(Customer::class, $row);
+                }
+
+                return $entities;
+            }
+        );
+
+        return $iterator;
     }
 
     /**
@@ -176,6 +239,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
     /**
      * @param Customer $customer
      * @return CustomerWebsiteDTO[]|ArrayCollection
+     * @deprecated
      */
     public function getCustomerWebsitePairsByCustomer(Customer $customer)
     {
@@ -184,6 +248,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
 
     /**
      * @return CustomerWebsiteDTO[]|ArrayCollection
+     * @deprecated
      */
     public function getAllCustomerWebsitePairs()
     {
@@ -193,6 +258,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
     /**
      * @param Customer|null $customer
      * @return CustomerWebsiteDTO[]|ArrayCollection
+     * @deprecated
      */
     protected function getCustomerWebsitePairs(Customer $customer = null)
     {
@@ -220,6 +286,89 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         }
 
         return $collection;
+    }
+
+    /**
+     * @return CustomerWebsiteDTO[]|\Iterator
+     */
+    public function getAllCustomerWebsitePairsWithSelfFallback()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select(
+                'IDENTITY(priceListFallBack.customer) as customer_id',
+                'IDENTITY(priceListFallBack.website) as website_id'
+            )
+            ->from(PriceListCustomerFallback::class, 'priceListFallBack')
+            ->where($qb->expr()->eq('priceListFallBack.fallback', ':fallback'))
+            ->setParameter('fallback', PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY);
+
+        $iterator = new BufferedQueryResultIterator($qb);
+        $em = $this->getEntityManager();
+        $iterator->setPageLoadedCallback(
+            static function ($rows) use ($em) {
+                $entities = [];
+                foreach ($rows as $pair) {
+                    /** @var Customer $customer */
+                    $customer = $em->getReference(Customer::class, $pair['customer_id']);
+                    /** @var Website $website */
+                    $website = $em->getReference(Website::class, $pair['website_id']);
+                    $entities[] = new CustomerWebsiteDTO($customer, $website);
+                }
+
+                return $entities;
+            }
+        );
+
+        return $iterator;
+    }
+
+    /**
+     * @param Website $website
+     * @return CustomerWebsiteDTO[]|\Iterator
+     */
+    public function getAllCustomersWithEmptyGroupAndDefaultFallback(Website $website)
+    {
+        $qb = $this->createQueryBuilder('PriceListToCustomer');
+        $qb
+            ->select(
+                'IDENTITY(PriceListToCustomer.customer) as customer_id'
+            )
+            ->innerJoin('PriceListToCustomer.customer', 'customer')
+            ->leftJoin(
+                PriceListCustomerFallback::class,
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.customer', 'PriceListToCustomer.customer'),
+                    $qb->expr()->eq('priceListFallBack.website', 'PriceListToCustomer.website'),
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallback')
+                )
+            )
+            ->where($qb->expr()->isNull('customer.group'))
+            ->andWhere($qb->expr()->isNull('priceListFallBack.id'))
+            ->andWhere($qb->expr()->eq('PriceListToCustomer.website', ':website'))
+            ->groupBy('PriceListToCustomer.customer');
+
+        $qb->setParameters([
+            'website' => $website,
+            'fallback' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY
+        ]);
+
+        $iterator = new BufferedQueryResultIterator($qb);
+        $em = $this->getEntityManager();
+        $iterator->setPageLoadedCallback(
+            static function ($rows) use ($em) {
+                $entities = [];
+                foreach ($rows as $row) {
+                    $entities[] = $em->getReference(Customer::class, $row['customer_id']);
+                }
+
+                return $entities;
+            }
+        );
+
+        return $iterator;
     }
 
     /**
@@ -276,11 +425,59 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
                 $subQueryBuilder->expr()->eq('relation.customer', $parentAlias),
-                $subQueryBuilder->expr()->eq('relation.priceList', ':'.$parameterName)
+                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
             )
         );
 
         $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
         $queryBuilder->setParameter($parameterName, $priceList);
+    }
+
+    /**
+     * @param Website $website
+     * @param CustomerGroup|null $customerGroup
+     * @return array
+     */
+    public function getCustomersWithAssignedPriceLists(Website $website, CustomerGroup $customerGroup = null)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->select('DISTINCT customer.id')
+            ->join('p.customer', 'customer')
+            ->where($qb->expr()->eq('p.website', ':website'))
+            ->setParameter('website', $website);
+
+        if ($customerGroup) {
+            $qb->andWhere($qb->expr()->eq('customer.group', ':group'))
+                ->setParameter('group', $customerGroup);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('customer.group'));
+        }
+
+        $data = [];
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            $data[$row['id']] = true;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param Website $website
+     * @param Customer $customer
+     * @return bool
+     */
+    public function hasAssignedPriceLists(Website $website, Customer $customer): bool
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->select('p.id')
+            ->where($qb->expr()->eq('p.website', ':website'))
+            ->andWhere($qb->expr()->eq('p.customer', ':customer'))
+            ->setParameter('website', $website)
+            ->setParameter('customer', $customer)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult() !== null;
     }
 }

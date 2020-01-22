@@ -147,6 +147,7 @@ class CombinedPriceListActivationPlanBuilder
         $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl);
         $priceListRelations = $this->getCPLToPriceListRepository()->getPriceListRelations($cpl);
 
+        $entities = [];
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
         foreach ($rawRules as $ruleData) {
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
@@ -169,8 +170,9 @@ class CombinedPriceListActivationPlanBuilder
 
             $rule->setCombinedPriceList($actualCPL);
             $this->getManager()->persist($rule);
+            $entities[] = $rule;
         }
-        $this->getManager()->flush();
+        $this->getManager()->flush($entities);
     }
 
     /**

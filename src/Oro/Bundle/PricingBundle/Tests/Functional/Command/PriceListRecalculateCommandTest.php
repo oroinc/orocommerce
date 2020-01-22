@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceLists;
@@ -12,9 +13,13 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallback
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceListRecalculateCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
@@ -159,8 +164,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'website 1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 38,
-                'expectedMessages' => 3,
+                'expectedCount' => 48, // 10 + 10 + 14 + 14 = website1 + group1 + customer_1.3 + customer_1_1
+                'expectedMessages' => 4,
                 'website' => [LoadWebsiteData::WEBSITE1],
                 'customerGroup' => [],
                 'customer' => []
@@ -196,7 +201,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 24, // 6 + 4 + 14 = customer.level_1_1 + customer.level_1.2 + customer.level_1.3
-                'expectedMessages' => 2,
+                'expectedMessages' => 3,
                 'website' => [],
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
@@ -204,7 +209,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'price_list_1' => [
                 'expected_message' => 'Start the process',
                 'params' => [],
-                'expectedCount' => 60,
+                // 10 + 10 + 14 + 14 + 8 = WS(US) + group1 + customer_1.3(US) + customer_1_1(US) + customer_1_1(US)
+                'expectedCount' => 56,
                 'expectedMessages' => 4,
                 'website' => [],
                 'customerGroup' => [],
@@ -214,7 +220,9 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'price_list_1 with dependant' => [
                 'expected_message' => 'Start the process',
                 'params' => ['--include-dependent'],
-                'expectedCount' => 62,
+                // 10 + 2 + 10 + 14 + 14 + 8 + 2
+                // WS1(US) + WS3(CA) + group1 + customer_1.3(WS1:US) + customer_1_1(WS1:US) + customer_1_1(WS2:Canada)
+                'expectedCount' => 58,
                 'expectedMessages' => 4,
                 'website' => [],
                 'customerGroup' => [],
@@ -241,20 +249,26 @@ class PriceListRecalculateCommandTest extends WebTestCase
      */
     protected function assertCombinedPriceCount($expectedCount)
     {
-        $combinedPrices = $this->getContainer()->get('doctrine')
-            ->getRepository('OroPricingBundle:CombinedProductPrice')
-            ->createQueryBuilder('a')->getQuery()->getResult();
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+        $combinedPrices = $repo
+            ->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
 
-        $this->assertCount($expectedCount, $combinedPrices);
+        $this->assertEquals($expectedCount, $combinedPrices);
     }
 
     protected function clearCombinedPrices()
     {
-        $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:CombinedProductPrice')
-            ->getRepository('OroPricingBundle:CombinedProductPrice')
-            ->createQueryBuilder('combinedProductPrice')
-            ->delete('OroPricingBundle:CombinedProductPrice', 'combinedProductPrice')
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class);
+
+        $repo->createQueryBuilder('combinedProductPrice')
+            ->delete(CombinedProductPrice::class, 'combinedProductPrice')
             ->getQuery()
             ->execute();
     }

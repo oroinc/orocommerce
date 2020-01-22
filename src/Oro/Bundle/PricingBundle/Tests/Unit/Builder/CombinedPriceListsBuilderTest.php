@@ -104,8 +104,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
         $this->websiteBuilder = $this->createMock(WebsiteCombinedPriceListsBuilder::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
-        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
-        $this->cplScheduleResolver = $this->createMock($className);
+        $this->cplScheduleResolver = $this->createMock(CombinedPriceListScheduleResolver::class);
         $priceResolver = $this->createMock(MergePricesCombiningStrategy::class);
         $strategyRegister = new StrategyRegister($this->configManager);
         $strategyRegister->add(MergePricesCombiningStrategy::NAME, $priceResolver);
