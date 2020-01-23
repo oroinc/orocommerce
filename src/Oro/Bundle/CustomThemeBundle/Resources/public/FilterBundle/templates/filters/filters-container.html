@@ -1,6 +1,6 @@
 <% if (!_.isEmpty(filters)) { %>
     <% if (renderMode === 'toggle-mode') { %>
-        <div class="filter-box toggle-mode" <%- attributes %>>
+        <div class="filter-box toggle-mode" <%= attributes %>>
             <div class="filter-container">
                 <div data-filters-items>
                     <div class="filter-items-hint">
@@ -25,7 +25,7 @@
             </div>
         </div>
     <% } else if (renderMode == 'collapse-mode') { %>
-        <div class="filter-box collapse-mode" <%- attributes %> >
+        <div class="filter-box collapse-mode" <%= attributes %> >
             <div class="filters-box-collapse"
                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                  data-page-component-options="{&quot;widgetModule&quot;:&quot;oroui/js/widget/collapse-widget&quot;,&quot;open&quot;:false}"
@@ -67,7 +67,7 @@
             </div>
         </div>
     <% } else { %>
-        <div class="filter-box dropdown-mode" <%- attributes %> >
+        <div class="filter-box dropdown-mode" <%= attributes %> >
             <div class="filter-container">
                 <select data-action="add-filter-select"
                         data-skip-input-widgets
