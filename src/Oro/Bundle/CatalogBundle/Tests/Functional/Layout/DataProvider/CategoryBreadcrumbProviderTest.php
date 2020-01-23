@@ -51,7 +51,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $breadCrumbsNodes = $crawler->filter('span.breadcrumbs__item a');
+        $breadCrumbsNodes = $crawler->filter('.breadcrumbs__item a');
 
         foreach ($breadCrumbsNodes as $key => $node) {
             $this->assertNotNull($node->getAttribute('href'));
