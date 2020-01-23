@@ -80,23 +80,36 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget = new ContentWidget();
         $contentWidget->setName('test_name');
 
-        $data = [new ImageSlide()];
+        $slides = [new ImageSlide()];
 
         $this->repository->expects($this->any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
-            ->willReturn($data);
+            ->willReturn($slides);
 
+        $expectedData = [
+            'pageComponentName' => 'test_name',
+            'pageComponentOptions' => new ArrayCollection(
+                [
+                    'slidesToShow' => 1,
+                    'slidesToScroll' => 1,
+                    'autoplay' => true,
+                    'autoplaySpeed' => 4000,
+                    'arrows' => false,
+                    'dots' => true,
+                    'infinite' => false,
+                ]
+            ),
+            'imageSlides' => new ArrayCollection($slides),
+        ];
+
+        $this->assertEquals($expectedData, $this->contentWidgetType->getWidgetData($contentWidget));
         $this->assertEquals(
-            ['pageComponentName' => 'test_name', 'imageSlides' => new ArrayCollection($data)],
-            $this->contentWidgetType->getWidgetData($contentWidget)
-        );
-        $this->assertEquals(
-            ['pageComponentName' => 'test_name1', 'imageSlides' => new ArrayCollection($data)],
+            array_merge($expectedData, ['pageComponentName' => 'test_name1']),
             $this->contentWidgetType->getWidgetData(clone $contentWidget)
         );
         $this->assertEquals(
-            ['pageComponentName' => 'test_name', 'imageSlides' => new ArrayCollection($data)],
+            array_merge($expectedData, ['pageComponentName' => 'test_name2']),
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
     }
@@ -133,20 +146,34 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget = new ContentWidget();
         $contentWidget->setName('test_name');
 
-        $data = [new ImageSlide()];
+        $slides = [new ImageSlide()];
 
         $this->repository->expects($this->any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
-            ->willReturn($data);
+            ->willReturn($slides);
 
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->exactly(2))
             ->method('render')
             ->willReturnCallback(
-                function ($name, array $context = []) use ($data) {
+                function ($name, array $context = []) use ($slides) {
                     $this->assertEquals(
-                        ['pageComponentName' => 'test_name', 'imageSlides' => new ArrayCollection($data)],
+                        [
+                            'pageComponentName' => 'test_name',
+                            'pageComponentOptions' => new ArrayCollection(
+                                [
+                                    'slidesToShow' => 1,
+                                    'slidesToScroll' => 1,
+                                    'autoplay' => true,
+                                    'autoplaySpeed' => 4000,
+                                    'arrows' => false,
+                                    'dots' => true,
+                                    'infinite' => false,
+                                ]
+                            ),
+                            'imageSlides' => new ArrayCollection($slides),
+                        ],
                         $context
                     );
 
@@ -223,29 +250,8 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     public function testGetDefaultTemplate(): void
     {
         $contentWidget = new ContentWidget();
-        $contentWidget->setName('test_name');
-        $contentWidget->setSettings(['param' => 'value']);
-
-        $slides = [new ImageSlide()];
-
-        $this->repository->expects($this->any())
-            ->method('findBy')
-            ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
-            ->willReturn($slides);
-
         $twig = $this->createMock(Environment::class);
-        $twig->expects($this->once())
-            ->method('render')
-            ->with(
-                '@OroCMS/ImageSliderContentWidget/widget.html.twig',
-                [
-                    'param' => 'value',
-                    'pageComponentName' => 'test_name',
-                    'imageSlides' => new ArrayCollection($slides)
-                ]
-            )
-            ->willReturn('rendered template');
 
-        $this->assertEquals('rendered template', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
+        $this->assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
     }
 }
