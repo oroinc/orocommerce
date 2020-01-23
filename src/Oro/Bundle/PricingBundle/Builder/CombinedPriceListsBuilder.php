@@ -14,7 +14,10 @@ use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 /**
- * Builder for combined price lists
+ * Builder for combined price lists.
+ * Perform CPL build for config level, call website CPL builder for websites with fallback to config.
+ *
+ * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
  */
 class CombinedPriceListsBuilder
 {
@@ -49,11 +52,6 @@ class CombinedPriceListsBuilder
      * @var ConfigManager
      */
     protected $configManager;
-
-    /**
-     * @var CombinedPriceListGarbageCollector
-     */
-    protected $garbageCollector;
     
     /**
      * @var CombinedPriceListScheduleResolver
@@ -80,7 +78,6 @@ class CombinedPriceListsBuilder
      * @param ConfigManager                     $configManager
      * @param PriceListCollectionProvider       $priceListCollectionProvider
      * @param CombinedPriceListProvider         $combinedPriceListProvider
-     * @param CombinedPriceListGarbageCollector $garbageCollector
      * @param CombinedPriceListScheduleResolver $scheduleResolver
      * @param StrategyRegister                  $priceStrategyRegister
      * @param CombinedPriceListTriggerHandler   $triggerHandler
@@ -91,7 +88,6 @@ class CombinedPriceListsBuilder
         ConfigManager $configManager,
         PriceListCollectionProvider $priceListCollectionProvider,
         CombinedPriceListProvider $combinedPriceListProvider,
-        CombinedPriceListGarbageCollector $garbageCollector,
         CombinedPriceListScheduleResolver $scheduleResolver,
         StrategyRegister $priceStrategyRegister,
         CombinedPriceListTriggerHandler $triggerHandler,
@@ -101,7 +97,6 @@ class CombinedPriceListsBuilder
         $this->configManager = $configManager;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
         $this->combinedPriceListProvider = $combinedPriceListProvider;
-        $this->garbageCollector = $garbageCollector;
         $this->scheduleResolver = $scheduleResolver;
         $this->priceStrategyRegister = $priceStrategyRegister;
         $this->triggerHandler = $triggerHandler;
@@ -120,7 +115,6 @@ class CombinedPriceListsBuilder
             );
 
             $isChangesCommittedToEm = false;
-            $isChangesCommittedToHandler = false;
             $this->triggerHandler->startCollect();
             $em->beginTransaction();
             try {
@@ -128,15 +122,12 @@ class CombinedPriceListsBuilder
                 $em->commit();
                 $isChangesCommittedToEm = true;
 
+                // build for websites with fallback to config
                 $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
                 $this->triggerHandler->commit();
-                $isChangesCommittedToHandler = true;
-                $this->garbageCollector->cleanCombinedPriceLists();
                 $this->built = true;
             } catch (\Exception $e) {
-                if (false === $isChangesCommittedToHandler) {
-                    $this->triggerHandler->rollback();
-                }
+                $this->triggerHandler->rollback();
 
                 if (false === $isChangesCommittedToEm) {
                     $em->rollback();

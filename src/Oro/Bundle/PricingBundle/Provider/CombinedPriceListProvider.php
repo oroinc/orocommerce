@@ -46,6 +46,11 @@ class CombinedPriceListProvider
     protected $strategyRegister;
 
     /**
+     * @var array|CombinedPriceList[]
+     */
+    protected $cpls = [];
+
+    /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
      * @param StrategyRegister $strategyRegister
@@ -69,7 +74,12 @@ class CombinedPriceListProvider
     {
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
-        $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
+
+        if (!array_key_exists($identifier, $this->cpls)) {
+            $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
+        } else {
+            return $this->cpls[$identifier];
+        }
 
         if (!$combinedPriceList) {
             $combinedPriceList = $this->createCombinedPriceList($identifier);
@@ -80,6 +90,7 @@ class CombinedPriceListProvider
                 new CombinedPriceListCreateEvent($combinedPriceList, $eventOptions)
             );
         }
+        $this->cpls[$identifier] = $combinedPriceList;
 
         return $combinedPriceList;
     }
@@ -174,6 +185,11 @@ class CombinedPriceListProvider
         $manager = $this->getManager();
         $this->actualizeCurrencies($combinedPriceList, $priceListsRelations);
         $i = 0;
+
+        $entities = [];
+        if (!$combinedPriceList->getId()) {
+            $entities[] = $combinedPriceList;
+        }
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListToCombined = new CombinedPriceListToPriceList();
             $priceListToCombined->setMergeAllowed($priceListsRelation->isMergeAllowed());
@@ -181,8 +197,9 @@ class CombinedPriceListProvider
             $priceListToCombined->setPriceList($priceListsRelation->getPriceList());
             $priceListToCombined->setSortOrder($i++);
             $manager->persist($priceListToCombined);
+            $entities[] = $priceListToCombined;
         }
-        $manager->flush();
+        $manager->flush($entities);
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener;
@@ -50,7 +52,8 @@ class ContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCase
         $imageSlide2 = $this->getEntity(ImageSlide::class, ['id' => 2002]);
 
         $data = new ContentWidget();
-        $data->setSettings(['imageSlides' => [$imageSlide2], 'param' => 'value']);
+        $data->setWidgetType(ImageSliderContentWidgetType::getName());
+        $data->setSettings(['imageSlides' => new ArrayCollection([$imageSlide2]), 'param' => 'value']);
 
         $this->repository->expects($this->once())
             ->method('findBy')
@@ -68,6 +71,20 @@ class ContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBeforeFlush(new AfterFormProcessEvent($this->createMock(Form::class), $data));
 
         $this->assertEquals(['param' => 'value'], $data->getSettings());
+    }
+
+    public function testOnBeforeFlushInvalidContentWidgetType(): void
+    {
+        $data = new ContentWidget();
+        $data->setWidgetType('test');
+
+        $this->repository->expects($this->never())
+            ->method($this->anything());
+
+        $this->manager->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onBeforeFlush(new AfterFormProcessEvent($this->createMock(Form::class), $data));
     }
 
     public function testOnBeforeFlushInvalidData(): void

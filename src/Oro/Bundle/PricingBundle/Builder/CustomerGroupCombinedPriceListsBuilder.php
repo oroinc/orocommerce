@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -11,7 +11,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 /**
  * Updates or creates combined price lists for customer group scope
  *
+ * Perform CPL build for customer group level,
+ * call customer CPL builder for customers with fallback to customer group,
+ * call customer CPL builder for customers with fallback to customer group and with empty group when concrete customer
+ * group not passed as $currentCustomerGroup parameter (build for all groups)
+ *
  * @method PriceListToCustomerGroupRepository getPriceListToEntityRepository()
+ *
+ * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
  */
 class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
@@ -36,14 +43,7 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
     public function build(Website $website, CustomerGroup $currentCustomerGroup = null, $forceTimestamp = null)
     {
         if (!$this->isBuiltForCustomerGroup($website, $currentCustomerGroup)) {
-            if (!$currentCustomerGroup) {
-                $fallback = $forceTimestamp ? null : PriceListCustomerGroupFallback::WEBSITE;
-                $customerGroups = $this->getPriceListToEntityRepository()
-                    ->getCustomerGroupIteratorByDefaultFallback($website, $fallback);
-            } else {
-                $customerGroups = [$currentCustomerGroup];
-            }
-
+            $customerGroups = $this->getCustomerGroupsForBuild($website, $currentCustomerGroup);
             foreach ($customerGroups as $customerGroup) {
                 $this->wrapInTransaction(function () use ($website, $customerGroup, $forceTimestamp) {
                     $this->updatePriceListsOnCurrentLevel($website, $customerGroup, $forceTimestamp);
@@ -53,9 +53,8 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
                     ->buildByCustomerGroup($website, $customerGroup, $forceTimestamp);
             }
 
-            if ($currentCustomerGroup) {
-                $this->scheduleResolver->updateRelations();
-                $this->garbageCollector->cleanCombinedPriceLists();
+            if (!$currentCustomerGroup) {
+                $this->customerCombinedPriceListsBuilder->buildForCustomersWithoutGroupAndFallbackToGroup($website);
             }
             $this->setBuiltForCustomerGroup($website, $currentCustomerGroup);
         }
@@ -71,11 +70,8 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
         CustomerGroup $customerGroup,
         $forceTimestamp = null
     ) {
-        $priceListsToCustomerGroup = $this->getPriceListToEntityRepository()
-            ->findOneBy(['website' => $website, 'customerGroup' => $customerGroup]);
         $hasFallbackOnNextLevel = $this->hasFallbackOnNextLevel($website, $customerGroup);
-
-        if (!$priceListsToCustomerGroup) {
+        if (!$this->hasAssignedPriceLists($website, $customerGroup)) {
             /** @var PriceListToCustomerGroupRepository $repo */
             $repo = $this->getCombinedPriceListToEntityRepository();
             $repo->delete($customerGroup, $website);
@@ -128,6 +124,7 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
         if ($customerGroup) {
             $customerGroupId = $customerGroup->getId();
         }
+
         return !empty($this->builtList[$website->getId()][$customerGroupId]);
     }
 
@@ -150,16 +147,40 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
      * @param CustomerGroup $customerGroup
      * @return bool
      */
-    public function hasFallbackOnNextLevel(Website $website, CustomerGroup $customerGroup)
+    protected function hasFallbackOnNextLevel(Website $website, CustomerGroup $customerGroup)
     {
-        $fallback = $this->getFallbackRepository()->findOneBy(
-            [
-                'customerGroup' => $customerGroup,
-                'website' => $website,
-                'fallback' => PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY
-            ]
-        );
+        /** @var PriceListCustomerGroupFallbackRepository $repo */
+        $repo = $this->getFallbackRepository();
 
-        return $fallback === null;
+        return $repo->hasFallbackOnNextLevel($website, $customerGroup);
+    }
+
+    /**
+     * @param Website $website
+     * @param CustomerGroup|null $currentCustomerGroup
+     * @return iterable|CustomerGroup[]
+     */
+    protected function getCustomerGroupsForBuild(
+        Website $website,
+        CustomerGroup $currentCustomerGroup = null
+    ) {
+        if ($currentCustomerGroup) {
+            return [$currentCustomerGroup];
+        }
+
+        return $this->getPriceListToEntityRepository()->getCustomerGroupIteratorWithDefaultFallback($website);
+    }
+
+    /**
+     * @param Website $website
+     * @param CustomerGroup $customerGroup
+     * @return bool
+     */
+    protected function hasAssignedPriceLists(Website $website, CustomerGroup $customerGroup): bool
+    {
+        /** @var PriceListToCustomerGroupRepository $repo */
+        $repo = $this->getPriceListToEntityRepository();
+
+        return $repo->hasAssignedPriceLists($website, $customerGroup);
     }
 }

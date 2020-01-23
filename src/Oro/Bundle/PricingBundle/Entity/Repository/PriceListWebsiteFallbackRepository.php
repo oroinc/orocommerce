@@ -6,7 +6,11 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Doctrine entity repository for  PriceListWebsiteFallback
+ */
 class PriceListWebsiteFallbackRepository extends EntityRepository
 {
     /**
@@ -32,5 +36,27 @@ class PriceListWebsiteFallbackRepository extends EntityRepository
             ->setParameter('fallback', PriceListWebsiteFallback::CONFIG);
 
         return $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
+    }
+
+    /**
+     * @param Website $website
+     * @return bool
+     */
+    public function hasFallbackOnNextLevel(Website $website): bool
+    {
+        $qb = $this->createQueryBuilder('f');
+        $qb->select('f.id')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('f.website', ':website'),
+                    $qb->expr()->eq('f.fallback', ':fallback')
+                )
+            )->setParameters([
+                'website' => $website,
+                'fallback' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY
+            ])
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult() === null;
     }
 }
