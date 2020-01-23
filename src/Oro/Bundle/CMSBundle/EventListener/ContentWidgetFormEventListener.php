@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\EventListener;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -29,13 +31,15 @@ class ContentWidgetFormEventListener
     public function onBeforeFlush(AfterFormProcessEvent $args): void
     {
         $contentWidget = $args->getData();
-        if (!$contentWidget instanceof ContentWidget) {
+        if (!$contentWidget instanceof ContentWidget ||
+            $contentWidget->getWidgetType() !== ImageSliderContentWidgetType::getName()
+        ) {
             return;
         }
 
         $settings = $contentWidget->getSettings();
 
-        /** @var ImageSlide[] $newImageSlides */
+        /** @var Collection|ImageSlide[] $newImageSlides */
         $newImageSlides = $settings['imageSlides'] ?? [];
 
         $manager = $this->registry->getManagerForClass(ImageSlide::class);
@@ -46,9 +50,13 @@ class ContentWidgetFormEventListener
         $oldImageSlides = $manager->getRepository(ImageSlide::class)
             ->findBy(['contentWidget' => $contentWidget]);
 
-        $toRemove = array_udiff($oldImageSlides, $newImageSlides, static function (ImageSlide $a, ImageSlide $b) {
-            return $a->getId() <=> $b->getId();
-        });
+        $toRemove = array_udiff(
+            $oldImageSlides,
+            $newImageSlides->toArray(),
+            static function (ImageSlide $a, ImageSlide $b) {
+                return $a->getId() <=> $b->getId();
+            }
+        );
 
         /** @var ImageSlide $imageSlide */
         foreach ($toRemove as $imageSlide) {
