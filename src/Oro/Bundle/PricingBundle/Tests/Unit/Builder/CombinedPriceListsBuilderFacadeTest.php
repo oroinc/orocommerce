@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder;
@@ -65,6 +67,12 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerRepository */
     protected $priceListToCustomerRepo;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListGarbageCollector */
+    private $garbageCollector;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    private $configManager;
+
     public function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -74,6 +82,8 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->combinedPriceListBuilder = $this->createMock(CombinedPriceListsBuilder::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->strategyRegister = $this->createMock(StrategyRegister::class);
+        $this->garbageCollector = $this->createMock(CombinedPriceListGarbageCollector::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->facade = new CombinedPriceListsBuilderFacade(
             $this->doctrineHelper,
@@ -82,7 +92,9 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             $this->websiteCombinedPriceListBuilder,
             $this->combinedPriceListBuilder,
             $this->dispatcher,
-            $this->strategyRegister
+            $this->strategyRegister,
+            $this->garbageCollector,
+            $this->configManager
         );
 
         $this->priceListToWebsiteRepo = $this->createMock(PriceListToWebsiteRepository::class);
@@ -128,41 +140,58 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     public function testRebuildAll()
     {
         $forceTimestamp = time();
-        $website = new Website();
         $websiteId = 1;
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 2]);
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 3]);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with(Website::class, $websiteId)
+            ->willReturn($website);
+
+        $this->doctrineHelper->expects($this->exactly(3))
+            ->method('getEntityRepositoryForClass')
+            ->willReturnMap([
+                [PriceListToWebsite::class, $this->priceListToWebsiteRepo],
+                [PriceListToCustomerGroup::class, $this->priceListToCustomerGroupRepo],
+                [PriceListToCustomer::class, $this->priceListToCustomerRepo],
+            ]);
 
         $this->combinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($forceTimestamp);
 
-        $this->doctrineHelper->expects($this->exactly(2))
-            ->method('getEntityRepositoryForClass')
-            ->will($this->returnValueMap([
-                [PriceListToCustomerGroup::class, $this->priceListToCustomerGroupRepo],
-                [PriceListToCustomer::class, $this->priceListToCustomerRepo],
-            ]));
+        $this->priceListToWebsiteRepo->expects($this->once())
+            ->method('getWebsiteIteratorWithSelfFallback')
+            ->willReturn([$website]);
+        $this->websiteCombinedPriceListBuilder->expects($this->once())
+            ->method('build')
+            ->with($website, $forceTimestamp);
 
         $this->priceListToCustomerGroupRepo->expects($this->once())
             ->method('getAllWebsiteIds')
             ->willReturn([$websiteId]);
-
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')
-            ->with(Website::class, $websiteId)
-            ->willReturn($website);
-
+        $this->priceListToCustomerGroupRepo->expects($this->once())
+            ->method('getCustomerGroupIteratorWithSelfFallback')
+            ->willReturn([$customerGroup]);
         $this->customerGroupCombinedPriceListBuilder->expects($this->once())
             ->method('build')
-            ->with($website, null, $forceTimestamp);
-
-        $customer = new Customer();
+            ->with($website, $customerGroup, $forceTimestamp);
 
         $this->priceListToCustomerRepo->expects($this->once())
-            ->method('getAllCustomerWebsitePairs')
+            ->method('getAllCustomerWebsitePairsWithSelfFallback')
             ->willReturn([new CustomerWebsiteDTO($customer, $website)]);
 
         $this->customerCombinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($website, $customer);
+
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
 
         $this->facade->rebuildAll($forceTimestamp);
     }
@@ -176,6 +205,9 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->websiteCombinedPriceListBuilder->expects($this->exactly(3))
             ->method('build')
             ->with($this->logicalOr($website1, $website2, $website3));
+
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
 
         $this->facade->rebuildForWebsites([$website1, $website2, $website3]);
     }
@@ -199,6 +231,9 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->customerGroupCombinedPriceListBuilder->expects($this->at(2))
             ->method('build')
             ->with($website, $customerGroup3, $forceTimestamp);
+
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
 
         $groups = [$customerGroup1, $customerGroup2, $customerGroup3];
         $this->facade->rebuildForCustomerGroups($groups, $website, $forceTimestamp);
@@ -224,6 +259,9 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->method('build')
             ->with($website, $customer3, $forceTimestamp);
 
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
+
         $customers = [$customer1, $customer2, $customer3];
         $this->facade->rebuildForCustomers($customers, $website, $forceTimestamp);
     }
@@ -231,39 +269,63 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     public function testRebuildForPriceLists()
     {
         $forceTimestamp = time();
-        $website = new Website();
+
         $websiteId = 11;
-        $customerGroup = new CustomerGroup();
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+
         $customerGroupId = 22;
-        $customer = new Customer();
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => $customerGroupId]);
+
         $customerId = 33;
-        $priceList1 = new PriceList();
-        $priceList2 = new PriceList();
-        $priceList3 = new PriceList();
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => $customerId]);
+
+        /** @var PriceList $priceList1 */
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+        /** @var PriceList $priceList3 */
+        $priceList3 = $this->getEntity(PriceList::class, ['id' => 3]);
         $priceLists = [$priceList1, $priceList2, $priceList3];
 
         $this->doctrineHelper->expects($this->exactly(3))
             ->method('getEntityRepositoryForClass')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [PriceListToWebsite::class, $this->priceListToWebsiteRepo],
                 [PriceListToCustomerGroup::class, $this->priceListToCustomerGroupRepo],
                 [PriceListToCustomer::class, $this->priceListToCustomerRepo],
-            ]));
-
+            ]);
         $this->doctrineHelper->expects($this->atLeastOnce())
             ->method('getEntityReference')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [Website::class, $websiteId, $website],
                 [CustomerGroup::class, $customerGroupId, $customerGroup],
                 [Customer::class, $customerId, $customer]
-            ]));
+            ]);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_pricing.default_price_lists')
+            ->willReturn([
+                [
+                    'priceList' => $priceList1->getId(),
+                    'merge' => true
+                ]
+            ]);
+        $this->combinedPriceListBuilder->expects($this->once())
+            ->method('build')
+            ->with($forceTimestamp);
 
         $this->priceListToWebsiteRepo->expects($this->once())
             ->method('getIteratorByPriceLists')
             ->with($priceLists)
-            ->willReturn([[
-                PriceListRelationTrigger::WEBSITE => $websiteId
-            ]]);
+            ->willReturn([
+                [
+                    PriceListRelationTrigger::WEBSITE => $websiteId
+                ]
+            ]);
 
         $this->websiteCombinedPriceListBuilder->expects($this->once())
             ->method('build')
@@ -272,10 +334,12 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->priceListToCustomerGroupRepo->expects($this->once())
             ->method('getIteratorByPriceLists')
             ->with($priceLists)
-            ->willReturn([[
-                PriceListRelationTrigger::WEBSITE => $websiteId,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroupId,
-            ]]);
+            ->willReturn([
+                [
+                    PriceListRelationTrigger::WEBSITE => $websiteId,
+                    PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroupId,
+                ]
+            ]);
         $this->customerGroupCombinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($website, $customerGroup, $forceTimestamp);
@@ -283,13 +347,18 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->priceListToCustomerRepo->expects($this->once())
             ->method('getIteratorByPriceLists')
             ->with($priceLists)
-            ->willReturn([[
-                PriceListRelationTrigger::WEBSITE => $websiteId,
-                PriceListRelationTrigger::ACCOUNT => $customerId,
-            ]]);
+            ->willReturn([
+                [
+                    PriceListRelationTrigger::WEBSITE => $websiteId,
+                    PriceListRelationTrigger::ACCOUNT => $customerId,
+                ]
+            ]);
         $this->customerCombinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($website, $customer, $forceTimestamp);
+
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
 
         $this->facade->rebuildForPriceLists($priceLists, $forceTimestamp);
     }

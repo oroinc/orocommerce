@@ -27,10 +27,5 @@ layout:
 
         - '@setOption':
             id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.text
-            optionValue: 'oro.rfp.request.label'
-
-        - '@setOption':
-            id: __datagrid
             optionName: grid_render_parameters.gridViewsOptions.hideTitle
             optionValue: '.page-title-wrapper'

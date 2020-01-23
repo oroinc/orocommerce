@@ -281,12 +281,19 @@
         }|json_encode
     } %}
 
-    <div class="product-view__attribute-images" {{ UI.attributes(popupGalleryAttr) }}>
-        {%- for item in collection -%}
-        <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
-            <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+    {% set showMoreAttr = {
+        'data-page-component-view': 'oroui/js/app/views/show-more/inline-show-more-view'
+    } %}
+
+    <div class="product-view__attribute-images show-more-view" {{ UI.attributes(showMoreAttr) }}>
+        <div class="product-view__attribute-images-container show-less" data-role="items-container" {{ UI.attributes(popupGalleryAttr) }}>
+            {%- for item in collection -%}
+            <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
+                <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+            </div>
+            {%- endfor -%}
         </div>
-        {%- endfor -%}
+        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
     </div>
 {% endblock %}
 
@@ -295,7 +302,7 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set popupGalleryAttr = {
-        'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
+        'data-page-component-module': 'oroui/js/app/widget/product-popup-gallery-widget',
         'data-page-component-options': {
             bindWithSlider: false,
             galleryImages: [{
@@ -315,7 +322,15 @@
 {% endblock %}
 
 {% block product_view_attribute_multifiles_widget %}
-    {{ block_widget(block) }}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set filesAttr = {
+        'data-page-component-view': 'oroui/js/app/views/show-more/table-show-more-view'
+    } %}
+
+    <div class="product-view__attribute-files show-more-view show-less" {{ UI.attributes(filesAttr) }}>
+        {{ block_widget(block) }}
+        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
+    </div>
 {% endblock %}
 
 {% block attribute_group_rest_attribute_widget %}

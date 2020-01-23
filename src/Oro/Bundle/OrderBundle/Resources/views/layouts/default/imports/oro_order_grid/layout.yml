@@ -17,8 +17,3 @@ layout:
             id: __datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.text
-            optionValue: 'oro.order.past_orders.label'

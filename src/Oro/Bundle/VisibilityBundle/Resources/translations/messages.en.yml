@@ -6,6 +6,7 @@ oro.visibility:
     customercategoryvisibility:
         entity_label: Visibility to Customers
         entity_plural_label: Customer Category Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         category.label: Category
         visibility.label: Visibility
@@ -20,6 +21,7 @@ oro.visibility:
     customergroupcategoryvisibility:
         entity_label: Visibility to Customer Groups
         entity_plural_label: Customer Group Category Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         category.label: Category
         visibility.label: Visibility
@@ -33,6 +35,7 @@ oro.visibility:
     categoryvisibility:
         entity_label: Visibility to All
         entity_plural_label: Category Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         category.label: Category
         visibility.label: Visibility
@@ -46,6 +49,7 @@ oro.visibility:
     customerproductvisibility:
         entity_label: Visibility to Customers
         entity_plural_label: Customer Product Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         product.label: Product
         visibility.label: Visibility
@@ -60,6 +64,7 @@ oro.visibility:
     customergroupproductvisibility:
         entity_label: Visibility to Customer Groups
         entity_plural_label: Customer Group Product Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         product.label: Product
         visibility.label: Visibility
@@ -73,6 +78,7 @@ oro.visibility:
     productvisibility:
         entity_label: Visibility to All
         entity_plural_label: Product Visibilities
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         product.label: Product
         visibility.label: Visibility
