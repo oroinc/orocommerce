@@ -49,6 +49,7 @@ const ComponentManager = BaseClass.extend({
      */
     addActionRte() {
         const RichTextEditor = this.editor.RichTextEditor;
+        const editor = this.editor;
 
         this.editorFormats.forEach(format => RichTextEditor.remove(format));
 
@@ -107,14 +108,44 @@ const ComponentManager = BaseClass.extend({
             attributes: {
                 title: 'Link'
             },
-            result: rte => {
-                const anchor = rte.selection().anchorNode;
-                const nextSibling = anchor && anchor.nextSibling;
-                if (nextSibling && nextSibling.nodeName === 'A') {
+
+            result: (rte, action) => {
+                const selection = rte.selection();
+
+                if (action.isSelectionALink(selection)) {
+                    const selectedComponent = editor.getSelected();
+
                     rte.exec('unlink');
-                } else {
-                    rte.insertHTML(`<a class="link" href="">${rte.selection()}</a>`);
+
+                    if (selectedComponent.get('type') === 'link') {
+                        selectedComponent.destroy();
+                    }
+                } else if (selection.toString() !== '') {
+                    rte.exec('createLink', '#');
+
+                    const linkElement = rte.selection().anchorNode.parentElement;
+
+                    linkElement.setAttribute('href', '');
+                    linkElement.classList.add('link');
                 }
+            },
+
+            update: (rte, action) => {
+                const selection = rte.selection();
+
+                if (action.isSelectionALink(selection)) {
+                    action.btn.classList.add(rte.classes.active);
+                }
+            },
+
+            isSelectionALink: selection => {
+                if (!selection.anchorNode) {
+                    return false;
+                }
+
+                const parentNode = selection.anchorNode.parentNode;
+
+                return parentNode && parentNode.nodeName === 'A' && parentNode.innerHTML === selection.toString();
             }
         });
 
