@@ -70,11 +70,11 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setFallback('system');
 
         $description = new LocalizedFallbackValue();
-        $description->setText('Product Description');
+        $description->setWysiwyg('Product Description');
 
         $localizedDescription = new LocalizedFallbackValue();
         $localizedDescription->setLocalization($localization)
-            ->setText('US Product Description')
+            ->setWysiwyg('US Product Description')
             ->setFallback('system');
 
         $shortDescription = new LocalizedFallbackValue();

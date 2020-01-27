@@ -25,6 +25,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addMetaTitl: ['@metaTitle']
             - addMetaDescription: ['@metaDescription']
             - addMetaKeyword: ['@metaKeywords']
+            - addDescription: ['@description_value1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -35,6 +36,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue2']
+            - addDescription: ['@description_value2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -45,6 +47,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue3']
+            - addDescription: ['@description_value3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -55,6 +58,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue4']
+            - addDescription: ['@description_value4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -65,6 +69,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue5']
+            - addDescription: ['@description_value5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
         organization: '@organization'
@@ -81,6 +86,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 4'
     locvalue5:
         string: 'Product5(disabled)'
+    description_value1:
+        wysiwyg: 'Product 1 Description'
+    description_value2:
+        wysiwyg: 'Product 2 Description'
+    description_value3:
+        wysiwyg: 'Product 3 Description'
+    description_value4:
+        wysiwyg: 'Product 4 Description'
+    description_value5:
+        wysiwyg: 'Product 5 Description'
     metaTitle:
         string: 'Meta Title 1'
     metaDescription:

@@ -363,7 +363,7 @@ services:
         arguments:
             - '@oro_ui.html_tag_helper'
         tags:
-             - { name: oro_entity_config.attribute_type, type: wysiwyg }
+            - { name: oro_entity_config.attribute_type, type: wysiwyg }
 
     oro_cms.form.type.wysiwyg:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
@@ -442,3 +442,8 @@ services:
         public: false
         tags:
             - { name: oro_draft.provider.draftable_fields_exclusion }
+
+    oro_cms.importexport.normalizer.localized_fallback_value_collection_normalizer.decorator:
+        decorates: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
+        parent: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
+        class: Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer
