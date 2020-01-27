@@ -29,11 +29,6 @@ class OroSaleExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroSaleExtension());
 
-        $expectedParameters = [
-            'oro_sale.entity.quote.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
         $expectedDefinitions = [
             // validators
             'oro_sale.validator.quote_product',

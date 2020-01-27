@@ -26,10 +26,6 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testCreateOrder()
     {
-        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
-            $this->markTestSkipped('OrderBundle disabled');
-        }
-
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());

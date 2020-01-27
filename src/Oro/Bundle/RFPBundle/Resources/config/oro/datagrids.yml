@@ -1,7 +1,7 @@
 datagrids:
     base-rfq-grid:
         acl_resource: oro_rfp_request_view
-        extended_entity_name: '%oro_rfp.entity.request.class%'
+        extended_entity_name: 'Oro\Bundle\RFPBundle\Entity\Request'
         options:
             entityHint: oro.rfp.request.entity_plural_label
             entity_pagination: true
@@ -15,7 +15,7 @@ datagrids:
                     - request.createdAt
                     - request.updatedAt
                 from:
-                    - { table: '%oro_rfp.entity.request.class%', alias: request }
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\Request', alias: request }
         columns:
             id:
                 label:         oro.rfp.request.id.label
@@ -270,7 +270,7 @@ datagrids:
 
     frontend-requests-grid:
         acl_resource: oro_rfp_frontend_request_view
-        extended_entity_name: '%oro_rfp.entity.request.class%'
+        extended_entity_name: 'Oro\Bundle\RFPBundle\Entity\Request'
         options:
             frontend: true
             entityHint: oro.rfp.request.entity_plural_label
@@ -287,7 +287,7 @@ datagrids:
                     - customerStatus.name as customerStatusName
                     - customerStatus.id as customerStatusId
                 from:
-                    - { table: '%oro_rfp.entity.request.class%', alias: request }
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\Request', alias: request }
                 join:
                     left:
                         - { join: request.customerUser, alias: requestCustomerUser }
@@ -376,7 +376,7 @@ datagrids:
 
     rfp-request-additional-notes-grid:
         acl_resource: oro_rfp_request_view
-        extended_entity_name: '%oro_rfp.entity.request.additional_note.class%'
+        extended_entity_name: 'Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote'
         options:
             entityHint: oro.rfp.requestadditionalnote.datagrid.entity_hint
         source:
@@ -388,7 +388,7 @@ datagrids:
                     - additionalNote.text
                     - additionalNote.createdAt
                 from:
-                    - { table: '%oro_rfp.entity.request.additional_note.class%', alias: additionalNote }
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote', alias: additionalNote }
                 where:
                     and:
                         - IDENTITY(additionalNote.request) = :request

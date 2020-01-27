@@ -1,6 +1,4 @@
 parameters:
-    oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
-    oro_redirect.entity.redirect.class: Oro\Bundle\RedirectBundle\Entity\Redirect
     oro_redirect.url_cache_type: 'storage'
     oro_redirect.url_provider_type: 'database'
     oro_redirect.url_storage_cache.split_deep: 2
@@ -41,7 +39,7 @@ services:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_catalog.entity.category.class%'
+            - 'Oro\Bundle\CatalogBundle\Entity\Category'
             - "@doctrine.orm.entity_manager"
 
     oro_redirect.security.firewall:

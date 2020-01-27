@@ -16,13 +16,6 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroShoppingListExtension());
 
-        $expectedParameters = [
-            // Entity
-            'oro_shopping_list.entity.shopping_list.class',
-            'oro_shopping_list.entity.line_item.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
         $expectedDefinitions = [
             // Services
             'oro_shopping_list.validator.line_item',

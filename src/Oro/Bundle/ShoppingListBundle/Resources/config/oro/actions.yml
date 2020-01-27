@@ -338,8 +338,8 @@ operations:
                           - [[replaceValue, $.currentUser.organization], [propertyName, [organization]]]
                           - [[keep], [propertyName, [website]]]
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
-                          - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
-                          - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+                          - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
+                          - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
                     - '@assign_value': [$.newShoppingList.label, $.newName]
                     - '@assign_value': [$.newShoppingList.current, false]
                     - '@flush_entity': $.newShoppingList
@@ -398,8 +398,8 @@ operations:
                   - [[replaceValue, $.currentUser.organization], [propertyName, [organization]]]
                   - [[keep], [propertyName, [website]]]
                   - [[shallowCopy], [propertyType, ['\DateTime']]]
-                  - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
-                  - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+                  - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
+                  - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
             - '@remove_restricted_products':
                 attribute: $.removedProducts
                 productHolderPath: $.newShoppingList.lineItems

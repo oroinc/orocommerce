@@ -29,17 +29,8 @@ class OrderBundlePassTest extends \PHPUnit\Framework\TestCase
         $this->compilerPass = new OrderBundlePass();
     }
 
-    public function testProcessWithoutOrderBundle()
-    {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(false);
-        $this->containerBuilder->expects($this->never())->method('hasDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
-    }
-
     public function testProcessWithOrderBundleWithoutDefinition()
     {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(true);
         $this->containerBuilder->expects($this->once())->method('hasDefinition')->willReturn(false);
         $this->containerBuilder->expects($this->never())->method('getDefinition');
 
@@ -48,7 +39,6 @@ class OrderBundlePassTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithOrderBundle()
     {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(true);
         $this->containerBuilder->expects($this->once())->method('hasDefinition')->willReturn(true);
 
         $definition = new Definition();

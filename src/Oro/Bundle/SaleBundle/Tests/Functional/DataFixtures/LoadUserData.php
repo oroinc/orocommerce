@@ -4,11 +4,14 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -44,63 +47,63 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected $roles = [
         self::ROLE1 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE3 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_LOCAL'],
             ]
         ],
         self::ROLE4 => [
             [
-                'class' => 'oro_order.entity.order.class',
+                'class' => Order::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE5 => [
             [
-                'class' => 'oro_order.entity.order.class',
+                'class' => Order::class,
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
         self::ROLE6 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_DEEP'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_DEEP'],
             ],
             [
-                'class' => 'oro_checkout.entity.checkout.class',
+                'class' => Checkout::class,
                 'acls'  => ['VIEW_DEEP', 'CREATE_LOCAL'],
             ],
         ],
         self::ROLE7 => [
             [
-                'class' => 'oro_checkout.entity.checkout.class',
+                'class' => Checkout::class,
                 'acls'  => ['VIEW_LOCAL', 'EDIT_LOCAL', 'CREATE_LOCAL'],
             ],
             [
@@ -242,7 +245,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             foreach ($items as $acls) {
                 if (isset($acls['class'])) {
-                    $identity = $this->container->getParameter($acls['class']);
+                    $identity = $acls['class'];
                 } else {
                     $identity = $acls['oid'];
                 }

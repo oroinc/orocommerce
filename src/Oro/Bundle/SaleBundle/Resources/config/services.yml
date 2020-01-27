@@ -1,10 +1,3 @@
-parameters:
-    oro_sale.entity.quote.class: Oro\Bundle\SaleBundle\Entity\Quote
-    oro_sale.entity.quote_address.class: Oro\Bundle\SaleBundle\Entity\QuoteAddress
-    oro_sale.entity.quote_product.class: Oro\Bundle\SaleBundle\Entity\QuoteProduct
-    oro_sale.entity.quote_product_offer.class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer
-    oro_sale.entity.quote_product_request.class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
-
 services:
     oro_sale.condition.quote_acceptable:
         class: Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable
@@ -84,16 +77,16 @@ services:
             - '@oro_email.mailer.processor'
             - '@oro_featuretoggle.checker.feature_checker'
         calls:
-            - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
-            - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]
+            - [ setQuoteClassName, [ 'Oro\Bundle\SaleBundle\Entity\Quote' ] ]
+            - [ setEmailTemplateClassName, [ 'Oro\Bundle\EmailBundle\Entity\EmailTemplate' ] ]
 
     oro_sale.service.request_helper:
         class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
         public: true
         arguments:
             - "@doctrine"
-            - '%oro_sale.entity.quote.class%'
-            - '%oro_rfp.entity.request.class%'
+            - 'Oro\Bundle\SaleBundle\Entity\Quote'
+            - 'Oro\Bundle\RFPBundle\Entity\Request'
 
     oro_sale.manager.quote_address:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteAddressManager'
@@ -101,10 +94,10 @@ services:
         arguments:
             - "@oro_sale.provider.quote_address"
             - "@doctrine"
-            - '%oro_sale.entity.quote_address.class%'
+            - 'Oro\Bundle\SaleBundle\Entity\QuoteAddress'
         calls:
-            - [addEntity, ['a', '%oro_customer.entity.customer_address.class%']]
-            - [addEntity, ['au', '%oro_customer.entity.customer_user_address.class%']]
+            - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
+            - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
 
     oro_sale.privider.form_template_data.quote:
         class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
@@ -124,8 +117,8 @@ services:
             - "@oro_security.token_accessor"
             - "@doctrine"
             - "@oro_security.acl_helper"
-            - '%oro_customer.entity.customer_address.class%'
-            - '%oro_customer.entity.customer_user_address.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
 
     oro_sale.provider.quote_address_security:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
@@ -133,8 +126,8 @@ services:
             - '@security.authorization_checker'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_sale.provider.quote_address'
-            - '%oro_customer.entity.customer_address.class%'
-            - '%oro_customer.entity.customer_user_address.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
 
     oro_sale.service.quote_request_handler:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteRequestHandler'
@@ -142,8 +135,8 @@ services:
         arguments:
             - "@doctrine"
             - "@request_stack"
-            - '%oro_customer.entity.customer.class%'
-            - '%oro_customer.entity.customer_user.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
 
     oro_sale.manager.quote_demand_manager:
         class: 'Oro\Bundle\SaleBundle\Manager\QuoteDemandManager'
@@ -317,7 +310,7 @@ services:
     oro_sale.updater.customer_user_reassign.quote_updater:
         parent: oro_customer.updater.customer_user_reassign.abstract
         calls:
-            - [ setEntityClass, [ '%oro_sale.entity.quote.class%' ] ]
+            - [ setEntityClass, [ 'Oro\Bundle\SaleBundle\Entity\Quote' ] ]
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false

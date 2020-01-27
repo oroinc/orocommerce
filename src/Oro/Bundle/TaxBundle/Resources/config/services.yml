@@ -1,19 +1,9 @@
-parameters:
-    oro_tax.entity.abstract_tax_code.class: Oro\Bundle\TaxBundle\Entity\AbstractTaxCode
-    oro_tax.entity.product_tax_code.class: Oro\Bundle\TaxBundle\Entity\ProductTaxCode
-    oro_tax.entity.customer_tax_code.class: Oro\Bundle\TaxBundle\Entity\CustomerTaxCode
-    oro_tax.entity.tax_jurisdiction.class: Oro\Bundle\TaxBundle\Entity\TaxJurisdiction
-    oro_tax.entity.tax.class: Oro\Bundle\TaxBundle\Entity\Tax
-    oro_tax.entity.tax_rule.class: Oro\Bundle\TaxBundle\Entity\TaxRule
-    oro_tax.entity.zip_code.class: Oro\Bundle\TaxBundle\Entity\ZipCode
-    oro_tax.entity.tax_value.class: Oro\Bundle\TaxBundle\Entity\TaxValue
-
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
@@ -22,7 +12,7 @@ services:
         class: Oro\Bundle\TaxBundle\Autocomplete\SearchHandler
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
@@ -31,7 +21,7 @@ services:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.customer_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_customer_tax_code }
@@ -48,8 +38,8 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
-            - '%oro_tax.entity.customer_tax_code.class%'
-            - '%oro_customer.entity.customer.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEdit }
@@ -59,8 +49,8 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
-            - '%oro_tax.entity.customer_tax_code.class%'
-            - '%oro_customer.entity.customer_group.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEdit }
@@ -70,8 +60,8 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
-            - '%oro_tax.entity.product_tax_code.class%'
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
@@ -81,7 +71,7 @@ services:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.tax.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\Tax'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_autocomplete, acl_resource: oro_tax_view }
@@ -90,7 +80,7 @@ services:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.tax_jurisdiction.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_jurisdiction_autocomplete, acl_resource: oro_tax_jurisdiction_view }
@@ -103,32 +93,32 @@ services:
     oro_tax.event_listener.customer_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - '%oro_tax.entity.customer_tax_code.class%'
-            - '%oro_customer.entity.customer.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.customer_grid_groups:
         class: 'Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener'
         arguments:
-            - '%oro_tax.entity.customer_tax_code.class%'
-            - '%oro_customer.entity.customer_group.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.customer_group_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - '%oro_tax.entity.customer_tax_code.class%'
-            - '%oro_customer.entity.customer_group.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.product_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
         arguments:
-            - '%oro_tax.entity.product_tax_code.class%'
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBefore }
@@ -145,7 +135,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_eu'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -155,7 +145,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'digital_products_us'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -165,7 +155,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
             - 'shipping_tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -175,7 +165,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener'
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
-            - '%oro_tax.entity.tax_value.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\TaxValue'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
@@ -232,8 +222,8 @@ services:
             - '@oro_tax.taxation_provider.cache'
             - '@oro.cache.generator.object_cache_key'
         calls:
-            - [addTransformer, ['%oro_order.entity.order.class%', "@oro_tax.transformer.tax_value"]]
-            - [addTransformer, ['%oro_order.entity.order_line_item.class%', "@oro_tax.transformer.tax_value"]]
+            - [addTransformer, ['Oro\Bundle\OrderBundle\Entity\Order', "@oro_tax.transformer.tax_value"]]
+            - [addTransformer, ['Oro\Bundle\OrderBundle\Entity\OrderLineItem', "@oro_tax.transformer.tax_value"]]
 
     oro_tax.manager.tax_value_manager:
         class: 'Oro\Bundle\TaxBundle\Manager\TaxValueManager'
@@ -241,8 +231,8 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity.event_listener.doctrine_flush_progress_listener'
-            - '%oro_tax.entity.tax_value.class%'
-            - '%oro_tax.entity.tax.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\TaxValue'
+            - 'Oro\Bundle\TaxBundle\Entity\Tax'
 
     oro_tax.factory.tax:
         class: 'Oro\Bundle\TaxBundle\Factory\TaxFactory'
@@ -270,7 +260,7 @@ services:
             - '@oro_tax.provider.taxation_address_provider'
             - '@oro_tax.order_tax.mapper.order_line_item_mapper'
         tags:
-            - { name: oro_tax.tax_mapper, class: '%oro_order.entity.order.class%' }
+            - { name: oro_tax.tax_mapper, class: 'Oro\Bundle\OrderBundle\Entity\Order' }
 
     oro_tax.order_tax.mapper.order_line_item_mapper:
         class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper'
@@ -279,14 +269,14 @@ services:
             - '@oro_tax.event.context_event_dispatcher'
             - '@oro_tax.provider.taxation_address_provider'
         tags:
-            - { name: oro_tax.tax_mapper, class: '%oro_order.entity.order_line_item.class%' }
+            - { name: oro_tax.tax_mapper, class: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem' }
 
     oro_tax.order_tax.context_handler.order_line_item_handler:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
         arguments:
             - "@oro_tax.provider.taxation_address_provider"
             - "@oro_tax.provider.tax_code"
-            - '%oro_order.entity.order_line_item.class%'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
@@ -323,7 +313,7 @@ services:
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.tax_rule.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\TaxRule'
 
     oro_tax.matcher.country_matcher:
         class: 'Oro\Bundle\TaxBundle\Matcher\CountryMatcher'
@@ -472,7 +462,7 @@ services:
         arguments:
             - '@oro_tax.manager.tax_value_manager'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_tax.entity.tax_value.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\TaxBundle\Entity\TaxValue', event: postRemove }
 
     # Service helps built-in tax provider to manage TaxValue entities in the DB
     oro_tax.event_listener.builin_entity_tax:
@@ -481,10 +471,10 @@ services:
         arguments:
             - '@oro_tax.provider.tax_provider_registry'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: prePersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: postPersist }
 
     # Service tracks changes of Order entity and call tax calculation process
     oro_tax.event_listener.order_tax:
@@ -492,11 +482,11 @@ services:
         public: false
         arguments:
             - '@oro_tax.provider.tax_provider_registry'
-            - '%oro_order.entity.order.class%'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
         tags:
             # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
             - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preRemove }
 
     # Service tracks changes of OrderLineItem entity and call tax calculation process
     oro_tax.event_listener.order_line_item_tax:
@@ -504,11 +494,11 @@ services:
         public: false
         arguments:
             - '@oro_tax.provider.tax_provider_registry'
-            - '%oro_order.entity.order_line_item.class%'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         tags:
             # For correct generate "Created At" in TaxValue entity this listener must be a called before ModifyCreatedAndUpdatedPropertiesListener
             - { name: doctrine.event_listener, event: onFlush, method: onFlush, priority: 200 }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: preRemove }
 
     oro_tax.layout.data_provider.tax:
         class: 'Oro\Bundle\TaxBundle\Layout\Provider\TaxProvider'
@@ -583,7 +573,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_tax.manager.oro.customer_tax_code_manager'
-            - '%oro_customer.entity.customer.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
         tags:
             - { name: kernel.event_subscriber }
 

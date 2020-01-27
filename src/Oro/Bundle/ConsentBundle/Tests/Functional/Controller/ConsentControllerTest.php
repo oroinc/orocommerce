@@ -155,7 +155,7 @@ class ConsentControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $entityClass = self::getContainer()->getParameter('oro_consent.entity.consent.class');
+        $entityClass = Consent::class;
         $operationName = 'DELETE';
         $params = $this->getOperationExecuteParams($operationName, $id, $entityClass);
         $this->client->request(

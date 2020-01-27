@@ -1,6 +1,6 @@
 datagrids:
     pricing-price-list-select-grid:
-        extended_entity_name: '%oro_pricing.entity.price_list.class%'
+        extended_entity_name: 'Oro\Bundle\PricingBundle\Entity\PriceList'
         acl_resource:      oro_pricing_price_list_view
         options:
             entityHint: oro.pricing.pricelist.entity_plural_label
@@ -15,10 +15,10 @@ datagrids:
                     - priceList.updatedAt
                     - CASE WHEN priceList.active <> true THEN 'disabled' ELSE CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN 'active' ELSE 'inactive' END ELSE 'active' END END as activity
                 from:
-                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList }
                 join:
                     left:
-                        - { join: '%oro_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceListSchedule', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
             bind_parameters:
                 - now
             hints:
@@ -169,10 +169,10 @@ datagrids:
                     - customerGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList }
                 join:
                     inner:
-                        - { join: '%oro_pricing.entity.price_list_to_customer.class%', alias: priceListToCustomer, conditionType: 'WITH', condition: 'priceListToCustomer.priceList = priceList'}
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer', alias: priceListToCustomer, conditionType: 'WITH', condition: 'priceListToCustomer.priceList = priceList'}
                         - { join: priceListToCustomer.customer, alias: relatedEntity }
                     left:
                         - { join: relatedEntity.group, alias: customerGroup }
@@ -201,7 +201,7 @@ datagrids:
                     options:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
-                            class:    '%oro_customer.entity.customer_group.class%'
+                            class:    'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
                             choice_label: name
                 parentName:
                     type:      string
@@ -217,10 +217,10 @@ datagrids:
                 select:
                     - relatedEntity.id as relatedEntityId
                 from:
-                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList }
                 join:
                     inner:
-                        - { join: '%oro_pricing.entity.price_list_to_customer_group.class%', alias: priceListToCustomerGroup, conditionType: 'WITH', condition: 'priceListToCustomerGroup.priceList = priceList'}
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup', alias: priceListToCustomerGroup, conditionType: 'WITH', condition: 'priceListToCustomerGroup.priceList = priceList'}
                         - { join: priceListToCustomerGroup.customerGroup, alias: relatedEntity }
         columns:
             name:
@@ -294,10 +294,10 @@ datagrids:
                     - customerGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: '%oro_customer.entity.customer.class%', alias: relatedEntity }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\Customer', alias: relatedEntity }
                 join:
                     left:
-                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
                         - { join: relatedEntity.group, alias: customerGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
@@ -315,7 +315,7 @@ datagrids:
                     options:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
-                            class:    '%oro_customer.entity.customer_group.class%'
+                            class:    'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
                             choice_label: name
                 parentName:
                     type:       string
@@ -337,10 +337,10 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: '%oro_customer.entity.customer_group.class%', alias: relatedEntity }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', alias: relatedEntity }
                 join:
                     left:
-                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
         columns:
             name:
                 label:          oro.customer.customergroup.name.label
@@ -357,10 +357,10 @@ datagrids:
                 select:
                     - relatedEntity.url
                 from:
-                    - { table: '%oro_website.entity.website.class%', alias: relatedEntity }
+                    - { table: 'Oro\Bundle\WebsiteBundle\Entity\Website', alias: relatedEntity }
                 join:
                     left:
-                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
+                        - { join: 'Oro\Bundle\PricingBundle\Entity\PriceList', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
         columns:
             name:
                 label:          oro.website.name.label
@@ -401,7 +401,7 @@ datagrids:
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
-                    - { table: '%oro_pricing.entity.product_price.class%', alias: productPrice }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: productPrice }
                 join:
                     inner:
                         - { join: productPrice.product, alias: product }
@@ -553,7 +553,7 @@ datagrids:
                     - productPrice.value
                     - productPrice.currency
                 from:
-                    - { table: '%oro_pricing.entity.product_price.class%', alias: productPrice }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: productPrice }
                 join:
                     left:
                         - { join: productPrice.priceList, alias: priceList }
@@ -648,7 +648,7 @@ datagrids:
                 select:
                     - priceAttributepriceList
                 from:
-                    - { table: '%oro_pricing.entity.price_attribute_price_list.class%', alias: priceAttributepriceList }
+                    - { table: 'Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList', alias: priceAttributepriceList }
 
         columns:
             name:

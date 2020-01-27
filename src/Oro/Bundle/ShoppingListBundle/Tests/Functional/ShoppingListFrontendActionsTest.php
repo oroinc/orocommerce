@@ -28,10 +28,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
     public function testCreateRequest()
     {
-        if (!$this->client->getContainer()->hasParameter('oro_rfp.entity.request.class')) {
-            $this->markTestSkipped('RFPBundle disabled');
-        }
-
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());

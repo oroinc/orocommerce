@@ -49,11 +49,6 @@ class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->container->expects($this->once())
-            ->method('getParameter')
-            ->with('oro_pricing.entity.price_list.class')
-            ->willReturn(PriceList::class);
-
         $definition = $this->getMockBuilder(Definition::class)
             ->disableOriginalConstructor()
             ->getMock();

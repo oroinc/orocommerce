@@ -283,7 +283,7 @@ action_groups:
                     - [[shallowCopy], [propertyName, [discountConfiguration]]]
                     - [[shallowCopy], [propertyName, [productsSegment]]]
                     - [[collection], [propertyName, [schedules]]]
-                    - [[keep], [property, ["%oro_locale.entity.localized_fallback_value.class%", localization]]]
+                    - [[keep], [property, ['Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue', localization]]]
                     - [[collection], [propertyName, [labels]]]
                     - [[collection], [propertyName, [descriptions]]]
             - '@assign_value': [$.promotionCopy.rule.enabled, false]

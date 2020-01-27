@@ -9,6 +9,8 @@ use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -117,12 +119,10 @@ class QuoteRepositoryTest extends WebTestCase
 
         $query = reset($queries);
 
-        $quoteProductMetadata = $this->em
-            ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product.class'));
+        $quoteProductMetadata = $this->em->getClassMetadata(QuoteProduct::class);
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()), $query);
 
-        $quoteProductOfferMetadata = $this->em
-            ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product_offer.class'));
+        $quoteProductOfferMetadata = $this->em->getClassMetadata(QuoteProductOffer::class);
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()), $query);
     }
 

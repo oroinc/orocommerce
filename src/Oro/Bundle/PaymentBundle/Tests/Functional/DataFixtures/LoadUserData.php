@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 
 class LoadUserData extends AbstractLoadMultipleUserData
@@ -20,7 +22,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
     protected $roles = [
         self::ROLE_VIEW => [
             [
-                'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
+                'class' => PaymentMethodsConfigsRule::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -29,7 +31,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
                 ],
             ],
             [
-                'class' => 'oro_integration.entity.class',
+                'class' => Channel::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -40,7 +42,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
         ],
         self::ROLE_EDIT => [
             [
-                'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
+                'class' => PaymentMethodsConfigsRule::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
@@ -49,7 +51,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
                 ],
             ],
             [
-                'class' => 'oro_integration.entity.class',
+                'class' => Channel::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
@@ -60,7 +62,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
         ],
         self::ROLE_CREATE => [
             [
-                'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
+                'class' => PaymentMethodsConfigsRule::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',
@@ -69,7 +71,7 @@ class LoadUserData extends AbstractLoadMultipleUserData
                 ],
             ],
             [
-                'class' => 'oro_integration.entity.class',
+                'class' => Channel::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',

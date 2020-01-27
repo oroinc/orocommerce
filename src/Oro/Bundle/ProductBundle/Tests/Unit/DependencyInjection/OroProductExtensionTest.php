@@ -11,11 +11,6 @@ class OroProductExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroProductExtension());
 
-        $expectedParameters = [
-            'oro_product.entity.product.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
         $expectedDefinitions = [
             'oro_product.form.type.product',
             'oro_product.form.type.product_step_one',

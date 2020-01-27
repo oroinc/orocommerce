@@ -1,7 +1,7 @@
 datagrids:
     category-products-grid:
         acl_resource: oro_product_update
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             type:         orm
             query:
@@ -26,7 +26,7 @@ datagrids:
                             END
                         ) as inCategory
                 from:
-                    - { table: '%oro_product.entity.product.class%', alias: product }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}

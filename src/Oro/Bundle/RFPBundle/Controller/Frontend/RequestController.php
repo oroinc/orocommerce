@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for RFQs on the storefront.
+ */
 class RequestController extends Controller
 {
     const LAST_SUCCESS_RFQ_SESSION_NAME = 'last_success_rfq_id';
@@ -52,7 +55,7 @@ class RequestController extends Controller
      */
     public function indexAction()
     {
-        $entityClass = $this->container->getParameter('oro_rfp.entity.request.class');
+        $entityClass = RFPRequest::class;
         $viewPermission = 'VIEW;entity:' . $entityClass;
         if (!$this->isGranted($viewPermission)) {
             return $this->redirect(

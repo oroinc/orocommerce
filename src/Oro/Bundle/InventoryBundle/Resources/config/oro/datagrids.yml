@@ -10,11 +10,11 @@ datagrids:
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-                    - { table: '%oro_product.entity.product_unit_precision.class%', alias: precision }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', alias: precision }
                 join:
                     left:
                         -
-                            join: '%oro_inventory.entity.inventory_level.class%'
+                            join: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel'
                             alias: level
                             conditionType: WITH
                             condition: "level.productUnitPrecision = precision.id"
@@ -59,7 +59,7 @@ datagrids:
                 - oroinventory/js/datagrid/builder/level-quantity-builder
 
     inventory-grid:
-        extended_entity_name: '%oro_inventory.entity.inventory_level.class%'
+        extended_entity_name: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel'
         acl_resource: oro_product_inventory_view
         source:
             type: orm
@@ -78,7 +78,7 @@ datagrids:
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
-                    - { table: '%oro_inventory.entity.inventory_level.class%', alias: inventory}
+                    - { table: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: inventory}
                 join:
                     left:
                         - { join: inventory.product, alias: product}

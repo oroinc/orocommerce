@@ -29,7 +29,7 @@ class ContentNodeDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $contentNodeId,
-            self::getContainer()->getParameter('oro_web_catalog.entity.content_node.class'),
+            ContentNode::class,
             ['datagrid' => 'web-catalog-grid']
         );
 

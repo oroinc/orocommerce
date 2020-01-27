@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for tax jurisdictions.
+ */
 class TaxJurisdictionController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class TaxJurisdictionController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.tax_jurisdiction.class')
+            'entity_class' => TaxJurisdiction::class
         ];
     }
 

@@ -1,5 +1,4 @@
 parameters:
-    oro_payment_term.entity.payment_term.class: Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
     oro_payment_term.type: 'payment_term'
 
 services:
@@ -7,7 +6,7 @@ services:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_payment_term.entity.payment_term.class%'
+            - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm'
             - ["label"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType, acl_resource: oro_payment_term_view }

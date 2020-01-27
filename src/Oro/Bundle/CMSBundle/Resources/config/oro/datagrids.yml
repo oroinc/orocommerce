@@ -9,7 +9,7 @@ datagrids:
                 select:
                     - page.id
                 from:
-                    - { table: '%oro_cms.entity.page.class%', alias: page }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\Page', alias: page }
         columns:
             id:
                 label: oro.cms.page.id.label
@@ -48,7 +48,7 @@ datagrids:
                 select:
                     - loginPage.id
                 from:
-                    - { table: '%oro_cms.entity.loginpage.class%', alias: loginPage }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\LoginPage', alias: loginPage }
         columns:
             id:
               label: oro.cms.loginpage.id.label
@@ -78,7 +78,7 @@ datagrids:
                 select:
                     - page.id
                 from:
-                    - { table: '%oro_cms.entity.page.class%', alias: page }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\Page', alias: page }
         columns:
             id:
               label: oro.cms.page.id.label
@@ -130,7 +130,7 @@ datagrids:
                     - contentBlock.createdAt
                     - contentBlock.updatedAt
                 from:
-                    - { table: '%oro_cms.entity.content_block.class%', alias: contentBlock }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentBlock', alias: contentBlock }
         columns:
             alias:
                 label: oro.cms.contentblock.alias.label
@@ -321,7 +321,7 @@ datagrids:
                             join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
                             alias: contentWidgetUsage
                             conditionType: WITH
-                            condition: "contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = '%oro_cms.entity.page.class%' AND contentWidgetUsage.entityId = page.id"
+                            condition: 'contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = ''Oro\Bundle\CMSBundle\Entity\Page'' AND contentWidgetUsage.entityId = page.id'
             bind_parameters:
                 - content_widget_id
 
@@ -336,7 +336,7 @@ datagrids:
                             join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
                             alias: contentWidgetUsage
                             conditionType: WITH
-                            condition: "contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = 'Oro\\Bundle\\CMSBundle\\Entity\\TextContentVariant' AND contentWidgetUsage.entityId = contentVariant.id"
+                            condition: 'contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = ''Oro\Bundle\CMSBundle\Entity\TextContentVariant'' AND contentWidgetUsage.entityId = contentVariant.id'
                 groupBy: contentBlock.id
             bind_parameters:
                 - content_widget_id

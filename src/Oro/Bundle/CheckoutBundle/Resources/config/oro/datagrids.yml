@@ -27,7 +27,7 @@ datagrids:
                     - checkout_subtotals.currency as currency
                     - (checkout_subtotals.value + COALESCE(checkout.shippingEstimateAmount, 0)) AS total
                 from:
-                    - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
+                    - { table: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', alias: checkout }
                 join:
                     left:
                         - { join: checkout.customerUser, alias: customer_user }

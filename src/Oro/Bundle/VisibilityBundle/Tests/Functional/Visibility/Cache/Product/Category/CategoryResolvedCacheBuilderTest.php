@@ -59,9 +59,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             $productReindexManager
         );
         $this->scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        $this->builder->setCacheClass(
-            $container->getParameter('oro_visibility.entity.category_visibility_resolved.class')
-        );
+        $this->builder->setCacheClass(CategoryVisibilityResolved::class);
         $this->builder->setRepository($container->get('oro_visibility.category_repository'));
 
         $subtreeBuilder = new VisibilityChangeCategorySubtreeCacheBuilder(
