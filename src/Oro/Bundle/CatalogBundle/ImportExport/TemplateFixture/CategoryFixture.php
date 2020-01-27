@@ -80,7 +80,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
                         ->setLocalization($localization)
                 )
                 ->addShortDescription((new LocalizedFallbackValue())->setText('Sample short description'))
-                ->addLongDescription((new LocalizedFallbackValue())->setText('Sample long description'))
+                ->addLongDescription((new LocalizedFallbackValue())->setWysiwyg('Sample long description'))
                 ->setOrganization($organizationRepo->getEntity('default'));
 
             return;
