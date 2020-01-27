@@ -23,8 +23,10 @@ oro:
         back_order:
             label:        Backorder
             description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
-        quantity.label: Qty
-        quantity.placeholder: "Qty #"
+        quantity:
+            label: Qty
+            placeholder: "Qty #"
+            aria-label: Product Quantity
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
