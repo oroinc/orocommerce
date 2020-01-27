@@ -127,19 +127,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product-1 en_US Name',
-                                'fallback' => 'parent_localization',
-                                'localization' => [
-                                    'testEntity' => Localization::class,
-                                    'testProperties' => [
-                                        'name' => 'English (United States)',
-                                    ],
-                                ],
-                            ]
-                        ],
-                        [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                            'testProperties' => [
                                 'string' => 'product-1 en_CA Name',
                                 'localization' => [
                                     'testEntity' => Localization::class,
@@ -178,14 +165,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'text' => null,
                         'fallback' => null,
                     ],
-                    'English (United States)' => [
-                        'reference' => 'product-1.names.en_US',
-                        'string' => 'product-1 en_US Name',
-                        'text' => null,
-                        'fallback' => null,
-                    ],
                     'English (Canada)' => [
-                        'reference' => null,
+                        'reference' => 'product-1.names.en_US',
                         'string' => 'product-1 en_CA Name',
                         'text' => null,
                         'fallback' => null,
@@ -196,10 +177,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'names' => [
                         null => [
                             'string' => 'product-1 Default Name'
-                        ],
-                        'English (United States)' => [
-                            'string' => 'product-1 en_US Name',
-                            'fallback' => 'parent_localization',
                         ],
                         'English (Canada)' => [
                             'string' => 'product-1 en_CA Name',
@@ -222,7 +199,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'fallback' => null,
                     ],
                     'English (Canada)' => [
-                        'reference' => null,
+                        'reference' => 'product-1.slugPrototypes.en_CA',
                         'string' => 'product-1-en-ca-slug-prototype-added',
                         'text' => null,
                         'fallback' => null,

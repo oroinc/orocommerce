@@ -69,7 +69,7 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'title'          => 'English (United States)',
                             'formattingCode' => 'en_US',
-                            'languageCode'   => 'en_US',
+                            'languageCode'   => 'en',
                             'default'        => true
                         ]
                     ],
@@ -103,7 +103,7 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'title'          => 'English (United States)',
                         'formattingCode' => 'en_US',
-                        'languageCode'   => 'en_US',
+                        'languageCode'   => 'en',
                         'default'        => true
                     ]
                 ]

@@ -33,17 +33,11 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.descriptions.default->id)>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.descriptions.en_US->id)>'
         shortDescriptions:
             data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.shortDescriptions.default->id)>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.shortDescriptions.en_US->id)>'
         unitPrecisions:
             data:
                 -

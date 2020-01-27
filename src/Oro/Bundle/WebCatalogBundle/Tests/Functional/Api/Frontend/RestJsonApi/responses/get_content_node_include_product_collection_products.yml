@@ -13,9 +13,8 @@ included:
         attributes:
             sku: PSKU1
             name: 'Product 1'
-            url: '/product1_slug_default'
+            url: '/product1_slug_en_US'
             urls:
-                - { url: '/product1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/product1_slug_default', localizationId: '<toString(@en_CA->id)>' }
                 - { url: '/product1_slug_default', localizationId: '<toString(@es->id)>' }
     -
