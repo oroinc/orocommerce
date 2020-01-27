@@ -128,3 +128,27 @@ Feature: Configurable image slider
     When I click "Second Dot On Image Slider"
     And I should not see "Slide text 1"
     And I should see "Slide text 2"
+
+  Scenario: Add same image slider to the same page
+    Given I proceed as the Admin
+    And I go to Marketing/Landing Pages
+    And click Edit "Image slider page" in grid
+    And I fill in WYSIWYG "CMS Page Content" with "<div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div><div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div>"
+    When I save form
+    Then I should see "Page has been saved" flash message
+
+  Scenario: Ensure sliders are still functional
+    Given I proceed as the Buyer
+    When I click "Image slider page"
+    Then Page title equals to "Image slider page"
+    And I should see "Slide text 1"
+    And I should not see "Slide text 2"
+    And I should not see "All Products"
+    When I click "First Image Slide"
+    Then I should see "All Products"
+    When I click "Image slider page"
+    Then I should see "Slide text 1"
+    And I should not see "Slide text 2"
+    When I click "Second Dot On Image Slider"
+    Then I should see "Slide text 2"
+    And I should see "Slide text 1"

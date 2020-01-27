@@ -1,10 +1,16 @@
 /* @theme: blank; */
 
+$product-view-attribute-font-weight: bold !default;
+
 // Attributes containers
 $product-view-attributes-containers-border-color: get-color('additional', 'light') !default;
 $product-view-attributes-container-border-radius: 5px !default;
 // Attributes containers for mobile landscape
 $product-view-attributes-container-border-radius-mobile-l: 0 !default;
+
+// Attribute title
+$product-view-attribute-title-offset: $offset-y 0 !default;
+$product-view-attribute-title-font-weight: bold !default;
 
 // Attributes tabs
 $product-view-attributes-tabs: '.product-attributes-tabs' !default;
@@ -32,3 +38,24 @@ $product-view-attributes-tab-content-attribute-weight: bold !default;
 
 // Attributes tab content for mobile landscap
 $product-view-attributes-tab-content-display-mobile-l: none !important !default;
+
+// Image sizes
+$desktop-product-view-attribute-image-size: 80px !default;
+$mobile-big-product-view-attribute-image-size: 100px !default;
+$mobile-small-product-view-attribute-image-size: 95px !default;
+
+// Image attribute
+$product-view-attribute-image-border: 1px solid get-color('additional', 'light') !default;
+$product-view-attribute-image-transition: border-color .5s !default;
+
+// Images attribute
+$product-view-attribute-images-item-space: 8px !default;
+$product-view-attribute-images-show-more-link-margin-top: 14px;
+
+// Files attribute
+$product-view-attribute-files-gradient-height: 48px !default;
+$mobile-product-view-attribute-files-gradient-height: 60px !default;
+$product-view-attribute-files-gradient-background: linear-gradient(to bottom, rgba($body-bg-color, 0), $body-bg-color) !default;
+$product-view-attribute-files-icon-color: get-color('ui', 'normal');
+$mobile-product-view-attribute-files-item-inner-padding: 4px 16px !default;
+$mobile-product-view-attribute-files-item-outer-padding: 18px !default;

@@ -17,6 +17,7 @@ import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
+const MIN_EDITOR_WIDHT = 1100;
 /**
  * Create grapesJS content builder
  * @type {*|void}
@@ -235,6 +236,16 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     render: function() {
+        if (_.isMobile()) {
+            this.message = mediator.execute('showFlashMessage', 'error', __('oro.cms.wysiwyg.mobile.flash_message'), {
+                container: this.$el.parent(),
+                hideCloseButton: true
+            });
+
+            this.$el.parent().addClass('mobile-mode');
+
+            return;
+        }
         this.applyComponentsJSON();
         this.initContainer();
         this.initBuilder();
@@ -551,6 +562,8 @@ const GrapesjsEditorView = BaseView.extend({
 
         mediator.trigger('grapesjs:loaded', this.builder);
         mediator.trigger('page:afterChange');
+
+        this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDHT);
     },
 
     /**

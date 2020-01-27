@@ -2,14 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Updates or creates combined price lists for website scope
  *
+ * Perform CPL build for website level,
+ * call customer group CPL builder for groups with fallback to website
+ *
  * @method PriceListToWebsiteRepository getPriceListToEntityRepository()
+ *
+ * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
  */
 class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
@@ -35,26 +40,17 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $currentWebsite = null, $forceTimestamp = null)
     {
-        if (!$this->isBuiltForWebsite($currentWebsite)) {
-            $websites = [$currentWebsite];
-            if (!$currentWebsite) {
-                $fallback = $forceTimestamp ? null : PriceListWebsiteFallback::CONFIG;
-                $websites = $this->getPriceListToEntityRepository()
-                    ->getWebsiteIteratorByDefaultFallback($fallback);
+        $websites = $this->getWebsitesForBuild($currentWebsite);
+        foreach ($websites as $website) {
+            if ($this->isBuiltForWebsite($website)) {
+                continue;
             }
+            $this->wrapInTransaction(function () use ($website, $forceTimestamp) {
+                $this->updatePriceListsOnCurrentLevel($website, $forceTimestamp);
+            });
+            $this->setBuiltForWebsite($website);
 
-            foreach ($websites as $website) {
-                $this->wrapInTransaction(function () use ($website, $forceTimestamp) {
-                    $this->updatePriceListsOnCurrentLevel($website, $forceTimestamp);
-                });
-
-                $this->customerGroupCombinedPriceListsBuilder->build($website, null, $forceTimestamp);
-            }
-
-            if ($currentWebsite) {
-                $this->garbageCollector->cleanCombinedPriceLists();
-            }
-            $this->setBuiltForWebsite($currentWebsite);
+            $this->customerGroupCombinedPriceListsBuilder->build($website, null, $forceTimestamp);
         }
     }
 
@@ -64,9 +60,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     protected function updatePriceListsOnCurrentLevel(Website $website, $forceTimestamp = null)
     {
-        $priceListsToWebsite = $this->getPriceListToEntityRepository()
-            ->findOneBy(['website' => $website]);
-        if (!$priceListsToWebsite) {
+        if (!$this->hasAssignedPriceLists($website)) {
             /** @var PriceListToWebsiteRepository $repo */
             $repo = $this->getCombinedPriceListToEntityRepository();
             $repo->delete($website);
@@ -91,6 +85,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         if ($website) {
             $websiteId = $website->getId();
         }
+
         return !empty($this->builtList[$websiteId]);
     }
 
@@ -111,12 +106,36 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      * @param Website $website
      * @return bool
      */
-    public function hasFallbackOnNextLevel(Website $website)
+    protected function hasFallbackOnNextLevel(Website $website)
     {
-        $fallback = $this->getFallbackRepository()->findOneBy(
-            ['website' => $website, 'fallback' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY]
-        );
+        /** @var PriceListWebsiteFallbackRepository $repo */
+        $repo = $this->getFallbackRepository();
 
-        return $fallback === null;
+        return $repo->hasFallbackOnNextLevel($website);
+    }
+
+    /**
+     * @param Website $currentWebsite
+     * @return iterable|Website[]
+     */
+    protected function getWebsitesForBuild(Website $currentWebsite = null)
+    {
+        if ($currentWebsite) {
+            return [$currentWebsite];
+        }
+
+        return $this->getPriceListToEntityRepository()->getWebsiteIteratorWithDefaultFallback();
+    }
+
+    /**
+     * @param Website $website
+     * @return bool
+     */
+    protected function hasAssignedPriceLists(Website $website): bool
+    {
+        /** @var PriceListToWebsiteRepository $repo */
+        $repo = $this->getPriceListToEntityRepository();
+
+        return $repo->hasAssignedPriceLists($website);
     }
 }

@@ -34,10 +34,13 @@ class WYSIWYGSchemaHelper
      */
     public function createAdditionalFields(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): void
     {
-        if ($fieldConfig->is('is_serialized')) {
-            $schema = $this->generateSerializedSchema($entityConfig, $fieldConfig);
-        } else {
-            $schema = $this->generateTableFieldSchema($entityConfig, $fieldConfig);
+        $schema = $entityConfig->get('schema', false, []);
+
+        if (!$fieldConfig->is('is_serialized')) {
+            $schema = $this->generateTableFieldSchema($schema, $fieldConfig);
+        } elseif ($schema) {
+            // Generates serialized fields schema only if schema for entity already exists.
+            $schema = $this->generateSerializedSchema($schema, $fieldConfig);
         }
 
         $entityConfig->set('schema', $schema);
@@ -45,14 +48,13 @@ class WYSIWYGSchemaHelper
     }
 
     /**
-     * @param ConfigInterface $entityConfig
+     * @param array $schema
      * @param ConfigInterface $fieldConfig
      *
      * @return array
      */
-    private function generateSerializedSchema(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): array
+    private function generateSerializedSchema(array $schema, ConfigInterface $fieldConfig): array
     {
-        $schema = $entityConfig->get('schema', false, []);
         $fieldConfigId = $fieldConfig->getId();
         $styleFieldName = $this->getStyleFieldName($fieldConfigId);
         $propertiesFieldName = $this->getPropertiesFieldName($fieldConfigId);
@@ -68,14 +70,13 @@ class WYSIWYGSchemaHelper
     }
 
     /**
-     * @param ConfigInterface $entityConfig
+     * @param array $schema
      * @param ConfigInterface $fieldConfig
      *
      * @return array
      */
-    private function generateTableFieldSchema(ConfigInterface $entityConfig, ConfigInterface $fieldConfig): array
+    private function generateTableFieldSchema(array $schema, ConfigInterface $fieldConfig): array
     {
-        $schema = $entityConfig->get('schema', false, []);
         $className = $schema['entity'];
         $fieldConfigId = $fieldConfig->getId();
         $styleFieldName = $this->getStyleFieldName($fieldConfigId);

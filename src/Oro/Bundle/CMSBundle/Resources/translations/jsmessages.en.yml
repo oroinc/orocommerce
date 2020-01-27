@@ -50,6 +50,8 @@ oro.cms:
             blockSetting: 'Block Settings'
         settings:
             label: 'Settings'
+        mobile:
+            flash_message: 'The screen size is too small to display an editor.'
     change_type:
         confirmation:
             title: 'Change Type'

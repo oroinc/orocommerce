@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ScalarFieldDenormalizer;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\RelatedProductNormalizer;
@@ -25,6 +26,7 @@ class RelatedProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->normalizer = new RelatedProductNormalizer($this->fieldHelper);
         $this->normalizer->setSerializer($this->serializer);
+        $this->normalizer->setScalarFieldDenormalizer(new ScalarFieldDenormalizer());
     }
 
     public function testSupportsNormalization(): void
