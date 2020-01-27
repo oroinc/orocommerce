@@ -57,9 +57,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
         $this->stepExecution = new StepExecution('step', new JobExecution());
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
-        $this->strategy->setEntityName(
-            $container->getParameter('oro_pricing.entity.product_price.class')
-        );
+        $this->strategy->setEntityName(ProductPrice::class);
     }
 
     public function testProcessLoadPriceAndProduct()

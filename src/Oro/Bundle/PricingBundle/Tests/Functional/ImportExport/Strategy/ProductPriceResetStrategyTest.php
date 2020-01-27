@@ -66,13 +66,11 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
-        
+
         $this->stepExecution = new StepExecution('step', new JobExecution());
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
-        $this->strategy->setEntityName(
-            $container->getParameter('oro_pricing.entity.product_price.class')
-        );
+        $this->strategy->setEntityName(ProductPrice::class);
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 

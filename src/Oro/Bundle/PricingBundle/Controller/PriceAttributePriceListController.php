@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for price attributes.
+ */
 class PriceAttributePriceListController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class PriceAttributePriceListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_pricing.entity.price_attribute_price_list.class')
+            'entity_class' => PriceAttributePriceList::class
         ];
     }
 

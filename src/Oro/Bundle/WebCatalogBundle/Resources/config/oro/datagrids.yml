@@ -1,7 +1,7 @@
 datagrids:
     web-catalog-select-grid:
         acl_resource: oro_web_catalog_view
-        extended_entity_name: '%oro_web_catalog.entity.web_catalog.class%'
+        extended_entity_name: 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
         options:
             entityHint: oro.webcatalog.entity_plural_label
         source:
@@ -13,7 +13,7 @@ datagrids:
                     - web_catalog.createdAt
                     - web_catalog.updatedAt
                 from:
-                    - { table: '%oro_web_catalog.entity.web_catalog.class%', alias: web_catalog }
+                    - { table: 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog', alias: web_catalog }
         columns:
             id:
                 label: oro.webcatalog.id.label

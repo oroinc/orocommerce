@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -40,10 +41,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
      */
     public function testConvertToImportFormat(array $data, array $expected)
     {
-        $fallbackClass = $this->getContainer()
-            ->getParameter('oro_locale.entity.localized_fallback_value.class');
-
-        $this->converter->setEntityName($fallbackClass);
+        $this->converter->setEntityName(LocalizedFallbackValue::class);
 
         $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
@@ -77,10 +75,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        $fallbackClass = $this->getContainer()
-            ->getParameter('oro_locale.entity.localized_fallback_value.class');
-
-        $this->converter->setEntityName($fallbackClass);
+        $this->converter->setEntityName(LocalizedFallbackValue::class);
 
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }

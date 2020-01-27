@@ -2,14 +2,14 @@ services:
     oro_tax.form.type.product_tax_code:
         class: 'Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.product_tax_code.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\ProductTaxCode']]
         tags:
             - { name: form.type, alias: oro_tax_product_tax_code_type }
 
     oro_tax.form.type.customer_tax_code:
         class: 'Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.customer_tax_code.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\CustomerTaxCode']]
         tags:
             - { name: form.type, alias: oro_tax_customer_tax_code_type }
 
@@ -32,7 +32,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_tax.entity.product_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
@@ -40,7 +40,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_tax.entity.customer_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
 
@@ -48,7 +48,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerGroupTaxExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_tax.entity.customer_tax_code.class%'
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
 
@@ -73,7 +73,7 @@ services:
     oro_tax.form.type.tax:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.tax.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\Tax']]
         tags:
             - { name: form.type, alias: oro_tax_type }
 
@@ -85,7 +85,7 @@ services:
     oro_tax.form.type.tax_rule:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxRuleType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.tax_rule.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\TaxRule']]
         tags:
             - { name: form.type, alias: oro_tax_rule_type }
 
@@ -95,7 +95,7 @@ services:
             - '@oro_address.form.listener.address'
             - '@oro_tax.provider.taxation_settings_provider'
         calls:
-            - [setDataClass, ['%oro_tax.entity.tax_jurisdiction.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\TaxJurisdiction']]
         tags:
             - { name: form.type, alias: oro_tax_jurisdiction_type }
 
@@ -103,7 +103,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType'
         tags:
             - { name: form.type, alias: oro_tax_jurisdiction_select }
-    
+
     oro_tax.form.type.zip_code_collection:
         class: 'Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType'
         tags:
@@ -112,7 +112,7 @@ services:
     oro_tax.form.type.zip_code:
         class: 'Oro\Bundle\TaxBundle\Form\Type\ZipCodeType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.zip_code.class%']]
+            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\ZipCode']]
         tags:
             - { name: form.type, alias: oro_tax_zip_code_type }
 

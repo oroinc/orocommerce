@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Back-office CRUD for quotes.
+ */
 class QuoteController extends Controller
 {
     const REDIRECT_BACK_FLAG = 'redirect_back';
@@ -49,7 +52,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
+            'entity_class' => Quote::class
         ];
     }
 
@@ -88,8 +91,7 @@ class QuoteController extends Controller
             $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         }
 
-        $quoteClass = $this->container->getParameter('oro_sale.entity.quote.class');
-        $em = $this->get('doctrine')->getManagerForClass($quoteClass);
+        $em = $this->get('doctrine')->getManagerForClass(Quote::class);
 
         $em->persist($quote);
         $em->flush();

@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerProductResolvedCacheBuilder;
 
@@ -54,9 +55,7 @@ class CustomerProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
             $container->get('oro_entity.orm.insert_from_select_query_executor'),
             $productReindexManager
         );
-        $builder->setCacheClass(
-            $container->getParameter('oro_visibility.entity.customer_product_visibility_resolved.class')
-        );
+        $builder->setCacheClass(CustomerProductVisibilityResolved::class);
         $builder->setRepository($container->get('oro_visibility.customer_product_repository'));
 
         return $builder;

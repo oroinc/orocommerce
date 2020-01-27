@@ -289,9 +289,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     protected function setShoppingListCurrent(ShoppingList $currentShoppingList, $isCurrent)
     {
         $container = $this->getContainer();
-        $manager = $container->get('doctrine')->getManagerForClass(
-            $container->getParameter('oro_shopping_list.entity.shopping_list.class')
-        );
+        $manager = $container->get('doctrine')->getManagerForClass(ShoppingList::class);
 
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getShoppingListRepository()->findAll();

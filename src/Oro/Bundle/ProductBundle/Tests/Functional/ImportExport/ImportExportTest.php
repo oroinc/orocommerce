@@ -157,7 +157,7 @@ class ImportExportTest extends AbstractImportExportTest
         $configuration = [
             'import_validation' => [
                 'processorAlias' => 'oro_product_product.add_or_replace',
-                'entityName' => $this->getContainer()->getParameter('oro_product.entity.product.class'),
+                'entityName' => Product::class,
                 'filePath' => $filePath,
             ],
         ];
@@ -203,7 +203,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
 
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
         $configuration = [
             'import' => [
                 'processorAlias' => 'oro_product_product.add_or_replace',
@@ -264,7 +264,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         $dataPath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
 
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
         $configuration = [
             'import' => [
                 'processorAlias' => 'oro_product_product.add_or_replace',
@@ -318,7 +318,7 @@ class ImportExportTest extends AbstractImportExportTest
              (see BAP-13063 and BAP-13064)'
         );
         $this->loadFixtures([LoadProductData::class]);
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
 
         $file = $this->getExportFile();
         $this->validateExportResult($file, 8);

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 
 class CustomerTaxCodeDeleteOperationTest extends ActionTestCase
@@ -25,7 +26,7 @@ class CustomerTaxCodeDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $customerTaxCode->getId(),
-            'oro_tax.entity.customer_tax_code.class',
+            CustomerTaxCode::class,
             'oro_tax_customer_tax_code_index'
         );
     }

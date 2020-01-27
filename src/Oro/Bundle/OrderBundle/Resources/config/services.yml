@@ -1,12 +1,3 @@
-parameters:
-    oro_order.entity.order.class: Oro\Bundle\OrderBundle\Entity\Order
-    oro_order.entity.order_address.class: Oro\Bundle\OrderBundle\Entity\OrderAddress
-    oro_order.entity.order_line_item.class: Oro\Bundle\OrderBundle\Entity\OrderLineItem
-    oro_order.entity.order_discount_item.class: Oro\Bundle\OrderBundle\Entity\OrderDiscount
-    oro_order.entity.order_shipping_tracking.class: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
-    oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
-    oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
-
 services:
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
@@ -18,7 +9,7 @@ services:
         arguments:
             - '@oro_order.order.entity.id_generator'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: postPersist}
 
     oro_order.order.listener.orm.order_status_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener'
@@ -27,7 +18,7 @@ services:
             - '@oro_order.provider.configuration'
             - '@doctrine'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
 
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
@@ -59,8 +50,8 @@ services:
             - '@oro_security.token_accessor'
             - '@doctrine'
             - '@oro_security.acl_helper'
-            - '%oro_customer.entity.customer_address.class%'
-            - '%oro_customer.entity.customer_user_address.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
 
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
@@ -68,8 +59,8 @@ services:
             - '@security.authorization_checker'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_order.order.provider.order_address'
-            - '%oro_customer.entity.customer_address.class%'
-            - '%oro_customer.entity.customer_user_address.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
 
     Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:
         alias: 'oro_order.order.provider.order_address_security'
@@ -81,18 +72,18 @@ services:
         arguments:
             - '@oro_order.order.provider.order_address'
             - '@doctrine'
-            - '%oro_order.entity.order_address.class%'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
         calls:
-            - [addEntity, ['a', '%oro_customer.entity.customer_address.class%']]
-            - [addEntity, ['au', '%oro_customer.entity.customer_user_address.class%']]
+            - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
+            - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
 
     oro_order.request_handler.order_request_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
         arguments:
             - '@doctrine'
             - '@request_stack'
-            - '%oro_customer.entity.customer.class%'
-            - '%oro_customer.entity.customer_user.class%'
+            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
 
     Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler:
         alias: 'oro_order.request_handler.order_request_handler'
@@ -432,9 +423,9 @@ services:
             - '@oro_product.search.product_reindex_manager'
             - '@oro_order.provider.previously_purchased_order_statuses'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist, method: reindexProductOnLineItemCreateOrDelete}
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postRemove, method: reindexProductOnLineItemCreateOrDelete}
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preUpdate, method: reindexProductOnLineItemUpdate}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: postPersist, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: postRemove, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: preUpdate, method: reindexProductOnLineItemUpdate}
             - { name: oro_featuretogle.feature, feature: previously_purchased_products }
 
     oro_order.order.listener.orm.reindex_product_order_listener:
@@ -444,8 +435,8 @@ services:
             - '@oro_product.search.product_reindex_manager'
             - '@oro_order.provider.previously_purchased_order_statuses'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preUpdate, method: processOrderUpdate}
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postRemove, method: processOrderRemove}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate, method: processOrderUpdate}
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: postRemove, method: processOrderRemove}
             - { name: oro_featuretogle.feature, feature: previously_purchased_products }
 
     oro_order.provider.previously_purchased_order_statuses:
@@ -469,8 +460,8 @@ services:
         arguments:
             - '@oro_product.layout.data_provider.configurable_products'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: prePersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', event: preUpdate }
 
     oro_order.datagrid.order_line_items_grid_frontend_access_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsGridFrontendAccessListener'
@@ -482,7 +473,7 @@ services:
     oro_order.updater.customer_user_reassign.order_updater:
         parent: oro_customer.updater.customer_user_reassign.abstract
         calls:
-            - [ setEntityClass, [ '%oro_order.entity.order.class%' ] ]
+            - [ setEntityClass, [ 'Oro\Bundle\OrderBundle\Entity\Order' ] ]
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false

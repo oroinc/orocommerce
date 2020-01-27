@@ -104,9 +104,7 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(
-            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
-        );
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductUnit::class);
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
@@ -119,7 +117,7 @@ class ProductUnitRepositoryTest extends WebTestCase
 
         $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
-    
+
     /**
      * @return array
      */
@@ -217,9 +215,7 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsByCodesNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(
-            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
-        );
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductUnit::class);
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
@@ -319,8 +315,6 @@ class ProductUnitRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
-        );
+        return $this->getContainer()->get('doctrine')->getRepository(ProductUnit::class);
     }
 }

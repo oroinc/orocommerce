@@ -6,12 +6,16 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -90,7 +94,7 @@ class ProductVisibilityController extends Controller
     /**
      * @param Product $product
      * @param array $preloadedScopes
-     * @return Form
+     * @return FormInterface
      */
     protected function createScopedDataForm(Product $product, array $preloadedScopes = [])
     {
@@ -104,12 +108,9 @@ class ProductVisibilityController extends Controller
                 ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
-                    EntityVisibilityType::ALL_CLASS => $this
-                        ->getParameter('oro_visibility.entity.product_visibility.class'),
-                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => $this
-                        ->getParameter('oro_visibility.entity.customer_group_product_visibility.class'),
-                    EntityVisibilityType::ACCOUNT_CLASS => $this
-                        ->getParameter('oro_visibility.entity.customer_product_visibility.class'),
+                    EntityVisibilityType::ALL_CLASS => ProductVisibility::class,
+                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => CustomerGroupProductVisibility::class,
+                    EntityVisibilityType::ACCOUNT_CLASS => CustomerProductVisibility::class,
                 ]
             ]
         );

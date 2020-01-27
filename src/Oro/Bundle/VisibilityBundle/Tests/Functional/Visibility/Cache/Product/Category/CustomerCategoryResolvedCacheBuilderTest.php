@@ -64,9 +64,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
             $container->get('oro_entity.orm.insert_from_select_query_executor'),
             $productReindexManager
         );
-        $this->builder->setCacheClass(
-            $container->getParameter('oro_visibility.entity.customer_category_visibility_resolved.class')
-        );
+        $this->builder->setCacheClass(CustomerCategoryVisibilityResolved::class);
         $this->builder->setRepository(
             $container->get('oro_visibility.customer_category_repository')
         );

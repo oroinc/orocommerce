@@ -1,14 +1,10 @@
-parameters:
-    oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
-    oro_payment.entity.payment_methods_configs_rule.class: Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule
-
 services:
     oro_payment.payment_methods_configs_rule.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_payment.entity.payment_methods_configs_rule.class%'
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
             - "@doctrine.orm.entity_manager"
 
     oro_payment.form.handler.payment_methods_configs_rule:
@@ -97,7 +93,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_customer.security.customer_user_provider'
             - '@event_dispatcher'
-            - '%oro_payment.entity.payment_transaction.class%'
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction'
         calls:
             - ['setLogger', ['@logger']]
 
@@ -336,7 +332,7 @@ services:
         arguments:
             - '@oro_security.token_accessor'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_payment.entity.payment_transaction.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', event: prePersist }
 
     oro_payment.provider.payment_order_line_item_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider'

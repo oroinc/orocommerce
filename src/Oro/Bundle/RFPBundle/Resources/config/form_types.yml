@@ -3,7 +3,7 @@ services:
     oro_rfp.form.type.request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestType'
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\Request']]
         tags:
             - { name: form.type, alias: oro_rfp_request }
 
@@ -17,14 +17,14 @@ services:
     oro_rfp.form.type.request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductType'
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request_product.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\RequestProduct']]
         tags:
             - { name: form.type, alias: oro_rfp_request_product }
 
     oro_rfp.form.type.request_product_item:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType'
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request_product_item.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\RequestProductItem']]
         tags:
             - { name: form.type, alias: oro_rfp_request_product_item }
 
@@ -46,14 +46,14 @@ services:
     oro_rfp.form.type.frontend_request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType'
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\Request']]
         tags:
             - { name: form.type, alias: oro_rfp_frontend_request }
 
     oro_rfp.form.type.frontend_request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType'
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request_product.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\RequestProduct']]
         tags:
             - { name: form.type, alias: oro_rfp_frontend_request_product }
 
@@ -67,7 +67,7 @@ services:
         public: true
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setDataClass, ['%oro_rfp.entity.request.class%']]
+            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\Request']]
             - [setConfigManager, ['@oro_config.manager']]
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]

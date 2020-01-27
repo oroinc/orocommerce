@@ -40,7 +40,7 @@ class ProductControllerTest extends WebTestCase
 
         $content = $crawler->html();
 
-        $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
+        $shoppingListClass = ShoppingList::class;
 
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')

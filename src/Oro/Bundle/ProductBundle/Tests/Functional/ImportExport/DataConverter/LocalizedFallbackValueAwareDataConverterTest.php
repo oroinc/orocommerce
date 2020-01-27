@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
@@ -113,12 +116,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));
         $this->converter->setRegistry($container->get('doctrine'));
-        $this->converter->setLocalizedFallbackValueClassName(
-            $container->getParameter('oro_locale.entity.localized_fallback_value.class')
-        );
-        $this->converter->setLocalizationClassName(
-            $container->getParameter('oro_locale.entity.localization.class')
-        );
+        $this->converter->setLocalizedFallbackValueClassName(LocalizedFallbackValue::class);
+        $this->converter->setLocalizationClassName(Localization::class);
     }
 
     /**
@@ -129,7 +128,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToImportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
 
         $this->converter->setEntityName($productClass);
 
@@ -171,7 +170,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
 
         $this->converter->setEntityName($productClass);
 

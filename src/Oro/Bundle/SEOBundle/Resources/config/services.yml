@@ -223,7 +223,7 @@ services:
         public: false
         calls:
             - ['setType', ['product']]
-            - ['setEntityClass', ['%oro_product.entity.product.class%']]
+            - ['setEntityClass', ['Oro\Bundle\ProductBundle\Entity\Product']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_product']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_product']]
         tags:
@@ -235,7 +235,7 @@ services:
         public: false
         calls:
             - ['setType', ['category']]
-            - ['setEntityClass', ['%oro_catalog.entity.category.class%']]
+            - ['setEntityClass', ['Oro\Bundle\CatalogBundle\Entity\Category']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_category']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_category']]
         tags:
@@ -248,7 +248,7 @@ services:
         public: false
         calls:
             - ['setType', ['cms_page']]
-            - ['setEntityClass', ['%oro_cms.entity.page.class%']]
+            - ['setEntityClass', ['Oro\Bundle\CMSBundle\Entity\Page']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_cms_page']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_cms_page']]
             - ['setExcludeProviderKey', ['oro_seo.sitemap_exclude_landing_pages']]

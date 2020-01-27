@@ -1,7 +1,7 @@
 datagrids:
     base-shopping-list-grid:
         acl_resource: oro_shopping_list_view
-        extended_entity_name: '%oro_shopping_list.entity.shopping_list.class%'
+        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
         options:
             entityHint: oro.shoppinglist.entity_plural_label
             entity_pagination: true
@@ -17,10 +17,10 @@ datagrids:
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                 from:
-                    - { table: '%oro_shopping_list.entity.shopping_list.class%', alias: shopping_list }
+                    - { table: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', alias: shopping_list }
                 join:
                     left:
-                        - { join: '%oro_shopping_list.entity.shopping_list_total.class%', alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
+                        - { join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal', alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
         columns:
             id:
                 label:         oro.shoppinglist.id.label
@@ -173,7 +173,7 @@ datagrids:
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
-        extended_entity_name: '%oro_shopping_list.entity.line_item.class%'
+        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
         source:
@@ -190,7 +190,7 @@ datagrids:
                     - lineItem.notes
                     - IDENTITY(lineItem.unit) as unitCode
                 from:
-                    - { table: '%oro_shopping_list.entity.line_item.class%', alias: lineItem }
+                    - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:
                     inner:
                         - { join: lineItem.product, alias: product }

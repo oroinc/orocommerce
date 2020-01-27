@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 
 class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipleUserData
@@ -23,7 +24,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
         return [
             self::ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls' => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -43,7 +44,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
             ],
             self::ROLE_VIEW_HISTORY => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls' => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',

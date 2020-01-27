@@ -70,7 +70,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $operationName = 'oro_shoppinglist_delete';
         $entityId = $shoppingList->getId();
-        $entityClass = self::getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
+        $entityClass = ShoppingList::class;
         $this->client->request(
             'POST',
             $this->getUrl(

@@ -281,7 +281,7 @@ class QuoteControllerTest extends WebTestCase
     public function testDelete($id)
     {
         $operationName = 'DELETE';
-        $entityClass   = $this->getContainer()->getParameter('oro_sale.entity.quote.class');
+        $entityClass   = Quote::class;
         $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
         $this->client->request(
             'POST',
