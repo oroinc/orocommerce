@@ -41,6 +41,8 @@ services:
     oro_web_catalog.content_variant_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: true
+        arguments:
+            - [] # content variant types
 
     Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
         alias: 'oro_web_catalog.content_variant_type.registry'
@@ -51,14 +53,10 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
-    oro_web_catalog.content_variant_provider.registry:
-        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
-        public: false
-
     oro_web_catalog.content_variant_provider:
-        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider
         arguments:
-            - '@oro_web_catalog.content_variant_provider.registry'
+            - [] # content variant providers
         public: false
 
     oro_web_catalog.content_node_tree_handler:
@@ -436,6 +434,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
+    oro_web_catalog.form.type.content_node_from_web_catalog_select:
+        class: 'Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType'
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: form.type }
 
     Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler:
         class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler

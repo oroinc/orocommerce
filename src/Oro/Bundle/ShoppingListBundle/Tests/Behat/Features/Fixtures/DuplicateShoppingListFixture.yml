@@ -35,6 +35,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
     product2:
         organization: '@organization'
         owner: '@business_unit'
@@ -43,7 +44,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
-        status: 'disabled'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
     product3:
         organization: '@organization'
         owner: '@business_unit'
@@ -53,6 +55,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
         status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
     product4:
         organization: '@organization'
         owner: '@business_unit'
@@ -62,6 +65,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
+        attributeFamily: '@defaultProductFamily'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:

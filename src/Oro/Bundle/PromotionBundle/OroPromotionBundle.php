@@ -4,16 +4,15 @@ namespace Oro\Bundle\PromotionBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCompilerPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * OroPromotionBundle adds coupon and promotion features to the OroCommerce application
+ * The PromotionBundle bundle class.
  */
 class OroPromotionBundle extends Bundle
 {
@@ -35,15 +34,18 @@ class OroPromotionBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new DefaultFallbackExtensionPass([
-            Promotion::class => [
+            'Oro\Bundle\PromotionBundle\Entity\Promotion' => [
                 'label' => 'labels',
-                'description' => 'descriptions',
-            ],
+                'description' => 'descriptions'
+            ]
         ]));
-        $container
-            ->addCompilerPass(new PromotionCompilerPass())
-            ->addCompilerPass(new PromotionProductsGridCompilerPass())
-            ->addCompilerPass(new LayoutBlockOptionsCompilerPass())
-            ->addCompilerPass(new TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
+            'oro_promotion.discount.strategy_registry',
+            'oro_promotion.discount_strategy',
+            'alias'
+        ));
+        $container->addCompilerPass(new PromotionProductsGridCompilerPass());
+        $container->addCompilerPass(new LayoutBlockOptionsCompilerPass());
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

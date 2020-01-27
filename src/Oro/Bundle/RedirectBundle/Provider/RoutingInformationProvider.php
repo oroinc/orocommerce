@@ -3,21 +3,27 @@
 namespace Oro\Bundle\RedirectBundle\Provider;
 
 use Oro\Bundle\RedirectBundle\Exception\UnsupportedEntityException;
+use Psr\Container\ContainerInterface;
 
+/**
+ * Delegates the getting of routing information to child providers.
+ */
 class RoutingInformationProvider implements RoutingInformationProviderInterface
 {
-    /**
-     * @var array|RoutingInformationProviderInterface[]
-     */
-    protected $providers = [];
+    /** @var string[] */
+    private $entityClasses = [];
+
+    /** @var ContainerInterface */
+    private $providers;
 
     /**
-     * @param RoutingInformationProviderInterface $provider
-     * @param string $entityClass
+     * @param string[]           $entityClasses
+     * @param ContainerInterface $providers
      */
-    public function registerProvider(RoutingInformationProviderInterface $provider, $entityClass)
+    public function __construct(array $entityClasses, ContainerInterface $providers)
     {
-        $this->providers[$entityClass] = $provider;
+        $this->entityClasses = $entityClasses;
+        $this->providers = $providers;
     }
 
     /**
@@ -25,8 +31,8 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
      */
     public function isSupported($entity)
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->isSupported($entity)) {
+        foreach ($this->entityClasses as $entityClass) {
+            if ($this->getProvider($entityClass)->isSupported($entity)) {
                 return true;
             }
         }
@@ -51,21 +57,34 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
     }
 
     /**
-     * @return array|string[]
+     * @return string[]
      */
     public function getEntityClasses()
     {
-        return array_keys($this->providers);
+        return $this->entityClasses;
+    }
+
+    /**
+     * @param string $entityClass
+     *
+     * @return RoutingInformationProviderInterface
+     */
+    private function getProvider(string $entityClass): RoutingInformationProviderInterface
+    {
+        return $this->providers->get($entityClass);
     }
 
     /**
      * @param object $entity
-     * @return null|RoutingInformationProviderInterface
+     *
+     * @return RoutingInformationProviderInterface|null
+     *
      * @throws UnsupportedEntityException
      */
-    protected function getProviderForEntity($entity)
+    private function getProviderForEntity($entity): ?RoutingInformationProviderInterface
     {
-        foreach ($this->providers as $provider) {
+        foreach ($this->entityClasses as $entityClass) {
+            $provider = $this->getProvider($entityClass);
             if ($provider->isSupported($entity)) {
                 return $provider;
             }

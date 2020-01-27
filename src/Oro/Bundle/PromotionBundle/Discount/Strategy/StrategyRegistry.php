@@ -2,40 +2,53 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
+use Psr\Container\ContainerInterface;
+
+/**
+ * The registry of discount strategies.
+ */
 class StrategyRegistry
 {
-    /**
-     * @var array|StrategyInterface[]
-     */
-    private $strategies = [];
+    /** @var string[] */
+    private $strategyAliases;
+
+    /** @var ContainerInterface */
+    private $strategyContainer;
 
     /**
-     * @param StrategyInterface $strategy
-     * @param string $alias
+     * @param string[]           $strategyAliases
+     * @param ContainerInterface $strategyContainer
      */
-    public function addStrategy(StrategyInterface $strategy, $alias)
+    public function __construct(array $strategyAliases, ContainerInterface $strategyContainer)
     {
-        $this->strategies[$alias] = $strategy;
+        $this->strategyAliases = $strategyAliases;
+        $this->strategyContainer = $strategyContainer;
     }
 
     /**
-     * @return array|StrategyInterface[]
+     * @return StrategyInterface[] [alias => strategy, ...]
      */
     public function getStrategies(): array
     {
-        return $this->strategies;
+        $strategies = [];
+        foreach ($this->strategyAliases as $alias) {
+            $strategies[$alias] = $this->strategyContainer->get($alias);
+        }
+
+        return $strategies;
     }
 
     /**
      * @param string $alias
-     * @return null|StrategyInterface
+     *
+     * @return StrategyInterface|null
      */
-    public function getStrategyByAlias($alias)
+    public function getStrategyByAlias(string $alias): ?StrategyInterface
     {
-        if (array_key_exists($alias, $this->strategies)) {
-            return $this->strategies[$alias];
+        if (!$this->strategyContainer->has($alias)) {
+            return null;
         }
 
-        return null;
+        return $this->strategyContainer->get($alias);
     }
 }

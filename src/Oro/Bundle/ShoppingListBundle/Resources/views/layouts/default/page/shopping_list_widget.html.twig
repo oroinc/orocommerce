@@ -180,7 +180,7 @@
                                         {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
                                     </span>
                                 {% else %}
-                                    <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
+                                    <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</span>
                                 {% endif %}
                             </div>
                             {% set routeOptions = {'id': product.id} %}

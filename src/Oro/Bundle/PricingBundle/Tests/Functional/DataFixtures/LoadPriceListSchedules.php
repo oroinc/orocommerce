@@ -79,6 +79,6 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
      */
     public function getDependencies()
     {
-        return ['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'];
+        return [LoadPriceLists::class];
     }
 }

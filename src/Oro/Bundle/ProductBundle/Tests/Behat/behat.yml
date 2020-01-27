@@ -1171,6 +1171,10 @@ oro_behat_extension:
         - OroNavigationBundle::PinbarContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroEmailBundle::EmailContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:

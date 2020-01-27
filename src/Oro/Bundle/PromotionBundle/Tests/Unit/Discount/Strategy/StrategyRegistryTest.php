@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Strategy;
 
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class StrategyRegistryTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,9 +15,15 @@ class StrategyRegistryTest extends \PHPUnit\Framework\TestCase
         /** @var StrategyInterface $strategy2 */
         $strategy2 = $this->createMock(StrategyInterface::class);
 
-        $registry = new StrategyRegistry();
-        $registry->addStrategy($strategy1, 'strategy1');
-        $registry->addStrategy($strategy2, 'strategy2');
+        $container = TestContainerBuilder::create()
+            ->add('strategy1', $strategy1)
+            ->add('strategy2', $strategy2)
+            ->getContainer($this);
+
+        $registry = new StrategyRegistry(
+            ['strategy1', 'strategy2'],
+            $container
+        );
 
         $this->assertEquals(
             [

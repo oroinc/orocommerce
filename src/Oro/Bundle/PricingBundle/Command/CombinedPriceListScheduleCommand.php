@@ -89,9 +89,12 @@ class CombinedPriceListScheduleCommand extends Command implements CronCommandInt
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->triggerHandler->startCollect();
+
+        // Build not calculated CPLs before switch
+        $this->combinePricesForScheduledCPL();
+        // Switch to scheduled CPLs according to activation schedule
         $this->priceListResolver->updateRelations();
 
-        $this->combinePricesForScheduledCPL();
         $this->triggerHandler->commit();
     }
 

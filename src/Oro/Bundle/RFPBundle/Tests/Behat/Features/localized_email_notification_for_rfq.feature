@@ -162,8 +162,8 @@ Feature: Localized email notification for RFQ
     And I submit form
     Then I should see "Configuration saved" flash message
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And I submit form
     Then I should see "Configuration saved" flash message
 

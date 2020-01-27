@@ -14,8 +14,8 @@ Feature: Guest shopping lists owner
     And I login as administrator
     When I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
     And I check "Create Guest Shopping Lists Immediately"
     And uncheck "Use default" for "Default Guest Shopping List Owner" field

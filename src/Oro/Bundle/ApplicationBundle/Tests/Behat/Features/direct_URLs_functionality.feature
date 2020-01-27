@@ -44,8 +44,9 @@ Feature: Direct URLs functionality
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title | All Products         |
-      | URI   | /catalog/allproducts |
+      | Title       | All Products         |
+      | Target Type | URI                  |
+      | URI         | /catalog/allproducts |
     And save form
     Then I should see "Menu item saved successfully" flash message
     And I proceed as the User

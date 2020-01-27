@@ -1,1 +1,6 @@
-"oro.webcatalog.jstree.add_new_root_warning": "You can not create new root content node."
+oro:
+    webcatalog:
+        jstree:
+            add_new_root_warning: "You can not create new root content node."
+            please_choose_web_catalog: "Please choose a Web Catalog"
+            web_catalog_is_empty: "{{ webCatalog }} doesn't have content nodes"

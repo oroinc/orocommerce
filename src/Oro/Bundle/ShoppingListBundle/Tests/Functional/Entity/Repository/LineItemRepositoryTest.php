@@ -286,6 +286,27 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testDeleteDisabledItemsByShoppingList()
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+
+        $repo = $this->getLineItemRepository();
+        $repo->deleteDisabledItemsByShoppingList($shoppingList);
+        $actual = array_map(function (LineItem $item) {
+            return $item->getId();
+        }, $repo->findBy(['shoppingList' => $shoppingList]));
+        sort($actual);
+
+        $expected = [
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10)->getId(),
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_11)->getId(),
+        ];
+        sort($expected);
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @return LineItemRepository
      */

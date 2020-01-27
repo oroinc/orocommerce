@@ -135,6 +135,8 @@ function parseNodes(el, config, ct = '', parent = false) {
                             obj = {type: compType.id};
                         }
                         break;
+                    } else if (obj === 0) {
+                        throw new Error();
                     }
                 }
 
@@ -325,7 +327,7 @@ function componentsCheck(components = [], cTypes) {
     return components.map(component => {
         const fType = component.type && find(cTypes, type => type.id === component.type);
 
-        if (component && component.components.length) {
+        if (component.components && component.components.length) {
             component.components = componentsCheck(component.components, cTypes);
         }
 

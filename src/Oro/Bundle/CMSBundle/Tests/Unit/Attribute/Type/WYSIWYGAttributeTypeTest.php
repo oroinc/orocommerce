@@ -36,11 +36,6 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
         return new WYSIWYGAttributeType($this->htmlTagHelper);
     }
 
-    public function testGetType()
-    {
-        $this->assertEquals('wysiwyg', $this->getAttributeType()->getType());
-    }
-
     /**
      * {@inheritdoc}
      */

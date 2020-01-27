@@ -8,16 +8,32 @@ export default class ImageExpression {
      */
     constructor(editor, ...options) {
         this.editor = editor;
-
+        this.applyInlineBackground = this.applyInlineBackground.bind(this);
+        this.onLoad = this.onLoad.bind(this);
         this.bindEvents();
+    }
+
+    destroy() {
+        this.unbindEvents();
+
+        delete this.applyInlineBackground;
+        delete this.onLoad;
     }
 
     /**
      * Bind event listeners
      */
     bindEvents() {
-        this.editor.on('component:styleUpdate:background-image', this.applyInlineBackground.bind(this));
-        this.editor.on('load', this.onLoad.bind(this));
+        this.editor.on('component:styleUpdate:background-image', this.applyInlineBackground);
+        this.editor.on('load', this.onLoad);
+    }
+
+    /**
+     * Bind event listeners
+     */
+    unbindEvents() {
+        this.editor.off('component:styleUpdate:background-image', this.applyInlineBackground);
+        this.editor.off('load', this.onLoad);
     }
 
     /**

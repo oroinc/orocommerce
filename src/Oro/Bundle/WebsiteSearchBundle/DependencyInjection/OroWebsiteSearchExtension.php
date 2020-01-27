@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
 use Oro\Component\Config\Loader\ContainerBuilderAdapter;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
-use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
+use Oro\Component\Config\Loader\NullCumulativeFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -32,7 +32,7 @@ class OroWebsiteSearchExtension extends Extension
 
         $configLoader = new CumulativeConfigLoader(
             'oro_website_search',
-            new YamlCumulativeFileLoader('Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml')
+            new NullCumulativeFileLoader('Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml')
         );
         $resources = $configLoader->load(new ContainerBuilderAdapter($container));
         foreach ($resources as $resource) {

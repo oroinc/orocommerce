@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -112,9 +113,18 @@ class ShoppingListControllerTest extends WebTestCase
         $expectedLineItemPrice,
         bool $atLeastOneAvailableProduct
     ) {
-        // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
+
+        // Make sure that all products are enabled for calculations
+        /** @var PersistentCollection $lineItems */
+        $lineItems = $shoppingList1->getLineItems();
+        $lineItems->forAll(function ($i, LineItem $lineItem) {
+            $lineItem->getProduct()->setStatus(Product::STATUS_ENABLED);
+        });
+        self::getContainer()->get('doctrine')->getManagerForClass(Product::class)->flush();
+        $lineItems->setInitialized(false);
+
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
@@ -122,6 +132,7 @@ class ShoppingListControllerTest extends WebTestCase
                 BaseLoadCustomerData::AUTH_PW
             )
         );
+
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
@@ -165,7 +176,6 @@ class ShoppingListControllerTest extends WebTestCase
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
-                    'Price for requested quantity is not available',
                     '$0.00',
                     'Price for requested quantity is not available',
                 ],

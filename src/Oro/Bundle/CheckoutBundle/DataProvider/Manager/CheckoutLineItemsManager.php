@@ -21,9 +21,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class CheckoutLineItemsManager
 {
     /**
-     * @var CheckoutDataProviderInterface[]
+     * @var iterable|CheckoutDataProviderInterface[]
      */
-    protected $providers = [];
+    protected $providers;
 
     /**
      * @var CheckoutLineItemsConverter
@@ -46,29 +46,24 @@ class CheckoutLineItemsManager
     protected $authorizationChecker;
 
     /**
+     * @param iterable|CheckoutDataProviderInterface[] $providers
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
      * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
+        iterable $providers,
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
         ConfigManager $configManager,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
+        $this->providers = $providers;
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
         $this->authorizationChecker = $authorizationChecker;
-    }
-
-    /**
-     * @param CheckoutDataProviderInterface $provider
-     */
-    public function addProvider(CheckoutDataProviderInterface $provider)
-    {
-        $this->providers[] = $provider;
     }
 
     /**

@@ -96,11 +96,11 @@ define(function(require) {
 
         /**
          * Check is tag allowed
-         * @param type
-         * @returns {*}
+         * @param {string} type
+         * @returns {boolean}
          */
         isAllowedTag: function(type) {
-            return _.contains(this.allowTags, type.toLowerCase());
+            return this.allowTags === false || this.allowTags.includes(type.toLowerCase());
         },
 
         /**
@@ -109,10 +109,6 @@ define(function(require) {
          * @returns {*}
          */
         isAllow: function(tags) {
-            if (!this.editor.allow_tags) {
-                return true;
-            }
-
             if (_.isString(tags)) {
                 return this.isAllowedTag(tags);
             }

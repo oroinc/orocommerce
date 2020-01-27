@@ -11,7 +11,7 @@ In the `Order confirmation email tempate` can be used twig:
 - [Functions](#functions)
 - [Filters](#filters)
 
-**Note:** Please, refer to the [Email Templates](https://oroinc.com/b2b-ecommerce/doc/current/admin-guide/email/email-templates#available-template-variables-and-functions)
+**Note:** Please, refer to the [Email Templates](https://doc.oroinc.com/user/back-office/system/emails/email-templates/#view-available-template-variables-and-functions)
 article of the OroCommerce documentation for the full list of available functions, filters and tags.
 
 Functions

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
@@ -878,11 +878,32 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->method->execute($transaction->getAction(), $transaction);
     }
 
-    public function testIsApplicable()
+    /**
+     * @dataProvider isApplicableProvider
+     *
+     * @param int $value
+     * @param bool $expectedResult
+     */
+    public function testIsApplicable(int $value, bool $expectedResult)
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(PaymentContextInterface::class);
-        $this->assertTrue($this->method->isApplicable($context));
+        /** @var PaymentContext|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(PaymentContext::class);
+        $context->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($value);
+
+        $this->assertEquals($expectedResult, $this->method->isApplicable($context));
+    }
+
+    /**
+     * @return array
+     */
+    public function isApplicableProvider()
+    {
+        return [
+            [0, false],
+            [42, true],
+        ];
     }
 
     public function testComplete()

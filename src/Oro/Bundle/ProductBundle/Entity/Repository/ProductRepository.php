@@ -110,6 +110,21 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param string $sku
+     *
+     * @return QueryBuilder
+     */
+    public function getProductIdBySkuQueryBuilder(string $sku): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->resetDQLPart('select')
+            ->select('p.id');
+
+        return $qb->where($qb->expr()->eq('p.skuUppercase', ':product_sku'))
+            ->setParameter('product_sku', mb_strtoupper($sku));
+    }
+
+    /**
      * This method is searching for products, not using any joined
      * tables for fast performance.
      *

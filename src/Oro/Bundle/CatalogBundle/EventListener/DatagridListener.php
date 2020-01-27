@@ -61,7 +61,8 @@ class DatagridListener
         $query = $config->getOrmQuery();
 
         // select
-        $query->addSelect('IDENTITY(product.category) as ' . self::CATEGORY_COLUMN);
+        $query->addLeftJoin('product.category', 'category');
+        $query->addSelect('category.denormalizedDefaultTitle as ' . self::CATEGORY_COLUMN);
 
         // columns
         $categoryColumn = [

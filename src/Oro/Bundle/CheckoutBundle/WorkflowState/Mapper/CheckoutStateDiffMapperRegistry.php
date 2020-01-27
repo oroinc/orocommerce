@@ -2,46 +2,68 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
-class CheckoutStateDiffMapperRegistry
+use Symfony\Contracts\Service\ResetInterface;
+
+/**
+ * The registry of checkout state diff mappers.
+ */
+class CheckoutStateDiffMapperRegistry implements ResetInterface
 {
-    /** @var CheckoutStateDiffMapperInterface[] */
-    protected $mappers = [];
+    /** @var iterable|CheckoutStateDiffMapperInterface[] */
+    private $mappers;
+
+    /** @var CheckoutStateDiffMapperInterface[]|null [name => mapper, ...] */
+    private $initializedMappers;
 
     /**
-     * @param CheckoutStateDiffMapperInterface $mapper
+     * @param iterable|CheckoutStateDiffMapperInterface[] $mappers
      */
-    public function addMapper(CheckoutStateDiffMapperInterface $mapper)
+    public function __construct(iterable $mappers)
     {
-        $this->mappers[$mapper->getName()] = $mapper;
+        $this->mappers = $mappers;
     }
 
     /**
      * @param string $name
+     *
      * @return CheckoutStateDiffMapperInterface
-     * @throws \InvalidArgumentException
+     *
+     * @throws \InvalidArgumentException if a mapper with the given name does not exist
      */
-    public function getMapper($name)
+    public function getMapper(string $name): CheckoutStateDiffMapperInterface
     {
-        $name = (string) $name;
-
-        if (array_key_exists($name, $this->mappers)) {
-            return $this->mappers[$name];
+        $mappers = $this->getMappers();
+        if (!isset($mappers[$name])) {
+            throw new \InvalidArgumentException(sprintf(
+                'Mapper "%s" is missing. Registered mappers: %s.',
+                $name,
+                implode(', ', array_keys($mappers))
+            ));
         }
 
-        throw new \InvalidArgumentException(
-            sprintf(
-                'Mapper "%s" is missing. Registered mappers are "%s"',
-                $name,
-                implode(', ', array_keys($this->mappers))
-            )
-        );
+        return $mappers[$name];
     }
 
     /**
-     * @return CheckoutStateDiffMapperInterface[]
+     * @return CheckoutStateDiffMapperInterface[] [name => mapper, ...]
      */
-    public function getMappers()
+    public function getMappers(): array
     {
-        return $this->mappers;
+        if (null === $this->initializedMappers) {
+            $this->initializedMappers = [];
+            foreach ($this->mappers as $mapper) {
+                $this->initializedMappers[$mapper->getName()] = $mapper;
+            }
+        }
+
+        return $this->initializedMappers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reset()
+    {
+        $this->initializedMappers = null;
     }
 }

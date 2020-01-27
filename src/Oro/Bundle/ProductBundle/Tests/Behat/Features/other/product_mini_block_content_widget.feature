@@ -45,8 +45,9 @@ Feature: Product mini-block content widget
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title | Product Mini-Block Page |
-      | URI   | product-mini-block-page |
+      | Title       | Product Mini-Block Page |
+      | Target Type | URI                     |
+      | URI         | product-mini-block-page |
     And I save form
     Then I should see "Menu item saved successfully" flash message
 

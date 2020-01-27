@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-16482
+@ticket-BB-18607
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroInventoryBundle:checkout.yml
@@ -37,10 +38,15 @@ Feature: Allowed inventory statuses configuration
       | SKU3 - Product3 |
     When I open select entity popup for field "LineItemProduct" in form "Quote Form"
     Then I should see following grid:
-      | SKU  | Name     | Inventory Status |
-      | SKU3 | Product3 | In Stock         |
-      | SKU2 | Product2 | In Stock         |
-      | SKU1 | Product1 | In Stock         |
+      | SKU  | Name     | Inventory Status | Category     |
+      | SKU3 | Product3 | In Stock         | NewCategory3 |
+      | SKU2 | Product2 | In Stock         | NewCategory2 |
+      | SKU1 | Product1 | In Stock         | NewCategory  |
+    When I filter "Category" as is equal to "NewCategory2"
+    Then there is one record in grid
+    And I should see following grid:
+      | SKU  | Name     | Inventory Status | Category     |
+      | SKU2 | Product2 | In Stock         | NewCategory2 |
     And click on SKU2 in grid
     And click "Cancel"
 

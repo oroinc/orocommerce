@@ -1,122 +1,134 @@
 services:
     # Attribute types (fields)
     oro_website_search.searchable_attribute_type.bigint:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType
         decorates: oro_entity_config.attribute_type.bigint
         arguments:
             - '@oro_website_search.searchable_attribute_type.bigint.inner'
 
     oro_website_search.searchable_attribute_type.boolean:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\BooleanSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\BooleanSearchableAttributeType
         decorates: oro_entity_config.attribute_type.boolean
         arguments:
             - '@oro_website_search.searchable_attribute_type.boolean.inner'
 
     oro_website_search.searchable_attribute_type.money:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType
         decorates: oro_entity_config.attribute_type.money
         arguments:
             - '@oro_website_search.searchable_attribute_type.money.inner'
 
     oro_website_search.searchable_attribute_type.date:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DateSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DateSearchableAttributeType
         decorates: oro_entity_config.attribute_type.date
         arguments:
             - '@oro_website_search.searchable_attribute_type.date.inner'
 
     oro_website_search.searchable_attribute_type.datetime:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DateSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DateSearchableAttributeType
         decorates: oro_entity_config.attribute_type.datetime
         arguments:
             - '@oro_website_search.searchable_attribute_type.datetime.inner'
 
     oro_website_search.searchable_attribute_type.decimal:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType
         decorates: oro_entity_config.attribute_type.decimal
         arguments:
             - '@oro_website_search.searchable_attribute_type.decimal.inner'
 
     oro_website_search.searchable_attribute_type.file:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType
         decorates: oro_entity_config.attribute_type.file
         arguments:
             - '@oro_website_search.searchable_attribute_type.file.inner'
 
     oro_website_search.searchable_attribute_type.float:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DecimalSearchableAttributeType
         decorates: oro_entity_config.attribute_type.float
         arguments:
             - '@oro_website_search.searchable_attribute_type.float.inner'
 
     oro_website_search.searchable_attribute_type.wysiwyg:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\WYSIWYGSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\WYSIWYGSearchableAttributeType
         decorates: oro_cms.attribute_type.wysiwyg
         arguments:
             - '@oro_website_search.searchable_attribute_type.wysiwyg.inner'
 
     oro_website_search.searchable_attribute_type.image:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType
         decorates: oro_entity_config.attribute_type.image
         arguments:
             - '@oro_website_search.searchable_attribute_type.image.inner'
 
+    oro_website_search.searchable_attribute_type.multifile:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType
+        decorates: oro_entity_config.attribute_type.multifile
+        arguments:
+            - '@oro_website_search.searchable_attribute_type.multifile.inner'
+
+    oro_website_search.searchable_attribute_type.multiimage:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType
+        decorates: oro_entity_config.attribute_type.multiimage
+        arguments:
+            - '@oro_website_search.searchable_attribute_type.multiimage.inner'
+
     oro_website_search.searchable_attribute_type.integer:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType
         decorates: oro_entity_config.attribute_type.integer
         arguments:
             - '@oro_website_search.searchable_attribute_type.integer.inner'
 
-    oro_website_search.searchable_attribute_type.multiEnum:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\MultiEnumSearchableAttributeType'
-        decorates: oro_entity_config.attribute_type.multiEnum
+    oro_website_search.searchable_attribute_type.multienum:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\MultiEnumSearchableAttributeType
+        decorates: oro_entity_config.attribute_type.multienum
         arguments:
-            - '@oro_website_search.searchable_attribute_type.multiEnum.inner'
+            - '@oro_website_search.searchable_attribute_type.multienum.inner'
 
     oro_website_search.searchable_attribute_type.percent:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\PercentSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\PercentSearchableAttributeType
         decorates: oro_entity_config.attribute_type.percent
         arguments:
             - '@oro_website_search.searchable_attribute_type.percent.inner'
 
     oro_website_search.searchable_attribute_type.enum:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType
         decorates: oro_entity_config.attribute_type.enum
         arguments:
             - '@oro_website_search.searchable_attribute_type.enum.inner'
 
     oro_website_search.searchable_attribute_type.smallint:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType
         decorates: oro_entity_config.attribute_type.smallint
         arguments:
             - '@oro_website_search.searchable_attribute_type.smallint.inner'
 
     oro_website_search.searchable_attribute_type.string:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType
         decorates: oro_entity_config.attribute_type.string
         arguments:
             - '@oro_website_search.searchable_attribute_type.string.inner'
 
     oro_website_search.searchable_attribute_type.text:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\TextSearchableAttributeType'
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\TextSearchableAttributeType
         decorates: oro_entity_config.attribute_type.text
         arguments:
             - '@oro_website_search.searchable_attribute_type.text.inner'
 
     # Attribute types (relations)
-    oro_website_search.searchable_attribute_type.manyToMany:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToManySearchableAttributeType'
-        decorates: oro_entity_config.attribute_type.manyToMany
+    oro_website_search.searchable_attribute_type.manytomany:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToManySearchableAttributeType
+        decorates: oro_entity_config.attribute_type.manytomany
         arguments:
-            - '@oro_website_search.searchable_attribute_type.manyToMany.inner'
+            - '@oro_website_search.searchable_attribute_type.manytomany.inner'
 
-    oro_website_search.searchable_attribute_type.manyToOne:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToOneSearchableAttributeType'
-        decorates: oro_entity_config.attribute_type.manyToOne
+    oro_website_search.searchable_attribute_type.manytoone:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToOneSearchableAttributeType
+        decorates: oro_entity_config.attribute_type.manytoone
         arguments:
-            - '@oro_website_search.searchable_attribute_type.manyToOne.inner'
+            - '@oro_website_search.searchable_attribute_type.manytoone.inner'
 
-    oro_website_search.searchable_attribute_type.oneToMany:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Attribute\Type\OneToManySearchableAttributeType'
-        decorates: oro_entity_config.attribute_type.oneToMany
+    oro_website_search.searchable_attribute_type.onetomany:
+        class: Oro\Bundle\WebsiteSearchBundle\Attribute\Type\OneToManySearchableAttributeType
+        decorates: oro_entity_config.attribute_type.onetomany
         arguments:
-            - '@oro_website_search.searchable_attribute_type.oneToMany.inner'
+            - '@oro_website_search.searchable_attribute_type.onetomany.inner'

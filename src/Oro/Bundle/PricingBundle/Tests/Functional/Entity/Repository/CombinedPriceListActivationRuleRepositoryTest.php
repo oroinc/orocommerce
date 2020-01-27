@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRe
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 {
     /**
@@ -88,6 +91,21 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 
     public function testDeleteExpiredRules()
     {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f',
+                'expiredAt' => $pastTime
+            ],
+            [
+                'cplName' => '1f',
+                'fullCPLName' => '2f',
+                'activateAt' => $now
+            ],
+        ];
+        $this->createRules($data);
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2f');
         $rules = $this->repository->findBy(['fullChainPriceList' => $cpl]);
@@ -208,5 +226,74 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         /** @var CombinedPriceListActivationRule[] $rules1 */
         $rules2 = $this->repository->findBy(['fullChainPriceList' => $cpl2]);
         $this->assertNotEmpty($rules2);
+    }
+
+    public function testHasActivationRules()
+    {
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f',
+            ],
+        ];
+        $this->createRules($data);
+        $cpl = $this->getReference('2f');
+        $this->assertTrue($this->repository->hasActivationRules($cpl));
+    }
+
+    public function testHasActivationRulesFalse()
+    {
+        $cpl = $this->getReference('2f_1t_3t');
+        $this->assertFalse($this->repository->hasActivationRules($cpl));
+    }
+
+    public function testGetActualRuleByCpl()
+    {
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $futureTime = new \DateTime('+ 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl = $this->getReference('2f');
+        $fullCpl = $this->getReference('2f_1t_3t');
+        $rule = $this->repository->getActualRuleByCpl($fullCpl, $now);
+        $this->assertInstanceOf(CombinedPriceListActivationRule::class, $rule);
+        $this->assertSame($fullCpl, $rule->getFullChainPriceList());
+        $this->assertSame($cpl, $rule->getCombinedPriceList());
+        $this->assertEquals($pastTime, $rule->getActivateAt());
+        $this->assertEquals($futureTime, $rule->getExpireAt());
+    }
+
+    public function testGetActiveRuleByScheduledCpl()
+    {
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $futureTime = new \DateTime('+ 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl = $this->getReference('2f');
+        $fullCpl = $this->getReference('2f_1t_3t');
+        $rule = $this->repository->getActiveRuleByScheduledCpl($cpl, $now);
+        $this->assertInstanceOf(CombinedPriceListActivationRule::class, $rule);
+        $this->assertSame($fullCpl, $rule->getFullChainPriceList());
+        $this->assertSame($cpl, $rule->getCombinedPriceList());
+        $this->assertEquals($pastTime, $rule->getActivateAt());
+        $this->assertEquals($futureTime, $rule->getExpireAt());
     }
 }

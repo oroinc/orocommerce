@@ -523,10 +523,10 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider'
         public: false
         arguments:
-        - '@translator'
-        - '@oro_config.manager'
+            - '@translator'
+            - '@oro_config.manager'
         tags:
-        - { name: oro_config.configuration_search_provider }
+            - { name: oro_config.configuration_search_provider }
 
     oro_shipping.factory.shipping_package_options:
         class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'

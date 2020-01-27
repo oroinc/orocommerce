@@ -5,15 +5,29 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
+/**
+ *  Provides Inventory Level sample export template data
+ */
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
+    /** @var LocalizationManager */
+    private $localizationManager;
+
+    /**
+     * @param LocalizationManager $localizationManager
+     */
+    public function __construct(LocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -47,8 +61,7 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $product = new Product();
         $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock');
 
-        $localization = new Localization();
-        $localization->setName('English');
+        $localization = $this->localizationManager->getDefaultLocalization();
 
         $name = new LocalizedFallbackValue();
         $name->setString('Product Name');

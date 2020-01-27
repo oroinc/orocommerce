@@ -26,8 +26,9 @@ Feature: Mass Product Actions processing
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title  | All Products         |
-      | URI    | /catalog/allproducts |
+      | Title       | All Products         |
+      | Target Type | URI                  |
+      | URI         | /catalog/allproducts |
     And save form
     Then I should see "Menu item saved successfully" flash message
 
@@ -95,7 +96,7 @@ Feature: Mass Product Actions processing
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then "Shopping List Config" must contains values:
       | Enable Guest Shopping List | false |
-    When uncheck "Use default" for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable Guest Shopping List" field
     And I fill form with:
       | Enable Guest Shopping List | true |
     And I save setting
