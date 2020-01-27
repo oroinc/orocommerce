@@ -1,7 +1,0 @@
-invoice,productSku,freeFormProduct,quantity,productUnit,price,sortOrder
-INV142657,1276,Sample product,1,each,9.99, 1
-INV142657,9OK21,,3,piece,9.99, 2
-INV142342,1345,Sample product 2,1,each,19.99, 3
-INV142342,5GN30,,3,piece,19.99, 4
-INV142834,1885,Sample product 3,1,each,29.99, 5
-INV142834,3RE23,,3,piece,29.99, 6
