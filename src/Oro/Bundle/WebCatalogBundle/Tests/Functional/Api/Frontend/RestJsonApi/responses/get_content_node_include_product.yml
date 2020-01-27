@@ -16,7 +16,6 @@ included:
             url: '/product2_slug_es'
             urls:
                 - { url: '/product2_slug_default', localizationId: '<toString(@current_localization->id)>' }
-                - { url: '/product2_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/product2_slug_default', localizationId: '<toString(@en_CA->id)>' }
         relationships:
             productFamily:

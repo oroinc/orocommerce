@@ -20,6 +20,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
+ * Brand entity class.
+ *
  * @ORM\Entity()
  * @ORM\Table(
  *      name="oro_brand",
@@ -232,7 +234,7 @@ class Brand extends ExtendBrand implements
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
-     *              "fallback_field"="text"
+     *              "fallback_field"="wysiwyg"
      *          },
      *          "attribute"={
      *              "is_attribute"=true

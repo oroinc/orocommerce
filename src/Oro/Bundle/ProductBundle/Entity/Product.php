@@ -426,7 +426,7 @@ class Product extends ExtendProduct implements
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
-     *              "fallback_field"="text"
+     *              "fallback_field"="wysiwyg"
      *          },
      *          "attribute"={
      *              "is_attribute"=true

@@ -23,6 +23,38 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
         $this->wysiwygSchemaHelper = new WYSIWYGSchemaHelper($this->configManager);
     }
 
+    public function testCreateSerializedFieldWhenNoSchema(): void
+    {
+        /** @var ConfigInterface|\PHPUnit\Framework\MockObject\MockObject $entityConfig */
+        $entityConfig = $this->createMock(ConfigInterface::class);
+        $entityConfig
+            ->expects($this->once())
+            ->method('get')
+            ->with('schema')
+            ->willReturn([]);
+        $entityConfig
+            ->expects($this->once())
+            ->method('set')
+            ->with('schema', [])
+            ->willReturnSelf();
+
+        /** @var ConfigInterface|\PHPUnit\Framework\MockObject\MockObject $fieldConfig */
+        $fieldConfig = $this->createMock(ConfigInterface::class);
+        $fieldConfig
+            ->expects($this->once())
+            ->method('is')
+            ->with('is_serialized')
+            ->willReturn(true);
+        $fieldConfig
+            ->expects($this->never())
+            ->method('in');
+        $fieldConfig
+            ->expects($this->never())
+            ->method('getId');
+
+        $this->wysiwygSchemaHelper->createAdditionalFields($entityConfig, $fieldConfig);
+    }
+
     /**
      * @param string $state
      * @param array $expected
@@ -37,7 +69,7 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('get')
             ->with('schema')
-            ->willReturn([]);
+            ->willReturn(['entity' => \stdClass::class]);
         $entityConfig
             ->expects($this->once())
             ->method('set')
@@ -84,7 +116,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                     'serialized_property' => [
                         'field_name_style' => [],
                         'field_name_properties' => [],
-                    ]
+                    ],
+                    'entity' => \stdClass::class,
                 ]
             ],
             'Updated field' => [
@@ -93,7 +126,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                     'serialized_property' => [
                         'field_name_style' => [],
                         'field_name_properties' => [],
-                    ]
+                    ],
+                    'entity' => \stdClass::class,
                 ]
             ],
             'New field' => [
@@ -102,7 +136,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                     'serialized_property' => [
                         'field_name_style' => [],
                         'field_name_properties' => [],
-                    ]
+                    ],
+                    'entity' => \stdClass::class,
                 ]
             ],
             'Restored field' => [
@@ -111,7 +146,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                     'serialized_property' => [
                         'field_name_style' => [],
                         'field_name_properties' => [],
-                    ]
+                    ],
+                    'entity' => \stdClass::class,
                 ]
             ],
             'Field deleted' => [
@@ -124,7 +160,8 @@ class WYSIWYGSchemaHelperTest extends \PHPUnit\Framework\TestCase
                         'field_name_properties' => [
                             'private' => true
                         ],
-                    ]
+                    ],
+                    'entity' => \stdClass::class,
                 ]
             ]
         ];

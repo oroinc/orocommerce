@@ -196,7 +196,6 @@ class ProductTest extends FrontendRestJsonApiTestCase
                         'metaKeywords'     => 'Product 1 Spanish Meta Keywords',
                         'url'              => '/product1_slug_es',
                         'urls'             => [
-                            ['url' => '/product1_slug_en_US', 'localizationId' => '<toString(@en_US->id)>'],
                             ['url' => '/product1_slug_en_CA', 'localizationId' => '<toString(@en_CA->id)>']
                         ]
                     ]
@@ -219,7 +218,6 @@ class ProductTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'url'  => '/product3_slug_default',
                         'urls' => [
-                            ['url' => '/product3_slug_default', 'localizationId' => '<toString(@en_US->id)>'],
                             ['url' => '/product3_slug_default', 'localizationId' => '<toString(@en_CA->id)>'],
                             ['url' => '/product3_slug_default', 'localizationId' => '<toString(@es->id)>']
                         ]

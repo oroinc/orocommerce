@@ -424,7 +424,7 @@ class ProductTest extends RestJsonApiTestCase
                 ],
                 [
                     'title' => 'form constraint',
-                    'detail' => 'This value is not valid.',
+                    'detail' => 'The entity does not exist.',
                     'source' => ['pointer' => '/included/1/relationships/unit/data']
                 ]
             ],
@@ -467,7 +467,7 @@ class ProductTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'form constraint',
-                    'detail' => 'This value is not valid.',
+                    'detail' => 'The entity does not exist.',
                     'source' => ['pointer' => '/included/0/relationships/unit/data']
                 ],
                 [

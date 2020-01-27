@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @dbIsolationPerTest
  */
 class WebCatalogTreeTest extends WebCatalogTreeTestCase
 {
@@ -642,8 +643,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
                     'attributes' => [
                         'url'  => '/catalog1_node11_es',
                         'urls' => [
-                            ['url' => '/catalog1_node11_en_US', 'localizationId' => '<toString(@en_US->id)>'],
-                            ['url' => '/catalog1_node11', 'localizationId' => (string)$currentLocalizationId],
+                            ['url' => '/catalog1_node11_en_US', 'localizationId' => (string)$currentLocalizationId],
                             ['url' => '/catalog1_node11', 'localizationId' => '<toString(@en_CA->id)>']
                         ]
                     ]

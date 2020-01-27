@@ -10,11 +10,9 @@ data:
         metaTitle: 'Category 1 Meta Title'
         metaDescription: 'Category 1 Meta Description'
         metaKeywords: 'Category 1 Meta Keywords'
-        url: '/category1_slug_default'
+        url: '/category1_slug_en_US'
         urls:
             - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
-            - { url: '/category1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
-            - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
         images:
             - { mimeType: '@file_category1_small_image->mimeType', type: 'small' }
             - { mimeType: '@file_category1_large_image->mimeType', type: 'large' }

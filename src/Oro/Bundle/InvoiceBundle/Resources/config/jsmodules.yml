@@ -1,4 +1,0 @@
-dynamic-imports:
-    oroinvoice:
-        - oroinvoice/js/app/views/invoice-line-item-view
-        - oroinvoice/js/app/views/invoice-line-items-view
