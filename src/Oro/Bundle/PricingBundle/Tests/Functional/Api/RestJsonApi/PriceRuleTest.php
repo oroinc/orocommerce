@@ -211,7 +211,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testUpdate()
     {
-        $this->cleanScheduledRelationMessages();
+        $this->cleanScheduledMessages();
 
         $priceRuleId = $this->getFirstPriceRule()->getId();
 
@@ -239,9 +239,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
-                    $this->getReference(LoadPriceLists::PRICE_LIST_4)->getId() => [],
+                    $updatedPriceRule->getPriceList()->getId() => []
                 ],
             ]
         );
