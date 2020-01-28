@@ -38,7 +38,6 @@ included:
             url: '/product1_slug_es'
             urls:
                 - { url: '/product1_slug_default', localizationId: '<toString(@current_localization->id)>' }
-                - { url: '/product1_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/product1_slug_default', localizationId: '<toString(@en_CA->id)>' }
             prices:
                 - { price: '12.9900', currencyId: USD, quantity: '1', unit: item }

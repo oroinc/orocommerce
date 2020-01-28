@@ -26,7 +26,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
 
         $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->localization = $this->em->getRepository(Localization::class)
-            ->findOneBy(['formattingCode' => 'en']);
+            ->findOneBy(['formattingCode' => 'en_US']);
     }
 
     public function testProcessRelation(): void

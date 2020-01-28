@@ -17,7 +17,7 @@ Feature: RFQ customer status translations
     When I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English, German Localization] |
+      | Enabled Localizations | [English (United States), German Localization] |
       | Default Localization  | German Localization            |
     And I submit form
     Then I should see "Configuration saved" flash message
@@ -51,7 +51,7 @@ Feature: RFQ customer status translations
       | PO Number | Status       |
       | Test RFQ  | Submitted_DE |
     When I click "Localization Switcher"
-    And I select "English" localization
+    And I select "English (United States)" localization
     Then I should see following grid:
       | PO Number | Status    |
       | Test RFQ  | Submitted |
@@ -66,7 +66,7 @@ Feature: RFQ customer status translations
     When I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Default Localization | English |
+      | Default Localization | English (United States) |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to Sales / Requests For Quote

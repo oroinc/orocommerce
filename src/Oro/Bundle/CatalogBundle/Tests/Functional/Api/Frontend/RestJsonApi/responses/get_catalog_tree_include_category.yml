@@ -33,7 +33,6 @@ included:
             url: '/category1_1_slug_default'
             urls:
                 - { url: '/category1_1_slug_default', localizationId: '<toString(@en_CA->id)>' }
-                - { url: '/category1_1_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/category1_1_slug_default', localizationId: '<toString(@es->id)>' }
             images: []
             metaTitle: 'Category 1_1 Meta Title'
