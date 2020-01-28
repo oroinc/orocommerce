@@ -1,4 +1,5 @@
 @ticket-BB-16433
+@ticket-BB-16299
 @regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -39,7 +40,7 @@ Feature: Shopping list duplication for non authenticated visitor
       | Email           | Andy001@example.com |
       | First Name      | Andy                |
       | Last Name       | Derrick             |
-      | Organization    | TestComapany        |
+      | Organization    | TestCompany         |
       | Street          | Fifth avenue        |
       | City            | Berlin              |
       | Country         | Germany             |
@@ -49,10 +50,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I check "Save my data and create an account" on the checkout page
-    And I type "Andy001@example.com" in "Email Address"
-    And I type "Andy001@example.com" in "Password"
-    And I type "Andy001@example.com" in "Confirm Password"
+    And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -64,8 +62,37 @@ Feature: Shopping list duplication for non authenticated visitor
 
   Scenario: Authenticate visitor and success duplicate shopping list
     Given I proceed as the Guest
-    And Andy001@example.com customer user confirms registration
-    And I login as Andy001@example.com buyer in old session
+    When type "SKU123" in "search"
+    And I click "Search Button"
+    Then I should see "400-Watt Bulb Work Light"
+    When I click "Add to Shopping List" for "SKU123" product
+    Then I should see "Product has been added to " flash message
+    And I open shopping list widget
+    And I click "View List"
+    And click "Create Order"
+    And I click "Continue as a Guest"
+    And I fill form with:
+      | Email           | Andy002@example.com |
+      | First Name      | Andy2               |
+      | Last Name       | Derrick             |
+      | Organization    | TestCompany         |
+      | Street          | Fifth avenue        |
+      | City            | Berlin              |
+      | Country         | Germany             |
+      | State           | Berlin              |
+      | Zip/Postal Code | 10115               |
+    And I click "Ship to This Address"
+    And click "Continue"
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I check "Save my data and create an account" on the checkout page
+    And I type "Andy002@example.com" in "Email Address"
+    And I type "Andy002@example.com" in "Password"
+    And I type "Andy002@example.com" in "Confirm Password"
+    And I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And Andy002@example.com customer user confirms registration
+    And I login as Andy002@example.com buyer in old session
 
     Given I proceed as the Admin
     And I go to Sales / Shopping Lists
@@ -74,3 +101,10 @@ Feature: Shopping list duplication for non authenticated visitor
     Then I should see "The shopping list has been duplicated" flash message
     And I should not see "Unable to duplicate as only one shopping list is allowed for unregistered users" flash message
     And I should see "Shopping List (copied "
+
+  Scenario: Check created customer user address
+    Given I go to Customers / Customer Users
+    When I click on Andy002@example.com in grid
+    And I should see "Fifth avenue"
+    And I should see "10115 Berlin"
+    And I should see "Germany"
