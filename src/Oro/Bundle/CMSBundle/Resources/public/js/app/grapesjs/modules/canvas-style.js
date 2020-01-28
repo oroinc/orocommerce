@@ -41,7 +41,7 @@ export default `
         margin: 0;
     }
     
-    .content-widget-inline {
+    span.content-widget {
         display: inline-block;
         background-color: #f8f8f8;
         font-size: 13px;
@@ -52,7 +52,8 @@ export default `
         margin: 0 4px;
     }
     
-    .content-widget-inline b {
+    span.content-widget span {
+        font-weight: bold;
         color: #565656;
     }
     
