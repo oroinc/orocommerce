@@ -190,7 +190,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                             , `<span
                                 data-title="${data.model.get('name')}"
                                 data-type="${data.model.get('widgetType')}"
-                                class="content-widget-inline"
+                                class="content-widget"
                                 >{{ widget("${data.model.get('name')}") }}</span>`
                             , event.offset, event.extentOffset
                         )
