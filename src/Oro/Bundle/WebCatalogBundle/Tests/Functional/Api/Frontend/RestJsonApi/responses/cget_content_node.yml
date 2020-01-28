@@ -31,10 +31,10 @@ data:
             updatedAt: '@catalog1_node1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Web Catalog 1 Node 1'
             order: 2
-            url: '/catalog1_node1_en_US'
+            url: '/catalog1_node1'
             urls:
                 - { url: '/catalog1_node1', localizationId: '<toString(@es->id)>' }
-                - { url: '/catalog1_node1', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/catalog1_node1_en_CA', localizationId: '<toString(@en_CA->id)>' }
             metaTitle: 'Web Catalog 1 Node 1 Meta Title'
             metaDescription: 'Web Catalog 1 Node 1 Meta Description'
             metaKeywords: 'Web Catalog 1 Node 1 Meta Keywords'
@@ -60,10 +60,10 @@ data:
             updatedAt: '@catalog1_node11->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Web Catalog 1 Node 1.1'
             order: 3
-            url: '/catalog1_node11_en_US'
+            url: '/catalog1_node11'
             urls:
                 - { url: '/catalog1_node11_es', localizationId: '<toString(@es->id)>' }
-                - { url: '/catalog1_node11', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/catalog1_node11_en_CA', localizationId: '<toString(@en_CA->id)>' }
             metaTitle: 'Web Catalog 1 Node 1.1 Meta Title'
             metaDescription: 'Web Catalog 1 Node 1.1 Meta Description'
             metaKeywords: 'Web Catalog 1 Node 1.1 Meta Keywords'

@@ -29,7 +29,7 @@ data:
             metaTitle: 'Category 1 Meta Title'
             metaDescription: 'Category 1 Meta Description'
             metaKeywords: 'Category 1 Meta Keywords'
-            url: '/category1_slug_en_US'
+            url: '/category1_slug_default'
             urls:
                 - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
                 - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
