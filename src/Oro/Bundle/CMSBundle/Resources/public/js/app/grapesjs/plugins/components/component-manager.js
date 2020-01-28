@@ -114,16 +114,28 @@ const ComponentManager = BaseClass.extend({
 
                 if (action.isSelectionALink(selection)) {
                     const selectedComponent = editor.getSelected();
+                    const linkElement = action.getLinkElement(selection);
+
+                    linkElement.classList.remove('link');
+                    linkElement.setAttribute('href', '#');
 
                     rte.exec('unlink');
 
                     if (selectedComponent.get('type') === 'link') {
+                        const el = selectedComponent.view.el;
+
+                        if (el.parentNode) {
+                            const textNode = document.createTextNode(selection.toString());
+
+                            el.parentNode.insertBefore(textNode, el);
+                        }
+
                         selectedComponent.destroy();
                     }
                 } else if (selection.toString() !== '') {
                     rte.exec('createLink', '#');
 
-                    const linkElement = rte.selection().anchorNode.parentElement;
+                    const linkElement = action.getLinkElement(rte.selection());
 
                     linkElement.setAttribute('href', '');
                     linkElement.classList.add('link');
@@ -146,6 +158,18 @@ const ComponentManager = BaseClass.extend({
                 const parentNode = selection.anchorNode.parentNode;
 
                 return parentNode && parentNode.nodeName === 'A' && parentNode.innerHTML === selection.toString();
+            },
+
+            getLinkElement: selection => {
+                let linkElement = selection.anchorNode;
+
+                if (linkElement.parentElement.tagName === 'A') {
+                    linkElement = linkElement.parentElement;
+                } else {
+                    linkElement = linkElement.nextSibling;
+                }
+
+                return linkElement;
             }
         });
 
