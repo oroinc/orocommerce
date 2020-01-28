@@ -257,6 +257,9 @@ services:
             - '@oro_pricing.builder.combined_price_list_builder'
             - '@event_dispatcher'
             - '@oro_pricing.pricing_strategy.strategy_register'
+        calls:
+            - ['setCombinedPriceListGarbageCollector', ['@oro_pricing.builder.combined_price_list_garbage_collector']]
+            - ['setConfigManager', ['@oro_config.global']]
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'

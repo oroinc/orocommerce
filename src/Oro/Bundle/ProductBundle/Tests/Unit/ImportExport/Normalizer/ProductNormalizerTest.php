@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ScalarFieldDenormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -41,6 +42,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
         $this->productNormalizer->setProductClass($this->productClass);
         $this->productNormalizer->setEventDispatcher($this->eventDispatcher);
+        $this->productNormalizer->setScalarFieldDenormalizer(new ScalarFieldDenormalizer());
     }
 
     public function testNormalize()

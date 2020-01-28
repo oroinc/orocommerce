@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -52,6 +53,12 @@ class CombinedPriceListsBuilderFacade
     /** @var StrategyRegister */
     private $strategyRegister;
 
+    /** @var CombinedPriceListGarbageCollector */
+    private $garbageCollector;
+
+    /** @var ConfigManager */
+    private $configManager;
+
     /** @var array  */
     private $rebuiltCombinedPriceListsIds = [];
 
@@ -83,6 +90,22 @@ class CombinedPriceListsBuilderFacade
     }
 
     /**
+     * @param CombinedPriceListGarbageCollector $garbageCollector
+     */
+    public function setCombinedPriceListGarbageCollector(CombinedPriceListGarbageCollector $garbageCollector)
+    {
+        $this->garbageCollector = $garbageCollector;
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function setConfigManager(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
+    /**
      * @param iterable|CombinedPriceList[] $combinedPriceLists
      * @param array|Product[] $products
      * @param int|null $startTimestamp
@@ -102,23 +125,15 @@ class CombinedPriceListsBuilderFacade
      */
     public function rebuildAll($forceTimestamp = null)
     {
+        // Execute builders config -> website (<- config) -> customer group (<- website) -> customers (<- group)
         $this->combinedPriceListBuilder->build($forceTimestamp);
-        $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
 
-        /** @var PriceListToCustomerGroupRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomerGroup::class);
-        foreach ($repository->getAllWebsiteIds() as $websiteId) {
-            /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $websiteId);
+        // Rebuild for entities with configured self-fallback (Current level only)
+        $this->rebuildForWebsitesWithSelfFallback($forceTimestamp);
+        $this->rebuildForCustomerGroupsWithSelfFallback($forceTimestamp);
+        $this->rebuildForCustomersWithSelfFallback($forceTimestamp);
 
-            $this->customerGroupCombinedPriceListBuilder->build($website, null, $forceTimestamp);
-        }
-
-        /** @var PriceListToCustomerRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomer::class);
-        foreach ($repository->getAllCustomerWebsitePairs() as $pair) {
-            $this->customerCombinedPriceListBuilder->build($pair->getWebsite(), $pair->getCustomer(), $forceTimestamp);
-        }
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -130,6 +145,8 @@ class CombinedPriceListsBuilderFacade
         foreach ($websites as $website) {
             $this->websiteCombinedPriceListBuilder->build($website, $forceTimestamp);
         }
+
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -142,6 +159,8 @@ class CombinedPriceListsBuilderFacade
         foreach ($customerGroups as $customerGroup) {
             $this->customerGroupCombinedPriceListBuilder->build($website, $customerGroup, $forceTimestamp);
         }
+
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -154,6 +173,8 @@ class CombinedPriceListsBuilderFacade
         foreach ($customers as $customer) {
             $this->customerCombinedPriceListBuilder->build($website, $customer, $forceTimestamp);
         }
+
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -162,36 +183,12 @@ class CombinedPriceListsBuilderFacade
      */
     public function rebuildForPriceLists($priceLists, $forceTimestamp = null)
     {
-        /** @var PriceListToWebsiteRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToWebsite::class);
-        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
-            /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+        $this->rebuildByConfigPriceLists($priceLists, $forceTimestamp);
+        $this->rebuildByWebsitePriceLists($priceLists, $forceTimestamp);
+        $this->rebuildByCustomerGroupPriceLists($priceLists, $forceTimestamp);
+        $this->rebuildByCustomerPriceLists($priceLists, $forceTimestamp);
 
-            $this->websiteCombinedPriceListBuilder->build($website, $forceTimestamp);
-        }
-
-        /** @var PriceListToCustomerGroupRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomerGroup::class);
-        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
-            /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
-            /** @var CustomerGroup $customerGroup */
-            $customerGroup = $this->getEntityById(CustomerGroup::class, $ids[PriceListRelationTrigger::ACCOUNT_GROUP]);
-
-            $this->customerGroupCombinedPriceListBuilder->build($website, $customerGroup, $forceTimestamp);
-        }
-
-        /** @var PriceListToCustomerRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomer::class);
-        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
-            /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
-            /** @var Customer $customer */
-            $customer = $this->getEntityById(Customer::class, $ids[PriceListRelationTrigger::ACCOUNT]);
-
-            $this->customerCombinedPriceListBuilder->build($website, $customer, $forceTimestamp);
-        }
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     public function dispatchEvents()
@@ -277,5 +274,128 @@ class CombinedPriceListsBuilderFacade
     private function getEntityById($className, $id)
     {
         return $this->doctrineHelper->getEntityReference($className, $id);
+    }
+
+    /**
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildForWebsitesWithSelfFallback($forceTimestamp = null)
+    {
+        /** @var PriceListToWebsiteRepository $plToWebsiteRepo */
+        $plToWebsiteRepo = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToWebsite::class);
+        foreach ($plToWebsiteRepo->getWebsiteIteratorWithSelfFallback() as $website) {
+            $this->websiteCombinedPriceListBuilder->build($website, $forceTimestamp);
+        }
+    }
+
+    /**
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildForCustomerGroupsWithSelfFallback($forceTimestamp = null): void
+    {
+        /** @var PriceListToCustomerGroupRepository $plToCustomerGroupRepo */
+        $plToCustomerGroupRepo = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomerGroup::class);
+        foreach ($plToCustomerGroupRepo->getAllWebsiteIds() as $websiteId) {
+            /** @var Website $website */
+            $website = $this->getEntityById(Website::class, $websiteId);
+
+            foreach ($plToCustomerGroupRepo->getCustomerGroupIteratorWithSelfFallback($website) as $customerGroup) {
+                $this->customerGroupCombinedPriceListBuilder->build($website, $customerGroup, $forceTimestamp);
+            }
+        }
+    }
+
+    /**
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildForCustomersWithSelfFallback($forceTimestamp = null): void
+    {
+        /** @var PriceListToCustomerRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomer::class);
+        foreach ($repository->getAllCustomerWebsitePairsWithSelfFallback() as $pair) {
+            $this->customerCombinedPriceListBuilder->build($pair->getWebsite(), $pair->getCustomer(), $forceTimestamp);
+        }
+    }
+
+    /**
+     * @param int[]|PriceList[]|Collection $priceLists
+     * @return bool
+     */
+    private function hasPriceListsInConfig($priceLists): bool
+    {
+        $priceListIds = array_map(function (PriceList $priceList) {
+            return $priceList->getId();
+        }, $priceLists);
+        $configPriceListRelations = $this->configManager->get('oro_pricing.default_price_lists');
+        foreach ($configPriceListRelations as $relation) {
+            if (\in_array((int)$relation['priceList'], $priceListIds, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param int[]|PriceList[]|Collection $priceLists
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildByConfigPriceLists($priceLists, $forceTimestamp): void
+    {
+        if ($this->hasPriceListsInConfig($priceLists)) {
+            $this->combinedPriceListBuilder->build($forceTimestamp);
+        }
+    }
+
+    /**
+     * @param int[]|PriceList[]|Collection $priceLists
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildByWebsitePriceLists($priceLists, $forceTimestamp): void
+    {
+        /** @var PriceListToWebsiteRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToWebsite::class);
+        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
+            /** @var Website $website */
+            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+
+            $this->websiteCombinedPriceListBuilder->build($website, $forceTimestamp);
+        }
+    }
+
+    /**
+     * @param int[]|PriceList[]|Collection $priceLists
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildByCustomerGroupPriceLists($priceLists, $forceTimestamp): void
+    {
+        /** @var PriceListToCustomerGroupRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomerGroup::class);
+        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
+            /** @var Website $website */
+            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getEntityById(CustomerGroup::class, $ids[PriceListRelationTrigger::ACCOUNT_GROUP]);
+
+            $this->customerGroupCombinedPriceListBuilder->build($website, $customerGroup, $forceTimestamp);
+        }
+    }
+
+    /**
+     * @param int[]|PriceList[]|Collection $priceLists
+     * @param int|null $forceTimestamp
+     */
+    private function rebuildByCustomerPriceLists($priceLists, $forceTimestamp): void
+    {
+        /** @var PriceListToCustomerRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomer::class);
+        foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
+            /** @var Website $website */
+            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+            /** @var Customer $customer */
+            $customer = $this->getEntityById(Customer::class, $ids[PriceListRelationTrigger::ACCOUNT]);
+
+            $this->customerCombinedPriceListBuilder->build($website, $customer, $forceTimestamp);
+        }
     }
 }
