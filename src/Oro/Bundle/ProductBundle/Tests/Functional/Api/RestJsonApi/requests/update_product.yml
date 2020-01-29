@@ -16,7 +16,7 @@ data:
                     id: '<toString(@product-1.names.default->getId())>'
                 -
                     type: localizedfallbackvalues
-                    id: '<toString(@product-1.names.en_US->getId())>'
+                    id: '<toString(@product-1.names.en_CA->getId())>'
                 -
                     type: localizedfallbackvalues
                     id: 'names-new'
@@ -25,25 +25,16 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.slugPrototypes.default->getId())>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.slugPrototypes.en_US->getId())>'
         descriptions:
             data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.descriptions.default->getId())>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.descriptions.en_US->getId())>'
         shortDescriptions:
             data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.shortDescriptions.default->getId())>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.shortDescriptions.en_US->getId())>'
         unitPrecisions:
             data:
                 -

@@ -206,7 +206,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $this->client->getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::AUTH_USER);
-        $this->changeLocalization('en_US');
+        $this->changeLocalization('en_CA');
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $result = $this->getSearchHandler()->convertItem($product);
@@ -215,7 +215,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             [
                 'id' => $product->getId(),
                 'sku' => $product->getSku(),
-                'defaultName.string' => 'product-1.names.en_US',
+                'defaultName.string' => 'product-1.names.en_CA',
             ],
             $result
         );
