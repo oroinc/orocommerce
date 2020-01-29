@@ -496,6 +496,7 @@ services:
     oro_shopping_list.manager.guest_shopping_list_migration:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager'
         lazy: true
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
