@@ -38,7 +38,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_5_2';
+        return 'v1_5_3';
     }
 
     /**
@@ -137,7 +137,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     private function createOroWebCatalogProductLimitTable(Schema $schema)
     {
         $table = $schema->createTable('oro_web_catalog_product_limit');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('version', 'integer', []);
         $table->setPrimaryKey(['id']);
