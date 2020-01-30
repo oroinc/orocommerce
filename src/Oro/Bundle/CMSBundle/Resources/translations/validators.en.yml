@@ -2,6 +2,8 @@ oro.cms:
     contentblock:
         alias:
             regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
+        content_variants:
+            empty.message: 'Please add at least one content variant.'
     contentwidget:
         alias:
             regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."

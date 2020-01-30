@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\ContentBlock;
 
-use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -55,40 +54,28 @@ class ContentBlockRenderer implements LoggerAwareInterface
      */
     public function render(string $blockAlias): string
     {
-        if (isset($this->aliases[$blockAlias])) {
-            throw new \RuntimeException(sprintf('Found a recursive "%s" content block renderer', $blockAlias));
-        }
+        $content = '';
 
-        $contentBlockView = $this->contentBlockDataProvider->getContentBlockView($blockAlias);
-        if (!$contentBlockView) {
-            $this->logger->error(sprintf('Could not render content block %s: cannot find content block', $blockAlias));
-
-            return '';
-        }
-
-        $this->aliases[$blockAlias] = true;
-        $content = $this->renderBlock($contentBlockView);
-        unset($this->aliases[$blockAlias]);
-
-        return $content;
-    }
-
-    /**
-     * @param ContentBlockView $contentBlockView
-     * @return string
-     */
-    private function renderBlock(ContentBlockView $contentBlockView): string
-    {
         try {
+            if (isset($this->aliases[$blockAlias])) {
+                throw new \RuntimeException(sprintf('Found a recursive "%s" content block renderer', $blockAlias));
+            }
+
+            $contentBlockView = $this->contentBlockDataProvider->getContentBlockView($blockAlias);
+            if (!$contentBlockView) {
+                throw new \RuntimeException(sprintf('Could not find content block "%s"', $blockAlias));
+            }
+
+            $this->aliases[$blockAlias] = true;
             $content = $this->getTemplate()->render(['contentBlock' => $contentBlockView]);
         } catch (\Exception $exception) {
             $this->logger->error(
-                sprintf('Error occurred while rendering content block %s', $contentBlockView->getAlias()),
+                sprintf('Error occurred while rendering content block %s', $blockAlias),
                 ['exception' => $exception]
             );
-
-            $content = '';
         }
+
+        unset($this->aliases[$blockAlias]);
 
         return $content;
     }
