@@ -201,6 +201,22 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
+    public function testGetProductIdBySkuQueryBuilder(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_2);
+
+        $result = $this->getRepository()->getProductIdBySkuQueryBuilder($product->getSku())
+            ->getQuery()
+            ->getArrayResult();
+
+        $this->assertEquals(
+            [
+                ['id' => $product->getId()],
+            ],
+            $result
+        );
+    }
+
     /**
      * @dataProvider getProductsNamesBySkuDataProvider
      *

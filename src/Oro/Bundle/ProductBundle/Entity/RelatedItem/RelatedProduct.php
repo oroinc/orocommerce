@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Entity\RelatedItem;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 
@@ -23,6 +25,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
  *     }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository")
+ * @Config(mode="hidden")
  */
 class RelatedProduct implements RelatedItemEntityInterface
 {
@@ -37,6 +40,13 @@ class RelatedProduct implements RelatedItemEntityInterface
      * @var Product
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          },
+     *      }
+     * )
      */
     protected $product;
 
@@ -44,6 +54,13 @@ class RelatedProduct implements RelatedItemEntityInterface
      * @var Product
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="related_item_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          },
+     *      }
+     * )
      */
     protected $relatedItem;
 
