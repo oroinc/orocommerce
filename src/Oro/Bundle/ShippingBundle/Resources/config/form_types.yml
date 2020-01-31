@@ -19,7 +19,7 @@ services:
             - '@oro_shipping.provider.measure_units.length'
             - '@oro_shipping.formatter.length_unit_label'
         calls:
-            - [setEntityClass, ['%oro_shipping.entity.length_unit.class%']]
+            - [setEntityClass, ['Oro\Bundle\ShippingBundle\Entity\LengthUnit']]
         tags:
             - { name: form.type, alias: oro_shipping_length_unit_select }
 
@@ -29,7 +29,7 @@ services:
             - '@oro_shipping.provider.measure_units.weight'
             - '@oro_shipping.formatter.weight_unit_label'
         calls:
-            - [setEntityClass, ['%oro_shipping.entity.weight_unit.class%']]
+            - [setEntityClass, ['Oro\Bundle\ShippingBundle\Entity\WeightUnit']]
         tags:
             - { name: form.type, alias: oro_shipping_weight_unit_select }
 
@@ -39,7 +39,7 @@ services:
             - '@oro_shipping.provider.measure_units.freight'
             - '@oro_shipping.formatter.freight_class_label'
         calls:
-            - [setEntityClass, ['%oro_shipping.entity.freight_class.class%']]
+            - [setEntityClass, ['Oro\Bundle\ShippingBundle\Entity\FreightClass']]
         tags:
             - { name: form.type, alias: oro_shipping_freight_class_select }
 
@@ -116,14 +116,14 @@ services:
     oro_shipping.form.product_shipping_option:
         class: Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
         calls:
-            - [setDataClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions']]
         tags:
             - { name: form.type, alias: oro_shipping_product_shipping_options }
 
     oro_shipping.form.product_shipping_option_collection:
         class: Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
         calls:
-            - [setDataClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+            - [setDataClass, ['Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions']]
         tags:
             - { name: form.type, alias: oro_shipping_product_shipping_options_collection }
 

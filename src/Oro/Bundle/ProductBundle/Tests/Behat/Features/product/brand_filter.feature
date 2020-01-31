@@ -22,8 +22,8 @@ Feature: Brand Filter
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And uncheck "Use Organization" for "Default Localization" field
     And fill form with:
-      | Enabled Localizations | [English, Localization1] |
-      | Default Localization  | English                  |
+      | Enabled Localizations | [English (United States), Localization1] |
+      | Default Localization  | English (United States)                  |
     And I submit form
     Then I should see "Configuration saved" flash message
 

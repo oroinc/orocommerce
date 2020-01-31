@@ -1,9 +1,4 @@
 parameters:
-    oro_shipping.entity.length_unit.class: Oro\Bundle\ShippingBundle\Entity\LengthUnit
-    oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
-    oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
-    oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
-    oro_shipping.entity.shipping_methods_configs_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
     oro_shipping.rule_grid_route_name: 'oro_shipping_methods_configs_rule_index'
     oro_shipping.rule_grid_name: 'shipping-methods-configs-rule-grid'
 
@@ -13,7 +8,7 @@ services:
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_shipping.entity.shipping_methods_configs_rule.class%'
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
             - "@doctrine.orm.entity_manager"
 
     oro_shipping.factory.shipping_origin_model_factory:
@@ -46,7 +41,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:
-            - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+            - [setProductShippingOptionsClass, ['Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
@@ -122,22 +117,22 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository'
         parent: oro_entity.abstract_repository
         arguments:
-            - '%oro_shipping.entity.product_shipping_options.class%'
+            - 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions'
 
     oro_shipping.repository.length_unit:
         parent: oro_entity.abstract_repository
         arguments:
-            - '%oro_shipping.entity.length_unit.class%'
+            - 'Oro\Bundle\ShippingBundle\Entity\LengthUnit'
 
     oro_shipping.repository.weight_unit:
         parent: oro_entity.abstract_repository
         arguments:
-            - '%oro_shipping.entity.weight_unit.class%'
+            - 'Oro\Bundle\ShippingBundle\Entity\WeightUnit'
 
     oro_shipping.repository.freight_class:
         parent: oro_entity.abstract_repository
         arguments:
-            - '%oro_shipping.entity.freight_class.class%'
+            - 'Oro\Bundle\ShippingBundle\Entity\FreightClass'
 
     oro_shipping.provider.measure_units.weight:
         class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
@@ -220,7 +215,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:
-            - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+            - [setProductShippingOptionsClass, ['Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 

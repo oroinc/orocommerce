@@ -45,7 +45,7 @@ Feature: Preview of alphabetic coupon code in coupon generation form
     When I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English, Zulu_Loc] |
+      | Enabled Localizations | [English (United States), Zulu_Loc] |
       | Default Localization  | Zulu_Loc            |
     And I submit form
     Then I should see "Configuration saved" flash message

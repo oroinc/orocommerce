@@ -75,7 +75,7 @@ class PageControllerTest extends WebTestCase
 
         $expectedData = [
             'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
-            'English' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+            'English (United States)' => ['before' => '/old-english-slug', 'after' => '/english-slug']
         ];
 
         $response = $this->client->getResponse();
@@ -199,7 +199,7 @@ class PageControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('oro_cms.entity.page.class'),
+                    'entityClass' => Page::class,
                 ]
             ),
             [],

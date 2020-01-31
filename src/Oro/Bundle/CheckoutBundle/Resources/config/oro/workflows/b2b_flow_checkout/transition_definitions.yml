@@ -651,4 +651,3 @@ workflows:
                             allow_manual_source_remove: $allow_manual_source_remove
                             remove_source: $remove_source
                             clear_source: $clear_source
-                            email: $email

@@ -29,7 +29,7 @@ class CategoryActionTest extends WebTestCase
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $operationName = 'oro_catalog_category_delete';
         $entityId = $category->getId();
-        $entityClass = $this->getContainer()->getParameter('oro_catalog.entity.category.class');
+        $entityClass = Category::class;
 
         $params = $this->getOperationExecuteParams($operationName, $entityId, $entityClass);
         $this->client->request(
@@ -71,7 +71,7 @@ class CategoryActionTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $operationName = 'oro_catalog_category_delete';
         $entityId = $masterCatalog->getId();
-        $entityClass = $this->getContainer()->getParameter('oro_catalog.entity.category.class');
+        $entityClass = Category::class;
 
         $params = $this->getOperationExecuteParams($operationName, $entityId, $entityClass);
         $this->client->request(

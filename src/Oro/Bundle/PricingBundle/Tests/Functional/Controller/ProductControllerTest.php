@@ -49,9 +49,7 @@ class ProductControllerTest extends ProductHelperTestCase
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = static::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $defaultPriceList */
         $defaultPriceList = $repository->getDefault();
 
@@ -73,9 +71,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListFromRequest()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = static::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 
@@ -101,9 +97,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListCurrenciesFromRequestUnchecked()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = static::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 
@@ -137,9 +131,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListCurrenciesFromRequestChecked()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = static::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 

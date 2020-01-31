@@ -10,6 +10,8 @@
         }
     ],
     "require": {
+        "ext-xmlwriter": "*",
+        "ext-zlib": "*",
         "oro/platform": "4.1.x-dev",
         "oro/platform-serialised-fields": "4.1.x-dev",
         "oro/calendar-bundle": "4.1.x-dev",

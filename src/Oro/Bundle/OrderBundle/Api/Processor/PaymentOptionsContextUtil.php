@@ -70,7 +70,8 @@ class PaymentOptionsContextUtil
 
     /**
      * Sets a value for the given payment option.
-     * All set payment options will be passes to the action group specified in $orderPurchaseActionGroupName property.
+     * All set payment options will be passes to the action group specified in
+     * {@see \Oro\Bundle\OrderBundle\Api\Processor\PlaceOrder::$orderPurchaseActionGroupName}.
      *
      * @param ParameterBagInterface $sharedData
      * @param Order                 $order

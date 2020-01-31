@@ -32,7 +32,7 @@ class OrderFrontendOperationTest extends FrontendActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $order->getId(),
-            $this->getContainer()->getParameter('oro_order.entity.order.class'),
+            Order::class,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
             Response::HTTP_FORBIDDEN

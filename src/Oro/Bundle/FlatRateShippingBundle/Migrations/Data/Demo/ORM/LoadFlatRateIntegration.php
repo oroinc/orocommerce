@@ -26,6 +26,9 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Configures an integration instance and adds a shipping rule to enable flat rate shipping ($10 per order).
+ */
 class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     /**
@@ -64,10 +67,6 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
     public function load(ObjectManager $manager)
     {
         if (!$this->container) {
-            return;
-        }
-
-        if (!$this->container->hasParameter('oro_integration.entity.class')) {
             return;
         }
 

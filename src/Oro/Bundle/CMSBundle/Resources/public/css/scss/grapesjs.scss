@@ -1,6 +1,12 @@
 /* @theme: admin.oro; */
 
 .#{$app-prefix} {
+    &editor-cont {
+        .ui-dialog & {
+            padding: 0;
+        }
+    }
+
     &frame {
         width: calc(100% - 16px);
         height: calc(100% - 16px);
@@ -270,6 +276,10 @@
 // Additional styles for fullscreen mode
 .page-content-editor {
     margin: -$grapesjs-content-editor-offset;
+
+    .widget-content & {
+        margin: 0;
+    }
 }
 
 .ui-dialog {

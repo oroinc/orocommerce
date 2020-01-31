@@ -9,7 +9,6 @@ data:
             title: 'Page 1'
             url: '/page1_slug_default'
             urls:
-                - { url: '/page1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/page1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
                 - { url: '/page1_slug_es', localizationId: '<toString(@es->id)>' }
             metaTitle: 'Page 1 Meta Title'
@@ -25,7 +24,6 @@ data:
             title: 'Page 2'
             url: '/page2_slug_default'
             urls:
-                - { url: '/page2_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/page2_slug_default', localizationId: '<toString(@en_CA->id)>' }
                 - { url: '/page2_slug_default', localizationId: '<toString(@es->id)>' }
             metaTitle: null

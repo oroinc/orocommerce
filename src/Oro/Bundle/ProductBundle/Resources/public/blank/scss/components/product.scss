@@ -47,61 +47,8 @@
             }
 
             &:hover {
-                .product__qty-input__count-option {
-                    z-index: 6;
-
-                    border: 1px solid $product-qty-active-border-color;
-
-                    .count-minus,
-                    .count-plus {
-                        display: block;
-                    }
-                }
-
                 .product__qty-input_more-info__popup {
                     display: block;
-                }
-            }
-
-            .product__qty-input__count-option {
-                position: relative;
-
-                border: 1px solid transparent;
-
-                .count-minus,
-                .count-plus {
-                    position: absolute;
-                    top: -1px;
-
-                    display: none;
-                    width: 21px;
-                    height: 39px;
-                    padding: 0;
-                    border: 1px solid $product-qty-active-border-color;
-                    box-shadow: none;
-
-                    background: get-color('additional', 'base');
-                    text-align: center;
-                }
-
-                .count-minus {
-                    left: -21px;
-
-                    border-right: 0;
-                    border-top-left-radius: 5px;
-                    border-bottom-left-radius: 5px;
-                }
-
-                .count-plus {
-                    right: -21px;
-
-                    border-left: 0;
-                    border-top-right-radius: 5px;
-                    border-bottom-right-radius: 5px;
-                }
-
-                input {
-                    padding: 11px 6px;
                 }
             }
         }

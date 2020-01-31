@@ -9,9 +9,11 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
@@ -36,21 +38,21 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected $roles = [
         self::ROLE1 => [
             [
-                'class' => 'oro_shopping_list.entity.shopping_list.class',
+                'class' => ShoppingList::class,
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'oro_shopping_list.entity.shopping_list.class',
+                'class' => ShoppingList::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_rfp.entity.request.class',
+                'class' => Request::class,
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
@@ -142,7 +144,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $role->setLabel($key);
 
             foreach ($roles as $acls) {
-                $className = $this->container->getParameter($acls['class']);
+                $className = $acls['class'];
 
                 $this->setRolePermissions($aclManager, $role, $className, $acls['acls']);
             }

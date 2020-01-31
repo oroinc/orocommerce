@@ -29,14 +29,14 @@ operations:
                 method_parameters: [$.data.amount, $.data.currency]
                 attribute: $.amountWithCurrency
             - '@find_entity':
-                class: '%oro_order.entity.order.class%'
+                class: 'Oro\Bundle\OrderBundle\Entity\Order'
                 where:
                     id: $.data.entityIdentifier
                 attribute: $.order
         preconditions:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
-                - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
+                - '@equal': [$.data.entity_class, 'Oro\Bundle\OrderBundle\Entity\Order']
                 - '@equal': [$.data.action, $.paymentMethodAction]
                 - '@equal': [$.data.active, true]
                 - '@equal': [$.data.successful, true]

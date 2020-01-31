@@ -3,12 +3,17 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
-class SluggableEntityStub implements SluggableInterface
+class SluggableEntityStub implements DatesAwareInterface, SluggableInterface
 {
+    use DatesAwareTrait;
     use SluggableTrait;
 
     /**
@@ -18,14 +23,20 @@ class SluggableEntityStub implements SluggableInterface
 
     /**
      * @var LocalizedFallbackValue
-     *
      */
     private $defaultSlugPrototype;
 
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     */
+    protected $titles;
+
     public function __construct()
     {
-        $this->slugs = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
+        $this->slugs = new ArrayCollection();
+        $this->titles = new ArrayCollection();
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**
@@ -62,6 +73,42 @@ class SluggableEntityStub implements SluggableInterface
     public function setDefaultSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
         $this->defaultSlugPrototype = $slugPrototype;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getTitles(): Collection
+    {
+        return $this->titles;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $title
+     *
+     * @return self
+     */
+    public function addTitle(LocalizedFallbackValue $title): self
+    {
+        if (!$this->titles->contains($title)) {
+            $this->titles->add($title);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $title
+     *
+     * @return self
+     */
+    public function removeTitle(LocalizedFallbackValue $title): self
+    {
+        if ($this->titles->contains($title)) {
+            $this->titles->removeElement($title);
+        }
 
         return $this;
     }

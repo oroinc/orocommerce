@@ -14,7 +14,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter'
         public: false
         arguments:
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         calls:
             - ['addColumnInformationProvider', ['@oro_product.expression.column_information.default_provider']]
 
@@ -40,7 +40,7 @@ services:
         arguments:
             - '@oro_product.expression.expression_language_converter'
         calls:
-            - [addNameMapping, ['product', '%oro_product.entity.product.class%']]
+            - [addNameMapping, ['product', 'Oro\Bundle\ProductBundle\Entity\Product']]
 
     oro_product.expression.query_expression.converter.binary_node:
         class: 'Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter'

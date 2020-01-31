@@ -90,7 +90,6 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
                                 'url'            => '/page2_slug_default',
                                 'localizationId' => '<toString(@current_localization->id)>'
                             ],
-                            ['url' => '/page2_slug_default', 'localizationId' => '<toString(@en_US->id)>'],
                             ['url' => '/page2_slug_default', 'localizationId' => '<toString(@en_CA->id)>']
                         ]
                     ]

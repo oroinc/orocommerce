@@ -130,7 +130,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'url'  => '/category1_slug_es',
                         'urls' => [
-                            ['url' => '/category1_slug_en_US', 'localizationId' => '<toString(@en_US->id)>'],
+                            ['url' => '/category1_slug_default', 'localizationId' => '<toString(@en_US->id)>'],
                             ['url' => '/category1_slug_en_CA', 'localizationId' => '<toString(@en_CA->id)>']
                         ]
                     ]

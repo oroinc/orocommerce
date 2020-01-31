@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
@@ -90,26 +89,6 @@ class WebCatalogProductLimiterTest extends WebTestCase
         $actual = $this->getContainer()->get('doctrine')
             ->getRepository(WebCatalogProductLimitation::class)
             ->findBy(['version' => LoadWebCatalogProductLimitationData::VERSION]);
-
-        $this->assertEmpty($actual);
-    }
-
-    public function testProductLimitationEntriesErasedWithTruncate()
-    {
-        if ($this->getContainer()->getParameter('database_driver') === DatabaseDriverInterface::DRIVER_MYSQL) {
-            $this->markTestSkipped('Truncate table calls implicit commit and violates isolation');
-        }
-
-        $this->loadFixtures([
-            LoadWebCatalogProductLimitationData::class
-        ]);
-
-        $this->webCatalogProductLimiter->erase(LoadWebCatalogProductLimitationData::VERSION);
-        $this->webCatalogProductLimiter->erase(LoadWebCatalogProductLimitationData::ALT_VERSION);
-
-        $actual = $this->getContainer()->get('doctrine')
-            ->getRepository(WebCatalogProductLimitation::class)
-            ->findAll();
 
         $this->assertEmpty($actual);
     }

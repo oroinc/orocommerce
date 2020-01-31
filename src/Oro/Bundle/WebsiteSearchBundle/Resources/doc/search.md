@@ -186,7 +186,7 @@ services:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         calls:
-            - [setEntityName, ['%oro_product.entity.product.class%']]
+            - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
 ```
 
 Parent `oro_website_search.repository.abstract` service already contains all required constructor arguments. You may specify the entity name to automatically fill the `FROM` part of the query. This call is optional. If it is missing, an empty query will be created.
