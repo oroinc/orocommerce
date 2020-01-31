@@ -150,7 +150,7 @@
         '~class': " product-item__title product-item__title--{{ class_prefix }}"
     }) %}
 
-    <h3 {{ block('block_attributes') }}>
+    <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
            itemprop="url"
@@ -158,7 +158,7 @@
         >
             <span itemprop="name">{{ block('container_widget')|trim|raw }}</span>
         </a>
-    </h3>
+    </h2>
 {% endblock %}
 
 {% block __oro_product_grid__product_details_widget %}
