@@ -98,7 +98,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
     ProductPricesGridFiltersButton:
       selector:
-        locator: '//div/h4[text()="Product Prices"]/../..//div[@class="oro-datagrid"]/div[@class="toolbar"]//a[@title="Filters"]'
+        locator: '//div/h4[text()="Product Prices"]/../..//div[@class="oro-datagrid"]/div[@class="toolbar"]//a[@title="Filter Toggle"]'
         type: xpath
     PriceListFilterHint:
       selector:
