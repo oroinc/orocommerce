@@ -78,8 +78,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer_group.md'
-            form_event_subscriber:
-                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -102,8 +100,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_customer_group_fallback.md'
-            form_event_subscriber:
-                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -123,8 +119,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer.md'
-            form_event_subscriber:
-                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -147,8 +141,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_customer_fallback.md'
-            form_event_subscriber:
-                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
