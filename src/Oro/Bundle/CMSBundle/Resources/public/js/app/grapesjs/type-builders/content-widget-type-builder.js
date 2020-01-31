@@ -71,6 +71,11 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         initialize(...args) {
             if (this.get('tagName') === 'span') {
                 this.set('draggable', false);
+
+                const classes = _.without(this.get('classes'), 'content-widget');
+
+                classes.push('content-widget-inline');
+                this.set('classes', classes);
             }
 
             this.constructor.__super__.initialize.call(this, ...args);
@@ -257,7 +262,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if ((el.tagName === 'DIV' || el.tagName === 'SPAN') && el.classList.contains('content-widget')) {
+        if (el.nodeType === 1 && el.matches('div.content-widget, span.content-widget-inline')) {
             result = {
                 type: this.componentType
             };

@@ -127,6 +127,7 @@ Feature: Single page checkout with consents
       | State        | Has              |
       | Postal Code  | 12345            |
     And I click "Continue"
+    And I scroll to top
     And I check "Use billing address" on the checkout page
 
   Scenario: Check validation errors while submitting order without accepted consents by Guest

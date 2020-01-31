@@ -82,13 +82,15 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
 
     public function testIsLateRegistrationEnabledByDefaultWithNullEmail()
     {
-        $expectedData =  [
-            'is_late_registration_enabled' => true
-        ];
-
         $form = $this->factory->create(LateRegistrationType::class, ['email' => null]);
         $formData = $form->getData();
-        $this->assertEquals($expectedData, $formData);
+        $this->assertEquals(
+            [
+                'email' => null,
+                'is_late_registration_enabled' => true
+            ],
+            $formData
+        );
     }
 
     public function testSubmitWithUncheckedCheckbox()

@@ -40,7 +40,7 @@ Example:
       "billingAddress": {
         "data": {
           "type": "orderaddresses",
-          "id": "18"
+          "id": "billing_address_1"
         }
       },
       "lineItems": {
@@ -60,6 +60,32 @@ Example:
     }
   },
   "included": [
+    {
+      "type": "orderaddresses",
+      "id": "billing_address_1",
+      "attributes": {
+        "label": "Address 01",
+        "street": "1215 Caldwell Road",
+        "city": "Rochester",
+        "postalCode": "14608",
+        "firstName": "Amanda",
+        "lastName": "Cole"
+      },
+      "relationships": {
+        "country": {
+          "data": {
+            "type": "countries",
+            "id": "US"
+          }
+        },
+        "region": {
+          "data": {
+            "type": "regions",
+            "id": "US-NY"
+          }
+        }
+      }
+    },
     {
       "type": "orderlineitems",
       "id": "line_item_1",
@@ -108,25 +134,7 @@ Example:
     "type": "orders",
     "id": "1",
     "attributes": {
-      "poNumber": "CV032342USDD",
-      "customerNotes": "Please, call before delivery",
-      "shipUntil": "2017-08-15"
-    },
-    "relationships": {      
-      "lineItems": {
-        "data": [
-          {
-            "type": "orderlineitems",
-            "id": "1"
-          }
-        ]
-      },
-      "customer": {
-        "data": {
-          "type": "customers",
-          "id": "1"
-        }
-      }
+      "customerNotes": "Please, call before delivery"
     }
   }
 }

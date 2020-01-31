@@ -174,8 +174,6 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceList->setProductAssignmentRule('product.id == 1');
         $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggerForPriceList');
-        $this->priceListTriggerHandler->expects($this->once())
-            ->method('sendScheduledTriggers');
 
         $this->listener->postPersist($priceList);
         $this->assertFalse($priceList->isActual());

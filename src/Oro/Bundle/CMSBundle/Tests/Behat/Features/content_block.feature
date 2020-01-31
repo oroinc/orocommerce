@@ -10,7 +10,7 @@ Feature: Content Block
       | Admin | first_session  |
       | Buyer | second_session |
 
-  Scenario: Create new content block
+  Scenario: Create new content block without content variant
     Given I proceed as the Admin
     And I login as administrator
     And go to Marketing/ Content Blocks
@@ -23,6 +23,11 @@ Feature: Content Block
       | Localization   | English                    |
       | Website        | Default                    |
       | Customer Group | Non-Authenticated Visitors |
+    When I save and close form
+    Then I should see "Please add at least one content variant."
+
+  Scenario: Create new content block with content variant
+    Given I click "Add Content"
     When I save and close form
     Then I should see "Content block has been saved" flash message
 

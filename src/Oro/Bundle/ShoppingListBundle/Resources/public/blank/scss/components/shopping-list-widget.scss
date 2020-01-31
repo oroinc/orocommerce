@@ -35,10 +35,10 @@
         border-top: .1rem solid get-color('additional', 'light');
         background: get-color('additional', 'light');
 
+        cursor: pointer;
+
         @include hover-focus() {
             outline: 0;
-
-            text-decoration: underline;
         }
 
         [class^="fa-"] {

@@ -1,0 +1,25 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    disabledPromotionOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Disabled Promotions Order'
+        website: '@website1'
+        currency: USD
+        poNumber: 'DORD1'
+        disablePromotions: true
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    simpleOrderLineItem:
+        product: '@product1'
+        order: '@disabledPromotionOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
