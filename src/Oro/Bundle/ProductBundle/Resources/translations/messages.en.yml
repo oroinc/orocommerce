@@ -714,6 +714,30 @@ oro:
                 options:
                     show_prices.label: Show Prices
                     show_add_button.label: Show Add Button
+            product_segment:
+                label: Product Segment
+                options:
+                    segment:
+                        label: Segment
+                        tooltip: Selected product segment will be used as data source. To modify existing or create new segment go to "Reports & Segments > Manage Segments" section. Only segments with type "Product" are listed here.
+                    maximum_items:
+                        label: Maximum Items
+                        tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                    minimum_items:
+                        label: Minimum Items
+                        tooltip: Hide the block completely if the number of items is lower than the specified value.
+                    use_slider_on_mobile:
+                        label: Use Slider On Mobile
+                        tooltip: When slider is enabled, the widget contents will occupy less screen space, while showing larger product images.
+                        value:
+                            no: No
+                            yes: Yes
+                    show_add_button:
+                        label: Show Add Button
+                        tooltip: Enables a buyer to add a product to the shopping list right away. When the option is disabled, a buyer needs to open the product details page before they can add it to the shopping list.
+                        value:
+                            no: No
+                            yes: Yes
 
     product_unit.each:
         label:

@@ -64,7 +64,7 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
     /**
      * @return int|null
      */
-    private function getMaxItemsLimit()
+    protected function getMaxItemsLimit()
     {
         return $this->getValueFromConfig(Configuration::NEW_ARRIVALS_MAX_ITEMS);
     }
@@ -72,7 +72,7 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
     /**
      * @return int|null
      */
-    private function getMinItemsLimit()
+    protected function getMinItemsLimit()
     {
         return $this->getValueFromConfig(Configuration::NEW_ARRIVALS_MIN_ITEMS);
     }
