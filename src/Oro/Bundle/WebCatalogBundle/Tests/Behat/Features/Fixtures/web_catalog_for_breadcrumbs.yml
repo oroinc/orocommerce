@@ -1,5 +1,5 @@
 include:
-    - ../../../../../CatalogBundle/Tests/Behat/Features/Fixtures/category_for_breadcrumbs.yml
+    - '@OroCatalogBundle:category_for_breadcrumbs.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueDefaultWebCatalog:
