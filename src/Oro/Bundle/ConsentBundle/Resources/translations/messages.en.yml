@@ -47,7 +47,9 @@ oro:
         add_consent: Add Consent
         declined:
             message: Consent %consent% declined by customer
-
+        icon.text:
+            not_apply: Consent is not applied
+            apply: Consent is applied
         system_configuration:
             fields:
                 consent:

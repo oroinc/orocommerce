@@ -41,7 +41,10 @@
         (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled')
     }) %}
 
-    <span {{ block('block_attributes') }} aria-hidden="true"></span>
+    <span>
+        <span class="sr-only">{{ (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans }}</span>
+        <span {{ block('block_attributes') }} aria-hidden="true"></span>
+    </span>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}
