@@ -13,9 +13,6 @@ Feature: Product collection shopping list
     And click "In Shopping List" for "PSKU1" product
     Then I should see "UiDialog" with elements:
       | Title | Product 1 |
-    And I wait for action
-    And I wait for action
-    And I wait for action
     And I click "Close" in modal window
     And click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
