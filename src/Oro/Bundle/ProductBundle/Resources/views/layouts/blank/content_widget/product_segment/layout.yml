@@ -22,10 +22,6 @@ layout:
             optionValue: segment-product
         - '@setOption':
             id: products
-            optionName: label
-            optionValue: '=context["content_widget"].getName()'
-        - '@setOption':
-            id: products
             optionName: attr.data-page-component-name
             optionValue: '="segment-product-list-"~data["instanceNumber"]'
         - '@appendOption':

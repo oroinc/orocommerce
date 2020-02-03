@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -109,7 +110,10 @@ class ContentWidgetType extends AbstractType
             static function (FormEvent $event) {
                 $data = $event->getData();
                 if ($data instanceof ContentWidget && $data->getId()) {
-                    $event->getForm()->remove('widgetType');
+                    $form = $event->getForm();
+                    $form->remove('widgetType');
+
+                    FormUtils::replaceField($form, 'name', ['disabled' => true]);
                 }
             }
         );
@@ -123,9 +127,16 @@ class ContentWidgetType extends AbstractType
                 }
 
                 $form = $event->getForm();
-
                 FormUtils::replaceFieldOptionsRecursive($form, 'layout', ['widget_type' => $data['widgetType']]);
-                $this->buildSettingsField($form, $form->getData() ?: new ContentWidget(), $data['widgetType']);
+
+                $contentWidget = $form->getData() ?: new ContentWidget();
+                $this->buildSettingsField(
+                    $form,
+                    $contentWidget,
+                    $contentWidget->getId() && $contentWidget->getWidgetType()
+                        ? $contentWidget->getWidgetType()
+                        : $data['widgetType']
+                );
             }
         );
     }
