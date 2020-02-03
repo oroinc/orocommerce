@@ -224,7 +224,7 @@ oro_behat_extension:
 
     Product Name:
       selector:
-        locator: '//h3[contains(@class,"product-item__title product-item__title")]'
+        locator: '//h2[contains(@class,"product-item__title product-item__title")]'
         type: xpath
 
     Green Box:
