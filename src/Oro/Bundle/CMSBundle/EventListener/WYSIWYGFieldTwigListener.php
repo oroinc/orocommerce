@@ -226,14 +226,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         $twigParser = $this->getTwigParser();
         $twigFunctionProcessor = $this->getTwigFunctionProcessor();
         $applicableMapping = $twigFunctionProcessor->getApplicableMapping();
-        $foundTwigFunctionCalls = [];
+        $isFlushNeeded = false;
 
         foreach ($this->getWysiwygFields($metadata) as $fieldName => $fieldType) {
             if (!isset($applicableMapping[$fieldType])) {
                 continue;
             }
 
-            $foundTwigFunctionCalls[$fieldType] = [];
+            $foundTwigFunctionCalls = [$fieldType => []];
             foreach ($collectionDTO->getEntity() as $entity) {
                 $foundCalls = $twigParser->findFunctionCalls(
                     $metadata->getFieldValue($entity, $fieldName),
@@ -247,12 +247,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
                     );
                 }
             }
+
+            $isFlushNeeded = $twigFunctionProcessor->processTwigFunctions(
+                $processedDTO->withProcessedEntityField($fieldName, $fieldType),
+                $foundTwigFunctionCalls
+            ) || $isFlushNeeded;
         }
 
-        return $twigFunctionProcessor->processTwigFunctions(
-            $processedDTO->withProcessedEntityField($fieldName, $fieldType),
-            $foundTwigFunctionCalls
-        );
+        return $isFlushNeeded;
     }
 
     /**
