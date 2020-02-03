@@ -38,12 +38,14 @@
 {% block __oro_consent_list__consent_items_status_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'class': 'consent-list__status' ~
-        (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled')
+        (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled'),
+        'title': (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans,
+        'aria-hidden': 'true'
     }) %}
 
     <span>
         <span class="sr-only">{{ (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans }}</span>
-        <span {{ block('block_attributes') }} aria-hidden="true"></span>
+        <span {{ block('block_attributes') }}></span>
     </span>
 {% endblock %}
 
