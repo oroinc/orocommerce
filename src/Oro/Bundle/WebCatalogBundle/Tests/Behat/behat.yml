@@ -109,6 +109,16 @@ oro_behat_extension:
         Second Content Variant Expand Button:
             selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
 
+        Content Variant Collection:
+            selector: "div.variant-collection"
+
+        Add Content Variant Restriction:
+            selector: ".variant-collection .add-list-item"
+
+        Content Variant Restriction Validation Error:
+            selector: ".variant-collection .validation-failed"
+
+
     suites:
         OroWebCatalogBundle:
             contexts:

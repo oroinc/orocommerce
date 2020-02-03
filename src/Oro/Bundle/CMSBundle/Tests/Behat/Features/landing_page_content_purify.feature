@@ -1,4 +1,5 @@
 @feature-BB-17656
+@ticket-BB-18771
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
 Feature: Landing Page content purify
   In order to restrict access to attributes that may be vulnerable
@@ -71,4 +72,13 @@ Feature: Landing Page content purify
       | Titles  | Draggable attr                            |
       | Content | <a draggable=\"true\" href=\"#\">Link</a> |
     And I save and close form
+    Then I should see "Page has been saved" flash message
+
+  Scenario: Create a new Landing Page with link using target attribute
+    Given I go to Marketing / Landing Pages
+    And click "Create Landing Page"
+    And I fill "CMS Page Form" with:
+      | Titles  | Page with link              |
+      | Content | <a target=\"_blank\">Link</a> |
+    When I save and close form
     Then I should see "Page has been saved" flash message

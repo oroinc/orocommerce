@@ -102,6 +102,30 @@ services:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_currency.converter.rate'
 
+    oro_order.delete_handler.order_line_item:
+        class: Oro\Bundle\OrderBundle\Handler\OrderLineItemDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_order.order.total.total_helper'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.delete_handler_extension.order_line_item:
+        class: Oro\Bundle\OrderBundle\Handler\OrderLineItemDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.delete_handler.order_discount:
+        class: Oro\Bundle\OrderBundle\Handler\OrderDiscountDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_order.order.total.total_helper'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
+
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
         public: true

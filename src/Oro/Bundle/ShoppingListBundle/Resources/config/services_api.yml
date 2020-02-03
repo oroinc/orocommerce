@@ -86,8 +86,8 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: 20 }
 
-    oro_shopping_list.api.add_new_line_item_to_shopping_list:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddNewLineItemToShoppingList
+    oro_shopping_list.api.add_line_item_to_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddLineItemToShoppingList
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 40 }
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
-use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -15,7 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  * of the create line item action does not contains this line item in the included shopping list
  * and the shopping list totals are calculated without this line item.
  */
-class AddNewLineItemToShoppingList implements ProcessorInterface
+class AddLineItemToShoppingList implements ProcessorInterface
 {
     /**
      * {@inheritdoc}
@@ -29,9 +28,6 @@ class AddNewLineItemToShoppingList implements ProcessorInterface
         $shoppingList = $lineItem->getShoppingList();
         if (null !== $shoppingList) {
             $lineItems = $shoppingList->getLineItems();
-            if ($lineItems instanceof PersistentCollection && !$lineItems->isInitialized()) {
-                $lineItems->initialize();
-            }
             if (!$lineItems->contains($lineItem)) {
                 $lineItems->add($lineItem);
             }
