@@ -2,32 +2,43 @@
 
 namespace Oro\Bundle\CheckountBundle\Migrations\Data\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 
-class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdateCustomerUserRolePermissions
+/**
+ * Updates permissions for Checkout entity for ROLE_FRONTEND_ADMINISTRATOR storefront role.
+ */
+class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdatePermissions implements
+    DependentFixtureInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected function getRoleName()
+    public function getDependencies()
     {
-        return 'ROLE_FRONTEND_ADMINISTRATOR';
+        return [LoadCustomerUserRoles::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getEntityOid()
+    public function load(ObjectManager $manager)
     {
-        return 'entity:' . Checkout::class;
-    }
+        $aclManager = $this->getAclManager();
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPermissions()
-    {
-        return ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP', 'DELETE_DEEP', 'ASSIGN_DEEP'];
+        $this->setEntityPermissions(
+            $aclManager,
+            $this->getRole($manager, 'ROLE_FRONTEND_ADMINISTRATOR', CustomerUserRole::class),
+            Checkout::class,
+            ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP', 'DELETE_DEEP', 'ASSIGN_DEEP']
+        );
+        $aclManager->flush();
     }
 }

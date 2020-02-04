@@ -45,8 +45,8 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
                 'acls'  => [],
             ],
             [
-                'oid' => ['workflow', '(root)'],
-                'acls'  => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+                'oid'  => 'workflow:(root)',
+                'acls' => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
             ],
         ],
         self::ROLE2 => [
