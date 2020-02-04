@@ -24,7 +24,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $priceList->getId(),
-            'oro_pricing.entity.price_list.class',
+            PriceList::class,
             'oro_pricing_price_list_index'
         );
 
@@ -44,7 +44,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $priceList->getId(),
-            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class'),
+            PriceList::class,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
             Response::HTTP_FORBIDDEN

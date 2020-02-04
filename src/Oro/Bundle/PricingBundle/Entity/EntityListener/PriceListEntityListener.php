@@ -101,7 +101,6 @@ class PriceListEntityListener
             $priceList->setActual(false);
             $this->priceListTriggerHandler
                 ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
-            $this->priceListTriggerHandler->sendScheduledTriggers();
         }
     }
 

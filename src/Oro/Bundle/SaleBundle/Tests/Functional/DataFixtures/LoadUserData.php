@@ -2,20 +2,25 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
+use Oro\Bundle\SecurityBundle\Tests\Functional\DataFixtures\SetRolePermissionsTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
-class LoadUserData extends AbstractFixture implements FixtureInterface
+class LoadUserData extends AbstractFixture
 {
+    use SetRolePermissionsTrait;
+
     const USER1 = 'sale-user1';
     const USER2 = 'sale-user2';
 
@@ -38,82 +43,78 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const PARENT_ACCOUNT_USER1    = 'sale-parent-customer-user1@example.com';
     const PARENT_ACCOUNT_USER2    = 'sale-parent-customer-user2@example.com';
 
-    /**
-     * @var array
-     */
-    protected $roles = [
+    /** @var array */
+    private $roles = [
         self::ROLE1 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE3 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_LOCAL'],
             ]
         ],
         self::ROLE4 => [
             [
-                'class' => 'oro_order.entity.order.class',
+                'class' => Order::class,
                 'acls'  => [],
             ],
         ],
         self::ROLE5 => [
             [
-                'class' => 'oro_order.entity.order.class',
+                'class' => Order::class,
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
         self::ROLE6 => [
             [
-                'class' => 'oro_sale.entity.quote.class',
+                'class' => Quote::class,
                 'acls'  => ['VIEW_DEEP'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_DEEP'],
             ],
             [
-                'class' => 'oro_checkout.entity.checkout.class',
+                'class' => Checkout::class,
                 'acls'  => ['VIEW_DEEP', 'CREATE_LOCAL'],
             ],
         ],
         self::ROLE7 => [
             [
-                'class' => 'oro_checkout.entity.checkout.class',
+                'class' => Checkout::class,
                 'acls'  => ['VIEW_LOCAL', 'EDIT_LOCAL', 'CREATE_LOCAL'],
             ],
             [
-                'oid' => ['workflow', '(root)'],
-                'acls'  => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+                'oid'  => 'workflow:(root)',
+                'acls' => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
             ],
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $customers = [
+    /** @var array */
+    private $customers = [
         [
             'name' => self::PARENT_ACCOUNT,
         ],
@@ -127,10 +128,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $customerUsers = [
+    /** @var array */
+    private $customerUsers = [
         [
             'email'     => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
@@ -197,10 +196,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $users = [
+    /** @var array */
+    private $users = [
         [
             'email'     => 'sale-user1@example.com',
             'username'  => self::USER1,
@@ -231,7 +228,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadRoles(ObjectManager $manager)
+    private function loadRoles(ObjectManager $manager)
     {
         /* @var $aclManager AclManager */
         $aclManager = $this->container->get('oro_security.acl.manager');
@@ -239,18 +236,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         foreach ($this->roles as $key => $items) {
             $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE . $key);
             $role->setLabel($key);
+            $manager->persist($role);
 
             foreach ($items as $acls) {
-                if (isset($acls['class'])) {
-                    $identity = $this->container->getParameter($acls['class']);
-                } else {
-                    $identity = $acls['oid'];
-                }
-
-                $this->setRolePermissions($aclManager, $role, $identity, $acls['acls']);
+                $oidDescriptor = isset($acls['class'])
+                    ? 'entity:' . $acls['class']
+                    : $acls['oid'];
+                $this->setRolePermissions($aclManager, $role, $oidDescriptor, $acls['acls']);
             }
-
-            $manager->persist($role);
 
             $this->setReference($key, $role);
         }
@@ -262,7 +255,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadCustomers(ObjectManager $manager)
+    private function loadCustomers(ObjectManager $manager)
     {
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();
@@ -287,13 +280,13 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadCustomerUsers(ObjectManager $manager)
+    private function loadCustomerUsers(ObjectManager $manager)
     {
         /* @var $userManager CustomerUserManager */
         $userManager = $this->container->get('oro_customer_user.manager');
 
-        $defaultUser    = $this->getUser($manager);
-        $organization   = $defaultUser->getOrganization();
+        $defaultUser = $this->getUser($manager);
+        $organization = $defaultUser->getOrganization();
 
         foreach ($this->customerUsers as $item) {
             /* @var $customerUser CustomerUser */
@@ -310,13 +303,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setOrganization($organization)
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
+                ->setEnabled(true);
 
             foreach ($item['roles'] as $role) {
-                /** @var CustomerUserRole $roleEntity */
-                $roleEntity = $this->getReference($role);
-                $customerUser->addRole($roleEntity);
+                $customerUser->addRole($this->getReference($role));
             }
 
             $userManager->updateUser($customerUser);
@@ -328,7 +318,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadUsers(ObjectManager $manager)
+    private function loadUsers(ObjectManager $manager)
     {
         /* @var UserManager $userManager */
         $userManager = $this->container->get('oro_user.manager');
@@ -361,37 +351,27 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     }
 
     /**
-     * @param AclManager $aclManager
+     * @param AclManager       $aclManager
      * @param CustomerUserRole $role
-     * @param string|array $identity
-     * @param array $allowedAcls
+     * @param string           $oidDescriptor
+     * @param string[]         $permissions
      */
-    protected function setRolePermissions(
+    private function setRolePermissions(
         AclManager $aclManager,
         CustomerUserRole $role,
-        $identity,
-        array $allowedAcls
+        string $oidDescriptor,
+        array $permissions
     ) {
         /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
+        $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-        if ($aclManager->isAclEnabled()) {
-            $sid = $aclManager->getSid($role);
-            if (is_array($identity)) {
-                $oid = $aclManager->getOid(implode(':', $identity));
-            } else {
-                $oid = $aclManager->getOid('entity:' . $identity);
-            }
-            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+        $this->setPermissions(
+            $aclManager,
+            $role,
+            [$oidDescriptor => $permissions]
+        );
 
-            $builder = $aclManager->getMaskBuilder($oid);
-            $mask = $builder->reset()->get();
-            foreach ($allowedAcls as $acl) {
-                $mask = $builder->add($acl)->get();
-            }
-            $aclManager->setPermission($sid, $oid, $mask);
-
-            $chainMetadataProvider->stopProviderEmulation();
-        }
+        $chainMetadataProvider->stopProviderEmulation();
     }
 }

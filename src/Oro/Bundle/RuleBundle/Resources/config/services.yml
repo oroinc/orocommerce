@@ -1,6 +1,3 @@
-parameters:
-    oro_rule.entity.rule.class: Oro\Bundle\RuleBundle\Entity\Rule
-
 services:
     oro_rule.expression_language:
         class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'

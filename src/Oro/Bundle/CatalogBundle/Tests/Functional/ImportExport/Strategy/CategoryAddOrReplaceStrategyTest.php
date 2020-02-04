@@ -50,9 +50,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             $container->get('oro_entity.doctrine_helper'),
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
-        $this->strategy->setLocalizedFallbackValueClass(
-            $container->getParameter('oro_locale.entity.localized_fallback_value.class')
-        );
+        $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
         $this->strategy->setCategoryImportExportHelper(
             $container->get('oro_catalog.importexport.helper.category_import_export')
         );

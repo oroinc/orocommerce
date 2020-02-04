@@ -13,7 +13,7 @@ services:
         parent: oro_locale.importexport.data_converter.localized_fallback_value_aware
         class: Oro\Bundle\CatalogBundle\ImportExport\DataConverter\CategoryDataConverter
         calls:
-            - [setEntityName, ['%oro_catalog.entity.category.class%']]
+            - [setEntityName, ['Oro\Bundle\CatalogBundle\Entity\Category']]
             - [setTranslateUsingLocale, [false]]
 
     oro_catalog.importexport.template_fixture.data_converter.category:
@@ -45,8 +45,8 @@ services:
             - [setDataConverter, ['@oro_catalog.importexport.data_converter.category']]
             - [setStrategy, ['@oro_catalog.importexport.strategy.category.add_or_replace']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_catalog.entity.category.class%', alias: oro_category.add_or_replace }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_catalog.entity.category.class%', alias: oro_category.add_or_replace }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category.add_or_replace }
 
     # Export processor
     oro_catalog.importexport.processor.export:
@@ -54,14 +54,14 @@ services:
         calls:
             - [setDataConverter, ['@oro_catalog.importexport.data_converter.category']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: '%oro_catalog.entity.category.class%', alias: oro_category }
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category }
 
     oro_catalog.importexport.processor.export_template:
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@oro_catalog.importexport.template_fixture.data_converter.category']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_catalog.entity.category.class%', alias: oro_category }
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category }
 
     # Configuration
     oro_catalog.importexport.configuration_provider.category:

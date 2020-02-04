@@ -4,7 +4,7 @@ services:
         arguments:
             - "@doctrine"
         calls:
-            - [setWebsiteClass, ['%oro_website.entity.website.class%']]
+            - [setWebsiteClass, ['Oro\Bundle\WebsiteBundle\Entity\Website']]
         tags:
             - { name: form.type, alias: oro_fallback_website_collection }
 

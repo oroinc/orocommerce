@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Back-office CRUD for RFQs.
+ */
 class RequestController extends Controller
 {
     /**
@@ -59,7 +62,7 @@ class RequestController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_rfp.entity.request.class'),
+            'entity_class' => RFPRequest::class,
         ];
     }
 

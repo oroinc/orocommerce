@@ -15,6 +15,9 @@ use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Generates Canonical URLs based on the given website and website configuration.
+ */
 class CanonicalUrlGenerator
 {
     /**
@@ -111,6 +114,19 @@ class CanonicalUrlGenerator
     }
 
     /**
+     * @param WebsiteInterface|null $website
+     * @return string|null
+     */
+    public function getCanonicalDomainUrl(WebsiteInterface $website = null): ?string
+    {
+        if ($this->getCanonicalUrlSecurityType($website) === Configuration::SECURE) {
+            return $this->websiteSystemUrlResolver->getWebsiteSecureUrl($website);
+        }
+
+        return $this->websiteSystemUrlResolver->getWebsiteUrl($website);
+    }
+
+    /**
      * @param string $slugUrl
      * @param WebsiteInterface|null $website
      *
@@ -118,13 +134,7 @@ class CanonicalUrlGenerator
      */
     public function getAbsoluteUrl($slugUrl, WebsiteInterface $website = null)
     {
-        if ($this->getCanonicalUrlSecurityType($website)=== Configuration::SECURE) {
-            $domainUrl = $this->websiteSystemUrlResolver->getWebsiteSecureUrl($website);
-        } else {
-            $domainUrl = $this->websiteSystemUrlResolver->getWebsiteUrl($website);
-        }
-
-        return $this->createUrl($domainUrl, $slugUrl);
+        return $this->createUrl($this->getCanonicalDomainUrl($website), $slugUrl);
     }
 
     /**
@@ -232,7 +242,7 @@ class CanonicalUrlGenerator
      * @param string $url
      * @return string
      */
-    private function createUrl($domainUrl, $url)
+    public function createUrl($domainUrl, $url)
     {
         $baseUrl = '';
         if ($masterRequest = $this->requestStack->getMasterRequest()) {

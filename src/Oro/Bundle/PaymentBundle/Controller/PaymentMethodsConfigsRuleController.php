@@ -30,7 +30,7 @@ class PaymentMethodsConfigsRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_payment.entity.payment_methods_configs_rule.class')
+            'entity_class' => PaymentMethodsConfigsRule::class
         ];
     }
 

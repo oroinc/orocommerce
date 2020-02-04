@@ -97,6 +97,18 @@ Example:
 ```
 {@/request}
 
+### delete
+
+Delete a specific order line item record.
+
+{@inheritdoc}
+
+### delete_list
+
+Delete a collection of line item records.
+
+{@inheritdoc}
+
 ## FIELDS
 
 ### order

@@ -42,7 +42,6 @@ data:
             url: '/product1_slug_default'
             urls:
                 - { url: '/product1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
-                - { url: '/product1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/product1_slug_es', localizationId: '<toString(@es->id)>' }
             prices:
                 - { price: '12.9900', currencyId: USD, quantity: '1', unit: '@item->code' }
@@ -100,7 +99,6 @@ data:
             url: '/product3_slug_default'
             urls:
                 - { url: '/product3_slug_default', localizationId: '<toString(@en_CA->id)>' }
-                - { url: '/product3_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/product3_slug_default', localizationId: '<toString(@es->id)>' }
             prices:
                 - { price: '10.0000', currencyId: USD, quantity: '1', unit: '@item->code' }

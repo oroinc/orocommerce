@@ -10,6 +10,8 @@
         }
     ],
     "require": {
+        "ext-xmlwriter": "*",
+        "ext-zlib": "*",
         "oro/platform": "4.1.x-dev",
         "oro/platform-serialised-fields": "4.1.x-dev",
         "oro/calendar-bundle": "4.1.x-dev",
@@ -54,6 +56,7 @@
         "npm": {
             "grapesjs": "0.15.9",
             "grapesjs-preset-webpage": "0.1.11",
+            "grapesjs-parser-postcss": "0.1.1",
             "@oroinc/jquery-creditcardvalidator": "1.1",
             "@oroinc/elevatezoom": "3.0.81"
         },

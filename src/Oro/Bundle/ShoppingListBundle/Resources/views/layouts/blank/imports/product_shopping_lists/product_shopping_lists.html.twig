@@ -59,7 +59,7 @@
     {% if not is_one_shopping_list_enabled() %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/widget-component',
-        '~data-page-component-options': {
+        'data-page-component-options': {
             type: 'product-shopping-lists',
             createOnEvent: 'click',
             options: {
@@ -74,7 +74,8 @@
                 configDefaultUnit: defaultUnitCode
             }
         },
-        '~class': ' shopping-lists__area-trigger'
+        '~class': ' shopping-lists__area-trigger',
+        'tabindex': 0
     }) %}
     {% endif %}
     <button {{ block('block_attributes') }}></button>

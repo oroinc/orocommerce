@@ -53,6 +53,7 @@ navigation:
                             content_block_list: ~
                             content_widget_list: ~
                             login_page_list: ~
+                            digital_asset_list: ~
             shortcuts:
                 children:
                     shortcut_pages_list: ~

@@ -1,6 +1,3 @@
-parameters:
-    oro_inventory.entity.inventory_level.class: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
-
 services:
     oro_inventory.service.fallback_fields_form_view:
         abstract: true

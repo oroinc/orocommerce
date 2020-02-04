@@ -272,7 +272,7 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
-                        - '@assign_value': [$late_registration.email, $visitor_email]
+                        - '@assign_value': [$late_registration.email, $email]
 
                     attribute_fields:
                         remove_source: ~
@@ -282,9 +282,9 @@ workflows:
                             options:
                                 checkout: $checkout
                         late_registration:
-                          form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
-                          options:
-                              required: true
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            options:
+                                required: true
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:

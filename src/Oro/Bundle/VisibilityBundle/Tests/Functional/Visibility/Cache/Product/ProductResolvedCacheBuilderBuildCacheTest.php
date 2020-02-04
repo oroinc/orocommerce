@@ -57,9 +57,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
             $container->get('oro_entity.orm.insert_from_select_query_executor'),
             $productReindexManager
         );
-        $this->cacheBuilder->setCacheClass(
-            $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
-        );
+        $this->cacheBuilder->setCacheClass(ProductVisibilityResolved::class);
         $this->cacheBuilder->setRepository(
             $container->get('oro_visibility.product_repository')
         );

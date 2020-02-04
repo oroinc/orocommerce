@@ -2,32 +2,42 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 
-class UpdateAnonymousPermissionsForCheckout extends AbstractUpdateCustomerUserRolePermissions
+/**
+ * Updates permissions for Checkout entity for ROLE_FRONTEND_ANONYMOUS storefront role.
+ */
+class UpdateAnonymousPermissionsForCheckout extends AbstractUpdatePermissions implements DependentFixtureInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected function getRoleName()
+    public function getDependencies()
     {
-        return 'ROLE_FRONTEND_ANONYMOUS';
+        return [LoadCustomerUserRoles::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getEntityOid()
+    public function load(ObjectManager $manager)
     {
-        return 'entity:' . Checkout::class;
-    }
+        $aclManager = $this->getAclManager();
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPermissions()
-    {
-        return ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC', 'DELETE_BASIC'];
+        $this->setEntityPermissions(
+            $aclManager,
+            $this->getRole($manager, 'ROLE_FRONTEND_ANONYMOUS', CustomerUserRole::class),
+            Checkout::class,
+            ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC', 'DELETE_BASIC']
+        );
+        $aclManager->flush();
     }
 }

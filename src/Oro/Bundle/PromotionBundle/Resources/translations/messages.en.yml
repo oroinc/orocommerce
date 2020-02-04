@@ -324,6 +324,10 @@ oro:
         applied_coupons.label: Applied Coupons
         applied_discounts.label: Applied Discounts
         applied_promotions.label: Applied Promotions
+        disable_promotions:
+            label: Disable Promotions
+            description: Allows to disable promotions engine in order to prevent it's execution for the order.
+            disabled_for_oder: Promotions are disabled for the order.
         promotions:
             applied_discount:
                 name: Name

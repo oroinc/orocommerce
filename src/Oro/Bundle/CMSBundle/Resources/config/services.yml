@@ -1,14 +1,9 @@
-parameters:
-    oro_cms.entity.page.class: Oro\Bundle\CMSBundle\Entity\Page
-    oro_cms.entity.content_block.class: Oro\Bundle\CMSBundle\Entity\ContentBlock
-    oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
-
 services:
     oro_cms.form.autocomplete.page.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_cms.entity.page.class%'
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
             - [ "defaultTitle.string"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\CMSBundle\Form\Type\PageType, acl_resource: oro_cms_page_view }
@@ -18,7 +13,7 @@ services:
         arguments:
             - "@doctrine"
         calls:
-            - [setLoginPageClass, ['%oro_cms.entity.loginpage.class%']]
+            - [setLoginPageClass, ['Oro\Bundle\CMSBundle\Entity\LoginPage']]
         tags:
             - { name: layout.data_provider, alias: oro_cms_login_page }
 
@@ -38,7 +33,7 @@ services:
             - "@doctrine"
             - "@oro_scope.scope_manager"
             - "@logger"
-            - "%oro_cms.entity.content_block.class%"
+            - 'Oro\Bundle\CMSBundle\Entity\ContentBlock'
             - "cms_content_block"
         tags:
             - { name: layout.data_provider, alias: content_block }
@@ -101,7 +96,7 @@ services:
         arguments:
             - '@oro_config.global'
         tags:
-            - { name: oro_redirect.routing_information_provider, alias: '%oro_cms.entity.page.class%' }
+            - { name: oro_redirect.routing_information_provider, alias: 'Oro\Bundle\CMSBundle\Entity\Page' }
 
     oro_cms.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
@@ -111,7 +106,7 @@ services:
             - '@oro_redirect.form.storage.redirect_storage'
             - '@oro_redirect.direct_url_message_factory'
             - 'oro_cms.landing_page_direct_url_prefix'
-            - '%oro_cms.entity.page.class%'
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
@@ -201,8 +196,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_message_queue.message_producer'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\Page', event: postRemove }
 
     oro_cms.parser.twig:
         class: Oro\Bundle\CMSBundle\Parser\TwigParser
@@ -363,7 +358,7 @@ services:
         arguments:
             - '@oro_ui.html_tag_helper'
         tags:
-             - { name: oro_entity_config.attribute_type, type: wysiwyg }
+            - { name: oro_entity_config.attribute_type, type: wysiwyg }
 
     oro_cms.form.type.wysiwyg:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
@@ -442,3 +437,8 @@ services:
         public: false
         tags:
             - { name: oro_draft.provider.draftable_fields_exclusion }
+
+    oro_cms.importexport.normalizer.localized_fallback_value_collection_normalizer.decorator:
+        decorates: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
+        parent: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
+        class: Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer

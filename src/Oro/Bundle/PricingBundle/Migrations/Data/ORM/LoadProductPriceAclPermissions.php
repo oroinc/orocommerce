@@ -4,18 +4,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractLoadAclData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Load default ACL permissions for All roles (except Anonymous) on ProductPrice entity
  * It's will run in case when application already installed
  * to prevent issue with blocking managing of ProductPrice entity to current users
  */
-class LoadProductPriceAclPermissions extends AbstractLoadAclData implements ContainerAwareInterface
+class LoadProductPriceAclPermissions extends AbstractLoadAclData
 {
-    use ContainerAwareTrait;
-
     /**
      * {@inheritdoc}
      */
@@ -25,7 +21,7 @@ class LoadProductPriceAclPermissions extends AbstractLoadAclData implements Cont
             return;
         }
 
-        return parent::load($manager);
+        parent::load($manager);
     }
 
     /**

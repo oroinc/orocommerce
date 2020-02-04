@@ -1,8 +1,3 @@
-parameters:
-    oro_checkout.entity.checkout.class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-    oro_checkout.entity.checkout_source.class: Oro\Bundle\CheckoutBundle\Entity\CheckoutSource
-    oro_checkout.entity.checkout_workflow_state.class: Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState
-
 services:
     # Data Providers
     oro_checkout.data_provider.converter.checkout_line_items:
@@ -160,17 +155,17 @@ services:
         public: false
         arguments:
             - '@doctrine'
-            - '%oro_checkout.entity.checkout.class%'
-            - '%oro_checkout.entity.checkout_source.class%'
+            - 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+            - 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', event: preRemove }
 
     oro_checkout.repository.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
         public: true
         parent: oro_entity.abstract_repository
         arguments:
-            - '%oro_checkout.entity.checkout.class%'
+            - 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
 
     oro_checkout.datagrid.checkout_grid_listener:
         class: Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
@@ -222,7 +217,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_checkout.entity.checkout_workflow_state.class%'
+            - 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState'
 
     oro_checkout.workflow_state.manager.checkout_state_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
@@ -363,10 +358,10 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_checkout.entity.checkout_workflow_state.class%'
+            - 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState'
         public: false
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', event: preRemove }
 
     oro_checkout.provider.checkout_totals:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
@@ -434,7 +429,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener'
         arguments:
             - '@doctrine'
-            - '%oro_checkout.entity.checkout.class%'
+            - 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
 
@@ -444,8 +439,8 @@ services:
             - '@oro_user.provider.default_user'
             - '@oro_security.token_accessor'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', event: prePersist }
 
     oro_checkout.listener.checkout_subtotal:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutSubtotalListener'
@@ -718,7 +713,7 @@ services:
     oro_checkout.updater.customer_user_reassign.checkout_updater:
         parent: oro_customer.updater.customer_user_reassign.abstract
         calls:
-            - [ setEntityClass, [ '%oro_checkout.entity.checkout.class%' ] ]
+            - [ setEntityClass, [ 'Oro\Bundle\CheckoutBundle\Entity\Checkout' ] ]
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false

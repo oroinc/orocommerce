@@ -510,7 +510,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         $expectedData = [
             'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
-            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+            'English (United States)' => ['before' => '/old-english-slug','after' => '/english-slug']
         ];
 
         $response = $this->client->getResponse();
@@ -580,7 +580,7 @@ class ProductControllerTest extends ProductHelperTestCase
      */
     public function testDelete($id)
     {
-        $entityClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $entityClass = Product::class;
         $operationName = 'DELETE';
         $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
         $this->client->request(

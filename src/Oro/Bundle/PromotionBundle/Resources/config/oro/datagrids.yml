@@ -1,7 +1,7 @@
 datagrids:
     promotion-select-grid:
         acl_resource: oro_promotion_view
-        extended_entity_name: '%oro_promotion.entity.promotion.class%'
+        extended_entity_name: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
         options:
             entityHint: oro.promotion.entity_plural_label
         source:
@@ -15,7 +15,7 @@ datagrids:
                     - promotion.updatedAt
                     - rule.enabled
                 from:
-                    - { table: '%oro_promotion.entity.promotion.class%', alias: promotion }
+                    - { table: 'Oro\Bundle\PromotionBundle\Entity\Promotion', alias: promotion }
                 join:
                     inner:
                         - { join: promotion.rule, alias: rule}
@@ -97,7 +97,7 @@ datagrids:
             export: true
 
     promotion-coupons-grid:
-        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        extended_entity_name: 'Oro\Bundle\PromotionBundle\Entity\Coupon'
         options:
             entityHint: oro.promotion.coupon.entity_plural_label
             export: true
@@ -131,7 +131,7 @@ datagrids:
                     - coupon.validFrom
                     - coupon.validUntil
                 from:
-                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                    - { table: 'Oro\Bundle\PromotionBundle\Entity\Coupon', alias: coupon }
                 join:
                     left:
                         - { join: coupon.promotion, alias: promotion }
@@ -232,7 +232,7 @@ datagrids:
                         allowMinimize: false
 
     promotion-coupons-assigned-to-promotion-grid:
-        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        extended_entity_name: 'Oro\Bundle\PromotionBundle\Entity\Coupon'
         options:
             entityHint: oro.promotion.coupon.entity_plural_label
             export: true
@@ -264,7 +264,7 @@ datagrids:
                     - coupon.usesPerPerson
                     - coupon.validUntil
                 from:
-                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                    - { table: 'Oro\Bundle\PromotionBundle\Entity\Coupon', alias: coupon }
                 where:
                     and:
                         - coupon.promotion = :promotion_id
@@ -347,7 +347,7 @@ datagrids:
                 data_identifier: coupon.id
 
     promotion-coupons-select-grid:
-        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        extended_entity_name: 'Oro\Bundle\PromotionBundle\Entity\Coupon'
         options:
             entityHint: oro.promotion.coupon.entity_plural_label
         source:
@@ -362,7 +362,7 @@ datagrids:
                     - coupon.validFrom
                     - coupon.validUntil
                 from:
-                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                    - { table: 'Oro\Bundle\PromotionBundle\Entity\Coupon', alias: coupon }
                 join:
                     inner:
                         - { join: coupon.promotion, alias: promotion }

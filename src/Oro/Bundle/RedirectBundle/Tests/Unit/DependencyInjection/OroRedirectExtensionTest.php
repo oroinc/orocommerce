@@ -12,7 +12,9 @@ class OroRedirectExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroRedirectExtension());
 
         $expectedParameters = [
-            'oro_redirect.entity.slug.class',
+            'oro_redirect.url_cache_type',
+            'oro_redirect.url_provider_type',
+            'oro_redirect.url_storage_cache.split_deep',
         ];
         $this->assertParametersLoaded($expectedParameters);
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -45,9 +46,7 @@ abstract class AbstractAjaxProductUnitController extends Controller
      */
     protected function getRepository()
     {
-        $class = $this->container->getParameter('oro_product.entity.product_unit.class');
-
-        return $this->getDoctrine()->getManagerForClass($class)->getRepository($class);
+        return $this->getDoctrine()->getManagerForClass(ProductUnit::class)->getRepository(ProductUnit::class);
     }
 
     /**

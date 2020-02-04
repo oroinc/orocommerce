@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for tax rules.
+ */
 class TaxRuleController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class TaxRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.tax_rule.class')
+            'entity_class' => TaxRule::class
         ];
     }
 

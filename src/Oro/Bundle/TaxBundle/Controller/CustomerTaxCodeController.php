@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for customer tax codes.
+ */
 class CustomerTaxCodeController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class CustomerTaxCodeController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.customer_tax_code.class')
+            'entity_class' => CustomerTaxCode::class
         ];
     }
 

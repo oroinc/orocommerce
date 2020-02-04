@@ -11,6 +11,7 @@ import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
+import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
@@ -75,6 +76,8 @@ const GrapesjsEditorView = BaseView.extend({
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
+        wrapperIsBody: 0,
+        exportWrapper: 1,
         pasteStyles: false,
 
         /**
@@ -506,26 +509,28 @@ const GrapesjsEditorView = BaseView.extend({
     componentSelected(model) {
         let toolbar = model.get('toolbar');
 
-        toolbar = toolbar.map(tool => {
-            switch (tool.command) {
-                case 'select-parent':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
-                    break;
-                case 'tlb-move':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
-                    break;
-                case 'tlb-clone':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
-                    break;
-                case 'tlb-delete':
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
-                    break;
-            }
+        if (_.isArray(toolbar)) {
+            toolbar = toolbar.map(tool => {
+                switch (tool.command) {
+                    case 'select-parent':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
+                        break;
+                    case 'tlb-move':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
+                        break;
+                    case 'tlb-clone':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
+                        break;
+                    case 'tlb-delete':
+                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
+                        break;
+                }
 
-            return tool;
-        });
+                return tool;
+            });
 
-        model.set('toolbar', toolbar);
+            model.set('toolbar', toolbar);
+        }
     },
 
     /**
@@ -728,7 +733,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: [ContentParser, ...Object.keys(this.builderPlugins)],
+            plugins: [ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

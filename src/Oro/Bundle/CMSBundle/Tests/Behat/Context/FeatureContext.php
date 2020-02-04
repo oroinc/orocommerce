@@ -13,6 +13,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     use PageObjectDictionary, KernelDictionary;
 
     /**
+     * @When /^(?:|I )type "(?P<value>(?:[^"]|\\")*)" in Landing Page Titles field$/
+     * @param string $value
+     */
+    public function typeInLandingPageTitlesField(string $value): void
+    {
+        $productNameField = $this->createElement('LandingPageTitlesField');
+        $this->getDriver()->typeIntoInput($productNameField->getXpath(), $value);
+    }
+
+    /**
      * @When /^(?:|I )fill in Landing Page Titles field with "(?P<value>(?:[^"]|\\")*)"$/
      * @param string $value
      */

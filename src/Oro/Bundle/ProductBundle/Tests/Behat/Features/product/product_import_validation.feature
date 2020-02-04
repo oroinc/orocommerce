@@ -21,14 +21,14 @@ Feature: Product import validation
     Given I go to Products/Products
     When I download "Products" Data Template file with processor "oro_product_product_export_template"
     Then I see the following columns in the downloaded csv template:
-       | names.English.fallback                 |
-       | names.English.value                    |
+       | names.English (United States).fallback |
+       | names.English (United States).value    |
        | names.Ukrainian.fallback               |
        | names.Ukrainian.value                  |
        | shortDescriptions.default.fallback     |
        | shortDescriptions.default.value        |
-       | shortDescriptions.English.fallback     |
-       | shortDescriptions.English.value        |
+       | shortDescriptions.English (United States).fallback     |
+       | shortDescriptions.English (United States).value        |
        | shortDescriptions.Ukrainian.fallback   |
        | shortDescriptions.Ukrainian.value      |
     And fill template with data:

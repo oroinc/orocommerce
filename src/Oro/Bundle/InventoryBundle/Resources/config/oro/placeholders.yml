@@ -3,11 +3,11 @@ placeholders:
         oro_product_manage_inventory_button:
             template: OroInventoryBundle:Product:inventoryButton.html.twig
             applicable:
-                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_product.entity.product.class%)"
-                - "@oro_frontend.placeholder.filter->isBackendRoute()"
+                - '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\ProductBundle\Entity\Product)'
+                - '@oro_frontend.placeholder.filter->isBackendRoute()'
 
         oro_product_manage_inventory_link:
             template: OroInventoryBundle:Product:inventoryLink.html.twig
             applicable:
-                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_product.entity.product.class%)"
-                - "@oro_frontend.placeholder.filter->isBackendRoute()"
+                - '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\ProductBundle\Entity\Product)'
+                - '@oro_frontend.placeholder.filter->isBackendRoute()'

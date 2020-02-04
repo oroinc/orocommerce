@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -31,8 +33,8 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('oro_locale.entity.localization.class')
+            LocalizedFallbackValue::class,
+            Localization::class
         );
 
         $this->assertEquals(
@@ -147,8 +149,8 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('oro_locale.entity.localization.class')
+            LocalizedFallbackValue::class,
+            Localization::class
         );
 
         $this->assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
@@ -255,15 +257,11 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsNormalization($data, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('oro_product.entity.product.class')) {
-            $this->markTestSkipped('ProductBundle required');
-        }
-
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('oro_locale.entity.localization.class')
+            LocalizedFallbackValue::class,
+            Localization::class
         );
 
         $this->assertEquals($expected, $normalizer->supportsNormalization($data, [], $context));
@@ -308,15 +306,11 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsDenormalization($data, $class, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('oro_product.entity.product.class')) {
-            $this->markTestSkipped('ProductBundle required');
-        }
-
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('oro_locale.entity.localization.class')
+            LocalizedFallbackValue::class,
+            Localization::class
         );
 
         $this->assertEquals($expected, $normalizer->supportsDenormalization($data, $class, [], $context));

@@ -4,15 +4,15 @@ services:
         arguments:
             - '@router'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category.class%']]
-            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\Category']]
+            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: form.type, alias: oro_catalog_category }
 
     oro_catalog.form.type.category_default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category_default_product_options.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions']]
         tags:
             - { name: form.type, alias: oro_catalog_category_default_product_options }
 

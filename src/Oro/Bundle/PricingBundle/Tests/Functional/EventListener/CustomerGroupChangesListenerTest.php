@@ -37,7 +37,7 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         $groupId = $group->getId();
 
         $operationName = 'oro_customer_groups_delete';
-        $entityClass = $this->getContainer()->getParameter('oro_customer.entity.customer_group.class');
+        $entityClass = CustomerGroup::class;
         $this->client->request(
             'POST',
             $this->getUrl(

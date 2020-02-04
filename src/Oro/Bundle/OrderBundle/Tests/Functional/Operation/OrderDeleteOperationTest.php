@@ -25,6 +25,6 @@ class OrderDeleteOperationTest extends ActionTestCase
         /** @var Order $order */
         $order = $this->getReference('simple_order');
 
-        $this->assertDeleteOperation($order->getId(), 'oro_order.entity.order.class', 'oro_order_index');
+        $this->assertDeleteOperation($order->getId(), Order::class, 'oro_order_index');
     }
 }
