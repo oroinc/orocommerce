@@ -61,8 +61,8 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
         $mediumImage = $this->getEntity(File::class, ['id' => 2002]);
         $smallImage = $this->getEntity(File::class, ['id' => 3003]);
 
-        $extected = new ImageSlide();
-        $extected->setContentWidget(new ContentWidget())
+        $expected = new ImageSlide();
+        $expected->setContentWidget(new ContentWidget())
             ->setSlideOrder(42)
             ->setUrl('path/to/test')
             ->setDisplayInSameWindow(true)
@@ -78,7 +78,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     'title' => 'test title',
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
                 ],
-                'expectedData' => $extected,
+                'expectedData' => $expected,
             ],
             'full data' => [
                 'submittedData' => [
@@ -92,7 +92,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
                     'text' => 'test content'
                 ],
-                'expectedData' => (clone $extected)
+                'expectedData' => (clone $expected)
                     ->setMainImage($mainImage)
                     ->setMediumImage($mediumImage)
                     ->setSmallImage($smallImage)

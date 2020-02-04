@@ -41,7 +41,7 @@ class ImageSlideType extends AbstractType
                 'label' => 'oro.cms.imageslide.main_image.label',
                 'tooltip' => 'oro.cms.imageslide.form.tooltip.main_image.label',
                 'required' => true,
-                //'checkEmptyFile' => true,
+                'checkEmptyFile' => true,
                 'allowDelete' => false,
             ]
         )->add(
