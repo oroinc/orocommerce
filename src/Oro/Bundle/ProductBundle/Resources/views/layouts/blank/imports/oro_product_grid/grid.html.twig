@@ -90,7 +90,7 @@
         <div{{ block('block_attributes') }}>
             {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
             <span class="datagrid-tool__label">{{ 'oro.product.frontend.grid.toolbar.display.label'|trans }}: &nbsp;</span>
-            <div class="btn-group catalog-switcher">
+            <div class="btn-group catalog-switcher" role="group" aria-label="{{ 'oro.product.grid.action.catalog_switcher.aria_label'|trans }}">
                 {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
                 {% set query_parameters = app.request.query.all() %}
 
@@ -99,8 +99,11 @@
                     'row-view': 'gallery-view'
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
-                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                        <i class="fa-th fa--no-offset"></i>
+                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
+                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
+                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label'|trans }}">
+                        <span class="fa-th fa--no-offset" aria-hidden="true"></span>
                 </a>
                 {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
                 {% set view_trigger = {
@@ -108,16 +111,21 @@
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
                    class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
-                   data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                        <i class="fa-th-list fa--no-offset"></i>
+                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
+                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.list_view.aria_label'|trans }}">
+                        <span class="fa-th-list fa--no-offset" aria-hidden="true"></span>
                 </a>
                 {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
                 {% set view_trigger = {
                     'row-view': 'no-image-view'
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
-                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                        <i class="fa-bars fa--no-offset"></i>
+                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
+                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
+                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.compact_view.aria_label'|trans }}">
+                        <span class="fa-bars fa--no-offset" aria-hidden="true"></span>
                 </a>
             </div>
         </div>

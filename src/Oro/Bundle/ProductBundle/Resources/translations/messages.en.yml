@@ -552,6 +552,11 @@ oro:
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
                     add_individual_product: Add
+                catalog_switcher:
+                    aria_label: Product Grid Views Toolbar
+                    gallery_view.aria_label: Gallery View
+                    list_view.aria_label: List View
+                    compact_view.aria_label: Compact View
             mass_action:
                 get_selected_product_ids:
                     response:
@@ -568,6 +573,8 @@ oro:
                 item: 'Item #:'
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'
+                view_details_aria_label: 'View Details of the Current Product'
+                view_details_prefix: 'View Details of the'
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
