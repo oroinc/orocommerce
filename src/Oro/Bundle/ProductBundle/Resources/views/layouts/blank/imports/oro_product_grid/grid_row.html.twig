@@ -75,7 +75,9 @@
 {% block  __oro_product_grid__product_view_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview'
+        '~class': ' product-item__preview',
+        'href': product.view_link,
+        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
 
     {% set isNoImage = true %}
@@ -98,7 +100,7 @@
         }) %}
     {% endif %}
 
-    <a href="{{ product.view_link }}" {{ block('block_attributes') }}>
+    <a {{ block('block_attributes') }}>
         {{ block('container_widget') }}
     </a>
 {% endblock %}

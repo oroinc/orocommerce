@@ -54,7 +54,9 @@
 
 {% block __oro_product_list_item__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview'
+        '~class': ' product-item__preview',
+        'href': path('oro_product_frontend_product_view', {id: product.id}),
+        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.names|localized_value
     }) %}
 
     {% if popup_gallery and product.imagesByType('listing')|length > 0 %}
@@ -77,7 +79,7 @@
         {% endif %}
     {% endif %}
 
-    <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" {{ block('block_attributes') }}>
+    <a {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </a>
 {% endblock %}
