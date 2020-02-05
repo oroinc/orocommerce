@@ -88,10 +88,11 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             $breadcrumbUrls[] = $item->getAttribute('href');
         }
 
-        self::assertCount(3, $breadcrumbUrls);
+        self::assertCount(4, $breadcrumbUrls);
         self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[0]);
         self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[1]);
         self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[2]);
+        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[3]);
     }
 
     /**
@@ -102,21 +103,14 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         return [
             [
                 LoadContentNodesData::CATALOG_1_ROOT,
-                1,
+                2,
                 [
-                    'All Products'
+                    'All Products',
+                    LoadCategoryData::FIRST_LEVEL,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
-                2,
-                [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL
-                ]
-            ],
-            [
-                LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 3,
                 [
                     'All Products',
@@ -125,12 +119,23 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 ]
             ],
             [
+                LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
+                4,
+                [
+                    'All Products',
+                    LoadCategoryData::FIRST_LEVEL,
+                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadCategoryData::THIRD_LEVEL1,
+                ]
+            ],
+            [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2,
-                3,
+                4,
                 [
                     'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL2,
+                    LoadCategoryData::THIRD_LEVEL2,
                 ]
             ],
         ];
