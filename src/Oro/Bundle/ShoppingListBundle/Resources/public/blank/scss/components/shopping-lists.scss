@@ -15,8 +15,6 @@
         height: $shopping-lists-content-height;
         min-height: $shopping-lists-content-min-height;
 
-        font-size: $shopping-lists-content-font-size;
-
         color: $shopping-lists-content-color;
         background: $shopping-lists-content-background;
         border-radius: $shopping-lists-content-border-radius;
@@ -32,48 +30,44 @@
         word-break: $shopping-lists-text-word-break;
     }
 
-
     &__cart {
-        &:before {
+        @include fa-icon($shopping-lists-cart-icon, before, true) {
             font-size: $shopping-lists-cart-font-size;
-        }
-
-        opacity: $shopping-lists-icons-opacity;
-
-        @include fa-icon($shopping-lists-cart-icon);
-    }
-
-    &__edit {
-        position: $shopping-lists-edit-position;
-        top: 50%;
-        right: $shopping-lists-edit-right;
-        height: $shopping-lists-edit-height;
-        margin-top: -($shopping-lists-edit-height / 2);
-
-        font-size: $shopping-lists-edit-font-size;
-
-        opacity: $shopping-lists-icons-opacity;
-
-        @include fa-icon($shopping-lists-edit-icon);
-    }
-
-    &__label {
-      margin-right: $shopping-lists-text-label-margin-right;
+        };
     }
 
     &__area-trigger {
-        display: $shopping-lists-text-area-trigger-display;
-        position: $shopping-lists-text-area-trigger-position;
+        position: $shopping-lists-area-trigger-position;
+        top: 50%;
+        right: $shopping-lists-area-trigger-right;
 
-        width: $shopping-lists-text-area-trigger-width;
-        height: $shopping-lists-text-area-trigger-height;
-        left: $shopping-lists-text-area-trigger-left;
-        top: $shopping-lists-text-area-trigger-top;
+        height: $shopping-lists-area-trigger-size;
+        width: $shopping-lists-area-trigger-size;
+        margin-top: -($shopping-lists-area-trigger-size / 2);
 
-        cursor: $shopping-lists-text-area-trigger-cursor;
+        border-radius: 0;
+        color: $shopping-lists-content-color;
 
-        border: $shopping-lists-text-area-trigger-border;
+        cursor: pointer;
 
-        background: $shopping-lists-text-area-trigger-bg;
+        @include fa-icon($shopping-lists-area-trigger-icon, before, true) {
+            font-size: $shopping-lists-area-trigger-font-size;
+            line-height: 1;
+
+            opacity: 1;
+
+            @include transition($btn-transition);
+        };
+
+        &.focus-visible,
+        &:hover,
+        &:focus,
+        &:not(.disabled):active {
+            &:before {
+                color: $shopping-lists-content-color;
+
+                opacity: $shopping-lists-content-color-opacity-hover;
+            }
+        }
     }
 }

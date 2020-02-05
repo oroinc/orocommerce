@@ -134,7 +134,8 @@
             {%- endif -%}
             {{ description|render_content }}
         </div>
-        <button class="collapse-view__trigger" data-collapse-trigger>
+        {# For button bellow attr "aria-hidden" will be toggled programmatically when collapse-widget is initialized or destroyed #}
+        <button class="collapse-view__trigger" data-collapse-trigger aria-hidden="true" aria-label="{{ 'oro.ui.collapse.more'|trans }}">
             <span class="collapse-view__trigger-icon fa-chevron-down" aria-hidden="true"></span>
         </button>
     </div>
