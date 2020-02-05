@@ -5,6 +5,7 @@
  * Overwrite and reassing html parsing
  */
 import {wrap, find, omit, isString} from 'underscore';
+import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const modelAttrStart = 'data-gjs-';
 const textTags = ['ul', 'ol', 'li'];
@@ -340,6 +341,20 @@ function componentsCheck(components = [], cTypes) {
     });
 }
 
+function normalizeBgURLString(str = '') {
+    const chars = {
+        '%7B': '{',
+        '%7D': '}',
+        '%20': ' '
+    };
+
+    return str.replace(/%[\w]{2}/g, input => {
+        if (chars[input]) {
+            return chars[input];
+        }
+    }).replace(/http(s)?:\/\/[\w:\/%\'\(,-]+(?=\{\{)/g, '');
+}
+
 /**
  * @constructor
  * Content parser initialize
@@ -348,6 +363,23 @@ function componentsCheck(components = [], cTypes) {
  */
 export default function ContentParser(editor) {
     const cTypes = editor.DomComponents.componentTypes;
+
+    editor.CssComposer.render = wrap(editor.CssComposer.render, func => {
+        const result = func();
+
+        result.querySelectorAll('style').forEach(style => {
+            style.innerText = normalizeBgURLString(style.innerText)
+                .replace(/\{\{([\w\s\'\_\-\,\(\)]+)\}\}/g, (input, matched) => {
+                    const imageId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(matched);
+                    if (imageId) {
+                        return DigitalAssetHelper.getImageUrl(imageId);
+                    }
+                });
+        });
+
+        return result;
+    });
+
     editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.parseCss);
 
     editor.DomComponents.setComponents = wrap(

@@ -116,17 +116,23 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new \ArrayIterator([new \SplFileInfo($filename)]));
 
         $url = 'http://example.com/sitemap.xml';
+
         $this->canonicalUrlGenerator->expects($this->once())
-            ->method('getAbsoluteUrl')
+            ->method('getCanonicalDomainUrl')
+            ->with($website)
+            ->willReturn('http://example.com/europe/');
+
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('createUrl')
             ->with(
+                'http://example.com',
                 sprintf(
                     '%s/%s/%s/%s',
                     self::SITEMAP_DIR,
                     $websiteId,
                     SitemapFilesystemAdapter::ACTUAL_VERSION,
                     $filename
-                ),
-                $website
+                )
             )
             ->willReturn($url);
 

@@ -2,27 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
-use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
+use Oro\Bundle\SecurityBundle\Acl\Extension\ObjectIdentityHelper;
+use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 use Oro\Bundle\UserBundle\Entity\Role;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Copies PriceList EDIT permissions to RECALCULATE for each backend role
+ * Copies EDIT permission to RECALCULATE permission for PriceList entity for all roles.
  */
-class SetPriceListRecalculatePermission extends AbstractFixture implements ContainerAwareInterface
+class SetPriceListRecalculatePermission extends AbstractUpdatePermissions
 {
-    use ContainerAwareTrait;
-    const RECALCULATE_PERMISSION = 'RECALCULATE';
-
-    /** @var ObjectManager */
-    protected $objectManager;
-
     /**
      * @param ObjectManager $manager
      */
@@ -32,52 +23,29 @@ class SetPriceListRecalculatePermission extends AbstractFixture implements Conta
             return;
         }
 
-        $this->objectManager = $manager;
-
-        /** @var AclManager $aclManager */
-        $aclManager = $this->container->get('oro_security.acl.manager');
-
-        if ($aclManager->isAclEnabled()) {
-            $this->setRecalculatePriceListPermission($aclManager);
+        $aclManager = $this->getAclManager();
+        if (!$aclManager->isAclEnabled()) {
+            return;
         }
-    }
 
-    /**
-     * @param AclManager $manager
-     */
-    protected function setRecalculatePriceListPermission(AclManager $manager)
-    {
-        $privilegeRepository = $this->container->get('oro_security.acl.privilege_repository');
-        $oid = $manager->getOid('entity:Oro\Bundle\PricingBundle\Entity\PriceList');
-        $extension = $manager->getExtensionSelector()->select($oid);
-        $maskBuilder = $extension->getMaskBuilder(self::RECALCULATE_PERMISSION);
-        /** @var Role $role */
-        foreach ($this->getRoleRepository()->findAll() as $role) {
-            $sid = $manager->getSid($role);
-            $allRolePrivileges = $privilegeRepository->getPrivileges($sid);
-            /** @var AclPrivilege $aclPrivilege */
+        $roles = $manager->getRepository(Role::class)->findAll();
+        $oidDescriptor = ObjectIdentityHelper::encodeIdentityString(EntityAclExtension::NAME, PriceList::class);
+        $oid = $aclManager->getOid($oidDescriptor);
+        $maskBuilder = $aclManager->getMaskBuilder($oid, 'RECALCULATE');
+        foreach ($roles as $role) {
+            $sid = $aclManager->getSid($role);
+            $allRolePrivileges = $this->getPrivileges($sid);
             foreach ($allRolePrivileges as $aclPrivilege) {
-                if ($aclPrivilege->getIdentity()->getId() !== 'entity:Oro\Bundle\PricingBundle\Entity\PriceList') {
+                if ($aclPrivilege->getIdentity()->getId() !== $oidDescriptor) {
                     continue;
                 }
-                $editAccessLevel = $aclPrivilege->getPermissions()->get('EDIT')->getAccessLevel();
-                $level = AccessLevel::getAccessLevelNames()[$editAccessLevel];
-                $maskName = self::RECALCULATE_PERMISSION . '_' . $level;
-                if ($maskBuilder->hasMask('MASK_' . $maskName)) {
-                    $maskBuilder->add($maskName);
-                    $manager->setPermission($sid, $oid, $maskBuilder->get());
+                $permission = 'RECALCULATE_' . $this->getPermissionAccessLevelName($aclPrivilege, 'EDIT');
+                if ($maskBuilder->hasMaskForPermission($permission)) {
+                    $maskBuilder->add($permission);
+                    $aclManager->setPermission($sid, $oid, $maskBuilder->get());
                 }
             }
         }
-        $manager->flush();
-    }
-
-    /**
-     * @param string $roleName
-     * @return EntityRepository
-     */
-    protected function getRoleRepository()
-    {
-        return $this->objectManager->getRepository(Role::class);
+        $aclManager->flush();
     }
 }

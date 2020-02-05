@@ -34,6 +34,8 @@ Feature: Configurable image slider
       | Title 1          | Slide 1      |
       | Text Alignment 1 | Center       |
       | Text 1           | Slide text 1 |
+    When I save and close form
+    Then I should see "This value should not be blank."
     And I click on "Choose Main Slider Image 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -42,7 +44,7 @@ Feature: Configurable image slider
     And click on cat1.jpg in grid
     And I click on "Choose Medium Slider Image 1"
     And click on cat1.jpg in grid
-    And I save and close form
+    When I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Image Slider"
     And I should see Content Widget with:
