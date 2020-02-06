@@ -8,7 +8,7 @@ import TableTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-type-bu
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
 import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
-import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
+import TextBasicTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-basic-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
@@ -34,8 +34,8 @@ ComponentManager.registerComponentTypes({
     'link-button': {
         Constructor: LinkButtonTypeBuilder
     },
-    'text': {
-        Constructor: TextTypeBuilder
+    'text-basic': {
+        Constructor: TextBasicTypeBuilder
     },
     'file': {
         Constructor: FileTypeBuilder
