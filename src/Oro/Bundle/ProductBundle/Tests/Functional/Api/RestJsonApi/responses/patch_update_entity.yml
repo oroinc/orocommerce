@@ -24,7 +24,7 @@ data:
                     id: '<toString(@product-1.names.default->id)>'
                 -
                     type: localizedfallbackvalues
-                    id: '<toString(@product-1.names.en_US->id)>'
+                    id: '<toString(@product-1.names.en_CA->id)>'
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.names.es->id)>'
@@ -33,17 +33,11 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.descriptions.default->id)>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.descriptions.en_US->id)>'
         shortDescriptions:
             data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.shortDescriptions.default->id)>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.shortDescriptions.en_US->id)>'
         unitPrecisions:
             data:
                 -

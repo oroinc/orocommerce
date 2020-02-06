@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -32,9 +31,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->handler = new PriceListTriggerHandler(
             $this->triggerFactory,
@@ -103,6 +100,42 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
 
         $this->assertAttributeCount(1, 'triggersData', $this->handler);
+    }
+
+    public function testAddTriggersForAssignedProductsAndPriceRulesAtTheSameTime()
+    {
+        /** @var PriceList $priceList1 */
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList2);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList1);
+
+        $message1 = [
+            PriceListTriggerFactory::PRODUCT => [$priceList1->getId() => []]
+        ];
+        $message2 = [
+            PriceListTriggerFactory::PRODUCT => [$priceList2->getId() => []]
+        ];
+        $this->triggerFactory->expects($this->exactly(2))
+            ->method('createFromIds')
+            ->willReturnMap(
+                [
+                    [[$priceList1->getId() => []], $message1],
+                    [[$priceList2->getId() => []], $message2],
+                ]
+            );
+
+        $this->messageProducer->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [Topics::RESOLVE_PRICE_RULES, $message2],
+                [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $message1]
+            );
+
+        $this->handler->sendScheduledTriggers();
     }
 
     public function testAddTriggersDifferentProducts()

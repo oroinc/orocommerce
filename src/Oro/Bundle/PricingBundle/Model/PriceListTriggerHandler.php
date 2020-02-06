@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Handles price list related MQ topics.
+ * Responsible for MQ message schedule, removing duplicates and sending messages to MQ.
+ */
 class PriceListTriggerHandler
 {
     const PRICE_LISTS_KEY = 'price_lists';
@@ -100,13 +105,14 @@ class PriceListTriggerHandler
     }
 
     /**
-     * remove triggers by Product + Price List if trigger for Price List exists
+     * Remove triggers that will lead to duplicate data processing.
      */
     protected function removeDuplicatedData()
     {
+        // remove triggers by Product + Price List if trigger for Price List exists
         foreach ($this->triggersData as $topic => $triggers) {
-            $filteredData = isset($triggers[self::PRODUCTS_KEY]) ? $triggers[self::PRODUCTS_KEY] : [];
-            $priceListTriggers = isset($triggers[self::PRICE_LISTS_KEY]) ? $triggers[self::PRICE_LISTS_KEY] : [];
+            $filteredData = $triggers[self::PRODUCTS_KEY] ?? [];
+            $priceListTriggers = $triggers[self::PRICE_LISTS_KEY] ?? [];
             if ($priceListTriggers) {
                 $filteredData = array_filter(
                     $filteredData,
@@ -117,6 +123,20 @@ class PriceListTriggerHandler
                 );
             }
             $this->triggersData[$topic][self::PRODUCTS_KEY] = $filteredData;
+        }
+
+        // Remove price rules triggers if price list assignment trigger present,
+        // because assignment calculation will trigger all rules rebuild
+        if (array_key_exists(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $this->triggersData)
+            && array_key_exists(Topics::RESOLVE_PRICE_RULES, $this->triggersData)
+        ) {
+            $resolvePLs = $this->triggersData[Topics::RESOLVE_PRICE_RULES][self::PRICE_LISTS_KEY] ?? [];
+            $assignPLs = $this->triggersData[Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS][self::PRICE_LISTS_KEY] ?? [];
+
+            $this->triggersData[Topics::RESOLVE_PRICE_RULES][self::PRICE_LISTS_KEY] = array_diff(
+                $resolvePLs,
+                $assignPLs
+            );
         }
     }
 

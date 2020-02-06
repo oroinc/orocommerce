@@ -13,7 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RelatedProductsRepositoryTest extends WebTestCase
+class RelatedProductRepositoryTest extends WebTestCase
 {
     /**
      * @var RelatedProductRepository
@@ -197,5 +197,78 @@ class RelatedProductsRepositoryTest extends WebTestCase
     private function getProductRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(Product::class);
+    }
+
+    /**
+     * @dataProvider getUniqueProductDataProvider
+     *
+     * @param bool $isBidirectional
+     * @param array $expected
+     */
+    public function testGetUniqueProductDataQueryBuilder(bool $isBidirectional, array $expected): void
+    {
+        $qb = $this->repository->getUniqueProductDataQueryBuilder($isBidirectional);
+
+        $actual = [];
+        foreach ($qb->getQuery()->getResult() as $item) {
+            $actual[] = $item;
+        }
+
+        foreach ($expected as &$item) {
+            $item['id'] = $this->getReference($item['id'])->getId();
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getUniqueProductDataProvider(): array
+    {
+        return [
+            [
+                'isBidirectional' => false,
+                'expected' => [
+                    [
+                        'id' => LoadProductData::PRODUCT_3,
+                        'sku' => LoadProductData::PRODUCT_3,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_4,
+                        'sku' => LoadProductData::PRODUCT_4,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_5,
+                        'sku' => LoadProductData::PRODUCT_5,
+                    ],
+                ],
+            ],
+            [
+                'isBidirectional' => true,
+                'expected' => [
+                    [
+                        'id' => LoadProductData::PRODUCT_1,
+                        'sku' => LoadProductData::PRODUCT_1,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_2,
+                        'sku' => LoadProductData::PRODUCT_2,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_3,
+                        'sku' => LoadProductData::PRODUCT_3,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_4,
+                        'sku' => LoadProductData::PRODUCT_4,
+                    ],
+                    [
+                        'id' => LoadProductData::PRODUCT_5,
+                        'sku' => LoadProductData::PRODUCT_5,
+                    ],
+                ],
+            ]
+        ];
     }
 }

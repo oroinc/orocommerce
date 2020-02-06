@@ -251,6 +251,21 @@ oro:
             label: Up-sell Products
             no_entities: No records found
 
+        relateditem:
+            relatedproduct:
+                entity_label: Related Product
+                entity_plural_label: Related Products
+                id.label: Id
+                product.label: Product
+                related_item.label: Related Item
+
+            upsellproduct:
+                entity_label: Related Product
+                entity_plural_label: Related Products
+                id.label: Id
+                product.label: Product
+                related_item.label: Related Item
+
         lineitem:
             unit.label: Unit
             quantity:
@@ -593,11 +608,14 @@ oro:
             inventory_status_only: "Inventory statuses only"
             button.label: 'Export Products'
             filtered_products.label: 'Export Filtered Products'
+            related_products.label: 'Export Related Products'
         import:
             popup.title: 'Import Products'
             entity.label: 'Products'
+            related_products.label: 'Related Products'
         import_validation:
             button.label: 'Validate Products File'
+            related_products.label: 'Validate Related Products File'
 
         variant_field:
             default.tooltip: "Enable the fields to be able to group products by these fields"

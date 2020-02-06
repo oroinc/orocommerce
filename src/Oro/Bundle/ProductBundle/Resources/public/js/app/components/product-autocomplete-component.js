@@ -104,6 +104,7 @@ define(function(require) {
                 data: {
                     name: 'oro_product_visibility_limited_with_prices',
                     per_page: 1,
+                    sku: [val],
                     query: val
                 },
                 success: function(response) {

@@ -77,7 +77,6 @@ workflows:
                         remove_source: ~
                         late_registration:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
-                            data: $late_registration_data
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
@@ -186,7 +185,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             options:
                                 required: true
-                                data: $late_registration
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         customerConsents:
