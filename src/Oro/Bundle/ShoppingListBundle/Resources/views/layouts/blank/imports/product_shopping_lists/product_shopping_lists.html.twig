@@ -218,7 +218,7 @@
                                         <span class="shopping-lists-modify__edit">
                                             <button class="btn btn--size-xs"
                                                     type="button"
-                                                    title="{{ 'Accept'|trans }}"
+                                                    title="{{ 'Apply'|trans }}"
                                                     disabled
                                                     data-role="accept">
                                                     <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
@@ -294,7 +294,7 @@
                                 <span class="shopping-lists-modify__edit">
                                     <button class="btn btn--size-xs"
                                             type="button"
-                                            title="{{ 'Accept'|trans }}"
+                                            title="{{ 'Apply'|trans }}"
                                             data-role="add-form-accept">
                                             <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
                                     </button>
@@ -315,7 +315,9 @@
             </form>
         </div>
         <div class="widget-actions">
-            <button class="btn" type="reset">{{ 'Close'|trans }}</button>
+            <button class="btn" type="reset" aria-label="{{ 'oro.orowindows.dialog.close.aria_label'|trans }}">
+                <span aria-hidden="true">{{ 'Close'|trans }}</span>
+            </button>
         </div>
     </div>
 {% endblock %}
