@@ -72,9 +72,11 @@
                 }
             },
             '~class': 'btn btn--plain shopping-lists__area-trigger',
+            'title': 'Edit'|trans,
+            'aria-label': 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans
         }) %}
 
-        <button {{ block('block_attributes') }} aria-label="{{ 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans }}"></button>
+        <button {{ block('block_attributes') }}></button>
     {% endif %}
 {% endblock %}
 
