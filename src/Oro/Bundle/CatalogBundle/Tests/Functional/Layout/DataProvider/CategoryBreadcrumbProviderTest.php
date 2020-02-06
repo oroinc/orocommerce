@@ -35,6 +35,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
      */
     public function testHaveCategoriesInBreadcrumbs($category, array $urlParts)
     {
+        $this->markTestSkipped('Due to BB-18904');
         $url = $this->getUrl(
             'oro_product_frontend_product_index',
             [
