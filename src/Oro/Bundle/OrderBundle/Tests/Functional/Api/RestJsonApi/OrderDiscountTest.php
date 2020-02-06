@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\CurrencyBundle\Test\Functional\RoundPriceExtension;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
@@ -13,8 +12,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
  */
 class OrderDiscountTest extends RestJsonApiTestCase
 {
-    use RoundPriceExtension;
-
     protected function setUp()
     {
         parent::setUp();
@@ -50,7 +47,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
                 'attributes'    => [
                     'description'       => 'New Discount',
                     'percent'           => 0.201,
-                    'amount'            => 180,
+                    'amount'            => 15,
                     'orderDiscountType' => OrderDiscount::TYPE_AMOUNT
                 ],
                 'relationships' => [
@@ -71,7 +68,8 @@ class OrderDiscountTest extends RestJsonApiTestCase
         $discountId = (int)$this->getResourceId($response);
         $responseContent = $data;
         $responseContent['data']['id'] = (string)$discountId;
-        $responseContent['data']['attributes']['amount'] = '180.0000';
+        $responseContent['data']['attributes']['percent'] = 7.5;
+        $responseContent['data']['attributes']['amount'] = '15.0000';
         $this->assertResponseContains($responseContent, $response);
 
         /** @var OrderDiscount $discount */
@@ -80,13 +78,12 @@ class OrderDiscountTest extends RestJsonApiTestCase
         $order = $this->getEntityManager()->find(Order::class, $orderId);
 
         self::assertEquals('New Discount', $discount->getDescription());
-        self::assertSame(0.201, $discount->getPercent());
-        self::assertSame('180.0000', $discount->getAmount());
+        self::assertSame(7.5, $discount->getPercent());
+        self::assertSame('15.0000', $discount->getAmount());
         self::assertEquals(OrderDiscount::TYPE_AMOUNT, $discount->getType());
-        self::assertSame(
-            $this->roundPrice($discount->getPercent() * $order->getSubtotal() + $discount->getAmount()),
-            (float)$order->getTotalDiscounts()->getValue()
-        );
+        self::assertSame(95.4, (float)$order->getTotalDiscounts()->getValue());
+        self::assertSame('200.0000', $order->getSubtotal());
+        self::assertSame('104.6000', $order->getTotal());
     }
 
     public function testUpdateDescription()
@@ -115,27 +112,67 @@ class OrderDiscountTest extends RestJsonApiTestCase
     {
         $discountId = $this->getReference('order_discount.amount')->getId();
 
-        $this->patch(
+        $response = $this->patch(
             ['entity' => 'orderdiscounts', 'id' => (string)$discountId],
             [
                 'data' => [
                     'type'       => 'orderdiscounts',
                     'id'         => (string)$discountId,
                     'attributes' => [
-                        'amount' => 300
+                        'amount' => 15
                     ]
                 ]
             ]
         );
 
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'orderdiscounts',
+                    'id'         => (string)$discountId,
+                    'attributes' => [
+                        'percent' => 7.5,
+                        'amount'  => '15.0000'
+                    ]
+                ]
+            ],
+            $response
+        );
+
         /** @var OrderDiscount $discount */
         $discount = $this->getEntityManager()->find(OrderDiscount::class, $discountId);
-        self::assertSame(300.0, (float)$discount->getOrder()->getTotalDiscounts()->getValue());
+        $order = $discount->getOrder();
+        self::assertSame(55.2, (float)$order->getTotalDiscounts()->getValue());
+        self::assertSame('200.0000', $order->getSubtotal());
+        self::assertSame('144.8000', $order->getTotal());
+    }
+
+    public function testDelete()
+    {
+        /** @var OrderDiscount $discount */
+        $discount = $this->getReference('order_discount.amount');
+        $discountId = $discount->getId();
+        $orderId = $discount->getOrder()->getId();
+
+        $this->delete(
+            ['entity' => 'orderdiscounts', 'id' => (string)$discountId]
+        );
+
+        $discount = $this->getEntityManager()->find(OrderDiscount::class, $discountId);
+        self::assertTrue(null === $discount);
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertSame(40.2, (float)$order->getTotalDiscounts()->getValue());
+        self::assertSame('200.0000', $order->getSubtotal());
+        self::assertSame('159.8000', $order->getTotal());
     }
 
     public function testDeleteList()
     {
-        $discountId = $this->getReference('order_discount.amount')->getId();
+        /** @var OrderDiscount $discount */
+        $discount = $this->getReference('order_discount.amount');
+        $discountId = $discount->getId();
+        $orderId = $discount->getOrder()->getId();
 
         $this->cdelete(
             ['entity' => 'orderdiscounts'],
@@ -144,6 +181,11 @@ class OrderDiscountTest extends RestJsonApiTestCase
 
         $discount = $this->getEntityManager()->find(OrderDiscount::class, $discountId);
         self::assertTrue(null === $discount);
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertSame(40.2, (float)$order->getTotalDiscounts()->getValue());
+        self::assertSame('200.0000', $order->getSubtotal());
+        self::assertSame('159.8000', $order->getTotal());
     }
 
     public function testGetSubResourceForOrder()

@@ -52,7 +52,8 @@ export default `
         margin: 0 4px;
     }
     
-    .content-widget-inline b {
+    .content-widget-inline span {
+        font-weight: bold;
         color: #565656;
     }
     
@@ -63,5 +64,9 @@ export default `
     
     .gjs-dashed *[data-highlightable] {
         outline-offset: -1px;
+    }
+    
+    [data-gjs-type="video"] {
+        max-width: 100%;
     }
 `;

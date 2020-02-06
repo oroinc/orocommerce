@@ -4,7 +4,7 @@ data:
     attributes:
         description: 'Discount 1'
         percent: 20.1
-        amount: '158.5890'
+        amount: '40.2000'
         orderDiscountType: oro_order_discount_item_type_percent
     relationships:
         order:

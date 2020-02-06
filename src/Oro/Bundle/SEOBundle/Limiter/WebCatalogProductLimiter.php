@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Limiter;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
@@ -23,6 +24,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Apply product limitation based on products engaged into web catalog
+ */
 class WebCatalogProductLimiter
 {
     /**
@@ -77,48 +81,14 @@ class WebCatalogProductLimiter
      */
     public function prepareLimitation($version, WebsiteInterface $website = null)
     {
-        $this->insertQueryExecutor->execute(
-            WebCatalogProductLimitation::class,
-            ['productId', 'version'],
-            $this->getWebCatalogDirectProductIds($version, $website)
-        );
-
-        $this->insertQueryExecutor->execute(
-            WebCatalogProductLimitation::class,
-            ['productId', 'version'],
-            $this->getWebCatalogProductCollectionProducts($version, $website)
-        );
-
-        $webCatalogCategoriesQueryBuilder = $this->getWebCatalogCategoriesQueryBuilder($website);
-        $categoriesProductIdsSQL = 'SELECT id, ? FROM oro_product WHERE category_id IN ('
-        . $webCatalogCategoriesQueryBuilder->getQuery()->getSQL()
-        . ');';
-
-        // Get all subquery position parameters
-        list($params, $types) = $this->nativeQueryExecutorHelper->processParameterMappings(
-            $webCatalogCategoriesQueryBuilder->getQuery()
-        );
-
-        // Set version value into first position parameter
-        array_unshift($params, $version);
-        array_unshift($types, Type::INTEGER);
-
-        $sql = sprintf(
-            'insert into %s (%s) %s',
-            $this->nativeQueryExecutorHelper->getTableName(WebCatalogProductLimitation::class),
-            'product_id, version',
-            $categoriesProductIdsSQL
-        );
-
-        $this->nativeQueryExecutorHelper
-            ->getManager(WebCatalogProductLimitation::class)
-            ->getConnection()
-            ->executeUpdate($sql, $params, $types);
+        $this->addWebCatalogDirectProducts($version, $website);
+        $this->addWebCatalogCollectionRelatedProducts($version, $website);
+        $this->addWebCatalogCateogoryRelatedProducts($version, $website);
     }
 
     /**
      * Erase `WebCatalogProductLimitation` table
-     * Truncate `WebCatalogProductLimitation` required to avoid accumulation autoincremented `id`  in the table.
+     *
      * @param int $version
      */
     public function erase($version)
@@ -130,14 +100,6 @@ class WebCatalogProductLimiter
             ->setParameter('version', $version)
             ->getQuery()
             ->execute();
-
-        if (empty($em->getRepository(WebCatalogProductLimitation::class)->findAll())) {
-            $connection = $em->getConnection();
-            $query = $connection->getDatabasePlatform()
-                ->getTruncateTableSQL($em->getClassMetadata(WebCatalogProductLimitation::class)->getTableName());
-
-            $connection->executeUpdate($query);
-        }
     }
 
     /**
@@ -151,7 +113,7 @@ class WebCatalogProductLimiter
         $em = $this->doctrineHelper->getEntityManager(Product::class);
         $qb = $em->createQueryBuilder();
 
-        $qb->select('IDENTITY(productContentVariant.product_page_product), '. (int)$version)
+        $qb->select('UUID(), IDENTITY(productContentVariant.product_page_product), '. (int)$version)
             ->from(ContentVariant::class, 'productContentVariant')
             ->innerJoin(
                 ContentNode::class,
@@ -231,7 +193,7 @@ class WebCatalogProductLimiter
         $em = $this->doctrineHelper->getEntityManager(Product::class);
         $qb = $em->createQueryBuilder();
 
-        $qb->select('segmentSnapshot.integerEntityId, '. (int)$version)
+        $qb->select('UUID(), segmentSnapshot.integerEntityId, '. (int)$version)
             ->from(ContentVariant::class, 'productCollectionContentVariant')
             ->innerJoin(
                 SegmentSnapshot::class,
@@ -263,5 +225,74 @@ class WebCatalogProductLimiter
     private function getScopeCriteria(WebsiteInterface $website = null)
     {
         return $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
+    }
+
+    /**
+     * @param $version
+     * @param WebsiteInterface|null $website
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\Query\QueryException
+     */
+    private function addWebCatalogDirectProducts($version, WebsiteInterface $website = null): void
+    {
+        $this->insertQueryExecutor->execute(
+            WebCatalogProductLimitation::class,
+            ['id', 'productId', 'version'],
+            $this->getWebCatalogDirectProductIds($version, $website)
+        );
+    }
+
+    /**
+     * @param $version
+     * @param WebsiteInterface|null $website
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\Query\QueryException
+     */
+    private function addWebCatalogCollectionRelatedProducts($version, WebsiteInterface $website = null): void
+    {
+        $this->insertQueryExecutor->execute(
+            WebCatalogProductLimitation::class,
+            ['id', 'productId', 'version'],
+            $this->getWebCatalogProductCollectionProducts($version, $website)
+        );
+    }
+
+    /**
+     * @param $version
+     * @param WebsiteInterface|null $website
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\Query\QueryException
+     */
+    private function addWebCatalogCateogoryRelatedProducts($version, WebsiteInterface $website = null)
+    {
+        $webCatalogCategoriesQueryBuilder = $this->getWebCatalogCategoriesQueryBuilder($website);
+        $platform = $this->doctrineHelper->getEntityManagerForClass(WebCatalogProductLimitation::class)
+            ->getConnection()
+            ->getDatabasePlatform();
+        $nativeUUID = $platform instanceof PostgreSqlPlatform ? 'uuid_generate_v4()' : 'uuid()';
+        $categoriesProductIdsSQL = 'SELECT ' . $nativeUUID . ', id, ? FROM oro_product WHERE category_id IN ('
+            . $webCatalogCategoriesQueryBuilder->getQuery()->getSQL()
+            . ');';
+
+        // Get all subquery position parameters
+        list($params, $types) = $this->nativeQueryExecutorHelper->processParameterMappings(
+            $webCatalogCategoriesQueryBuilder->getQuery()
+        );
+
+        // Set version value into first position parameter
+        array_unshift($params, $version);
+        array_unshift($types, Type::INTEGER);
+
+        $sql = sprintf(
+            'insert into %s (%s) %s',
+            $this->nativeQueryExecutorHelper->getTableName(WebCatalogProductLimitation::class),
+            'id, product_id, version',
+            $categoriesProductIdsSQL
+        );
+
+        $this->nativeQueryExecutorHelper
+            ->getManager(WebCatalogProductLimitation::class)
+            ->getConnection()
+            ->executeUpdate($sql, $params, $types);
     }
 }

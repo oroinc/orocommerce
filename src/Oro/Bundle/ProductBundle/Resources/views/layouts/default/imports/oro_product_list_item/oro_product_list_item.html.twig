@@ -3,8 +3,10 @@
     '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"{% if isTargetBlank is defined and isTargetBlank %} target="_blank"{% endif %}>
-            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"{% if isTargetBlank is defined and isTargetBlank %} target="_blank"{% endif %}
+            aria-label="{{ 'oro.product.frontend.index.view_details_aria_label'|trans }}"
+        >
+            {{ 'oro.product.frontend.index.view_details'|trans }}<span class="fa-angle-right fa--link-r" aria-hidden="true"></span>
         </a>
     </div>
 {% endblock %}

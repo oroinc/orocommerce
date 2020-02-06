@@ -3,12 +3,14 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -54,7 +56,9 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
+        self::assertSame('10.0000', $order->getSubtotal());
         self::assertSame('10.0000', $order->getTotal());
+        self::assertNull($order->getTotalDiscounts());
         self::assertEquals('USD', $order->getCurrency());
         self::assertNotEmpty($order->getOwner()->getId());
         self::assertEquals($organizationId, $order->getOrganization()->getId());
@@ -213,8 +217,11 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
         $orderId = $order->getId();
-        $oldSubtotalValue = $order->getSubtotal();
-        $oldTotalValue = $order->getTotal();
+        $order->setSubtotal(11);
+        $order->setTotal(10);
+        $order->setTotalDiscounts(Price::create(1, $order->getCurrency()));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
 
         $this->patch(
             ['entity' => 'orders', 'id' => $orderId],
@@ -242,8 +249,9 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('test notes', $updatedOrder->getCustomerNotes());
         $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
         self::assertEquals('net 20', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
-        self::assertLessThanOrEqual($oldSubtotalValue, $updatedOrder->getSubtotal());
-        self::assertLessThanOrEqual($oldTotalValue, $updatedOrder->getTotal());
+        self::assertSame('444.5000', $updatedOrder->getSubtotal());
+        self::assertSame('444.5000', $updatedOrder->getTotal());
+        self::assertNull($updatedOrder->getTotalDiscounts());
     }
 
     public function testGetSubresourceForOwner()
@@ -550,6 +558,9 @@ class OrderTest extends RestJsonApiTestCase
         self::assertTrue(null === $lineItem);
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
+        self::assertSame('78.5000', $order->getSubtotal());
+        self::assertSame('78.5000', $order->getTotal());
+        self::assertNull($order->getTotalDiscounts());
     }
 
     public function testDeleteList()

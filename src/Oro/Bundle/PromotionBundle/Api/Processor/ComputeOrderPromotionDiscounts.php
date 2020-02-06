@@ -41,22 +41,36 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
 
         $data = $context->getData();
 
-        /** @var Order $order */
-        $order = $this->doctrineHelper->getEntityReference(
-            Order::class,
-            $context->getResultFieldValue('id', $data)
-        );
-
         $discountFieldName = $context->getResultFieldName('discount');
-        if ($context->isFieldRequested($discountFieldName, $data)) {
-            $data[$discountFieldName] = $this->appliedDiscountsProvider
-                ->getDiscountsAmountByOrder($order);
+        $shippingDiscountFieldName = $context->getResultFieldName('shippingDiscount');
+
+        $isDiscountRequested = $context->isFieldRequested($discountFieldName, $data);
+        $isShippingDiscountRequested = $context->isFieldRequested($shippingDiscountFieldName, $data);
+        if (!$isDiscountRequested && !$isShippingDiscountRequested) {
+            return;
         }
 
-        $shippingDiscountFieldName = $context->getResultFieldName('shippingDiscount');
-        if ($context->isFieldRequested($shippingDiscountFieldName, $data)) {
-            $data[$shippingDiscountFieldName] = $this->appliedDiscountsProvider
-                ->getShippingDiscountsAmountByOrder($order);
+        if ($context->getResultFieldValue('disablePromotions', $data)) {
+            if ($isDiscountRequested) {
+                $data[$discountFieldName] = null;
+            }
+            if ($isShippingDiscountRequested) {
+                $data[$shippingDiscountFieldName] = null;
+            }
+        } else {
+            /** @var Order $order */
+            $order = $this->doctrineHelper->getEntityReference(
+                Order::class,
+                $context->getResultFieldValue('id', $data)
+            );
+            if ($isDiscountRequested) {
+                $data[$discountFieldName] = $this->appliedDiscountsProvider
+                    ->getDiscountsAmountByOrder($order);
+            }
+            if ($isShippingDiscountRequested) {
+                $data[$shippingDiscountFieldName] = $this->appliedDiscountsProvider
+                    ->getShippingDiscountsAmountByOrder($order);
+            }
         }
 
         $context->setData($data);

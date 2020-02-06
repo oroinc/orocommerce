@@ -191,6 +191,8 @@ operations:
                     '@eq': [$.addedCouponsCount, 0]
                 message: oro.promotion.ui.order_add_coupon.not_added.message
                 type: 'success'
+        preconditions:
+            '@neq': [$.data.disablePromotions, true]
 
     oro_promotion_coupon_unassign:
         label: oro.promotion.ui.unassign_coupon.label

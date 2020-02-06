@@ -5,6 +5,8 @@ namespace Oro\Bundle\SEOBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Temporary table for storing products ids to limit sitemap generator to.
+ *
  * @ORM\Table(name="oro_web_catalog_product_limit")
  * @ORM\Entity()
  */
@@ -13,9 +15,9 @@ class WebCatalogProductLimitation
     /**
      * @var int
      *
+     * @ORM\Column(name="id", type="guid")
      * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="UUID")
      */
     protected $id;
 

@@ -2,6 +2,8 @@
 
 .#{$app-prefix} {
     &editor-cont {
+        transition: height .5s;
+
         .ui-dialog & {
             padding: 0;
         }
@@ -181,13 +183,14 @@
 
     &toolbar {
         margin-top: -2px;
+        white-space: nowrap;
     }
-
 
     &com-badge,
     &com-badge-red,
     &badge {
         margin-left: -2px;
+        white-space: nowrap;
     }
 
     &am-assets-cont {

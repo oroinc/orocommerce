@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4_1';
+        return 'v1_5';
     }
 
     /**
@@ -88,6 +88,7 @@ class OroPromotionBundleInstaller implements
         $this->addAppliedCouponsToOrder($schema);
         $this->addAppliedCouponsToCheckout($schema);
         $this->addAppliedPromotionsToOrder($schema);
+        $this->addDisablePromotionsToOrder($schema);
     }
 
     /**
@@ -639,6 +640,24 @@ class OroPromotionBundleInstaller implements
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false]
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addDisablePromotionsToOrder(Schema $schema)
+    {
+        $table = $schema->getTable('oro_order');
+        $table->addColumn(
+            'disablePromotions',
+            'boolean',
+            [
+                'oro_options' => [
+                    'extend'    => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false]
+                ]
             ]
         );
     }

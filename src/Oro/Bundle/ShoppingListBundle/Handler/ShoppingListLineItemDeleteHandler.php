@@ -64,10 +64,10 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
     {
         /** @var LineItem $entity */
 
-        parent::deleteWithoutFlush($entity, $options);
         $shoppingList = $entity->getShoppingList();
         if (null !== $shoppingList) {
             $shoppingList->removeLineItem($entity);
         }
+        parent::deleteWithoutFlush($entity, $options);
     }
 }
