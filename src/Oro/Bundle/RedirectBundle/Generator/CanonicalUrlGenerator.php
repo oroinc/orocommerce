@@ -244,15 +244,18 @@ class CanonicalUrlGenerator
      */
     public function createUrl($domainUrl, $url)
     {
+        $domainUrl = rtrim($domainUrl, ' /');
         $baseUrl = '';
         if ($masterRequest = $this->requestStack->getMasterRequest()) {
             $baseUrl = $masterRequest->getBaseUrl();
             $baseUrl = trim($baseUrl, '/');
         }
 
-        $urlParts = [rtrim($domainUrl, ' /') ];
         if ($baseUrl) {
-            $urlParts[] = $baseUrl;
+            $domainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
+            $urlParts = [rtrim($domainUrl, ' /'), $baseUrl];
+        } else {
+            $urlParts = [$domainUrl];
         }
 
         $urlParts[] = ltrim($url, '/');

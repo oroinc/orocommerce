@@ -150,6 +150,28 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->doTestDirectUrlWithWebsite($slug, $website, $expectedUrl, $expectedBaseUrl, $urlSecurityType);
     }
 
+    public function testGetDirectUrlForInsecureCanonicalWithInstallationInSubfolder()
+    {
+        $canonicalPath = '/canonical';
+        $expectedWebsiteUrl = 'http://example.com/subfolder';
+        $expectedUrl = 'http://example.com/subfolder/index_dev.php/canonical';
+        $expectedBaseUrl = '/subfolder/index_dev.php';
+        $urlSecurityType = Configuration::INSECURE;
+        $website = $this->getWebsite();
+
+        $this->websiteUrlResolver->expects($this->any())
+            ->method('getWebsiteUrl')
+            ->with($website)
+            ->willReturn($expectedWebsiteUrl);
+
+        $slug = new Slug();
+        $slug->setUrl($canonicalPath);
+        $slug->setRouteName('route_name');
+        $slug->setRouteParameters([]);
+
+        $this->doTestDirectUrlWithWebsite($slug, $website, $expectedUrl, $expectedBaseUrl, $urlSecurityType);
+    }
+
     public function testGetDirectUrlForSecureCanonical()
     {
         $canonicalPath = '/canonical';

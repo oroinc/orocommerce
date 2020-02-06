@@ -200,10 +200,8 @@ define(function(require) {
                 invert = false;
             }
             const ratio = width <= 640 ? 1.7 : 1.3;
-            let height = invert ? width / ratio : width * ratio;
-            if (height > this.canvasEl.offsetHeight) {
-                height = this.canvasEl.offsetHeight;
-            }
+            const height = invert ? width / ratio : width * ratio;
+
             return Math.round(height) + 'px';
         },
 
@@ -240,9 +238,6 @@ define(function(require) {
 
         updateRtePosition(pos) {
             if (pos.targetHeight !== 0) {
-                const style = window.getComputedStyle(this.$builderIframe[0]);
-                const borderTopSize = parseInt(style['border-top-width']);
-                const borderLeftSize = parseInt(style['border-left-width']);
                 const rteActionBarWidth = $(this.rte.actionbar).innerWidth();
                 const builderIframeWidth = this.$builderIframe.innerWidth();
                 let positionLeft = pos.left;
@@ -251,20 +246,51 @@ define(function(require) {
                     positionLeft = pos.elementLeft + pos.elementWidth - rteActionBarWidth;
                 }
 
-                pos.left = positionLeft += borderLeftSize;
-                pos.top = pos.elementTop + pos.elementHeight + borderTopSize;
+                pos.left = positionLeft;
+                pos.top = pos.elementTop + pos.elementHeight;
             }
         },
 
-        updateSelectedElement() {
+        updateSelectedElement(model, deviceName) {
             const selected = this.builder.getSelected();
+            const iframe = this.$builderIframe[0];
+            const deviceManager = this.builder.DeviceManager;
+            const device = deviceManager.get(deviceName);
+            const editorConf = this.builder.getConfig();
 
-            if (selected) {
-                this.$builderIframe.one('transitionend.' + this.cid, () => {
+            editorConf.el.style.height = editorConf.height;
+
+            this.$builderIframe.one('transitionend.' + this.cid, () => {
+                if (iframe.offsetHeight >= (parseInt(editorConf.height) - this.canvasEl.offsetTop)) {
+                    const styleEditor = getComputedStyle(editorConf.el);
+                    const styleCanvas = getComputedStyle(this.canvasEl);
+                    const height = [iframe.offsetHeight, this.canvasEl.offsetTop, styleEditor['padding-top'],
+                        styleEditor['padding-bottom'], styleCanvas['padding-top'], styleCanvas['padding-bottom']]
+                        .reduce((a, b) => a + parseInt(b), 0);
+
+                    editorConf.el.style.height = height + 'px';
+                } else {
+                    editorConf.el.style.height = editorConf.height;
+                }
+
+                const leftOffset = parseInt($(iframe).css('margin-left')) +
+                    parseInt($(iframe).css('border-left-width'));
+
+                $(this.canvasEl).find('#gjs-cv-tools').css({
+                    width: device.get('width'),
+                    height: device.get('height'),
+                    marginLeft: leftOffset
+                });
+
+                $(this.canvasEl).find('#gjs-tools').css({
+                    marginLeft: -leftOffset
+                });
+
+                if (selected) {
                     this.builder.selectRemove(selected);
                     this.builder.selectAdd(selected);
-                });
-            }
+                }
+            });
         },
 
         dispose() {

@@ -65,4 +65,8 @@ export default `
     .gjs-dashed *[data-highlightable] {
         outline-offset: -1px;
     }
+    
+    [data-gjs-type="video"] {
+        max-width: 100%;
+    }
 `;
