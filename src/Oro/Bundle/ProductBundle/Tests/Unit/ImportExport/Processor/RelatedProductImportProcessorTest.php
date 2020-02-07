@@ -158,6 +158,100 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->processor->process($this->item));
     }
 
+    /**
+     * @dataProvider processWhenSkuColumnMissingDataProvider
+     *
+     * @param array $item
+     * @param string $expectedError
+     *
+     * @throws \Akeneo\Bundle\BatchBundle\Item\InvalidItemException
+     */
+    public function testProcessWhenColumnMissing(array $item, string $expectedError): void
+    {
+        $this->configProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->context->expects($this->once())
+            ->method('incrementErrorEntriesCount');
+
+        $this->importStrategyHelper->expects($this->once())
+            ->method('addValidationErrors')
+            ->with([$expectedError], $this->context);
+
+        $this->strategy->expects($this->never())
+            ->method('process');
+
+        $this->assertNull($this->processor->process($item));
+    }
+
+    /**
+     * @return array
+     */
+    public function processWhenSkuColumnMissingDataProvider(): array
+    {
+        return [
+            [
+                'item' => ['sample_key' => 'sample_value', 'Related SKUs' => 'sample_value'],
+                'expectedError' => 'oro.product.import.sku.column_missing',
+            ],
+            [
+                'item' => ['sample_key' => 'sample_value', 'SKU' => 'sample_value'],
+                'expectedError' => 'oro.product.import.related_sku.column_missing',
+            ],
+        ];
+    }
+
+    public function testProcessWhenEmptyRelatedSku(): void
+    {
+        $this->configProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->context->expects($this->once())
+            ->method('incrementErrorEntriesCount');
+
+        $this->importStrategyHelper->expects($this->once())
+            ->method('addValidationErrors')
+            ->with(['oro.product.import.related_sku.empty_sku'], $this->context);
+
+        $this->strategy->expects($this->never())
+            ->method('process');
+
+        $this->context->expects($this->once())
+            ->method('incrementErrorEntriesCount');
+
+        $this->setUpQueryMock(['id' => 42]);
+
+        $this->assertNull(
+            $this->processor->process(['SKU' => 'sku-1', 'Related SKUs' => 'sku-2,,sku-3'])
+        );
+    }
+
+    public function testProcessWhenSelfRelation(): void
+    {
+        $this->configProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->context->expects($this->once())
+            ->method('incrementErrorEntriesCount');
+
+        $this->importStrategyHelper->expects($this->once())
+            ->method('addValidationErrors')
+            ->with(['oro.product.import.related_sku.self_relation'], $this->context);
+
+        $this->strategy->expects($this->never())
+            ->method('process');
+
+        $this->context->expects($this->once())
+            ->method('incrementErrorEntriesCount');
+
+        $this->setUpQueryMock(['id' => 42]);
+
+        $this->assertNull($this->processor->process(['SKU' => 'sku-1', 'Related SKUs' => 'sku-1']));
+    }
+
     public function testProcess(): void
     {
         $this->configProvider->expects($this->once())
@@ -242,7 +336,7 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->importStrategyHelper->expects($this->once())
             ->method('addValidationErrors')
-            ->with(['It is not possible to add more items, because of the limit of relations.'], $this->context);
+            ->with(['oro.product.import.related_sku.max_relations'], $this->context);
 
         $this->assertEquals([], $this->processor->process($this->item));
     }

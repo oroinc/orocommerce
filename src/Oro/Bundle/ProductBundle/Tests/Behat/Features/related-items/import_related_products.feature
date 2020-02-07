@@ -6,6 +6,20 @@ Feature: Import Related Products
   As an Administrator
   I want to have an ability Import all related products from the file into the system
 
+  Scenario: Check import error page from the email after validating import file when import with missing columns
+    Given I login as administrator
+    When I go to Products/ Products
+    And I open "Related Products" import tab
+    And fill import file with data:
+      | test1 | test2 |
+      | test3 | test4 |
+    When I open "Related Products" import tab
+    And I validate file
+    Then Email should contains the following "Errors: 2 processed: 0, read: 1" text
+    And I follow "Error log" link from the email
+    And I should see "Error in row #1. SKU column is missing"
+    And I should see "Error in row #1. Related SKUs column is missing"
+
   Scenario: Verify export Related Products template
     Given I login as administrator
     When I go to Products/ Products
@@ -23,6 +37,18 @@ Feature: Import Related Products
     Then Email should contains the following "Errors: 1 processed: 0, read: 1" text
     And I follow "Error log" link from the email
     And I should see "Error in row #1. SKU not found"
+
+  Scenario: Check import error page from the email after validating import file when import unknown related SKU
+    Given I login as administrator
+    And I go to Products/ Products
+    And fill template with data:
+      | SKU   | Related SKUs |
+      | psku2 | psku4        |
+    When I open "Related Products" import tab
+    And I validate file
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1" text
+    And I follow "Error log" link from the email
+    And I should see "Error in row #1. Not found entity \"Product\". Item data: \"psku4\"."
 
   Scenario: Check import error page from the email after validating import file when import own SKU
     Given I login as administrator
@@ -88,8 +114,20 @@ Feature: Import Related Products
     And import file
     Then Email should contains the following "Errors: 0 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
 
+  Scenario: Import empty related SKU
+    And I go to Products/ Products
+    And fill template with data:
+      | SKU   | Related SKUs |
+      | psku2 | psku1,,psku3  |
+    When I open "Related Products" import tab
+    And import file
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    And I follow "Error log" link from the email
+    And I should see "Error in row #1. Related SKUs collection contains empty SKU. Item data:"
+
   Scenario: Import when no edit permission
-    Given I go to Products/ Products
+    Given I login as administrator
+    And I go to Products/ Products
     And I click "Import file"
     And I should see "Related Products"
     And I click "Cancel"
