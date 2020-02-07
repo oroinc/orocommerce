@@ -5,16 +5,17 @@ namespace Oro\Bundle\RFPBundle\Acl\Voter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
- * Restricts EDIT permission for RFP when some workflow for this entity is enabled
+ * Prevents editing of RFPs when some workflow for this entity is enabled.
  */
 class FrontendRequestVoter extends AbstractEntityVoter
 {
     /** @var array */
-    protected $supportedAttributes = ['EDIT'];
+    protected $supportedAttributes = [BasicPermission::EDIT];
 
     /** @var FrontendHelper */
     protected $frontendHelper;

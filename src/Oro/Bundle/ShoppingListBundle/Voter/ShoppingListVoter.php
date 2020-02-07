@@ -2,19 +2,25 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Voter;
 
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
- * This security voter denies access to shopping lists created on another websites.
+ * Denies access to shopping lists created on another websites.
  */
 class ShoppingListVoter extends AbstractEntityVoter
 {
     /**
      * @var array
      */
-    protected $supportedAttributes = ['VIEW', 'CREATE', 'EDIT', 'DELETE'];
+    protected $supportedAttributes = [
+        BasicPermission::VIEW,
+        BasicPermission::CREATE,
+        BasicPermission::EDIT,
+        BasicPermission::DELETE
+    ];
 
     /**
      * @var WebsiteManager
