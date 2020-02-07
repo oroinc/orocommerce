@@ -44,7 +44,7 @@
     }) %}
 
     <span>
-        <span class="sr-only">{{ (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans }}</span>
+        <span class="sr-only" tabindex="0">{{ (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans }}</span>
         <span {{ block('block_attributes') }}></span>
     </span>
 {% endblock %}
