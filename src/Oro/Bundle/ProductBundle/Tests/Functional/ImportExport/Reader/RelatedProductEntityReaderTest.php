@@ -54,9 +54,9 @@ class RelatedProductEntityReaderTest extends WebTestCase
         $this->assertCount(2, $actual);
         $this->assertArrayHasKey('sku', $actual);
         $this->assertEquals(LoadProductData::PRODUCT_3, $actual['sku']);
-        $this->assertArrayHasKey('related_skus', $actual);
-        $this->assertCount(2, $actual['related_skus']);
-        $this->assertContains(LoadProductData::PRODUCT_1, $actual['related_skus']);
-        $this->assertContains(LoadProductData::PRODUCT_2, $actual['related_skus']);
+        $this->assertArrayHasKey('relatedItem', $actual);
+        $this->assertCount(2, $actual['relatedItem']);
+        $this->assertContains(LoadProductData::PRODUCT_1, $actual['relatedItem']);
+        $this->assertContains(LoadProductData::PRODUCT_2, $actual['relatedItem']);
     }
 }

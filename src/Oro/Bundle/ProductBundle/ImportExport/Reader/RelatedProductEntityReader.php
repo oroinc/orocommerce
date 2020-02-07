@@ -93,7 +93,7 @@ class RelatedProductEntityReader extends IteratorBasedReader
 
         return [
             'sku' => $result['sku'],
-            'related_skus' => array_unique(array_column($query->getScalarResult(), 'relatedSku')),
+            'relatedItem' => array_unique(array_column($query->getScalarResult(), 'relatedSku')),
         ];
     }
 
