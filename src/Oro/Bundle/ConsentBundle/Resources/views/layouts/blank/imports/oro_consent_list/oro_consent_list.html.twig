@@ -43,17 +43,16 @@
         'aria-hidden': 'true'
     }) %}
 
-    <span>
-        <span class="sr-only" tabindex="0">{{ (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans }}</span>
-        <span {{ block('block_attributes') }}></span>
-    </span>
+    <span {{ block('block_attributes') }}></span>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}
     {% if consent.cmsPageData.url is defined %}
         {% set attr = layout_attr_defaults(attr, {
             'class': 'consent-list__link',
-            'href': consent.cmsPageData.url
+            'href': consent.cmsPageData.url,
+            'aria-label':  consent.title ~ 'and' ~
+            (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans
         }) %}
 
         <a {{ block('block_attributes') }}>
