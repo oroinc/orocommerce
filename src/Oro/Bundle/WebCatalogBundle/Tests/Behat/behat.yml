@@ -101,13 +101,23 @@ oro_behat_extension:
         NewCategory2 breadcrumb item:
             selector:
                 type: xpath
-                locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
+                locator: '//li[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
 
         First Content Variant Expand Button:
             selector: '[data-content="oro_web_catalog_content_node[contentVariants][0]"] .btn-toggle-variant'
 
         Second Content Variant Expand Button:
             selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
+
+        Content Variant Collection:
+            selector: "div.variant-collection"
+
+        Add Content Variant Restriction:
+            selector: ".variant-collection .add-list-item"
+
+        Content Variant Restriction Validation Error:
+            selector: ".variant-collection .validation-failed"
+
 
     suites:
         OroWebCatalogBundle:

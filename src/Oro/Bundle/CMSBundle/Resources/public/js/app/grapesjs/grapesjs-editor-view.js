@@ -11,6 +11,7 @@ import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
+import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
@@ -75,6 +76,8 @@ const GrapesjsEditorView = BaseView.extend({
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
+        wrapperIsBody: 0,
+        exportWrapper: 1,
         pasteStyles: false,
 
         /**
@@ -730,7 +733,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: [ContentParser, ...Object.keys(this.builderPlugins)],
+            plugins: [ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

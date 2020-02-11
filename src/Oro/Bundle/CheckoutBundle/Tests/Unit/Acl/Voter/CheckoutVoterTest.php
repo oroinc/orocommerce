@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -98,7 +97,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'object' => $this->getIdentity(),
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => false,
-                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
                     'isGrantedAttrCheckout' => $permissionCreate,
                 ],
@@ -109,7 +108,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'object' => $this->getIdentity(),
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => true,
-                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => false,
                     'isGrantedAttrCheckout' => $permissionCreate,
                 ],
@@ -120,7 +119,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'object' => $this->getIdentity(),
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => true,
-                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
                     'isGrantedAttrCheckout' => $permissionCreate,
                 ],
@@ -131,7 +130,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'object' => $object,
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => true,
-                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
                     'isGrantedAttrCheckout' => $permissionCreate,
                 ],

@@ -5,23 +5,20 @@ namespace Oro\Bundle\VisibilityBundle\Acl\Voter;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
- * Security voter that prevents direct access to the products with disabled visibility
+ * Prevents direct access to the products with disabled visibility.
  */
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_VIEW = 'VIEW';
-
     /**
      * @var array
      */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_VIEW,
-    ];
+    protected $supportedAttributes = [BasicPermission::VIEW];
 
     /**
      * @var ProductVisibilityQueryBuilderModifier

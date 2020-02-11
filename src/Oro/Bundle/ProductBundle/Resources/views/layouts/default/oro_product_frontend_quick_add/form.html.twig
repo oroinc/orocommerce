@@ -49,7 +49,10 @@
         <div class="quick-order-add__error-autocomplete">
             {{ form_errors(form.productQuantity) }}
             <div class="product-autocomplete-error" style="display: none;" data-role="autocomplete-error">
-                <span class="validation-failed">{{ 'oro.product.sku.not_found'|trans }}</span>
+                <span class="validation-failed">
+                    <span class="validation-failed__icon" aria-hidden="true"></span>
+                    <span>{{ 'oro.product.sku.not_found'|trans }}</span>
+                </span>
             </div>
         </div>
     </div>

@@ -42,7 +42,7 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
             'plain data' => [
                 'importedRecord' => [
                     'sku' => 'sku1',
-                    'related_skus'  => 'sku2,sku3,sku4',
+                    'relatedItem'  => 'sku2,sku3,sku4',
                 ],
                 'exportedRecord' => [
                     'SKU' => 'sku1',

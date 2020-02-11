@@ -5,21 +5,16 @@ namespace Oro\Bundle\ConsentBundle\Acl\Voter;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 /**
- * Disables deleting and editing the consent in case it was accepted by any user
+ * Disables deleting and editing the consent in case it was accepted by any user.
  */
 class ConsentVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_EDIT = 'EDIT';
-    const ATTRIBUTE_DELETE = 'DELETE';
-
     /** @var array */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_EDIT,
-        self::ATTRIBUTE_DELETE
-    ];
+    protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
      * {@inheritdoc}

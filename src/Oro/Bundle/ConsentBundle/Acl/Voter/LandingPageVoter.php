@@ -5,23 +5,18 @@ namespace Oro\Bundle\ConsentBundle\Acl\Voter;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 /**
- * Disables deleting the landing page if it has accepted consents associated with it
+ * Disables deleting the landing page if it has accepted consents associated with it.
  */
 class LandingPageVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_EDIT   = 'EDIT';
-    const ATTRIBUTE_DELETE = 'DELETE';
-
     /**
      * @var array
      */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_EDIT,
-        self::ATTRIBUTE_DELETE
-    ];
+    protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
      * {@inheritdoc}

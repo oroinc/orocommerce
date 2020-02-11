@@ -185,7 +185,7 @@ oro_behat_extension:
       selector: '.order-checkout-widget__container'
 
     In Shopping List:
-      selector: 'a.shopping-lists__area-trigger'
+      selector: 'button.shopping-lists__area-trigger'
 
     Add to Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'

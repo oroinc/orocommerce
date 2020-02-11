@@ -23,8 +23,10 @@ oro:
         back_order:
             label:        Backorder
             description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
-        quantity.label: Qty
-        quantity.placeholder: "Qty #"
+        quantity:
+            label: Qty
+            placeholder: "Qty #"
+            aria-label: Product Quantity
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
@@ -72,6 +74,7 @@ oro:
         images:
             label: Images
             description: The images for the product.
+            zoom.label: Enlarge Product Image
         is_related.label: Is Related
         related_to_products.label: Related Products
         related_by_products.label: Products that are related to this Product
@@ -550,6 +553,11 @@ oro:
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
                     add_individual_product: Add
+                catalog_switcher:
+                    aria_label: Product Grid Views Toolbar
+                    gallery_view.aria_label: Gallery View
+                    list_view.aria_label: List View
+                    compact_view.aria_label: Compact View
             mass_action:
                 get_selected_product_ids:
                     response:
@@ -566,6 +574,8 @@ oro:
                 item: 'Item #:'
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'
+                view_details_aria_label: 'View Details of the Current Product'
+                view_details_prefix: 'View Details of the'
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart

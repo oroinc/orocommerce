@@ -1567,7 +1567,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         if (!$filters->isVisible()) {
             $gridToolbarActions = $this->elementFactory->createElement('GridToolbarActions');
             if ($gridToolbarActions->isVisible()) {
-                $gridToolbarActions->getActionByTitle('Filters')->click();
+                $gridToolbarActions->getActionByTitle('Filter Toggle')->click();
             }
 
             $filterState = $this->elementFactory->createElement('GridFiltersState');

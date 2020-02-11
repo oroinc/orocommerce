@@ -106,8 +106,13 @@ class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 
         $absoluteUrl = 'http://test.com/sitemaps/1/actual/test.xml';
         $this->canonicalUrlGenerator->expects($this->once())
-            ->method('getAbsoluteUrl')
-            ->with('/sitemaps/1/actual/test.xml', $website)
+            ->method('getCanonicalDomainUrl')
+            ->with($website)
+            ->willReturn('http://test.com/subfolder/');
+
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('createUrl')
+            ->with('http://test.com', '/sitemaps/1/actual/test.xml')
             ->willReturn($absoluteUrl);
 
         $actual = iterator_to_array($this->provider->getUrlItems($website, $version));

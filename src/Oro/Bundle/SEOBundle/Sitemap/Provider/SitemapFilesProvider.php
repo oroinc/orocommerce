@@ -11,6 +11,9 @@ use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Sitemap URL Items Provider for sitemap index entities.
+ */
 class SitemapFilesProvider implements UrlItemsProviderInterface
 {
     /**
@@ -63,7 +66,22 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
             );
 
             $mTime = \DateTime::createFromFormat('U', $file->getMTime(), new \DateTimeZone('UTC'));
-            yield new UrlItem($this->canonicalUrlGenerator->getAbsoluteUrl($url, $website), $mTime);
+
+            yield new UrlItem($this->getSitemapFileUrl($website, $url), $mTime);
         }
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @param string $url
+     * @return string
+     */
+    protected function getSitemapFileUrl(WebsiteInterface $website, string $url): string
+    {
+        $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');
+        // Sitemaps are placed in root folder of domain, additional path should be removed
+        $baseDomainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
+
+        return $this->canonicalUrlGenerator->createUrl($baseDomainUrl, $url);
     }
 }

@@ -35,6 +35,8 @@
             <div {{ block('block_attributes') }}>
                 {%- if mode == 'text' -%}
                     {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}
+                {%- else -%}
+                    <span aria-label="{{- ('oro.product.sticker.' ~ sticker.type)|trans -}}"></span>
                 {%- endif -%}
             </div>
         {% endfor %}

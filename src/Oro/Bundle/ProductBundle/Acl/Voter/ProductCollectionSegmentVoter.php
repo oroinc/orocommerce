@@ -4,15 +4,19 @@ namespace Oro\Bundle\ProductBundle\Acl\Voter;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Prevents editing and removal of segments that represent a product collection content variant.
+ */
 class ProductCollectionSegmentVoter extends AbstractEntityVoter
 {
     /**
      * @var array
      */
-    protected $supportedAttributes = ['EDIT', 'DELETE'];
+    protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
      * @var array

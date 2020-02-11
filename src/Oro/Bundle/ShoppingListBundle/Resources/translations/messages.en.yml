@@ -214,11 +214,17 @@ oro:
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
                 must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
+            open_modal_btn:
+                aria_label: 'Manage current product in the Shopping List'
             btn:
+                apply_aria_label: 'Apply changes in the Shopping List'
+                decline_aria_label: 'Decline changes in the Shopping List'
+                edit_aria_label: 'Change item quantity in the Shopping List'
                 update: 'Update'
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'
+                delete_item_aria_label: 'Delete this Shopping list item'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:

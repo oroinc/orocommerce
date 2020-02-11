@@ -54,6 +54,13 @@ oro_behat_extension:
           Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
           Managed Inventory Fallback: 'oro_catalog_category[manageInventory][fallback]'
           Backorders Fallback: 'oro_catalog_category[backOrder][fallback]'
+          Short Description: 'oro_catalog_category[shortDescriptions][values][default]'
+          Short Description Localization 1: 'oro_catalog_category[shortDescriptions][values][localizations][1][value]'
+          Short Description Localization 1 fallback selector: 'oro_catalog_category[shortDescriptions][values][localizations][1][fallback]'
+
+    Short Description Localization 1 fallback selector:
+      selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'
+
     Visibility Settings Form:
       selector: 'form[name="visibility_title"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
