@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType;
@@ -21,12 +22,16 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $aclHelper;
+
     protected function setUp(): void
     {
+        $this->aclHelper = $this->createMock(AclHelper::class);
         $repository = $this->createMock(SegmentRepository::class);
         $repository->expects($this->any())
             ->method('findByEntity')
-            ->with(Product::class)
+            ->with($this->aclHelper, Product::class)
             ->willReturn(['Sample Segment' => 42]);
 
         $manager = $this->createMock(ObjectManager::class);
@@ -81,7 +86,7 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
         return [
             new PreloadedExtension(
                 [
-                    SegmentChoiceType::class => new SegmentChoiceType($this->registry, Segment::class),
+                    SegmentChoiceType::class => new SegmentChoiceType($this->registry, $this->aclHelper),
                 ],
                 []
             ),

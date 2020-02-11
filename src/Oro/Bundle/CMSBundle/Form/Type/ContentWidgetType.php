@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -49,6 +48,7 @@ class ContentWidgetType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

@@ -8,6 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\ProductBundle\ContentWidget\ProductSegmentContentWidgetType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType;
@@ -32,9 +33,13 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ProductSegmentContentWidgetType */
     private $contentWidgetType;
 
+    /** @var AclHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $aclHelper;
+
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SegmentRepository::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->manager = $this->createMock(ObjectManager::class);
         $this->manager->expects($this->any())
@@ -185,7 +190,7 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
                         $this->registry,
                         'New Arrivals'
                     ),
-                    SegmentChoiceType::class => new SegmentChoiceType($this->registry, Segment::class),
+                    SegmentChoiceType::class => new SegmentChoiceType($this->registry, $this->aclHelper),
                 ],
                 []
             ),

@@ -62,7 +62,7 @@ class ContentWidgetControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_cms_content_widget[name]'] = self::WIDGET_NAME . '-updated';
+        $form['oro_cms_content_widget[description]'] = self::WIDGET_NAME . '-updated';
 
         $this->client->followRedirects();
 
@@ -74,7 +74,7 @@ class ContentWidgetControllerTest extends WebTestCase
         $contentWidget = $this->getContainer()
             ->get('doctrine')
             ->getRepository(ContentWidget::class)
-            ->findOneBy(['name' => self::WIDGET_NAME . '-updated']);
+            ->findOneBy(['description' => self::WIDGET_NAME . '-updated']);
 
         $this->assertInstanceOf(ContentWidget::class, $contentWidget);
         $this->assertEquals(StubContentWidgetType::getName(), $contentWidget->getWidgetType());

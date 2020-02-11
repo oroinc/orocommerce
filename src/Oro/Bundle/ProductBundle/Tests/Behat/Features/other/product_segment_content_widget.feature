@@ -17,9 +17,10 @@ Feature: Product segment content widget
     And go to Marketing/Content Widgets
     And click "Create Content Widget"
     When fill "Content Widget Form" with:
-      | Type    | Product Segment |
-      | Name    | product_segment |
-      | Segment | New Arrivals    |
+      | Type                 | Product Segment |
+      | Name                 | product_segment |
+      | Segment              | New Arrivals    |
+      | Use Slider On Mobile | Yes             |
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Product Segment"
@@ -28,7 +29,7 @@ Feature: Product segment content widget
       | Segment              | New Arrivals    |
       | Maximum Items        | 4               |
       | Minimum Items        | 3               |
-      | Use Slider On Mobile | No              |
+      | Use Slider On Mobile | Yes             |
       | Show Add Button      | Yes             |
 
   Scenario: Create Landing Page
@@ -64,6 +65,20 @@ Feature: Product segment content widget
     And I should see "Product4"
     And I should see "Add to Shopping List"
 
+  Scenario: Check content widget on storefront rendered in slider (mobile view)
+    Given I set window size to 320x640
+    When I reload the page
+    Then Page title equals to "Product Segment Page"
+    And I should see "Additional test data"
+    And I should see "Product7"
+    When I click "Product Segment Content Widget Slider Next"
+    Then I should see "Product6"
+    When I click "Product Segment Content Widget Slider Next"
+    Then I should see "Product5"
+    When I click "Product Segment Content Widget Slider Next"
+    Then I should see "Product4"
+    And I should see "Add to Shopping List"
+
   Scenario: Check add button
     Given I should not see "In Shopping List"
     When I should not see "Update Shopping List"
@@ -80,7 +95,8 @@ Feature: Product segment content widget
     And go to Marketing/Content Widgets
     And click "Edit" on row "product_segment" in grid
     When fill "Content Widget Form" with:
-      | Show Add Button | No |
+      | Show Add Button      | No |
+      | Use Slider On Mobile | No |
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see Content Widget with:
