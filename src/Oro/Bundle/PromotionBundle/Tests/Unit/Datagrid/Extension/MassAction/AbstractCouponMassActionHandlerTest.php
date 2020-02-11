@@ -159,7 +159,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                [['id' => 1], ['id' => 3]],
+                [[['id' => 1]], [['id' => 3]]],
                 [
                     $this->getCouponMock(1),
                     $this->getCouponMock(3)

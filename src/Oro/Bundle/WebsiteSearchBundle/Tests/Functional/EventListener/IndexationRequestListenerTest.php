@@ -34,7 +34,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -59,7 +59,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -92,7 +92,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -131,7 +131,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -162,7 +162,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 

@@ -55,7 +55,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
      * @param int $categoryId
      * @param array $expectedData
      */
-    public function testGetDefaultProductUnit($categoryId, $expectedData)
+    public function testGetDefaultProductUnit($categoryId, array $expectedData)
     {
         $this->defaultProductUnitProvider->setCategory($this->categories[$categoryId]);
 
@@ -110,7 +110,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
         return [
             'noCategory' => [
                 'categoryId' => 0,
-                'expectedData' => null
+                'expectedData' => ['code' => null, 'precision' => null]
             ],
             'CategoryWithPrecision' => [
                 'categoryId' => 1,
@@ -122,7 +122,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'CategoryWithNoPrecision' => [
                 'categoryId' => 3,
-                'expectedData' => null
+                'expectedData' => ['code' => null, 'precision' => null]
             ],
         ];
     }

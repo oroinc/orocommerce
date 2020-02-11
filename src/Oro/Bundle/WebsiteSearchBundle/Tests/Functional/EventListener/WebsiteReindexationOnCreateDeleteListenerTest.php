@@ -36,7 +36,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );
@@ -63,7 +63,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );
@@ -94,7 +94,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );

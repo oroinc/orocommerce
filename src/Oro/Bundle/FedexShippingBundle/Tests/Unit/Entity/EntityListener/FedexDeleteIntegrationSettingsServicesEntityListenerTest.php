@@ -128,6 +128,11 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
             $this->createMock(ClassMetadata::class),
             new ArrayCollection($deletedServices)
         );
+        $serviceCollection->setOwner(new \stdClass(), [
+            'type' => 0,
+            'inversedBy' => 'testField',
+            'isOwningSide' => false,
+        ]);
         $serviceCollection->takeSnapshot();
         $serviceCollection->clear();
 
