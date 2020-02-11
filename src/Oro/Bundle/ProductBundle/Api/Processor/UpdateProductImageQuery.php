@@ -51,7 +51,11 @@ class UpdateProductImageQuery implements ProcessorInterface
         /** @var Parameter[] $parameters */
         $parameters = $subquery->getParameters();
         foreach ($parameters as $parameter) {
-            $query->setParameter($parameter->getName(), $parameter->getValue(), $parameter->getType());
+            $query->setParameter(
+                $parameter->getName(),
+                $parameter->getValue(),
+                $parameter->typeWasSpecified() ? $parameter->getType() : null
+            );
         }
     }
 }

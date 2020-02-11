@@ -181,6 +181,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $view = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
+        $view->children['shoppingList'] = $this->createMock(FormView::class);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject| $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');

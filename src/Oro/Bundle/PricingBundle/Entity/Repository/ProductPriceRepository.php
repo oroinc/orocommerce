@@ -190,7 +190,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $qb = $this->createQueryBuilder('price');
 
         // ensure all skus are strings to avoid postgres's "No operator matches the given name and argument type(s)."
-        array_walk($productSkus, function (& $sku) {
+        array_walk($productSkus, function (&$sku) {
             $sku = (string)$sku;
         });
 
