@@ -65,12 +65,20 @@ Feature: Landing Page content purify
     When I save and close form
     Then I should see only "The entered content contains invalid twig constructions." error message
 
+  Scenario: Create a new Landing Page with link using draggable attribute
+    When I go to Marketing / Landing Pages
+    And click "Create Landing Page"
+    And I fill "CMS Page Form" with:
+      | Titles  | Draggable attr                            |
+      | Content | <a draggable=\"true\" href=\"#\">Link</a> |
+    And I save and close form
+    Then I should see "Page has been saved" flash message
+
   Scenario: Create a new Landing Page with link using target attribute
     Given I go to Marketing / Landing Pages
     And click "Create Landing Page"
     And I fill "CMS Page Form" with:
       | Titles  | Page with link              |
       | Content | <a target=\"_blank\">Link</a> |
-    And I wait for action
     When I save and close form
     Then I should see "Page has been saved" flash message
