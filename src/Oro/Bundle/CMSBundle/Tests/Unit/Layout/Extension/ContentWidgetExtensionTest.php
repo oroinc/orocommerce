@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\Extension;
 
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Layout\Extension\ContentWidgetExtension;
 use Oro\Component\Layout\Extension\Theme\Model\DependencyInitializer;
 use Oro\Component\Layout\Extension\Theme\PathProvider\ChainPathProvider;
@@ -221,8 +222,14 @@ class ContentWidgetExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private function getLayoutItem(string $id, ?string $theme = null): LayoutItemInterface
     {
+        $contentWidget = null;
+        if ($theme) {
+            $contentWidget = new ContentWidget();
+            $contentWidget->setWidgetType($theme);
+        }
+
         $context = new LayoutContext();
-        $context->set('content_widget', $theme);
+        $context->set('content_widget', $contentWidget);
 
         $layoutItem = new LayoutItem(new RawLayoutBuilder(), $context);
         $layoutItem->initialize($id);

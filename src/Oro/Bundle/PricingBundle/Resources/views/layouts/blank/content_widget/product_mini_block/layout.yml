@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@appendOption':
-            id: content_widget_container
+            id: content_widget_root
             optionName: vars.blockContext
             optionValue:
                 productPrices: '=data["product"] ? data["frontend_product_prices"].getByProduct(data["product"]) : []'

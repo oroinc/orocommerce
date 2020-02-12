@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_product_list
-            root: content_widget_container
+            root: content_widget_root
     actions:
         - '@setBlockTheme':
             themes:
@@ -30,3 +30,11 @@ layout:
             optionValue:
                 # additional user check to correctly render the widget on the backend
                 visible: '=data["show_add_button"] and (is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User") === false)'
+        - '@setOption':
+            id: product_line_item_form_fields
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
+        - '@setOption':
+            id: product_line_item_form_end
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'

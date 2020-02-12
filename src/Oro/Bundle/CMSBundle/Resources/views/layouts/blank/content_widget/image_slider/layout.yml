@@ -6,7 +6,7 @@ layout:
 
         - '@add':
             id: content_widget_image_slider
-            parentId: content_widget_container
+            parentId: content_widget_root
             blockType: block
             options:
                 vars:
