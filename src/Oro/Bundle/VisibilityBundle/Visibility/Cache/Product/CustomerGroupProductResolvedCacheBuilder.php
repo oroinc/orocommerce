@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
@@ -14,6 +13,9 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGro
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
+/**
+ * Cache builder based on customer group
+ */
 class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {

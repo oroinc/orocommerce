@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
@@ -15,8 +18,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'inventory_status.id' => '',
         'names.default.fallback' => '',
         'names.default.value' => '',
-        'names.English.fallback' => '',
-        'names.English.value' => '',
         'names.English (United States).fallback' => '',
         'names.English (United States).value' => '',
         'names.English (Canada).fallback' => '',
@@ -25,8 +26,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'names.Spanish.value' => '',
         'descriptions.default.fallback' => '',
         'descriptions.default.value' => '',
-        'descriptions.English.fallback' => '',
-        'descriptions.English.value' => '',
         'descriptions.English (United States).fallback' => '',
         'descriptions.English (United States).value' => '',
         'descriptions.English (Canada).fallback' => '',
@@ -35,8 +34,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'descriptions.Spanish.value' => '',
         'shortDescriptions.default.fallback' => '',
         'shortDescriptions.default.value' => '',
-        'shortDescriptions.English.fallback' => '',
-        'shortDescriptions.English.value' => '',
         'shortDescriptions.English (United States).fallback' => '',
         'shortDescriptions.English (United States).value' => '',
         'shortDescriptions.English (Canada).fallback' => '',
@@ -50,8 +47,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'primaryUnitPrecision.sell' => '',
         'metaTitles.default.fallback' => '',
         'metaTitles.default.value' => '',
-        'metaTitles.English.fallback' => '',
-        'metaTitles.English.value' => '',
         'metaTitles.English (United States).fallback' => '',
         'metaTitles.English (United States).value' => '',
         'metaTitles.Spanish.fallback' => '',
@@ -60,8 +55,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'metaTitles.English (Canada).value' => '',
         'metaDescriptions.default.fallback' => '',
         'metaDescriptions.default.value' => '',
-        'metaDescriptions.English.fallback' => '',
-        'metaDescriptions.English.value' => '',
         'metaDescriptions.English (United States).fallback' => '',
         'metaDescriptions.English (United States).value' => '',
         'metaDescriptions.Spanish.fallback' => '',
@@ -70,8 +63,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'metaDescriptions.English (Canada).value' => '',
         'metaKeywords.default.fallback' => '',
         'metaKeywords.default.value' => '',
-        'metaKeywords.English.fallback' => '',
-        'metaKeywords.English.value' => '',
         'metaKeywords.English (United States).fallback' => '',
         'metaKeywords.English (United States).value' => '',
         'metaKeywords.Spanish.fallback' => '',
@@ -80,8 +71,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'metaKeywords.English (Canada).value' => '',
         'slugPrototypes.default.fallback' => '',
         'slugPrototypes.default.value' => '',
-        'slugPrototypes.English.fallback' => '',
-        'slugPrototypes.English.value' => '',
         'slugPrototypes.English (United States).fallback' => '',
         'slugPrototypes.English (United States).value' => '',
         'slugPrototypes.Spanish.fallback' => '',
@@ -127,12 +116,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));
         $this->converter->setRegistry($container->get('doctrine'));
-        $this->converter->setLocalizedFallbackValueClassName(
-            $container->getParameter('oro_locale.entity.localized_fallback_value.class')
-        );
-        $this->converter->setLocalizationClassName(
-            $container->getParameter('oro_locale.entity.localization.class')
-        );
+        $this->converter->setLocalizedFallbackValueClassName(LocalizedFallbackValue::class);
+        $this->converter->setLocalizationClassName(Localization::class);
     }
 
     /**
@@ -143,7 +128,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToImportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
 
         $this->converter->setEntityName($productClass);
 
@@ -159,10 +144,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
             'default localization' => [
                 ['names.default.fallback' => 'system', 'names.default.value' => 'default value'],
                 ['names' => ['default' => ['fallback' => 'system', 'string' => 'default value']]],
-            ],
-            'en localization' => [
-                ['names.English.fallback' => 'system', 'names.English.value' => 'en value'],
-                ['names' => ['English' => ['fallback' => 'system', 'string' => 'en value']]],
             ],
             'custom localizations' => [
                 [
@@ -189,7 +170,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $productClass = Product::class;
 
         $this->converter->setEntityName($productClass);
 
@@ -214,16 +195,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     ]
                 ),
             ],
-            'en localization' => [
-                ['names' => ['English' => ['fallback' => 'system', 'string' => 'en value']]],
-                array_merge(
-                    self::DEFAULT_EXPECTED_LOCALIZATION,
-                    [
-                        'names.English.fallback' => 'system',
-                        'names.English.value' => 'en value'
-                    ]
-                ),
-            ],
+
             'custom localization' => [
                 [
                     'names' => [

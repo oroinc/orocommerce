@@ -33,7 +33,6 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidation
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -268,7 +267,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
+                    new StripTagsExtensionStub($this)
                 ]]
             ),
             $this->getValidatorExtension(true)

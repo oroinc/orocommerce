@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -32,9 +32,10 @@ class FrontendQuoteDemandPermissionVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $attribute === BasicPermissionMap::PERMISSION_VIEW &&
-            $subject instanceof QuoteDemand &&
-            $this->frontendHelper->isFrontendRequest();
+        return
+            BasicPermission::VIEW === $attribute
+            && $subject instanceof QuoteDemand
+            && $this->frontendHelper->isFrontendRequest();
     }
 
     /**

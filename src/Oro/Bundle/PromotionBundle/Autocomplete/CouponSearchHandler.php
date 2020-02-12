@@ -5,6 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Autocomplete;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\PromotionBundle\Model\CouponApplicabilityQueryBuilderModifier;
 
+/**
+ * The autocomplete handler to search coupons.
+ */
 class CouponSearchHandler extends SearchHandler
 {
     /**
@@ -37,7 +40,7 @@ class CouponSearchHandler extends SearchHandler
 
         $this->modifier->modify($queryBuilder);
 
-        $query = $this->aclHelper->apply($queryBuilder, 'VIEW');
+        $query = $this->aclHelper->apply($queryBuilder);
 
         return $query->getResult();
     }

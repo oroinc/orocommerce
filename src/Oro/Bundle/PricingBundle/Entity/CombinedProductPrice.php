@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Entity to store prices combined from price list chain by merge strategy.
+ *
  * @ORM\Table(
  *      name="oro_price_product_combined",
  *      uniqueConstraints={

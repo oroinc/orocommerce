@@ -3,12 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
@@ -41,14 +41,9 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $strategyRegister;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository
-     */
-    protected $repository;
-
     protected function setUp()
     {
-        $this->registry = $this->getRegistryMockWithRepository();
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->strategyRegister = $this->createMock(StrategyRegister::class);
 
@@ -64,22 +59,73 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         unset($this->provider, $this->registry, $this->resolver);
     }
 
-    /**
-     * @dataProvider getCombinedPriceListDataProvider
-     * @param array $data
-     * @param array $expected
-     */
-    public function testGetCombinedPriceList(array $data, array $expected)
+    public function testGetCombinedPriceListCreateNew()
     {
+        $priceListsRelationsData = [
+            [
+                'price_list_id' => 1,
+                'currencies' => ['USD'],
+                'mergeAllowed' => true,
+            ],
+            [
+                'price_list_id' => 1,
+                'currencies' => ['USD'],
+                'mergeAllowed' => false,
+            ],
+            [
+                'price_list_id' => 2,
+                'currencies' => ['USD', 'EUR'],
+                'mergeAllowed' => false,
+            ],
+            [
+                'price_list_id' => 2,
+                'currencies' => ['USD', 'EUR'],
+                'mergeAllowed' => true,
+            ],
+        ];
+
+        $expectedIdentifier = md5('1t_2f_2t');
+
+        $priceListsRelations = $this->getPriceListsRelationMocks($priceListsRelationsData);
+
         $this->strategyRegister->expects($this->atLeastOnce())
             ->method('getCurrentStrategy')
             ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
 
-        $this->repository->expects($this->any())
-            ->method('findOneBy')
-            ->willReturn($data['priceListFromRepository']);
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
 
-        $this->eventDispatcher->expects($this->exactly($expected['combineCallsCount']))
+        $persistedEntities = [];
+
+        $manager->expects($this->exactly(4))
+            ->method('persist')
+            ->willReturnCallback(
+                static function ($entity) use (&$persistedEntities) {
+                    $persistedEntities[] = $entity;
+                }
+            );
+        $flushedEntities = [];
+        $manager->expects($this->once())
+            ->method('flush')
+            ->with($this->isType('array'))
+            ->willReturnCallback(
+                static function ($entities) use (&$flushedEntities) {
+                    $flushedEntities = $entities;
+                }
+            );
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $repository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
                 function (string $eventName, CombinedPriceListCreateEvent $event) {
@@ -88,76 +134,71 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
         $this->assertInstanceOf(CombinedPriceList::class, $combinedPriceList);
-        $this->assertEquals($expected['name'], $combinedPriceList->getName());
-        $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
+        $this->assertEquals($expectedIdentifier, $combinedPriceList->getName());
+        $this->assertEquals(['EUR', 'USD'], $combinedPriceList->getCurrencies());
+
+        $this->assertCount(4, $persistedEntities);
+        $this->assertEquals($persistedEntities, $flushedEntities);
+        $this->assertEquals($combinedPriceList, $persistedEntities[0]);
+        $this->assertInstanceOf(CombinedPriceListToPriceList::class, $persistedEntities[1]);
+        $this->assertInstanceOf(CombinedPriceListToPriceList::class, $persistedEntities[2]);
+        $this->assertInstanceOf(CombinedPriceListToPriceList::class, $persistedEntities[3]);
 
         $this->provider->getCombinedPriceList($priceListsRelations);
     }
 
-    /**
-     * @return array
-     */
-    public function getCombinedPriceListDataProvider()
+    public function testGetCombinedPriceListExisting()
     {
-        $priceList = $this->createMock(CombinedPriceList::class);
-        $priceList->expects($this->any())->method('getName')->willReturn('');
-        $priceList->expects($this->any())->method('getCurrencies')->willReturn([]);
-
-        return [
-            'duplicate price lists force call' => [
-                'data' => [
-                    'priceListsRelationsData' => [
-                        [
-                            'price_list_id' => 1,
-                            'currencies' => ['USD'],
-                            'mergeAllowed' => true,
-                        ],
-                        [
-                            'price_list_id' => 1,
-                            'currencies' => ['USD'],
-                            'mergeAllowed' => false,
-                        ],
-                        [
-                            'price_list_id' => 2,
-                            'currencies' => ['USD', 'EUR'],
-                            'mergeAllowed' => false,
-                        ],
-                        [
-                            'price_list_id' => 2,
-                            'currencies' => ['USD', 'EUR'],
-                            'mergeAllowed' => true,
-                        ],
-                    ],
-                    'priceListFromRepository' => null,
-                ],
-                'expected' => [
-                    'name' => md5('1t_2f_2t'),
-                    'currencies' => ['EUR', 'USD'],
-                    'combineCallsCount' => 2,
-                ]
-            ],
-            'empty price lists normal call' => [
-                'data' => [
-                    'priceListsRelationsData' => [],
-                    'priceListFromRepository' => $priceList,
-                ],
-                'expected' => [
-                    'name' => '',
-                    'currencies' => [],
-                    'combineCallsCount' => 0,
-                ]
-            ],
+        $priceListsRelationsData = [
+            [
+                'price_list_id' => 1,
+                'currencies' => ['USD'],
+                'mergeAllowed' => true,
+            ]
         ];
+        $cpl = new CombinedPriceList();
+
+        $priceListsRelations = $this->getPriceListsRelationMocks($priceListsRelationsData);
+
+        $this->strategyRegister->expects($this->atLeastOnce())
+            ->method('getCurrentStrategy')
+            ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
+
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $manager->expects($this->never())
+            ->method('persist');
+        $manager->expects($this->never())
+            ->method('flush');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $repository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($cpl);
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
+        $this->assertEquals($cpl, $combinedPriceList);
+        $this->provider->getCombinedPriceList($priceListsRelations);
     }
 
     public function testGetCombinedPriceListWithEventOptions()
     {
         $options = ['test' => true];
 
-        $this->repository->expects($this->any())
+        $repository = $this->getRepositoryMock();
+        $repository->expects($this->any())
             ->method('findOneBy')
             ->willReturn(null);
 
@@ -192,7 +233,8 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentStrategy')
             ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
 
-        $this->repository->expects($this->any())
+        $repository = $this->getRepositoryMock();
+        $repository->expects($this->any())
             ->method('findOneBy')
             ->with(['name' => $identifier])
             ->willReturn($priceList);
@@ -239,7 +281,8 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentStrategy')
             ->willReturn($strategy);
 
-        $this->repository->expects($this->any())
+        $repository = $this->getRepositoryMock();
+        $repository->expects($this->any())
             ->method('findOneBy')
             ->with(['name' => $identifier])
             ->willReturn($priceList);
@@ -321,22 +364,20 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|\Doctrine\Common\Persistence\ManagerRegistry
      */
-    protected function getRegistryMockWithRepository()
+    protected function getRepositoryMock()
     {
-        $this->repository = $this->createMock(ObjectRepository::class);
-        $manager = $this->createMock(ObjectManager::class);
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $manager = $this->createMock(EntityManagerInterface::class);
 
         $manager->expects($this->any())
             ->method('getRepository')
-            ->willReturn($this->repository);
+            ->willReturn($repository);
 
-        $registry = $this->createMock(ManagerRegistry::class);
-
-        $registry->expects($this->any())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($manager);
 
-        return $registry;
+        return $repository;
     }
 
     /**

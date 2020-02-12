@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepositoryTest
@@ -23,7 +26,7 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
         }
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $iterator = $this->doctrine->getRepository('OroPricingBundle:PriceListCustomerFallback')
+        $iterator = $this->doctrine->getRepository(PriceListCustomerFallback::class)
             ->getCustomerIdentityByGroup($customerGroups, $website->getId());
         $this->checkExpectedCustomers($expectedCustomers, $iterator);
     }
@@ -67,6 +70,36 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
                 'website' => 'Canada',
                 'expectedCustomers' => [],
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider fallbackDataProvider
+     * @param string $websiteReference
+     * @param string $customerReference
+     * @param bool $expected
+     */
+    public function testHasFallbackOnNextLevel($websiteReference, $customerReference, $expected)
+    {
+        /** @var Website $website */
+        $website = $this->getReference($websiteReference);
+        /** @var Customer $customer */
+        $customer = $this->getReference($customerReference);
+
+        /** @var PriceListCustomerFallbackRepository $repo */
+        $repo = $this->doctrine->getRepository(PriceListCustomerFallback::class);
+        $this->assertEquals($expected, $repo->hasFallbackOnNextLevel($website, $customer));
+    }
+
+    /**
+     * @return array
+     */
+    public function fallbackDataProvider(): array
+    {
+        return [
+            'defined fallback to previous level' => ['US', 'customer.level_1_1', true],
+            'default fallback to previous level' => ['US', 'customer.level_1.2.1', true],
+            'default fallback to current level' => ['US', 'customer.level_1.2', false]
         ];
     }
 }

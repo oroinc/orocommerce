@@ -41,7 +41,7 @@ When creating a Product entity there are certain relations or associations with 
 which require by default that you specify their type and id so that they are loaded.
 
 But if you need to create a new entity from a relation, you have the option to do so, but you must
-use the **"included"** section. See documentation about this section [here](https://oroinc.com/b2b-ecommerce/doc/current/dev-guide/web-api#create-and-update-related-resources-together-with-a-primary-api-resource)
+use the **"included"** section. See documentation about this section [here](https://doc.oroinc.com/api/using/#create-update-related-resources)
 
 For example, if we look at the manageInventory field, in the **"data"** section
 

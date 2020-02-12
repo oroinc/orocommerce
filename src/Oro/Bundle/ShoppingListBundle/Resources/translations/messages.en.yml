@@ -2,6 +2,7 @@ oro:
     shoppinglist:
         entity_label: Shopping List
         entity_plural_label: Shopping Lists
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Shows content of shopping lists of the customer users.
         id.label: ID
         label:
@@ -86,6 +87,7 @@ oro:
         lineitem:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             notes:
                 label: Notes
@@ -145,7 +147,7 @@ oro:
                 default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
                 shopping_list_limit.tooltip: 'Set the number of shopping lists allowed per customer. The default value is zero, which means that no limit of shopping lists is applied.'
                 availability_for_guests:
-                    label: 'Enable guest shopping list'
+                    label: 'Enable Guest Shopping List'
                     tooltip: 'Allows guests to create a shopping list'
                 mass_adding_on_product_listing_enabled:
                     label: 'Enable Mass Adding on Product Listing'
@@ -212,11 +214,17 @@ oro:
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
                 must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
+            open_modal_btn:
+                aria_label: 'Manage current product in the Shopping List'
             btn:
+                apply_aria_label: 'Apply changes in the Shopping List'
+                decline_aria_label: 'Decline changes in the Shopping List'
+                edit_aria_label: 'Change item quantity in the Shopping List'
                 update: 'Update'
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'
+                delete_item_aria_label: 'Delete this Shopping list item'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:

@@ -13,12 +13,10 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -447,7 +445,6 @@ class RequestTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectionType::class    => new ProductUnitSelectionTypeStub(),
                     PriceType::class                   => $priceType,
                     ProductSelectType::class           => $productSelectType,
                     CustomerSelectType::class          => $customerSelectType,
@@ -460,7 +457,7 @@ class RequestTypeTest extends AbstractTest
                     CustomerUserMultiSelectType::class => $customerMultiSelectType,
                     QuantityType::class                => $this->getQuantityType(),
                 ],
-                [FormType::class => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
+                [FormType::class => [new StripTagsExtensionStub($this)]]
             ),
             $this->getValidatorExtension(true),
         ];

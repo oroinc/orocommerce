@@ -7,8 +7,8 @@
                         <button type="button"
                                 class="btn btn--size-s btn--link reset-filter-button"
                         >
-                            <span class="fa-close"></span>
-                            <%= _.__('oro.filter.reset.label') %>
+                            <span class="fa-close" aria-hidden="true"></span>
+                            <%- _.__('oro.filter.reset.label') %>
                         </button>
                     </div>
                     <div class="filter-items"></div>
@@ -32,9 +32,9 @@
             >
                 <div class="filters-box-collapse__trigger" data-collapse-trigger>
                     <%- _.__('oro.product.product_filters.collapse.label')  %>
-                    <div class="filters-box-collapse__icon">
-                        <i class="fa-plus"></i>
-                        <i class="fa-minus"></i>
+                    <div class="filters-box-collapse__icon" aria-hidden="true">
+                        <span class="fa-plus"></span>
+                        <span class="fa-minus"></span>
                     </div>
                 </div>
                 <div class="filter-container">
@@ -59,8 +59,8 @@
                         <button type="button"
                                 class="btn btn--size-s btn--link reset-filter-button"
                         >
-                            <span class="fa-close"></span>
-                            <%= _.__('oro.filter.reset.label') %>
+                            <span class="fa-close" aria-hidden="true"></span>
+                            <%- _.__('oro.filter.reset.label') %>
                         </button>
                     </div>
                 </div>
@@ -84,10 +84,10 @@
                 <div class="filter-items"></div>
                 <div class="filter-items-hint">
                     <button type="button"
-                            class="btn btn--link reset-filter-button"
+                            class="btn btn--link btn--size-s reset-filter-button"
                     >
-                        <span class="fa-close"></span>
-                        <%= _.__('oro.filter.reset.label') %>
+                        <span class="fa-close" aria-hidden="true"></span>
+                        <%- _.__('oro.filter.reset.label') %>
                     </button>
                 </div>
             </div>

@@ -92,12 +92,12 @@ Feature: Guest Shopping Lists
     Given I proceed as the Admin
     And I go to System/Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    Then the "Enable Guest Shopping List" checkbox should not be checked
+    When uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And I save setting
     Then I should see "Configuration saved" flash message
-    And the "Enable guest shopping list" checkbox should be checked
+    And the "Enable Guest Shopping List" checkbox should be checked
 
   Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
     Given I proceed as the User
@@ -179,8 +179,8 @@ Feature: Guest Shopping Lists
   Scenario: Disable guest shopping list
     Given I go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I uncheck "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I uncheck "Enable Guest Shopping List"
     When I save setting
     And I should see "Configuration saved" flash message
 

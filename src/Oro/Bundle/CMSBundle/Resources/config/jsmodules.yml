@@ -1,6 +1,9 @@
 aliases:
     grapesjs$: npmassets/grapesjs/dist/grapes
     grapesjs-preset-webpage$: npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: npmassets/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
+app-modules:
+  - orocms/js/app/modules/grapesjs-module
 dynamic-imports:
     orocms:
         - orocms/js/app/components/content-variant-collection-component
@@ -8,8 +11,3 @@ dynamic-imports:
         - orocms/js/app/views/content-widget-view
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
-        - orocms/js/app/grapesjs/helpers/digital-asset-helper
-        - orocms/js/app/grapesjs/components/digital-assets
-        - orocms/js/app/grapesjs/components/digital-asset-image
-        - orocms/js/app/grapesjs/components/digital-asset-file
-        - orocms/js/app/grapesjs/components/digital-asset-property-file-type

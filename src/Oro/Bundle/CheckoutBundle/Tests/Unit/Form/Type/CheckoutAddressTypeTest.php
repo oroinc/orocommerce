@@ -18,7 +18,6 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -146,7 +145,6 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             ->willReturn(true);
         $orderAddressType = new OrderAddressType($orderAddressSecurityProvider);
         $addressTypeStub = new AddressTypeStub();
-        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject $addressManager */
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
@@ -177,7 +175,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
                 ),
                 TranslatableEntityType::class => $addressType,
             ], [
-                FormType::class => [new StripTagsExtensionStub($htmlTagHelper)]
+                FormType::class => [new StripTagsExtensionStub($this)]
             ])
         ];
     }

@@ -1,13 +1,9 @@
-parameters:
-    oro_consent.entity.consent.class: Oro\Bundle\ConsentBundle\Entity\Consent
-    oro_consent.entity.consent_acceptance.class: Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance
-
 services:
     oro_consent.form.autocomplete.consent.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_consent.entity.consent.class%'
+            - 'Oro\Bundle\ConsentBundle\Entity\Consent'
             - ["defaultName"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_consent_list, acl_resource: oro_consent_view }
@@ -65,7 +61,7 @@ services:
             - '@doctrine'
             - '@oro_consent.config.consent_config_manager'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_consent.entity.consent.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ConsentBundle\Entity\Consent', event: preRemove }
 
     oro_consent.form.extension.frontend_customer_user_registration:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserRegistrationExtension'
@@ -209,7 +205,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
-            - [setClassName, ['%oro_consent.entity.consent.class%']]
+            - [setClassName, ['Oro\Bundle\ConsentBundle\Entity\Consent']]
         tags:
             - { name: security.voter, priority: 700 }
 
@@ -218,7 +214,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
-            - [setClassName, ['%oro_cms.entity.page.class%']]
+            - [setClassName, ['Oro\Bundle\CMSBundle\Entity\Page']]
         tags:
             - { name: security.voter, priority: 700 }
 

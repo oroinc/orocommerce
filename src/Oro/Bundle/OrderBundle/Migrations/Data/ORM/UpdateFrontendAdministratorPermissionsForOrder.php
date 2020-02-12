@@ -2,32 +2,43 @@
 
 namespace Oro\Bundle\OrderBundle\Migrations\Data\ORM;
 
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 
-class UpdateFrontendAdministratorPermissionsForOrder extends AbstractUpdateCustomerUserRolePermissions
+/**
+ * Updates permissions for Order entity for ROLE_FRONTEND_ADMINISTRATOR storefront role.
+ */
+class UpdateFrontendAdministratorPermissionsForOrder extends AbstractUpdatePermissions implements
+    DependentFixtureInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected function getRoleName()
+    public function getDependencies()
     {
-        return 'ROLE_FRONTEND_ADMINISTRATOR';
+        return [LoadCustomerUserRoles::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getEntityOid()
+    public function load(ObjectManager $manager)
     {
-        return 'entity:' . Order::class;
-    }
+        $aclManager = $this->getAclManager();
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPermissions()
-    {
-        return ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP', 'ASSIGN_DEEP'];
+        $this->setEntityPermissions(
+            $aclManager,
+            $this->getRole($manager, 'ROLE_FRONTEND_ADMINISTRATOR', CustomerUserRole::class),
+            Order::class,
+            ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP', 'ASSIGN_DEEP']
+        );
+        $aclManager->flush();
     }
 }

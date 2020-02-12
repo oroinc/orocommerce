@@ -99,7 +99,11 @@ class ContentVariantSegmentProvider
 
         /** @var Query\Parameter $parameter */
         foreach ($contentVariantQueryBuilder->getParameters() as $parameter) {
-            $queryBuilder->setParameter($parameter->getName(), $parameter->getValue(), $parameter->getType());
+            $queryBuilder->setParameter(
+                $parameter->getName(),
+                $parameter->getValue(),
+                $parameter->typeWasSpecified() ? $parameter->getType() : null
+            );
         }
 
         return $queryBuilder;

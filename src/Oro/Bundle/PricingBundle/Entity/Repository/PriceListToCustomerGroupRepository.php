@@ -12,6 +12,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -54,46 +55,67 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
 
     /**
      * @param Website $website
-     * @param int|null $fallback
      * @return BufferedQueryResultIteratorInterface|CustomerGroup[]
      */
-    public function getCustomerGroupIteratorByDefaultFallback(Website $website, $fallback = null)
+    public function getCustomerGroupIteratorWithDefaultFallback(Website $website)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('distinct customerGroup')
-            ->from('OroCustomerBundle:CustomerGroup', 'customerGroup');
-
-        $qb->leftJoin(
-            'OroPricingBundle:PriceListToCustomerGroup',
-            'plToCustomerGroup',
-            Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('plToCustomerGroup.customerGroup', 'customerGroup'),
-                $qb->expr()->eq('plToCustomerGroup.website', ':website')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('distinct customerGroup')
+            ->from(CustomerGroup::class, 'customerGroup')
+            ->leftJoin(
+                PriceListToCustomerGroup::class,
+                'plToCustomerGroup',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('plToCustomerGroup.customerGroup', 'customerGroup'),
+                    $qb->expr()->eq('plToCustomerGroup.website', ':website')
+                )
             )
-        );
-
-        $qb->leftJoin(
-            'OroPricingBundle:PriceListCustomerGroupFallback',
-            'priceListFallBack',
-            Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('priceListFallBack.customerGroup', 'customerGroup'),
-                $qb->expr()->eq('priceListFallBack.website', ':website')
+            ->leftJoin(
+                PriceListCustomerGroupFallback::class,
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.customerGroup', 'customerGroup'),
+                    $qb->expr()->eq('priceListFallBack.website', 'plToCustomerGroup.website')
+                )
             )
-        )
-        ->setParameter('website', $website)
-        ->orderBy('customerGroup.id', Criteria::ASC);
-
-        if ($fallback !== null) {
-            $qb->where(
+            ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
                     $qb->expr()->isNull('priceListFallBack.fallback')
                 )
             )
-                ->setParameter('fallbackToWebsite', $fallback);
-        }
+            ->setParameter('fallbackToWebsite', PriceListCustomerGroupFallback::WEBSITE)
+            ->setParameter('website', $website)
+            ->orderBy('customerGroup.id', Criteria::ASC);
+
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param Website $website
+     * @return BufferedQueryResultIteratorInterface|Website[]
+     */
+    public function getCustomerGroupIteratorWithSelfFallback(Website $website)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('distinct customerGroup')
+            ->from(CustomerGroup::class, 'customerGroup')
+            ->innerJoin(
+                PriceListCustomerGroupFallback::class,
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.customerGroup', 'customerGroup'),
+                    $qb->expr()->eq('priceListFallBack.website', ':website')
+                )
+            )
+            ->where(
+                $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
+            )
+            ->setParameter('websiteFallback', PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY)
+            ->setParameter('website', $website);
 
         return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
@@ -134,8 +156,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->groupBy('PriceListToCustomerGroup.customerGroup', 'PriceListToCustomerGroup.website')
             ->setParameter('priceLists', $priceLists)
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
-            ->orderBy('PriceListToCustomerGroup.customerGroup, PriceListToCustomerGroup.website')
-        ;
+            ->orderBy('PriceListToCustomerGroup.customerGroup, PriceListToCustomerGroup.website');
 
         return new BufferedQueryResultIterator($qb);
     }
@@ -200,5 +221,24 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
 
         $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
         $queryBuilder->setParameter($parameterName, $priceList);
+    }
+
+    /**
+     * @param Website $website
+     * @param CustomerGroup $customerGroup
+     * @return bool
+     */
+    public function hasAssignedPriceLists(Website $website, CustomerGroup $customerGroup): bool
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->select('p.id')
+            ->where($qb->expr()->eq('p.website', ':website'))
+            ->andWhere($qb->expr()->eq('p.customerGroup', ':customerGroup'))
+            ->setParameter('website', $website)
+            ->setParameter('customerGroup', $customerGroup)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult() !== null;
     }
 }

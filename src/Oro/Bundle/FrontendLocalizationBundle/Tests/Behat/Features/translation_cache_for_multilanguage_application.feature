@@ -12,8 +12,8 @@ Feature: Translation cache for multilanguage application
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     # we must enable new localization without translation cache clear
     When fill form with:
-      | Enabled Localizations | [English, Zulu] |
-      | Default Localization  | English         |
+      | Enabled Localizations | [English (United States), Zulu] |
+      | Default Localization  | English (United States)         |
     And I submit form
     Then I should see "Configuration saved" flash message
 

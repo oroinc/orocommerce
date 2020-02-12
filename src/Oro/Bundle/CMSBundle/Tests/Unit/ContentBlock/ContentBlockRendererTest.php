@@ -97,6 +97,24 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', $this->renderer->render('sample-block'));
     }
 
+    public function testRenderWhenNoContentBlockView(): void
+    {
+        $this->contentBlockDataProvider->expects($this->once())
+            ->method('getContentBlockView')
+            ->with('sample-block')
+            ->willReturn(null);
+
+        $template = $this->createMock(Template::class);
+        $template->expects($this->never())
+            ->method('render');
+
+        $this->twig->expects($this->never())
+            ->method('loadTemplate');
+
+        $this->assertLoggerErrorMethodCalled();
+        $this->assertEquals('', $this->renderer->render('sample-block'));
+    }
+
     public function testRender(): void
     {
         $blockView = new ContentBlockView('block', new ArrayCollection(), true, 'content', 'style');

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 /**
@@ -45,11 +46,6 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
      * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListProvider;
-
-    /**
-     * @var CombinedPriceListGarbageCollector|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $garbageCollector;
 
     /**
      * @var string
@@ -111,6 +107,13 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
      */
     abstract protected function getPriceListToEntityRepositoryClass();
 
+    /**
+     * @return string
+     */
+    protected function getPriceListFallbackRepositoryClass()
+    {
+        return EntityRepository::class;
+    }
 
     /**
      * @return array
@@ -128,82 +131,51 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
      */
     protected function setUp()
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $this->priceListCollectionProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->combinedPriceListProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->garbageCollector = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->combinedPriceListRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fallbackRepository = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $fallbackEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->priceListCollectionProvider = $this->createMock(PriceListCollectionProvider::class);
+        $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
+        $this->combinedPriceListRepository = $this->createMock(CombinedPriceListRepository::class);
+        $this->fallbackRepository = $this->createMock($this->getPriceListFallbackRepositoryClass());
+        $fallbackEm = $this->createMock(ObjectManager::class);
         $fallbackEm->expects($this->any())
             ->method('getRepository')
             ->with($this->fallbackClass)
-            ->will($this->returnValue($this->fallbackRepository));
+            ->willReturn($this->fallbackRepository);
 
         $this->combinedPriceListEm = $this->createMock(EntityManager::class);
         $this->combinedPriceListEm->expects($this->any())
             ->method('getRepository')
             ->with($this->combinedPriceListClass)
-            ->will($this->returnValue($this->combinedPriceListRepository));
+            ->willReturn($this->combinedPriceListRepository);
 
-        $this->priceListToEntityRepository = $this->getMockBuilder($this->getPriceListToEntityRepositoryClass())
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $priceListToEntityEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $this->priceListToEntityRepository = $this->createMock($this->getPriceListToEntityRepositoryClass());
+        $priceListToEntityEm = $this->createMock(ObjectManager::class);
         $priceListToEntityEm->expects($this->any())
             ->method('getRepository')
             ->with($this->priceListToEntityClass)
-            ->will($this->returnValue($this->priceListToEntityRepository));
+            ->willReturn($this->priceListToEntityRepository);
 
-        $this->combinedPriceListToEntityRepository = $this->getMockBuilder($this->getPriceListToEntityRepositoryClass())
-            ->disableOriginalConstructor()
-            ->getMock();
-        $combinedPriceListToEntityEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $this->combinedPriceListToEntityRepository = $this->createMock($this->getPriceListToEntityRepositoryClass());
+        $combinedPriceListToEntityEm = $this->createMock(ObjectManager::class);
         $combinedPriceListToEntityEm->expects($this->any())
             ->method('getRepository')
             ->with($this->combinedPriceListToEntityClass)
-            ->will($this->returnValue($this->combinedPriceListToEntityRepository));
+            ->willReturn($this->combinedPriceListToEntityRepository);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [$this->combinedPriceListClass, $this->combinedPriceListEm],
-                        [$this->priceListToEntityClass, $priceListToEntityEm],
-                        [$this->combinedPriceListToEntityClass, $combinedPriceListToEntityEm],
-                        [$this->fallbackClass, $fallbackEm],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    [$this->combinedPriceListClass, $this->combinedPriceListEm],
+                    [$this->priceListToEntityClass, $priceListToEntityEm],
+                    [$this->combinedPriceListToEntityClass, $combinedPriceListToEntityEm],
+                    [$this->fallbackClass, $fallbackEm],
+                ]
             );
 
-        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
-        $this->cplScheduleResolver = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->combiningStrategy = self::createMock(PriceCombiningStrategyInterface::class);
-        $this->strategyRegister = self::createMock(StrategyRegister::class);
+        $this->cplScheduleResolver = $this->createMock(CombinedPriceListScheduleResolver::class);
+        $this->combiningStrategy = $this->createMock(PriceCombiningStrategyInterface::class);
+        $this->strategyRegister = $this->createMock(StrategyRegister::class);
         $this->strategyRegister->method('getCurrentStrategy')->willReturn($this->combiningStrategy);
         $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
             ->disableOriginalConstructor()
@@ -215,9 +187,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
      */
     protected function getPriceListSequenceMember()
     {
-        return $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(PriceListSequenceMember::class);
     }
 
     protected function configureTransactionWrappingForOneCall()

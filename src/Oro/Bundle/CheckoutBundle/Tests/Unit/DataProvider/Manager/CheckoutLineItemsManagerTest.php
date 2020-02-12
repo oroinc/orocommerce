@@ -31,11 +31,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     protected $authorizationChecker;
 
     /**
-     * @var CheckoutLineItemsManager
-     */
-    protected $checkoutLineItemsManager;
-
-    /**
      * @var UserCurrencyManager
      */
     protected $currencyManager;
@@ -63,26 +58,21 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             }));
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+    }
 
-        $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
+    /**
+     * @param CheckoutDataProviderInterface[] $providers
+     *
+     * @return CheckoutLineItemsManager
+     */
+    private function getCheckoutLineItemsManager(array $providers)
+    {
+        return new CheckoutLineItemsManager(
+            $providers,
             $this->checkoutLineItemsConverter,
             $this->currencyManager,
             $this->configManager,
             $this->authorizationChecker
-        );
-    }
-
-    public function testAddProvider()
-    {
-        /** @var CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
-        $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
-
-        $this->checkoutLineItemsManager->addProvider($provider);
-
-        $this->assertAttributeSame(
-            [$provider],
-            'providers',
-            $this->checkoutLineItemsManager
         );
     }
 
@@ -105,16 +95,16 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         $checkout = $this->getCheckout();
         $data = [];
 
+        $providers = [];
         if ($withDataProvider) {
             if ($isEntitySupported && $visible) {
                 $data = [$this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
-            $provider = $this->getProvider($checkout, $data, $isEntitySupported);
-
-            $this->checkoutLineItemsManager->addProvider($provider);
+            $providers[] = $this->getProvider($checkout, $data, $isEntitySupported);
         }
 
-        $result = $this->checkoutLineItemsManager->getData($checkout);
+        $checkoutLineItemsManager = $this->getCheckoutLineItemsManager($providers);
+        $result = $checkoutLineItemsManager->getData($checkout);
         $this->assertEquals($this->checkoutLineItemsConverter->convert($data), $result);
     }
 
@@ -137,10 +127,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 
         $checkout = $this->getCheckout();
 
-        $this->checkoutLineItemsManager->addProvider($this->getProvider($checkout, $providerData));
+        $checkoutLineItemsManager = $this->getCheckoutLineItemsManager(
+            [$this->getProvider($checkout, $providerData)]
+        );
 
         $expectedData = $this->checkoutLineItemsConverter->convert($expectedData);
-        $actualData = $this->checkoutLineItemsManager->getData($checkout, $disablePriceFilter);
+        $actualData = $checkoutLineItemsManager->getData($checkout, $disablePriceFilter);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -334,10 +326,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 
         $checkout = $this->getCheckout();
 
-        $this->checkoutLineItemsManager->addProvider($this->getProvider($checkout, $providerData));
+        $checkoutLineItemsManager = $this->getCheckoutLineItemsManager(
+            [$this->getProvider($checkout, $providerData)]
+        );
 
         $expectedData = $this->checkoutLineItemsConverter->convert($expectedData);
-        $actualData = $this->checkoutLineItemsManager->getLineItemsWithoutQuantity($checkout);
+        $actualData = $checkoutLineItemsManager->getLineItemsWithoutQuantity($checkout);
         $this->assertEquals($expectedData, $actualData);
     }
 

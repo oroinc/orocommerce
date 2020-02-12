@@ -1,0 +1,15 @@
+data:
+    type: productunitprecisions
+    attributes:
+        precision: 0
+        conversionRate: 1
+        sell: true
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.box->code)>'

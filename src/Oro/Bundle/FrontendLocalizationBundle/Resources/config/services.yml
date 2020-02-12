@@ -47,7 +47,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:
-            - [setClassName, ['%oro_locale.entity.localization.class%']]
+            - [setClassName, ['Oro\Bundle\LocaleBundle\Entity\Localization']]
         tags:
             - { name: security.voter }
 

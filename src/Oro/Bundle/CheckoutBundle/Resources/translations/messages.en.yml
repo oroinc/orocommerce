@@ -2,6 +2,8 @@ oro:
     checkout:
         entity_label: Checkout
         entity_plural_label: Checkouts
+        entity_grid_all_view_label: All %entity_plural_label%
+        entity_frontend_grid_all_view_label: All Open Orders
         id.label: Id
         owner.label: Owner
         customer.label: Customer
@@ -50,6 +52,7 @@ oro:
         checkoutlineitem:
             entity_label: 'Checkout Line Item'
             entity_plural_label: 'Checkout Line Items'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'ID'
             product.label: 'Product'
             product_sku.label: 'Product SKU'
@@ -71,6 +74,7 @@ oro:
         checkoutsubtotal:
             entity_label: 'Checkout Subtotal'
             entity_plural_label: 'Checkout Subtotals'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'ID'
             checkout.label: 'Checkout'
             subtotal.label: 'Subtotal'
@@ -79,6 +83,7 @@ oro:
         basecheckout:
             entity_label: Base Checkout
             entity_plural_label: Base Checkouts
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             owner.label: Owner
             customer.label: Customer
@@ -105,6 +110,7 @@ oro:
         checkoutsource:
             entity_label: Checkout Source
             entity_plural_label: Checkout Sources
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             deleted.label: Deleted
 
@@ -246,8 +252,8 @@ oro:
 
         system_configuration:
             fields:
-                frontend_show_open_orders.title: 'Show open orders'
-                frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
+                frontend_show_open_orders.title: 'Show Open Orders'
+                frontend_open_orders_separate_page.title: 'Show Open Orders On a Separate Page'
                 guest_checkout:
                     title: 'Enable Guest Checkout'
                     tooltip: 'Enable Guest Checkout'

@@ -2,39 +2,16 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\Role;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 
-class LoadShoppingListPermissionsBackendRolesData extends AbstractFixture implements ContainerAwareInterface
+/**
+ * Updates DUPLICATE_SHOPPING_LIST permission for ShoppingList entity for all back-office roles.
+ */
+class LoadShoppingListPermissionsBackendRolesData extends AbstractUpdatePermissions
 {
-    /**
-     * @internal
-     */
-    const DUPLICATE_SHOPPING_LIST_PERMISSION_NONE = 'DUPLICATE_SHOPPING_LIST_NONE';
-
-    /**
-     * @internal
-     */
-    const DUPLICATE_SHOPPING_LIST_PERMISSION_SYSTEM = 'DUPLICATE_SHOPPING_LIST_SYSTEM';
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -49,85 +26,21 @@ class LoadShoppingListPermissionsBackendRolesData extends AbstractFixture implem
             return;
         }
 
-        $roles = $this->loadRoles();
-        $rolesWithAccess = [
-            'ROLE_ADMINISTRATOR',
-            'ROLE_SALES_ASSISTANT'
-        ];
+        /** @var Role[] $roles */
+        $roles = $manager->getRepository(Role::class)->findAll();
+        $rolesWithAccess = ['ROLE_ADMINISTRATOR', 'ROLE_SALES_ASSISTANT'];
         foreach ($roles as $role) {
-            $permission = self::DUPLICATE_SHOPPING_LIST_PERMISSION_NONE;
+            $permission = 'DUPLICATE_SHOPPING_LIST_NONE';
             if (in_array($role->getRole(), $rolesWithAccess, true)) {
-                $permission = self::DUPLICATE_SHOPPING_LIST_PERMISSION_SYSTEM;
+                $permission = 'DUPLICATE_SHOPPING_LIST_SYSTEM';
             }
-            $sid = $aclManager->getSid($role);
-
-            $this->setPermissions(
+            $this->setEntityPermissions(
                 $aclManager,
-                $sid,
-                $this->getOrderEntityOid(),
-                [
-                    $permission,
-                ]
+                $role,
+                ShoppingList::class,
+                [$permission]
             );
         }
-
         $aclManager->flush();
-    }
-
-    /**
-     * @return Role[]
-     */
-    protected function loadRoles()
-    {
-        return $this->container->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(Role::class)->findAll();
-    }
-
-    /**
-     * @param AclManager                $aclManager
-     * @param SecurityIdentityInterface $sid
-     * @param string                    $oidDescriptor
-     * @param array                     $acls
-     */
-    protected function setPermissions(
-        AclManager $aclManager,
-        SecurityIdentityInterface $sid,
-        $oidDescriptor,
-        array $acls
-    ) {
-        $oid = $aclManager->getOid($oidDescriptor);
-        $extension = $aclManager->getExtensionSelector()->select($oid);
-        $maskBuilders = $extension->getAllMaskBuilders();
-
-        foreach ($maskBuilders as $maskBuilder) {
-            $wasFound = false;
-
-            foreach ($acls as $acl) {
-                if ($maskBuilder->hasMask('MASK_'.$acl)) {
-                    $maskBuilder->add($acl);
-                    $wasFound = true;
-                }
-            }
-
-            if ($wasFound) {
-                $aclManager->setPermission($sid, $oid, $maskBuilder->get());
-            }
-        }
-    }
-
-    /**
-     * @return AclManager
-     */
-    protected function getAclManager()
-    {
-        return $this->container->get('oro_security.acl.manager');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getOrderEntityOid()
-    {
-        return 'entity:Oro\Bundle\ShoppingListBundle\Entity\ShoppingList';
     }
 }

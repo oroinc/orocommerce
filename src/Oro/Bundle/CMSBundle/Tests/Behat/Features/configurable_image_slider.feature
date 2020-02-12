@@ -34,6 +34,8 @@ Feature: Configurable image slider
       | Title 1          | Slide 1      |
       | Text Alignment 1 | Center       |
       | Text 1           | Slide text 1 |
+    When I save and close form
+    Then I should see "This value should not be blank."
     And I click on "Choose Main Slider Image 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -42,7 +44,7 @@ Feature: Configurable image slider
     And click on cat1.jpg in grid
     And I click on "Choose Medium Slider Image 1"
     And click on cat1.jpg in grid
-    And I save and close form
+    When I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Image Slider"
     And I should see Content Widget with:
@@ -101,8 +103,9 @@ Feature: Configurable image slider
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title | Image slider page |
-      | URI   | image-slider-page |
+      | Title       | Image slider page |
+      | Target Type | URI               |
+      | URI         | image-slider-page |
     And I save form
     Then I should see "Menu item saved successfully" flash message
 
@@ -127,3 +130,27 @@ Feature: Configurable image slider
     When I click "Second Dot On Image Slider"
     And I should not see "Slide text 1"
     And I should see "Slide text 2"
+
+  Scenario: Add same image slider to the same page
+    Given I proceed as the Admin
+    And I go to Marketing/Landing Pages
+    And click Edit "Image slider page" in grid
+    And I fill in WYSIWYG "CMS Page Content" with "<div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div><div data-title=\"test_image_slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget('test_image_slider') }}</div>"
+    When I save form
+    Then I should see "Page has been saved" flash message
+
+  Scenario: Ensure sliders are still functional
+    Given I proceed as the Buyer
+    When I click "Image slider page"
+    Then Page title equals to "Image slider page"
+    And I should see "Slide text 1"
+    And I should not see "Slide text 2"
+    And I should not see "All Products"
+    When I click "First Image Slide"
+    Then I should see "All Products"
+    When I click "Image slider page"
+    Then I should see "Slide text 1"
+    And I should not see "Slide text 2"
+    When I click "Second Dot On Image Slider"
+    Then I should see "Slide text 2"
+    And I should see "Slide text 1"

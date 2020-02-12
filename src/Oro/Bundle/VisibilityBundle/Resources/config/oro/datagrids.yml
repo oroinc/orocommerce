@@ -8,11 +8,11 @@ datagrids:
                     - customer.name
                     - visibilityAlias
                 from:
-                    - { table: '%oro_customer.entity.customer.class%', alias: customer }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\Customer', alias: customer }
                 join:
                     left:
-                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
-                        - { join: '%oro_visibility.entity.customer_category_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: 'Oro\Bundle\ScopeBundle\Entity\Scope', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -37,16 +37,16 @@ datagrids:
                     data_name: customer.name
                 visibility:
                     type: visibility_choice
-                    visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
-                    targetEntityClass: '%oro_catalog.entity.category.class%'
+                    visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility'
+                    targetEntityClass: 'Oro\Bundle\CatalogBundle\Entity\Category'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
             scopeAttr: 'customer'
-            visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
-            targetEntityClass: '%oro_catalog.entity.category.class%'
+            visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility'
+            targetEntityClass: 'Oro\Bundle\CatalogBundle\Entity\Category'
             cellSelection:
                 dataField: id
                 columnName:
@@ -64,11 +64,11 @@ datagrids:
                     - customerGroup.name
                     - visibilityAlias
                 from:
-                    - { table: '%oro_customer.entity.customer_group.class%', alias: customerGroup }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', alias: customerGroup }
                 join:
                     left:
-                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
-                        - { join: '%oro_visibility.entity.customer_group_category_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: 'Oro\Bundle\ScopeBundle\Entity\Scope', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -93,16 +93,16 @@ datagrids:
                     data_name: customerGroup.name
                 visibility:
                     type: visibility_choice
-                    visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
-                    targetEntityClass: '%oro_catalog.entity.category.class%'
+                    visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility'
+                    targetEntityClass: 'Oro\Bundle\CatalogBundle\Entity\Category'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
             scopeAttr: 'customerGroup'
-            visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
-            targetEntityClass: '%oro_catalog.entity.category.class%'
+            visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility'
+            targetEntityClass: 'Oro\Bundle\CatalogBundle\Entity\Category'
             cellSelection:
                 dataField: id
                 columnName:
@@ -121,11 +121,11 @@ datagrids:
                     - customer.name
                     - visibilityAlias
                 from:
-                    - { table: '%oro_customer.entity.customer.class%', alias: customer }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\Customer', alias: customer }
                 join:
                     left:
-                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
-                        - { join: '%oro_visibility.entity.customer_product_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: 'Oro\Bundle\ScopeBundle\Entity\Scope', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -150,16 +150,16 @@ datagrids:
                     data_name: customer.name
                 visibility:
                     type: visibility_choice
-                    visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
-                    targetEntityClass: '%oro_product.entity.product.class%'
+                    visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility'
+                    targetEntityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
             scopeAttr: 'customer'
-            visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
-            targetEntityClass: '%oro_product.entity.product.class%'
+            visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility'
+            targetEntityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
             cellSelection:
                 dataField: id
                 columnName:
@@ -177,11 +177,11 @@ datagrids:
                     - customerGroup.id
                     - customerGroup.name
                 from:
-                    - { table: '%oro_customer.entity.customer_group.class%', alias: customerGroup }
+                    - { table: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', alias: customerGroup }
                 join:
                     left:
-                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
-                        - { join: '%oro_visibility.entity.customer_group_product_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: 'Oro\Bundle\ScopeBundle\Entity\Scope', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -207,15 +207,15 @@ datagrids:
                 visibility:
                     type: visibility_choice
                     data_name: visibilityAlias.visibility
-                    visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
-                    targetEntityClass: '%oro_product.entity.product.class%'
+                    visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility'
+                    targetEntityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                     options:
                         field_options:
                             multiple: true
         options:
             scopeAttr: 'customerGroup'
-            visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
-            targetEntityClass: '%oro_product.entity.product.class%'
+            visibilityEntityClass: 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility'
+            targetEntityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
             cellSelection:
                 dataField: id
                 columnName:

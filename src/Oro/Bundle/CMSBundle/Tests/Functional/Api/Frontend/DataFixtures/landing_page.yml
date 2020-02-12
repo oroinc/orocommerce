@@ -34,11 +34,6 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         routeName: "oro_cms_frontend_page_view"
         parametersHash: "93540a68aeff18ecd864cb808c4e171b"
         url: '/page1_slug_default'
-    page1_slug_en_US:
-        routeName: "oro_cms_frontend_page_view"
-        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
-        url: '/page1_slug_en_US'
-        localization: '@en_US'
     page1_slug_en_CA:
         routeName: "oro_cms_frontend_page_view"
         parametersHash: "93540a68aeff18ecd864cb808c4e171b"
@@ -60,7 +55,7 @@ Oro\Bundle\CMSBundle\Entity\Page:
         metaTitles: ['@page1_meta_title', '@page1_es_meta_title']
         metaDescriptions: ['@page1_meta_description', '@page1_es_meta_description']
         metaKeywords: ['@page1_meta_keywords', '@page1_es_meta_keywords']
-        slugs: ['@page1_slug_default', '@page1_slug_en_US', '@page1_slug_en_CA', '@page1_slug_es']
+        slugs: ['@page1_slug_default', '@page1_slug_en_CA', '@page1_slug_es']
         __calls:
             - addTitle: ['@page1_title']
             - addTitle: ['@page1_es_title']

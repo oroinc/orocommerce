@@ -19,7 +19,18 @@ Feature: Product import validation
 
   Scenario: Validate import file with valid slug prototype
     Given I go to Products/Products
-    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    When I download "Products" Data Template file with processor "oro_product_product_export_template"
+    Then I see the following columns in the downloaded csv template:
+       | names.English (United States).fallback |
+       | names.English (United States).value    |
+       | names.Ukrainian.fallback               |
+       | names.Ukrainian.value                  |
+       | shortDescriptions.default.fallback     |
+       | shortDescriptions.default.value        |
+       | shortDescriptions.English (United States).fallback     |
+       | shortDescriptions.English (United States).value        |
+       | shortDescriptions.Ukrainian.fallback   |
+       | shortDescriptions.Ukrainian.value      |
     And fill template with data:
       | names.default.value                                                                                               | attributeFamily.code | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.value |
       | <b>Test</b><br><img src="http://test.jpg"><strong>Test</strong><a href="http://test.pdf" target="_blank">Test</a> | default_family       | PSKU1 | enabled | simple | in_stock            | set                            | 1                              | invalid,slug^&               |

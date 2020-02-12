@@ -36,9 +36,7 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->loadFixtures([LoadProductData::class]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_product.entity.product.class')
-        );
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }
 
     public function testFindOneBySku()
@@ -202,6 +200,22 @@ class ProductRepositoryTest extends WebTestCase
                 ['id' => $product2->getId(), 'sku' => $product2->getSku()],
                 ['id' => $product3->getId(), 'sku' => $product3->getSku()],
                 ['id' => $product7->getId(), 'sku' => $product7->getSku()],
+            ],
+            $result
+        );
+    }
+
+    public function testGetProductIdBySkuQueryBuilder(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_2);
+
+        $result = $this->getRepository()->getProductIdBySkuQueryBuilder($product->getSku())
+            ->getQuery()
+            ->getArrayResult();
+
+        $this->assertEquals(
+            [
+                ['id' => $product->getId()],
             ],
             $result
         );

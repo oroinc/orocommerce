@@ -2,9 +2,6 @@ api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
-            form_event_subscriber:
-                - oro_order.form.type.event_listener.subtotals_subscriber
-                - oro_website.form_subscriber.default_website
             fields:
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
@@ -46,9 +43,6 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
-            actions:
-                delete: false
-                delete_list: false
             subresources:
                 order:
                     actions:

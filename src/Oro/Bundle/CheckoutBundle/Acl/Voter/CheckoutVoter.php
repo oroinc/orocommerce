@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\EntityClassResolverUtil;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -46,10 +46,8 @@ class CheckoutVoter implements VoterInterface
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($this->authorizationChecker->isGranted(BasicPermissionMap::PERMISSION_VIEW, $object)
-            && $this->authorizationChecker->isGranted(
-                BasicPermissionMap::PERMISSION_CREATE . ';entity:' . Checkout::class
-            )
+        if ($this->authorizationChecker->isGranted(BasicPermission::VIEW, $object)
+            && $this->authorizationChecker->isGranted(BasicPermission::CREATE . ';entity:' . Checkout::class)
         ) {
             return self::ACCESS_GRANTED;
         }

@@ -41,8 +41,8 @@ services:
              - [setDataConverter, ['@oro_pricing.importexport.data_converter.product_price']]
              - [setStrategy, ['@oro_pricing.importexport.strategy.product_price.add_or_replace']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price.add_or_replace }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price.add_or_replace }
 
     oro_pricing.importexport.processor.import.product_price.reset:
         public: false
@@ -51,8 +51,8 @@ services:
              - [setDataConverter, ['@oro_pricing.importexport.data_converter.product_price']]
              - [setStrategy, ['@oro_pricing.importexport.strategy.product_price.reset']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price.reset }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price.reset }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price.reset }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price.reset }
 
     # Export processor
     oro_pricing.importexport.processor.export.product_price:
@@ -61,7 +61,7 @@ services:
         calls:
             - [setDataConverter, ['@oro_pricing.importexport.data_converter.product_price']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price }
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price }
 
     # Reader
     oro_pricing.importexport.reader.price_list_product_prices:
@@ -86,7 +86,7 @@ services:
         calls:
             - [setDataConverter, ['@oro_pricing.importexport.data_converter.product_price']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_pricing.entity.product_price.class%', alias: oro_pricing_product_price }
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\PricingBundle\Entity\ProductPrice', alias: oro_pricing_product_price }
 
     # Writer
     oro_pricing.importexport.writer.product_price:
@@ -139,7 +139,7 @@ services:
         calls:
             - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price }
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price }
 
     oro_pricing.importexport.processor.export_template.price_attribute_product_price:
         public: false
@@ -147,7 +147,7 @@ services:
         calls:
             - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price }
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price }
 
     oro_pricing.importexport.strategy.price_attribute_product_price.add_or_replace:
         class: 'Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy'
@@ -166,8 +166,8 @@ services:
              - [setStrategy, ['@oro_pricing.importexport.strategy.price_attribute_product_price.add_or_replace']]
              - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price.add_or_replace }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price.add_or_replace }
 
     oro_pricing.importexport.processor.import.price_attribute_product_price.reset:
         public: false
@@ -176,8 +176,8 @@ services:
              - [setStrategy, ['@oro_pricing.importexport.strategy.price_attribute_product_price.reset']]
              - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price.reset }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price.reset }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price.reset }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', alias: oro_pricing_product_price_attribute_price.reset }
 
     oro_pricing.importexport.writer.price_attribute_product_price:
         class: 'Oro\Bundle\PricingBundle\ImportExport\Writer\PriceAttributeProductPriceWriter'

@@ -18,6 +18,8 @@ oro:
     order:
         entity_label:                     Order
         entity_plural_label:              Orders
+        entity_grid_all_view_label:       All %entity_plural_label%
+        entity_frontend_grid_all_view_label: All Past Orders
         entity_description:               Orders contain information about buyers’ shopping lists submitted for purchase and the collected information about billing and shipping addresses, payment methods, etc.
         id.label: ID
         identifier:
@@ -139,6 +141,7 @@ oro:
         shipping_tracking:
             entity_label:         Shipping Tracking
             entity_plural_label:  Shipping Tracking Numbers
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   Shipping Tracking is manually entered by the sales manager to help the customer user track the shipping status via the shipping provider.
             method:
                 label:            Method
@@ -158,6 +161,7 @@ oro:
         ordershippingtracking:
             entity_label: 'Shipping Tracking'
             entity_plural_label: 'Shipping Tracking Numbers'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'ID'
             method:
                 label: 'Method'
@@ -172,6 +176,7 @@ oro:
         orderdiscount:
             entity_label:         Order Discount
             entity_plural_label:  Order Discounts
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   Order Discounts are applied to the order in the discount section of the order.
             id.label:             ID
             amount:
@@ -202,6 +207,7 @@ oro:
         orderaddress:
             entity_label:                 Order Address
             entity_plural_label:          Order Addresses
+            entity_grid_all_view_label:   All %entity_plural_label%
             entity_description:           Order Addresses refer to the address information that was used by customer users as the billing or shipping address in their orders.
             id.label:                     ID
             customer_address:
@@ -272,6 +278,7 @@ oro:
         orderlineitem:
             entity_label: 'Order Line Item'
             entity_plural_label: 'Order Line Items'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: Order Line Item is a unique product that is ordered in a particular quantity of the certain units of quantity.
             add_label: 'Add Product'
             id.label: 'ID'

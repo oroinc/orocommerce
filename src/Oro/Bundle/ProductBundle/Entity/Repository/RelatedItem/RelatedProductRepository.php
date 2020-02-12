@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerRepositoryInterface;
@@ -98,5 +100,29 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
         }
 
         return $products;
+    }
+
+    /**
+     * @param bool $bidirectional
+     * @return QueryBuilder
+     */
+    public function getUniqueProductDataQueryBuilder(bool $bidirectional): QueryBuilder
+    {
+        $qb = $this->getEntityManager()
+            ->getRepository(Product::class)
+            ->createQueryBuilder('p');
+
+        $qb->resetDQLPart('select')
+            ->select('DISTINCT p.id as id, p.sku')
+            ->leftJoin(RelatedProduct::class, 'rp', Join::WITH, $qb->expr()->eq('IDENTITY(rp.product)', 'p.id'))
+            ->where($qb->expr()->isNotNull('rp.id'))
+            ->orderBy('p.id');
+
+        if ($bidirectional) {
+            $qb->leftJoin(RelatedProduct::class, 'ri', Join::WITH, $qb->expr()->eq('IDENTITY(ri.relatedItem)', 'p.id'))
+                ->orWhere($qb->expr()->isNotNull('ri.id'));
+        }
+
+        return $qb;
     }
 }

@@ -10,6 +10,10 @@ oro_behat_extension:
                 - OroSEOBundle::FeatureContext
                 - OroWebCatalogBundle::FeatureContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - OroEmailBundle::EmailContext
+                - OroImportExportBundle::ImportExportContext:
+                      - '@oro_entity.entity_alias_resolver'
+                      - '@oro_importexport.processor.registry'
             paths:
                 - '@OroSEOBundle/Tests/Behat/Features'
     elements:

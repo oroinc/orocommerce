@@ -2,6 +2,8 @@ oro.cms:
     contentblock:
         alias:
             regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
+        content_variants:
+            empty.message: 'Please add at least one content variant.'
     contentwidget:
         alias:
             regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
@@ -9,5 +11,6 @@ oro.cms:
         url:
             not_dangerous_protocol.message: '"{{ protocol }}" pseudo-protocol is not allowed in slide URIs.'
     wysiwyg:
+        field_name_exist: 'This field name cannot be used.'
         not_permitted_content.message: "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions."
         twig_content.message: "The entered content contains invalid twig constructions."

@@ -7,6 +7,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -61,7 +62,7 @@ class LineItemRepository extends EntityRepository
             ->setParameter('products', $products)
             ->addOrderBy($qb->expr()->asc('li.id'));
 
-        return $aclHelper->apply($qb, 'EDIT')->getResult();
+        return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }
 
     /**
@@ -237,5 +238,33 @@ DQL;
             ->from($this->getEntityName(), 'li')
             ->where($deleteQb->expr()->in('li.id', ':ids'));
         $deleteQb->getQuery()->execute(['ids' => $ids]);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    public function deleteDisabledItemsByShoppingList(ShoppingList $shoppingList)
+    {
+        $whereQb = $this->createQueryBuilder('l');
+        $whereQb->select('l.id')
+            ->join('l.product', 'p')
+            ->where($whereQb->expr()->eq('p.status', ':status'))
+            ->andWhere($whereQb->expr()->eq('l.shoppingList', ':shoppingList'))
+            ->setParameter('status', Product::STATUS_DISABLED)
+            ->setParameter('shoppingList', $shoppingList);
+        $whereQuery = $whereQb->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $whereQuery
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+        $ids = $whereQuery->getResult($identifierHydrationMode);
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete()
+            ->from($this->getEntityName(), 'li')
+            ->where($qb->expr()->in('li.id', ':ids'))
+            ->getQuery()->execute(['ids' => $ids]);
     }
 }

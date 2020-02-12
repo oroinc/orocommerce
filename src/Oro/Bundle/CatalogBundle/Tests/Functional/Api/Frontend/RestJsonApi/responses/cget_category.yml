@@ -32,7 +32,6 @@ data:
             url: '/category1_slug_default'
             urls:
                 - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
-                - { url: '/category1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
             images:
                 - { mimeType: '@file_category1_small_image->mimeType', type: 'small' }
@@ -58,7 +57,6 @@ data:
             url: '/category1_1_slug_default'
             urls:
                 - { url: '/category1_1_slug_default', localizationId: '<toString(@en_CA->id)>' }
-                - { url: '/category1_1_slug_default', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/category1_1_slug_default', localizationId: '<toString(@es->id)>' }
             images: []
         relationships:

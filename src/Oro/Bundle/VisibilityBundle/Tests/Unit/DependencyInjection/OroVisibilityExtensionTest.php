@@ -17,13 +17,6 @@ class OroVisibilityExtensionTest extends AbstractPrependExtensionTest
 
         $this->loadExtension($extension);
 
-        $expectedParameters = [
-            'oro_visibility.entity.product_visibility.class',
-            'oro_visibility.entity.product_visibility_resolved.class'
-        ];
-
-        $this->assertParametersLoaded($expectedParameters);
-
         $this->assertEquals('oro_visibility', $extension->getAlias());
     }
 

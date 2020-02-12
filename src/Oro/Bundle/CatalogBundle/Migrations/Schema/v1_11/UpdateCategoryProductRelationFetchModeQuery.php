@@ -31,7 +31,10 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
             ->execute()
             ->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->process(reset($rows), $logger);
+        $row = reset($rows);
+        if ($row) {
+            $this->process($row, $logger);
+        }
     }
 
     /**

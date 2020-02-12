@@ -77,11 +77,6 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         routeName: "oro_category_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e1711"
         url: '/category1_slug_default'
-    category1_slug_en_US:
-        routeName: "oro_category_frontend_product_index"
-        parametersHash: "93540a68aeff18ecd864cb808c4e1712"
-        url: '/category1_slug_en_US'
-        localization: '@en_US'
     category1_slug_en_CA:
         routeName: "oro_category_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e1713"
@@ -108,7 +103,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addMetaKeyword: ['@category1_meta_keywords']
         organization: '@organization'
         parentCategory: '@root_category'
-        slugs: ['@category1_slug_default', '@category1_slug_en_US', '@category1_slug_en_CA', '@category1_slug_es']
+        slugs: ['@category1_slug_default', '@category1_slug_en_CA', '@category1_slug_es']
         smallImage: '@file_category1_small_image'
         largeImage: '@file_category1_large_image'
     category1_1:

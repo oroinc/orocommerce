@@ -314,6 +314,24 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(true, $this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
+    public function testIsOnlyOneEnabledWhenConfigReturnsString(): void
+    {
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit')
+            ->willReturn('1');
+
+        $this->configureCount(1);
+
+        $this->assertEquals(true, $this->shoppingListLimitManager->isOnlyOneEnabled());
+    }
+
     /**
      * @param int $count
      */

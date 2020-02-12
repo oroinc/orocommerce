@@ -717,8 +717,8 @@ Feature: Consent management via Management Console UI
     Given I proceed as the Admin
     And go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     When I save form
     Then I should see "Configuration saved" flash message
     And I follow "Commerce/Sales/Checkout" on configuration sidebar

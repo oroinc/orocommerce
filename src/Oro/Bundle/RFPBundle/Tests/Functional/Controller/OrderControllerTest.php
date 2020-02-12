@@ -14,10 +14,6 @@ class OrderControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
-            $this->markTestSkipped('OrderBundle disabled');
-        }
-
         $this->loadFixtures(
             [
                 'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',

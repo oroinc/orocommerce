@@ -10,6 +10,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -49,41 +50,58 @@ class PriceListToWebsiteRepository extends EntityRepository
     }
 
     /**
-     * @param int $fallback
      * @return BufferedQueryResultIteratorInterface|Website[]
      */
-    public function getWebsiteIteratorByDefaultFallback($fallback)
+    public function getWebsiteIteratorWithDefaultFallback()
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('distinct website')
-            ->from('OroWebsiteBundle:Website', 'website');
-
-        $qb->innerJoin(
-            'OroPricingBundle:PriceListToWebsite',
-            'plToWebsite',
-            Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('plToWebsite.website', 'website')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('distinct website')
+            ->from(Website::class, 'website')
+            ->leftJoin(
+                PriceListToWebsite::class,
+                'plToWebsite',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('plToWebsite.website', 'website')
+                )
             )
-        );
+            ->leftJoin(
+                PriceListWebsiteFallback::class,
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->eq('priceListFallBack.website', 'website')
+            )
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
+            ->setParameter('websiteFallback', PriceListWebsiteFallback::CONFIG);
 
-        if ($fallback !== null) {
-            $qb->leftJoin(
-                'OroPricingBundle:PriceListWebsiteFallback',
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @return BufferedQueryResultIteratorInterface|Website[]
+     */
+    public function getWebsiteIteratorWithSelfFallback()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('distinct website')
+            ->from(Website::class, 'website')
+            ->innerJoin(
+                PriceListWebsiteFallback::class,
                 'priceListFallBack',
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('priceListFallBack.website', 'website')
                 )
             )
-                ->where(
-                    $qb->expr()->orX(
-                        $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback'),
-                        $qb->expr()->isNull('priceListFallBack.fallback')
-                    )
-                )
-                ->setParameter('websiteFallback', $fallback);
-        }
+            ->where(
+                $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
+            )
+            ->setParameter('websiteFallback', PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY);
 
         return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
@@ -112,8 +130,7 @@ class PriceListToWebsiteRepository extends EntityRepository
             ->groupBy('priceListToWebsite.website')
             ->setParameter('priceLists', $priceLists)
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
-            ->orderBy('priceListToWebsite.website')
-        ;
+            ->orderBy('priceListToWebsite.website');
 
         return new BufferedQueryResultIterator($qb);
     }
@@ -130,5 +147,21 @@ class PriceListToWebsiteRepository extends EntityRepository
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Website $website
+     * @return bool
+     */
+    public function hasAssignedPriceLists(Website $website): bool
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->select('p.id')
+            ->where($qb->expr()->eq('p.website', ':website'))
+            ->setParameter('website', $website)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult() !== null;
     }
 }

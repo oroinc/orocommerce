@@ -134,9 +134,10 @@
             {%- endif -%}
             {{ description|render_content }}
         </div>
-        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon fa-chevron-down"></i>
-        </a>
+        {# For button bellow attr "aria-hidden" will be toggled programmatically when collapse-widget is initialized or destroyed #}
+        <button class="collapse-view__trigger" data-collapse-trigger aria-hidden="true" aria-label="{{ 'oro.ui.collapse.more'|trans }}">
+            <span class="collapse-view__trigger-icon fa-chevron-down" aria-hidden="true"></span>
+        </button>
     </div>
     {% endif %}
 {% endblock %}
@@ -281,12 +282,19 @@
         }|json_encode
     } %}
 
-    <div class="product-view__attribute-images" {{ UI.attributes(popupGalleryAttr) }}>
-        {%- for item in collection -%}
-        <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
-            <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+    {% set showMoreAttr = {
+        'data-page-component-view': 'oroui/js/app/views/show-more/inline-show-more-view'
+    } %}
+
+    <div class="product-view__attribute-images show-more-view" {{ UI.attributes(showMoreAttr) }}>
+        <div class="product-view__attribute-images-container show-less" data-role="items-container" {{ UI.attributes(popupGalleryAttr) }}>
+            {%- for item in collection -%}
+            <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
+                <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+            </div>
+            {%- endfor -%}
         </div>
-        {%- endfor -%}
+        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
     </div>
 {% endblock %}
 
@@ -315,7 +323,15 @@
 {% endblock %}
 
 {% block product_view_attribute_multifiles_widget %}
-    {{ block_widget(block) }}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set filesAttr = {
+        'data-page-component-view': 'oroui/js/app/views/show-more/table-show-more-view'
+    } %}
+
+    <div class="product-view__attribute-files show-more-view show-less" {{ UI.attributes(filesAttr) }}>
+        {{ block_widget(block) }}
+        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
+    </div>
 {% endblock %}
 
 {% block attribute_group_rest_attribute_widget %}

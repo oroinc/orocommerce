@@ -1,8 +1,6 @@
 # OroCMSBundle
 
-OroCMSBundle enables content management features in OroCommerce applications. The bundle provides the menas to create and modify landing pages, content blocks, content widgets and to customize the customer login page. It also allows developers to register new content widget types.
+OroCMSBundle enables content management features in OroCommerce applications. The bundle provides the means to create and modify landing pages, content blocks, content widgets and to customize the customer login page. It also allows developers to register new content widget types.
 
-## Table of Contents
+Read more on OroCRMBundle components on the [Oro Inc documentation website](https://doc.oroinc.com/master/backend/bundles/commerce/CMSBundle/):
 
-* [Content Blocks](./Resources/doc/reference/content_blocks.md)
-* [Widgets on a CMS Content Page](./Resources/doc/widgets.md)

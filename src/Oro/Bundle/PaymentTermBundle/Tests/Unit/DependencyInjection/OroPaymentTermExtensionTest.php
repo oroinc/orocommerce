@@ -12,7 +12,6 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroPaymentTermExtension());
 
         $expectedParameters = [
-            'oro_payment_term.entity.payment_term.class',
             'oro_payment_term.type'
         ];
         $this->assertParametersLoaded($expectedParameters);

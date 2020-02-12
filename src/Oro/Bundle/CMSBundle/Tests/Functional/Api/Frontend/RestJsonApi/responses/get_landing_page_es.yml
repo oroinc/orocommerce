@@ -8,7 +8,6 @@ data:
         title: 'Page 1 Spanish Title'
         url: '/page1_slug_es'
         urls:
-            - { url: '/page1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
             - { url: '/page1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
             - { url: '/page1_slug_default', localizationId: '<toString(@current_localization->id)>' }
         metaTitle: 'Page 1 Spanish Meta Title'

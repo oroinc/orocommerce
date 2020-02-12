@@ -30,7 +30,7 @@ class ShippingMethodsConfigsRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_shipping.entity.shipping_methods_configs_rule.class')
+            'entity_class' => ShippingMethodsConfigsRule::class
         ];
     }
 

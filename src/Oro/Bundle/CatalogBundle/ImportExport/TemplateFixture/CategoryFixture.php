@@ -6,8 +6,8 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -17,6 +17,17 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
 {
     /** @var MasterCatalogRootProvider */
     private $masterCatalogRootProvider;
+
+    /** @var LocalizationManager */
+    private $localizationManager;
+
+    /**
+     * @param LocalizationManager $localizationManager
+     */
+    public function __construct(LocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
+    }
 
     /**
      * @param MasterCatalogRootProvider $masterCatalogRootProvider
@@ -59,8 +70,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
         $organizationRepo = $this->templateManager->getEntityRepository(Organization::class);
 
         if ($key === 'Sample Category') {
-            $localization = new Localization();
-            $localization->setName('English');
+            $localization = $this->localizationManager->getDefaultLocalization();
             $entity
                 ->setParentCategory($this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization())
                 ->addTitle((new LocalizedFallbackValue())->setString('Sample Category'))
@@ -70,7 +80,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
                         ->setLocalization($localization)
                 )
                 ->addShortDescription((new LocalizedFallbackValue())->setText('Sample short description'))
-                ->addLongDescription((new LocalizedFallbackValue())->setText('Sample long description'))
+                ->addLongDescription((new LocalizedFallbackValue())->setWysiwyg('Sample long description'))
                 ->setOrganization($organizationRepo->getEntity('default'));
 
             return;

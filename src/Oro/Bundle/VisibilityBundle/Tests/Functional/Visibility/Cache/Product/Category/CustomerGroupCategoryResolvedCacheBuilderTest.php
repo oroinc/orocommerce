@@ -76,9 +76,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
             $this->insertExecutor,
             $productReindexManager
         );
-        $this->builder->setCacheClass(
-            $container->getParameter('oro_visibility.entity.customer_group_category_visibility_resolved.class')
-        );
+        $this->builder->setCacheClass(CustomerGroupCategoryVisibilityResolved::class);
         $this->builder->setRepository(
             $container->get('oro_visibility.category_repository')
         );

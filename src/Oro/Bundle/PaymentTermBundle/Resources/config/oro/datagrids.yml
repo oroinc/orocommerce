@@ -1,7 +1,7 @@
 datagrids:
     payment-terms-grid:
         acl_resource: oro_payment_term_view
-        extended_entity_name: '%oro_payment_term.entity.payment_term.class%'
+        extended_entity_name: 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm'
         options:
             entityHint: oro.paymentterm.entity_plural_label
             entity_pagination: true
@@ -12,7 +12,7 @@ datagrids:
                     - paymentTerm.id
                     - paymentTerm.label
                 from:
-                    - { table: '%oro_payment_term.entity.payment_term.class%', alias: paymentTerm }
+                    - { table: 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', alias: paymentTerm }
         columns:
             label:
                 label: oro.paymentterm.label.label
@@ -64,7 +64,7 @@ datagrids:
                     - paymentTerm.id
                     - paymentTerm.label
                 from:
-                    - { table: '%oro_payment_term.entity.payment_term.class%', alias: paymentTerm }
+                    - { table: 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', alias: paymentTerm }
         columns:
             label:
                 label: oro.paymentterm.label.label

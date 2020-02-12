@@ -18,7 +18,6 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -172,7 +171,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $formType = new OrderAddressType($this->orderAddressSecurityProvider);
-        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject $addressManager */
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
@@ -202,7 +200,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                     $serializer
                 )
             ], [
-                FormType::class => [new StripTagsExtensionStub($htmlTagHelper)]
+                FormType::class => [new StripTagsExtensionStub($this)]
             ])
         ];
     }

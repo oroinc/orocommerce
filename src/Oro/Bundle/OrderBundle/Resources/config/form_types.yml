@@ -8,7 +8,7 @@ services:
         tags:
             - { name: form.type, alias: oro_order_type }
         calls:
-            - [setDataClass, ['%oro_order.entity.order.class%']]
+            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\Order']]
 
     oro_order.form.type.order_address_select:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType'
@@ -38,7 +38,7 @@ services:
         arguments:
             - '@oro_product.provider.product_units_provider'
         calls:
-            - [setDataClass, ['%oro_order.entity.order_line_item.class%']]
+            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\OrderLineItem']]
             - [setSectionProvider, ['@oro_order.form.section.provider']]
         tags:
             - { name: form.type, alias: "oro_order_line_item" }
@@ -52,7 +52,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setDataClass, ['%oro_order.entity.order.class%']]
+            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\Order']]
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
 
@@ -64,7 +64,7 @@ services:
     oro_order.form.type.order_discount_collection_row:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType'
         calls:
-            - [setDataClass, ['%oro_order.entity.order_discount_item.class%']]
+            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\OrderDiscount']]
         tags:
             - { name: form.type, alias: "oro_order_discount_collection_row" }
 
@@ -78,7 +78,7 @@ services:
         arguments:
             - '@oro_order.order.total.total_helper'
         calls:
-            - [setDataClass, ['%oro_order.entity.order_discount_item.class%']]
+            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\OrderDiscount']]
         tags:
             - { name: form.type, alias: "oro_order_discount_item" }
 

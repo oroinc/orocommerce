@@ -8,7 +8,7 @@ services:
             - '@oro_sale.form.event_listener.quote_update'
             - '@security.authorization_checker'
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\Quote']]
         tags:
             - { name: form.type, alias: oro_sale_quote }
 
@@ -20,8 +20,8 @@ services:
             - "@oro_sale.formatter.quote_product"
             - "@doctrine"
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote_product.class%']]
-            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProduct']]
+            - [setProductUnitClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
         tags:
             - { name: form.type, alias: oro_sale_quote_product }
 
@@ -30,14 +30,14 @@ services:
         arguments:
             - "@oro_sale.formatter.quote_product_offer"
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote_product_offer.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProductOffer']]
         tags:
             - { name: form.type, alias: oro_sale_quote_product_offer }
 
     oro_sale.form.type.quote_product_request:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType'
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote_product_request.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProductRequest']]
         tags:
             - { name: form.type, alias: oro_sale_quote_product_request }
 
@@ -60,7 +60,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension'
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\Quote']]
         tags:
             - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
 
@@ -82,7 +82,7 @@ services:
         tags:
             - { name: form.type, alias: oro_quote_address_type }
         calls:
-            - [setDataClass, ['%oro_sale.entity.quote_address.class%']]
+            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteAddress']]
 
     oro_sale.form.type.quote_demand:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType'

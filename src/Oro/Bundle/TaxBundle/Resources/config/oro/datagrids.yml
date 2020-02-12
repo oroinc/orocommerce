@@ -66,7 +66,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: '%oro_tax.entity.product_tax_code.class%', alias: tax_code }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', alias: tax_code }
         columns:
             code:
                 label: oro.tax.producttaxcode.code.label
@@ -87,7 +87,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: '%oro_tax.entity.customer_tax_code.class%', alias: tax_code }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', alias: tax_code }
         columns:
             code:
                 label: oro.tax.customertaxcode.code.label
@@ -125,7 +125,7 @@ datagrids:
                     - tax.createdAt
                     - tax.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax.class%', alias: tax }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\Tax', alias: tax }
         columns:
             code:
                 label: oro.tax.code.label
@@ -209,7 +209,7 @@ datagrids:
                     - tax_rule.createdAt
                     - tax_rule.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax_rule.class%', alias: tax_rule }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\TaxRule', alias: tax_rule }
                 join:
                     left:
                         - { join: tax_rule.customerTaxCode, alias: customer_tax_code }
@@ -300,7 +300,7 @@ datagrids:
                     - jurisdiction.createdAt
                     - jurisdiction.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax_jurisdiction.class%', alias: jurisdiction }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', alias: jurisdiction }
         columns:
             code:
                 label: oro.tax.taxjurisdiction.code.label

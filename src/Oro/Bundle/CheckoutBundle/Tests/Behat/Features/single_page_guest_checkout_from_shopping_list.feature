@@ -26,7 +26,7 @@ Feature: Single Page Guest Checkout From Shopping List
       | Enable Guest Shopping List Default | false |
       | Enable Guest Shopping List         | true  |
     And click "Save settings"
-    Then the "Enable guest shopping list" checkbox should be checked
+    Then the "Enable Guest Shopping List" checkbox should be checked
 
   Scenario: Enable guest checkout setting
     Given I follow "Commerce/Sales/Checkout" on configuration sidebar

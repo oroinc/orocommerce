@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * CRUD for payment terms.
+ */
 class PaymentTermController extends Controller
 {
     /**
@@ -44,7 +47,7 @@ class PaymentTermController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_payment_term.entity.payment_term.class')
+            'entity_class' => PaymentTerm::class
         ];
     }
 

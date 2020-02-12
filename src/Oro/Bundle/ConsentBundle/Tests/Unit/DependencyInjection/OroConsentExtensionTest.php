@@ -11,11 +11,6 @@ class OroConsentExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroConsentExtension());
 
-        $expectedParameters = [
-            'oro_consent.entity.consent.class'
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
         $expectedDefinitions = [
             'oro_consent.form.autocomplete.consent.search_handler',
             'oro_consent.form.consent_collection_data_transformer',

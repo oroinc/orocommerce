@@ -7,7 +7,7 @@ services:
             - "@router"
             - "@oro_product.helper.product_image_helper"
         calls:
-            - [setDataClass, ['%oro_product.entity.product.class%']]
+            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: form.type, alias: oro_product }
 
@@ -35,7 +35,7 @@ services:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
         calls:
-            - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
+            - [setEntityClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
         tags:
             - { name: form.type, alias: oro_product_unit_selection }
 
@@ -44,7 +44,7 @@ services:
         arguments:
             - '@oro_product.formatter.product_unit_label'
         calls:
-            - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
+            - [setEntityClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
         tags:
             - { name: form.type, alias: oro_product_unit_select }
 
@@ -52,7 +52,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\QuantityType'
         arguments:
             - "@oro_product.service.quantity_rounding"
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         tags:
             - { name: form.type, alias: oro_quantity }
 
@@ -60,14 +60,14 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
         public: true
         calls:
-            - [setDataClass, ['%oro_product.entity.product_unit_precision.class%']]
+            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision']]
         tags:
             - { name: form.type, alias: oro_product_primary_unit_precision }
 
     oro_product.form.type.product_unit_precision:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'
         calls:
-            - [setDataClass, ['%oro_product.entity.product_unit_precision.class%']]
+            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision']]
         tags:
             - { name: form.type, alias: oro_product_unit_precision }
 
@@ -102,7 +102,7 @@ services:
             - "@oro_product.storage.product_data_storage"
             - "@oro_entity.doctrine_helper"
             - '@oro_security.acl_helper'
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         calls:
             - [setLogger,  ["@logger"]]
 
@@ -204,7 +204,7 @@ services:
             - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
             - '@oro_product.provider.variant_field_provider'
             - '@property_accessor'
-            - '%oro_product.entity.product.class%'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
         tags:
             - { name: form.type, alias: oro_product_product_variant_frontend_variant_field }
 
@@ -234,7 +234,7 @@ services:
     oro_product.form.type.brand:
         class: 'Oro\Bundle\ProductBundle\Form\Type\BrandType'
         calls:
-            - [setDataClass, ['%oro_product.entity.brand.class%']]
+            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\Brand']]
         tags:
             - { name: form.type, alias: oro_product_brand }
 

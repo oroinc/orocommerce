@@ -38,4 +38,15 @@ class LineItemControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
     }
+
+    public function testDeleteWhenNoLineItem()
+    {
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => 99999999])
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 404);
+    }
 }

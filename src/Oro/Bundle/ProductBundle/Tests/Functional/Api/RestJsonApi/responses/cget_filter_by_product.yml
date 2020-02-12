@@ -44,31 +44,22 @@ data:
                         id: '<toString(@product-1.names.default->id)>'
                     -
                         type: localizedfallbackvalues
-                        id: '<toString(@product-1.names.en_US->id)>'
+                        id: '<toString(@product-1.names.en_CA->id)>'
             descriptions:
                 data:
                     -
                         type: localizedfallbackvalues
                         id: '<toString(@product-1.descriptions.default->id)>'
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-1.descriptions.en_US->id)>'
             shortDescriptions:
                 data:
                     -
                         type: localizedfallbackvalues
                         id: '<toString(@product-1.shortDescriptions.default->id)>'
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-1.shortDescriptions.en_US->id)>'
             slugPrototypes:
                 data:
                     -
                         type: localizedfallbackvalues
                         id: '<toString(@product-1.slugPrototypes.default->id)>'
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-1.slugPrototypes.en_US->id)>'
             taxCode:
                 data:
                     type: producttaxcodes

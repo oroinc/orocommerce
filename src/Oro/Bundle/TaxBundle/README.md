@@ -48,14 +48,6 @@ class DemoTaxProvider implements TaxProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function createTaxValue($object)
-    {
-        // implement your createTaxValue() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function loadTax($object)
     {
         // implement your loadTax() method.

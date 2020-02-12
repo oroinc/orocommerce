@@ -9,67 +9,70 @@ use Psr\Log\LoggerInterface;
 
 class CheckoutLineItemConverterRegistryTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var CheckoutLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $converter1;
+
+    /** @var CheckoutLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $converter2;
+
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    private $logger;
 
     /** @var CheckoutLineItemConverterRegistry */
-    protected $registry;
+    private $registry;
 
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
+        $this->converter1 = $this->createMock(CheckoutLineItemConverterInterface::class);
+        $this->converter2 = $this->createMock(CheckoutLineItemConverterInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->registry = new CheckoutLineItemConverterRegistry($this->logger);
+
+        $this->registry = new CheckoutLineItemConverterRegistry(
+            [$this->converter1, $this->converter2],
+            $this->logger
+        );
     }
 
-    public function testAddAndGetConverter()
+    public function testGetConverter()
     {
         $source = new \stdClass();
 
-        $converter1 = $this->createMock(CheckoutLineItemConverterInterface::class);
-        $this->registry->addConverter($converter1, 'test');
-
-        /** Override by Alias */
-        $converter2 = $this->createMock(CheckoutLineItemConverterInterface::class);
-        $this->registry->addConverter($converter2, 'test');
-
-        /** Should be skipped by priority */
-        $converter3 = $this->createMock(CheckoutLineItemConverterInterface::class);
-        $this->registry->addConverter($converter3, 'test_another');
-
-        $converter1
-            ->expects($this->never())
-            ->method('isSourceSupported');
-
-        $converter2
-            ->expects($this->once())
+        $this->converter1->expects($this->once())
+            ->method('isSourceSupported')
+            ->with($source)
+            ->willReturn(false);
+        $this->converter2->expects($this->once())
             ->method('isSourceSupported')
             ->with($source)
             ->willReturn(true);
 
-        $converter3
-            ->expects($this->never())
-            ->method('isSourceSupported');
-
-        self::assertSame($converter2, $this->registry->getConverter($source));
+        self::assertSame($this->converter2, $this->registry->getConverter($source));
     }
 
     /**
-     * @param mixed $object
-     * @param string $expectedMessage
-     *
      * @dataProvider exceptionDataProvider
      */
-    public function testGetConverterException($object, $expectedMessage)
+    public function testGetConverterWhenNoConvertersSupportSource($object, $expectedMessage)
     {
+        $this->converter1->expects($this->once())
+            ->method('isSourceSupported')
+            ->with($object)
+            ->willReturn(false);
+        $this->converter2->expects($this->once())
+            ->method('isSourceSupported')
+            ->with($object)
+            ->willReturn(false);
+
         $this->logger->expects($this->once())
             ->method('critical')
             ->with($expectedMessage, ['source_instance' => $object]);
 
         $this->expectException(RegistryException::class);
         $this->expectExceptionMessage($expectedMessage);
+
         $this->registry->getConverter($object);
     }
 

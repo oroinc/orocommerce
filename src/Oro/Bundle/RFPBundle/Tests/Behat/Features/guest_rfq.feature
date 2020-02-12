@@ -24,8 +24,8 @@ Feature: Guest RFQ
     And I check "Enable Guest RFQ"
     And I save setting
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     When I save setting
     Then I should see "Configuration saved" flash message
 

@@ -12,7 +12,7 @@ services:
              - [setDataConverter, ["@oro_inventory.importexport.inventory_level_converter"]]
              - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.detailed_inventory_levels }
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: oro_inventory.detailed_inventory_levels }
 
     # Strategy
     oro_inventory.importexport.strategy.inventory_level:
@@ -51,8 +51,8 @@ services:
             - [setStrategy, ['@oro_inventory.importexport.strategy.inventory_level']]
             - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.inventory_level }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.inventory_level }
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: oro_inventory.inventory_level }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: oro_inventory.inventory_level }
 
     # Export template
     oro_inventory.importexport.processor.export_template.inventory_level:
@@ -62,12 +62,14 @@ services:
             - [setDataConverter, ['@oro_inventory.importexport.inventory_level_converter']]
             - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.detailed_inventory_levels_template }
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: oro_inventory.detailed_inventory_levels_template }
 
     # Template Fixture
     oro_inventory.importexport.template_fixture.inventory_level:
         class: 'Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture\InventoryLevelFixture'
         public: false
+        arguments:
+            - '@oro_locale.manager.localization'
         tags:
             - { name: oro_importexport.template_fixture }
 

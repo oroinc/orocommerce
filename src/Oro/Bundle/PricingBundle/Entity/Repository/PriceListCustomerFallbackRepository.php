@@ -7,7 +7,9 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Repository for PriceListCustomerFallback entity
@@ -63,5 +65,30 @@ class PriceListCustomerFallbackRepository extends EntityRepository
         ->setParameter('fallback', PriceListCustomerFallback::ACCOUNT_GROUP);
 
         return $qb;
+    }
+
+    /**
+     * @param Website $website
+     * @param Customer $customer
+     * @return bool
+     */
+    public function hasFallbackOnNextLevel(Website $website, Customer $customer): bool
+    {
+        $qb = $this->createQueryBuilder('f');
+        $qb->select('f.id')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('f.website', ':website'),
+                    $qb->expr()->eq('f.customer', ':customer'),
+                    $qb->expr()->eq('f.fallback', ':fallback')
+                )
+            )->setParameters([
+                'website' => $website,
+                'customer' => $customer,
+                'fallback' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY
+            ])
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult() === null;
     }
 }

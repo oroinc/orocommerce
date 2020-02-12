@@ -49,7 +49,6 @@ included:
             description: 'Category 1 Description'
             url: '/category1_slug_default'
             urls:
-                - { url: '/category1_slug_en_US', localizationId: '<toString(@en_US->id)>' }
                 - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
                 - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
             metaTitle: 'Category 1 Meta Title'
