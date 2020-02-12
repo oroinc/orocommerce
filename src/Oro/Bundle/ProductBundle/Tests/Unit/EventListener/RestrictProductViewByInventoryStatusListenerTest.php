@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\EventListener\RestrictProductViewByInventoryStatusL
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
@@ -53,8 +53,8 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
 
-        /** @var FilterControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FilterControllerEvent::class);
+        /** @var ControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->createMock(ControllerEvent::class);
         $event->expects($this->any())
             ->method('getController')
             ->willReturn($controller);
@@ -101,8 +101,8 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
 
-        /** @var FilterControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->createMock(FilterControllerEvent::class);
+        /** @var ControllerEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->createMock(ControllerEvent::class);
         $event->expects($this->any())
             ->method('getController')
             ->willReturn([$this->createMock(ProductController::class), 'viewAction']);

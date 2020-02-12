@@ -13,7 +13,7 @@ oro_behat_extension:
     All Products:
       selector:
         type: xpath
-        locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "All Products")]'
+        locator: '//li[contains(@class, "breadcrumbs__item")]/a[contains(., "All Products")]'
 
     Search:
       selector:
@@ -112,7 +112,7 @@ oro_behat_extension:
       options:
         mapping:
           Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
-  
+
   pages:
     Category Update:
       class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate

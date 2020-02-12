@@ -35,6 +35,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
      */
     public function testHaveCategoriesInBreadcrumbs($category, array $urlParts)
     {
+        $this->markTestSkipped('Due to BB-18904');
         $url = $this->getUrl(
             'oro_product_frontend_product_index',
             [
@@ -51,7 +52,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $breadCrumbsNodes = $crawler->filter('span.breadcrumbs__item a');
+        $breadCrumbsNodes = $crawler->filter('.breadcrumbs__item a');
 
         foreach ($breadCrumbsNodes as $key => $node) {
             $this->assertNotNull($node->getAttribute('href'));

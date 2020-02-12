@@ -40,7 +40,7 @@ class RelatedProductFixture implements TemplateFixtureInterface
     {
         return new \ArrayIterator(
             [
-                ['sku' => 'sku-1', 'related_skus' => 'sku-2,sku-3']
+                ['sku' => 'sku-1', 'relatedItem' => 'sku-2,sku-3']
             ]
         );
     }

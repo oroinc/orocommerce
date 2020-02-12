@@ -37,7 +37,7 @@
                 {% endif %}
             </div>
             <div class="product-view-quantity__value{% if form.unit.vars.choices|length == 1 %} product-view-quantity__value--half{% endif %}">
-                {{ form_widget(form.quantity) }}
+                {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria-label'|trans }}) }}
             </div>
             <div class="fields-row-error"></div>
         </div>

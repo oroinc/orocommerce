@@ -10,6 +10,8 @@ layout:
                         breadcrumbs: '=data["category_breadcrumbs"].getItems()'
                 breadcrumbs_filters:
                     blockType: block
+                    options:
+                        visible: false
                 category_picture:
                     blockType: category
                     options:

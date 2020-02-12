@@ -74,6 +74,7 @@ oro:
         images:
             label: Images
             description: The images for the product.
+            zoom.label: Enlarge Product Image
         is_related.label: Is Related
         related_to_products.label: Related Products
         related_by_products.label: Products that are related to this Product

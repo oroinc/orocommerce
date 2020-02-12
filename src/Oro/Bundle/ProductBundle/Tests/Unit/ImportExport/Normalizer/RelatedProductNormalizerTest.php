@@ -81,7 +81,7 @@ class RelatedProductNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->normalizer->denormalize(
                 [
                     'sku' => 'sku-1',
-                    'related_skus' => 'sku-2',
+                    'relatedItem' => 'sku-2',
                 ],
                 RelatedProduct::class,
                 null,

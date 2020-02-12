@@ -152,7 +152,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $this->builder->buildCache();
 
         $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertNull($visibilityResolved['sourceCategoryVisibility']['visibility']);
+        $this->assertNull($visibilityResolved['sourceCategoryVisibility']);
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $visibilityResolved['source']);
         $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
         $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);

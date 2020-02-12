@@ -4,15 +4,19 @@ namespace Oro\Bundle\PromotionBundle\Acl\Voter;
 
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Prevents editing and removal of segments that represent a list of promotions.
+ */
 class PromotionMatchedProductSegmentVoter extends AbstractEntityVoter
 {
     /**
      * @var array
      */
-    protected $supportedAttributes = ['EDIT', 'DELETE'];
+    protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     /**
      * @var array

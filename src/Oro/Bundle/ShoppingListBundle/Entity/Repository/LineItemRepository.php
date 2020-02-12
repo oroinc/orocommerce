@@ -7,6 +7,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -61,7 +62,7 @@ class LineItemRepository extends EntityRepository
             ->setParameter('products', $products)
             ->addOrderBy($qb->expr()->asc('li.id'));
 
-        return $aclHelper->apply($qb, 'EDIT')->getResult();
+        return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }
 
     /**

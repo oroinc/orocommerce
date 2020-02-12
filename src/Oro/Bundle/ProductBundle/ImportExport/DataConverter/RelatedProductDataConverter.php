@@ -17,7 +17,7 @@ class RelatedProductDataConverter extends AbstractTableDataConverter
     {
         return [
             'SKU' => 'sku',
-            'Related SKUs' => 'related_skus',
+            'Related SKUs' => 'relatedItem',
         ];
     }
 
@@ -34,8 +34,8 @@ class RelatedProductDataConverter extends AbstractTableDataConverter
      */
     public function convertToExportFormat(array $exportedRecord, $skipNullValues = true): array
     {
-        if (isset($exportedRecord['related_skus']) && is_array($exportedRecord['related_skus'])) {
-            $exportedRecord['related_skus'] = implode(',', $exportedRecord['related_skus']);
+        if (isset($exportedRecord['relatedItem']) && is_array($exportedRecord['relatedItem'])) {
+            $exportedRecord['relatedItem'] = implode(',', $exportedRecord['relatedItem']);
         }
 
         return parent::convertToExportFormat($exportedRecord, $skipNullValues);
