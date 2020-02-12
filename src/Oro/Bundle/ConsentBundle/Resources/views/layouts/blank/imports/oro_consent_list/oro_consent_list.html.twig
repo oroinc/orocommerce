@@ -39,7 +39,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'class': 'consent-list__status' ~
         (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled'),
-        'title': (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans,
+        'title': (consent.accepted ? 'oro.consent.status.apply' : 'oro.consent.status.not_apply')|trans,
         'aria-hidden': 'true'
     }) %}
 
@@ -51,8 +51,10 @@
         {% set attr = layout_attr_defaults(attr, {
             'class': 'consent-list__link',
             'href': consent.cmsPageData.url,
-            'aria-label':  consent.title ~ 'and' ~
-            (consent.accepted ? 'oro.consent.icon.text.apply' : 'oro.consent.icon.text.not_apply')|trans
+            'aria-label': 'oro.consent.link.aria_label'|trans({
+                '%title%': consent.title,
+                '%status%': (consent.accepted ? 'oro.consent.status.apply' : 'oro.consent.status.not_apply')|trans
+            })
         }) %}
 
         <a {{ block('block_attributes') }}>
