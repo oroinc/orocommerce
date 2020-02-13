@@ -43,6 +43,7 @@
             module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
             options: {
                 frontend_type: 'title',
+                inputAriaLabel: 'oro.shoppinglist.inlineEditing.input.aria_label'|trans,
                 value: shoppingList.label,
                 fieldName: 'label',
                 insertEditorMethod: 'after',
@@ -107,12 +108,12 @@
     {% set hasNotes = notes is not empty %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " collapse-view" }) %}
     <div{{ block('block_attributes') }} data-page-component-collapse="{{ { open: hasNotes }|json_encode() }}">
-        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon fa-caret-right"></i>
+        <button class="collapse-view__trigger" data-collapse-trigger>
+            <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
             <span class="collapse-view__trigger-text">
                 {{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}
             </span>
-        </a>
+        </button>
 
         <div class="shopping-list-view-options collapse-view__container" data-collapse-container
             {{ UI.renderPageComponentAttributes({
@@ -154,6 +155,7 @@
             </label>
             <div data-role="editor">
             <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                      aria-label="{{ 'oro.frontend.shoppinglist.view.add_note.aria_label'|trans({'%shoppingList%': shoppingList.label}) }}"
                       rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
                       class="textarea textarea--full">{{ notes }}</textarea>
             </div>
@@ -282,13 +284,13 @@
 
 {% block _shopping_list_line_items_list_row_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroShoppingListBundle::image_macros.html.twig' as Image %}
     {% set class = matrixForm is null ?
         ' shopping-list-line-items__item' :
         'shopping-list-line-items__item--configurable'
     %}
     {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
-    {% set productImage = Image.image(productImageData, 'product_small') %}
+    {% set productImage = Image.image(productImageData, 'product_small', mainProduct.names|localized_value|oro_html_strip_tags ) %}
     {% set productImageUrl = Image.url(productImageData, 'product_small') %}
     {% set modelAttr = mainProduct.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -357,9 +359,9 @@
     {% if mainProduct.isConfigurable %}
         {% set routeOptions = routeOptions|merge({'variantProductId': lineItem.product.id}) %}
     {% endif %}
-    <h3 class="product-item__title product-item__title--in-cart">
+    <h2 class="product-item__title product-item__title--in-cart">
         <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
-    </h3>
+    </h2>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
@@ -492,11 +494,20 @@
             }) %}
         {% endif %}
 
-        <button class="item-remove btn btn--plain" {{ UI.renderPageComponentAttributes({
-                module: 'orofrontend/js/app/components/delete-item-component',
-                options: moduleOptions
-            }) }} >
-            <i class="fa-trash-o fa--x-large fa--no-offset"></i>
+        <button class="item-remove btn btn--plain"
+            title="{{ 'oro.shoppinglist.remove_item.title'|trans({
+                '%productName%': mainProduct.names|localized_value|oro_html_strip_tags,
+                '%shoppinglist%': shoppingList.label })
+            }}"
+            aria-label="{{ 'oro.shoppinglist.remove_item.aria_label'|trans({
+                '%productName%': mainProduct.names|localized_value|oro_html_strip_tags,
+                '%shoppinglist%': shoppingList.label })
+            }}"
+            {{ UI.renderPageComponentAttributes({
+                    module: 'orofrontend/js/app/components/delete-item-component',
+                    options: moduleOptions
+            }) }}>
+            <span class="fa-trash-o fa--x-large fa--no-offset" aria-hidden="true"></span>
         </button>
     {% endif %}
 {% endblock %}
@@ -569,6 +580,7 @@
                 </div>
                 <div data-role="editor" class="editable__editor-container">
                     <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                              aria-label="{{ 'oro.frontend.shoppinglist.view.add_item_note.aria_label'|trans({'%productName%': mainProduct.names|localized_value|oro_html_strip_tags}) }}"
                               placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                 </div>
             </div>
