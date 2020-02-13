@@ -353,6 +353,9 @@ operations:
 
     oro_shoppinglist_frontend_duplicate:
         label: oro.shoppinglist.duplicate.list.label
+        frontend_options:
+            options:
+                ariaLabel: 'oro.shoppinglist.duplicate.list.aria_label'
         acl_resource: ['DUPLICATE_SHOPPING_LIST', $.data]
         groups:
             - update_navButtons
