@@ -79,6 +79,25 @@ oro_behat_extension:
           Valid From: 'oro_promotion_coupon_type[validFrom]'
           Valid Until: 'oro_promotion_coupon_type[validUntil]'
 
+    Generate Multiple Coupons Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Promotion:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_action_operation_couponGenerationOptions_promotion-uid")]//input'
+          Valid From: "oro_action_operation[couponGenerationOptions][validFrom]"
+          Valid Until: "oro_action_operation[couponGenerationOptions][validUntil]"
+
+    Mass Coupon Edit Form:
+      selector: 'form[name="oro_promotion_base_coupon_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Valid From: 'oro_promotion_base_coupon_type[validFrom]'
+          Valid Until: 'oro_promotion_base_coupon_type[validUntil]'
+
     PromotionBackendOrder:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder
       selector: 'div.layout-content'

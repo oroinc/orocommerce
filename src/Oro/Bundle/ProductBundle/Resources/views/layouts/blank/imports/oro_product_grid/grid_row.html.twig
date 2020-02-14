@@ -119,7 +119,9 @@
             'data-trigger-gallery-open': true
         }) %}
 
-        <div {{ block('block_attributes') }}></div>
+        <div {{ block('block_attributes') }}>
+            <span class="view-product-gallery__icon" aria-hidden="true"></span>
+        </div>
     {% endif %}
 {% endblock %}
 
