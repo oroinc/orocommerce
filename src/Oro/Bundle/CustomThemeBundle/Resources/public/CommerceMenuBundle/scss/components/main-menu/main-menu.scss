@@ -84,7 +84,7 @@
         width: 100%;
 
         position: static;
-        
+
         background: none;
         box-shadow: none;
     }
@@ -115,7 +115,7 @@
                 }
             }
 
-            &.open {
+            &.show {
                 .main-menu__sublist-container {
                     display: block;
 
