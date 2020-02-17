@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_product_list_item
-            root: content_widget_root
+            root: content_widget_container
 
     actions:
         - '@setBlockTheme':
@@ -16,7 +16,7 @@ layout:
             optionValue: gallery-view
 
         - '@appendOption':
-            id: content_widget_root
+            id: content_widget_container
             optionName: vars.blockContext
             optionValue:
                 product: '=data["product"]'

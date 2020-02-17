@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_product_list
-            root: content_widget_root
+            root: content_widget_container
     actions:
         - '@setBlockTheme':
             themes:
