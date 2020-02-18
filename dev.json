@@ -18,7 +18,6 @@
         "oro/marketing": "4.1.x-dev",
         "oro/customer-portal": "4.1.x-dev",
         "box/spout": "2.7.*",
-        "myclabs/deep-copy": "1.8.*",
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
