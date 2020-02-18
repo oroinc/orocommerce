@@ -27,8 +27,9 @@ Feature: Product attribute file
       | image/jpeg               |
       | image/png                |
     When I fill form with:
-      | File Size (MB)        | 10                                       |
-      | Allowed MIME types    | [application/pdf, image/png, image/jpeg] |
+      | File Size (MB)     | 10                                       |
+      | Allowed MIME types | [application/pdf, image/png, image/jpeg] |
+      | File applications  | [default, commerce]                      |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
