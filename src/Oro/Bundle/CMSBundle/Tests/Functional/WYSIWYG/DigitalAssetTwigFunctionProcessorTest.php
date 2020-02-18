@@ -37,6 +37,12 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
      */
     public function testPostPersist(): Page
     {
+        //cleanup
+        foreach ($this->fileRepository->findBy(['parentEntityClass' => Page::class]) as $file) {
+            $this->em->remove($file);
+        }
+        $this->em->flush();
+
         /** @var ContentWidget $digitalAsset1 */
         $digitalAsset1 = $this->getReference(LoadDigitalAssetData::DIGITAL_ASSET_1);
 
