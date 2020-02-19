@@ -105,7 +105,7 @@ oro_behat_extension:
           locator: '//span[@class="product-item__sku-value"]'
 
     Shopping List Line Item Product View Link:
-      selector: 'h3.product-item__title a'
+      selector: 'h2.product-item__title a'
 
     Shopping List Line Item Product Price:
       selector: 'div.line-item-price span[data-name="price-value"]'
@@ -188,13 +188,13 @@ oro_behat_extension:
       selector: 'button.shopping-lists__area-trigger'
 
     Add to Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
+      selector: 'a.add-to-shopping-list-button:contains("Add to Shopping List")'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
 
     Create Order:
-      selector: '.order-checkout-widget a[title="Create Order"]'
+      selector: '.order-checkout-widget a:contains("Create Order")'
 
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'

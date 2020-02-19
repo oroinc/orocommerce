@@ -755,9 +755,7 @@ oro_behat_extension:
         locator: '//label[contains(@class,"content-variant-item-title") and contains(., "Product Collection")]'
 
     Edit within Web Catalog:
-      selector:
-        type: 'xpath'
-        locator: '//a[contains(@class,"operation-button") and contains(., "Edit within Web Catalog")]'
+      selector: 'a.operation-button:contains("Edit within Web Catalog")'
 
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
