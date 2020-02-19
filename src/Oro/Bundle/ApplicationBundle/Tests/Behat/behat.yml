@@ -239,7 +239,7 @@ oro_behat_extension:
 
     Add to Shopping List button:
       selector:
-        locator: '//div/a[@title="Add to Shopping List"]'
+        locator: '//div/a[contains(text(),"Add to Shopping List")]'
         type: xpath
 
     Gallery View:

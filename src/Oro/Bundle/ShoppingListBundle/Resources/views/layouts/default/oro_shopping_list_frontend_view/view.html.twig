@@ -284,13 +284,13 @@
 
 {% block _shopping_list_line_items_list_row_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroShoppingListBundle::image_macros.html.twig' as Image %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set class = matrixForm is null ?
         ' shopping-list-line-items__item' :
         'shopping-list-line-items__item--configurable'
     %}
     {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
-    {% set productImage = Image.image(productImageData, 'product_small', mainProduct.names|localized_value|oro_html_strip_tags ) %}
+    {% set productImage = Image.image(productImageData, 'product_small', {alt: mainProduct.names|localized_value|oro_html_strip_tags}) %}
     {% set productImageUrl = Image.url(productImageData, 'product_small') %}
     {% set modelAttr = mainProduct.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -404,7 +404,7 @@
                 <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                        placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
                        class="input  input--full text-center" disabled="disabled" required
-                       aria-label="{{ 'oro.product.quantity.aria-label'|trans }}"
+                       aria-label="{{ 'oro.product.quantity.aria_label'|trans }}"
                 />
             </div>
         </div>

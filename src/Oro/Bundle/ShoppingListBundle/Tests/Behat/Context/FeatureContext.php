@@ -10,6 +10,7 @@ use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ConfigurableProductTableRowAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList as ShoppingListElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
@@ -225,6 +226,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $sku,
             implode(',', $attributeLabels)
         ));
+    }
+
+    /**
+     * @When /^(?:|I )click on "(?P<sku>[^"]+)" product in "(?P<tableName>[^"]+)"$/
+     *
+     * @param string $sku
+     * @param string $tableName
+     */
+    public function iClickOnProductInShoppingList(string $sku, string $tableName)
+    {
+        /** @var ProductTable $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($tableName);
+        /** @var ProductTableRow[] $rows */
+        $rows = $shoppingListItemsTableElement->getProductRows();
+
+        foreach ($rows as $rowElement) {
+            if ($rowElement->getProductSku() !== $sku) {
+                continue;
+            }
+            $rowElement->clickProductLink();
+        }
     }
 
     /**
