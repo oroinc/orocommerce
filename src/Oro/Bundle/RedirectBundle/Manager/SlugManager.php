@@ -6,6 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 
+/**
+ * Handles Slug URL uniqueness.
+ */
 class SlugManager
 {
     /**
@@ -76,7 +79,7 @@ class SlugManager
     {
         $version = 0;
 
-        if (preg_match('/^(.*)-(\d+)$/', $url, $matches)) {
+        if (preg_match('/^(.*)\-(\d+)$/', $url, $matches)) {
             $url     = $matches[1];
             $version = $matches[2];
         }
