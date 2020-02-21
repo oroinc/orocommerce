@@ -1621,3 +1621,21 @@ services:
     oro_product.delete_handler.product_unit_precision:
         class: Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandler
         parent: oro_soap.handler.delete.abstract
+
+    oro_product.provider.brand_slug_source_entity:
+        class: Oro\Bundle\ProductBundle\Provider\BrandSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_product.provider.product_slug_source_entity:
+        class: Oro\Bundle\ProductBundle\Provider\ProductSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }

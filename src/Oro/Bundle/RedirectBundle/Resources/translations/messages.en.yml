@@ -40,6 +40,9 @@ oro:
                 direct_urls.label: 'Direct URLs'
             fields:
                 enable_direct_url.label: 'Enable Direct URLs'
+                language_swithcer_uses_localized_urls:
+                    label: 'Languages Switcher Uses Localized URLs'
+                    tooltip: "If enabled, the language switcher will point to the page's localized URL for the selected language."
                 canonical_url_type:
                     label: 'Canonical URL Type'
                     choice:

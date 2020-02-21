@@ -28,8 +28,17 @@ services:
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
 
-    oro_redirect.routing.slug_url_mathcer:
-        alias: oro_redirect.routing.slug_url_matcher
+    oro_redirect.event_listener.redirect:
+        class: Oro\Bundle\RedirectBundle\EventListener\RedirectListener
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_redirect.provider.slug_source_entity_provider_registry'
+            - '@doctrine'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_website.manager'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -30 }
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
@@ -391,3 +400,9 @@ services:
             - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }
+
+    oro_redirect.provider.slug_source_entity_provider_registry:
+        class: Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderRegistry
+        public: false
+        arguments:
+            - !tagged oro_redirect.slug_source_entity_provider

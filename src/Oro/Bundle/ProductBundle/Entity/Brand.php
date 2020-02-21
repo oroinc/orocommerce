@@ -20,7 +20,9 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
- * @ORM\Entity()
+ * Brand entity class.
+ *
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository")
  * @ORM\Table(
  *      name="oro_brand",
  *      indexes={

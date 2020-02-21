@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -38,10 +39,20 @@ class Configuration implements ConfigurationInterface
                 self::ENABLE_DIRECT_URL => ['value' => true],
                 self::CANONICAL_URL_TYPE => ['value' => self::SYSTEM_URL],
                 self::REDIRECT_GENERATION_STRATEGY => ['value' => self::STRATEGY_ASK],
-                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE]
+                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE],
+                'language_switcher_uses_localized_urls' => ['value' => false],
             ]
         );
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public static function getConfigKey(string $key): string
+    {
+        return sprintf('%s%s%s', OroRedirectExtension::ALIAS, ConfigManager::SECTION_MODEL_SEPARATOR, $key);
     }
 }
