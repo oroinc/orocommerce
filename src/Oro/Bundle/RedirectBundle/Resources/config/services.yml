@@ -26,6 +26,17 @@ services:
         tags:
             - { name: container.hot_path }
 
+    oro_redirect.event_listener.redirect:
+        class: Oro\Bundle\RedirectBundle\EventListener\RedirectListener
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_redirect.provider.slug_source_entity_provider_registry'
+            - '@doctrine'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_website.manager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -30 }
+
     Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
         alias: oro_redirect.routing.slug_url_matcher
 
@@ -414,3 +425,9 @@ services:
             - '@doctrine.orm.entity_manager'
         tags:
             - { name: kernel.event_listener, event: oro_redirect.event.restrict_slug_increment, method: onRestrictSlugIncrementEvent }
+
+    oro_redirect.provider.slug_source_entity_provider_registry:
+        class: Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderRegistry
+        public: false
+        arguments:
+            - !tagged_iterator oro_redirect.slug_source_entity_provider

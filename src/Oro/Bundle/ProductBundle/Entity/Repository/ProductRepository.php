@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -567,5 +568,19 @@ class ProductRepository extends EntityRepository
         $queryBuilder
             ->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
             ->setParameter('imageType', ProductImageType::TYPE_LISTING);
+    }
+
+    /**
+     * @param Slug $slug
+     * @return Product|null
+     */
+    public function findOneBySlug(Slug $slug): ?Product
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb
+            ->where($qb->expr()->isMemberOf(':slug', 'p.slugs'))
+            ->setParameter('slug', $slug);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

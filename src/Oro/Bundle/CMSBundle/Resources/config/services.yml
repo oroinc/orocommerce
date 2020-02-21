@@ -442,3 +442,12 @@ services:
         decorates: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
         parent: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
         class: Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer
+
+    oro_cms.provider.page_slug_source_entity:
+        class: Oro\Bundle\CMSBundle\Provider\PageSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }
