@@ -81,8 +81,6 @@ Delete a collection of product unit records.
 
 ## FIELDS
 
-## FIELDS
-
 ### label
 
 The localized label of the product unit.
@@ -162,11 +160,3 @@ The localized short plural label of the product unit.
 **Please note:**
 
 *This field is **required** and must remain defined.*
-
-### id
-
-#### create
-
-{@inheritdoc}
-
-**The required field.**

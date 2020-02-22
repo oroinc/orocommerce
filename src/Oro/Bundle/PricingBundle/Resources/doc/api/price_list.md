@@ -159,14 +159,6 @@ Delete a collection of price list records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field.**
-
 ### name
 
 The name of the price list
