@@ -1,5 +1,5 @@
 services:
-    oro_web_catalog.action.configurable:
+    oro_web_catalog.action.get_node_default_variant_url:
         class: Oro\Bundle\WebCatalogBundle\Actions\GetNodeDefaultVariantUrl
         arguments:
             - '@oro_action.expression.context_accessor'
