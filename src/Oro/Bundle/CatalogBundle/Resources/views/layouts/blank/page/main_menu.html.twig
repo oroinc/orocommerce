@@ -48,9 +48,12 @@
              data-header-row-toggle
              data-scroll="true"
              role="menu"
-             aria-labelledby="{{ togglerId }}">
+             aria-labelledby="{{ togglerId }}"
+             data-role="sub-menu"
+             aria-hidden="true"
+        >
             <div class="main-menu-columns">
-                <div class="main-menu-column main-menu-column">
+                <div class="main-menu-column main-menu-column" data-role="sub-menu">
                     <div class="main-menu-column__title">{{ 'oro.catalog.menu.by_category.label'|trans }}</div>
                     <div class="main-menu-column__inner">
                         <ul class="main-menu-column__inner-left">
