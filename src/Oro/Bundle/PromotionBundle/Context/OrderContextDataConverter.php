@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Context;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
@@ -50,12 +51,18 @@ class OrderContextDataConverter implements ContextDataConverterInterface
     protected $entityCouponsProvider;
 
     /**
+     * @var EntityPaymentMethodsProvider
+     */
+    protected $paymentMethodsProvider;
+
+    /**
      * @param CriteriaDataProvider $criteriaDataProvider
      * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param ScopeManager $scopeManager
      * @param SubtotalProviderInterface $lineItemSubtotalProvider
      * @param CouponValidationService $couponValidationService
      * @param EntityCouponsProviderInterface $entityCouponsProvider
+     * @param EntityPaymentMethodsProvider $paymentMethodsProvider
      */
     public function __construct(
         CriteriaDataProvider $criteriaDataProvider,
@@ -63,7 +70,8 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         ScopeManager $scopeManager,
         SubtotalProviderInterface $lineItemSubtotalProvider,
         CouponValidationService $couponValidationService,
-        EntityCouponsProviderInterface $entityCouponsProvider
+        EntityCouponsProviderInterface $entityCouponsProvider,
+        EntityPaymentMethodsProvider $paymentMethodsProvider
     ) {
         $this->criteriaDataProvider = $criteriaDataProvider;
         $this->lineItemsConverter = $lineItemsConverter;
@@ -71,6 +79,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->couponValidationService = $couponValidationService;
         $this->entityCouponsProvider = $entityCouponsProvider;
+        $this->paymentMethodsProvider = $paymentMethodsProvider;
     }
 
     /**
@@ -96,8 +105,9 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         ];
 
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($entity);
+        $paymentMethods = $this->paymentMethodsProvider->getPaymentMethods($entity);
 
-        $contextData = [
+        return [
             self::CUSTOMER_USER => $customerUser,
             self::CUSTOMER => $customer,
             self::CUSTOMER_GROUP => $customerGroup,
@@ -110,10 +120,10 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SHIPPING_COST => $entity->getShippingCost(),
             self::SHIPPING_METHOD => $entity->getShippingMethod(),
             self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType(),
-            self::APPLIED_COUPONS => $this->getValidateCoupons($this->entityCouponsProvider->getCoupons($entity))
+            self::APPLIED_COUPONS => $this->getValidateCoupons($this->entityCouponsProvider->getCoupons($entity)),
+            self::PAYMENT_METHOD => reset($paymentMethods),
+            self::PAYMENT_METHODS => $paymentMethods
         ];
-
-        return $contextData;
     }
 
     /**
