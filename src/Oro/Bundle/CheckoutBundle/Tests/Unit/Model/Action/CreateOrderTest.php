@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -26,6 +27,11 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     protected $mapper;
 
     /**
+     * @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $paymentMethodsProvider;
+
+    /**
      * @var CreateOrder
      */
     protected $action;
@@ -34,6 +40,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     {
         $this->contextAccessor = new ContextAccessor();
         $this->mapper = $this->createMock(MapperInterface::class);
+        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
         /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
         $eventDispatcher = $this
@@ -42,6 +49,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
 
         $this->action = new CreateOrder($this->contextAccessor, $this->mapper);
         $this->action->setDispatcher($eventDispatcher);
+        $this->action->setPaymentMethodsProvider($this->paymentMethodsProvider);
     }
 
     protected function tearDown()
@@ -123,6 +131,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     {
         $expected = new Order();
         $checkout = new Checkout();
+        $checkout->setPaymentMethod('pm1');
         $data = [
             'lineItems' => new ArrayCollection([new PropertyPath('lineItems')]),
         ];
@@ -148,6 +157,10 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             ->method('map')
             ->with($checkout, $data)
             ->willReturn($expected);
+
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($expected, ['pm1']);
 
         $this->action->execute($context);
 

@@ -16,6 +16,8 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
             - '@oro_checkout.checkout_to_order_converter.cache'
+        calls:
+            - ['setPaymentMethodsProvider', ['@oro_checkout.payment_methods_provider']]
 
     oro_checkout.checkout_to_order_converter.cache:
         parent: doctrine_cache.abstract.array
@@ -420,6 +422,8 @@ services:
         arguments:
             - '@oro_action.expression.context_accessor'
             - '@oro_checkout.mapper.order_mapper'
+        calls:
+            - ['setPaymentMethodsProvider', ['@oro_checkout.payment_methods_provider']]
         tags:
             - { name: oro_action.action, alias: create_order }
 
@@ -517,6 +521,11 @@ services:
             - '@oro_checkout.repository.checkout'
         tags:
             - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}
+
+    oro_checkout.payment_methods_provider:
+        class: Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
 
     oro_checkout.provider.payment_method_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\PaymentMethodProvider

@@ -199,6 +199,8 @@ services:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_promotion.validation_service.coupon_validation'
             - '@oro_promotion.provider.entity_coupons_provider'
+        calls:
+            - ['setPaymentMethodsProvider', ['@oro_checkout.payment_methods_provider']]
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 

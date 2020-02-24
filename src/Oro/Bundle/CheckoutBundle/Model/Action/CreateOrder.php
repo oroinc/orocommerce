@@ -4,11 +4,26 @@ namespace Oro\Bundle\CheckoutBundle\Model\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
+/**
+ * Create Order action (workflow, operation)
+ *
+ * Usage:
+ * - '@create_order':
+ *   attribute: $.order
+ *   checkout: $.checkout
+ *   data:
+ *     billingAddress: $.billingAddress
+ *     shippingAddress: $.shippingAddress
+ *     sourceEntityClass: $.sourceDocumentEntityClassName
+ *     paymentTerm: $.paymentTerm
+ *     lineItems: $.lineItems
+ */
 class CreateOrder extends AbstractAction
 {
     const OPTION_KEY_ATTRIBUTE = 'attribute';
@@ -26,6 +41,11 @@ class CreateOrder extends AbstractAction
     protected $mapper;
 
     /**
+     * @var EntityPaymentMethodsProvider
+     */
+    protected $paymentMethodsProvider;
+
+    /**
      * @param ContextAccessor $contextAccessor
      * @param MapperInterface $mapper
      */
@@ -36,6 +56,14 @@ class CreateOrder extends AbstractAction
         parent::__construct($contextAccessor);
 
         $this->mapper = $mapper;
+    }
+
+    /**
+     * @param EntityPaymentMethodsProvider $paymentMethodsProvider
+     */
+    public function setPaymentMethodsProvider(EntityPaymentMethodsProvider $paymentMethodsProvider)
+    {
+        $this->paymentMethodsProvider = $paymentMethodsProvider;
     }
 
     /**
@@ -81,6 +109,8 @@ class CreateOrder extends AbstractAction
         }
 
         $order = $this->mapper->map($checkout, $additionalData);
+        $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
+
         $this->contextAccessor->setValue($context, $this->options[self::OPTION_KEY_ATTRIBUTE], $order);
     }
 

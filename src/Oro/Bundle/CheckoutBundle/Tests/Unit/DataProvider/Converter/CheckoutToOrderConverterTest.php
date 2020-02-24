@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
@@ -24,6 +25,11 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
     private $mapper;
 
     /**
+     * @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $paymentMethodsProvider;
+
+    /**
      * @var CheckoutToOrderConverter
      */
     private $converter;
@@ -38,16 +44,20 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->mapper = $this->createMock(MapperInterface::class);
         $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
+
         $this->converter = new CheckoutToOrderConverter(
             $this->checkoutLineItemsManager,
             $this->mapper,
             $this->cacheProvider
         );
+        $this->converter->setPaymentMethodsProvider($this->paymentMethodsProvider);
     }
 
     public function testGetOrder()
     {
         $checkout = new Checkout();
+        $checkout->setPaymentMethod('pm1');
         $order = new Order();
 
         $cacheKey = md5(serialize($checkout));
@@ -74,12 +84,17 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
             ->with($checkout, ['lineItems' => $lineItems])
             ->willReturn($order);
 
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($order, ['pm1']);
+
         $this->assertSame($order, $this->converter->getOrder($checkout));
     }
 
     public function testGetOrderCachedResultOnSecondCall()
     {
         $checkout = new Checkout();
+        $checkout->setPaymentMethod('pm1');
         $order = new Order();
 
         $cacheKey = md5(serialize($checkout));
@@ -106,6 +121,10 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
             ->method('map')
             ->with($checkout, ['lineItems' => $lineItems])
             ->willReturn($order);
+
+        $this->paymentMethodsProvider->expects($this->exactly(2))
+            ->method('storePaymentMethodsToEntity')
+            ->with($order, ['pm1']);
 
         $this->assertSame($order, $this->converter->getOrder($checkout));
         $this->assertSame($order, $this->converter->getOrder($checkout));
