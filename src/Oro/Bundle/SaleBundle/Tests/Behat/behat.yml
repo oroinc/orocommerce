@@ -71,7 +71,8 @@ oro_behat_extension:
             type: xpath
           Do Not Ship Later Than:
               type: 'css'
-              locator: 'input[name^="date_selector_oro_sale_quote_shipUntil"]'
+              locator: 'input[name^="oro_sale_quote_shipUntil"]'
+          Valid Until: 'oro_sale_quote[validUntil]'
 
     Quote Shipping Address State Selector:
       selector:

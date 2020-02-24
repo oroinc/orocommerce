@@ -4,16 +4,28 @@ namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
-abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
+/**
+ * Abstract class for page data fixture.
+ */
+abstract class AbstractLoadPageData extends AbstractFixture implements
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     /**
      * @var ContainerInterface
      */
@@ -33,6 +45,16 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            LoadAdminUserData::class
+        ];
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
@@ -43,7 +65,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
 
         $loadedPages = [];
         foreach ((array)$this->getFilePaths() as $filePath) {
-            $pages = $this->loadFromFile($filePath, $organization);
+            $pages = $this->loadFromFile($manager, $filePath, $organization);
             foreach ($pages as $page) {
                 $manager->persist($page);
                 $loadedPages[] = $page;
@@ -72,11 +94,12 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     }
 
     /**
-     * @param $filePath
+     * @param ObjectManager $manager
+     * @param string $filePath
      * @param Organization $organization
      * @return Page[]
      */
-    protected function loadFromFile($filePath, Organization $organization)
+    protected function loadFromFile(ObjectManager $manager, string $filePath, Organization $organization): array
     {
         $rows = Yaml::parse(file_get_contents($filePath));
         $pages = [];
@@ -106,5 +129,39 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     {
         $locator = $this->container->get('file_locator');
         return $locator->locate($path);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param FileManager $fileManager
+     * @param string $sourcePath
+     * @param string $title
+     * @return DigitalAsset
+     */
+    protected function createDigitalAsset(
+        ObjectManager $manager,
+        FileManager $fileManager,
+        string $sourcePath,
+        string $title
+    ): DigitalAsset {
+        $user = $this->getFirstUser($manager);
+
+        $daTitle = new LocalizedFallbackValue();
+        $daTitle->setString($title);
+        $manager->persist($daTitle);
+
+        $imagePath = $this->getFilePathsFromLocator($sourcePath);
+        $sourceFile = $fileManager->createFileEntity(is_array($imagePath) ? current($imagePath) : $imagePath);
+        $sourceFile->setOwner($user);
+        $manager->persist($sourceFile);
+
+        $digitalAsset = new DigitalAsset();
+        $digitalAsset->addTitle($daTitle)
+            ->setSourceFile($sourceFile)
+            ->setOwner($user)
+            ->setOrganization($user->getOrganization());
+        $manager->persist($digitalAsset);
+
+        return $digitalAsset;
     }
 }

@@ -26,7 +26,7 @@ oro:
         quantity:
             label: Qty
             placeholder: "Qty #"
-            aria-label: Product Quantity
+            aria_label: Product Quantity
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.

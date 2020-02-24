@@ -2,7 +2,25 @@
 
 ## ACTIONS
 
+### get
+
+Retrieve a specific product image type record.
+
+{@inheritdoc}
+
+### get_list
+
+Retrieve a collection of product image type records.
+
+{@inheritdoc}
+
 ### create
+
+Create a new product image type record.
+
+The created record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -32,17 +50,13 @@ Example:
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
  of image defined in themes and it is not directly handled by the API.
 
-### get
-
-{@inheritdoc}
-
-### get_list
-
-{@inheritdoc}
-
 ### update
 
-Edit a specific ProductImageType record.
+Edit a specific product image type record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -82,9 +96,13 @@ Example:
 
 ### delete
 
+Delete a specific product image type record.
+
 {@inheritdoc}
 
 ### delete_list
+
+Delete a collection of product image type records.
 
 {@inheritdoc}
 
@@ -92,11 +110,11 @@ Example:
 
 ### productImageTypeType
 
-The type for the productImageType
+The type for the product image.
 
 ### productImage
 
-The productImage for the productImageType
+The associated product image.
 
 ## SUBRESOURCES
 
@@ -104,15 +122,15 @@ The productImage for the productImageType
 
 #### get_subresource
 
-Retrieve the productImage of a specific productImageType record. 
+Retrieve the record of the product image a specific product image type record is associated with.
 
 #### get_relationship
 
-Retrieve the ID of the productImage for a specific productImageType.
+Retrieve the ID of the product image a specific product image type record is associated with.
 
 #### update_relationship
 
-Replace the productImage for a specific productImageType.
+Replace the product image a specific product image type record is associated with.
 
 {@request:json_api}
 Example:
