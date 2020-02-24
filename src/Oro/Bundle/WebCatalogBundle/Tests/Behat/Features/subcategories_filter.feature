@@ -8,8 +8,8 @@ Feature: Sub-Categories filter
 
   Scenario: Logged in as buyer and manager on different window sessions
     Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Prepare Web Catalog
     Given I proceed as the Admin
@@ -41,8 +41,8 @@ Feature: Sub-Categories filter
     And I click on "Show Variants Dropdown"
     And I click "Add Category"
     And I fill "Content Node Form" with:
-      | Titles   | Lighting Products             |
-      | Url Slug | lighting-products             |
+      | Titles         | Lighting Products       |
+      | Url Slug       | lighting-products       |
       | Sub-Categories | Include, show as filter |
     And I click "Lighting Products"
     And I save form
@@ -131,8 +131,9 @@ Feature: Sub-Categories filter
 
     When I filter Text as does not contain "Product2"
     Then I should see "Subcategories Filter Select" with options:
-      | Value         |
-      | Headlamps (2) |
+      | Value                           |
+      | Architectural Floodlighting (0) |
+      | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
     And I should see "PSKU3" product
     And I should see "PSKU4" product
@@ -158,8 +159,9 @@ Feature: Sub-Categories filter
 
     When I filter Text as does not contain "Product2"
     Then I should see "Subcategories Filter Select" with options:
-      | Value         |
-      | Headlamps (2) |
+      | Value                           |
+      | Architectural Floodlighting (0) |
+      | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
     And I should see "PSKU3" product
     And I should see "PSKU4" product
@@ -178,10 +180,7 @@ Feature: Sub-Categories filter
 
     When I filter Text as contains "Product2"
     Then I should not see an "Subcategories Filter" element
-    When I show filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
-    Then I should see an "Subcategories Filter" element
-    And number of records in "Product Frontend Grid" should be 1
-    And I should see "PSKU2" product
+    And I should see no available "Sub-Categories" filter in "ProductFrontendGrid" frontend grid
 
   Scenario: Change type to "Do not include"
     Given I proceed as the Admin
@@ -210,6 +209,7 @@ Feature: Sub-Categories filter
 
     When I proceed as the Buyer
     And I filter Text as contains "Pro"
+    And I show filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
     Then I should see an "Subcategories Filter" element
     And number of records in "Product Frontend Grid" should be 4
     And I should see "PSKU1" product

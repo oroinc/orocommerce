@@ -330,7 +330,8 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 1 => [
                     'type' => 'subcategory',
                     'counts' => [1 => 2],
-                    'disabledOptions' => [0 => '2']
+                    'countsWithoutFilters' => [1 => 2, 2 => 3],
+                    'isDisableFiltersEnabled' => true
                 ]
             ]
         ];
@@ -434,7 +435,8 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 1 => [
                     'type' => 'subcategory',
                     'counts' => [1 => 2],
-                    'disabledOptions' => [0 => '2']
+                    'countsWithoutFilters' => [1 => 2, 2 => 3],
+                    'isDisableFiltersEnabled' => true
                 ]
             ]
         ];
@@ -480,7 +482,8 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                     [
                         'type' => SubcategoryFilter::FILTER_TYPE_NAME,
                         'counts' => [],
-                        'disabledOptions' => []
+                        'countsWithoutFilters' => [],
+                        'isDisableFiltersEnabled' => false
                     ],
                 ],
             ],

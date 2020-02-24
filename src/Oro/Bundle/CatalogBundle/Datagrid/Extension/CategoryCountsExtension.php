@@ -120,7 +120,8 @@ class CategoryCountsExtension extends AbstractExtension
         $categoryCounts = $this->getCounts($config);
 
         $countsWithoutFilters = [];
-        if ($this->isOptionsDisablingApplicable()) {
+        $isDisableFiltersEnabled = $this->isOptionsDisablingApplicable();
+        if ($isDisableFiltersEnabled) {
             $countsWithoutFilters = $this->getCountsWithoutFilters($config);
         }
 
@@ -131,14 +132,8 @@ class CategoryCountsExtension extends AbstractExtension
             }
 
             $filter['counts'] = $categoryCounts;
-
-            $filter['disabledOptions'] = [];
-            if ($countsWithoutFilters) {
-                $filter['disabledOptions'] = array_map(
-                    'strval',
-                    array_values(array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts)))
-                );
-            }
+            $filter['countsWithoutFilters'] = $countsWithoutFilters;
+            $filter['isDisableFiltersEnabled'] = $isDisableFiltersEnabled;
         }
         unset($filter);
 
