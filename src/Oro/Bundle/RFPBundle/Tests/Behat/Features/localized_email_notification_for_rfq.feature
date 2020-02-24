@@ -103,7 +103,7 @@ Feature: Localized email notification for RFQ
 
     When I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:

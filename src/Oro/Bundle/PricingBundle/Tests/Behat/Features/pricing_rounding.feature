@@ -163,19 +163,19 @@ Feature: Pricing rounding
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And click "Account"
+    And follow "Account"
     When click "Order History"
     Then should see following "PastOrdersGrid" grid:
       |Order Number|Total |
@@ -229,13 +229,13 @@ Feature: Pricing rounding
     And should see "Total $8"
 
     And I proceed as the customer
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7.5"
     And should see "Total $7.5"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
@@ -303,7 +303,7 @@ Feature: Pricing rounding
       |PO Number|Order4|
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And click "Account"
+    And follow "Account"
     When click "Order History"
     Then should see following "PastOrdersGrid" grid:
       |Order Number|Total |
@@ -346,25 +346,25 @@ Feature: Pricing rounding
       |Price List         |Quantity|Unit|Value |
       |Default Price List |1       |item|7.45  |
     And I proceed as the customer
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $8"
     And should see "Total $8"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q321 in grid
     And click "Accept and Submit to Order"
@@ -390,19 +390,19 @@ Feature: Pricing rounding
       |Price List         |Quantity|Unit|Value |
       |Default Price List |1       |item|7.45  |
     And I proceed as the customer
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $8"
     And should see "Total $8"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
@@ -427,19 +427,19 @@ Feature: Pricing rounding
       |Price List         |Quantity|Unit|Value |
       |Default Price List |1       |item|7.45  |
     And I proceed as the customer
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4"
     And should see "Total $4"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
@@ -464,13 +464,13 @@ Feature: Pricing rounding
       |Price List         |Quantity|Unit|Value |
       |Default Price List |1       |item|7.45  |
     And I proceed as the customer
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q321 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4"
     And should see "Total $4"
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on Q654 in grid
     And click "Accept and Submit to Order"

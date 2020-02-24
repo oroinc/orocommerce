@@ -41,7 +41,7 @@ Feature: Single Page Checkout Fields Values Are Saved
       | Do not ship later than | 7/1/2018      |
 
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after checkout is started from shopping list again
-    Given I click "Account"
+    Given I follow "Account"
     And I open page with shopping list List 1
     When I click "Create Order"
     Then "Checkout Order Review Form" must contains values:
@@ -50,7 +50,7 @@ Feature: Single Page Checkout Fields Values Are Saved
       | Do not ship later than | 7/1/2018      |
 
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after user returns to the checkout from other page
-    Given I click "Account"
+    Given I follow "Account"
     And click "Orders"
     When click "Check Out" on row "List 1" in grid
     Then "Checkout Order Review Form" must contains values:
