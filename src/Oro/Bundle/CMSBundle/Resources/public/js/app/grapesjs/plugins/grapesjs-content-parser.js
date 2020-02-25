@@ -4,7 +4,7 @@
  *
  * Overwrite and reassing html parsing
  */
-import {wrap, find, omit, isString} from 'underscore';
+import {wrap} from 'underscore';
 import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const modelAttrStart = 'data-gjs-';
@@ -314,33 +314,6 @@ function parseNodes(el, config, ct = '', parent = false) {
     return result;
 }
 
-/**
- * Check components default properties
- * @param components
- * @param cTypes
- * @returns {*}
- */
-function componentsCheck(components = [], cTypes) {
-    if (isString(components)) {
-        return components;
-    }
-
-    return components.map(component => {
-        const fType = component.type && find(cTypes, type => type.id === component.type);
-
-        if (component.components && component.components.length) {
-            component.components = componentsCheck(component.components, cTypes);
-        }
-
-        return fType ? Object.assign(
-            component,
-            omit(fType.model.prototype.defaults,
-                ['components', 'content', 'class', 'style', 'tagName', 'type', 'attributes']
-            )
-        ) : component;
-    });
-}
-
 function normalizeBgURLString(str = '') {
     const chars = {
         '%7B': '{',
@@ -381,9 +354,4 @@ export default function ContentParser(editor) {
     });
 
     editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.parseCss);
-
-    editor.DomComponents.setComponents = wrap(
-        editor.DomComponents.setComponents,
-        (func, components) => func.call(editor.DomComponents, componentsCheck(components, cTypes))
-    );
 }
