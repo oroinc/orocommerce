@@ -1618,6 +1618,15 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product.validator_constraints.sku_regex_validator }
 
+    oro_product.event_listener.image_remove:
+        class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
     oro_product.delete_handler.product_unit_precision:
         class: Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandler
         parent: oro_soap.handler.delete.abstract
