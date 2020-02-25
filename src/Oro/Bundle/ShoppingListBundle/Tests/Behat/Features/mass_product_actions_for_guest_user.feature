@@ -27,7 +27,7 @@ Feature: Mass Product Actions for Guest user
 
   Scenario: Mass actions are enabled for Guest when Guest Shopping List feature is enabled
     Given I proceed as the Admin
-    When uncheck "Use default" for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable Guest Shopping List" field
     And I fill form with:
       | Enable Guest Shopping List | true |
     When I click "Save settings"

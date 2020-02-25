@@ -792,7 +792,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'The entity does not exist.',
                 'source' => ['pointer' => '/included/1/relationships/customerAddress/data']
             ],
             $response
@@ -814,7 +814,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'The entity does not exist.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
             $response

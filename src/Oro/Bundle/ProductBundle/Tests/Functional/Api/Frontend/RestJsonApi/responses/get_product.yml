@@ -38,7 +38,7 @@ data:
         unitPrecisions:
             - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
             - { unit: '@set->code', precision: 1, conversionRate: 10, default: false }
-        url: '/product1_slug_en_US'
+        url: '/product1_slug_default'
         urls:
             - { url: '/product1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
             - { url: '/product1_slug_es', localizationId: '<toString(@es->id)>' }

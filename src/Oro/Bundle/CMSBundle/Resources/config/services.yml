@@ -228,15 +228,15 @@ services:
     oro_cms.event_listener.wysiwyg_field_twig_listener:
         class: Oro\Bundle\CMSBundle\EventListener\WYSIWYGFieldTwigListener
         arguments:
-            - '@oro_entity_config.config_manager'
-            - '@oro_cms.parser.twig'
-            - '@oro_cms.wysiwyg.chain_twig_function_processor'
-            - '@property_accessor'
+            - '@Psr\Container\ContainerInterface'
         tags:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
             - { name: doctrine.event_listener, event: postFlush }
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.parser.twig }
+            - { name: container.service_subscriber, id: oro_cms.wysiwyg.chain_twig_function_processor }
 
     oro_cms.entity_listener.image_slide:
         class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
@@ -442,3 +442,12 @@ services:
         decorates: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
         parent: oro_locale.importexport.normalizer.localized_fallback_value_collection_normalizer
         class: Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer
+
+    oro_cms.provider.page_slug_source_entity:
+        class: Oro\Bundle\CMSBundle\Provider\PageSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }

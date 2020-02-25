@@ -2,6 +2,7 @@ oro.cms:
     page:
         entity_label:           'Landing Page'
         entity_plural_label:    'Landing Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label:               'ID'
         titles:
             label:              'Titles'
@@ -28,11 +29,13 @@ oro.cms:
         draft:
             entity_label:        'Landing Page Draft'
             entity_plural_label: 'Landing Page Drafts'
+            entity_grid_all_view_label: 'All Landing Page Drafts'
             owner.label:         'Owner'
 
     contentblock:
         entity_label: Content Block
         entity_plural_label: Content Blocks
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: Id
         alias.label: Alias
         createdat.label: Created At
@@ -40,6 +43,7 @@ oro.cms:
         content_variants:
             label: Content Variant
             entity_plural_label: Content Variants
+            entity_grid_all_view_label: All %entity_plural_label%
             no_content_variants.label: No content variants
             default:
                 label: Default Variant
@@ -75,6 +79,7 @@ oro.cms:
     contentwidget:
         entity_label: Content Widget
         entity_plural_label: Content Widgets
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         name.label: Name
         description.label: Description
@@ -112,6 +117,7 @@ oro.cms:
     imageslide:
         entity_label: Image Slide
         entity_plural_label: Image Slides
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
         content_widget.label: Content Widget
         slide_order.label: Slide Order
@@ -154,6 +160,7 @@ oro.cms:
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
+        entity_grid_all_view_label: All %entity_plural_label%
         content.label: Content
         content_style.label: Content Style
         content_properties.label: Content Properties
@@ -180,6 +187,7 @@ oro.cms:
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_label: 'Customer Login Page'
         id.label: 'Id'
         top_content.label: 'Top content'

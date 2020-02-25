@@ -1,6 +1,7 @@
 aliases:
     grapesjs$: npmassets/grapesjs/dist/grapes
     grapesjs-preset-webpage$: npmassets/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: npmassets/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
 app-modules:
   - orocms/js/app/modules/grapesjs-module
 dynamic-imports:

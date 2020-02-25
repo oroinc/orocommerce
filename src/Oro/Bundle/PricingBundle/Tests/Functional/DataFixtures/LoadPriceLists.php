@@ -75,7 +75,7 @@ class LoadPriceLists extends AbstractFixture
     {
         $now = new \DateTime();
 
-        foreach (self::$data as $priceListData) {
+        foreach (static::getPriceListData() as $priceListData) {
             $priceList = new PriceList();
 
             $priceList
@@ -99,6 +99,6 @@ class LoadPriceLists extends AbstractFixture
      */
     public static function getPriceListData()
     {
-        return self::$data;
+        return static::$data;
     }
 }

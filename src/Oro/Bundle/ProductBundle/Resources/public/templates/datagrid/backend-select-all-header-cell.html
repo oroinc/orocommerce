@@ -10,7 +10,7 @@
             <button class="datagrid-massaction__invisible" type="button" id="<%- togglerId %>" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.label') %>"></button>
             <label class="custom-checkbox">
-                <input type="checkbox" name="is_default" class="custom-checkbox__input" data-select>
+                <input type="checkbox" name="is_default" class="custom-checkbox__input" data-select aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.input.aria_label') %>">
                 <span class="custom-checkbox__icon" aria-hidden="true"></span>
             </label>
             <ul class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>">

@@ -302,11 +302,6 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         routeName: "oro_product_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e171b"
         url: '/product1_slug_default'
-    product1_slug_en_US:
-        routeName: "oro_product_frontend_product_index"
-        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
-        url: '/product1_slug_en_US'
-        localization: '@en_US'
     product1_slug_en_CA:
         routeName: "oro_product_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e171b"
@@ -358,7 +353,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testToOneId: '@country.usa'
         testAttrManyToMany: ['@customer_user1', '@customer_user2']
         testToManyId: ['@country.mexico', '@country.germany']
-        slugs: ['@product1_slug_default', '@product1_slug_en_US', '@product1_slug_en_CA', '@product1_slug_es']
+        slugs: ['@product1_slug_default', '@product1_slug_en_CA', '@product1_slug_es']
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@product2_precision'

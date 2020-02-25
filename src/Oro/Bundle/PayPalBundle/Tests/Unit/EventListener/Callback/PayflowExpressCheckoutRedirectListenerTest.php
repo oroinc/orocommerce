@@ -148,4 +148,50 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
 
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
+
+    public function testOnReturnError10486()
+    {
+        $this->paymentTransaction
+            ->setSuccessful(false)
+            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout'])
+            ->setResponse([
+                'RESPMSG' =>
+                    'Declined: 10486-This transaction couldn\'t be completed. Please redirect your customer to PayPal.'
+            ])
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
+        $event = new CallbackErrorEvent();
+        $event->setPaymentTransaction($this->paymentTransaction);
+
+        $message = 'oro.payment.result.error';
+        $this->messageProvider->expects($this->once())->method('getErrorMessage')->willReturn($message);
+
+        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
+        $flashBag = $this->createMock(FlashBagInterface::class);
+
+        $flashBag->expects($this->once())
+            ->method('has')
+            ->with('error')
+            ->willReturn(false);
+
+        $flashBag->expects($this->exactly(2))
+            ->method('add')
+            ->withConsecutive(
+                ['warning', 'oro.paypal.result.funding_decline_error'],
+                ['error', $message]
+            );
+
+        $this->session->expects($this->any())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+
+        $this->listener->onReturn($event);
+
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
+    }
 }

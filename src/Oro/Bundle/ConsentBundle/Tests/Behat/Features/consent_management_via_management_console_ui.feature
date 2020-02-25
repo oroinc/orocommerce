@@ -277,7 +277,7 @@ Feature: Consent management via Management Console UI
   Scenario: Manage consents from My profile page
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
-    When click "Account"
+    When follow "Account"
     Then should see a "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
@@ -322,14 +322,14 @@ Feature: Consent management via Management Console UI
     And I save form
     And click "Yes, Decline"
     Then should see "Customer User profile updated" flash message
-    When click "Account"
+    When follow "Account"
     Then I should see "Accepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
 
   Scenario: Check consents section after changing customer user role
     Given I proceed as the User
-    And click "Account"
+    And follow "Account"
     And click "Users"
     And click edit AmandaRCole1@example.org in grid
     And I fill form with:
@@ -564,7 +564,7 @@ Feature: Consent management via Management Console UI
   Scenario: Check mandatory consents on Checkout Page
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
-    And click "Account"
+    And follow "Account"
     And I click "Edit Profile Button"
     And fill form with:
       | Presenting Personal Data             | false |
@@ -672,13 +672,13 @@ Feature: Consent management via Management Console UI
     And on the "Payment" checkout step I press Continue
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    When I click "Account"
+    When I follow "Account"
     Then I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
 
   Scenario: Check that Agreements step is presenting if it was shown previously
-    Given I click "Account"
+    Given I follow "Account"
     And I click "Edit Profile Button"
     And I fill form with:
       | Test Consent 3 | false |
@@ -700,7 +700,7 @@ Feature: Consent management via Management Console UI
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see 1 elements "Required Consent"
     And the "Test Consent 3" checkbox should not be checked
-    When I click "Account"
+    When I follow "Account"
     And I click "Edit Profile Button"
     Then I fill form with:
       | Test Consent 3 | true |
@@ -717,8 +717,8 @@ Feature: Consent management via Management Console UI
     Given I proceed as the Admin
     And go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     When I save form
     Then I should see "Configuration saved" flash message
     And I follow "Commerce/Sales/Checkout" on configuration sidebar
@@ -854,7 +854,7 @@ Feature: Consent management via Management Console UI
     And I type "Tester2@test.com" in "Confirm Password"
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    When click "Account"
+    When follow "Account"
     Then should see a "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element

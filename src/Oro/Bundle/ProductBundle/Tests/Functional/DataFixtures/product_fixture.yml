@@ -8,7 +8,7 @@ product-1:
         precision: 0
     names:
         - { reference: product-1.names.default, string: product-1.names.default }
-        - { reference: product-1.names.en_US, string: product-1.names.en_CA, localization: en_CA }
+        - { reference: product-1.names.en_CA, string: product-1.names.en_CA, localization: en_CA }
     slugPrototypes:
         - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
         - { reference: product-1.slugPrototypes.en_CA, string: product-1.slugPrototypes.en_CA, localization: en_CA }

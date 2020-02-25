@@ -75,7 +75,9 @@
 {% block  __oro_product_grid__product_view_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview'
+        '~class': ' product-item__preview',
+        'href': product.view_link,
+        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
 
     {% set isNoImage = true %}
@@ -98,7 +100,7 @@
         }) %}
     {% endif %}
 
-    <a href="{{ product.view_link }}" {{ block('block_attributes') }}>
+    <a {{ block('block_attributes') }}>
         {{ block('container_widget') }}
     </a>
 {% endblock %}
@@ -117,7 +119,9 @@
             'data-trigger-gallery-open': true
         }) %}
 
-        <div {{ block('block_attributes') }}></div>
+        <div {{ block('block_attributes') }}>
+            <span class="view-product-gallery__icon" aria-hidden="true"></span>
+        </div>
     {% endif %}
 {% endblock %}
 
@@ -150,7 +154,7 @@
         '~class': " product-item__title product-item__title--{{ class_prefix }}"
     }) %}
 
-    <h3 {{ block('block_attributes') }}>
+    <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
            itemprop="url"
@@ -158,7 +162,7 @@
         >
             <span itemprop="name">{{ block('container_widget')|trim|raw }}</span>
         </a>
-    </h3>
+    </h2>
 {% endblock %}
 
 {% block __oro_product_grid__product_details_widget %}

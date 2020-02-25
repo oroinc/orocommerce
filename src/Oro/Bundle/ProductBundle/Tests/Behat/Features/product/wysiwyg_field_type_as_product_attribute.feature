@@ -31,7 +31,8 @@ Feature: WYSIWYG field type as product attribute
       | Type       | WYSIWYG       |
     And click "Continue"
     And fill form with:
-      | Label | WYSIWYG video |
+      | Label             | WYSIWYG video       |
+      | File Applications | [default, commerce] |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 

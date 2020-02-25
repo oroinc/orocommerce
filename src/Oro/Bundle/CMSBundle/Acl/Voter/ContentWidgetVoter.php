@@ -5,11 +5,12 @@ namespace Oro\Bundle\CMSBundle\Acl\Voter;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
- * Checks if given ContentWidget can be deleted.
+ * Prevents removal of content widgets that are in use.
  */
 class ContentWidgetVoter implements VoterInterface
 {
@@ -36,7 +37,7 @@ class ContentWidgetVoter implements VoterInterface
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(ContentWidgetUsage::class);
 
         foreach ($attributes as $attribute) {
-            if ($attribute !== 'DELETE') {
+            if (BasicPermission::DELETE !== $attribute) {
                 continue;
             }
 

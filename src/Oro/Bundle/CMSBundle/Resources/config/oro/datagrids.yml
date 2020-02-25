@@ -376,6 +376,8 @@ datagrids:
         options:
             entityHint: oro.cms.page.draft.entity_plural_label
             showDrafts: true
+            gridViews:
+                allLabel: oro.cms.page.draft.entity_grid_all_view_label
         columns:
             slug:
                 label: oro.cms.page.slugs.singular_label

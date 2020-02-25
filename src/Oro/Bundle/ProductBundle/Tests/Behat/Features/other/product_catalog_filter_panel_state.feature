@@ -23,7 +23,7 @@ Feature: Product catalog Filter Panel state
     Given I proceed as the Buyer
     When I click "NewCategory"
     Then I should not see an "GridFilters" element
-    When click "Account"
+    When follow "Account"
     And click "Users"
     Then I should not see an "GridFilters" element
 
@@ -55,7 +55,7 @@ Feature: Product catalog Filter Panel state
     Given I proceed as the Buyer
     When I click "NewCategory"
     Then I should see an "GridFilters" element
-    When click "Account"
+    When follow "Account"
     And click "Users"
     Then I should not see an "GridFilters" element
 
@@ -76,7 +76,7 @@ Feature: Product catalog Filter Panel state
 
   Scenario: Check that Filter Panel state for rest of grids is preserved separately from last usage
     Given I proceed as the Buyer
-    When click "Account"
+    When follow "Account"
     And click "Users"
     Then I should not see an "GridFilters" element
     When I click "GridFiltersButton"

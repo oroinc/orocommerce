@@ -40,6 +40,9 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         ['en', 'wysiwyg'],
                     ],
                 ],
+            ],
+
+            [
                 'wysiwyg_style' => [
                     'test' => [
                         ['default', 'wysiwyg_styles'],
@@ -56,6 +59,9 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         ['default', 'wysiwyg2'],
                     ],
                 ],
+            ],
+
+            [
                 'wysiwyg_style' => [
                     'test' => [
                         ['en', 'wysiwyg_styles'],
@@ -97,7 +103,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                 WYSIWYGTwigFunctionProcessorInterface::FIELD_STYLES_TYPE => ['test'],
             ]);
 
-        $processor->expects($this->atLeast(2))
+        $processor->expects($this->atLeast(4))
             ->method('processTwigFunctions')
             ->willReturnCallback(
                 function (WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls) use (&$expectedCalls) {

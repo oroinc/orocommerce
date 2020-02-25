@@ -4,6 +4,9 @@
  *
  * Overwrite and reassing html parsing
  */
+import {wrap, find, omit, isString} from 'underscore';
+import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
+
 const modelAttrStart = 'data-gjs-';
 const textTags = ['ul', 'ol', 'li'];
 const wrappedTags = ['ul', 'ol'];
@@ -312,6 +315,47 @@ function parseNodes(el, config, ct = '', parent = false) {
 }
 
 /**
+ * Check components default properties
+ * @param components
+ * @param cTypes
+ * @returns {*}
+ */
+function componentsCheck(components = [], cTypes) {
+    if (isString(components)) {
+        return components;
+    }
+
+    return components.map(component => {
+        const fType = component.type && find(cTypes, type => type.id === component.type);
+
+        if (component.components && component.components.length) {
+            component.components = componentsCheck(component.components, cTypes);
+        }
+
+        return fType ? Object.assign(
+            component,
+            omit(fType.model.prototype.defaults,
+                ['components', 'content', 'class', 'style', 'tagName', 'type', 'attributes']
+            )
+        ) : component;
+    });
+}
+
+function normalizeBgURLString(str = '') {
+    const chars = {
+        '%7B': '{',
+        '%7D': '}',
+        '%20': ' '
+    };
+
+    return str.replace(/%[\w]{2}/g, input => {
+        if (chars[input]) {
+            return chars[input];
+        }
+    }).replace(/http(s)?:\/\/[\w:\/%\'\(,-]+(?=\{\{)/g, '');
+}
+
+/**
  * @constructor
  * Content parser initialize
  * @param editor
@@ -319,5 +363,27 @@ function parseNodes(el, config, ct = '', parent = false) {
  */
 export default function ContentParser(editor) {
     const cTypes = editor.DomComponents.componentTypes;
+
+    editor.CssComposer.render = wrap(editor.CssComposer.render, func => {
+        const result = func();
+
+        result.querySelectorAll('style').forEach(style => {
+            style.innerText = normalizeBgURLString(style.innerText)
+                .replace(/\{\{([\w\s\'\_\-\,\(\)]+)\}\}/g, (input, matched) => {
+                    const imageId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(matched);
+                    if (imageId) {
+                        return DigitalAssetHelper.getImageUrl(imageId);
+                    }
+                });
+        });
+
+        return result;
+    });
+
     editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.parseCss);
+
+    editor.DomComponents.setComponents = wrap(
+        editor.DomComponents.setComponents,
+        (func, components) => func.call(editor.DomComponents, componentsCheck(components, cTypes))
+    );
 }

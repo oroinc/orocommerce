@@ -11,6 +11,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles logic related to quick order process
+ */
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
     /** @var UrlGeneratorInterface */
@@ -207,7 +210,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         return array_map(
             function ($entityItem) {
-                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY];
+                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
             },
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
         );

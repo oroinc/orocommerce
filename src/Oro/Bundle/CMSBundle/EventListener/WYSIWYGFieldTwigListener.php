@@ -16,7 +16,9 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * Listens to changes in wysiwyg fields to
@@ -25,18 +27,12 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class WYSIWYGFieldTwigListener implements OptionalListenerInterface
+class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubscriberInterface
 {
     use OptionalListenerTrait;
 
-    /** @var TwigParser */
-    private $twigParser;
-
-    /** @var WYSIWYGTwigFunctionProcessorInterface */
-    private $processor;
-
-    /** @var PropertyAccessorInterface */
-    private $propertyAccessor;
+    /** @var ContainerInterface */
+    private $container;
 
     /** @var string[][] */
     private $fieldLists = [];
@@ -44,25 +40,25 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
     /** @var bool */
     private $transactional = false;
 
-    /** @var EntityConfigManager */
-    private $entityConfigManager;
+    /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * @param EntityConfigManager $entityConfigManager
-     * @param TwigParser $twigParser
-     * @param WYSIWYGTwigFunctionProcessorInterface $processor
-     * @param PropertyAccessorInterface $propertyAccessor
+     * {@inheritDoc}
      */
-    public function __construct(
-        EntityConfigManager $entityConfigManager,
-        TwigParser $twigParser,
-        WYSIWYGTwigFunctionProcessorInterface $processor,
-        PropertyAccessorInterface $propertyAccessor
-    ) {
-        $this->entityConfigManager = $entityConfigManager;
-        $this->twigParser = $twigParser;
-        $this->processor = $processor;
-        $this->propertyAccessor = $propertyAccessor;
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_cms.parser.twig' => TwigParser::class,
+            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
+            EntityConfigManager::class,
+            PropertyAccessorInterface::class
+        ];
     }
 
     /**
@@ -93,8 +89,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
     public function preRemove(LifecycleEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
-            $isFlushNeeded = $this->processor->onPreRemove($this->createDTO($args));
-            $this->postProcess($args, $isFlushNeeded);
+            $this->postProcess($args, $this->getTwigFunctionProcessor()->onPreRemove($this->createDTO($args)));
         }
     }
 
@@ -105,9 +100,9 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
     private function isApplicable(LifecycleEventArgs $args): bool
     {
         if (!$this->enabled
-            || !$this->processor->getApplicableMapping()
-            || !is_object($args->getEntity())
+            || !\is_object($args->getEntity())
             || $args->getEntity() instanceof LocalizedFallbackValue
+            || !$this->getTwigFunctionProcessor()->getApplicableMapping()
         ) {
             return false;
         }
@@ -154,7 +149,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
         return new WYSIWYGProcessedDTO(
             new WYSIWYGProcessedEntityDTO(
                 $args->getEntityManager(),
-                $this->propertyAccessor,
+                $this->getPropertyAccessor(),
                 $args->getEntity(),
                 $args instanceof PreUpdateEventArgs ? $args->getEntityChangeSet() : null
             )
@@ -194,17 +189,18 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
             return false;
         }
 
-        $applicableMapping = $this->processor->getApplicableMapping();
+        $twigFunctionProcessor = $this->getTwigFunctionProcessor();
+        $applicableMapping = $twigFunctionProcessor->getApplicableMapping();
         if (!isset($applicableMapping[$processedEntity->getFieldType()])) {
             return false;
         }
 
-        $foundTwigFunctionCalls[$processedEntity->getFieldType()] = $this->twigParser->findFunctionCalls(
+        $foundTwigFunctionCalls[$processedEntity->getFieldType()] = $this->getTwigParser()->findFunctionCalls(
             $processedEntity->getFieldValue(),
             $applicableMapping[$processedEntity->getFieldType()]
         );
 
-        return $this->processor->processTwigFunctions($processedDTO, $foundTwigFunctionCalls);
+        return $twigFunctionProcessor->processTwigFunctions($processedDTO, $foundTwigFunctionCalls);
     }
 
     /**
@@ -222,22 +218,24 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
 
         $collectionDTO = new WYSIWYGProcessedEntityDTO(
             $processedEntity->getEntityManager(),
-            $this->propertyAccessor,
+            $this->getPropertyAccessor(),
             $collection
         );
         $metadata = $collectionDTO->getMetadata();
 
-        $applicableMapping = $this->processor->getApplicableMapping();
-        $foundTwigFunctionCalls = [];
+        $twigParser = $this->getTwigParser();
+        $twigFunctionProcessor = $this->getTwigFunctionProcessor();
+        $applicableMapping = $twigFunctionProcessor->getApplicableMapping();
+        $isFlushNeeded = false;
 
         foreach ($this->getWysiwygFields($metadata) as $fieldName => $fieldType) {
             if (!isset($applicableMapping[$fieldType])) {
                 continue;
             }
 
-            $foundTwigFunctionCalls[$fieldType] = [];
+            $foundTwigFunctionCalls = [$fieldType => []];
             foreach ($collectionDTO->getEntity() as $entity) {
-                $foundCalls = $this->twigParser->findFunctionCalls(
+                $foundCalls = $twigParser->findFunctionCalls(
                     $metadata->getFieldValue($entity, $fieldName),
                     $applicableMapping[$fieldType]
                 );
@@ -249,12 +247,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
                     );
                 }
             }
+
+            $isFlushNeeded = $twigFunctionProcessor->processTwigFunctions(
+                $processedDTO->withProcessedEntityField($fieldName, $fieldType),
+                $foundTwigFunctionCalls
+            ) || $isFlushNeeded;
         }
 
-        return $this->processor->processTwigFunctions(
-            $processedDTO->withProcessedEntityField($fieldName, $fieldType),
-            $foundTwigFunctionCalls
-        );
+        return $isFlushNeeded;
     }
 
     /**
@@ -300,7 +300,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
         $entityName = $metadata->getName();
         if (!isset($this->fieldLists[$entityName])) {
             $this->fieldLists[$entityName] = [];
-            $applicableFieldTypes = \array_keys($this->processor->getApplicableMapping());
+            $applicableFieldTypes = \array_keys($this->getTwigFunctionProcessor()->getApplicableMapping());
 
             $this->collectRegularWysiwygFields($metadata, $applicableFieldTypes);
             $this->collectSerializedWysiwygFields($metadata->getName(), $applicableFieldTypes);
@@ -337,7 +337,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
      */
     private function collectSerializedWysiwygFields(string $entityName, array $applicableFieldTypes): void
     {
-        $entityConfigModel = $this->entityConfigManager->getConfigEntityModel($entityName);
+        $entityConfigModel = $this->getEntityConfigManager()->getConfigEntityModel($entityName);
         if ($entityConfigModel) {
             // Working with fieldConfigModels because regular doctrine metadata does not contain info about
             // serialized fields.
@@ -350,5 +350,37 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface
                 }
             }
         }
+    }
+
+    /**
+     * @return TwigParser
+     */
+    private function getTwigParser(): TwigParser
+    {
+        return $this->container->get('oro_cms.parser.twig');
+    }
+
+    /**
+     * @return WYSIWYGTwigFunctionProcessorInterface
+     */
+    private function getTwigFunctionProcessor(): WYSIWYGTwigFunctionProcessorInterface
+    {
+        return $this->container->get('oro_cms.wysiwyg.chain_twig_function_processor');
+    }
+
+    /**
+     * @return EntityConfigManager
+     */
+    private function getEntityConfigManager(): EntityConfigManager
+    {
+        return $this->container->get(EntityConfigManager::class);
+    }
+
+    /**
+     * @return PropertyAccessorInterface
+     */
+    private function getPropertyAccessor(): PropertyAccessorInterface
+    {
+        return $this->container->get(PropertyAccessorInterface::class);
     }
 }

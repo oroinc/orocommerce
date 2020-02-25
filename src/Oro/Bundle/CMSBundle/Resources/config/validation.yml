@@ -26,6 +26,9 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         contentVariants:
             - Valid: ~
+            - Count:
+                min: 1
+                minMessage: oro.cms.contentblock.content_variants.empty.message
 
 Oro\Bundle\CMSBundle\Entity\ContentWidget:
     constraints:
@@ -96,3 +99,7 @@ Oro\Bundle\CMSBundle\Entity\TextContentVariant:
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+
+Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel:
+    constraints:
+        - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGFieldsName: ~

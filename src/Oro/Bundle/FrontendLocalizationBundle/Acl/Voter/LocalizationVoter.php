@@ -4,14 +4,16 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Acl\Voter;
 
 use Oro\Bundle\ConfigBundle\Entity\ConfigValue;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
+/**
+ * Prevents removal of localizations that are in use.
+ */
 class LocalizationVoter extends AbstractEntityVoter
 {
     /** {@inheritdoc} */
-    protected $supportedAttributes = [
-        'DELETE'
-    ];
+    protected $supportedAttributes = [BasicPermission::DELETE];
 
     /** @var array */
     protected static $usedLocalizationIds;

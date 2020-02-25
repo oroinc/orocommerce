@@ -224,7 +224,7 @@ oro_behat_extension:
 
     Product Name:
       selector:
-        locator: '//h3[contains(@class,"product-item__title product-item__title")]'
+        locator: '//h2[contains(@class,"product-item__title product-item__title")]'
         type: xpath
 
     Green Box:
@@ -259,9 +259,6 @@ oro_behat_extension:
 
     Matrix Grid Popup:
       selector: 'div.matrix-order-widget--dialog'
-
-    Matrix Grid Popup Close Button:
-      selector: 'button[title="Close"]'
 
     Matrix Grid Form:
       selector:

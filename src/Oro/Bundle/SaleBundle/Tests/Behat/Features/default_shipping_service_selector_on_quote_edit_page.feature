@@ -49,7 +49,7 @@ Feature: Default Shipping Service Selector on Quote Edit page
 
     Then I proceed as the Buyer
     And I am on homepage
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click on View in grid
     And click "Accept and Submit to Order"

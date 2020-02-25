@@ -7,6 +7,7 @@
             reloadEvents: ['shopping-list:refresh', 'frontend:shopping-list-item-quantity:update', 'frontend:item:delete'],
         },
         'data-dropdown-trigger': true,
+        'aria-label': 'oro.shoppinglist.entity_plural_label'|trans,
         '~class': " main-menu__item main-menu__item--nested"
     }) %}
 
@@ -147,7 +148,10 @@
                         {% endif %}
                     {% endfor %}
                 </span>
-                <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} <i class="fa-angle-right"></i></span>
+                <span class="shopping-list-dropdown__info">
+                    {{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }}
+                    <span class="fa-angle-right" aria-hidden="true"></span>
+                </span>
             </a>
         </div>
     {% else %}
@@ -217,7 +221,7 @@
                 {% endif %}
                 <div class="shopping-list-dropdown__info-container">
                     <a href="{{ path('oro_shopping_list_frontend_view') }}" class="shopping-list-dropdown__info">
-                        <span class="fa-shopping-cart"></span>
+                        <span class="fa-shopping-cart" aria-hidden="true"></span>
                         <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
                     </a>
                 </div>

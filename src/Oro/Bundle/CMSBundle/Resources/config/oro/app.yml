@@ -10,6 +10,11 @@ doctrine:
             wysiwyg_style: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType
             wysiwyg_properties: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType
 
+oro_api:
+    form_type_guesses:
+        wysiwyg_properties:
+            form_type: Oro\Bundle\ApiBundle\Form\Type\ArrayType
+
 liip_imagine:
     filter_sets:
         login_page_logo:

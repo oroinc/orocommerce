@@ -11,12 +11,14 @@ import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 
 import 'grapesjs-preset-webpage';
+import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
+const MIN_EDITOR_WIDHT = 1100;
 /**
  * Create grapesJS content builder
  * @type {*|void}
@@ -74,6 +76,9 @@ const GrapesjsEditorView = BaseView.extend({
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
+        wrapperIsBody: 0,
+        exportWrapper: 1,
+        pasteStyles: false,
 
         /**
          * Color picker options
@@ -234,6 +239,16 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     render: function() {
+        if (_.isMobile()) {
+            this.message = mediator.execute('showFlashMessage', 'error', __('oro.cms.wysiwyg.mobile.flash_message'), {
+                container: this.$el.parent(),
+                hideCloseButton: true
+            });
+
+            this.$el.parent().addClass('mobile-mode');
+
+            return;
+        }
         this.applyComponentsJSON();
         this.initContainer();
         this.initBuilder();
@@ -375,6 +390,12 @@ const GrapesjsEditorView = BaseView.extend({
                     e.preventDefault();
                 });
         });
+
+        $(this.builder.Canvas.getBody()).on(
+            'paste',
+            '[contenteditable="true"]',
+            this.onPasteContent.bind(this)
+        );
     },
 
     /**
@@ -388,6 +409,8 @@ const GrapesjsEditorView = BaseView.extend({
             this.builder.off();
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
+
+        $(this.builder.Canvas.getBody()).off();
     },
 
     /**
@@ -517,6 +540,15 @@ const GrapesjsEditorView = BaseView.extend({
         $(this.builder.Canvas.getFrameEl().contentDocument).find('#wrapper').addClass(this.contextClass);
     },
 
+    onPasteContent(e) {
+        if (!this.builderOptions.pasteStyles) {
+            e.preventDefault();
+            const text = e.originalEvent.clipboardData.getData('text');
+
+            e.target.ownerDocument.execCommand('insertText', false, text);
+        }
+    },
+
     /**
      * Onload builder handler
      * @private
@@ -535,6 +567,8 @@ const GrapesjsEditorView = BaseView.extend({
 
         mediator.trigger('grapesjs:loaded', this.builder);
         mediator.trigger('page:afterChange');
+
+        this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDHT);
     },
 
     /**
@@ -699,7 +733,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: [ContentParser, ...Object.keys(this.builderPlugins)],
+            plugins: [ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

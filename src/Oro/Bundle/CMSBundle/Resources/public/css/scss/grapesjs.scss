@@ -1,6 +1,14 @@
 /* @theme: admin.oro; */
 
 .#{$app-prefix} {
+    &editor-cont {
+        transition: height .5s;
+
+        .ui-dialog & {
+            padding: 0;
+        }
+    }
+
     &frame {
         width: calc(100% - 16px);
         height: calc(100% - 16px);
@@ -175,13 +183,14 @@
 
     &toolbar {
         margin-top: -2px;
+        white-space: nowrap;
     }
-
 
     &com-badge,
     &com-badge-red,
     &badge {
         margin-left: -2px;
+        white-space: nowrap;
     }
 
     &am-assets-cont {
@@ -270,6 +279,10 @@
 // Additional styles for fullscreen mode
 .page-content-editor {
     margin: -$grapesjs-content-editor-offset;
+
+    .widget-content & {
+        margin: 0;
+    }
 }
 
 .ui-dialog {

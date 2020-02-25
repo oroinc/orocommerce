@@ -114,14 +114,6 @@ Delete a collection of price rule records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field.**
-
 ### priceList
 
 #### create

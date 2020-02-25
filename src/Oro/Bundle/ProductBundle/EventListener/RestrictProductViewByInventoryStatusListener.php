@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -27,12 +27,15 @@ class RestrictProductViewByInventoryStatusListener
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
-        if ($controller && $controller[0] instanceof ProductController && $controller[1] === 'viewAction'
+        if ($controller
+            && is_array($controller)
+            && $controller[0] instanceof ProductController
+            && $controller[1] === 'viewAction'
             && $event->getRequest()->attributes->has('product')
         ) {
             $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');

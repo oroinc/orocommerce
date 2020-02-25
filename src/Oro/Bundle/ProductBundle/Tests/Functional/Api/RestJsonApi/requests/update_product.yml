@@ -16,7 +16,7 @@ data:
                     id: '<toString(@product-1.names.default->getId())>'
                 -
                     type: localizedfallbackvalues
-                    id: '<toString(@product-1.names.en_US->getId())>'
+                    id: '<toString(@product-1.names.en_CA->getId())>'
                 -
                     type: localizedfallbackvalues
                     id: 'names-new'

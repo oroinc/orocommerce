@@ -46,6 +46,8 @@ class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
         $form->expects(static::any())->method('getData')->willReturn($order);
 
         $formView = static::createMock(FormView::class);
+        $formView->children = ['discounts' => $this->createMock(FormView::class)];
+
         $this->twigEngine->expects(static::once())
             ->method('render')
             ->with(OrderDiscountEventListener::TEMPLATE, ['form' => $formView])

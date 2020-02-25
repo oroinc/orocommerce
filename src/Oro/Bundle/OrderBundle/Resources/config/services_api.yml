@@ -28,10 +28,21 @@ services:
 
     oro_order.api.add_discount_to_order:
         class: Oro\Bundle\OrderBundle\Api\Processor\AddDiscountToOrder
-        arguments:
-            - '@oro_order.order.total.total_helper'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
+            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
+
+    oro_order.api.add_line_item_to_order:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddLineItemToOrder
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.api.set_default_website_to_order:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 20 }
 
     oro_order.api.compute_order_payment_status:
         class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentStatus
@@ -130,12 +141,28 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
 
-    oro_order.api.fill_order_totals:
-        class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderTotals
+    oro_order.api.add_order_to_update_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddOrderToUpdateTotals
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -25 }
+
+    oro_order.api.add_associated_order_to_update_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddAssociatedOrderToUpdateTotals
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -25 }
+            - { name: oro.api.processor, action: customize_form_data, requestType: '!frontend', event: post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderDiscount, priority: -25 }
+
+    oro_order.api.move_orders_to_update_totals_from_shared_data_to_context:
+        class: Oro\Bundle\OrderBundle\Api\Processor\MoveOrderToUpdateTotalsFromSharedDataToContext
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, priority: -28 }
+
+    oro_order.api.update_order_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderTotals
         arguments:
             - '@oro_order.order.total.total_helper'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -30 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, orders_to_update_totals: exists, priority: -30 }
 
     oro_order.api.fill_payment_method.payment_term:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderPaymentMethod

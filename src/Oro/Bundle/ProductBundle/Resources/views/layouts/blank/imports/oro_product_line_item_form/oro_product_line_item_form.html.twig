@@ -27,7 +27,8 @@
     {% if renderCacheQuantity is not defined %}
         {% set renderCacheQuantity %}
             {{ form_widget(form.quantity, {attr: {
-                'class': 'product-item__qty-input'
+                'class': 'product-item__qty-input',
+                'aria-label': 'oro.product.quantity.aria_label'|trans
             }}) }}
         {% endset %}
         {% do block|merge_context({

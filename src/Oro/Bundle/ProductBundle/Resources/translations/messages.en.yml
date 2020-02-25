@@ -5,6 +5,7 @@ oro:
                 title: '{0} All Products|[1,Inf] Search Results for "%text%"'
         entity_label: Product
         entity_plural_label: Products
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents product information.
         id.label: Id
         sku_uppercase:
@@ -22,8 +23,10 @@ oro:
         back_order:
             label:        Backorder
             description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
-        quantity.label: Qty
-        quantity.placeholder: "Qty #"
+        quantity:
+            label: Qty
+            placeholder: "Qty #"
+            aria_label: Product Quantity
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
@@ -71,6 +74,7 @@ oro:
         images:
             label: Images
             description: The images for the product.
+            zoom.label: Enlarge Product Image
         is_related.label: Is Related
         related_to_products.label: Related Products
         related_by_products.label: Products that are related to this Product
@@ -171,6 +175,7 @@ oro:
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description: Represents product units information.
             code.label: Code
             default_precision:
@@ -182,6 +187,7 @@ oro:
         productunitprecision:
             entity_label: 'Product Unit Precision'
             entity_plural_label: 'Product Unit Precisions'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: 'Precision represents a number of digits after the decimal point for the number of products that a customer can order or add to the shopping list.'
             id.label: 'Id'
             product:
@@ -212,6 +218,7 @@ oro:
         productvariantlink:
             entity_label: Product Variant Link
             entity_plural_label: Product Variant Links
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             visible.label: Visible
             parent_product.label: Parent Product
@@ -220,6 +227,7 @@ oro:
         productimage:
             entity_label: Product Image
             entity_plural_label: Product Images
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             types.label: Types
             product.label: Product
@@ -236,6 +244,7 @@ oro:
         productimagetype:
             entity_label: Product Image Type
             entity_plural_label: Product Image Types
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             product_image.label: Type
@@ -544,6 +553,11 @@ oro:
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
                     add_individual_product: Add
+                catalog_switcher:
+                    aria_label: Product Grid Views Toolbar
+                    gallery_view.aria_label: Gallery View
+                    list_view.aria_label: List View
+                    compact_view.aria_label: Compact View
             mass_action:
                 get_selected_product_ids:
                     response:
@@ -560,6 +574,8 @@ oro:
                 item: 'Item #:'
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'
+                view_details_aria_label: 'View Details of the Current Product'
+                view_details_prefix: 'View Details of the'
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
@@ -643,6 +659,7 @@ oro:
             description:          Brand of the product
             entity_label:         Brand
             entity_plural_label:  Brands
+            entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   The brand is a combination of the name and visual identity that is aimed to mark products or product lines of a single firm or manufacturer. Brand identifies the product and distinguishes it from the competition.
             descriptions:
                 label:    Description
@@ -683,6 +700,7 @@ oro:
 
             menu:
                 entity_plural_label:  Product Brands
+                entity_grid_all_view_label: All %entity_plural_label%
                 description:          Product Brands
 
             form:

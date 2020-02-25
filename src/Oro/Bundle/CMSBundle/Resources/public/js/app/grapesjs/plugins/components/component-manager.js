@@ -114,12 +114,6 @@ const ComponentManager = BaseClass.extend({
 
                 if (action.isSelectionALink(selection)) {
                     const selectedComponent = editor.getSelected();
-                    const linkElement = action.getLinkElement(selection);
-
-                    linkElement.classList.remove('link');
-                    linkElement.setAttribute('href', '#');
-
-                    rte.exec('unlink');
 
                     if (selectedComponent.get('type') === 'link') {
                         const el = selectedComponent.view.el;
@@ -131,6 +125,12 @@ const ComponentManager = BaseClass.extend({
                         }
 
                         selectedComponent.destroy();
+                    } else {
+                        const linkElement = action.getLinkElement(selection);
+
+                        linkElement.classList.remove('link');
+                        linkElement.setAttribute('href', '#');
+                        rte.exec('unlink');
                     }
                 } else if (selection.toString() !== '') {
                     rte.exec('createLink', '#');

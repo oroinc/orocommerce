@@ -12,6 +12,7 @@ oro:
 
         entity_label: Payment Term
         entity_plural_label: Payment Terms
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
 
         id.label: ID

@@ -10,6 +10,9 @@ use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 
+/**
+ * Add sitemap index to robots.txt when sitemaps are generated.
+ */
 class DumpRobotsTxtListener
 {
     /**
@@ -68,18 +71,21 @@ class DumpRobotsTxtListener
 
             /** @var \SplFileInfo $indexFile */
             foreach ($indexFiles as $indexFile) {
-                $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl(
-                    sprintf(
-                        '%s/%s/%s/%s',
-                        $this->sitemapDir,
-                        $event->getWebsite()->getId(),
-                        SitemapFilesystemAdapter::ACTUAL_VERSION,
-                        $indexFile->getFilename()
-                    ),
-                    $event->getWebsite()
+                $url = sprintf(
+                    '%s/%s/%s/%s',
+                    $this->sitemapDir,
+                    $event->getWebsite()->getId(),
+                    SitemapFilesystemAdapter::ACTUAL_VERSION,
+                    $indexFile->getFilename()
                 );
 
-                $this->robotsTxtSitemapManager->addSitemap($absoluteUrl);
+                $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($event->getWebsite()), '/');
+                // Sitemaps are placed in root folder of domain, additional path should be removed
+                $baseDomainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
+
+                $this->robotsTxtSitemapManager->addSitemap(
+                    $this->canonicalUrlGenerator->createUrl($baseDomainUrl, $url)
+                );
             }
 
             $this->robotsTxtSitemapManager->flush();

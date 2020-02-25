@@ -14,6 +14,11 @@
 
             box-shadow: $canvas-box-shadow;
             border: none;
+
+            .#{$app-prefix}cv-canvas__tools {
+                overflow: hidden;
+                position: relative;
+            }
         }
 
         &.tablet,
@@ -29,7 +34,11 @@
             }
 
             #gjs-tools {
-                transform: translate(20px, 55px);
+                transform: translate(14px, -6px)
+            }
+
+            .#{$app-prefix}cv-canvas__tools {
+                margin-top: 55px;
             }
         }
 
@@ -40,13 +49,18 @@
                 border-width: 20px 75px 20px 55px;
             }
 
+            .#{$app-prefix}cv-canvas__tools {
+                margin-top: 20px;
+            }
+
             #gjs-tools {
-                transform: translate(55px, 20px);
+                transform: translate(49px, -6px);
             }
         }
 
         &__frames {
             background-color: transparent !important;
+            z-index: 1;
         }
     }
 

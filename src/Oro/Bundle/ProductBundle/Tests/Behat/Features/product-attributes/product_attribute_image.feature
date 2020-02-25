@@ -25,9 +25,10 @@ Feature: Product attribute image
     And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
 
     When I fill form with:
-      | File Size (MB)        | 10   |
-      | Thumbnail Width       | 1900 |
-      | Thumbnail Height      | 1200 |
+      | File Size (MB)    | 10                  |
+      | Thumbnail Width   | 1900                |
+      | Thumbnail Height  | 1200                |
+      | File applications | [default, commerce] |
     When I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -48,8 +49,8 @@ Feature: Product attribute image
     And I fill "Product Form" with:
       | ImageField | cat1.jpg |
     And I set Images with:
-      | Main  | Listing | Additional |
-      | 1     | 1       | 1          |
+      | Main | Listing | Additional |
+      | 1    | 1       | 1          |
     And I click on "Digital Asset Choose"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -71,10 +72,28 @@ Feature: Product attribute image
     And I login as AmandaRCole@example.org buyer
     And I type "SKU123" in "search"
     And I click "Search Button"
-    And I click "View Details" for "SKU123" product
-    And I click "Copyright"
+    When I click "View Details" for "SKU123" product
+    Then I should see "ImageField"
+    When I click "Copyright"
     And I hover on "Product Main Image"
-    And I check element "Zoom Container" has width "564"
+    Then I check element "Zoom Container" has width "564"
+
+  Scenario: Remove commerce from product attribute file applications
+    Given I proceed as the Admin
+    And I login as administrator
+    And I go to Products/ Product Attributes
+    When I click Edit ImageField in grid
+    And I fill form with:
+      | File applications | [default] |
+    And I save and close form
+    Then I should see "Attribute was successfully saved" flash message
+
+  Scenario: Check image field is not displayed on store front
+    Given I proceed as the Buyer
+    And I type "SKU123" in "search"
+    And I click "Search Button"
+    When I click "View Details" for "SKU123" product
+    Then I should not see "ImageField"
 
   Scenario: Delete product attribute
     Given I proceed as the Admin

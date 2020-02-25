@@ -37,11 +37,6 @@ abstract class AbstractCombinedPriceListBuilder
     protected $registry;
 
     /**
-     * @var CombinedPriceListGarbageCollector
-     */
-    protected $garbageCollector;
-
-    /**
      * @var PriceListCollectionProvider
      */
     protected $priceListCollectionProvider;
@@ -110,7 +105,6 @@ abstract class AbstractCombinedPriceListBuilder
      * @param ManagerRegistry $registry
      * @param PriceListCollectionProvider $priceListCollectionProvider
      * @param CombinedPriceListProvider $combinedPriceListProvider
-     * @param CombinedPriceListGarbageCollector $garbageCollector
      * @param CombinedPriceListScheduleResolver $scheduleResolver
      * @param StrategyRegister $strategyRegister
      * @param CombinedPriceListTriggerHandler $triggerHandler
@@ -119,7 +113,6 @@ abstract class AbstractCombinedPriceListBuilder
         ManagerRegistry $registry,
         PriceListCollectionProvider $priceListCollectionProvider,
         CombinedPriceListProvider $combinedPriceListProvider,
-        CombinedPriceListGarbageCollector $garbageCollector,
         CombinedPriceListScheduleResolver $scheduleResolver,
         StrategyRegister $strategyRegister,
         CombinedPriceListTriggerHandler $triggerHandler
@@ -127,7 +120,6 @@ abstract class AbstractCombinedPriceListBuilder
         $this->registry = $registry;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
         $this->combinedPriceListProvider = $combinedPriceListProvider;
-        $this->garbageCollector = $garbageCollector;
         $this->scheduleResolver = $scheduleResolver;
         $this->strategyRegister = $strategyRegister;
         $this->triggerHandler = $triggerHandler;

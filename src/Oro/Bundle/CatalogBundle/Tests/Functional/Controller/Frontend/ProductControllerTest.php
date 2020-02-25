@@ -128,7 +128,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $url);
 
-        $navigationBarNode = $crawler->filter('div.breadcrumbs')->first()->getNode(0);
+        $navigationBarNode = $crawler->filter('.breadcrumbs')->first()->getNode(0);
 
         $this->assertObjectHasAttribute('textContent', $navigationBarNode);
         $text = $navigationBarNode->textContent;

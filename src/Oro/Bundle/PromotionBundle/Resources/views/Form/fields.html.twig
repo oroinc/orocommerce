@@ -111,6 +111,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div class="oro-collection-table-heading">
         <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
+        {% if not form.vars.entity.disablePromotions %}
         {{ UI.clientLink({
             'dataUrl': path('oro_action_widget_form', {
                 operationName: 'oro_promotion_add_coupon_form',
@@ -141,12 +142,19 @@
                 }
             }
         }) }}
+        {% endif %}
     </div>
 
-    {% import 'OroOrderBundle:Order:macros.html.twig' as order_macros %}
-    <div {{ block('widget_container_attributes') }}>
-        {{ order_macros.hiddenCollection(form) }}
-    </div>
+    {% if form.vars.entity.disablePromotions %}
+        <div class="no-data">
+            {{ 'oro.order.disable_promotions.disabled_for_oder'|trans }}
+        </div>
+    {% else %}
+        {% import 'OroOrderBundle:Order:macros.html.twig' as order_macros %}
+        <div {{ block('widget_container_attributes') }}>
+            {{ order_macros.hiddenCollection(form) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block oro_promotion_applied_coupon_widget %}

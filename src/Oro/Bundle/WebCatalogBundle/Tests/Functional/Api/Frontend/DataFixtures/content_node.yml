@@ -86,9 +86,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Web Catalog 1 Node 1'
     catalog1_node1_url:
         text: /catalog1_node1
-    catalog1_node1_url_en_US:
-        text: /catalog1_node1_en_US
-        localization: '@en_US'
+    catalog1_node1_url_en_CA:
+        text: /catalog1_node1_en_CA
+        localization: '@en_CA'
     catalog1_node1_meta_title:
         string: 'Web Catalog 1 Node 1 Meta Title'
     catalog1_node1_meta_description:
@@ -99,9 +99,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Web Catalog 1 Node 1.1'
     catalog1_node11_url:
         text: /catalog1_node11
-    catalog1_node11_url_en_US:
-        text: /catalog1_node11_en_US
-        localization: '@en_US'
+    catalog1_node11_url_en_CA:
+        text: /catalog1_node11_en_CA
+        localization: '@en_CA'
     catalog1_node11_url_es:
         text: /catalog1_node11_es
         localization: '@es'
@@ -204,11 +204,11 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         routeName: "oro_product_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e1721"
         url: '/product1_slug_default'
-    product1_slug_en_US:
+    product1_slug_en_CA:
         routeName: "oro_product_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e1722"
-        url: '/product1_slug_en_US'
-        localization: '@en_US'
+        url: '/product1_slug_en_CA'
+        localization: '@en_CA'
     product2_slug_default:
         routeName: "oro_product_frontend_product_index"
         parametersHash: "93540a68aeff18ecd864cb808c4e1723"
@@ -256,7 +256,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         newArrival: true
         organization: '@organization'
         owner: '@business_unit'
-        slugs: ['@product1_slug_default', '@product1_slug_en_US']
+        slugs: ['@product1_slug_default', '@product1_slug_en_CA']
     product2:
         sku: 'PSKU2'
         names: ['@product2_name']
@@ -438,7 +438,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - addMetaKeyword: ['@catalog1_node1_meta_keywords']
             - addContentVariant: ['@catalog1_node1_variant']
         webCatalog: '@catalog1'
-        localizedUrls: ['@catalog1_node1_url', '@catalog1_node1_url_en_US']
+        localizedUrls: ['@catalog1_node1_url', '@catalog1_node1_url_en_CA']
         parentNode: '@catalog1_rootNode'
     catalog1_node11:
         __calls:
@@ -450,7 +450,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - addContentVariant: ['@catalog1_node11_variant_customer1']
             - addContentVariant: ['@catalog1_node11_variant_es']
         webCatalog: '@catalog1'
-        localizedUrls: ['@catalog1_node11_url', '@catalog1_node11_url_en_US', '@catalog1_node11_url_es']
+        localizedUrls: ['@catalog1_node11_url', '@catalog1_node11_url_en_CA', '@catalog1_node11_url_es']
         parentNode: '@catalog1_node1'
     catalog1_node111:
         __calls:
