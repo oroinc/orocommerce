@@ -345,7 +345,7 @@ Feature: Frontend workflow configuration
 
   Scenario: Check Button Title on the entity view with Name in the transition
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And click View 0110 in grid
     Then I should see "Popup transition with only name" button with attributes:

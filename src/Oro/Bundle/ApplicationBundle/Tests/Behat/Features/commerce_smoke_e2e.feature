@@ -818,7 +818,7 @@ Feature: Commerce smoke e2e
       | Internal Status | Sent to Customer |
       | Customer Status | N/A              |
     And I proceed as the User
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     And click on PO00001 in grid
     When click "Accept and Submit to Order"
@@ -890,7 +890,7 @@ Feature: Commerce smoke e2e
     Then I should see "Quote #2 successfully sent to customer" flash message
     And I proceed as the User
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on PO1001 in grid
     When click "Accept and Submit to Order"
@@ -904,7 +904,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges have ability to see orders, RFQ, quotes of other users for the same customer
     Given I proceed as the User
-    And click "Account"
+    And follow "Account"
     When click "Requests For Quote"
     And click on PO00001 in grid
     Then should see "First Name Amanda"
@@ -936,7 +936,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges create/update/block/delete new Customer User
     Given I proceed as the User
-    And click "Account"
+    And follow "Account"
     And click "Roles"
     When click edit "Buyer" in grid
     And fill form with:
@@ -960,14 +960,14 @@ Feature: Commerce smoke e2e
     Then should see "Signed in as: TestF TestL"
     And click "Sign Out"
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When click "Account"
+    When follow "Account"
     And click "Users"
     And click disable "TestUser1@test.com" in grid
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
     Then should see "Account is locked."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When click "Account"
+    When follow "Account"
     And click "Users"
     And click edit "TestUser1@test.com" in grid
     And fill form with:

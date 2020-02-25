@@ -21,7 +21,7 @@ Feature: Country and region translations front-store
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I click "Localization Switcher"
     And I select "Zulu" localization
-    And click "Account"
+    And follow "Account"
     When click "Address Book"
     Then should see following "Customers Address Book Grid" grid:
       | Customer Address | City          | State       | Zip/Postal Code | Country           |

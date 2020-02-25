@@ -7,7 +7,7 @@ Feature: Frontend rfq product grid filters hint is appears after reloading page
 
   Scenario: Feature background
     Given I login as AmandaRCole@example.org buyer
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:

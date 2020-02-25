@@ -1,5 +1,5 @@
 {% block _web_catalog_menu_list_widget %}
-    {% set attr =  layout_attr_defaults(attr, {'~class': ' main-menu'}) %}
+    {% set attr =  layout_attr_defaults(attr, {'~class': ' main-menu', 'role': 'menubar'}) %}
 
     <ul {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -126,7 +126,7 @@
 {% block _web_catalog_menu_third_level_item_mega_widget %}
     {% for category in categories %}
         {% if two_column or loop.first %}
-        <ul class="main-menu-column__inner-{{ loop.index % 2 ? 'left' : 'right' }}">
+        <ul role="menu" class="main-menu-column__inner-{{ loop.index % 2 ? 'left' : 'right' }}">
         {% endif %}
             {{ block('_web_catalog_menu_second_level_item') }}
             {% set hasSublist = category.children is not empty %}
@@ -149,8 +149,15 @@
 {% block _web_catalog_menu_main_menu_link %}
     <li {{ block('block_attributes') }}>
         {% set hasSublist = category.children is not empty %}
-        <a href="{{ oro_commercemenu_get_url(category.url) }}"
-           class="main-menu__link">
+        {% set menuLinkId = 'menu-link-'|uniqid %}
+        <a href="{{ oro_commercemenu_get_url(category.url) }}" role="menuitem"
+           id="{{ menuLinkId }}"
+           class="main-menu__link"
+           {% if hasSublist %}
+               aria-haspopup="true"
+               aria-expanded="false"
+           {% endif %}
+        >
             <span class="main-menu__text">{{ category.label }}</span>
             {% if hasSublist %}
                 <span class="main-menu__taptick" aria-hidden="true">
@@ -159,18 +166,19 @@
             {% endif %}
         </a>
         {% if hasSublist %}
-            {% set togglerId = 'dropdown-'|uniqid %}
+            {% set menuButtonId = 'button-'|uniqid %}
             <button class="main-menu__button-arrow"
                     data-toggle="dropdown"
                     data-popper="false"
                     data-go-to="next"
-                    id="{{ togglerId }}"
+                    id="{{ menuButtonId }}"
                     aria-haspopup="true"
                     aria-expanded="false"
                     aria-label="{{ category.label }}"
             >
                 <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
             </button>
+            {% set togglerId = menuLinkId  ~ ' ' ~ menuButtonId%}
             {% do block|merge_context({'togglerId': togglerId}) %}
             {{ block(sub_block) }}
         {% endif %}
@@ -181,9 +189,13 @@
     <div class="main-menu__sublist-container"
          data-header-row-toggle
          data-scroll="true"
-         aria-labelledby="{{ togglerId }}">
+         aria-labelledby="{{ togglerId }}"
+         role="menu"
+         data-role="sub-menu"
+         aria-hidden="true"
+    >
         <div class="main-menu-columns main-menu-columns--single">
-            <div class="main-menu-column">
+            <div class="main-menu-column" data-role="sub-menu">
                 <ul class="main-menu-column__inner">
                     {% do block|merge_context({'categories': category.children }) %}
                     {{ block('container_widget') }}
@@ -197,7 +209,11 @@
     <div class="main-menu__sublist-container"
          data-header-row-toggle
          data-scroll="true"
-         aria-labelledby="{{ togglerId }}">
+         aria-labelledby="{{ togglerId }}"
+         role="menu"
+         data-role="sub-menu"
+         aria-hidden="true"
+    >
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -206,7 +222,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_second_level_column %}
-    <div class="main-menu-column {{ addClass|default('') }}">
+    <div class="main-menu-column {{ addClass|default('') }}" data-role="sub-menu">
         <p class="main-menu-column__title">
             {{ label }}
         </p>
@@ -220,7 +236,11 @@
     <div class="main-menu__sublist-container"
          data-header-row-toggle
          data-scroll="true"
-         aria-labelledby="{{ togglerId }}">
+         aria-labelledby="{{ togglerId }}"
+         role="menu"
+         data-role="sub-menu"
+         aria-hidden="true"
+    >
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -230,19 +250,19 @@
 
 {% block _web_catalog_menu_second_level_item %}
     <li class="main-menu-column__item">
-        <a class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
+        <a role="menuitem" class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
     </li>
 {% endblock %}
 
 {% block _web_catalog_menu_third_level_item %}
     <li class="main-menu-column__subitem">
-        <a class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
+        <a role="menuitem" class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
     </li>
 {% endblock %}
 
 {% block _web_catalog_menu_second_level_item_simple %}
     <li class="main-menu-column__item">
-        <a class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
+        <a role="menuitem" class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
     </li>
     {% if category.children is not empty %}
         {% set categories = category.children %}
