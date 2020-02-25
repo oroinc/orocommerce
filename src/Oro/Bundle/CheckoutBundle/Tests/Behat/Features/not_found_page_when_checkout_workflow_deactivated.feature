@@ -21,7 +21,7 @@ Feature: Not found page when Checkout workflow deactivated
     And I scroll to top
     And I wait line items are initialized
     When I click "Create Order"
-    And I click "Account"
+    And I follow "Account"
     And I click "Order History"
     Then I should see following grid:
       | Step                | Started From | Items | Subtotal |
@@ -44,6 +44,6 @@ Feature: Not found page when Checkout workflow deactivated
     Then I should see "404 Not Found"
 
   Scenario: Check checkout page
-    Given I click "Account"
+    Given I follow "Account"
     When I click "Order History"
     Then there are no records in "OpenOrdersGrid"

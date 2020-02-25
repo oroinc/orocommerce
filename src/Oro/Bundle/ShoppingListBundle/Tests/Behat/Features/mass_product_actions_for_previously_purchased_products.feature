@@ -26,7 +26,7 @@ Feature: Mass Product Actions for Previously purchased products
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
-    When I click "Account"
+    When I follow "Account"
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"

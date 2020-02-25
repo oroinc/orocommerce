@@ -443,3 +443,13 @@ services:
 
     Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider:
         class: Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider
+
+    oro_web_catalog.provider.content_variant_slug_source_entity:
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider, priority: 100 }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }

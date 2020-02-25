@@ -234,7 +234,7 @@ Feature: Allowed inventory statuses configuration
     Then I should see "Some products are not available and cannot be added to RFQ: Product1 (Item # SKU1)"
 
   Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
-    Given I click "Account"
+    Given I follow "Account"
     And click "Order History"
     When I click "Re-Order" on row "$23.00" in grid
     Then should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1."

@@ -87,14 +87,6 @@ Delete a collection of price list customer fallback records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field.**
-
 ### fallback
 
 Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallback to the current customer only.

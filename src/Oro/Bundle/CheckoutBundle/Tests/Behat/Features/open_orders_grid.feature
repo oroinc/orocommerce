@@ -28,7 +28,7 @@ Feature: Open Orders Grid
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
 
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
     And I click "Accept and Submit to Order"

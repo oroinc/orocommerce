@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Context;
 
+/**
+ * Promotion Context Data Provider Interface. Context is used for promotion expression.
+ */
 interface ContextDataConverterInterface
 {
     const BILLING_ADDRESS = 'billingAddress';
@@ -14,6 +17,7 @@ interface ContextDataConverterInterface
     const SUBTOTAL = 'subtotal';
     const SHIPPING_COST = 'shippingCost';
     const PAYMENT_METHOD = 'paymentMethod';
+    const PAYMENT_METHODS = 'paymentMethods';
     const SHIPPING_METHOD = 'shippingMethod';
     const SHIPPING_METHOD_TYPE = 'shippingMethodType';
     const CRITERIA = 'criteria';

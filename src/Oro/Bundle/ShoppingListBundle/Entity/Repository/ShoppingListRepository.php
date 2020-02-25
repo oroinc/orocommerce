@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
@@ -73,15 +73,14 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
      * @param AclHelper $aclHelper
      * @param int $id
      *
-     * @return mixed
-     * @throws NonUniqueResultException
+     * @return ShoppingList|null
      */
     public function findByUserAndId(AclHelper $aclHelper, $id)
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->andWhere('list.id = :id')
-            ->setParameter('id', $id);
+            ->setParameter('id', $id, Type::INTEGER);
 
         return $aclHelper->apply($qb)->getOneOrNullResult();
     }
