@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setOption':
+            id: products
+            optionName: use_slider
+            optionValue: '=data["use_slider_on_mobile"]'
+    conditions: 'context["is_mobile"]'

@@ -1121,6 +1121,9 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//div[contains(@class, "product__description-content")]//strong'
 
+    Product Segment Content Widget Slider Next:
+      selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

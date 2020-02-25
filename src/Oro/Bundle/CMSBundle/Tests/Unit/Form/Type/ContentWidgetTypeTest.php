@@ -12,6 +12,7 @@ use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -24,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContentWidgetTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /** @var string */
     private const FORM_NAME = 'test_form';
 
@@ -178,18 +181,35 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $expected,
             ],
+            'form based on form type with default data (include id) and with submitted data' => [
+                'widgetTypeForm' => Forms::createFormFactory()->create(ContentWidgetTypeStub::class),
+                'defaultData' => $this->createContentWidget(['param' => 'old value'], 42)
+                    ->setWidgetType('testType1')
+                    ->setName('test_name'),
+                'submittedData' => [
+                    'widgetType' => 'unsaved type',
+                    'name' => 'unsaved name',
+                    'description' => 'test description',
+                    'layout' => 'template2',
+                    'settings' => ['param' => 'value'],
+                ],
+                'expectedData' => $this->createContentWidget(['param' => 'value'], 42)
+                    ->setWidgetType('testType1')
+                    ->setName('test_name')
+                    ->setDescription('test description')
+                    ->setLayout('template2'),
+            ],
         ];
     }
 
     /**
      * @param array $settings
+     * @param int|null $id
      * @return ContentWidget
      */
-    private function createContentWidget(array $settings = []): ContentWidget
+    private function createContentWidget(array $settings = [], ?int $id = null): ContentWidget
     {
-        $contentWidget = new ContentWidget();
-
-        return $contentWidget->setSettings($settings);
+        return $this->getEntity(ContentWidget::class, ['settings' => $settings, 'id' => $id]);
     }
 
     public function testFinishView(): void
