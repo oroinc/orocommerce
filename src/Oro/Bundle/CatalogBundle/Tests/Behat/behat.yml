@@ -53,6 +53,8 @@ oro_behat_extension:
       options:
         mapping:
           Default Value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          English Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          English: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           French Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
           French: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
 
@@ -62,6 +64,8 @@ oro_behat_extension:
       options:
         mapping:
           Default Value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          English Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          English: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           French Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
           French: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
 

@@ -85,14 +85,6 @@ Delete a collection of price list schedule records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field.**
-
 ### activeAt
 
 Defines time when price list should be activated

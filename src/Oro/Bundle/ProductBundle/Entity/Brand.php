@@ -22,7 +22,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 /**
  * Brand entity class.
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository")
  * @ORM\Table(
  *      name="oro_brand",
  *      indexes={

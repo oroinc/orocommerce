@@ -1656,3 +1656,21 @@ services:
         parent: oro_entity.delete_handler_extension
         tags:
             - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision }
+
+    oro_product.provider.brand_slug_source_entity:
+        class: Oro\Bundle\ProductBundle\Provider\BrandSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_product.provider.product_slug_source_entity:
+        class: Oro\Bundle\ProductBundle\Provider\ProductSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }

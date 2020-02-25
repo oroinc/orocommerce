@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Context;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -61,6 +62,12 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
      * @var EntityCouponsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityCouponsProvider;
+
+    /**
+     * @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $paymentMethodsProvider;
+
     /**
      * @var OrderContextDataConverter
      */
@@ -74,6 +81,7 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->lineItemSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $this->couponValidationService = $this->createMock(CouponValidationService::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProviderInterface::class);
+        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
         $this->converter = new OrderContextDataConverter(
             $this->criteriaDataProvider,
@@ -81,7 +89,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             $this->scopeManager,
             $this->lineItemSubtotalProvider,
             $this->couponValidationService,
-            $this->entityCouponsProvider
+            $this->entityCouponsProvider,
+            $this->paymentMethodsProvider
         );
     }
 
@@ -175,6 +184,11 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn(new ArrayCollection([$coupon1, $coupon2]));
 
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('getPaymentMethods')
+            ->with($entity)
+            ->willReturn(['pm1', 'pm2']);
+
         $discountLineItems = $this->getDiscountLineItems($entity);
         $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
         $subtotalAmount = $this->getSubtotalAmount($entity);
@@ -193,6 +207,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::SHIPPING_METHOD => $shippingMethod,
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
             ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$coupon1]),
+            ContextDataConverterInterface::PAYMENT_METHODS => ['pm1', 'pm2'],
+            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1'
         ], $this->converter->getContextData($entity));
     }
 

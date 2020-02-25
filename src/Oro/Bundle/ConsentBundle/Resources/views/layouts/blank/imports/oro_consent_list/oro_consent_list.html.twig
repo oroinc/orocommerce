@@ -37,18 +37,24 @@
 
 {% block __oro_consent_list__consent_items_status_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'consent-list__status' ~
-        (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled')
+        'class': 'consent-list__status ' ~
+            (consent.accepted ? 'consent-list__status--enabled' : 'consent-list__status--disabled'),
+        'title': (consent.accepted ? 'oro.consent.status.apply' : 'oro.consent.status.not_apply')|trans,
+        'aria-hidden': 'true'
     }) %}
 
-    <i {{ block('block_attributes') }}></i>
+    <span {{ block('block_attributes') }}></span>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}
     {% if consent.cmsPageData.url is defined %}
         {% set attr = layout_attr_defaults(attr, {
             'class': 'consent-list__link',
-            'href': consent.cmsPageData.url
+            'href': consent.cmsPageData.url,
+            'aria-label': 'oro.consent.link.aria_label'|trans({
+                '%title%': consent.title,
+                '%status%': (consent.accepted ? 'oro.consent.status.apply' : 'oro.consent.status.not_apply')|trans
+            })
         }) %}
 
         <a {{ block('block_attributes') }}>

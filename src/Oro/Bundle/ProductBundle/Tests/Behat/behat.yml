@@ -296,10 +296,10 @@ oro_behat_extension:
             locator: '[id^="oro_product_CurrencyField"]'
           DateField:
             type: 'css'
-            locator: 'input[name^="date_selector_oro_product_DateField"]'
+            locator: 'input[name^="oro_product_DateField"]'
           DateTimeField:
             type: 'css'
-            locator: '[id^="oro_product_DateTimeField"]'
+            locator: '[data-ftid^="oro_product_DateTimeField"]'
           SelectField:
             type: 'css'
             locator: '[id^="oro_product_SelectField"]'
@@ -749,7 +749,9 @@ oro_behat_extension:
         locator: '//label[contains(@class,"content-variant-item-title") and contains(., "Product Collection")]'
 
     Edit within Web Catalog:
-      selector: 'a.operation-button[title="Edit within Web Catalog"]'
+      selector:
+        type: 'xpath'
+        locator: '//a[contains(@class,"operation-button") and contains(., "Edit within Web Catalog")]'
 
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
