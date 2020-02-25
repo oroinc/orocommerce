@@ -1,0 +1,40 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: content_widget_container
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'OroFrontendBundle:layouts:blank/layout.html.twig'
+                - 'OroProductBundle:layouts:blank/page/layout.html.twig'
+        - '@setOption':
+            id: products
+            optionName: items
+            optionValue: '=data["segment_products"].getProducts(data["product_segment"],data["minimum_items"],data["maximum_items"])'
+        - '@setOption':
+            id: products
+            optionName: items_data.stickers
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["segment_products"].getProducts(data["product_segment"],data["minimum_items"],data["maximum_items"]))'
+        - '@appendOption':
+            id: product
+            optionName: attr.class
+            optionValue: segment-product
+        - '@setOption':
+            id: products
+            optionName: attr.data-page-component-name
+            optionValue: '="segment-product-list-"~data["instanceNumber"]'
+        - '@appendOption':
+            id: product_line_item_form
+            optionName: vars
+            optionValue:
+                # additional user check to correctly render the widget on the backend
+                visible: '=data["show_add_button"] and (is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User") === false)'
+        - '@setOption':
+            id: product_line_item_form_fields
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
+        - '@setOption':
+            id: product_line_item_form_end
+            optionName: form
+            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'

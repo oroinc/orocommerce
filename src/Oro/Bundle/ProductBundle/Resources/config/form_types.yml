@@ -264,3 +264,8 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type }
+
+    oro_product.form.type.product_segment_content_widget_settings:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType'
+        tags:
+            - { name: form.type }
