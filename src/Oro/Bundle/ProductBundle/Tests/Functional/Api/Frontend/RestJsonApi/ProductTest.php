@@ -367,6 +367,10 @@ class ProductTest extends FrontendRestJsonApiTestCase
                                     'id'          => '<toString(@country.germany->iso2Code)>',
                                     'targetValue' => '<toString(@country.germany->iso2Code)>'
                                 ]
+                            ],
+                            'wysiwyg'            => [
+                                'value' => null,
+                                'style' => null
                             ]
                         ]
                     ]
@@ -375,7 +379,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             $response
         );
         $responseData = self::jsonToArray($response->getContent());
-        self::assertCount(10, $responseData['data']['attributes']['productAttributes']);
+        self::assertCount(11, $responseData['data']['attributes']['productAttributes']);
     }
 
     public function testGetAttributesWithEmptyValues()
@@ -408,7 +412,11 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             ],
                             'testToOneId'        => null,
                             'testAttrManyToMany' => [],
-                            'testToManyId'       => []
+                            'testToManyId'       => [],
+                            'wysiwyg'            => [
+                                'value' => null,
+                                'style' => null
+                            ]
                         ]
                     ]
                 ]
@@ -416,7 +424,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
             $response
         );
         $responseData = self::jsonToArray($response->getContent());
-        self::assertCount(10, $responseData['data']['attributes']['productAttributes']);
+        self::assertCount(11, $responseData['data']['attributes']['productAttributes']);
     }
 
     public function testGetConfigurableProduct()

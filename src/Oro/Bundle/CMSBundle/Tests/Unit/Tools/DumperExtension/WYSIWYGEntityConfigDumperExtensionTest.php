@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Tools\DumperExtension;
 
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Helper\WYSIWYGSchemaHelper;
 use Oro\Bundle\CMSBundle\Tools\DumperExtensions\WYSIWYGEntityConfigDumperExtension;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
@@ -22,14 +21,10 @@ class WYSIWYGEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var WYSIWYGSchemaHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $wysiwygSchemaHelper;
-
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->wysiwygSchemaHelper = $this->createMock(WYSIWYGSchemaHelper::class);
-        $this->extension = new WYSIWYGEntityConfigDumperExtension($this->configManager, $this->wysiwygSchemaHelper);
+        $this->extension = new WYSIWYGEntityConfigDumperExtension($this->configManager);
     }
 
     public function testSupports(): void
@@ -109,11 +104,6 @@ class WYSIWYGEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestCase
                 ['entityConfig' => $entityConfig, 'fieldConfig' => $fieldConfig],
             ]
         );
-
-        $this->wysiwygSchemaHelper
-            ->expects($this->exactly(2))
-            ->method('createAdditionalFields')
-            ->with($entityConfig, $fieldConfig);
 
         $this->extension->postUpdate();
     }

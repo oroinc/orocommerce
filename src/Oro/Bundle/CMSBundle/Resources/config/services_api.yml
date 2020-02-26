@@ -25,3 +25,46 @@ services:
             - '@router'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CMSBundle\Entity\Page }
+
+    oro_cms.api.wysiwyg_fields_loaded_data:
+        class: Oro\Bundle\CMSBundle\Api\Processor\CustomizeLoadedData\WYSIWYGFieldsLoadedData
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data }
+
+    oro_cms.api.frontend_wysiwyg_fields_loaded_data:
+        class: Oro\Bundle\CMSBundle\Api\Processor\CustomizeLoadedData\FrontendWYSIWYGFieldsLoadedData
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, priority: -20 }
+
+    oro_cms.api.wysiwyg_fields_form_data:
+        class: Oro\Bundle\CMSBundle\Api\Processor\CustomizeFormData\WYSIWYGFieldsFormData
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit }
+
+    oro_cms.api.add_additional_wysiwyg_fields:
+        class: Oro\Bundle\CMSBundle\Api\Processor\AddAdditionalWYSIWYGFields
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, priority: 100 }
+            - { name: oro.api.processor, action: update, group: transform_data, priority: 100 }
+
+    oro_cms.api.prepare_wysiwyg_additional_fields:
+        class: Oro\Bundle\CMSBundle\Api\Processor\GetConfig\PrepareWYSIWYGAdditionalFields
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', priority: -100 }
+
+    oro_cms.api.frontend_prepare_wysiwyg_additional_fields:
+        class: Oro\Bundle\CMSBundle\Api\Processor\GetConfig\FrontendPrepareWYSIWYGAdditionalFields
+        arguments:
+            - '@oro_cms.provider.wysiwyg_fields_provider'
+        tags:
+            - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', class: Oro\Bundle\ProductBundle\Entity\Product, priority: -110 }

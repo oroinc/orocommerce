@@ -3,7 +3,9 @@ data:
         type: landingpages
         id: '<toString(@page1->id)>'
         attributes:
-            content: 'Page 1 content'
+            content:
+                value: 'Page 1 content'
+                style: null
             createdAt: '@page1->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@page1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Page 1'
@@ -18,7 +20,9 @@ data:
         type: landingpages
         id: '<toString(@page2->id)>'
         attributes:
-            content: 'Page 2 content'
+            content:
+                value: 'Page 2 content'
+                style: null
             createdAt: '@page2->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@page2->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Page 2'
@@ -33,7 +37,9 @@ data:
         type: landingpages
         id: '<toString(@page3->id)>'
         attributes:
-            content: 'Page 3 content'
+            content:
+                value: 'Page 3 content'
+                style: null
             createdAt: '@page3->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@page3->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Page 3'
@@ -46,7 +52,9 @@ data:
         type: landingpages
         id: '<toString(@page4->id)>'
         attributes:
-            content: 'Page 4 content'
+            content:
+                value: 'Page 4 content'
+                style: null
             createdAt: '@page4->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@page4->updatedAt->format("Y-m-d\TH:i:s\Z")'
             title: 'Page 4'

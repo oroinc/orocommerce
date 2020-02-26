@@ -41,6 +41,14 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
         $entityConfigModel = new EntityConfigModel(TestActivity::class);
         $entityConfigModel->setFields(new ArrayCollection([
             $this->getEntity(FieldConfigModel::class, ['fieldName' => 'wysiwyg_field', 'type' => WYSIWYGType::TYPE]),
+            $this->getEntity(FieldConfigModel::class, [
+                'fieldName' => 'wysiwyg_field_style',
+                'type' => 'wysiwyg_style'
+            ]),
+            $this->getEntity(FieldConfigModel::class, [
+                'fieldName' => 'wysiwyg_field_properties',
+                'type' => 'wysiwyg_properties'
+            ]),
             $this->getEntity(FieldConfigModel::class, ['fieldName' => 'string_style', 'type' => 'string']),
             $this->getEntity(FieldConfigModel::class, ['fieldName' => 'string_properties', 'type' => 'string']),
         ]));
@@ -63,10 +71,10 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
     public function fieldDataProvider(): array
     {
         return [
-            'WYSIWYG type and field exist' => [
+            'WYSIWYG type and fields exist' => [
                 'fieldName' => 'wysiwyg_field',
                 'type' => WYSIWYGType::TYPE,
-                'countError' => 0 // UniqueName validator check this case
+                'countError' => 1
             ],
             'WYSIWYG type and additional field exist' => [
                 'fieldName' => 'string',

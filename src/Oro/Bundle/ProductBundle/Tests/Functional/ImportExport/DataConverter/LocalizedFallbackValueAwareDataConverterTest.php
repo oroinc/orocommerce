@@ -90,6 +90,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'minimumQuantityToOrder.value' => '',
         'isUpcoming.value' => '',
         'category.id' => '',
+        'wysiwyg' => '',
     ];
 
     /**
