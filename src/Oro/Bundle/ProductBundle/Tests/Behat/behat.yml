@@ -328,6 +328,12 @@ oro_behat_extension:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
             element: Select2Entity
+          MultipleFiles 1:
+            locator: '//input[starts-with(@name, "oro_product[MultipleFiles") and contains(@name, "[file][file]")]'
+            type: xpath
+          MultipleImages 1:
+            locator: '//input[starts-with(@name, "oro_product[MultipleImages") and contains(@name, "[file][file]")]'
+            type: xpath
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -1121,8 +1127,49 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//div[contains(@class, "product__description-content")]//strong'
 
+    Drawing Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-cell") and .//label[contains(., "Drawing")]]'
+
+    Document Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-cell") and .//label[contains(., "Document")]]'
+
+    MultipleFiles Field:
+      selector:
+        type: xpath
+        locator: '//h4[contains(., "MultipleFiles")]/parent::*'
+
+    MultipleImages Field:
+      selector:
+        type: xpath
+        locator: '//h4[contains(., "MultipleImages")]/parent::*'
+
+    Drawing Storefront Field:
+      selector:
+        type: xpath
+        locator: '//span[contains(@class, "product-view-attribute") and contains(., "Drawing")]/parent::div/parent::div'
+
+    Document Storefront Field:
+      selector:
+        type: xpath
+        locator: '//span[contains(@class, "product-view-attribute") and contains(., "Document")]/parent::div'
+
+    MultipleImages Storefront Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "product-view__attribute-title") and contains(., "MultipleImages")]/parent::div'
+
+    MultipleFiles Storefront Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "product-view__attribute-title") and contains(., "MultipleFiles")]/parent::div'
+
     Product Segment Content Widget Slider Next:
       selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
+
 
   pages:
     Product View:

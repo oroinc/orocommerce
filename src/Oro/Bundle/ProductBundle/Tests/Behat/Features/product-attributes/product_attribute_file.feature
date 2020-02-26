@@ -51,7 +51,7 @@ Feature: Product attribute file
       | FileField | tiger.svg |
     And I save and close form
     Then I should see "Product Form" validation errors:
-      | FileField | The mime type of the file is invalid ("image/svg+xml"). Allowed mime types are "application/pdf", "image/jpeg", "image/png". |
+      | FileField | The mime type of the file is invalid ("image/svg+xml"). Allowed mime types are "application/pdf", "image/png", "image/jpeg". |
     Then I fill "Product Form" with:
       | FileField | cat1.jpg |
     And I save and close form
