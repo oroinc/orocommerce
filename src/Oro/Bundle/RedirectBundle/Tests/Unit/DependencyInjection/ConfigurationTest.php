@@ -40,6 +40,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => 'secure',
                     'scope' => 'app'
                 ],
+                'language_switcher_uses_localized_urls' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

@@ -29,7 +29,7 @@ class RelatedProductFixtureTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             [
-                ['sku' => 'sku-1', 'related_skus' => 'sku-2,sku-3']
+                ['sku' => 'sku-1', 'relatedItem' => 'sku-2,sku-3']
             ],
             iterator_to_array($this->fixture->getData())
         );

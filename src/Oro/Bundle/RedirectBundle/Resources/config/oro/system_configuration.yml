@@ -55,6 +55,15 @@ system_configuration:
                     oro.redirect.system_configuration.fields.canonical_url_security_type.choice.insecure.label: insecure
                     oro.redirect.system_configuration.fields.canonical_url_security_type.choice.secure.label: secure
 
+        oro_redirect.language_switcher_uses_localized_urls:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            options:
+                required: false
+                label: oro.redirect.system_configuration.fields.language_swithcer_uses_localized_urls.label
+                tooltip: oro.redirect.system_configuration.fields.language_swithcer_uses_localized_urls.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -68,6 +77,7 @@ system_configuration:
                                             - oro_redirect.canonical_url_type
                                             - oro_redirect.canonical_url_security_type
                                             - oro_redirect.redirect_generation_strategy
+                                            - oro_redirect.language_switcher_uses_localized_urls
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_redirect.enable_direct_url

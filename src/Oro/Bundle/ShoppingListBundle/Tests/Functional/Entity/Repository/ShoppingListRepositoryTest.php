@@ -94,12 +94,19 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindByUserAndId()
     {
-        /** @var ShoppingList $shoppingList */
+        /** @var ShoppingList $shoppingListReference */
         $shoppingListReference = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
 
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
         $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
+    }
+
+    public function testFindByUserAndNonNumericalId()
+    {
+        $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, 'abc');
+
+        $this->assertNull($shoppingList);
     }
 
     /**

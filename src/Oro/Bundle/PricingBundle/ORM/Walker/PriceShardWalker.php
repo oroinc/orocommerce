@@ -6,6 +6,9 @@ use Doctrine\ORM\Query\AST;
 use Doctrine\ORM\Query\SqlWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Query walker for price shard
+ */
 class PriceShardWalker extends SqlWalker
 {
     const ORO_PRICING_SHARD_MANAGER = 'oro_pricing.shard_manager';
@@ -50,7 +53,7 @@ class PriceShardWalker extends SqlWalker
             }
             //find aliases
             $matches = [];
-            preg_match_all('~' . $baseTableName . ' ([\w_-]+) ~', $sql, $matches);
+            preg_match_all('~' . $baseTableName . ' ([\w\_\-]+) ~', $sql, $matches);
             $aliases = $matches[1];
 
             $tableMap = [];
@@ -96,9 +99,9 @@ class PriceShardWalker extends SqlWalker
             if (!empty($matches[1])) {
                 return $matches[1][0];
             }
-            preg_match_all('~[ (]' . $discriminationField . ' = ([.\w_-]+)[ )]~', $sql, $matches);
+            preg_match_all('~[ (]' . $discriminationField . ' = ([.\w\_\-]+)[ )]~', $sql, $matches);
             if (empty($matches[1])) {
-                $expr = '~[ (]([.\w_-]+) = ' . $discriminationField . '[ )]~';
+                $expr = '~[ (]([.\w\_\-]+) = ' . $discriminationField . '[ )]~';
                 preg_match_all($expr, $sql, $matches);
             }
             $ignoreFields[] = $discriminationField;

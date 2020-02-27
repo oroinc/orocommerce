@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
@@ -29,6 +30,11 @@ class CheckoutToOrderConverter
     private $mapper;
 
     /**
+     * @var EntityPaymentMethodsProvider
+     */
+    private $paymentMethodsProvider;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param MapperInterface $mapper
      * @param CacheProvider $orderCache
@@ -44,23 +50,29 @@ class CheckoutToOrderConverter
     }
 
     /**
+     * @param EntityPaymentMethodsProvider $paymentMethodsProvider
+     */
+    public function setPaymentMethodsProvider(EntityPaymentMethodsProvider $paymentMethodsProvider)
+    {
+        $this->paymentMethodsProvider = $paymentMethodsProvider;
+    }
+
+    /**
      * @param Checkout $checkout
      * @return Order
      */
     public function getOrder(Checkout $checkout)
     {
         $hash = md5(serialize($checkout));
-        $cachedResult = $this->orderCache->fetch($hash);
-        if ($cachedResult !== false) {
-            return $cachedResult;
+        $order = $this->orderCache->fetch($hash);
+        if ($order === false) {
+            $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
+            $order = $this->mapper->map($checkout, $data);
+            $this->orderCache->save($hash, $order);
         }
 
-        $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
+        $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
 
-        $cachedResult = $this->mapper->map($checkout, $data);
-
-        $this->orderCache->save($hash, $cachedResult);
-
-        return $cachedResult;
+        return $order;
     }
 }

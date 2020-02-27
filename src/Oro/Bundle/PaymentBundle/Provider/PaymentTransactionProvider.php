@@ -97,17 +97,21 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
-     * @return array
+     * @return array|string[]
      */
     public function getPaymentMethods($object)
     {
-        $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
+        if (!$identifier) {
+            return [];
+        }
+        $className = $this->doctrineHelper->getEntityClass($object);
+
         /** @var PaymentTransactionRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
         $methods = $repository->getPaymentMethods($className, [$identifier]);
 
-        return isset($methods[$identifier]) ? $methods[$identifier] : [];
+        return $methods[$identifier] ?? [];
     }
 
     /**

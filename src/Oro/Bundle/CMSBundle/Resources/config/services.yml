@@ -150,3 +150,12 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }
+
+    oro_cms.provider.page_slug_source_entity:
+        class: Oro\Bundle\CMSBundle\Provider\PageSlugSourceEntityProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider }
