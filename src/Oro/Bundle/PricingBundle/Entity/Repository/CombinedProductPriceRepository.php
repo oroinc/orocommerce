@@ -654,6 +654,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $minProductId,
         $maxProductId
     ) {
+        $qb->addSelect('UUID()');
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -672,7 +673,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     'quantity',
                     'value',
                     'currency',
-                    'mergeAllowed'
+                    'mergeAllowed',
+                    'id'
                 ],
                 $qb
             );
@@ -692,6 +694,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products
     ) {
         $qb->andWhere($qb->expr()->in('pp.product', ':products'))
+            ->addSelect('UUID()')
             ->setParameter('products', $products);
         $insertFromSelectQueryExecutor->execute(
             CombinedProductPrice::class,
@@ -703,7 +706,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'quantity',
                 'value',
                 'currency',
-                'mergeAllowed'
+                'mergeAllowed',
+                'id'
             ],
             $qb
         );

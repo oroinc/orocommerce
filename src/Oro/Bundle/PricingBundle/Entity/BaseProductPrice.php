@@ -25,11 +25,11 @@ class BaseProductPrice implements
     ProductPriceInterface
 {
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="guid")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="UUID")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -157,7 +157,7 @@ class BaseProductPrice implements
     protected $price;
 
     /**
-     * @return integer
+     * @return string
      */
     public function getId()
     {
