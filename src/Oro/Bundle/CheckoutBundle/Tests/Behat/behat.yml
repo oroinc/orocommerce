@@ -177,7 +177,7 @@ oro_behat_extension:
       selector: '.checkout-order-summary__grid-td--subtotal'
 
     CheckoutGoBackButton:
-        selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
+        selector: 'div.checkout-sidebar ol.checkout-navigation > li > h3.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
       selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Flat Rate 2: $2.00")'
