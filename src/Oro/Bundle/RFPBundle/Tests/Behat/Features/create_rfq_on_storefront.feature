@@ -13,7 +13,7 @@ Feature: Create RFQ on storefront
   Scenario: Create RFQ that contains notes
     Given I continue as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And I click "New Quote"
     And fill form with:

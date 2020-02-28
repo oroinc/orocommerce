@@ -128,8 +128,8 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                     $matrixFormData['form'] = $formHtml;
 
                     $form = $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
-                    $matrixFormData['rows'][] = count($form['rows'] ?: []);
-                    $matrixFormData['rows'][] = count($form['rows'][0]['columns'] ?: []);
+                    $matrixFormData['rows'][] = count($form['rows'] ?? []);
+                    $matrixFormData['rows'][] = count($form['rows'][0]['columns'] ?? []);
                 }
 
                 $row->setValue(

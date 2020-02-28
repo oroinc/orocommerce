@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -14,9 +15,19 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 /**
  * Add organization to page slug redirect
  */
-class CmsPageSlugRedirectOrganization extends AbstractFixture
+class CmsPageSlugRedirectOrganization extends AbstractFixture implements DependentFixtureInterface
 {
     const BATCH_SIZE = 1000;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            LoadPageData::class
+        ];
+    }
 
     public function load(ObjectManager $manager): void
     {

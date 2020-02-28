@@ -16,7 +16,7 @@ Feature: Ship to Billing address on "Default" Checkout workflow
   Scenario: Customer User does not has addresses in the address book
     Given There is EUR currency in the system configuration
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     When I click "Address Book"
     Then number of records in "Customers Address Book Grid" grid should be 0
     And number of records in "Customer Users Address Book Grid" grid should be 0

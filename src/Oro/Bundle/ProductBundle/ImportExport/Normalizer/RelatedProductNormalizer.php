@@ -32,12 +32,12 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if (!isset($data['sku'], $data['related_skus'])) {
+        if (!isset($data['sku'], $data['relatedItem'])) {
             return null;
         }
 
         return parent::denormalize(
-            ['product' => ['sku' => $data['sku']], 'relatedItem' => ['sku' => $data['related_skus']]],
+            ['product' => ['sku' => $data['sku']], 'relatedItem' => ['sku' => $data['relatedItem']]],
             $class,
             $format,
             $context

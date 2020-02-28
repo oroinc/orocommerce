@@ -2,7 +2,9 @@ data:
     type: landingpages
     id: '<toString(@page1->id)>'
     attributes:
-        content: 'Page 1 content'
+        content:
+            value: 'Page 1 content'
+            style: null
         createdAt: '@page1->createdAt->format("Y-m-d\TH:i:s\Z")'
         updatedAt: '@page1->updatedAt->format("Y-m-d\TH:i:s\Z")'
         title: 'Page 1'

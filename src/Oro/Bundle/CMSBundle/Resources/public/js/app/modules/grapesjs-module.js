@@ -9,6 +9,7 @@ import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tab
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
 import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
 import TextBasicTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-basic-type-builder';
+import VideoTypeBuilder from 'orocms/js/app/grapesjs/type-builders/video-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
@@ -42,5 +43,8 @@ ComponentManager.registerComponentTypes({
     },
     'image': {
         Constructor: ImageTypeBuilder
+    },
+    'video': {
+        Constructor: VideoTypeBuilder
     }
 });

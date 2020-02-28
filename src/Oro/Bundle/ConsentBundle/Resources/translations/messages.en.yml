@@ -47,7 +47,11 @@ oro:
         add_consent: Add Consent
         declined:
             message: Consent %consent% declined by customer
-
+        link.aria_label: '%title% %status%'
+        status:
+            not_apply: Consent is not applied
+            apply: Consent is applied
+            
         system_configuration:
             fields:
                 consent:

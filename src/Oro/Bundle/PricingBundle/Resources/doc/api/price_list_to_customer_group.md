@@ -95,14 +95,6 @@ Delete a collection of price list to customer group relation records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field.**
-
 ### mergeAllowed
 
 Whether to allow merging of the current price list to other price lists for the current customer group.

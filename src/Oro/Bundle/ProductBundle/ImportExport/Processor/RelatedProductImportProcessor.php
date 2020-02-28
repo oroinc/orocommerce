@@ -58,7 +58,7 @@ class RelatedProductImportProcessor extends ImportProcessor
      */
     public function process($item)
     {
-        if (!$this->configProvider->isEnabled()) {
+        if (!$this->canBeProcessed($item)) {
             return null;
         }
 
@@ -70,14 +70,12 @@ class RelatedProductImportProcessor extends ImportProcessor
 
         $relatedSkus = array_unique(explode(',', $item['Related SKUs'] ?? ''));
 
+        if (!$this->isValidRow($sku, $relatedSkus, $item)) {
+            return null;
+        }
+
         $processed = [];
         foreach ($relatedSkus as $relatedSku) {
-            if (mb_strtoupper($sku) === mb_strtoupper($relatedSku)) {
-                $this->addError('It is not possible to create relations from product to itself.');
-
-                continue;
-            }
-
             $object = parent::process(['SKU' => $sku, 'Related SKUs' => $relatedSku]);
 
             if ($object instanceof RelatedProduct && $object->getProduct() && $object->getRelatedItem()) {
@@ -86,6 +84,56 @@ class RelatedProductImportProcessor extends ImportProcessor
         }
 
         return $this->validateRelations($productId, $processed) ? $processed : [];
+    }
+
+    /**
+     * @param string $sku
+     * @param array $relatedSkus
+     * @param array $item
+     *
+     * @return bool
+     */
+    private function isValidRow(string $sku, array $relatedSkus, array $item): bool
+    {
+        $result = true;
+
+        if (in_array(mb_strtoupper($sku), array_map('mb_strtoupper', $relatedSkus), false)) {
+            $this->addError('oro.product.import.related_sku.self_relation');
+            $result = false;
+        }
+
+        if (in_array('', $relatedSkus, true)) {
+            $this->addError('oro.product.import.related_sku.empty_sku', ['%data%' => json_encode($item)]);
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $item
+     *
+     * @return bool
+     */
+    private function canBeProcessed(array $item): bool
+    {
+        $result = true;
+
+        if (!$this->configProvider->isEnabled()) {
+            $result = false;
+        }
+
+        if (!isset($item['SKU'])) {
+            $this->addError('oro.product.import.sku.column_missing');
+            $result = false;
+        }
+
+        if (!isset($item['Related SKUs'])) {
+            $this->addError('oro.product.import.related_sku.column_missing');
+            $result = false;
+        }
+
+        return $result;
     }
 
     /**
@@ -119,7 +167,7 @@ class RelatedProductImportProcessor extends ImportProcessor
 
         $numberOfRelations = count($relatedProductIds) + count($processed);
         if ($numberOfRelations > $this->configProvider->getLimit()) {
-            $this->addError('It is not possible to add more items, because of the limit of relations.');
+            $this->addError('oro.product.import.related_sku.max_relations');
 
             return false;
         }
@@ -140,14 +188,14 @@ class RelatedProductImportProcessor extends ImportProcessor
 
     /**
      * @param string $error
-     * @throws \InvalidArgumentException
+     * @param array $parameters
      */
-    private function addError(string $error): void
+    private function addError(string $error, array $parameters = []): void
     {
         $this->context->incrementErrorEntriesCount();
 
         $this->importStrategyHelper->addValidationErrors(
-            [$this->translator->trans($error, [], 'validators')],
+            [$this->translator->trans($error, $parameters, 'validators')],
             $this->context
         );
     }

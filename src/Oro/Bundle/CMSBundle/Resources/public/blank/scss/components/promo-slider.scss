@@ -5,6 +5,11 @@
 
     white-space: nowrap;
 
+    .content-widget & {
+        min-width: 100%;
+        width: 0;
+    }
+
     &--has-arrows,
     &.embedded-arrows {
         margin-left: $promo-slider-has-arrows-offset;

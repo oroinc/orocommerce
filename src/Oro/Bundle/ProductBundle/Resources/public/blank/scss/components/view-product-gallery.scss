@@ -25,14 +25,17 @@
 
     @extend %base-transition;
 
-    @include fa-icon($view-product-gallery-icon);
-
+    &:focus,
     .product-item__preview:hover > & {
         opacity: $view-product-gallery-hover-opacity;
     }
 
-    &:before {
-        margin: $view-product-gallery-icon-offset;
+    &__icon {
+        @include fa-icon($view-product-gallery-icon);
+
+        &:before {
+            margin: $view-product-gallery-icon-offset;
+        }
     }
 }
 

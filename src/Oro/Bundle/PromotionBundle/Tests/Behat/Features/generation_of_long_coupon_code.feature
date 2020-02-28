@@ -9,7 +9,7 @@ Feature: Generation of long coupon code
     And go to Marketing/Promotions/Coupons
     And click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |
@@ -30,7 +30,7 @@ Feature: Generation of long coupon code
   Scenario: Generate coupons with max length
     Given click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |

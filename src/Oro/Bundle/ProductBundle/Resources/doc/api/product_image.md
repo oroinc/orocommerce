@@ -213,15 +213,15 @@ Delete a collection of order records.
 
 ### product
 
-The product for the product image
+The product for the product image.
 
 ### types
 
-The imaget types for the product image
+The image types for the product image.
 
 ### image
 
-The image file for the product image
+The image file for the product image.
 
 ## SUBRESOURCES
 

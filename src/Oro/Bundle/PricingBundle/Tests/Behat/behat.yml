@@ -158,10 +158,10 @@ oro_behat_extension:
           Active: 'oro_pricing_price_list[active]'
           Activate At (first):
             type: 'xpath'
-            locator: '//input[contains(@name,"date_selector_oro_pricing_price_list_schedules_0_activeAt-uid")]'
+            locator: '//input[contains(@name,"oro_pricing_price_list_schedules_0_activeAt-uid")]'
           Deactivate At (first):
             type: 'xpath'
-            locator: '//input[contains(@name,"date_selector_oro_pricing_price_list_schedules_0_deactivateAt-uid")]'
+            locator: '//input[contains(@name,"oro_pricing_price_list_schedules_0_deactivateAt-uid")]'
           Rule: 'oro_pricing_price_list[productAssignmentRule]'
 
     Order Review Form:

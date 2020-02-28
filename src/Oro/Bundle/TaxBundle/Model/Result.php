@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Tax result model
+ */
 final class Result extends AbstractResult implements \JsonSerializable
 {
     const TOTAL = 'total';
@@ -103,7 +106,11 @@ final class Result extends AbstractResult implements \JsonSerializable
         return $this->getOffset(self::ITEMS, []);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * This method is required for compatibility with PHP <7.4
+     *
+     * {@inheritdoc}
+     */
     public function serialize()
     {
         // Prevent original object modifying
@@ -122,6 +129,29 @@ final class Result extends AbstractResult implements \JsonSerializable
     private function parentSerialize()
     {
         return parent::serialize();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __serialize(): array
+    {
+        // Prevent original object modifying
+        $that = clone $this;
+
+        $that->prepareToSerialization();
+
+        return $that->__parentSerialize();
+    }
+
+    /**
+     * Proxy method to call parent::__serialize method in cloned object
+     *
+     * @return array
+     */
+    private function __parentSerialize(): array
+    {
+        return parent::__serialize();
     }
 
     public function lockResult()

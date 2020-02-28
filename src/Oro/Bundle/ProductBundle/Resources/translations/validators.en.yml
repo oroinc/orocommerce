@@ -76,6 +76,15 @@ oro:
             related_product:
                 relation_already_exists: "Relation between products already exists."
 
+        import:
+            sku:
+                column_missing: 'SKU column is missing'
+            related_sku:
+                column_missing: 'Related SKUs column is missing'
+                empty_sku: 'Related SKUs collection contains empty SKU. Item data: %data%'
+                self_relation: 'It is not possible to create relations from product to itself.'
+                max_relations: 'It is not possible to add more items, because of the limit of relations.'
+
 "Related Items functionality is disabled.": "Related Items functionality is disabled."
 "It is not possible to create relations from product to itself.": "It is not possible to create relations from product to itself."
 "It is not possible to add more items, because of the limit of relations.": "It is not possible to add more items, because of the limit of relations."

@@ -18,7 +18,6 @@
         "oro/marketing": "4.1.*",
         "oro/customer-portal": "4.1.*",
         "box/spout": "2.7.*",
-        "myclabs/deep-copy": "1.8.*",
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
@@ -29,15 +28,14 @@
         "behat/symfony2-extension": "2.1.*",
         "nelmio/alice": "3.5.*",
         "theofidry/alice-data-fixtures": "1.0.*",
-        "phpunit/phpunit": "7.5.15",
+        "phpunit/phpunit": "7.5.*",
         "johnkary/phpunit-speedtrap": "3.0.*",
-        "mybuilder/phpunit-accelerator": "dev-master",
-        "squizlabs/php_codesniffer": "3.3.*",
-        "phpmd/phpmd": "2.6.*",
+        "squizlabs/php_codesniffer": "3.5.*",
+        "phpmd/phpmd": "2.8.*",
         "sebastian/phpcpd": "4.0.*",
         "phpunit/phpcov": "5.0.*",
-        "symfony/phpunit-bridge": "4.3.*",
-        "friendsofphp/php-cs-fixer": "2.12.*",
+        "symfony/phpunit-bridge": "4.4.*",
+        "friendsofphp/php-cs-fixer": "2.16.*",
         "oro/twig-inspector": "1.0.*"
     },
     "repositories": {
