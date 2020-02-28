@@ -96,10 +96,6 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_header_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': 'bold'
-    }) %}
-
     <h4 {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.applied_coupons_header.label'|trans }}</h4>
 {% endblock %}
 
@@ -108,7 +104,7 @@
         '~class': ' coupons-list'
     }) %}
 
-    <ul {{ block('block_attributes') }}>
+    <ul {{ block('block_attributes') }} aria-label="{{ 'oro.frontend.coupon.widget.list.aria_label'|trans }}">
         {% for appliedCoupon in appliedCoupons %}
             {% set promotion = appliedCouponsPromotions[appliedCoupon.sourcePromotionId] is defined ? appliedCouponsPromotions[appliedCoupon.sourcePromotionId] : null %}
             {% do block|merge_context({
@@ -158,12 +154,14 @@
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'btn btn--plain btn--baseline',
+        'class': 'btn btn--link btn--baseline',
         'data-object-id': appliedCoupon.id,
         'data-role': 'remove-coupon'
     }) %}
-
-    <button {{ block('block_attributes') }}>
-        <i class="fa-trash-o fa--x-large fa--no-offset"></i>
+    <button {{ block('block_attributes') }} aria-label="{{ 'oro.frontend.coupon.widget.delete'|trans({
+        '%counter%': loop.index,
+        '%coupon_name%': appliedCoupon.couponCode
+    }) }}">
+        <span class="fa-trash-o fa--x-large fa--no-offset" aria-hidden="true"></span>
     </button>
 {% endblock %}
