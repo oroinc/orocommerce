@@ -70,8 +70,7 @@
 {% endblock %}
 
 {% block __matrix_grid_order__form_fields_widget %}
-    {# TODO: should be replaced to {{ parent_block_widget(block) }} in BB-12666 #}
-    {{ block_widget(block) }}
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __matrix_grid_order__matrix_form_clear_button_widget %}
