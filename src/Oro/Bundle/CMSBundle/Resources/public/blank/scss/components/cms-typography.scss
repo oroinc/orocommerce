@@ -160,4 +160,10 @@
     time {
         color: $cms-typography-time-color;
     }
+
+    .dropdown-menu {
+        list-style: none;
+        padding: $dropdown-padding-y 0;
+        margin: $dropdown-spacer 0 0;
+    }
 }
