@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Actions;
 
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Action\Action\AbstractAction;
@@ -56,10 +57,31 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         /** @var ContentNode $contentNode */
         $contentNode = $this->contextAccessor->getValue($context, $this->options[self::CONTENT_NODE]);
 
-        $slugUrl = $contentNode->getDefaultVariant()->getBaseSlug()->getUrl();
-        $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl($slugUrl);
+        $slug = $contentNode->getDefaultVariant()->getBaseSlug();
+        if (!$slug) {
+            $slug = $this->getContentNodeVariantSlug($contentNode);
+        }
+
+        $url = $slug ? $slug->getUrl() : '/';
+        $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl($url);
 
         $this->contextAccessor->setValue($context, $this->options[self::ATTRIBUTE], $absoluteUrl);
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     * @return Slug|null
+     */
+    private function getContentNodeVariantSlug(ContentNode $contentNode)
+    {
+        $contentVariants = $contentNode->getContentVariants();
+        foreach ($contentVariants as $contentVariant) {
+            if ($contentVariant->getBaseSlug()) {
+                return $contentVariant->getBaseSlug();
+            }
+        }
+
+        return null;
     }
 
     /**

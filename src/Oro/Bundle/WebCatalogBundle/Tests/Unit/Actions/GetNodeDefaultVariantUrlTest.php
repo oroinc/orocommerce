@@ -49,22 +49,23 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($this->eventDispatcher);
     }
 
-    public function testExecute(): void
-    {
-        $slugUrl = '/test-url';
-        $absoluteUrl = 'http://test.com/test-url';
-
-        $localizedSlug = new Slug();
-        $localizedSlug->setUrl($slugUrl);
-
+    /**
+     * @dataProvider executeDataProvider
+     *
+     * @param string $slugUrl
+     * @param string $absoluteUrl
+     * @param array $contentVariants
+     */
+    public function testExecute(
+        string $slugUrl,
+        string $absoluteUrl,
+        array $contentVariants
+    ): void {
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 123]);
-        $contentNode->addContentVariant(
-            (new ContentVariant())->setType('system_page')
-            ->setSystemPageRoute('some_route')
-            ->addSlug($localizedSlug)
-            ->setDefault(true)
-        );
+        foreach ($contentVariants as $contentVariant) {
+            $contentNode->addContentVariant($contentVariant);
+        }
 
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getAbsoluteUrl')
@@ -82,6 +83,41 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->action->execute($context);
 
         $this->assertSame($absoluteUrl, $context->get('attribute'));
+    }
+
+    public function executeDataProvider()
+    {
+        $slugUrl = '/test-url';
+        $absoluteUrl = 'http://test.com/test-url';
+
+        $localizedSlug = new Slug();
+        $localizedSlug->setUrl($slugUrl);
+
+        return [
+            'without default variant slug' => [
+                'slugUrl' => $slugUrl,
+                'absoluteUrl' => $absoluteUrl,
+                'contentVariants' => [
+                    (new ContentVariant())->setType('system_page')
+                        ->setSystemPageRoute('some_route')
+                        ->setDefault(true),
+                    (new ContentVariant())->setType('system_page')
+                        ->setSystemPageRoute('some_route')
+                        ->addSlug($localizedSlug)
+                        ->setDefault(false)
+                ]
+            ],
+            'with default variant slug' => [
+                'slugUrl' => $slugUrl,
+                'absoluteUrl' => $absoluteUrl,
+                'contentVariants' => [
+                    (new ContentVariant())->setType('system_page')
+                        ->setSystemPageRoute('some_route')
+                        ->addSlug($localizedSlug)
+                        ->setDefault(true)
+                ]
+            ],
+        ];
     }
 
     public function testInitializeException(): void
