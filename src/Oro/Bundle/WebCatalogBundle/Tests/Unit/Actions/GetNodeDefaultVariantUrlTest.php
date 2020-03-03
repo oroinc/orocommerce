@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Actions\GetNodeDefaultVariantUrl;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Action\Action\ActionInterface;
+use Oro\Component\Action\Exception\ActionException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -47,6 +48,18 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->action = new GetNodeDefaultVariantUrl($this->contextAccessor, $this->canonicalUrlGenerator);
 
         $this->action->setDispatcher($this->eventDispatcher);
+    }
+
+    public function testExecuteException()
+    {
+        $context = new ActionData([
+            'content_node' => null
+        ]);
+
+        $this->expectException(ActionException::class);
+        $this->expectExceptionMessage('Content node is empty');
+
+        $this->action->execute($context);
     }
 
     /**

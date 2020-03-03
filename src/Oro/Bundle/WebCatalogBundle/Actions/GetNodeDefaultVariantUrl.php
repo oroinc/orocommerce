@@ -6,6 +6,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\Action\Exception\ActionException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
@@ -56,6 +57,9 @@ class GetNodeDefaultVariantUrl extends AbstractAction
     {
         /** @var ContentNode $contentNode */
         $contentNode = $this->contextAccessor->getValue($context, $this->options[self::CONTENT_NODE]);
+        if (!$contentNode) {
+            throw new ActionException('Content node is empty');
+        }
 
         $slug = $contentNode->getDefaultVariant()->getBaseSlug();
         if (!$slug) {
