@@ -1695,3 +1695,12 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_product.event_listener.image_remove:
+        class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
