@@ -41,7 +41,7 @@
 {% endblock %}
 
 {% block _shipping_methods_template_methods_widget %}
-    <span class="label label--full text-uppercase">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="checkout-form__asterix">*</sup></span>
+    <span class="label label--full text-uppercase">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="checkout-form__asterix" aria-required="true">*</sup></span>
     <% _.each(methods, function(method, key) { %>
         <% if (method.types) { %>
             <% _.each(method.types, function(type, key) { %>
