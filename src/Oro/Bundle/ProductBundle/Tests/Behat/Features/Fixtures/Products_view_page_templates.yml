@@ -1,25 +1,27 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Green shirt L'
+    product2_name:
+        string: 'Red shirt M'
+    configurable_product_name:
+        string: 'Shirt_1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_meta_title:
         string: 'Meta title for Green simple product'
     product1_meta_description:
         string: 'Meta description for Green simple product'
     product1_meta_keywords:
         string: 'Meta keywords for Green simple product'
-    product2_name:
-        string: 'Red shirt M'
     product2_meta_title:
         string: 'Meta title for Red simple product'
     product2_meta_description:
         string: 'Meta description for Red simple product'
     product2_meta_keywords:
         string: 'Meta keywords for Red simple product'
-    configurable_product_name:
-        string: 'Shirt_1'
     configurable_meta_title:
         string: 'Meta title for configurable product'
     configurable_meta_description:

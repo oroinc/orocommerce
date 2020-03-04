@@ -24,33 +24,39 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Web Catalog 1 Node 1.1'
     catalog1_node11_url:
         text: /catalog1_node11
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Product 1'
     product1_es_name:
         string: 'Product 1 Spanish Name'
         localization: '@es'
-    product1_short_description:
-        string: 'Product 1 Short Description'
-    product1_description:
-        string: 'Product 1 Description'
     product2_name:
         string: 'Product 2'
-    product2_short_description:
-        string: 'Product 2 Short Description'
-    product2_description:
-        string: 'Product 2 Description'
     product3_name:
         string: 'Product 3'
-    product3_short_description:
-        string: 'Product 3 Short Description'
-    product3_description:
-        string: 'Product 3 Description'
     product4_name:
         string: 'Product 4'
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    product1_short_description:
+        text: 'Product 1 Short Description'
+    product2_short_description:
+        text: 'Product 2 Short Description'
+    product3_short_description:
+        text: 'Product 3 Short Description'
     product4_short_description:
-        string: 'Product 4 Short Description'
+        text: 'Product 4 Short Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    product1_description:
+        wysiwyg: 'Product 1 Description'
+    product2_description:
+        wysiwyg: 'Product 2 Description'
+    product3_description:
+        wysiwyg: 'Product 3 Description'
     product4_description:
-        string: 'Product 4 Description'
+        wysiwyg: 'Product 4 Description'
 
 Oro\Bundle\ScopeBundle\Entity\Scope:
     scope_catalog1:

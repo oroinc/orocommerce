@@ -19,7 +19,10 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
@@ -109,7 +112,7 @@ class LoadProductDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $name = new LocalizedFallbackValue();
+            $name = new ProductName();
             $name->setString($row['name']);
 
             $text = '<p  class="product-view-desc">' . $row['description'] . '</p>'
@@ -130,10 +133,10 @@ class LoadProductDemoData extends AbstractFixture implements
                     : ''
                 );
 
-            $description = new LocalizedFallbackValue();
+            $description = new ProductDescription();
             $description->setWysiwyg(nl2br($text));
 
-            $shortDescription = new LocalizedFallbackValue();
+            $shortDescription = new ProductShortDescription();
             $shortDescription->setText($row['description']);
 
             $product = new Product();

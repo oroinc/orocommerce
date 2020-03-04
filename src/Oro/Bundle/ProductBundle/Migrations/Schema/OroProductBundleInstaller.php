@@ -88,7 +88,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_20';
+        return 'v1_21';
     }
 
     /**
@@ -219,11 +219,15 @@ class OroProductBundleInstaller implements
      */
     protected function createOroProductNameTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_product_name');
-        $table->addColumn('product_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['product_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_ba57d521eb576e89');
+        $table = $schema->createTable('oro_product_prod_name');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_product_prod_name_fallback', []);
+        $table->addIndex(['string'], 'idx_product_prod_name_string', []);
     }
 
     /**
@@ -231,11 +235,16 @@ class OroProductBundleInstaller implements
      */
     protected function createOroProductDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_product_description');
-        $table->addColumn('description_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['description_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
+        $table = $schema->createTable('oro_product_prod_descr');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('wysiwyg', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
+        $table->addColumn('wysiwyg_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('wysiwyg_properties', 'wysiwyg_properties', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_product_prod_descr_fallback', []);
     }
 
     /**
@@ -323,16 +332,16 @@ class OroProductBundleInstaller implements
      */
     protected function addOroProductNameForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_product_name');
+        $table = $schema->getTable('oro_product_prod_name');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
-            ['localized_value_id'],
+            $schema->getTable('oro_product'),
+            ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -343,16 +352,16 @@ class OroProductBundleInstaller implements
      */
     protected function addOroProductDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_product_description');
+        $table = $schema->getTable('oro_product_prod_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
-            ['localized_value_id'],
+            $schema->getTable('oro_product'),
+            ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['description_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -452,11 +461,14 @@ class OroProductBundleInstaller implements
      */
     protected function createOroProductShortDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);
-        $table->addColumn('short_description_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['short_description_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id']);
+        $table = $schema->createTable('oro_product_prod_s_descr');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('text', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_product_prod_s_descr_fallback', []);
     }
 
     /**
@@ -464,18 +476,18 @@ class OroProductBundleInstaller implements
      */
     protected function addOroProductShortDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable('oro_product_prod_s_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
-            ['localized_value_id'],
+            $schema->getTable('oro_product'),
+            ['product_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
-            ['short_description_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

@@ -5,6 +5,9 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
@@ -74,6 +77,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
+                    'value_class' => CategoryTitle::class,
                     'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
@@ -84,7 +88,10 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->with(
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::class,
-                $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label')
+                array_merge(
+                    $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label'),
+                    ['value_class' => CategoryShortDescription::class,]
+                )
             )
             ->will($this->returnSelf());
 
@@ -96,7 +103,8 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
-                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
+                    'value_class' => CategoryLongDescription::class,
+                    'field' => ['wysiwyg', 'wysiwygStyle', 'wysiwygProperties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'use_tabs' => true
                 ]

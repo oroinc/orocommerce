@@ -19,13 +19,15 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: 'Common Business Unit'
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locValue1:
     string: 'Phone'
   locValue2:
     string: 'Light'
   locValue3:
     string: 'TV'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
   localNewCategory:
     string: 'NewCategory'
 

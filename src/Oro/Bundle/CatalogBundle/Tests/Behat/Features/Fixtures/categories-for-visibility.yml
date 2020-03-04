@@ -34,7 +34,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setInventoryThreshold: ['@treshhold500']
             - setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localValueRetailSupplies:
         string: 'Retail Supplies'
 

@@ -46,7 +46,7 @@ Oro\Bundle\ShippingBundle\Model\Dimensions:
         value: '@dimensionsValue'
         unit: '@centimeter'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locValue1:
     string: 'Product1'
 

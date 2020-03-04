@@ -18,3 +18,27 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - Valid: ~
         slugPrototypes:
             - Valid: ~
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+        string:
+            - Length:
+                  max: 255
+
+Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+
+Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }

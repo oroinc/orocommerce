@@ -21,7 +21,7 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
         foreach ($object as $item) {
             $key = LocalizationCodeFormatter::formatName($item->getLocalization());
 
-            $result[$key]['wysiwyg'] = $item->getWysiwyg();
+            $result[$key]['wysiwyg'] = method_exists($item, 'getWysiwyg') ? $item->getWysiwyg() : null;
         }
 
         return $result;
@@ -41,7 +41,10 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
             if (array_key_exists('wysiwyg', $item) && $result->containsKey($localizationName)) {
                 /** @var LocalizedFallbackValue $object */
                 $object = $result->get($localizationName);
-                $object->setWysiwyg((string)$item['wysiwyg']);
+
+                if (method_exists($object, 'getWysiwyg')) {
+                    $object->setWysiwyg((string)$item['wysiwyg']);
+                }
             }
         }
 

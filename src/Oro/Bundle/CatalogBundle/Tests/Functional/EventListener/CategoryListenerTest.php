@@ -5,8 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\EventListener\ORM;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -114,7 +114,7 @@ class CategoryListenerTest extends WebTestCase
     {
         $category = new Category();
         $category->setParentCategory($parentCategory);
-        $category->addTitle((new LocalizedFallbackValue())->setString($title));
+        $category->addTitle((new CategoryTitle())->setString($title));
 
         return $category;
     }

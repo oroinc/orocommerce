@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
@@ -16,7 +17,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -234,12 +234,12 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $childCategory = new Category();
         $childCategory->setLevel(2);
         $childCategory->setMaterializedPath('1_2_3');
-        $childCategory->addTitle((new LocalizedFallbackValue())->setString('category_1_2_3'));
+        $childCategory->addTitle((new CategoryTitle())->setString('category_1_2_3'));
 
         $mainCategory = new Category();
         $mainCategory->setLevel(1);
         $mainCategory->setMaterializedPath('1_2');
-        $mainCategory->addTitle((new LocalizedFallbackValue())->setString('category_1_2'));
+        $mainCategory->addTitle((new CategoryTitle())->setString('category_1_2'));
         $mainCategory->addChildCategory($childCategory);
 
         $rootCategory = new Category();

@@ -12,13 +12,13 @@ data:
         names:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: '<toString(@product-1.names.default->getId())>'
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: '<toString(@product-1.names.en_CA->getId())>'
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: 'names-new'
         slugPrototypes:
             data:
@@ -28,12 +28,12 @@ data:
         descriptions:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productdescriptions
                     id: '<toString(@product-1.descriptions.default->getId())>'
         shortDescriptions:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productshortdescriptions
                     id: '<toString(@product-1.shortDescriptions.default->getId())>'
         unitPrecisions:
             data:
@@ -57,34 +57,34 @@ included:
     -
         meta:
             update: true
-        type: localizedfallbackvalues
+        type: productdescriptions
         id: '<toString(@product-1.descriptions.default->getId())>'
         attributes:
             fallback: null
-            string: null
-            text: '<b>Description Bold</b>'
+            wysiwyg:
+                value: '<b>Description Bold</b>'
+                style: null
+                properties: null
         relationships:
             localization:
                 data: null
     -
         meta:
             update: true
-        type: localizedfallbackvalues
+        type: productnames
         id: '<toString(@product-1.names.default->getId())>'
         attributes:
             fallback: null
             string: 'Test product changed'
-            text: null
         relationships:
             localization:
                 data: null
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: 'names-new'
         attributes:
             fallback: null
             string: 'Product in spanish'
-            text: null
         relationships:
             localization:
                 data:

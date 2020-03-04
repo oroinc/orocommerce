@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\EventListener\ORM;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -30,7 +30,7 @@ class OrganizationPersistListener
      */
     public function prePersist(Organization $organization)
     {
-        $title = new LocalizedFallbackValue();
+        $title = new CategoryTitle();
         $title->setString(self::ROOT_CATEGORY_NAME);
 
         $category = new Category();

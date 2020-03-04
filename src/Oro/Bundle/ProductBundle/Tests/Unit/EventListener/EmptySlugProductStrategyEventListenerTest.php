@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\EventListener\EmptySlugProductStrategyEventListener;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -30,7 +31,7 @@ class EmptySlugProductStrategyEventListenerTest extends \PHPUnit\Framework\TestC
     public function testOnProcessAfterSlugPrototypesSet()
     {
         $product = new ProductStub();
-        $product->setNames([(new LocalizedFallbackValue())->setString('Product 3')]);
+        $product->setNames([(new ProductName())->setString('Product 3')]);
         $product->addSlugPrototype((new LocalizedFallbackValue())->setString('custom-slug'));
 
         $this->slugGenerator->expects(self::never())
@@ -52,9 +53,9 @@ class EmptySlugProductStrategyEventListenerTest extends \PHPUnit\Framework\TestC
         $localization = (new Localization())->setName('Ukrainian');
 
         $product->setNames([
-            (new LocalizedFallbackValue())
+            (new ProductName())
                 ->setString('Product 3'),
-            (new LocalizedFallbackValue())
+            (new ProductName())
                 ->setString('Product 3 Ukrainian')
                 ->setLocalization($localization),
         ]);

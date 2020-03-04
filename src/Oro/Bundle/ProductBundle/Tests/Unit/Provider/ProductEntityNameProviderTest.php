@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TranslationBundle\Entity\Language;
@@ -68,11 +68,11 @@ class ProductEntityNameProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $string
      * @param Localization|null $localization
-     * @return LocalizedFallbackValue
+     * @return ProductName
      */
     protected function getFallbackValue($string, Localization $localization = null)
     {
-        $value = new LocalizedFallbackValue();
+        $value = new ProductName();
         $value->setString($string)->setLocalization($localization);
 
         return $value;

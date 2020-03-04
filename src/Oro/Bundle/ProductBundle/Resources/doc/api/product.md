@@ -65,9 +65,8 @@ used to identify the data used for creating this entity, data taken from the **"
       }
     }
 
-The same applies to other relation entities like "localizedfallbackvalues" type, which are used for
-properties like "names", "descriptions", "shortDescriptions", and also meta fields. You can see in
-the detailed example for product creation.
+The same applies to other relation entities like "localizedfallbackvalues" type, which are used for some properties
+like meta fields. You can see in the detailed example for product creation.
 
 #### 3. Using ProductPrecisionUnits:
 
@@ -331,12 +330,36 @@ Example:
       "names": {
         "data": [
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "names-1"
           },
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "names-2"
+          }
+        ]
+      },
+      "shortDescriptions": {
+        "data": [
+          {
+            "type": "productshortdescriptions",
+            "id": "short-descriptions-1"
+          },
+          {
+            "type": "productshortdescriptions",
+            "id": "short-descriptions-2"
+          }
+        ]
+      },
+      "descriptions": {
+        "data": [
+          {
+            "type": "productdescriptions",
+            "id": "descriptions-1"
+          },
+          {
+            "type": "productdescriptions",
+            "id": "descriptions-2"
           }
         ]
       },
@@ -544,12 +567,11 @@ Example:
       }
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "names-1",
       "attributes": {
         "fallback": null,
-        "string": "Test product",
-        "text": null
+        "string": "Test product"
       },
       "relationships": {
         "localization": {
@@ -558,18 +580,83 @@ Example:
       }
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "names-2",
       "attributes": {
         "fallback": null,
-        "string": "Product in spanish",
-        "text": null
+        "string": "Product in Spanish"
       },
       "relationships": {
         "localization": {
           "data": {
             "type": "localizations",
-            "id": "6"
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productshortdescriptions",
+      "id": "short-descriptions-1",
+      "attributes": {
+        "fallback": null,
+        "text": "Test product short description"
+      },
+      "relationships": {
+        "localization": {
+          "data": null
+        }
+      }
+    },
+    {
+      "type": "productshortdescriptions",
+      "id": "short-descriptions-2",
+      "attributes": {
+        "fallback": null,
+        "text": "Product Short Description in Spanish"
+      },
+      "relationships": {
+        "localization": {
+          "data": {
+            "type": "localizations",
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productdescriptions",
+      "id": "descriptions-1",
+      "attributes": {
+        "fallback": null,
+        "wysiwyg": {
+          "value": "Test product description",
+          "style": null,
+          "properties": null
+        }
+      },
+      "relationships": {
+        "localization": {
+          "data": null
+        }
+      }
+    },
+    {
+      "type": "productdescriptions",
+      "id": "descriptions-2",
+      "attributes": {
+        "fallback": null,
+        "wysiwyg": {
+          "value": "Product Short Description in Spanish",
+          "style": null,
+          "properties": null
+        }
+      },
+      "relationships": {
+        "localization": {
+          "data": {
+            "type": "localizations",
+            "id": "1"
           }
         }
       }
@@ -639,10 +726,8 @@ Example:
         }
       }
     }
-
   ]
 }
-
 ```
 {@/request}
 
@@ -706,7 +791,7 @@ of the "included" section (see example below)
           "id": "807",
           "attributes": {
             "fallback": null,
-            "string": "Test product - updated",
+            "string": "Test value - updated",
             "text": null
           }
         }
@@ -782,7 +867,7 @@ have only those 2 saved and all the other (6 entities) will be removed. Example 
       "id": "807",
       "attributes": {
         "fallback": null,
-        "string": "Test product - updated",
+        "string": "Test value - updated",
         "text": null
       }
     }
@@ -856,44 +941,16 @@ Example:
       "names": {
         "data": [
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "807"
-          },
+          }
+        ]
+      },
+      "slugPrototypes": {
+        "data": [
           {
             "type": "localizedfallbackvalues",
-            "id": "810"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "814"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "812"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "813"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "811"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "808"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "815"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "816"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "817"
+            "id": "907"
           }
         ]
       },
@@ -935,10 +992,10 @@ Example:
          "update": true
       },
       "type": "localizedfallbackvalues",
-      "id": "807",
+      "id": "907",
       "attributes": {
         "fallback": null,
-        "string": "Test product - updated",
+        "string": "test-prod-slug-updated",
         "text": null
       }
     },
@@ -1510,11 +1567,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "593"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "594"
     }
   ]
@@ -1533,11 +1590,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "593"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "594"
     }
   ]
@@ -1556,11 +1613,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "69"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "592"
     }
   ]
@@ -1589,11 +1646,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "608"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "609"
     }
   ]
@@ -1612,11 +1669,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "608"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "609"
     }
   ]
@@ -1635,11 +1692,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "70"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "601"
     }
   ]
@@ -1905,11 +1962,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]
@@ -1930,11 +1987,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]
@@ -1953,11 +2010,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]

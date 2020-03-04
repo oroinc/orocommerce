@@ -15,9 +15,13 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
@@ -142,14 +146,6 @@ class ProductTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
-    {
-        unset($this->type, $this->roundingService);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions()
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
@@ -163,47 +159,33 @@ class ProductTypeTest extends FormIntegrationTestCase
         ]);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
-        $configProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configProvider = $this->createMock(ConfigProvider::class);
         /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
-        $translator = $this->getMockBuilder(Translator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $translator = $this->createMock(Translator::class);
         /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider*/
-        $imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn([]);
         /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider $variantFieldProvider */
-        $variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $variantFieldProvider = $this->createMock(VariantFieldProvider::class);
         $variantFields = [new VariantField('size', 'Size'), new VariantField('color', 'Color')];
         $variantFieldProvider->expects($this->any())
             ->method('getVariantFields')
             ->willReturn($variantFields);
         /** @var \PHPUnit\Framework\MockObject\MockObject|EntityFallbackResolver $entityFallbackResolver */
-        $entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
         $entityFallbackResolver->expects($this->any())
             ->method('getFallbackConfig')
             ->willReturn([]);
         /** @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager $pageTemplatesManager */
-        $pageTemplatesManager = $this->getMockBuilder(PageTemplatesManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pageTemplatesManager = $this->createMock(PageTemplatesManager::class);
         $pageTemplatesManager->expects($this->any())
             ->method('getRoutePageTemplates')
             ->willReturn([]);
 
         /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
 
         $entityType = new EntityTypeStub(
             [
@@ -236,6 +218,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                     LocalizedSlugWithRedirectType::class
                     => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                     BrandSelectType::class => new BrandSelectTypeStub(),
+                    EntityTypeStub::class => new EntityTypeStub(
+                        [
+                            'en' => (new Localization())->setName('en'),
+                            'en_US' => (new Localization())->setName('en_US'),
+                        ]
+                    ),
                 ],
                 [
                     FormType::class => [
@@ -332,8 +320,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
                     'names' => [
-                        ['string' => 'first name'],
-                        ['string' => 'second name'],
+                        ['string' => 'first name', 'localization' => 'en'],
+                        ['string' => 'second name', 'localization' => 'en_US'],
                     ],
                     'descriptions' => [
                         ['text' => 'first description'],
@@ -447,12 +435,39 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         if ($withNamesAndDescriptions) {
             $expectedProduct
-                ->addName($this->createLocalizedValue('first name'))
-                ->addName($this->createLocalizedValue('second name'))
-                ->addDescription($this->createLocalizedValue(null, 'first description'))
-                ->addDescription($this->createLocalizedValue(null, 'second description'))
-                ->addShortDescription($this->createLocalizedValue(null, 'first short description'))
-                ->addShortDescription($this->createLocalizedValue(null, 'second short description'));
+                ->setNames(
+                    [
+                        (new ProductName())->setString('first name')
+                            ->setLocalization((new Localization())->setName('en')),
+                        (new ProductName())->setString('second name')
+                            ->setLocalization((new Localization())->setName('en_US'))
+                    ]
+                )
+                ->getNames()->map(static function (ProductName $name) {
+                    $name->setProduct(null);
+                });
+
+            $expectedProduct
+                ->setDescriptions(
+                    [
+                        (new ProductDescription())->setText('first description'),
+                        (new ProductDescription())->setText('second description')
+                    ]
+                )
+                ->getDescriptions()->map(function (ProductDescription $description) {
+                    $description->setProduct(null);
+                });
+
+            $expectedProduct
+                ->setShortDescriptions(
+                    [
+                        (new ProductShortDescription())->setText('first short description'),
+                        (new ProductShortDescription())->setText('second short description')
+                    ]
+                )
+                ->getShortDescriptions()->map(function (ProductShortDescription $shortDescription) {
+                    $shortDescription->setProduct(null);
+                });
         }
 
         if ($hasImages) {
@@ -477,21 +492,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('primaryUnitPrecision'));
         $this->assertTrue($form->has('additionalUnitPrecisions'));
     }
-
-    /**
-     * @param string|null $string
-     * @param string|null $text
-     * @return LocalizedFallbackValue
-     */
-    protected function createLocalizedValue($string = null, $text = null)
-    {
-        $value = new LocalizedFallbackValue();
-        $value->setString($string)
-            ->setText($text);
-
-        return $value;
-    }
-
 
     /**
      * @return AttributeFamily

@@ -1,7 +1,7 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName1:
         string: <("Product1`\"'&йёщ>")>
 
@@ -11,9 +11,11 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductName3:
         string: 'Product3'
 
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
     localProductDescription{1..3}:
         wysiwyg: 'Product Description<current()>'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 

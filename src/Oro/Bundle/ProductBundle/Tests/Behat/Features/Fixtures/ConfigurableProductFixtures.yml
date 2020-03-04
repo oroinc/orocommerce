@@ -9,13 +9,15 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     simpleProductLoc1:
         string: 'Black Slip-On Clog L'
     simpleProductLoc2:
         string: 'White Slip-On Clog M'
     configurableProductLoc:
         string: 'Slip-On Clog'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     clogCategoryLoc:
         string: 'Clogs'
 

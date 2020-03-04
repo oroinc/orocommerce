@@ -6,13 +6,15 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Green shirt L'
     configurable_product_name:
         string: 'Shirt 1'
     configurable_product_name_2:
         string: 'Shirt 2'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     tshirt_family_label:
         string: 'T-shirt'
 

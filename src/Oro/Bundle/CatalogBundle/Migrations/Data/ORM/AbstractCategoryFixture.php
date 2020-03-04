@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -84,7 +85,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $defaultOrganization = $root->getOrganization();
 
         foreach ($categories as $title => $nestedCategories) {
-            $categoryTitle = new LocalizedFallbackValue();
+            $categoryTitle = new CategoryTitle();
             $categoryTitle->setString($title);
 
             $category = new Category();

@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category as BaseCategory;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
@@ -82,11 +85,16 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
      * @param Localization|null $localization
      * @param string|null $string
      * @param string|null $text
+     * @param string $className
      * @return LocalizedFallbackValue
      */
-    private function prepareLocalizedValue($localization = null, $string = null, $text = null)
-    {
-        $value = new LocalizedFallbackValue();
+    private function prepareLocalizedValue(
+        ?Localization $localization = null,
+        ?string $string = null,
+        ?string $text = null,
+        string $className = LocalizedFallbackValue::class
+    ) {
+        $value = new $className();
         $value->setString($string)
             ->setText($text)
             ->setLocalization($localization);
@@ -110,22 +118,43 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
             ]
         );
 
-        $category->addTitle($this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null))
-            ->addTitle($this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null))
-            ->addLongDescription($this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE))
-            ->addLongDescription($this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE))
+        $category
+            ->addTitle(
+                $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null, CategoryTitle::class)
+            )
+            ->addTitle(
+                $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null, CategoryTitle::class)
+            )
+            ->addLongDescription(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    null,
+                    self::DESCRIPTION_DEFAULT_LOCALE,
+                    CategoryLongDescription::class
+                )
+            )
+            ->addLongDescription(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    null,
+                    self::DESCRIPTION_CUSTOM_LOCALE,
+                    CategoryLongDescription::class
+                )
+            )
             ->addShortDescription(
                 $this->prepareLocalizedValue(
                     $defaultLocale,
                     null,
-                    self::SHORT_DESCRIPTION_DEFAULT_LOCALE
+                    self::SHORT_DESCRIPTION_DEFAULT_LOCALE,
+                    CategoryShortDescription::class
                 )
             )
             ->addShortDescription(
                 $this->prepareLocalizedValue(
                     $customLocale,
                     null,
-                    self::SHORT_DESCRIPTION_CUSTOM_LOCALE
+                    self::SHORT_DESCRIPTION_CUSTOM_LOCALE,
+                    CategoryShortDescription::class
                 )
             )
             ->addProduct($product);

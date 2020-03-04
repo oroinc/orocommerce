@@ -53,6 +53,30 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate:
                 route: 'oro_product_frontend_product_view'
 
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+        string:
+            - Length:
+                  max: 255
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
         code:

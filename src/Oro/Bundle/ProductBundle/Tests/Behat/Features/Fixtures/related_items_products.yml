@@ -70,7 +70,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product 1'
     locvalue2:

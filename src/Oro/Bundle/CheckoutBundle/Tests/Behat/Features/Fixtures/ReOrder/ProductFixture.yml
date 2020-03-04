@@ -27,7 +27,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     name_product1:
         string: 'Product1'
     name_product2:
@@ -36,6 +36,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product3'
     name_product4:
         string: 'Product4'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     name_category:
         string: 'NewCategory'
 

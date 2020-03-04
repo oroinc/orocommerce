@@ -119,7 +119,9 @@ class LocalizedSlugType extends AbstractType
                 }
             }
 
-            $localizedSlug = clone $localizedSource;
+            $localizedSlug = new LocalizedFallbackValue();
+            $localizedSlug->setLocalization($localizedSource->getLocalization());
+            $localizedSlug->setFallback($localizedSource->getFallback());
             $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
             $localizedSlugs->add($localizedSlug);
         }

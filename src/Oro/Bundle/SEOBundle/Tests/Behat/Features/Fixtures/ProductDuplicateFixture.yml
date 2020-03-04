@@ -1,6 +1,8 @@
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     name:
         string: 'Product1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     metaTitle:
         string: 'Meta Title 1'
     metaDescription:

@@ -6,9 +6,11 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue{1..3}:
         string: 'Product<current()>'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 

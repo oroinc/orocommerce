@@ -1,4 +1,4 @@
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName{1..30}:
         string: 'Product <current()>'
 

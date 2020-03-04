@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
@@ -53,5 +54,6 @@ class OroProductBundle extends Bundle
             ],
         ]));
         $container->addCompilerPass(new ProductCollectionCompilerPass());
+        $container->addCompilerPass(new AttributeBlockTypeMapperPass());
     }
 }

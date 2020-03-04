@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
@@ -120,10 +120,10 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetProductCategoryWithTwoCategories()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
         $parent = new Category();
-        $parent->addTitle((new LocalizedFallbackValue())->setString('parent category title'));
+        $parent->addTitle((new CategoryTitle())->setString('parent category title'));
         $category->setParentCategory($parent);
 
         $this->assertEquals(
@@ -139,7 +139,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetProductCategoryWithOneCategory()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
         $this->assertEquals('some string', $this->extension->getProductCategoryPath($category));
         $this->assertEquals('some string', $this->extension->getProductCategoryTitle($category));
@@ -148,14 +148,14 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetProductCategoryWithMoreThanTwoCategories()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
         $parent = new Category();
-        $parent->addTitle((new LocalizedFallbackValue())->setString('parent category title'));
+        $parent->addTitle((new CategoryTitle())->setString('parent category title'));
         $category->setParentCategory($parent);
 
         $rootCategory = new Category();
-        $rootCategory->addTitle((new LocalizedFallbackValue())->setString('root category title'));
+        $rootCategory->addTitle((new CategoryTitle())->setString('root category title'));
         $parent->setParentCategory($rootCategory);
 
         $this->assertEquals(

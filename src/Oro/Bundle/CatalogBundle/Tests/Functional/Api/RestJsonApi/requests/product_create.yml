@@ -19,7 +19,7 @@ data:
         names:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: names-1
         attributeFamily:
             data:
@@ -44,12 +44,11 @@ data:
                 id: '<toString(@category_1->id)>'
 included:
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: names-1
         attributes:
             fallback: ~
             string: Test product
-            text: ~
         relationships:
             localization:
                 data: ~

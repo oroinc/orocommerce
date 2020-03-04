@@ -2,7 +2,7 @@ include:
     -  '@OroCustomerBundle:BuyerCustomerFixture.yml'
     -  '@OroSaleBundle:QuoteProductFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     productName1:
         string: <("Product1`\"'&йёщ>")>
 

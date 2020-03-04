@@ -1,21 +1,20 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName{1..20}:
         string: 'Product <current()>'
 
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
     localProductDescription{1..20}:
         wysiwyg: 'Product Description<current()>'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
     localProductAttributeFamilyCustom:
         string: 'Product Attribute Family Custom'
-
-    localCategoryTitle{1..4}:
-        string: 'Category <current()>'
 
     localProductAttributeFamilyGroupGeneral:
         string: 'General'
@@ -32,6 +31,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamilyGroupSEO:
         string: 'SEO'
 
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localCategoryTitle{1..4}:
+        string: 'Category <current()>'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..20}:

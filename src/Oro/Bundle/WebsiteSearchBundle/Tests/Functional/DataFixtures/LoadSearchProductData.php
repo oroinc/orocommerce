@@ -10,9 +10,9 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
@@ -79,7 +79,7 @@ class LoadSearchProductData extends AbstractFixture implements DependentFixtureI
                 ->setPrimaryUnitPrecision($unitPrecision)
                 ->setType('simple');
 
-            $value = (new LocalizedFallbackValue())->setString($sku);
+            $value = (new ProductName())->setString($sku);
             $product->addName($value);
 
             $manager->persist($product);

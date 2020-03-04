@@ -63,21 +63,6 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         precision: 0
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    product1_name:
-        string: 'Product 1'
-    product1_es_name:
-        string: 'Product 1 Spanish Name'
-        localization: '@es'
-    product1_short_description:
-        string: 'Product 1 Short Description'
-    product1_es_short_description:
-        string: 'Product 1 Spanish Short Description'
-        localization: '@es'
-    product1_description:
-        wysiwyg: 'Product 1 Description'
-    product1_es_description:
-        wysiwyg: 'Product 1 Spanish Description'
-        localization: '@es'
     product1_meta_title:
         string: 'Product 1 Meta Title'
     product1_es_meta_title:
@@ -93,82 +78,103 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_es_meta_keywords:
         string: 'Product 1 Spanish Meta Keywords'
         localization: '@es'
-    product2_name:
-        string: 'Product 2'
-    product2_short_description:
-        string: 'Product 2 Short Description'
-    product2_description:
-        wysiwyg: 'Product 2 Description'
-    product3_name:
-        string: 'Product 3'
-    product3_short_description:
-        string: 'Product 3 Short Description'
-    product3_description:
-        wysiwyg: 'Product 3 Description'
     product3_meta_title:
         string: 'Product 3 Meta Title'
     product3_meta_description:
         string: 'Product 3 Meta Description'
     product3_meta_keywords:
         string: 'Product 3 Meta Keywords'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
+    product1_es_name:
+        string: 'Product 1 Spanish Name'
+        localization: '@es'
+    product2_name:
+        string: 'Product 2'
+    product3_name:
+        string: 'Product 3'
     product4_name:
         string: 'Product 4'
-    product4_short_description:
-        string: 'Product 4 Short Description'
-    product4_description:
-        wysiwyg: 'Product 4 Description'
     configurable_product1_name:
         string: 'Configurable Product 1'
-    configurable_product1_short_description:
-        string: 'Configurable Product 1 Short Description'
-    configurable_product1_description:
-        wysiwyg: 'Configurable Product 1 Description'
     configurable_product2_name:
         string: 'Configurable Product 2'
-    configurable_product2_short_description:
-        string: 'Configurable Product 2 Short Description'
-    configurable_product2_description:
-        wysiwyg: 'Configurable Product 2 Description'
     configurable_product3_name:
         string: 'Configurable Product 3'
-    configurable_product3_short_description:
-        string: 'Configurable Product 3 Short Description'
-    configurable_product3_description:
-        wysiwyg: 'Configurable Product 3 Description'
     configurable_product1_variant1_name:
         string: 'Variant 1 for Configurable Product 1'
-    configurable_product1_variant1_short_description:
-        string: 'Variant 1 for Configurable Product 1 Short Description'
-    configurable_product1_variant1_description:
-        wysiwyg: 'Variant 1 for Configurable Product 1 Description'
     configurable_product1_variant2_name:
         string: 'Variant 2 for Configurable Product 1'
-    configurable_product1_variant2_short_description:
-        string: 'Variant 2 for Configurable Product 1 Short Description'
-    configurable_product1_variant2_description:
-        wysiwyg: 'Variant 2 for Configurable Product 1 Description'
     configurable_product2_variant1_name:
         string: 'Variant 1 for Configurable Product 2'
-    configurable_product2_variant1_short_description:
-        string: 'Variant 1 for Configurable Product 2 Short Description'
-    configurable_product2_variant1_description:
-        wysiwyg: 'Variant 1 for Configurable Product 2 Description'
     configurable_product2_variant2_name:
         string: 'Variant 2 for Configurable Product 2'
-    configurable_product2_variant2_short_description:
-        string: 'Variant 2 for Configurable Product 2 Short Description'
-    configurable_product2_variant2_description:
-        wysiwyg: 'Variant 2 for Configurable Product 2 Description'
     configurable_product3_variant1_name:
         string: 'Variant 1 for Configurable Product 3'
-    configurable_product3_variant1_short_description:
-        string: 'Variant 1 for Configurable Product 3 Short Description'
-    configurable_product3_variant1_description:
-        wysiwyg: 'Variant 1 for Configurable Product 3 Description'
     configurable_product3_variant2_name:
         string: 'Variant 2 for Configurable Product 3'
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    product1_short_description:
+        text: 'Product 1 Short Description'
+    product1_es_short_description:
+        text: 'Product 1 Spanish Short Description'
+        localization: '@es'
+    product2_short_description:
+        text: 'Product 2 Short Description'
+    product3_short_description:
+        text: 'Product 3 Short Description'
+    product4_short_description:
+        text: 'Product 4 Short Description'
+    configurable_product1_short_description:
+        text: 'Configurable Product 1 Short Description'
+    configurable_product2_short_description:
+        text: 'Configurable Product 2 Short Description'
+    configurable_product3_short_description:
+        text: 'Configurable Product 3 Short Description'
+    configurable_product1_variant1_short_description:
+        text: 'Variant 1 for Configurable Product 1 Short Description'
+    configurable_product1_variant2_short_description:
+        text: 'Variant 2 for Configurable Product 1 Short Description'
+    configurable_product2_variant1_short_description:
+        text: 'Variant 1 for Configurable Product 2 Short Description'
+    configurable_product2_variant2_short_description:
+        text: 'Variant 2 for Configurable Product 2 Short Description'
+    configurable_product3_variant1_short_description:
+        text: 'Variant 1 for Configurable Product 3 Short Description'
     configurable_product3_variant2_short_description:
-        string: 'Variant 2 for Configurable Product 3 Short Description'
+        text: 'Variant 2 for Configurable Product 3 Short Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    product1_description:
+        wysiwyg: 'Product 1 Description'
+    product1_es_description:
+        wysiwyg: 'Product 1 Spanish Description'
+        localization: '@es'
+    product2_description:
+        wysiwyg: 'Product 2 Description'
+    product3_description:
+        wysiwyg: 'Product 3 Description'
+    product4_description:
+        wysiwyg: 'Product 4 Description'
+    configurable_product1_description:
+        wysiwyg: 'Configurable Product 1 Description'
+    configurable_product2_description:
+        wysiwyg: 'Configurable Product 2 Description'
+    configurable_product3_description:
+        wysiwyg: 'Configurable Product 3 Description'
+    configurable_product1_variant1_description:
+        wysiwyg: 'Variant 1 for Configurable Product 1 Description'
+    configurable_product1_variant2_description:
+        wysiwyg: 'Variant 2 for Configurable Product 1 Description'
+    configurable_product2_variant1_description:
+        wysiwyg: 'Variant 1 for Configurable Product 2 Description'
+    configurable_product2_variant2_description:
+        wysiwyg: 'Variant 2 for Configurable Product 2 Description'
+    configurable_product3_variant1_description:
+        wysiwyg: 'Variant 1 for Configurable Product 3 Description'
     configurable_product3_variant2_description:
         wysiwyg: 'Variant 2 for Configurable Product 3 Description'
 

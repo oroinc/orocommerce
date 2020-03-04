@@ -6,7 +6,7 @@ data:
         names:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: 'names-1'
         attributeFamily:
             data:
@@ -27,12 +27,11 @@ data:
                 id: 'out_of_stock'
 included:
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: 'names-1'
         attributes:
             fallback: null
             string: 'Test product'
-            text: null
     -
         type: productunitprecisions
         id: 'product-unit-precision-id-1'

@@ -117,13 +117,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                     'names' => [
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
                             'testProperties' => [
                                 'string' => 'product-1 Default Name'
                             ],
                         ],
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
                             'testProperties' => [
                                 'string' => 'product-1 en_CA Name',
                                 'localization' => [
@@ -287,11 +287,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                     'names' => [
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
                             'testProperties' => ['string' => 'product-4 Default Name']
                         ],
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
                             'testProperties' => [
                                 'string' => 'product-4 en_CA Name',
                                 'localization' => [

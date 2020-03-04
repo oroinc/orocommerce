@@ -6,7 +6,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision1:
     unit: '@item'
     precision: '1'
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locValue1:
     string: 'Product1'
 Oro\Bundle\ProductBundle\Entity\Product:

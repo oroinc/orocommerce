@@ -147,13 +147,15 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addProduct: ['@product3']
         organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue1:
         string: 'Product1'
     locValue2:
         string: 'Product2'
     locValue3:
         string: 'Product3'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
     localNewCategory2:

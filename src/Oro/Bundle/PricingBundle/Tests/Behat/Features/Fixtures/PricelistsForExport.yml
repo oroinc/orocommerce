@@ -11,7 +11,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
         organization: '@organization'
         owner: '@admin'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product 1'
     locvalue2:
@@ -20,6 +20,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 3'
     locvalue4:
         string: 'Product 4'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 

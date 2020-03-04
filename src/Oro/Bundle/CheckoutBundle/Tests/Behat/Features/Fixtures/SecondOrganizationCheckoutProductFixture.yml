@@ -6,7 +6,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locValueSecondOrganization:
         string: 'Touchscreen POS System'
 

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Provider\CategoryEntityNameProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 
 class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
@@ -72,11 +72,11 @@ class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $string
      * @param Localization|null $localization
-     * @return LocalizedFallbackValue
+     * @return CategoryTitle
      */
     protected function getFallbackValue($string, Localization $localization = null)
     {
-        $value = new LocalizedFallbackValue();
+        $value = new CategoryTitle();
         $value->setString($string)
             ->setLocalization($localization);
 

@@ -62,7 +62,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
         product: '@product1'
         pricelist: '@pricelist'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue:
         string: 'Product 1'
 

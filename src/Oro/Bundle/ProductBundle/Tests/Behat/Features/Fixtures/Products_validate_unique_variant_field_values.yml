@@ -1,13 +1,15 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Green shirt L'
     product2_name:
         string: 'Red shirt M'
     configurable_product_name:
         string: 'Shirt 1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     tshirt_family_label:
         string: 'T-shirt'
 

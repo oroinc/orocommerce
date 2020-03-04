@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -250,6 +251,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 
     /**
      * @param mixed $data
+     * @param string $localizedFallbackValueClass
      * @param bool $expected
      * @param array $context
      *
@@ -260,7 +262,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            LocalizedFallbackValue::class,
+            ProductName::class,
             Localization::class
         );
 
@@ -309,7 +311,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
-            LocalizedFallbackValue::class,
+            ProductName::class,
             Localization::class
         );
 

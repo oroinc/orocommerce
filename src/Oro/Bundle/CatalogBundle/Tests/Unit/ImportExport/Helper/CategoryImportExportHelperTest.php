@@ -5,10 +5,10 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
@@ -65,7 +65,7 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
      */
     private function createCategory(string $title): CategoryStub
     {
-        return (new CategoryStub())->addTitle((new LocalizedFallbackValue())->setString($title));
+        return (new CategoryStub())->addTitle((new CategoryTitle())->setString($title));
     }
 
     /**

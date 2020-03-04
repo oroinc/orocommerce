@@ -20,10 +20,10 @@ data:
         names:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: 'names-1'
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: 'names-2'
         slugPrototypes:
             data:
@@ -148,22 +148,20 @@ included:
             scalarValue: 0
             arrayValue: null
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: 'names-1'
         attributes:
             fallback: null
             string: 'Test product'
-            text: null
         relationships:
             localization:
                 data: null
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: 'names-2'
         attributes:
             fallback: null
             string: 'Product in spanish'
-            text: null
         relationships:
             localization:
                 data:

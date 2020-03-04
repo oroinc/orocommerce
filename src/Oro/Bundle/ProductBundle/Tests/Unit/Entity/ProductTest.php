@@ -7,7 +7,10 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -52,9 +55,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testCollections()
     {
         $collections = [
-            ['names', new LocalizedFallbackValue()],
-            ['descriptions', new LocalizedFallbackValue()],
-            ['shortDescriptions', new LocalizedFallbackValue()],
+            ['names', new ProductName()],
+            ['descriptions', new ProductDescription()],
+            ['shortDescriptions', new ProductShortDescription()],
             ['images', new ProductImage()],
             ['slugPrototypes', new LocalizedFallbackValue()],
             ['slugs', new Slug()],
@@ -73,7 +76,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product->setSku(123);
         $this->assertSame('123', (string)$product);
 
-        $product->addName((new LocalizedFallbackValue())->setString('localized_name'));
+        $product->addName((new ProductName())->setString('localized_name'));
         $this->assertEquals('localized_name', (string)$product);
     }
 
@@ -92,7 +95,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $unitPrecision->setPrecision(3);
 
         $product->setPrimaryUnitPrecision($unitPrecision);
-        $product->addName((new LocalizedFallbackValue())->setString('1234'));
+        $product->addName((new ProductName())->setString('1234'));
         $product->setSku('SKU' . $id);
 
         $this->assertEquals(
@@ -355,7 +358,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $this->addDefaultName($product, $defaultName);
 
-        $localizedName = new LocalizedFallbackValue();
+        $localizedName = new ProductName();
         $localizedName->setString('localized')
             ->setLocalization(new Localization());
 
@@ -372,10 +375,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultDescription()
     {
-        $defaultDescription = new LocalizedFallbackValue();
+        $defaultDescription = new ProductDescription();
         $defaultDescription->setString('default');
 
-        $localizedDescription = new LocalizedFallbackValue();
+        $localizedDescription = new ProductDescription();
         $localizedDescription->setString('localized')
             ->setLocalization(new Localization());
 
@@ -388,10 +391,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultShortDescription()
     {
-        $defaultShortDescription = new LocalizedFallbackValue();
+        $defaultShortDescription = new ProductShortDescription();
         $defaultShortDescription->setString('default short');
 
-        $localizedShortDescription = new LocalizedFallbackValue();
+        $localizedShortDescription = new ProductShortDescription();
         $localizedShortDescription->setString('localized')->setLocalization(new Localization());
 
         $product = new Product();
@@ -596,7 +599,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     protected function addDefaultName(Product $product, $name)
     {
-        $defaultName = new LocalizedFallbackValue();
+        $defaultName = new ProductName();
         $defaultName->setString($name);
 
         $product->addName($defaultName);

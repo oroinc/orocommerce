@@ -18,10 +18,11 @@ Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     country: '@germany'
     region: '@berlin'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   product_name:
     string: 'ProductOrgOroPro'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   attribute_family_label:
     string: 'ProductAttributeOrgOroPro'
 

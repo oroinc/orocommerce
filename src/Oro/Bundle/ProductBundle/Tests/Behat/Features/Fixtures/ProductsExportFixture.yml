@@ -75,7 +75,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product 1'
     locvalue2:
@@ -86,6 +86,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 4'
     locvalue5:
         string: 'Product5(disabled)'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
     description_value1:
         wysiwyg: 'Product 1 Description'
     description_value2:
@@ -96,6 +98,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         wysiwyg: 'Product 4 Description'
     description_value5:
         wysiwyg: 'Product 5 Description'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     metaTitle:
         string: 'Meta Title 1'
     metaDescription:

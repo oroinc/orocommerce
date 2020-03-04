@@ -134,7 +134,7 @@ class ProductTest extends RestJsonApiTestCase
         $bottlePrecision = $product->getUnitPrecision('bottle');
 
         $this->assertEquals('Test product changed', $defaultName->getString());
-        $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getText());
+        $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getWysiwyg());
         $this->assertInstanceOf(ProductUnitPrecision::class, $newUnitPrecision);
         $this->assertEquals('15', $newUnitPrecision->getConversionRate());
         $this->assertEquals('99', $bottlePrecision->getConversionRate());

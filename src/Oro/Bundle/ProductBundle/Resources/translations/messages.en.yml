@@ -172,6 +172,81 @@ oro:
                 show_on_product_view: The new product icon will be displayed on the product view page.
         form.add_row: Add More Rows
 
+        productdescription:
+            entity_label: 'Product Description'
+            entity_plural_label: 'Product Description'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg:
+                label: 'WYSIWYG value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg_style:
+                label: 'WYSIWYG Style value'
+                description: 'The text value for the current localization, can contain css data'
+            wysiwyg_properties:
+                label: 'WYSIWYG Properties'
+                description: 'The text value for the current localization, can contain additional WYSIWYG data'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
+        productname:
+            entity_label: 'Product Name'
+            entity_plural_label: 'Product Name'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product name values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
+        productshortdescription:
+            entity_label: 'Product Short Description'
+            entity_plural_label: 'Product Short Description'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product short description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units

@@ -5,8 +5,8 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\EventListener;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Twig\Environment;
 use Twig\Sandbox\SecurityPolicy;
@@ -41,7 +41,6 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                     ],
                 ],
             ],
-
             [
                 'wysiwyg_style' => [
                     'test' => [
@@ -60,7 +59,6 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                     ],
                 ],
             ],
-
             [
                 'wysiwyg_style' => [
                     'test' => [
@@ -111,8 +109,8 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                         return false;
                     }
 
-                    $this->assertEquals(reset($expectedCalls), $twigFunctionCalls);
-                    unset($expectedCalls[key($expectedCalls)]);
+                    $this->assertContains($twigFunctionCalls, $expectedCalls);
+                    unset($expectedCalls[array_search($twigFunctionCalls, $expectedCalls, true)]);
 
                     return true;
                 }
@@ -124,7 +122,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
         $product->setDefaultName('testTitle');
         $product->setSku('test-1');
         $product->addDescription(
-            (new LocalizedFallbackValue())
+            (new ProductDescription())
                 ->setWysiwyg(
                     "<div>{{ test('default', 'wysiwyg') }}</div>"
                 )
@@ -135,7 +133,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
                 )
         );
         $product->addDescription(
-            (new LocalizedFallbackValue())
+            (new ProductDescription())
                 ->setLocalization($this->localization)
                 ->setWysiwyg(
                     "<div>{{ test('en', 'wysiwyg') }}</div>"

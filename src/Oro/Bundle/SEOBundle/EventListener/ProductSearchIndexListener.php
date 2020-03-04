@@ -13,6 +13,12 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
+/**
+ * Adds following category SEO fields to Product documents at search index
+ * - meta title (all_text_LOCALIZATION_ID)
+ * - meta description (all_text_LOCALIZATION_ID)
+ * - meta keywords (all_text_LOCALIZATION_ID)
+ */
 class ProductSearchIndexListener
 {
     /**
@@ -93,7 +99,7 @@ class ProductSearchIndexListener
         $products = $event->getEntities();
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
-        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
         foreach ($products as $product) {
             // Localized fields
             $category = &$categoryMap[$product->getId()];

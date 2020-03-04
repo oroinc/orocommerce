@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
@@ -42,7 +42,7 @@ class CategoryListenerTest extends WebTestCase
     private function getCategory()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('default title'));
+        $category->addTitle((new CategoryTitle())->setString('default title'));
         return $category;
     }
 

@@ -1,6 +1,10 @@
 include:
     - '@OroRFPBundle:RFQCustomer.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue:
+        string: 'product1'
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision:
         unit: '@item'
