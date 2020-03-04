@@ -1,0 +1,9 @@
+/* @theme: default; */
+
+$checkout-navigation-icon-size: 30px !default;
+$checkout-navigation-icon-font-size: 16px !default;
+
+$checkout-navigation-border-left: 2px solid get-color('additional', 'light') !default;
+
+$checkout-navigation-complete-color: get-color('additional', 'ultra') !default;
+$checkout-navigation-complete-background-color: get-color('secondary', 'light') !default;

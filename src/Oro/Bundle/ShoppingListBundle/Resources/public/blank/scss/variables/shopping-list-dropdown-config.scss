@@ -2,3 +2,8 @@
 
 $shopping-list-dropdown-radio-width: 20px !default;
 $shopping-list-dropdown-item-inner-offset: 10px 9px !default;
+
+$shopping-list-dropdown-info-color: get-color('ui', 'normal') !default;
+
+$shopping-list-dropdown-item-title-hover-color: null !default;
+$shopping-list-product-sku-value-color: get-color('primary', 'dark') !default;

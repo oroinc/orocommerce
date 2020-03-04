@@ -84,7 +84,7 @@
     }
 
     &__info {
-        color: get-color('ui', 'normal');
+        color: $shopping-list-dropdown-info-color;
     }
 
     &__link:hover &__info {
@@ -167,6 +167,10 @@
         display: block;
         text-overflow: ellipsis;
         overflow: hidden;
+
+        &:hover {
+            color: $shopping-list-dropdown-item-title-hover-color;
+        }
     }
 
     &__product-total {
@@ -181,7 +185,7 @@
     }
 
     &__product-sku-value {
-        color: get-color('primary', 'dark');
+        color: $shopping-list-product-sku-value-color;
     }
 }
 

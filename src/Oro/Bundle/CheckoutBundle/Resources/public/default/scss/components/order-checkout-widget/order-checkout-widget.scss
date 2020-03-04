@@ -46,7 +46,7 @@
     }
 
     &__total-price {
-        color: get-color('ui', 'normal');
+        color: $order-checkout-widget-total-price-color;
     }
 
     &__col {
