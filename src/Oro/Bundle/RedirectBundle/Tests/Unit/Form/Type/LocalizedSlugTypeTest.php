@@ -13,6 +13,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SluggableEntityFormStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -24,6 +25,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LocalizedSlugTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var SlugifyFormHelper|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -222,20 +225,32 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
                     ]
                 ),
             ],
+            [
+                'localizedSources' => new ArrayCollection([$this->createLocalizedFallbackValue('test')]),
+                'localizedSlugs' => new ArrayCollection([$this->createLocalizedFallbackValue('', null, 1)]),
+                'expectedLocalizedSlugs' => new ArrayCollection(
+                    [$this->createLocalizedFallbackValue('', null, 1)]
+                ),
+            ],
         ];
     }
 
     /**
      * @param string $string
      * @param Localization|null $localization
+     * @param int|null $id
      *
      * @return LocalizedFallbackValue
      */
     private function createLocalizedFallbackValue(
         string $string,
-        ?Localization $localization = null
+        ?Localization $localization = null,
+        ?int $id = null
     ): LocalizedFallbackValue {
-        return (new LocalizedFallbackValue())->setString($string)->setLocalization($localization);
+        return $this->getEntity(
+            LocalizedFallbackValue::class,
+            ['string' => $string, 'localization' => $localization, 'id' => $id]
+        );
     }
 
     public function testConfigureOptions()

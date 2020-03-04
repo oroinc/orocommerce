@@ -112,7 +112,7 @@ class LocalizedSlugType extends AbstractType
 
             /** @var LocalizedFallbackValue $localizedSlug */
             foreach ($localizedSlugs as $localizedSlug) {
-                if ($localizedSlug->getString()
+                if (($localizedSlug->getId() || $localizedSlug->getString())
                     && $localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
                     // Skips creating default slug as it is already defined.
                     continue 2;
