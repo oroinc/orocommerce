@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Represents the entry point for the localization settings of the store frontend.
  */
-class UserLocalizationManager
+class UserLocalizationManager implements UserLocalizationManagerInterface
 {
     const SESSION_LOCALIZATIONS = 'localizations_by_website';
 
@@ -64,9 +64,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @return Localization[]
+     * {@inheritDoc}
      */
-    public function getEnabledLocalizations()
+    public function getEnabledLocalizations(): array
     {
         $ids = array_map(function ($id) {
             return (int)$id;
@@ -76,9 +76,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @return Localization|null
+     * {@inheritDoc}
      */
-    public function getDefaultLocalization()
+    public function getDefaultLocalization(): ?Localization
     {
         $localization = $this->localizationManager->getLocalization(
             (int)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
@@ -88,10 +88,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @param Website|null $website
-     * @return Localization|null
+     * {@inheritDoc}
      */
-    public function getCurrentLocalization(Website $website = null)
+    public function getCurrentLocalization(Website $website = null): ?Localization
     {
         $website = $this->getWebsite($website);
 
@@ -124,9 +123,7 @@ class UserLocalizationManager
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param Website|null $website
-     * @return null|Localization
+     * {@inheritDoc}
      */
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
@@ -152,16 +149,14 @@ class UserLocalizationManager
     }
 
     /**
-     * @param Localization $localization
-     * @param Website|null $website
-     * @param bool $forceSessionStart Sets localization to the session even if it was not started.
+     * {@inheritDoc}
      *  Enabled for ajax action but not for API to remain it stateless
      */
     public function setCurrentLocalization(
         Localization $localization,
         Website $website = null,
         $forceSessionStart = false
-    ) {
+    ): void {
         $website = $this->getWebsite($website);
         if (!$website) {
             return;

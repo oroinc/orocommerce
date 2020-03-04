@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Url provider for ContentVariant entity.
+ */
 class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 {
     const USED_SLUG_KEY = '_used_slug';
@@ -24,19 +27,19 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
     private $cache;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
     /**
      * @param RequestStack $requestStack
      * @param UrlCacheInterface $cache
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManager $userLocalizationManager
+        UserLocalizationManagerInterface $userLocalizationManager
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
