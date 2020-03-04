@@ -85,7 +85,7 @@ class PageType extends AbstractType
                 [
                     'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'names',
+                    'source_field' => 'titles',
                     'get_changed_slugs_url' => $url
                 ]
             );
