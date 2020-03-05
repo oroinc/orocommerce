@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
@@ -92,16 +93,26 @@ class PriceListRecalculateCommandTest extends WebTestCase
             $params[] = '--price-list='.$this->getReference($priceListName)->getId();
         }
 
-        if (false !== array_search('--disable-triggers', $params, true)) {
-            $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
-            $databaseTriggerManager->expects($this->once())
-                ->method('disable');
-            $databaseTriggerManager->expects($this->once())
-                ->method('enable');
-            $this->getContainer()->set(
-                'oro_pricing.database_triggers.manager.combined_prices',
-                $databaseTriggerManager
-            );
+        if (\in_array('--disable-triggers', $params, true)) {
+            $databasePlatform = $this->getContainer()->get('doctrine')->getConnection()->getDatabasePlatform();
+            if ($databasePlatform instanceof MySqlPlatform) {
+                $expectedMessage = sprintf(
+                    'The option `disable-triggers` is not available for `%s` database',
+                    $databasePlatform->getName()
+                );
+                $expectedCount = 0;
+                $expectedMesssages = 0;
+            } else {
+                $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
+                $databaseTriggerManager->expects($this->once())
+                    ->method('disable');
+                $databaseTriggerManager->expects($this->once())
+                    ->method('enable');
+                $this->getContainer()->set(
+                    'oro_pricing.database_triggers.manager.combined_prices',
+                    $databaseTriggerManager
+                );
+            }
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
