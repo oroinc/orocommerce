@@ -59,6 +59,11 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ActionException::class);
         $this->expectExceptionMessage('Content node is empty');
 
+        $this->action->initialize([
+            'content_node' =>  new PropertyPath('content_node'),
+            'attribute' => new PropertyPath('attribute')
+        ]);
+
         $this->action->execute($context);
     }
 
