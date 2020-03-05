@@ -174,6 +174,10 @@ oro:
 
     frontend:
         shoppinglist:
+            trigger.aria_label: '{0} You do not have available Shopping Lists. Open to Create a New one|{1} You have 1 Shopping List. Open to view details|]1,Inf[ You have %count% Shopping Lists. Open to view details'
+            link.aria_label: '{0} %shoppinglist% is empty. View Details|{1} %shoppinglist% contains %count% item. Total cost is %total%. View Details|]1,Inf[ %shoppinglist% contains %count% items. Total cost is %total%. View Details'
+            radio.aria_label: 'Set the %shoppinglist% as Default'
+            radio.title: 'Set as Default'
             quick_order:
                 default_label: Quick Order (%date%)
             selector:
@@ -189,7 +193,7 @@ oro:
                 item.lable: Item
                 price.label: Price
 
-                entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
+                entity.label: '{0} <span class="cart-widget-name">No Shopping Lists</span>|{1} <strong>%count%</strong> <span class="cart-widget-name">Shopping List</span>|]1,Inf[ <strong>%count%</strong> <span class="cart-widget-name">Shopping Lists</span>'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
                 total.label: 'Total:'
                 subtotal.label: 'Subtotal:'
