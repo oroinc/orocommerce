@@ -239,16 +239,17 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     render: function() {
-        if (_.isMobile()) {
+        if (_.isMobile() || _.isTouchDevice()) {
             this.message = mediator.execute('showFlashMessage', 'error', __('oro.cms.wysiwyg.mobile.flash_message'), {
                 container: this.$el.parent(),
                 hideCloseButton: true
             });
 
-            this.$el.parent().addClass('mobile-mode');
+            this.$el.parent().addClass('editor-unavailable');
 
             return;
         }
+
         this.applyComponentsJSON();
         this.initContainer();
         this.initBuilder();

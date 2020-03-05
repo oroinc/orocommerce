@@ -280,8 +280,17 @@
 .page-content-editor {
     margin: -$grapesjs-content-editor-offset;
 
-    .widget-content & {
+    .widget-content &,
+    &.editor-unavailable {
         margin: 0;
+    }
+}
+
+.content-variant-item-content__body {
+    &.editor-unavailable {
+        .alert {
+            margin-top: 8px;
+        }
     }
 }
 
