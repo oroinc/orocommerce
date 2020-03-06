@@ -15,6 +15,7 @@
         width: $checkout-view-column-width;
         margin: $checkout-view-column-margin;
         padding: $checkout-view-column-offset;
+        min-width: $checkout-view-column-min-width;
 
         &-inner {
             padding: $checkout-view-column-inner-offset;
@@ -57,6 +58,7 @@
     &__title {
         position: $checkout-view-title-position;
 
+        width: 100%;
         min-height: $checkout-view-title-min-height;
         margin: $checkout-view-title-margin;
 

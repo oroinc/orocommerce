@@ -48,7 +48,12 @@ oro:
         completed_data.label: Completed Data
         confirm_email_flash_message: Please confirm your email before continue checkout
         late_registration.label: Save my data and create an account
-
+        navigation_sidebar:
+            status:
+                completed: Completed
+                not_completed: Not Completed
+            list.aria_label: 'Checkout steps. Current step is %current_step_name%. Step %current_step_num% of %count_steps%'
+            item.aria_label: '%step_name%. Step %step_num% of %count_steps%. %step_status%'
         checkoutlineitem:
             entity_label: 'Checkout Line Item'
             entity_plural_label: 'Checkout Line Items'
@@ -124,7 +129,8 @@ oro:
             shipping_date: Do not ship later than
             shipping_date_placeholder: ""
             note: Notes
-            note_placeholder: ""
+            note_placeholder: "Enter your note"
+            note_aria_label: "Note"
             po_number_placeholder: ""
             po_number: PO Number
 
@@ -132,7 +138,9 @@ oro:
             label: Order Summary
             items: Items
             subtotal: Subtotal
-            edit_order: Edit Order
+            edit_order:
+                title: Edit Order
+                aria_label: Action Edit Order
             item: Item
             sku: SKU
             quantity: Quantity

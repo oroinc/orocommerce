@@ -8,27 +8,54 @@
         data-page-component-options="{{ {
             view: 'orocheckout/js/app/views/checkout-content-view',
         }|json_encode }}">
-        <ul class="checkout-navigation">
+
+        {% set currentStepName = '' %}
+        {% set currentStepNum = 0 %}
+        {% set break = false %}
+
+        {% for step in steps if not break %}
+            {% set currentStepNum = currentStepNum + 1 %}
+            {% if (currentStep.name == step.name) %}
+                {% set currentStepName = step.label %}
+                {% set break = true %}
+            {% endif %}
+        {% endfor %}
+        
+        <nav aria-label="{{ 'oro.checkout.navigation_sidebar.list.aria_label'|trans({
+            '%current_step_name%': currentStepName|trans({},'workflows'),
+            '%current_step_num%': currentStepNum,
+            '%count_steps%': steps|length - 1
+            }) }}"
+        >
+            <ol class="checkout-navigation">
             {% set isComplete = true %}
-            {% set pageNum = 0 %}
+            {% set stepNum = 0 %}
             {% for key, step in steps if step.final == false and step.name not in excludedSteps %}
-                {% set pageNum = pageNum + 1 %}
+                {% set stepNum = stepNum + 1 %}
                 {% set isCurrent = currentStep.name == step.name %}
                 {% if isCurrent %}
                     {% set isComplete = false %}
                 {% endif %}
-                <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}" data-role="transition-trigger-container">
+                    <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}"
+                        data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
+                        aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
+                            '%step_name%': step.label|trans({},'workflows'),
+                            '%step_num%': stepNum,
+                            '%count_steps%': steps|length - 1,
+                            '%step_status%': (isComplete ? 'oro.checkout.navigation_sidebar.status.completed' : 'oro.checkout.navigation_sidebar.status.not_completed')|trans
+                        }) }}"
+                    >
                     {% set badgeClass = '' %}
                     {% if isComplete %}
                         {% set badgeClass = 'checkout-navigation__icon--complete' %}
                     {% elseif isCurrent %}
                         {% set badgeClass = 'checkout-navigation__icon--current' %}
                     {% endif %}
-                    <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger">
+                    <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
                         {% if isComplete %}
-                            <i class="fa-check"></i>
+                            <span class="fa-check"></span>
                         {% else %}
-                            {{ pageNum }}
+                            {{ stepNum }}
                         {% endif %}
                     </span>
                     <h3 class="checkout-navigation__title">
@@ -45,13 +72,14 @@
                     </h3>
                     {% set informationBlockId = step.name ~ '_information' %}
                     {% if isComplete and block[informationBlockId] is defined %}
-                        <div class="checkout-navigation__content">
+                        <div class="checkout-navigation__content" aria-hidden="true">
                             {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
                         </div>
                     {% endif %}
                 </li>
             {% endfor %}
-        </ul>
+            </ol>
+        </nav>
     </div>
     {% endif %}
 {% endblock %}
