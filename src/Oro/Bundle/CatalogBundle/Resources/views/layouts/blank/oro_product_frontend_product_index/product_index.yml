@@ -16,6 +16,8 @@ layout:
                     blockType: category
                     options:
                         category: '=data["category"].getCurrentCategory()'
+                        attr:
+                            src: '=data["category_image_placeholder"].getPath("product_original")'
                 category_title:
                     blockType: text
                     options:

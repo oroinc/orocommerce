@@ -1,6 +1,4 @@
 {% block _category_picture_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' category-picture__image',
         'alt': category.defaultTitle,
@@ -9,7 +7,7 @@
 
     {% if category.largeImage %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.url(category.largeImage, 'product_original')
+            src: filtered_image_url(category.largeImage, 'product_original')
         }) %}
 
         <div class="category-picture" itemprop="hasOfferCatalog" itemscope itemtype="http://schema.org/OfferCatalog">

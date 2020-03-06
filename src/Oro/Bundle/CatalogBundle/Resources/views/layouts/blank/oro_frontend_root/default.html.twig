@@ -28,8 +28,6 @@
 {% endblock %}
 
 {% block _featured_category_image_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
         alt: category.title
@@ -37,11 +35,7 @@
 
     {% if category.small_image %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.url(category.small_image, 'category_medium')
-        }) %}
-    {% else %}
-        {% set attr = layout_attr_defaults(attr, {
-            src: category_image_placeholder('category_medium')
+            src: filtered_image_url(category.small_image, 'category_medium')
         }) %}
     {% endif %}
 
