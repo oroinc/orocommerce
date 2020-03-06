@@ -105,8 +105,8 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
     }) %}
-    <div {{ block('block_attributes') }}>
-        <h2 class="single-page-checkout-view__title"
+    <fieldset {{ block('block_attributes') }}>
+        <legend class="single-page-checkout-view__title"
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
@@ -118,13 +118,13 @@
                 }
             }|json_encode }}"
         >
-            <span class="single-page-checkout-view__badge">1</span>
+            <span class="single-page-checkout-view__badge" aria-hidden="true">1</span>
             <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
-        </h2>
+        </legend>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
         </div>
-    </div>
+    </fieldset>
 {% endblock %}
 
 {% block _shipping_methods_wrapper_widget %}
@@ -143,8 +143,8 @@
 
 {% block _checkout_shipping_information_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
-    <div {{ block('block_attributes') }}>
-        <h2 class="single-page-checkout-view__title"
+    <fieldset {{ block('block_attributes') }}>
+        <legend class="single-page-checkout-view__title"
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
@@ -156,13 +156,13 @@
                 }
             }|json_encode }}"
         >
-            <span class="single-page-checkout-view__badge">2</span>
+            <span class="single-page-checkout-view__badge" aria-hidden="true">2</span>
             <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
-        </h2>
+        </legend>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
         </div>
-    </div>
+    </fieldset>
 {% endblock %}
 
 {% block _checkout_order_summary_header_widget %}
@@ -181,15 +181,28 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _checkout_summary_widget %}
+{% block __oro_checkout_content__checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--extended"}) %}
-    <div {{ block('block_attributes') }}>
+    <fieldset {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
+    </fieldset>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': "single-page-checkout-view__title"
+    }) %}
+    <legend {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </legend>
+{% endblock %}
+
+{% block _checkout_summary_widget %}
+     {{ block_widget(block) }}
 {% endblock %}
 
 {% block _checkout_summary_badge_widget %}
-    <span class="single-page-checkout-view__badge">3</span>
+    <span class="single-page-checkout-view__badge" aria-hidden="true">3</span>
 {% endblock %}
 
 {% block _shipping_address_widget -%}
@@ -259,48 +272,52 @@
 {% endblock %}
 
 {% block _shipping_date_widget %}
-    <fieldset class="grid__row grid__row--offset-none">
-        <label class="label label--full">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
+    {% set shippingDate= 'shipping-date-uid-'|uniqid %}
+    <div class="grid__row grid__row--offset-none" role="group" aria-labelledby="{{ shippingDate }}">
+        <div class="label label--full" id="{{ shippingDate }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</div>
         <div class="datepicker-box">
-            <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+            <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
             {{ form_widget(form.ship_until) }}
         </div>
-    </fieldset>
+    </div>
 {% endblock %}
 
 {% block _checkout_summary_additional_options_widget -%}
     <div class="collapse-view" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
-        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
-            <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
+        <span class="collapse-view__trigger collapse-view__trigger--icon" aria-hidden="true" data-collapse-trigger>
+            <span class="collapse-view__trigger-icon fa-caret-right"></span>
         </span>
-        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            {{ 'oro.checkout.workflow.order_options.label'|trans }}
-        </a>
+        <button type="button" class="collapse-view__trigger" data-collapse-trigger>
+             <span class="collapse-view__trigger-text">
+                {{ 'oro.checkout.workflow.order_options.label'|trans }}
+             </span>
+        </button>
         <div class="order-review-options collapse-view__container" data-collapse-container>
-            <fieldset class="grid__row grid__row--offset-none">
+            <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--6 grid__column--offset-y">
-                    <label class=" label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
+                    {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
+                    <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                     <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {
+                        {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
                             'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
                             'data-validation': { Length: {max: 255} }|json_encode
                         }}) }}
                     </div>
                 </div>
-            </fieldset>
-            <fieldset class="grid__row grid__row--offset-none">
+            </div>
+            <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--offset-y">
-                    <label class=" label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
+                    {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
+                    <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
-                    {{ form_widget(form.customer_notes, {
-                        'attr': {
+                    {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
                             'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                             'data-page-component-elastic-area': ''
                         }
                     }) }}
                     </div>
                 </div>
-            </fieldset>
+            </div>
 
             {% if workflowItem.data.get('allow_manual_source_remove') %}
                 {% set removeElementOptions = {} %}
@@ -308,18 +325,18 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <fieldset class="grid__row grid__row--offset-none">
+                <div class="grid__row grid__row--offset-none">
                     <div class="grid__column grid__column--12 grid__column--offset-y">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
-                </fieldset>
+                </div>
             {% endif %}
 
             {% if feature_enabled('checkout_customer_users_registration') and
             checkout.registeredCustomerUser == null and
             checkout.customerUser.isGuest
             %}
-                <fieldset class="grid__row grid__row--offset-none"
+                <div class="grid__row grid__row--offset-none"
                           data-page-component-module="oroui/js/app/components/view-component",
                           data-page-component-options="{{ {
                               view: 'orocheckout/js/app/views/late-checkout-registration-view',
@@ -338,7 +355,7 @@
                             {{ form_widget(form.late_registration) }}
                         </div>
                     </div>
-                </fieldset>
+                </div>
 
             {% endif %}
         </div>
@@ -423,7 +440,7 @@
     {% if consents is empty %}
         <div {{ block('block_attributes') }}>
             <span class="notification__item">
-                <i class="fa-check"></i>
+                <span class="fa-check" aria-hidden="true"></span>
                 {{ 'oro.consent.frontend.single_page_checkout.form.messages.all_agreements_accepted'|trans }}
                 {{ parent_block_widget(block) }}
             </span>

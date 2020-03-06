@@ -8,6 +8,12 @@
         padding: $coupon-container-content-inner-offset;
     }
 
+    &__title {
+        font-size: $coupon-container-title-font-size;
+        font-weight: $coupon-container-title-font-weight;     
+        line-height: $coupon-container-title-line-height;
+    }
+
     &__form {
         margin: $coupon-container-form-offset;
     }

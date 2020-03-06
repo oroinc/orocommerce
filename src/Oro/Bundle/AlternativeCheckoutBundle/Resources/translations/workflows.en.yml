@@ -183,7 +183,7 @@ oro:
                         state_token:
                             label: ''
                 back_to_customer_consents:
-                    label: 'Edit Customer Consents'
+                    label: 'Edit Agreements'
                 back_to_billing_address:
                     label: 'Edit Billing Information'
                     warning_message: ''

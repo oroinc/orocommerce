@@ -1,6 +1,6 @@
 <% if (item.visible) { %>
     <tr>
-        <td><%= _.escape(item.label) %></td>
-        <td><%= item.formattedAmount %></td>
+        <th scope="row"><%- item.label %></th>
+        <td><%- item.formattedAmount %></td>
     </tr>
 <% } %>

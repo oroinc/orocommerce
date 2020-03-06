@@ -183,7 +183,7 @@ oro:
                     label: 'Back to Enter Credentials'
                     warning_message: ''
                 back_to_customer_consents:
-                    label: 'Edit Customer Consents'
+                    label: 'Edit Agreements'
                     warning_message: ''
                 back_to_billing_address:
                     label: 'Edit Billing Information'
