@@ -56,10 +56,16 @@ class RemoveProductImageListenerTest extends WebTestCase
         $this->em->persist($productImage);
         $this->em->flush();
 
+        $files = $fileRepository->findAll();
+        $this->assertContains($imageFile, $files);
+
         $message = $this->prepareExpectedMessage($imageFile);
 
         $this->em->remove($productImage);
         $this->em->flush();
+
+        $files = $fileRepository->findAll();
+        $this->assertNotContains($imageFile, $files);
 
         $this->assertMessagesCount($this->imageRemoveTopic, 1);
         $this->assertMessageSent(
