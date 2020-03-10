@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductTest extends WebTestCase
@@ -22,7 +22,7 @@ class ProductTest extends WebTestCase
             Product::class
         );
 
-        $defaultName = (new LocalizedFallbackValue)->setString('Table chair');
+        $defaultName = (new ProductName())->setString('Table chair');
 
         $product = new Product();
         $product->addName($defaultName);
@@ -35,7 +35,7 @@ class ProductTest extends WebTestCase
         $this->assertEquals($product->getDenormalizedDefaultNameUppercase(), mb_strtoupper($product->getDefaultName()));
 
         $product->removeName($defaultName);
-        $otherName = (new LocalizedFallbackValue)->setString('Light lamp');
+        $otherName = (new ProductName)->setString('Light lamp');
         $product->addName($otherName);
         $manager->persist($product);
         $manager->flush();

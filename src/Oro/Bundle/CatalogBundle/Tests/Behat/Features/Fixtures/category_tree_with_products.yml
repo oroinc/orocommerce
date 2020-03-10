@@ -1,7 +1,8 @@
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName{1..4}:
         string: 'Product <current()>'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
@@ -20,6 +21,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamilyGroupSEO:
         string: 'SEO'
 
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localValueRetailSupplies:
         string: 'Retail Supplies'
 

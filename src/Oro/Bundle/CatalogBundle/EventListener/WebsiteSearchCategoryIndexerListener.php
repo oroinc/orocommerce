@@ -14,6 +14,15 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
+/**
+ * Adds following category information to Product documents at search index
+ * - category ID (category_id)
+ * - full materialized path (category_path)
+ * - parts of materialized path for all parent categories (category_path_CATEGORY_PATH)
+ * - category title (category_title_LOCALIZATION_ID)
+ * - category short description (all_text_LOCALIZATION_ID)
+ * - category long description (all_text_LOCALIZATION_ID)
+ */
 class WebsiteSearchCategoryIndexerListener
 {
     const CATEGORY_TITLE_L10N_FIELD = 'category_title_LOCALIZATION_ID';
@@ -70,7 +79,7 @@ class WebsiteSearchCategoryIndexerListener
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
 
         foreach ($products as $product) {
             /** @var Category $category */

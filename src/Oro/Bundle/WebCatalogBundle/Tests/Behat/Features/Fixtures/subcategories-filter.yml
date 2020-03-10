@@ -65,36 +65,30 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setParentCategory: ['@categoryMedicalApparel']
             - setProducts: ['@categoryMedicalUniformsProducts']
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localValueProduct{1..6}:
         string: 'Product<current()>'
 
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localValueLightingProducts:
         string: 'Lighting Products'
-
-    localValueLightingProductsSlug:
-        string: 'lighting-products'
-
     localValueArchitecturalFloodlighting:
         string: 'Architectural Floodlighting'
-
-    localValueArchitecturalFloodlightingSlug:
-        string: 'architectural-floodlighting'
-
     localValueHeadlamps:
         string: 'Headlamps'
-
-    localValueHeadlampsSlug:
-        string: 'headlamps'
-
     localValueMedicalApparel:
         string: 'Medical Apparel'
-
-    localValueMedicalApparelSlug:
-        string: 'medical-apparel'
-
     localValueMedicalUniforms:
         string: 'Medical Uniforms'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueLightingProductsSlug:
+        string: 'lighting-products'
+    localValueArchitecturalFloodlightingSlug:
+        string: 'architectural-floodlighting'
+    localValueHeadlampsSlug:
+        string: 'headlamps'
+    localValueMedicalApparelSlug:
+        string: 'medical-apparel'
     localValueMedicalUniformsSlug:
         string: 'medical-uniforms'

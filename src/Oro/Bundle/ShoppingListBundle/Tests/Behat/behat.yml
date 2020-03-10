@@ -243,6 +243,12 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="customer-user-shopping-lists-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Duplicated Matrix Order Widget:
+      selector: '.matrix-order-widget__totals div.matrix-order-widget__totals'
+
+    Matrix Order Widget:
+      selector: '.matrix-order-widget__totals'
+
   suites:
     OroShoppingListBundle:
       contexts:

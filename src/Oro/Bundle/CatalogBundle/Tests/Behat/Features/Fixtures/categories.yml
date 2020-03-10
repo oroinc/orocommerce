@@ -14,7 +14,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@localValuePrinters']
             - setParentCategory: ['@categoryRetailSupplies']
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localValueRetailSupplies:
         string: 'Retail Supplies'
 

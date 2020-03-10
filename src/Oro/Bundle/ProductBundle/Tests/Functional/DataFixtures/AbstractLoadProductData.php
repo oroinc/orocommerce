@@ -12,12 +12,16 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -119,11 +123,13 @@ abstract class AbstractLoadProductData extends AbstractFixture implements Depend
 
     /**
      * @param array $name
-     * @return LocalizedFallbackValue
+     * @param string $className
+     * @return AbstractLocalizedFallbackValue
      */
-    protected function createValue(array $name)
+    protected function createValue(array $name, string $className = LocalizedFallbackValue::class)
     {
-        $value = new LocalizedFallbackValue();
+        /** @var AbstractLocalizedFallbackValue $value */
+        $value = new $className();
         if (array_key_exists('localization', $name)) {
             /** @var Localization $localization */
             $localization = $this->getReference($name['localization']);
@@ -183,7 +189,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements Depend
     {
         if (!empty($item['names'])) {
             foreach ($item['names'] as $name) {
-                $product->addName($this->createValue($name));
+                $product->addName($this->createValue($name, ProductName::class));
             }
         }
 
@@ -195,13 +201,13 @@ abstract class AbstractLoadProductData extends AbstractFixture implements Depend
 
         if (!empty($item['descriptions'])) {
             foreach ($item['descriptions'] as $description) {
-                $product->addDescription($this->createValue($description));
+                $product->addDescription($this->createValue($description, ProductDescription::class));
             }
         }
 
         if (!empty($item['shortDescriptions'])) {
             foreach ($item['shortDescriptions'] as $shortDescription) {
-                $product->addShortDescription($this->createValue($shortDescription));
+                $product->addShortDescription($this->createValue($shortDescription, ProductShortDescription::class));
             }
         }
     }

@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -133,7 +134,7 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework
         $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1, 'sku' => $sku]);
 
         $category = new Category();
-        $title = new LocalizedFallbackValue();
+        $title = new CategoryTitle();
         $category->addTitle($title);
         $category->addProduct($product);
 

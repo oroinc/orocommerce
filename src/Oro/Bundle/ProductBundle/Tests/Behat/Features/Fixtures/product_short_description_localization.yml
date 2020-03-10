@@ -7,9 +7,11 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit: '@item'
     precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   productName:
     string: 'Product1'
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
   shortDescr:
     text: '\<strong\>Short description for default localization\<strong\>'
   shortDescr_loc1:

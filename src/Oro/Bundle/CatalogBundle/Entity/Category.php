@@ -121,22 +121,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $id;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryTitle[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_category_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryTitle", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -190,22 +177,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $childCategories;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryShortDescription[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_cat_short_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryShortDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -222,22 +196,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $shortDescriptions;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryLongDescription[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_cat_long_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryLongDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -463,7 +424,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultTitle($value)
+    {
+        $this->setDefaultFallbackValue($this->titles, $value, CategoryTitle::class);
+        $this->getDefaultTitle()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryTitle[]
      */
     public function getTitles()
     {
@@ -471,13 +443,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $title
+     * @param CategoryTitle $title
      *
      * @return $this
      */
-    public function addTitle(LocalizedFallbackValue $title)
+    public function addTitle(CategoryTitle $title)
     {
         if (!$this->titles->contains($title)) {
+            $title->setCategory($this);
             $this->titles->add($title);
         }
 
@@ -485,11 +458,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $title
+     * @param CategoryTitle $title
      *
      * @return $this
      */
-    public function removeTitle(LocalizedFallbackValue $title)
+    public function removeTitle(CategoryTitle $title)
     {
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
@@ -590,7 +563,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultShortDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->shortDescriptions, $value, CategoryShortDescription::class);
+        $this->getDefaultShortDescription()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryShortDescription[]
      */
     public function getShortDescriptions()
     {
@@ -598,13 +582,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param CategoryShortDescription $shortDescription
      *
      * @return $this
      */
-    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    public function addShortDescription(CategoryShortDescription $shortDescription)
     {
         if (!$this->shortDescriptions->contains($shortDescription)) {
+            $shortDescription->setCategory($this);
             $this->shortDescriptions->add($shortDescription);
         }
 
@@ -612,11 +597,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param CategoryShortDescription $shortDescription
      *
      * @return $this
      */
-    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    public function removeShortDescription(CategoryShortDescription $shortDescription)
     {
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
@@ -626,7 +611,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultLongDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->longDescriptions, $value, CategoryLongDescription::class);
+        $this->getDefaultShortDescription()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryLongDescription[]
      */
     public function getLongDescriptions()
     {
@@ -634,13 +630,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $longDescription
+     * @param CategoryLongDescription $longDescription
      *
      * @return $this
      */
-    public function addLongDescription(LocalizedFallbackValue $longDescription)
+    public function addLongDescription(CategoryLongDescription $longDescription)
     {
         if (!$this->longDescriptions->contains($longDescription)) {
+            $longDescription->setCategory($this);
             $this->longDescriptions->add($longDescription);
         }
 
@@ -648,11 +645,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $longDescription
+     * @param CategoryLongDescription $longDescription
      *
      * @return $this
      */
-    public function removeLongDescription(LocalizedFallbackValue $longDescription)
+    public function removeLongDescription(CategoryLongDescription $longDescription)
     {
         if ($this->longDescriptions->contains($longDescription)) {
             $this->longDescriptions->removeElement($longDescription);

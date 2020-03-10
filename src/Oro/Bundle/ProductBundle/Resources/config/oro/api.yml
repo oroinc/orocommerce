@@ -25,6 +25,29 @@ api:
         Oro\Bundle\ProductBundle\Entity\ProductImageType:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image_type.md'
 
+        Oro\Bundle\ProductBundle\Entity\ProductName:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_name.md'
+            actions:
+                delete_list: false
+                delete: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_short_description.md'
+            actions:
+                delete_list: false
+                delete: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductDescription:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_description.md'
+            actions:
+                delete_list: false
+                delete: false
+            fields:
+                wysiwygProperties:
+                    exclude: true
+                wysiwygStyle:
+                    exclude: true
+
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
             form_options:

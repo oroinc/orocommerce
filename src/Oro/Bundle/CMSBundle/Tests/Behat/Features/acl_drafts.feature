@@ -55,9 +55,9 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title          | Slug | Owner       |
-      | John Doe Draft | page | John Doe    |
-      | Misty Draft    | page | Misty Grant |
+      | Title          | Slug           | Owner       |
+      | John Doe Draft | john-doe-draft | John Doe    |
+      | Misty Draft    | misty-draft    | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View          |
       | Edit          |
@@ -76,9 +76,9 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title          | Slug | Owner       |
-      | John Doe Draft | page | John Doe    |
-      | Misty Draft    | page | Misty Grant |
+      | Title          | Slug           | Owner       |
+      | John Doe Draft | john-doe-draft | John Doe    |
+      | Misty Draft    | misty-draft    | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View          |
       | Edit          |
@@ -107,8 +107,8 @@ Feature: ACL Drafts
     When I click view "Page" in grid
     Then I should not see "Create draft"
     And I should see following grid:
-      | Title          | Slug | Owner       |
-      | John Doe Draft | page | John Doe    |
+      | Title          | Slug           | Owner    |
+      | John Doe Draft | john-doe-draft | John Doe |
     And number of records in "CMS Page Drafts Grid" should be 1
     And I should see following actions for John Doe Draft in grid:
       | View |
@@ -124,8 +124,8 @@ Feature: ACL Drafts
     When I click view "Page" in grid
     Then I should not see "Create draft"
     And I should see following grid:
-      | Title          | Slug | Owner       |
-      | Misty Draft    | page | Misty Grant |
+      | Title       | Slug        | Owner       |
+      | Misty Draft | misty-draft | Misty Grant |
     And number of records in "CMS Page Drafts Grid" should be 1
     And I should see following actions for Misty Draft in grid:
       | View |
@@ -150,9 +150,9 @@ Feature: ACL Drafts
     When I click view "Page" in grid
     Then I should not see "Create draft"
     And I should see following grid:
-      | Title          | Slug | Owner       |
-      | John Doe Draft | page | John Doe    |
-      | Misty Draft    | page | Misty Grant |
+      | Title          | Slug           | Owner       |
+      | John Doe Draft | john-doe-draft | John Doe    |
+      | Misty Draft    | misty-draft    | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View |
       | Edit |
@@ -165,9 +165,9 @@ Feature: ACL Drafts
     When I click view "Page" in grid
     Then I should not see "Create draft"
     And I should see following grid:
-      | Title          | Slug | Owner       |
-      | John Doe Draft | page | John Doe    |
-      | Misty Draft    | page | Misty Grant |
+      | Title          | Slug           | Owner       |
+      | John Doe Draft | john-doe-draft | John Doe    |
+      | Misty Draft    | misty-draft    | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View |
     And I should see following actions for Misty Draft in grid:
@@ -214,10 +214,10 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title                    | Slug | Owner       |
-      | John Doe Draft           | page | John Doe    |
-      | Misty Draft              | page | Misty Grant |
-      | Misty Draft (Duplicated) | page | Misty Grant |
+      | Title                    | Slug                   | Owner       |
+      | John Doe Draft           | john-doe-draft         | John Doe    |
+      | Misty Draft              | misty-draft            | Misty Grant |
+      | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View      |
       | Edit      |
@@ -250,9 +250,9 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title                    | Slug | Owner       |
-      | John Doe Draft           | page | John Doe    |
-      | Misty Draft (Duplicated) | page | Misty Grant |
+      | Title                    | Slug                   | Owner       |
+      | John Doe Draft           | john-doe-draft         | John Doe    |
+      | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |
     And I should see following actions for John Doe Draft in grid:
       | View      |
       | Edit      |
@@ -282,8 +282,8 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title                    | Slug | Owner       |
-      | Misty Draft (Duplicated) | page | Misty Grant |
+      | Title                    | Slug                   | Owner       |
+      | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |
     And I should see following actions for Misty Draft (Duplicated) in grid:
       | View      |
       | Duplicate |
@@ -311,9 +311,9 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     When I click view "Page" in grid
     Then I should see following grid:
-      | Title                    | Slug | Owner       |
-      | Misty Draft (Duplicated) | page | Misty Grant |
-      | Misty Draft (Edited)     | page | John Doe    |
+      | Title                    | Slug                   | Owner       |
+      | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |
+      | Misty Draft (Edited)     | misty-draft-edited     | John Doe    |
     And I should see following actions for Misty Draft (Edited) in grid:
       | View          |
       | Duplicate     |
@@ -334,5 +334,5 @@ Feature: ACL Drafts
     And I should see Landing Page with:
       | Title | Misty Draft (Edited) |
     And I should see following grid:
-      | Title                    | Slug | Owner       |
-      | Misty Draft (Duplicated) | page | Misty Grant |
+      | Title                    | Slug                   | Owner       |
+      | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |

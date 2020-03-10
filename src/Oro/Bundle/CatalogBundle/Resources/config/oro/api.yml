@@ -1,5 +1,34 @@
 api:
     entities:
+        Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api/category_title.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api/category_short_description.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api/category_long_description.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            fields:
+                wysiwygProperties:
+                    exclude: true
+                wysiwygStyle:
+                    exclude: true
+
         Oro\Bundle\CatalogBundle\Entity\Category:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api/category.md'
             fields:

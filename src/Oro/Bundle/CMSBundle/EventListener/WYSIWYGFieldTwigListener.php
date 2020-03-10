@@ -13,7 +13,7 @@ use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Psr\Container\ContainerInterface;
@@ -101,7 +101,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     {
         if (!$this->enabled
             || !\is_object($args->getEntity())
-            || $args->getEntity() instanceof LocalizedFallbackValue
+            || $args->getEntity() instanceof AbstractLocalizedFallbackValue
             || !$this->getTwigFunctionProcessor()->getApplicableMapping()
         ) {
             return false;
@@ -325,8 +325,10 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
 
         foreach ($metadata->getAssociationMappings() as $relationName => $mapping) {
-            if (isset($mapping['targetEntity']) && $mapping['targetEntity'] === LocalizedFallbackValue::class) {
-                $this->fieldLists[$entityName][$relationName] = LocalizedFallbackValue::class;
+            if (isset($mapping['targetEntity']) &&
+                is_a($mapping['targetEntity'], AbstractLocalizedFallbackValue::class, true)
+            ) {
+                $this->fieldLists[$entityName][$relationName] = $mapping['targetEntity'];
             }
         }
     }

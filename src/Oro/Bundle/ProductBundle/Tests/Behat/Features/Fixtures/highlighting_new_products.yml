@@ -7,15 +7,19 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product1'
     locvalue2:
         string: 'Product2'
     locvalue3:
         string: 'Product3'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attribute_family_label:
         string: 'Attribute Family'
 

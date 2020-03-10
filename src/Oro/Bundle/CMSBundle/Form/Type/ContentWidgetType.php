@@ -48,6 +48,7 @@ class ContentWidgetType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -109,7 +110,10 @@ class ContentWidgetType extends AbstractType
             static function (FormEvent $event) {
                 $data = $event->getData();
                 if ($data instanceof ContentWidget && $data->getId()) {
-                    $event->getForm()->remove('widgetType');
+                    $form = $event->getForm();
+                    $form->remove('widgetType');
+
+                    FormUtils::replaceField($form, 'name', ['disabled' => true]);
                 }
             }
         );
@@ -123,9 +127,16 @@ class ContentWidgetType extends AbstractType
                 }
 
                 $form = $event->getForm();
-
                 FormUtils::replaceFieldOptionsRecursive($form, 'layout', ['widget_type' => $data['widgetType']]);
-                $this->buildSettingsField($form, $form->getData() ?: new ContentWidget(), $data['widgetType']);
+
+                $contentWidget = $form->getData() ?: new ContentWidget();
+                $this->buildSettingsField(
+                    $form,
+                    $contentWidget,
+                    $contentWidget->getId() && $contentWidget->getWidgetType()
+                        ? $contentWidget->getWidgetType()
+                        : $data['widgetType']
+                );
             }
         );
     }

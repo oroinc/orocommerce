@@ -58,6 +58,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     promotionWithSegmentLabel:
         string: 'Promotion that uses segment in query'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
     featuredProductLabel:
         string: 'Product 3'
 

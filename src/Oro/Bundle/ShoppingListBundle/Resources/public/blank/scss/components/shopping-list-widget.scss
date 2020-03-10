@@ -31,6 +31,11 @@
         text-align: center;
         text-decoration: none;
 
+        font-size: $base-font-size;
+        line-height: $base-line-height;
+
+        color: get-color('ui', 'normal');
+
         border: 0;
         border-top: .1rem solid get-color('additional', 'light');
         background: get-color('additional', 'light');
@@ -39,6 +44,10 @@
 
         @include hover-focus() {
             outline: 0;
+        }
+        
+        @include hover {
+            text-decoration: underline;
         }
 
         [class^="fa-"] {

@@ -4,8 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\DataConverter;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\ImportExport\DataConverter\CategoryDataConverter;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryDataConverterTest extends WebTestCase
@@ -62,7 +62,7 @@ class CategoryDataConverterTest extends WebTestCase
         $this->converter->setEntityName(Category::class);
         $this->converter->setDispatcher($container->get('event_dispatcher'));
         $this->converter->setRegistry($container->get('doctrine'));
-        $this->converter->setLocalizedFallbackValueClassName(LocalizedFallbackValue::class);
+        $this->converter->setLocalizedFallbackValueClassName(AbstractLocalizedFallbackValue::class);
         $this->converter->setLocalizationClassName(Localization::class);
     }
 

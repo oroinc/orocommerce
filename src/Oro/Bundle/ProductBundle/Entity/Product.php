@@ -366,22 +366,9 @@ class Product extends ExtendProduct implements
     protected $primaryUnitPrecision;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|ProductName[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_name",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="ProductName", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -403,20 +390,12 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     * @ORM\OneToMany(
+     *      targetEntity="ProductDescription",
+     *      mappedBy="product",
      *      cascade={"ALL"},
      *      orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_description",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="description_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
+     *      fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
@@ -489,20 +468,12 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     * @ORM\OneToMany(
+     *      targetEntity="ProductShortDescription",
+     *      mappedBy="product",
      *      cascade={"ALL"},
      *      orphanRemoval=true,
      *      fetch="EXTRA_LAZY"
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_short_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="short_description_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
      * )
      * @ConfigField(
      *      defaultValues={
@@ -1035,7 +1006,19 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param array|LocalizedFallbackValue[] $names
+     * {@inheritdoc}
+     */
+    public function setDefaultName($value)
+    {
+        $this->setDefaultFallbackValue($this->names, $value, ProductName::class);
+        $this->getDefaultName()->setProduct($this);
+        $this->preUpdate();
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductName[] $names
      *
      * @return $this
      */
@@ -1051,7 +1034,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * @return Collection|ProductName[]
      */
     public function getNames()
     {
@@ -1059,25 +1042,30 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $name
+     * @param ProductName $name
      *
      * @return $this
      */
-    public function addName(LocalizedFallbackValue $name)
+    public function addName(ProductName $name)
     {
         if (!$this->names->contains($name)) {
+            $name->setProduct($this);
             $this->names->add($name);
+
+            if (!$name->getLocalization()) {
+                $this->preUpdate();
+            }
         }
 
         return $this;
     }
 
     /**
-     * @param LocalizedFallbackValue $name
+     * @param ProductName $name
      *
      * @return $this
      */
-    public function removeName(LocalizedFallbackValue $name)
+    public function removeName(ProductName $name)
     {
         if ($this->names->contains($name)) {
             $this->names->removeElement($name);
@@ -1087,7 +1075,34 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->descriptions, $value, ProductDescription::class);
+        $this->getDefaultDescription()->setProduct($this);
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductDescription[] $descriptions
+     *
+     * @return $this
+     */
+    public function setDescriptions(array $descriptions = [])
+    {
+        $this->descriptions->clear();
+
+        foreach ($descriptions as $description) {
+            $this->addDescription($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductDescription[]
      */
     public function getDescriptions()
     {
@@ -1095,13 +1110,14 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $description
+     * @param ProductDescription $description
      *
      * @return $this
      */
-    public function addDescription(LocalizedFallbackValue $description)
+    public function addDescription(ProductDescription $description)
     {
         if (!$this->descriptions->contains($description)) {
+            $description->setProduct($this);
             $this->descriptions->add($description);
         }
 
@@ -1109,11 +1125,11 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $description
+     * @param ProductDescription $description
      *
      * @return $this
      */
-    public function removeDescription(LocalizedFallbackValue $description)
+    public function removeDescription(ProductDescription $description)
     {
         if ($this->descriptions->contains($description)) {
             $this->descriptions->removeElement($description);
@@ -1261,7 +1277,34 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultShortDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->shortDescriptions, $value, ProductShortDescription::class);
+        $this->getDefaultShortDescription()->setProduct($this);
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductShortDescription[] $shortDescriptions
+     *
+     * @return $this
+     */
+    public function setShortDescriptions(array $shortDescriptions = [])
+    {
+        $this->shortDescriptions->clear();
+
+        foreach ($shortDescriptions as $shortDescription) {
+            $this->addShortDescription($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductShortDescription[]
      */
     public function getShortDescriptions()
     {
@@ -1269,13 +1312,14 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param ProductShortDescription $shortDescription
      *
      * @return $this
      */
-    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    public function addShortDescription(ProductShortDescription $shortDescription)
     {
         if (!$this->shortDescriptions->contains($shortDescription)) {
+            $shortDescription->setProduct($this);
             $this->shortDescriptions->add($shortDescription);
         }
 
@@ -1283,11 +1327,11 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param ProductShortDescription $shortDescription
      *
      * @return $this
      */
-    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    public function removeShortDescription(ProductShortDescription $shortDescription)
     {
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);

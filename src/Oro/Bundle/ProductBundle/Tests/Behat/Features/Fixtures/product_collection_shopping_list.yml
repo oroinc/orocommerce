@@ -1,13 +1,17 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProduct1Name:
         string: 'Product 1'
     localProduct2Name:
         string: 'Product 2'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'New Category'
 

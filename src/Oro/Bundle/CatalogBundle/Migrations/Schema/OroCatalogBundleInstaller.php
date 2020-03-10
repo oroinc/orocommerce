@@ -33,10 +33,7 @@ class OroCatalogBundleInstaller implements
 {
     use AttachmentExtensionAwareTrait;
 
-    const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
-    const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
     const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
-    const ORO_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_localization_val';
     const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
     const ORO_PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
@@ -67,7 +64,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_16';
     }
 
     /**
@@ -154,17 +151,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Create oro_catalog_category_title table
+     * Create oro_catalog_cat_title table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryTitleTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_catalog_category_title');
-        $table->addColumn('category_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['category_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id']);
+        $table = $schema->createTable('oro_catalog_cat_title');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_cat_cat_title_fallback', []);
+        $table->addIndex(['string'], 'idx_cat_cat_title_string', []);
     }
 
     /**
@@ -239,94 +240,102 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_catalog_category_title foreign keys.
+     * Add oro_catalog_cat_title foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryTitleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_catalog_category_title');
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
-            ['localized_value_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
+        $table = $schema->getTable('oro_catalog_cat_title');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
-     * Create oro_catalog_category_short_description table
+     * Create oro_catalog_cat_s_descr table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryShortDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
-        $table->addColumn('category_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_a2b14ef5eb576e89');
-        $table->setPrimaryKey(['category_id', 'localized_value_id']);
+        $table = $schema->createTable('oro_catalog_cat_s_descr');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('text', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_cat_cat_s_descr_fallback', []);
     }
 
     /**
-     * Create oro_catalog_category_long_description table
+     * Create oro_catalog_cat_l_descr table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryLongDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
-        $table->addColumn('category_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_4f7c279feb576e89');
-        $table->setPrimaryKey(['category_id', 'localized_value_id']);
+        $table = $schema->createTable('oro_catalog_cat_l_descr');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('wysiwyg', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
+        $table->addColumn('wysiwyg_style', 'wysiwyg_style', ['notnull' => false]);
+        $table->addColumn('wysiwyg_properties', 'wysiwyg_properties', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_cat_cat_l_descr_fallback', []);
     }
 
     /**
-     * Add oro_catalog_category_short_description foreign keys.
+     * Add oro_catalog_cat_s_descr foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_cat_s_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
-            ['localized_value_id'],
+            $schema->getTable('oro_catalog_category'),
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATALOG_CATEGORY_TABLE_NAME),
-            ['category_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
     /**
-     * Add oro_catalog_category_long_description foreign keys.
+     * Add oro_catalog_cat_l_descr foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_cat_l_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
-            ['localized_value_id'],
+            $schema->getTable('oro_catalog_category'),
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATALOG_CATEGORY_TABLE_NAME),
-            ['category_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

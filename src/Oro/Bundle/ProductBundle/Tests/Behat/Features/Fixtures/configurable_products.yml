@@ -1,6 +1,8 @@
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attribute_family_label:
         string: 'Attribute Family'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
     configurable_product_A_name:
         string: 'ConfigurableProductA'
     product_A_1_name:

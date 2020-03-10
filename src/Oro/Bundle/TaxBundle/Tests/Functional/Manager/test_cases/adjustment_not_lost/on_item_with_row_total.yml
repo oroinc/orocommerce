@@ -142,7 +142,7 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
         product_tax_code_with_9_product:
             code: 9_product
-    'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue':
+    'Oro\Bundle\ProductBundle\Entity\ProductName':
         product_name_9:
             string: 'product 1'
         product_name_10:

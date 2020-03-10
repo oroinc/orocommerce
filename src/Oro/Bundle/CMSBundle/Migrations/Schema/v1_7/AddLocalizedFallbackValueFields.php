@@ -70,8 +70,14 @@ class AddLocalizedFallbackValueFields implements Migration
             );
         }
 
-        $queries->addPostQuery(new UpdateCategoryDescriptionFieldDataQuery());
+        if ($schema->hasTable('oro_catalog_cat_long_desc')) {
+            $queries->addPostQuery(new UpdateCategoryDescriptionFieldDataQuery());
+        }
+
         $queries->addPostQuery(new UpdateBrandDescriptionFieldDataQuery());
-        $queries->addPostQuery(new UpdateProductDescriptionFieldDataQuery());
+
+        if ($schema->hasTable('oro_product_description')) {
+            $queries->addPostQuery(new UpdateProductDescriptionFieldDataQuery());
+        }
     }
 }

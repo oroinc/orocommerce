@@ -52,7 +52,7 @@ Feature: WYSIWYG field name validation
       | Type         | WYSIWYG          |
     And I click "Continue"
     Then I should see validation errors:
-      | Field name | A field with this name is already exist. |
+      | Field name | This field name cannot be used. |
 
   Scenario: Check validation for `WYSIWYG` field and additional fields exists
     Given I fill form with:

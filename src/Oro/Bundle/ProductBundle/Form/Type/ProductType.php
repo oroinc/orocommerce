@@ -13,6 +13,9 @@ use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallba
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
@@ -106,6 +109,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.names.label',
                     'required' => true,
+                    'value_class' => ProductName::class,
                     'entry_options' => [
                         'constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])],
                         StripTagsExtension::OPTION_NAME => true,
@@ -118,7 +122,8 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
-                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
+                    'value_class' => ProductDescription::class,
+                    'field' => ['wysiwyg', 'wysiwygStyle', 'wysiwygProperties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'use_tabs' => true,
                 ]
@@ -129,6 +134,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.short_descriptions.label',
                     'required' => false,
+                    'value_class' => ProductShortDescription::class,
                     'field' => 'text',
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [

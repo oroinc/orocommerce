@@ -6,7 +6,7 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
     name: 'Common Business Unit'
     organization: '@organization'
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locValue:
     string: 'Lenovo Vibe1'
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:

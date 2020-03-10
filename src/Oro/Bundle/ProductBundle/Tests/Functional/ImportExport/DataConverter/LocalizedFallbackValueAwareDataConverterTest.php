@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -90,6 +90,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'minimumQuantityToOrder.value' => '',
         'isUpcoming.value' => '',
         'category.id' => '',
+        'wysiwyg' => '',
     ];
 
     /**
@@ -116,7 +117,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));
         $this->converter->setRegistry($container->get('doctrine'));
-        $this->converter->setLocalizedFallbackValueClassName(LocalizedFallbackValue::class);
+        $this->converter->setLocalizedFallbackValueClassName(AbstractLocalizedFallbackValue::class);
         $this->converter->setLocalizationClassName(Localization::class);
     }
 

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -100,7 +100,7 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($entity->getProductSku());
         $this->assertEmpty($entity->getProductUnitCode());
 
-        $productName = new LocalizedFallbackValue();
+        $productName = new ProductName();
         $productName->setString('Product Test Name');
 
         $product = new Product();

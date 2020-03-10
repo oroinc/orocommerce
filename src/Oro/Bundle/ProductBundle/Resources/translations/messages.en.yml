@@ -172,6 +172,81 @@ oro:
                 show_on_product_view: The new product icon will be displayed on the product view page.
         form.add_row: Add More Rows
 
+        productdescription:
+            entity_label: 'Product Description'
+            entity_plural_label: 'Product Description'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg:
+                label: 'WYSIWYG value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg_style:
+                label: 'WYSIWYG Style value'
+                description: 'The text value for the current localization, can contain css data'
+            wysiwyg_properties:
+                label: 'WYSIWYG Properties'
+                description: 'The text value for the current localization, can contain additional WYSIWYG data'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
+        productname:
+            entity_label: 'Product Name'
+            entity_plural_label: 'Product Name'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product name values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
+        productshortdescription:
+            entity_label: 'Product Short Description'
+            entity_plural_label: 'Product Short Description'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the product short description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            product:
+                label: 'Product'
+                description: 'The value for the related product'
+
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
@@ -724,6 +799,30 @@ oro:
                 options:
                     show_prices.label: Show Prices
                     show_add_button.label: Show Add Button
+            product_segment:
+                label: Product Segment
+                options:
+                    segment:
+                        label: Segment
+                        tooltip: Selected product segment will be used as data source. To modify existing or create new segment go to "Reports & Segments > Manage Segments" section. Only segments with type "Product" are listed here.
+                    maximum_items:
+                        label: Maximum Items
+                        tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                    minimum_items:
+                        label: Minimum Items
+                        tooltip: Hide the block completely if the number of items is lower than the specified value.
+                    use_slider_on_mobile:
+                        label: Use Slider On Mobile
+                        tooltip: When slider is enabled, the widget contents will occupy less screen space, while showing larger product images.
+                        value:
+                            no: No
+                            yes: Yes
+                    show_add_button:
+                        label: Show Add Button
+                        tooltip: Enables a buyer to add a product to the shopping list right away. When the option is disabled, a buyer needs to open the product details page before they can add it to the shopping list.
+                        value:
+                            no: No
+                            yes: Yes
 
     product_unit.each:
         label:

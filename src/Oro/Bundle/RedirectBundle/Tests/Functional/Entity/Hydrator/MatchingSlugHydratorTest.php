@@ -43,7 +43,7 @@ class MatchingSlugHydratorTest extends WebTestCase
         $this->assertCount(1, $matchingSlugs);
 
         $matchingSlug = reset($matchingSlugs);
-        $expectedSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
+        $expectedSlug = $this->repository->findOneBy(['url' => LoadSlugsData::SLUG_URL_PAGE]);
 
         $this->assertEquals($expectedSlug->getId(), $matchingSlug->getId());
     }
@@ -71,7 +71,7 @@ class MatchingSlugHydratorTest extends WebTestCase
         $this->assertCount(1, $matchingSlugs);
 
         $matchingSlug = reset($matchingSlugs);
-        $expectedSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
+        $expectedSlug = $this->repository->findOneBy(['url' => LoadSlugsData::SLUG_URL_PAGE_2]);
 
         $this->assertEquals($expectedSlug->getId(), $matchingSlug->getId());
     }

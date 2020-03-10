@@ -37,17 +37,17 @@ data:
             names:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productnames
                         id: '<toString(@product-2.names.default->id)>'
             descriptions:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productdescriptions
                         id: '<toString(@product-2.descriptions.default->id)>'
             shortDescriptions:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productshortdescriptions
                         id: '<toString(@product-2.shortDescriptions.default->id)>'
             slugPrototypes:
                 data:
@@ -98,17 +98,17 @@ data:
             names:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productnames
                         id: '<toString(@product-3.names.default->id)>'
             descriptions:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productdescriptions
                         id: '<toString(@product-3.descriptions.default->id)>'
             shortDescriptions:
                 data:
                     -
-                        type: localizedfallbackvalues
+                        type: productshortdescriptions
                         id: '<toString(@product-3.shortDescriptions.default->id)>'
             slugPrototypes:
                 data:

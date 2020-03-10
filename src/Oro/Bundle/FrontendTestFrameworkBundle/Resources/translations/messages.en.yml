@@ -5,3 +5,9 @@ oro.product:
     multienum_field:
         label: Multi-enum field
         description: Multi-enum field
+    wysiwyg:
+        label: WYSIWYG
+    wysiwyg_style:
+        label: WYSIWYG Style
+    wysiwyg_properties:
+        label: WYSIWYG Properties

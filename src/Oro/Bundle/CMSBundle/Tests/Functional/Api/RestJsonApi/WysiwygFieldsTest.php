@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Functional\Api\Frontend\RestJsonApi;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +23,7 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
                     [
                         'status' => (string) Response::HTTP_BAD_REQUEST,
                         'title' => 'form constraint',
-                        'detail' => 'This value is not valid.',
-                        'source' => [
-                            'pointer' => '/data/attributes/wysiwyg_properties'
-                        ]
+                        'detail' => 'This value is not valid. Source: wysiwyg_properties.'
                     ]
                 ]
             ],
@@ -55,9 +52,11 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
             'data' => [
                 'type' => 'localizedfallbackvalues',
                 'attributes' => [
-                    'wysiwyg_properties' => $properties,
-                    'wysiwyg_style' => '<style></style>',
-                    'wysiwyg' => 'Content',
+                    'wysiwyg' => [
+                        'value' => 'Content',
+                        'style' => '<style></style>',
+                        'properties' => $properties,
+                    ],
                     'fallback' => null,
                     'string' => null,
                     'text' => 'text'

@@ -9,9 +9,12 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -163,12 +166,31 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
             ->addSlug($productSlug)
-            ->addName($this->prepareLocalizedValue(self::NAME_DEFAULT_LOCALE))
-            ->addName($this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE))
-            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE))
-            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
-            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
-            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
+            ->addName($this->prepareLocalizedValue(self::NAME_DEFAULT_LOCALE, null, ProductName::class))
+            ->addName(
+                $this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE, null, ProductName::class)
+                    ->setLocalization((new Localization()))
+            )
+            ->addDescription(
+                $this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE, ProductDescription::class)
+            )
+            ->addDescription(
+                $this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE, ProductDescription::class)
+            )
+            ->addShortDescription(
+                $this->prepareLocalizedValue(
+                    null,
+                    self::SHORT_DESCRIPTION_DEFAULT_LOCALE,
+                    ProductShortDescription::class
+                )
+            )
+            ->addShortDescription(
+                $this->prepareLocalizedValue(
+                    null,
+                    self::SHORT_DESCRIPTION_CUSTOM_LOCALE,
+                    ProductShortDescription::class
+                )
+            )
             ->addImage($productImage);
 
         $this->skuIncrementor->expects($this->once())
@@ -277,11 +299,12 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string|null $string
      * @param string|null $text
-     * @return LocalizedFallbackValue
+     * @param string $className
+     * @return object
      */
-    protected function prepareLocalizedValue($string = null, $text = null)
+    protected function prepareLocalizedValue(?string $string = null, ?string $text = null, string $className)
     {
-        $value = new LocalizedFallbackValue();
+        $value = new $className();
         $value->setString($string)
             ->setText($text);
 

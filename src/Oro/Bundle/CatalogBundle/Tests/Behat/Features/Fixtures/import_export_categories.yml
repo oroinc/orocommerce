@@ -23,16 +23,21 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         parentCategory: '@root_category'
         organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localizedFallbackValueTitle{1..21}:
         string: 'existing category <current()>'
+    localizedFallbackValueTitle24:
+        string: 'category with tree level 1'
 
+Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
     localizedFallbackValueShortDesc21:
         text: 'short description'
 
+Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
     localizedFallbackValueLongDesc21:
         wysiwyg: 'long description'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localizedFallbackValueMetaDesc21:
         text: 'meta description'
 
@@ -44,6 +49,3 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
     localizedFallbackValueSlugPrototype21:
         string: 'existing-category-filled'
-
-    localizedFallbackValueTitle24:
-        string: 'category with tree level 1'

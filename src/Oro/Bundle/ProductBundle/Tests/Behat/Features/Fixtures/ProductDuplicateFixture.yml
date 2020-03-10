@@ -3,25 +3,33 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
         name: Extra Business Unit
         organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     name1:
         string: 'Product1'
-    slug1:
-        string: 'product1'
-    description1:
-        wysiwyg: 'Product1 Description'
-    shortDescription1:
-        text: 'Product1 Short Description'
-    categoryTitle{1..2}:
-        string: 'Category<current()>'
-    productSlugPrototype1:
-        string: 'product1'
-    brandName{1..2}:
-        string: 'Brand<current()>'
     relatedProductName1:
         string: 'Related1'
     upsellProductName1:
         string: 'Upsell1'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    description1:
+        wysiwyg: 'Product1 Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    shortDescription1:
+        text: 'Product1 Short Description'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    categoryTitle{1..2}:
+        string: 'Category<current()>'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    slug1:
+        string: 'product1'
+    productSlugPrototype1:
+        string: 'product1'
+    brandName{1..2}:
+        string: 'Brand<current()>'
 
 Oro\Bundle\RedirectBundle\Entity\Slug:
     productSlug1:

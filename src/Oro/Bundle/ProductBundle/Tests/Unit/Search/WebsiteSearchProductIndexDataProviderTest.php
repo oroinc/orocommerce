@@ -23,6 +23,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
@@ -406,11 +407,11 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     /**
      * @param string $string
      * @param Localization|null $localization
-     * @return LocalizedFallbackValue
+     * @return ProductDescription
      */
     protected function getLocalizedValue($string, Localization $localization = null)
     {
-        $value = new LocalizedFallbackValue();
+        $value = new ProductDescription();
         $value->setLocalization($localization)->setString($string);
 
         return $value;

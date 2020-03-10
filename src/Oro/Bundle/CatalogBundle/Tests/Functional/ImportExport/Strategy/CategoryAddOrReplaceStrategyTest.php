@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\ImportExport\Strategy\CategoryAddOrReplaceStrategy;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -220,7 +221,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     private function createCategoryWithTitle(string $title): Category
     {
         return (new Category())->addTitle(
-            (new LocalizedFallbackValue())->setString($title)
+            (new CategoryTitle())->setString($title)
         );
     }
 

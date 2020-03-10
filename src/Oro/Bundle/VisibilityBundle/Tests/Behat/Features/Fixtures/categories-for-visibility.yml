@@ -9,7 +9,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@localValueMedicalApparel']
             - setParentCategory: ['@root_category']
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localValueLightingProducts:
         string: 'Lighting Products'
 

@@ -11,21 +11,25 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locvalue:
     string: 'Product1'
-  localNewCategory:
-    string: 'NewCategory'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   attribute_family_label:
     string: 'Attribute Family'
   localValueProductSlug:
     string: 'acme'
   localValueDefaultWebCatalog:
     string: 'Default Web Catalog'
-  localValueNewCategory:
-    string: 'MyCategory'
   localValueNewCategorySlug:
     string: 'new-category'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+  localNewCategory:
+    string: 'NewCategory'
+  localValueNewCategory:
+    string: 'MyCategory'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
   attribute_family:

@@ -4,11 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -49,12 +50,12 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         $localization = (new Localization())
             ->setLanguage($language);
 
-        $product1Name = new LocalizedFallbackValue();
+        $product1Name = new ProductName();
         $product1Name
             ->setString('DE Product Name')
             ->setLocalization($localization);
 
-        $product1Description = new LocalizedFallbackValue();
+        $product1Description = new ProductShortDescription();
         $product1Description
             ->setText('DE Product Description')
             ->setLocalization($localization);
@@ -65,11 +66,11 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
             ->addName($product1Name)
             ->addShortDescription($product1Description);
 
-        $product2Name = new LocalizedFallbackValue();
+        $product2Name = new ProductName();
         $product2Name
             ->setString('DE Product Without SKU')
             ->setLocalization($localization);
-        $product2Description = new LocalizedFallbackValue();
+        $product2Description = new ProductShortDescription();
         $product2Description
             ->setText('DE Product Description')
             ->setLocalization($localization);

@@ -269,7 +269,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         sell: false
         precision: '0'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Product 1'
     product2_name:

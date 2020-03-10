@@ -128,6 +128,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Web Catalog 2 Node 1'
     catalog2_node1_url:
         text: /catalog2_node1
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     category1_name:
         string: 'Category 1'
     category11_name:
@@ -136,6 +138,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Category 1.1.1'
     category2_name:
         string: 'Category 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Product 1'
     product2_name:

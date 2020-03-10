@@ -4,6 +4,10 @@
 
 ### test_variant_field
 
+### wysiwyg
+
+The wysiwyg field of the product.
+
 {@inheritdoc}
 
 ## SUBRESOURCES

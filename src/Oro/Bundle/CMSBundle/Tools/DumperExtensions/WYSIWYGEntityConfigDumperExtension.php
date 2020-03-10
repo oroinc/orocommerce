@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Tools\DumperExtensions;
 
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType as DBALWYSIWYGType;
-use Oro\Bundle\CMSBundle\Helper\WYSIWYGSchemaHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Tools\DumperExtensions\AbstractEntityConfigDumperExtension;
@@ -21,23 +20,16 @@ class WYSIWYGEntityConfigDumperExtension extends AbstractEntityConfigDumperExten
     private $configManager;
 
     /**
-     * @var WYSIWYGSchemaHelper
-     */
-    private $wysiwygSchemaHelper;
-
-    /**
      * @var array
      */
     private $configs = [];
 
     /**
      * @param ConfigManager $configManager
-     * @param WYSIWYGSchemaHelper $wysiwygSchemaHelper
      */
-    public function __construct(ConfigManager $configManager, WYSIWYGSchemaHelper $wysiwygSchemaHelper)
+    public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
-        $this->wysiwygSchemaHelper = $wysiwygSchemaHelper;
     }
 
     /**
@@ -75,16 +67,6 @@ class WYSIWYGEntityConfigDumperExtension extends AbstractEntityConfigDumperExten
                     $this->configs[] = ['entityConfig' => $entityConfig, 'fieldConfig' => $fieldConfig];
                 }
             }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function postUpdate(): void
-    {
-        foreach ($this->configs as $config) {
-            $this->wysiwygSchemaHelper->createAdditionalFields($config['entityConfig'], $config['fieldConfig']);
         }
     }
 }

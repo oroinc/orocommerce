@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle;
 
+use Oro\Bundle\CatalogBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -18,13 +19,19 @@ class OroCatalogBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
-            'Oro\Bundle\CatalogBundle\Entity\Category' => [
-                'title' => 'titles',
-                'shortDescription' => 'shortDescriptions',
-                'longDescription' => 'longDescriptions',
-                'slugPrototype' => 'slugPrototypes'
-            ]
-        ]));
+        $container
+            ->addCompilerPass(
+                new DefaultFallbackExtensionPass(
+                    [
+                        'Oro\Bundle\CatalogBundle\Entity\Category' => [
+                            'title' => 'titles',
+                            'shortDescription' => 'shortDescriptions',
+                            'longDescription' => 'longDescriptions',
+                            'slugPrototype' => 'slugPrototypes'
+                        ]
+                    ]
+                )
+            )
+            ->addCompilerPass(new AttributeBlockTypeMapperPass());
     }
 }

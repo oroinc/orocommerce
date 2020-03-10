@@ -8,9 +8,11 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@each'
         precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'ProductWithHTML'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 

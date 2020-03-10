@@ -1351,6 +1351,20 @@ services:
         tags:
             - { name: layout.data_provider, alias: new_arrivals }
 
+    oro_product.layout.data_provider.segment_products:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SegmentProductsProvider'
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@oro_product.product.manager'
+            - '@doctrine'
+            - '@security.token_storage'
+            - '@oro_security.encoder.default'
+            - '@oro_security.acl_helper'
+        calls:
+            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+        tags:
+            - { name: layout.data_provider, alias: segment_products }
+
     oro_product.layout.data_provider.search_product:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\SearchProductDataProvider
         arguments:
@@ -1648,6 +1662,22 @@ services:
             - '@doctrine'
             - '@security.authorization_checker'
             - "@oro_config.manager"
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_product.event_listener.image_remove:
+        class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    oro_product.content_widget_type.product_segment:
+        class: Oro\Bundle\ProductBundle\ContentWidget\ProductSegmentContentWidgetType
+        arguments:
+            - '@doctrine'
         tags:
             - { name: oro_cms.content_widget.type }
 

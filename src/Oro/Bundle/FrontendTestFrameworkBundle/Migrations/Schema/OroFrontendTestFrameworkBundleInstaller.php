@@ -3,9 +3,13 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -37,6 +41,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
         $this->createTestContentNode($schema);
         $this->createTestContentVariant($schema);
         $this->addVariantFieldToProduct($schema);
+        $this->addWYSIWYGFieldToProduct($schema);
     }
 
     /**
@@ -125,6 +130,74 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
                     'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addWYSIWYGFieldToProduct(Schema $schema)
+    {
+        if ($schema->hasTable('oro_product')) {
+            $table = $schema->getTable('oro_product');
+
+            $table->addColumn(
+                'wysiwyg',
+                'wysiwyg',
+                [
+                    'notnull' => false,
+                    'comment' => '(DC2Type:wysiwyg)',
+                    OroOptions::KEY => [
+                        ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_DEFAULT,
+                        'attribute' => ['is_attribute' => true],
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                        ],
+                        'dataaudit' => ['auditable' => false],
+                        'importexport' => ['excluded' => false],
+                    ],
+                ]
+            );
+
+            $table->addColumn(
+                'wysiwyg_style',
+                'wysiwyg_style',
+                [
+                    'notnull' => false,
+                    OroOptions::KEY => [
+                        ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                        ],
+                        'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+                        'dataaudit' => ['auditable' => false],
+                        'importexport' => ['excluded' => false],
+                    ],
+                ]
+            );
+
+            $table->addColumn(
+                'wysiwyg_properties',
+                'wysiwyg_properties',
+                [
+                    'notnull' => false,
+                    OroOptions::KEY => [
+                        ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'origin' => ExtendScope::ORIGIN_CUSTOM,
+                        ],
+                        'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+                        'dataaudit' => ['auditable' => false],
+                        'importexport' => ['excluded' => false],
+                    ],
                 ]
             );
         }

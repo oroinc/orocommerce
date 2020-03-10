@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Command;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
@@ -176,7 +177,8 @@ class PriceListRecalculateCommand extends Command
                 self::DISABLE_TRIGGERS,
                 null,
                 InputOption::VALUE_NONE,
-                'disables ALL triggers before the operation, allowing faster reindexation of bigger data'
+                'disables ALL triggers before the operation, allowing faster reindexation of bigger data.
+                Not available for MySQL or MySQL-based database platforms'
             )
             ->addOption(
                 self::USE_INSERT_SELECT,
@@ -200,9 +202,20 @@ class PriceListRecalculateCommand extends Command
             ->setOutput($output);
 
         $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
+
         if (true === $disableTriggers) {
+            $databasePlatform = $this->registry->getConnection()->getDatabasePlatform();
+            if ($databasePlatform instanceof MySqlPlatform) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The option `%s` is not available for `%s` database platform.',
+                    self::DISABLE_TRIGGERS,
+                    $databasePlatform->getName()
+                ));
+            }
+
             $this->disableAllTriggers($output);
         }
+
         $this->prepareBuilders($input);
         $optionAll = (bool)$input->getOption(self::ALL);
         if ($optionAll) {

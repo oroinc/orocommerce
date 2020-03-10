@@ -1,10 +1,9 @@
 include:
   - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
   product1_name:
     string: 'Product1'
-
   product2_name:
     string: 'Product2'
 

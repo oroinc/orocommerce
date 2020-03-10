@@ -3,10 +3,12 @@
 namespace Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -73,14 +75,14 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
             $localization = $this->localizationManager->getDefaultLocalization();
             $entity
                 ->setParentCategory($this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization())
-                ->addTitle((new LocalizedFallbackValue())->setString('Sample Category'))
+                ->addTitle((new CategoryTitle())->setString('Sample Category'))
                 ->addTitle(
-                    (new LocalizedFallbackValue())
+                    (new CategoryTitle())
                         ->setString('Sample Category English')
                         ->setLocalization($localization)
                 )
-                ->addShortDescription((new LocalizedFallbackValue())->setText('Sample short description'))
-                ->addLongDescription((new LocalizedFallbackValue())->setWysiwyg('Sample long description'))
+                ->addShortDescription((new CategoryShortDescription())->setText('Sample short description'))
+                ->addLongDescription((new CategoryLongDescription())->setWysiwyg('Sample long description'))
                 ->setOrganization($organizationRepo->getEntity('default'));
 
             return;

@@ -37,7 +37,7 @@
         }) %}
 
         <div {{ block('block_attributes') }}>
-            {{ parent_block_widget(block) }}
+            {{ block('container_widget') }}
         </div>
     {% endfor %}
 {% endblock %}
@@ -48,11 +48,11 @@
         'for': 'consent-' ~ index
     }) %}
 
-    <label {{ block('block_attributes') }}>
+    <label {{ block('block_attributes') }} {% if consent.required %} aria-required="true" {% endif %}>
         {% spaceless %}
             {{ parent_block_widget(block) }}
             {% if consent.required %}
-                <em class="consent-item__asterisk">*</em>
+                <em class="consent-item__asterisk" aria-hidden="true">*</em>
             {% endif %}
         {% endspaceless %}
     </label>

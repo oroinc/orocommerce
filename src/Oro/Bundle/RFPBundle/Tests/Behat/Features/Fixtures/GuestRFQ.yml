@@ -4,7 +4,7 @@ include:
     - '@OroLocaleBundle:LocalizationFixture.yml'
     - '@OroProductBundle:ProductUnitItemTranslation.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product1'
     locvalue1_loc1:

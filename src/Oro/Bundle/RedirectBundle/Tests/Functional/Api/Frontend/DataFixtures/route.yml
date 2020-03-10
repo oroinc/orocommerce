@@ -58,12 +58,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         text: /catalog1_node5
     catalog1_node5_slug_prototype:
         string: catalog1_node5
-    category1_title:
-        string: 'Category 1'
-    product1_name:
-        string: 'Product 1'
     landing_page1_name:
         string: 'Landing Page 1'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category1_title:
+        string: 'Category 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:

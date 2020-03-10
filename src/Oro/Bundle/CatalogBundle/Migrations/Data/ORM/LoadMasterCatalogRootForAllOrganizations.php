@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\NoResultException;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\EventListener\ORM\OrganizationPersistListener;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -29,7 +29,7 @@ class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
             try {
                 $manager->getRepository(Category::class)->getMasterCatalogRoot($organization);
             } catch (NoResultException $exception) {
-                $title = new LocalizedFallbackValue();
+                $title = new CategoryTitle();
                 $title->setString(OrganizationPersistListener::ROOT_CATEGORY_NAME);
 
                 $category = new Category();

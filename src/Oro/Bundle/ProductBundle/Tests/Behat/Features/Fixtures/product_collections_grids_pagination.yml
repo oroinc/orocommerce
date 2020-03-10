@@ -1,10 +1,11 @@
 include:
     - '@OroProductBundle:product_collections_web_catalog.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName{1..25}:
         string: 'Product <current()>'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 

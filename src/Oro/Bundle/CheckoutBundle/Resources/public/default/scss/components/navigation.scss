@@ -1,8 +1,10 @@
+/* @theme: default; */
+
 .checkout-navigation {
     @include list-normalize();
 
     margin: 0 0 0 15px;
-    border-left: 2px solid get-color('additional', 'light');
+    border-left: $checkout-navigation-border-left;
 
     word-wrap: break-word;
 
@@ -33,23 +35,21 @@
     }
 
     &__icon {
-        $checkout-navigation-icon-size: 30px !default;
-
         position: absolute;
         top: 0;
         left: -$checkout-navigation-icon-size / 2;
 
         font-weight: 700;
 
-        @include badge($checkout-navigation-icon-size, 16px, get-color('additional', 'middle'));
+        @include badge($checkout-navigation-icon-size, $checkout-navigation-icon-font-size, get-color('additional', 'middle'));
 
         &--current {
             background-color: get-color('primary', 'base');
         }
 
         &--complete {
-            color: get-color('additional', 'ultra');
-            background-color: get-color('secondary', 'light');
+            color: $checkout-navigation-complete-color;
+            background-color: $checkout-navigation-complete-background-color;
         }
 
     }

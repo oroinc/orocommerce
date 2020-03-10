@@ -9,8 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -128,7 +128,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
             ->setPrimaryUnitPrecision($unitPrecision)
             ->setType($type);
 
-        $defaultName = new LocalizedFallbackValue();
+        $defaultName = new ProductName();
         $defaultName->setString($sku);
         $product->addName($defaultName);
 

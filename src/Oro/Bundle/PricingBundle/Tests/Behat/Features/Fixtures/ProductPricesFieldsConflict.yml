@@ -1,6 +1,8 @@
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     productName:
         string: 'Product 1'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     category:
         string: 'NewCategory'
 

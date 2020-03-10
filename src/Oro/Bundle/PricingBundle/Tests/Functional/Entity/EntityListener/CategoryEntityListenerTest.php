@@ -32,28 +32,6 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->cleanScheduledMessages();
     }
 
-    public function testOnDelete()
-    {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
-        $em->flush();
-
-        $this->sendScheduledMessages();
-
-        self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
-            [
-                [
-                    PriceListTriggerFactory::PRODUCT => [
-                        $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
-                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
-                        $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId() => [],
-                    ]
-                ],
-            ]
-        );
-    }
-
     public function testOnUpdateCategoryParentChanged()
     {
         /** @var Category $category */
@@ -155,6 +133,28 @@ class CategoryEntityListenerTest extends WebTestCase
                         $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
                             $product->getId()
                         ]
+                    ]
+                ],
+            ]
+        );
+    }
+
+    public function testOnDelete()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
+        $em->flush();
+
+        $this->sendScheduledMessages();
+
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRODUCT => [
+                        $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
+                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
+                        $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId() => [],
                     ]
                 ],
             ]

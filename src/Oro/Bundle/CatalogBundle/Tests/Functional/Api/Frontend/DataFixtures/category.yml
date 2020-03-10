@@ -15,30 +15,24 @@ Oro\Bundle\OrganizationBundle\Entity\Organization:
         enabled: true
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    category1_title:
-        string: 'Category 1'
-    category1_short_description:
-        string: 'Category 1 Short Description'
-    category1_description:
-        string: 'Category 1 Description'
     category1_meta_title:
         string: 'Category 1 Meta Title'
     category1_meta_description:
         string: 'Category 1 Meta Description'
     category1_meta_keywords:
         string: 'Category 1 Meta Keywords'
-    category1_1_title:
-        string: 'Category 1_1'
-    category1_1_short_description:
-        string: 'Category 1_1 Short Description'
-    category1_1_description:
-        string: 'Category 1_1 Description'
     category1_1_meta_title:
         string: 'Category 1_1 Meta Title'
     category1_1_meta_description:
         string: 'Category 1_1 Meta Description'
     category1_1_meta_keywords:
         string: 'Category 1_1 Meta Keywords'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category1_title:
+        string: 'Category 1'
+    category1_1_title:
+        string: 'Category 1_1'
     category1_1_1_title:
         string: 'Category 1_1_1'
     category2_title:
@@ -49,6 +43,20 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Category 3_1'
     category3_1_1_title:
         string: 'Category 3_1_1'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
+    category1_short_description:
+        text: 'Category 1 Short Description'
+    category1_1_short_description:
+        text: 'Category 1_1 Short Description'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
+    category1_description:
+        wysiwyg: 'Category 1 Description'
+    category1_1_description:
+        wysiwyg: 'Category 1_1 Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Product 1'
     product2_name:

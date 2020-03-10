@@ -38,11 +38,13 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '0'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue1:
         string: 'Product 1'
     locValue2:
         string: 'Product 2'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locValueFamily:
         string: 'Product Attribute Family'
 

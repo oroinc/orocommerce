@@ -12,13 +12,13 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@admin'
         group: '@all_customers'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProduct1Name:
         string: 'Product 1'
-
     localProduct2Name:
         string: 'Product 2'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 

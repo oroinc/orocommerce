@@ -19,7 +19,7 @@ data:
         names:
             data:
                 -
-                    type: localizedfallbackvalues
+                    type: productnames
                     id: 'name-1'
         attributeFamily:
             data:
@@ -40,12 +40,11 @@ data:
                     id: 'product-unit-precision-id-1'
 included:
     -
-        type: localizedfallbackvalues
+        type: productnames
         id: 'name-1'
         attributes:
             fallback: null
             string: 'Test product'
-            text: null
         relationships:
             localization:
                 data: null

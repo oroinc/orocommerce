@@ -6,7 +6,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -254,10 +253,9 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * Creates product to category map, [product_id => Category, ...]
      * @param Product[] $products
-     * @param Localization[] $localizations
      * @return Category[]
      */
-    public function getCategoryMapByProducts(array $products, array $localizations = [])
+    public function getCategoryMapByProducts(array $products)
     {
         $builder = $this->_em->createQueryBuilder();
         $builder
