@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
@@ -103,10 +104,20 @@ class PriceListRecalculateCommandTest extends WebTestCase
         }
 
         if (\in_array('--disable-triggers', $params, true)) {
-            $this->databaseTriggerManager->expects($this->once())
-                ->method('disable');
-            $this->databaseTriggerManager->expects($this->once())
-                ->method('enable');
+            $databasePlatform = $this->getContainer()->get('doctrine')->getConnection()->getDatabasePlatform();
+            if ($databasePlatform instanceof MySqlPlatform) {
+                $expectedMessage = sprintf(
+                    'The option `disable-triggers` is not available for `%s` database',
+                    $databasePlatform->getName()
+                );
+                $expectedCount = 0;
+                $expectedMesssages = 0;
+            } else {
+                $this->databaseTriggerManager->expects($this->once())
+                    ->method('disable');
+                $this->databaseTriggerManager->expects($this->once())
+                    ->method('enable');
+            }
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::getDefaultName(), $params);

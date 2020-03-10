@@ -11,7 +11,9 @@ layout:
                 header_row_shopping_toggle:
                      blockType: container
                 main_menu_shopping_lists_wrapper:
-                    blockType: container
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                 main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
