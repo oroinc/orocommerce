@@ -1,6 +1,6 @@
 @regression
 @ticket-BAP-18470
-@fixture-OroShoppingListBundle:GuestShoppingListsFixture.yml
+@fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Guest Shopping Lists Turned On But Guest Role Has No Permissions To Interact With Shopping List
   In order to follow Guest Role Has No Permissions
   As a Guest User
