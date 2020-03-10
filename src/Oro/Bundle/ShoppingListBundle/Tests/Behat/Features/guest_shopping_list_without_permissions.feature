@@ -16,8 +16,8 @@ Feature: Guest Shopping Lists Turned On But Guest Role Has No Permissions To Int
     And I login as administrator
     And I go to System/Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable Guest Shopping List" field
-    And I check "Enable Guest Shopping List"
+    And uncheck "Use default" for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
     And I save setting
     Then I should see "Configuration saved" flash message
     When I go to Customers/ Customer User Roles
