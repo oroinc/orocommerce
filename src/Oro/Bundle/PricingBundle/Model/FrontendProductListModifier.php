@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -65,7 +66,7 @@ class FrontendProductListModifier implements FeatureCheckerAwareInterface
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroPricingBundle:CombinedProductPrice', $productPriceAlias)
+                $limitationQb->from(CombinedProductPrice::class, $productPriceAlias)
                     ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
                     ->where($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'priceList'),

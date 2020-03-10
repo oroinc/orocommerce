@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\AttachmentBundle\Entity\Repository\FileRepository;
 use Oro\Bundle\AttachmentBundle\MessageProcessor\ImageRemoveMessageProcessor;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -58,7 +60,10 @@ class RemoveProductImageListener
         }
     }
 
-    public function postFlush()
+    /**
+     * @param PostFlushEventArgs $args
+     */
+    public function postFlush(PostFlushEventArgs $args)
     {
         if (!$this->imagesToRemove) {
             return;
@@ -85,6 +90,10 @@ class RemoveProductImageListener
         if ($imagesBatch) {
             $this->messageProducer->send(ImageRemoveMessageProcessor::IMAGE_REMOVE_TOPIC, $imagesBatch);
         }
+
+        /** @var FileRepository $repository */
+        $repository = $args->getEntityManager()->getRepository(File::class);
+        $repository->deleteByFileIds(array_keys($this->imagesToRemove));
     }
 
     /**

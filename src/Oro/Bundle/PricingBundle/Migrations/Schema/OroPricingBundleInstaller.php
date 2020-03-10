@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_15_1';
     }
 
     /**
@@ -230,7 +230,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function createOroPriceProductCombinedTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_product_combined');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);

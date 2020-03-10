@@ -41,22 +41,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 class ProductPrice extends BaseProductPrice
 {
     /**
-     * @var string
-     *
-     * @ORM\Column(name="id", type="guid")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
-
-    /**
      * @var PriceList
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="prices")
