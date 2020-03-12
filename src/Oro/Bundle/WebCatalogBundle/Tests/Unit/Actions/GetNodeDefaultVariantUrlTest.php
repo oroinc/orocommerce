@@ -2,12 +2,18 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Acl\Actions;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\WebCatalogBundle\Actions\GetNodeDefaultVariantUrl;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\ActionException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -35,6 +41,11 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
     private $eventDispatcher;
 
     /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $registry;
+
+    /**
      * @var GetNodeDefaultVariantUrl
      */
     private $action;
@@ -44,13 +55,18 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->contextAccessor = new ContextAccessor();
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
-        $this->action = new GetNodeDefaultVariantUrl($this->contextAccessor, $this->canonicalUrlGenerator);
+        $this->action = new GetNodeDefaultVariantUrl(
+            $this->contextAccessor,
+            $this->canonicalUrlGenerator,
+            $this->registry
+        );
 
         $this->action->setDispatcher($this->eventDispatcher);
     }
 
-    public function testExecuteException()
+    public function testExecuteException(): void
     {
         $context = new ActionData([
             'content_node' => null
@@ -79,11 +95,17 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         string $absoluteUrl,
         array $contentVariants
     ): void {
+        /** @var Organization $organization */
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1, 'organization' => $organization]);
         /** @var ContentNode $contentNode */
-        $contentNode = $this->getEntity(ContentNode::class, ['id' => 123]);
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 123, 'webCatalog' => $webCatalog]);
         foreach ($contentVariants as $contentVariant) {
             $contentNode->addContentVariant($contentVariant);
         }
+
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $this->mockRegistry([$website], $organization);
 
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getAbsoluteUrl')
@@ -100,10 +122,18 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         ]);
         $this->action->execute($context);
 
-        $this->assertSame($absoluteUrl, $context->get('attribute'));
+        $expectedResult = [
+            'targetUrl' => $absoluteUrl,
+            'website' => $website,
+            'organization' => $organization
+        ];
+        $this->assertSame($expectedResult, $context->get('attribute'));
     }
 
-    public function executeDataProvider()
+    /**
+     * @return array
+     */
+    public function executeDataProvider(): array
     {
         $slugUrl = '/test-url';
         $absoluteUrl = 'http://test.com/test-url';
@@ -136,6 +166,53 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
+    }
+
+    public function testExecuteNoWebsitesException(): void
+    {
+        /** @var Organization $organization */
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1, 'organization' => $organization]);
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 123, 'webCatalog' => $webCatalog]);
+
+        $this->mockRegistry([], $organization);
+
+        $context = new ActionData([
+            'content_node' => $contentNode
+        ]);
+
+        $this->action->initialize([
+            'content_node' =>  new PropertyPath('content_node'),
+            'attribute' => new PropertyPath('attribute')
+        ]);
+
+        $this->expectException(ActionException::class);
+        $this->expectExceptionMessage('There must be at least one website.');
+
+        $this->action->execute($context);
+    }
+
+    /**
+     * @param array $websites
+     * @param Organization $organization
+     */
+    private function mockRegistry(array $websites, Organization $organization): void
+    {
+        $repository = $this->createMock(WebsiteRepository::class);
+        $repository->expects($this->once())
+            ->method('getAllWebsites')
+            ->with($organization)
+            ->willReturn($websites);
+        $entityManager = $this->createMock(EntityManager::class);
+        $entityManager->expects($this->once())
+            ->method('getRepository')
+            ->with(Website::class)
+            ->willReturn($repository);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($entityManager);
     }
 
     public function testInitializeException(): void
