@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 /**
@@ -30,10 +32,23 @@ class EmptySlugProductStrategyEventListener
 
         if ($product->getSlugPrototypes()->isEmpty()) {
             foreach ($product->getNames() as $localizedName) {
-                $localizedSlug = clone $localizedName;
-                $localizedSlug->setString($this->slugGenerator->slugify($localizedSlug->getString()));
-                $product->addSlugPrototype($localizedSlug);
+                $this->addSlug($product, $localizedName);
             }
         }
+
+        if (!$product->getDefaultSlugPrototype() && $product->getDefaultName()) {
+            $this->addSlug($product, $product->getDefaultName());
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param LocalizedFallbackValue $localizedName
+     */
+    private function addSlug(Product $product, LocalizedFallbackValue $localizedName): void
+    {
+        $localizedSlug = clone $localizedName;
+        $localizedSlug->setString($this->slugGenerator->slugify($localizedSlug->getString()));
+        $product->addSlugPrototype($localizedSlug);
     }
 }

@@ -55,9 +55,12 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             $container->get('oro_catalog.importexport.helper.category_import_export')
         );
         $this->strategy->setTokenAccessor($container->get('oro_security.token_accessor'));
-
         $this->strategy->setEntityName(Category::class);
-        $this->strategy->setImportExportContext($this->context = new Context([]));
+
+        $this->context = new Context([]);
+        $this->context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($this->context);
 
         $organization = $this->getReference('organization');
         $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
@@ -210,6 +213,19 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             $this->context->getErrors()
         );
         $this->assertContains($itemData, $this->context->getPostponedRows());
+    }
+
+    public function testSlugGenerateWhenNotProvided(): void
+    {
+        $category = $this->createCategoryWithTitle('test category');
+        $category->setParentCategory($this->getReference(LoadCategoryData::FIRST_LEVEL));
+
+        $this->strategy->process($category);
+
+        $this->assertEquals(
+            [(new LocalizedFallbackValue())->setString('test-category')],
+            $category->getSlugPrototypes()->toArray()
+        );
     }
 
     /**

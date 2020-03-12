@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
+use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStub extends Product
 {
+    use FallbackTrait;
+
     /** @var array */
     private $values = [];
 
@@ -34,5 +38,21 @@ class ProductStub extends Product
     public function __isset($name)
     {
         return isset($this->values[$name]);
+    }
+
+    /**
+     * @return LocalizedFallbackValue|null
+     */
+    public function getDefaultName(): ?LocalizedFallbackValue
+    {
+        return $this->getDefaultFallbackValue($this->names);
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     */
+    public function getDefaultSlugPrototype(): ?LocalizedFallbackValue
+    {
+        return $this->getDefaultFallbackValue($this->slugPrototypes);
     }
 }
