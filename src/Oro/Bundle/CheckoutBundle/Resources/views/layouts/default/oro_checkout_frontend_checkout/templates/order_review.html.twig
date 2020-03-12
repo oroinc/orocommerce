@@ -4,42 +4,47 @@
         '~class': " collapse-view order-review-options__wrapper"
     }) %}
     <div {{ block('block_attributes') }}>
-        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
-            <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
+        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger aria-hidden="true">
+            <span class="collapse-view__trigger-icon fa-caret-right"></span>
         </span>
-        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            {{ 'oro.checkout.workflow.order_options.label'|trans }}
-        </a>
+        <button type="button" class="collapse-view__trigger" data-collapse-trigger>
+            <span class="collapse-view__trigger-text">
+                {{ 'oro.checkout.workflow.order_options.label'|trans }}
+            </span>
+        </button>
         <div class="order-review-options collapse-view__container" data-collapse-container>
             <div class="grid__row">
-                <fieldset class="grid__column grid__column--6">
-                    <label class="label label--full">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
+                {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
+                <div class="grid__column grid__column--6" role="group" aria-labelledby={{ shippingDateId }}>
+                    <div class="label label--full" id="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</div>
                     <div class="checkout-form__datepicker datepicker-box">
-                        <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                        <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
                         {{ form_widget(form.ship_until) }}
                     </div>
-                </fieldset>
-                <fieldset class="grid__column grid__column--6">
-                    <label class="label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
+                </div>
+                <div class="grid__column grid__column--6">
+                    {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
+                    <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                     <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {
+                        {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
                             'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
                             'data-validation': { Length: {max: 255} }|json_encode
                         }}) }}
                     </div>
-                </fieldset>
+                </div>
             </div>
-            <fieldset class="grid__row grid__row--offset-none">
+            <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12">
-                    <label class="label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
+                    {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
+                    <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
-                        {{ form_widget(form.customer_notes, {'attr': {
+                        {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
                             'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                             'data-page-component-elastic-area': ''
                         }}) }}
                     </div>
                 </div>
-            </fieldset>
+            </div>
 
             {% if workflowItem.data.get('allow_manual_source_remove') %}
                 {% set removeElementOptions = {} %}
@@ -47,11 +52,11 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <fieldset class="grid__row grid__row--offset-none">
+                <div class="grid__row grid__row--offset-none">
                     <div class="grid__column grid__column--6">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
-                </fieldset>
+                </div>
             {% endif %}
             {% if form.state_token is defined %}
                 {{ form_row(form.state_token) }}
@@ -61,7 +66,7 @@
                 checkout.registeredCustomerUser == null and
                 checkout.customerUser.isGuest
             %}
-                <fieldset class="grid__row grid__row--offset-none"
+                <div class="grid__row grid__row--offset-none"
                   data-page-component-module="oroui/js/app/components/view-component"
                   data-page-component-options="{{ {
                       view: 'orocheckout/js/app/views/late-checkout-registration-view',
@@ -80,7 +85,7 @@
                             {{ form_widget(form.late_registration) }}
                         </div>
                     </div>
-                </fieldset>
+                </div>
 
             {% endif %}
         </div>

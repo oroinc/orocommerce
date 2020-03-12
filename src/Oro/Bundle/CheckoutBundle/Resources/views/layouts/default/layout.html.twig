@@ -65,7 +65,7 @@
         {{ layout.transitionAttributes(transitionData, checkout) }}
         {{ layout.conditionMessages(transitionData) }}
     >
-        <i class="fa-angle-left"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
+        <span class="fa-angle-left" aria-hidden="true"></span>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
     </a>
     {% endif %}
 {% endblock %}
@@ -81,7 +81,7 @@
                 autocomplete="off"
                 {{ layout.transitionAttributes(transitionData, checkout, componentOptions) }}
             >
-                {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right"></i>
+                {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<span class="fa-angle-right" aria-hidden="true"></span>
             </button>
         </div>
     {% endif %}
@@ -108,9 +108,10 @@
        data-title="{{ transitionLabel }}"
        data-html="true"
        data-container="body"
+       aria-label="{{ transitionLabel }}"
        {{ layout.transitionAttributes(transitionData, checkout) }}
     >
-        <i class="fa-pencil fa--no-offset tooltip-trigger"></i>
+        <span class="fa-pencil fa--no-offset tooltip-trigger" aria-hidden="true"></span>
     </a>
     {% endif %}
 {% endblock %}

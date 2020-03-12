@@ -41,9 +41,4 @@ layout:
             optionName: entity
             optionValue: '=data["checkout"]'
 
-        - '@setOption':
-            id: coupon_form_applied_coupons_list_row_delete_button
-            optionName: attr.class
-            optionValue: 'btn btn--link btn--baseline'
-
     conditions: 'context["isAppliedCouponsAware"] == true'

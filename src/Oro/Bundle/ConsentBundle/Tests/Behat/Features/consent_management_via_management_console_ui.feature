@@ -610,7 +610,7 @@ Feature: Consent management via Management Console UI
     When click "Continue"
     Then I should see "Billing Information" in the "Checkout Step Title" element
     And I should see "Back"
-    When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
+    When on the "Billing Information" checkout step I go back to "Edit Agreements"
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see "All mandatory consents were accepted."
     And I should not see "Presenting Personal Data"
@@ -828,7 +828,7 @@ Feature: Consent management via Management Console UI
     When click "Continue"
     Then I should see "Billing Information" in the "Checkout Step Title" element
     And I should see "Back"
-    When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
+    When on the "Billing Information" checkout step I go back to "Edit Agreements"
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see "All mandatory consents were accepted."
     And I should not see "Presenting Personal Data"

@@ -16,6 +16,7 @@ $checkout-view-column-first-width: calc(#{$checkout-view-column-width} - #{$chec
 $checkout-view-column-extended-width: calc(#{$checkout-view-column-extra-width} + #{$checkout-view-column-gap}) !default;
 $checkout-view-column-margin: 0 0 $offset-y !default;
 $checkout-view-column-offset: 0 $checkout-view-column-gap !default;
+$checkout-view-column-min-width: 0 !default;
 
 $checkout-view-column-inner-offset: 0 !default;
 

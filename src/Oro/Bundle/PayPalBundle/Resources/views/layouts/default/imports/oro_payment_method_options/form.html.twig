@@ -48,9 +48,11 @@
                     </a>
                 </div>
             {% endif %}
-            <ul class="{{ class_prefix }}-form__payment-methods-list">
+            <ul class="{{ class_prefix }}-form__payment-methods-list" aria-label="{{ 'oro_frontend.avaliable_credit_cards.aria_label'|trans }}">
                 {% for cc_name in options.creditCardComponentOptions.allowedCreditCards %}
-                    <li class="{{ class_prefix }}-form__payment-methods-item"><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
+                    <li class="{{ class_prefix }}-form__payment-methods-item" aria-label="{{ cc_name }}">
+                        <span class="credit-card-icon credit-card-icon_{{ cc_name }}" aria-hidden="true"></span>
+                    </li>
                 {% endfor %}
             </ul>
             <div class="{{ class_prefix }}-form__payment-methods-form" data-credit-card-form="data-credit-card-form">

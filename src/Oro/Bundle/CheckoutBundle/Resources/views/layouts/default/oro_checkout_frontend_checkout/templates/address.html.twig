@@ -2,15 +2,15 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div id="checkout-address-fields-container" class="grid {% if not hasCustomAddress %}hidden{% endif %}">
         {% if email_form %}
-            <fieldset>
+            <div>
                 <div class="grid__row grid__row--offset-none">
                     <div class="grid__column {% if compact %}grid__column--12 grid__column--no-gutters{% else %}grid__column--6{% endif %}">
                         {{ form_row(email_form, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.email'|trans}}) }}
                     </div>
                 </div>
-            </fieldset>
+            </div>
         {% endif %}
-        <fieldset {{ UI.attributes(address_form.vars.attr) }}>
+        <div {{ UI.attributes(address_form.vars.attr) }}>
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column {% if compact %}grid__column--12 grid__column--no-gutters{% else %}grid__column--6{% endif %}">
                     {{ form_row(address_form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
@@ -103,6 +103,6 @@
                 {{ form_widget(address_form.id) }}
                 {{ form_widget(address_form.region_text) }}
             </div>
-        </fieldset>
+        </div>
     </div>
 {% endmacro %}
