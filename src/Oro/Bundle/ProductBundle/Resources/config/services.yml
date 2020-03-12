@@ -1382,13 +1382,14 @@ services:
             - '@oro.cache.memory_cache_chain'
             - 'oro_product.layout.data_provider.new_arrivals'
 
-    oro_product.layout.data_provider.product_image_placeholder:
-        parent: oro_layout.layout.data_provider.image_placeholder.abstract
+    oro_product.layout.data_provider.product_filtered_image:
+        parent: oro_layout.layout.data_provider.filtered_image.abstract
         public: true
         arguments:
+            - '@oro_attachment.manager'
             - '@oro_product.provider.product_image_placeholder'
         tags:
-            - { name: layout.data_provider, alias: product_image_placeholder }
+            - { name: layout.data_provider, alias: product_filtered_image }
 
     oro_product.provider.segment:
         parent: oro_product.provider.segment.logging_errors

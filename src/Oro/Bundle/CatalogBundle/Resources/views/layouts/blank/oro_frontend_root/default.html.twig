@@ -30,14 +30,9 @@
 {% block _featured_category_image_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
+        src: category_filtered_image(category.small_image, 'category_medium'),
         alt: category.title
     }) %}
-
-    {% if category.small_image %}
-        {% set attr = layout_attr_defaults(attr, {
-            src: filtered_image_url(category.small_image, 'category_medium')
-        }) %}
-    {% endif %}
 
     <img {{ block('block_attributes') }}>
 {% endblock %}

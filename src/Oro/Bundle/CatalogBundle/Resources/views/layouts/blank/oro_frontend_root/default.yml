@@ -42,7 +42,6 @@ layout:
                     options:
                         attr:
                             itemprop: 'image'
-                            src: '=data["category_image_placeholder"].getPath("category_medium")'
                 featured_category_desc:
                     blockType: container
                 featured_category_label:
