@@ -12,7 +12,7 @@ use Twig\TwigFunction;
 
 /**
  * Provides a Twig function to get an filtered image or placeholder for a category:
- *   - category_filtered_image
+     *   - category_filtered_image
  *   - category_image_placeholder
  */
 class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
