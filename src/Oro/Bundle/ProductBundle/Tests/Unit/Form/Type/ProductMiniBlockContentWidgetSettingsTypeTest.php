@@ -13,6 +13,7 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -60,14 +61,8 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
             ->willReturnCallback(
                 static function ($className, $fieldName) {
                     return new Config(
-                        new FieldConfigId(
-                            'form',
-                            $className,
-                            $fieldName
-                        ),
-                        [
-                            'grid_name' => 'test_grid'
-                        ]
+                        new FieldConfigId('form', $className, $fieldName),
+                        ['grid_name' => 'test_grid']
                     );
                 }
             );
@@ -79,6 +74,9 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
             ->willReturn($configProvider);
 
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
+        $searchHandler->expects($this->any())
+            ->method('getEntityName')
+            ->willReturn(Product::class);
         $searchHandler->expects($this->any())
             ->method('getProperties')
             ->willReturn(['code', 'label']);

@@ -130,8 +130,8 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget->setSettings(['product' => 42]);
 
         $product = $this->getEntity(\Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product::class, ['id' => 42]);
-        $productInventotyStatus = new TestEnumValue('in_stock', 'in_stock');
-        $product->setInventoryStatus($productInventotyStatus);
+        $productInventoryStatus = new TestEnumValue('in_stock', 'in_stock');
+        $product->setInventoryStatus($productInventoryStatus);
 
         $this->repository->expects($this->any())
             ->method('find')
@@ -162,8 +162,8 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget->setSettings(['product' => 42]);
 
         $product = $this->getEntity(\Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product::class, ['id' => 42]);
-        $productInventotyStatus = new TestEnumValue('in_stock', 'in_stock');
-        $product->setInventoryStatus($productInventotyStatus);
+        $productInventoryStatus = new TestEnumValue('in_stock', 'in_stock');
+        $product->setInventoryStatus($productInventoryStatus);
 
         $this->repository->expects($this->any())
             ->method('find')
@@ -270,14 +270,8 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->willReturnCallback(
                 static function ($className, $fieldName) {
                     return new Config(
-                        new FieldConfigId(
-                            'form',
-                            $className,
-                            $fieldName
-                        ),
-                        [
-                            'grid_name' => 'test_grid'
-                        ]
+                        new FieldConfigId('form', $className, $fieldName),
+                        ['grid_name' => 'test_grid']
                     );
                 }
             );
@@ -289,6 +283,9 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
             ->willReturn($configProvider);
 
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
+        $searchHandler->expects($this->any())
+            ->method('getEntityName')
+            ->willReturn(Product::class);
         $searchHandler->expects($this->any())
             ->method('getProperties')
             ->willReturn(['code', 'label']);
