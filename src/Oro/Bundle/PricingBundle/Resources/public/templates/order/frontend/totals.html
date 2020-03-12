@@ -1,8 +1,8 @@
 <tr>
+    <th class="order-checkout-widget__total" scope="row">
+        <span class="text-uppercase"><%- item.label %></span>
+    </th>
     <td class="order-checkout-widget__total">
-        <span class="text-uppercase"><%= _.escape(item.label) %></span>
-    </td>
-    <td class="order-checkout-widget__total">
-        <span class="blue"><%= item.formattedAmount %></span>
+        <span class="blue"><%- item.formattedAmount %></span>
     </td>
 </tr>

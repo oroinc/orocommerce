@@ -33,7 +33,7 @@
         '~class': " checkout__title"
     }) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="checkout__title-icon">{{ workflowStep.name not in excludedSteps ? stepOrder : '-' }}</span>
+        <span class="checkout__title-icon" aria-hidden="true">{{ workflowStep.name not in excludedSteps ? stepOrder : '-' }}</span>
         <span class="checkout__title-text">{{ workflowStep.label|trans({},'workflows') }}</span>
         {{ block_widget(block) }}
     </h2>
@@ -102,11 +102,11 @@
 
 {% block __oro_checkout_content__checkout_order_summary_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__title"
+        '~class': " h2 checkout-order-summary__title"
     }) %}
-    <h2 {{ block('block_attributes') }}>
+    <span  {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </h2>
+    </span>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_title_text_widget %}
@@ -130,12 +130,13 @@
     {% set editLink = workflowItem.data.get('edit_order_link') %}
     {% set attr = layout_attr_defaults(attr, {
         'href': editLink,
-        '~class': " checkout-order-summary__edit-link"
+        '~class': " checkout-order-summary__edit-link",
+        'aria-label': 'oro.checkout.order_summary.edit_order.aria_label'|trans,
+        'title': 'oro.checkout.order_summary.edit_order.title'|trans
     }) %}
     {% if editLink %}
         <a {{ block('block_attributes') }}>
-            <i class="checkout-order-summary__edit-icon fa-pencil"></i>
-            <span class="checkout-order-summary__edit-text">{{ 'oro.checkout.order_summary.edit_order'|trans }}</span>
+            <span class="checkout-order-summary__edit-icon fa-pencil" aria-hidden="true"></span>
         </a>
     {% endif %}
 {% endblock %}
@@ -168,7 +169,9 @@
             <div class="checkout-order-summary__collapse-container" data-collapse-container>
                 {{ block_widget(block) }}
             </div>
-            <span class="checkout-order-summary__collapse-trigger" data-collapse-trigger></span>
+            <button type="button" class="collapse-view__trigger checkout-order-summary__collapse-trigger" data-collapse-trigger>
+                <span class="collapse-view__trigger-text" data-collapse-text></span>
+            </button>
         </div>
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
@@ -189,19 +192,19 @@
     <table {{ block('block_attributes') }}>
         <thead class="checkout-order-summary__grid-head">
             <tr class="checkout-order-summary__grid-tr">
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--info">
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--info" scope="col">
                     {{ 'oro.checkout.order_summary.item'|trans }}
                 </th>
-                <th class="checkout-order-summary__grid-th hide-on-mobile-landscape">
+                <th class="checkout-order-summary__grid-th hide-on-mobile-landscape" scope="col">
                     {{ 'oro.checkout.order_summary.sku'|trans }}
                 </th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--qty">
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--qty" scope="col">
                     {{ 'oro.checkout.order_summary.quantity_short'|trans }}
                 </th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--price">
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--price" scope="col">
                     {{ 'oro.checkout.order_summary.price'|trans }}
                 </th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--subtotal hide-on-mobile-landscape">
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--subtotal hide-on-mobile-landscape" scope="col">
                     {{ 'oro.checkout.order_summary.subtotal'|trans }}
                 </th>
             </tr>
@@ -372,7 +375,7 @@
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
     {% if transitionData is defined and transitionData %}
-        <fieldset class="grid__row grid__row--offset-y">
+        <div class="grid__row grid__row--offset-y">
             <div class="grid__column">
                 {{ block_widget(block) }}
             </div>
@@ -381,7 +384,7 @@
                     {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
                 </div>
             </div>
-        </fieldset>
+        </div>
     {% endif %}
 {% endblock %}
 
