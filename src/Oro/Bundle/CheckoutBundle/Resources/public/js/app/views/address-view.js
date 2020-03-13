@@ -176,7 +176,7 @@ define(function(require) {
 
         _showForm: function() {
             if (this.$externalShipToBillingCheckbox === undefined) {
-                this.shipToBillingContainer.parents('fieldset').removeClass('hidden');
+                this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
                 this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
             }
             this.$fieldsContainer.removeClass('hidden');
@@ -187,7 +187,7 @@ define(function(require) {
                 if (showCheckbox ||
                     this.$addressSelector.val() === '0' ||
                     _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
-                    this.shipToBillingContainer.parents('fieldset').removeClass('hidden');
+                    this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
                     this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
                 } else {
                     this.$shipToBillingCheckbox.prop('checked', false);

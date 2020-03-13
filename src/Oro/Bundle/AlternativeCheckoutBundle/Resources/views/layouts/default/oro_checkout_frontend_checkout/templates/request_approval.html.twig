@@ -5,9 +5,13 @@
             <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|raw }}</span>
         </div>
 
-        <fieldset class="grid__row grid__row--offset-none">
-            {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input--full input--size-m', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
-        </fieldset>
+        <div class="grid__row grid__row--offset-none">
+            {{ form_row(form.request_approval_notes, {'attr': {
+                'class': 'input input--full input--size-m',
+                'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                'aria-label': 'oro.checkout.order_review.note_aria_label'|trans
+            }}) }}
+        </div>
 
         {{ form_row(form.state_token) }}
 

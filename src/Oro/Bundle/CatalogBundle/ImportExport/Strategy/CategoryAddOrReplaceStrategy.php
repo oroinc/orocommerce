@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\ImportExport\Strategy;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\ImportExport\Event\CategoryStrategyAfterProcessEntityEvent;
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -13,6 +14,8 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
  * Additionally is responsible for:
  * - handles resolving of parentCategory relation
  * - sets dummy values to Gedmo tree columns as they must be properly filled in CategoryWriter
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
 {
@@ -64,9 +67,15 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
 
     /**
      * {@inheritdoc}
+     *
+     * @param Category $category
      */
     protected function afterProcessEntity($category)
     {
+        $this->eventDispatcher->dispatch(
+            new CategoryStrategyAfterProcessEntityEvent($category, $this->context->getValue('itemData'))
+        );
+
         /** @var Category|null $category */
         $category = parent::afterProcessEntity($category);
 

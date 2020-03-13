@@ -83,4 +83,41 @@ class EmptySlugProductStrategyEventListenerTest extends \PHPUnit\Framework\TestC
         self::assertEquals('product-3-ukrainian', $slugPrototypes->offsetGet(1)->getString());
         self::assertEquals('Product 3 Ukrainian', $updatedProduct->getNames()->offsetGet(1)->getString());
     }
+
+    public function testOnProcessAfterSlugPrototypesNotSetDefault()
+    {
+        $product = new ProductStub();
+        $localization = (new Localization())->setName('Ukrainian');
+
+        $product->setNames([
+            (new ProductName())
+                ->setString('Product 3'),
+            (new ProductName())
+                ->setString('Product 3 Ukrainian')
+                ->setLocalization($localization),
+        ]);
+
+        $product->addSlugPrototype(
+            (new LocalizedFallbackValue())
+                ->setFallback('system')
+                ->setLocalization($localization)
+        );
+
+        $this->slugGenerator->expects($this->once())
+            ->method('slugify')
+            ->with('Product 3')
+            ->willReturn('product-3');
+
+        $event = new ProductStrategyEvent($product, []);
+
+        $this->listener->onProcessAfter($event);
+        $updatedProduct = $event->getProduct();
+        $slugPrototypes = $updatedProduct->getSlugPrototypes();
+
+        self::assertCount(2, $slugPrototypes);
+        self::assertEquals(null, $slugPrototypes->offsetGet(0)->getString());
+        self::assertEquals($localization, $slugPrototypes->offsetGet(0)->getLocalization());
+        self::assertEquals('product-3', $slugPrototypes->offsetGet(1)->getString());
+        self::assertEquals(null, $slugPrototypes->offsetGet(1)->getLocalization());
+    }
 }

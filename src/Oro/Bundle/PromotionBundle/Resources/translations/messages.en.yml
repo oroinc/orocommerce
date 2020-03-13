@@ -311,9 +311,13 @@ oro:
             expand_link.label: 'I have a Coupon Code'
             widget:
                 header.label: 'Coupon'
+                input.aria_label: 'Use your coupon code for getting a discount'
                 coupon_input.placeholder: 'Enter Coupon Code here'
                 apply_button.label: 'Apply'
+                apply_button.aria_label: 'Apply Coupon'
                 applied_coupons_header.label: 'Applied Code'
+                list.aria_label: 'The list of applied coupon codes'
+                delete: 'Delete applied %counter% coupon: %coupon_name%'
         shoppinglist:
             view:
                 discount.label: 'Row Discount:'
