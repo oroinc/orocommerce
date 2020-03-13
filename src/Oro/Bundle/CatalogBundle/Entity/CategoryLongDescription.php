@@ -68,7 +68,7 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
     protected $wysiwygStyle;
 
     /**
-     * @var null|string
+     * @var null|array
      *
      * @ORM\Column(type="wysiwyg_properties", name="wysiwyg_properties", nullable=true)
      */
@@ -132,18 +132,18 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
     }
 
     /**
-     * @return null|string
+     * @return null|array
      */
-    public function getWysiwygProperties(): ?string
+    public function getWysiwygProperties(): ?array
     {
         return $this->wysiwygProperties;
     }
 
     /**
-     * @param null|string $wysiwygProperties
+     * @param null|array $wysiwygProperties
      * @return $this
      */
-    public function setWysiwygProperties(?string $wysiwygProperties): self
+    public function setWysiwygProperties(?array $wysiwygProperties): self
     {
         $this->wysiwygProperties = $wysiwygProperties;
 
