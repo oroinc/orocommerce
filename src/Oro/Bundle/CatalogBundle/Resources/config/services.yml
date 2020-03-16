@@ -298,3 +298,10 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_catalog.event_listener.category_strategy.empty_slug:
+        class: Oro\Bundle\CatalogBundle\EventListener\EmptySlugCategoryStrategyEventListener
+        arguments:
+            - '@oro_entity_config.slug.generator'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\CatalogBundle\ImportExport\Event\CategoryStrategyAfterProcessEntityEvent, method: onProcessAfter }
