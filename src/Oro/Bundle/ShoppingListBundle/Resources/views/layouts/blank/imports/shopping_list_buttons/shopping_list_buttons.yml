@@ -9,7 +9,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") || (data["feature"].isFeatureEnabled("guest_shopping_list") && !context["is_logged_in"])'
+                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
                 shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                 productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'
                 vars:
