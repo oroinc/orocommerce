@@ -4,6 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -42,9 +44,9 @@ class ProductVisibilityProvider
     /**
      * Returns fields to index with product.
      *
-     * @param Product[] $products
+     * @param Product[]|array $products
      * @param int $websiteId
-     * @return array
+     * @return \Generator
      */
     public function getCustomerVisibilitiesForProducts(array $products, $websiteId)
     {
@@ -56,46 +58,25 @@ class ProductVisibilityProvider
             $website
         );
 
-        $customersData = $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
+        yield from $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
             $website,
             $productsWithCategoryConfigVisibility,
             $this->getCategoryConfigValue()
         );
 
-        $customersData = array_merge(
-            $customersData,
-            $this->getCustomersDataBasedOnCustomerProductVisibility(
-                $website,
-                $productsWithCategoryConfigVisibility,
-                $this->getCategoryConfigValue()
-            )
+        yield from $this->getCustomersDataBasedOnCustomerProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getCategoryConfigValue()
         );
 
-        $customersData = array_merge($customersData, $this->processInverseProducts($products, $website));
-
-        usort($customersData, [$this, 'compare']);
-
-        return $customersData;
+        yield from $this->processInverseProducts($products, $website);
     }
 
     /**
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
-    private function compare(array $a, array $b)
-    {
-        if ($a['productId'] === $b['productId']) {
-            return $a['customerId'] - $b['customerId'];
-        }
-
-        return $a['productId'] - $b['productId'];
-    }
-
-    /**
-     * @param array $products
+     * @param array|Product[] $products
      * @param Website $website
-     * @return array
+     * @return \Generator
      */
     private function processInverseProducts(array $products, Website $website)
     {
@@ -105,55 +86,75 @@ class ProductVisibilityProvider
             $website
         );
 
+        $knownHashes = [];
         $customersData = $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
             $website,
             $productsWithCategoryConfigVisibility,
             $this->getInverseCategoryConfigValue()
         );
+        foreach ($customersData as $dataRow) {
+            $knownHashes[$this->getDataRowHash($dataRow)] = true;
+        }
 
-        $customersData = array_merge(
-            $customersData,
-            $this->getCustomersDataBasedOnCustomerProductVisibility(
-                $website,
-                $productsWithCategoryConfigVisibility,
-                $this->getInverseCategoryConfigValue()
-            )
+        $customersData = $this->getCustomersDataBasedOnCustomerProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getInverseCategoryConfigValue()
         );
+        foreach ($customersData as $dataRow) {
+            $knownHashes[$this->getDataRowHash($dataRow)] = true;
+        }
 
-        return array_udiff(
-            $this->getAllCustomersData($productsWithCategoryConfigVisibility),
-            $customersData,
-            [$this, 'compare']
-        );
+        foreach ($this->getAllCustomersData($productsWithCategoryConfigVisibility) as $dataRow) {
+            if (!array_key_exists($this->getDataRowHash($dataRow), $knownHashes)) {
+                yield $dataRow;
+            }
+        }
     }
 
     /**
-     * @return array
+     * @param array $dataRow
+     * @return string
+     */
+    private function getDataRowHash(array $dataRow): string
+    {
+        return $dataRow['productId'] . ':' . $dataRow['customerId'];
+    }
+
+    /**
+     * @return BufferedQueryResultIterator
      */
     private function getCustomerIds()
     {
         $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Customer::class)->createQueryBuilder();
         $queryBuilder
             ->select('customer.id as customerIid')
-            ->from(Customer::class, 'customer');
+            ->from(Customer::class, 'customer')
+            ->orderBy('customer.id');
 
-        return array_column($queryBuilder->getQuery()->getArrayResult(), 'customerIid');
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query = $queryBuilder->getQuery();
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+
+        $query->setHydrationMode($identifierHydrationMode);
+
+        return new BufferedQueryResultIterator($query);
     }
 
     /**
      * @param array $productIds
-     * @return array
+     * @return \Generator
      */
     private function getAllCustomersData(array $productIds)
     {
-        $data = [];
         foreach ($productIds as $productId) {
             foreach ($this->getCustomerIds() as $customerId) {
-                $data[] = ['productId' => $productId, 'customerId' => $customerId];
+                yield ['productId' => $productId, 'customerId' => $customerId];
             }
         }
-
-        return $data;
     }
 
     /**
@@ -351,7 +352,7 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @param Product[] $products
+     * @param Product[]|array $products
      * @return QueryBuilder
      */
     private function createProductsQuery(array $products)
@@ -383,7 +384,7 @@ class ProductVisibilityProvider
      * @param Website $website
      * @param array $products
      * @param int $productVisibility
-     * @return array
+     * @return BufferedQueryResultIterator
      */
     private function getCustomersDataBasedOnCustomerProductVisibility(
         Website $website,
@@ -424,14 +425,14 @@ class ProductVisibilityProvider
             )
             ->setParameter('invertedProductVisibility', $this->inverseVisibility($productVisibility));
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        return new BufferedQueryResultIterator($queryBuilder);
     }
 
     /**
      * @param Website $website
      * @param array $products
      * @param int $productVisibility
-     * @return array
+     * @return BufferedQueryResultIterator
      */
     private function getCustomersDataBasedOnCustomerGroupProductVisibility(
         Website $website,
@@ -459,14 +460,14 @@ class ProductVisibilityProvider
             ->setParameter('invertedProductVisibility', $this->inverseVisibility($productVisibility))
             ->addOrderBy('customer.id', 'ASC');
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        return new BufferedQueryResultIterator($queryBuilder);
     }
 
     /**
      * Returns products from $products for given $website which visibility equals to $defaultVisibility.
      *
-     * @param $defaultVisibility
-     * @param $products
+     * @param int $defaultVisibility
+     * @param array|Product[] $products
      * @param Website $website
      * @return array
      */
@@ -483,9 +484,14 @@ class ProductVisibilityProvider
             ->setParameter('defaultVisibility', $defaultVisibility)
             ->addOrderBy('product.id');
 
-        $productsResult = $queryBuilder->getQuery()->getArrayResult();
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query = $queryBuilder->getQuery();
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
 
-        return array_column($productsResult, 'productId');
+        return $query->getResult($identifierHydrationMode);
     }
 
     /**

@@ -105,13 +105,13 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->assertEquals(
             $expectedCustomersVisibilities,
-            $this->provider->getCustomerVisibilitiesForProducts(
+            $this->getActualResult($this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product-1'),
                     $this->getReference('product-4'),
                 ],
                 $this->getDefaultWebsiteId()
-            )
+            ))
         );
     }
 
@@ -158,13 +158,13 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->assertEquals(
             $expectedCustomersVisibilities,
-            $this->provider->getCustomerVisibilitiesForProducts(
+            $this->getActualResult($this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product-3'),
                     $this->getReference('product-5')
                 ],
                 $this->getDefaultWebsiteId()
-            )
+            ))
         );
     }
 
@@ -207,13 +207,13 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->assertEquals(
             $expectedCustomersVisibilities,
-            $this->provider->getCustomerVisibilitiesForProducts(
+            $this->getActualResult($this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product-1'),
                     $this->getReference('product-2')
                 ],
                 $this->getDefaultWebsiteId()
-            )
+            ))
         );
     }
 
@@ -296,12 +296,12 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->assertEquals(
             $expectedCustomersVisibilities,
-            $this->provider->getCustomerVisibilitiesForProducts(
+            $this->getActualResult($this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product-1'),
                 ],
                 $this->getDefaultWebsiteId()
-            )
+            ))
         );
     }
 
@@ -359,5 +359,34 @@ class ProductVisibilityProviderTest extends WebTestCase
                 $this->getReference('product-5'),
             ], $this->getDefaultWebsiteId())
         );
+    }
+
+    /**
+     * @param iterable $items
+     * @return array
+     */
+    private function getActualResult($items): array
+    {
+        if (!is_array($items)) {
+            $items = iterator_to_array($items, false);
+        }
+
+        usort($items, [$this, 'compare']);
+
+        return $items;
+    }
+
+    /**
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
+    private function compare(array $a, array $b): int
+    {
+        if ($a['productId'] === $b['productId']) {
+            return $a['customerId'] - $b['customerId'];
+        }
+
+        return $a['productId'] - $b['productId'];
     }
 }
