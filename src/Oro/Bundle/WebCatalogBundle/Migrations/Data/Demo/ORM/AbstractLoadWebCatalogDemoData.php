@@ -145,10 +145,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
         $doctrine = $this->container->get('doctrine');
         if ($type === CategoryPageContentVariantType::TYPE && method_exists($variant, 'setCategoryPageCategory')) {
-            $defaultOrganization = $doctrine->getRepository(Organization::class)->getFirst();
-            $category = $doctrine
-                ->getRepository(Category::class)
-                ->findOneByDefaultTitle($params['title'], $defaultOrganization);
+            $category = $this->getCategory($params['title']);
             $variant->setCategoryPageCategory($category);
             $variant->setExcludeSubcategories($params['excludeSubcategories'] ?? true);
         } elseif ($type === CmsPageContentVariantType::TYPE && method_exists($variant, 'setCmsPage')) {
@@ -168,6 +165,27 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         }
         
         return $variant;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $title
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Category
+     */
+    private function getCategory(string  $title): Category
+    {
+        $doctrine = $this->container->get('doctrine');
+        $organization = $doctrine->getRepository(Organization::class)->getFirst();
+        $queryBuilder = $doctrine->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
 
     /**

@@ -4,12 +4,12 @@ namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Provides master catalog root
  */
-class MasterCatalogRootProvider
+class MasterCatalogRootProvider implements MasterCatalogRootProviderInterface
 {
     /**
      * @var ManagerRegistry
@@ -17,29 +17,28 @@ class MasterCatalogRootProvider
     private $registry;
 
     /**
-     * @var TokenAccessor
+     * @var AclHelper
      */
-    private $tokenAccessor;
+    private $aclHelper;
 
     /**
      * @param ManagerRegistry $registry
-     * @param TokenAccessor $tokenAccessor
+     * @param AclHelper $aclHelper
      */
-    public function __construct(ManagerRegistry $registry, TokenAccessor $tokenAccessor)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
      * @return Category
      */
-    public function getMasterCatalogRootForCurrentOrganization()
+    public function getMasterCatalogRoot(): Category
     {
-        $organization = $this->tokenAccessor->getOrganization();
+        $categoryRepository = $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);
+        $queryBuilder = $this->aclHelper->apply($categoryRepository->getMasterCatalogRootQueryBuilder());
 
-        return $this->registry->getManagerForClass(Category::class)
-            ->getRepository(Category::class)
-            ->getMasterCatalogRoot($organization);
+        return $queryBuilder->getSingleResult();
     }
 }

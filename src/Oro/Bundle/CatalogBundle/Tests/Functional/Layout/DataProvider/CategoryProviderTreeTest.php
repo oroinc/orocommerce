@@ -7,6 +7,8 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
@@ -17,7 +19,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     /**
      * @var ManagerRegistry
@@ -70,6 +72,9 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     private function getCategoryProviderForNode($nodeId)
     {
+        /** @var MasterCatalogRootProviderInterface $masterCatalogRootProvider */
+        $masterCatalogRootProvider = $this->getContainer()->get('oro_catalog.provider.master_catalog_root');
+
         $requestProductHandler = $this->createMock(RequestProductHandler::class);
         $requestProductHandler->expects($this->once())
             ->method('getCategoryId')
@@ -80,7 +85,8 @@ class CategoryProviderTreeTest extends WebTestCase
             $this->registry,
             $this->createMock(CategoryTreeProvider::class),
             $this->tokenAccessor,
-            $this->localizationHelper
+            $this->localizationHelper,
+            $masterCatalogRootProvider
         );
     }
 
@@ -89,7 +95,8 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentTraverseToRootCategories()
     {
-        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3', $this->getOrganization())->getId();
+        $category = $this->findCategory('category_1_2_3');
+        $categoryId = $category->getId();
         $categoryProvider = $this->getCategoryProviderForNode($categoryId);
         $parents = $categoryProvider->getParentCategories();
 
@@ -110,8 +117,7 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentRootHasNoPath()
     {
-        $root = $this->repository->getMasterCatalogRoot($this->getOrganization());
-        $categoryProvider = $this->getCategoryProviderForNode($root->getId());
+        $categoryProvider = $this->getCategoryProviderForNode($this->getRootCategory()->getId());
         $parents = $categoryProvider->getParentCategories();
 
         $this->assertTrue(is_array($parents));

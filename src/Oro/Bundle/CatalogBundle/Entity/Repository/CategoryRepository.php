@@ -19,20 +19,13 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 class CategoryRepository extends NestedTreeRepository
 {
     /**
-     * @param Organization $organization
-     * @return Category
+     * @return QueryBuilder
      */
-    public function getMasterCatalogRoot(Organization $organization)
+    public function getMasterCatalogRootQueryBuilder(): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('category')
+        return $this->createQueryBuilder('category')
             ->andWhere('category.parentCategory IS NULL')
             ->orderBy('category.id', 'ASC');
-        $qb->andWhere('category.organization = :organization');
-        $qb->setParameter('organization', $organization);
-
-        return $qb->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
     }
 
     /**
@@ -92,22 +85,16 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param string $title
-     * @param Organization $organization
-     * @return Category|null
+     *
+     * @return QueryBuilder
      */
-    public function findOneByDefaultTitle(string $title, Organization $organization)
+    public function findOneByDefaultTitleQueryBuilder(string $title): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('category');
-
-        return $qb
+        return $this->createQueryBuilder('category')
             ->select('partial category.{id}')
             ->andWhere('category.denormalizedDefaultTitle = :title')
-            ->andWhere('category.organization = :organization')
             ->setParameter('title', $title)
-            ->setParameter('organization', $organization)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
     }
 
     /**

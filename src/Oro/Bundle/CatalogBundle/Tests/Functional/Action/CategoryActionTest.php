@@ -3,14 +3,14 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Action;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryActionTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     protected function setUp()
     {
@@ -53,24 +53,18 @@ class CategoryActionTest extends WebTestCase
             LoadCategoryData::FOURTH_LEVEL1,
         ];
 
-        /** @var CategoryRepository $repo */
-        $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
-
         foreach ($removedChildCategories as $removedChildCategory) {
-            $this->assertEmpty($categoryRepo->findOneByDefaultTitle($removedChildCategory, $this->getOrganization()));
+            $category = $this->findCategory($removedChildCategory);
+            $this->assertEmpty($category);
         }
     }
 
     public function testDeleteRoot()
     {
-        $masterCatalog = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
-
+        $catalog = $this->getRootCategory();
         $this->initClient([], $this->generateBasicAuthHeader());
         $operationName = 'oro_catalog_category_delete';
-        $entityId = $masterCatalog->getId();
+        $entityId = $catalog->getId();
         $entityClass = Category::class;
 
         $params = $this->getOperationExecuteParams($operationName, $entityId, $entityClass);

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -14,6 +15,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\AbstractImportExportT
  */
 class ImportExportTest extends AbstractImportExportTest
 {
+    use CatalogTrait;
+
     public function testImportWithCategory()
     {
         $this->markTestSkipped(
@@ -37,8 +40,8 @@ class ImportExportTest extends AbstractImportExportTest
 
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $this->getRepository(Category::class);
-        $categoryFirst = $categoryRepository->findOneByDefaultTitle(LoadCategoryData::FIRST_LEVEL);
-        $categorySecond = $categoryRepository->findOneByDefaultTitle(LoadCategoryData::SECOND_LEVEL1);
+        $categoryFirst = $this->findCategory(LoadCategoryData::FIRST_LEVEL);
+        $categorySecond = $this->findCategory(LoadCategoryData::SECOND_LEVEL1);
 
         $categoryFirst->removeProduct($sku1Product);
         $categorySecond->addProduct($sku1Product);

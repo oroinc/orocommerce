@@ -113,7 +113,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         ];
     }
 
-    public function testCreateTreeByCurrentOrganizationMasterCatalogRoot()
+    public function testCreateTreeByMasterCatalogRoot()
     {
         $rootId = 1;
         /** @var Category $firstLevel */
@@ -200,7 +200,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 
         $this->setAdminToken();
 
-        $actualTree = $this->handler->createTreeByCurrentOrganizationMasterCatalogRoot();
+        $actualTree = $this->handler->createTreeByMasterCatalogRoot();
         $actualTree = array_reduce($actualTree, function ($result, $data) {
             $result[] = $data;
             return $result;

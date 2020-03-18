@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\CatalogBundle\ImportExport\Normalizer\CategoryNormalizer;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
@@ -12,7 +13,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryNormalizerTest extends WebTestCase
 {
-    use EntityTrait;
+    use EntityTrait, CatalogTrait;
 
     /** @var Context */
     private $context;
@@ -83,8 +84,7 @@ class CategoryNormalizerTest extends WebTestCase
         $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
         $this->getContainer()->get('security.token_storage')->setToken($token);
 
-        $rootCategory = $this->getContainer()->get('oro_catalog.provider.master_catalog_root')
-            ->getMasterCatalogRootForCurrentOrganization();
+        $rootCategory = $this->getRootCategory();
 
         $data = $this->normalizer->normalize($rootCategory);
 

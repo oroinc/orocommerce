@@ -45,7 +45,7 @@ class ProductController extends AbstractController
         );
 
         $masterCatalogRoot = $this->get(MasterCatalogRootProvider::class)
-            ->getMasterCatalogRootForCurrentOrganization();
+            ->getMasterCatalogRoot();
 
         return [
             'defaultCategoryId' => $catalogRequestHandler->getCategoryId(),

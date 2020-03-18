@@ -87,3 +87,4 @@ services:
         class: Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper
         arguments:
             - '@doctrine'
+            - '@oro_security.acl_helper'

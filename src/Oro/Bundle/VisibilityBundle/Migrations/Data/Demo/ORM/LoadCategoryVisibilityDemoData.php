@@ -50,10 +50,9 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $category = $this->getCategory($manager, $row['category'], $defaultOrganization);
+            $category = $this->getCategory($manager, $row['category']);
             $visibility = $row['visibility'];
 
             if ($row['all']) {
@@ -85,14 +84,23 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      * @param string $title
-     * @param Organization $organization
-     * @return Category
+     *
+     * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Category
      */
-    protected function getCategory(ObjectManager $manager, string  $title, Organization $organization): Category
+    private function getCategory(ObjectManager $manager, string  $title): Category
     {
-        return $manager->getRepository(Category::class)->findOneByDefaultTitle($title, $organization);
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $queryBuilder = $manager->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
+
     /**
      * @param ObjectManager $manager
      * @param int $id

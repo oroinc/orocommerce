@@ -4,8 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -13,6 +13,7 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category as CategoryDTO;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -52,6 +53,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     private $tokenAccessor;
 
     /**
+     * @var MasterCatalogRootProviderInterface
+     */
+    private $masterCatalogProvider;
+
+    /**
      * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
@@ -71,6 +77,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->masterCatalogProvider = $this->createMock(MasterCatalogRootProviderInterface::class);
         $this->cache = $this->createMock(CacheProvider::class);
 
         $manager = $this->createMock(ObjectManager::class);
@@ -79,6 +86,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
+        /** @var ManagerRegistry $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
@@ -90,14 +98,14 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             $registry,
             $this->categoryTreeProvider,
             $this->tokenAccessor,
-            $this->localizationHelper
+            $this->localizationHelper,
+            $this->masterCatalogProvider
         );
         $this->categoryProvider->setCache($this->cache, 3600);
     }
 
     public function testGetCurrentCategoryUsingMasterCatalogRoot()
     {
-        $organization = new Organization();
         $category = new Category();
 
         $this->requestProductHandler
@@ -105,39 +113,13 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCategoryId')
             ->willReturn(null);
 
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $this->categoryRepository
+        $this->masterCatalogProvider
             ->expects($this->once())
             ->method('getMasterCatalogRoot')
-            ->with($organization)
             ->willReturn($category);
 
         $result = $this->categoryProvider->getCurrentCategory();
         $this->assertSame($category, $result);
-    }
-
-    public function testGetCurrentCategoryNull()
-    {
-        $this->requestProductHandler
-            ->expects($this->once())
-            ->method('getCategoryId')
-            ->willReturn(null);
-
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn(null);
-
-        $this->categoryRepository
-            ->expects($this->never())
-            ->method('getMasterCatalogRoot');
-
-        $result = $this->categoryProvider->getCurrentCategory();
-        $this->assertNull($result);
     }
 
     public function testGetCurrentCategoryUsingFind()
@@ -162,15 +144,9 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRootCategory()
     {
-        $organization = new Organization();
         $category = new Category();
 
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $this->categoryRepository
+        $this->masterCatalogProvider
             ->expects($this->once())
             ->method('getMasterCatalogRoot')
             ->willReturn($category);
@@ -201,14 +177,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $rootCategory->addChildCategory($mainCategory);
 
         $user = new CustomerUser();
-        $organization = new Organization();
 
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $this->categoryRepository
+        $this->masterCatalogProvider
             ->expects($this->once())
             ->method('getMasterCatalogRoot')
             ->willReturn($rootCategory);
@@ -248,14 +218,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $rootCategory->addChildCategory($mainCategory);
 
         $user = new CustomerUser();
-        $organization = new Organization();
 
-        $this->tokenAccessor
-            ->expects($this->exactly(2))
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $this->categoryRepository
+        $this->masterCatalogProvider
             ->expects($this->once())
             ->method('getMasterCatalogRoot')
             ->willReturn($rootCategory);
@@ -294,6 +258,12 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
+
+        $organization = new Organization();
+        $this->tokenAccessor
+            ->expects($this->exactly(1))
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $user = $this->prepareGetCategoryTreeArray();
         $this->cache->expects($this->once())

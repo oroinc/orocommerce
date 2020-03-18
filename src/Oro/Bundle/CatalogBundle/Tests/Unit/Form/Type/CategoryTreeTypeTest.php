@@ -31,7 +31,7 @@ class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
                 [
                     'class' => Category::class,
                     'tree_key' => 'commerce-category',
-                    'tree_data' => [$this->treeHandler, 'createTreeByCurrentOrganizationMasterCatalogRoot']
+                    'tree_data' => [$this->treeHandler, 'createTreeByMasterCatalogRoot']
                 ]
             );
 

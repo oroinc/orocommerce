@@ -3,16 +3,21 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
@@ -130,16 +135,37 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRootCategory(): void
     {
-        $organization = $this->createMock(Organization::class);
-        $repo = $this->mockGetRepository();
+        $category = $this->getEntity(Category::class);
+        $organization = $this->getEntity(Organization::class);
 
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getSingleResult')
+            ->willReturn($category);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder
+            ->expects($this->once())
+            ->method('andWhere')
+            ->with('category.organization = :organization')
+            ->willReturnSelf();
+        $queryBuilder
+            ->expects($this->once())
+            ->method('setParameter')
+            ->with('organization', $organization);
+        $queryBuilder
+            ->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+
+        $repo = $this->mockGetRepository();
         $repo
             ->expects($this->once())
-            ->method('getMasterCatalogRoot')
-            ->with($organization)
-            ->willReturn($rootCategory = new Category());
+            ->method('getMasterCatalogRootQueryBuilder')
+            ->willReturn($queryBuilder);
 
-        $this->assertSame($rootCategory, $this->helper->getRootCategory($organization));
+        $this->assertSame($category, $this->helper->getRootCategory($organization));
     }
 
     public function testGetMaxLeft(): void

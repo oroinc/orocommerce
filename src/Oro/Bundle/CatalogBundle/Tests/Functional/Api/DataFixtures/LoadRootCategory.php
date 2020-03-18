@@ -34,9 +34,11 @@ class LoadRootCategory extends AbstractFixture implements
     {
         /** @var CategoryRepository $repository */
         $repository = $manager->getRepository(Category::class);
-        $this->addReference(
-            'root_category',
-            $repository->getMasterCatalogRoot($this->getReference('organization'))
-        );
+        $queryBuilder = $repository->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $this->getReference('organization'));
+
+        $this->addReference('root_category', $queryBuilder->getQuery()->getSingleResult());
     }
 }

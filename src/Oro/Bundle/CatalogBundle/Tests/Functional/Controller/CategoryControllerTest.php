@@ -5,13 +5,13 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class CategoryControllerTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use CatalogTrait;
 
     const DEFAULT_CATEGORY_TITLE = 'Category Title';
     const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
@@ -66,10 +66,8 @@ class CategoryControllerTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroLocaleBundle:Localization')
             ->findAll();
-        $this->masterCatalog = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
+
+        $this->masterCatalog = $this->getRootCategory();
     }
 
     public function testGetChangedUrlsWhenSlugChanged()
@@ -145,9 +143,7 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testCreateCategory()
     {
-        $this->getContainer()->get('doctrine')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
+        $this->masterCatalog = $this->getRootCategory();
 
         return $this->assertCreate($this->masterCatalog->getId());
     }
@@ -325,10 +321,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var CategoryRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category');
-        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1, $this->getOrganization());
+        $category = $this->findCategory(LoadCategoryData::THIRD_LEVEL1);
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 

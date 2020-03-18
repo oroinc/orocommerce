@@ -4,11 +4,9 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -79,41 +77,9 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework
                         $result = null;
                     } else {
                         $this->findByProductSkuCalls[$sku]++;
-                        $result = $this->categoriesByProduct[$sku];
                     }
 
-                    $query = $this->createMock(AbstractQuery::class);
-                    $query->expects($this->once())
-                        ->method('getOneOrNullResult')
-                        ->willReturn($result);
-                    $queryBuilder = $this->createMock(QueryBuilder::class);
-                    $queryBuilder->expects($this->once())
-                        ->method('andWhere')
-                        ->with('category.organization = :organization')
-                        ->willReturnSelf();
-                    $queryBuilder->expects($this->once())
-                        ->method('setParameter')
-                        ->willReturnSelf();
-                    $queryBuilder->expects($this->once())
-                        ->method('getQuery')
-                        ->willReturn($query);
-
-                    return $queryBuilder;
-                }
-            );
-
-        $this->categoryRepository
-            ->expects($this->any())
-            ->method('findOneByDefaultTitle')
-            ->willReturnCallback(
-                function ($title) {
-                    if (!isset($this->categoriesByTitle[$title])) {
-                        return null;
-                    }
-
-                    $this->findByDefaultTitleCalls[$title]++;
-
-                    return $this->categoriesByTitle[$title];
+                    return $this->createMock(QueryBuilder::class);
                 }
             );
 
@@ -142,22 +108,5 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework
         $this->categoriesByProduct[$sku] = $category;
 
         return $product;
-    }
-
-    /**
-     * @param string $title
-     * @return string
-     */
-    protected function prepareTitle($title)
-    {
-        $this->findByDefaultTitleCalls[$title] = 0;
-
-        $category = new Category();
-        $fallbackValue = new LocalizedFallbackValue();
-        $category->addTitle($fallbackValue);
-
-        $this->categoriesByTitle[$title] = $category;
-
-        return $title;
     }
 }

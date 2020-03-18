@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\EventListener\ORM\OrganizationPersistListener;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 /**
  * Loads root category for all organizations if it does not exist still (eg. in case of update from older version
@@ -27,7 +28,7 @@ class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
         foreach ($allOrganizations as $organization) {
             //Create master catalog if there is no still for certain organization
             try {
-                $manager->getRepository(Category::class)->getMasterCatalogRoot($organization);
+                $this->getCategory($manager, $organization);
             } catch (NoResultException $exception) {
                 $title = new CategoryTitle();
                 $title->setString(OrganizationPersistListener::ROOT_CATEGORY_NAME);
@@ -44,5 +45,23 @@ class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
         if ($categoriesToFlush) {
             $manager->flush($categoriesToFlush);
         }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param OrganizationInterface $organization
+     *
+     * @throws NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function getCategory(ObjectManager $manager, OrganizationInterface $organization): void
+    {
+        $categoryRepository = $manager->getRepository(Category::class);
+        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        $queryBuilder->getQuery()->getSingleResult();
     }
 }

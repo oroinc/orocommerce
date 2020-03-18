@@ -1,18 +1,19 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\EventListener\ORM;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryListenerTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     /** @var ManagerRegistry */
     private $doctrine;
@@ -33,7 +34,7 @@ class CategoryListenerTest extends WebTestCase
         /** @var CategoryRepository $categoryRepo */
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->categoryRepo = $this->doctrine->getRepository(Category::class);
-        $this->rootCategory = $this->categoryRepo->getMasterCatalogRoot($this->getOrganization());
+        $this->rootCategory = $this->getRootCategory();
         $this->entityManager = $this->doctrine->getManagerForClass(Category::class);
     }
 

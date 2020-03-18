@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -110,16 +111,14 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
     /**
      * @param EntityManager $manager
      * @param string $title
-     *
      * @param Organization $organization
+     *
      * @return Category|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     protected function getCategoryByDefaultTitle(EntityManager $manager, string $title, Organization $organization)
     {
         if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] = $this->getCategoryRepository($manager)
-                ->findOneByDefaultTitle($title, $organization);
+            $this->categories[$title] = $this->getCategory($manager, $organization, $title);
         }
 
         return $this->categories[$title];
@@ -151,5 +150,22 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         }
 
         return $this->categoryRepository;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param OrganizationInterface $organization
+     * @param string $title
+     *
+     * @return Category|null
+     */
+    private function getCategory(ObjectManager $manager, OrganizationInterface $organization, string $title): ?Category
+    {
+        $queryBuilder = $this->getCategoryRepository($manager)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }
