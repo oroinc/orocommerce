@@ -16,10 +16,16 @@
     {% endif %}
 {%- endmacro -%}
 
-{% macro image(file, filter) -%}
+{% macro image(file, filter, attrs) -%}
     {% import _self as imageMacros %}
+    {% set arrts = attrs|default({}) %}
 
-    <img src="{{ imageMacros.url(file, filter) }}" title="{{ oro_file_title(file) }}"/>
+    <img src="{{ imageMacros.url(file, filter) }}"
+         title="{{ oro_file_title(file) }}"
+        {% for name, value in arrts %}
+            {{ name }}="{{ value }}"
+        {% endfor %}
+    />
 {%- endmacro -%}
 
 {% macro renderProductImages(productImages, imageTypes) %}

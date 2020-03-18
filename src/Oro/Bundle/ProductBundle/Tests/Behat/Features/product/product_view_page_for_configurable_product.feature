@@ -197,7 +197,7 @@ Feature: Product view page for configurable product
   Scenario: Update configurable product variants when resuming product page from Shopping list
     Given I proceed as the Buyer
     When I open page with shopping list "Shopping List"
-    And click "Tablet PC"
+    And I click on "tpc" product in "Shopping List Line Items Table"
     And I fill "Matrix Grid Form" with:
       |       | No | Yes |
       | Black | -  | 2   |

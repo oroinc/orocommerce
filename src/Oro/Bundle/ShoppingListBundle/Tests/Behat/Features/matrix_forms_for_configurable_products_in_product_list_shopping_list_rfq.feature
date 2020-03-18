@@ -568,7 +568,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | -        | 2        | -        |          |
     And I click "Update"
-    And I click "ConfigurableProductA"
+    And I click on "CNFA" product in "Shopping List Line Items Table"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |

@@ -69,7 +69,7 @@ oro_behat_extension:
 
     Single Page Checkout Step:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'div[class=" checkout-order-summary__totals"]'
+      selector: 'div.checkout-order-summary__totals'
 
     CheckoutStepTitle:
       selector: 'h2.checkout__title'
@@ -264,6 +264,9 @@ oro_behat_extension:
     Quick Order Import Validation:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.quick_add_validation_items'
+
+    Quick Order Add Form:
+      selector: 'form[name="oro_product_quick_add"]'
 
     Customers Address Book Paginator:
       selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.oro-items-counter'

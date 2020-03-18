@@ -743,7 +743,7 @@ Feature: Consent management via Management Console UI
     And I should see "Product has been added to" flash message
     And I open shopping list widget
     And I click "View List"
-    And click "Create Order"
+    And click on "Create Order"
     And I click "Create An Account"
     And I fill "Registration Form" with:
       | Company          | Company            |
@@ -793,7 +793,7 @@ Feature: Consent management via Management Console UI
     And I should see "Product has been added to" flash message
     And I open shopping list widget
     And I click "View List"
-    And click "Create Order"
+    And click on "Create Order"
     And I click "Continue as a Guest"
     And I should see "Agreements" in the "Checkout Step Title" element
     And I should see 3 elements "Required Consent"

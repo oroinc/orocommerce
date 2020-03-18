@@ -34,7 +34,7 @@ Feature: Shopping list duplication for non authenticated visitor
     Then I should see "Product has been added to " flash message
     And I open shopping list widget
     And I click "View List"
-    And click "Create Order"
+    And click on "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
       | Email           | Andy001@example.com |
@@ -69,7 +69,7 @@ Feature: Shopping list duplication for non authenticated visitor
     Then I should see "Product has been added to " flash message
     And I open shopping list widget
     And I click "View List"
-    And click "Create Order"
+    And click on "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
       | Email           | Andy002@example.com |
