@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Acl\Actions;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -41,6 +42,11 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
     private $eventDispatcher;
 
     /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
      * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
@@ -56,10 +62,12 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->action = new GetNodeDefaultVariantUrl(
             $this->contextAccessor,
             $this->canonicalUrlGenerator,
+            $this->configManager,
             $this->registry
         );
 
@@ -106,6 +114,12 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
 
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $this->mockRegistry([$website], $organization);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_web_catalog.web_catalog', false, false, $website)
+            ->willReturn($webCatalog->getId());
 
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getAbsoluteUrl')

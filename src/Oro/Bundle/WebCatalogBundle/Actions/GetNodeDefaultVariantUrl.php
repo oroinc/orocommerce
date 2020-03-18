@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Actions;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -40,18 +41,26 @@ class GetNodeDefaultVariantUrl extends AbstractAction
     private $managerRegistry;
 
     /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
      * {@inheritDoc}
      * @param CanonicalUrlGenerator $canonicalUrlGenerator
+     * @param ConfigManager $configManager
      * @param ManagerRegistry $managerRegistry
      */
     public function __construct(
         ContextAccessor $contextAccessor,
         CanonicalUrlGenerator $canonicalUrlGenerator,
+        ConfigManager $configManager,
         ManagerRegistry $managerRegistry
     ) {
         parent::__construct($contextAccessor);
 
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
+        $this->configManager = $configManager;
         $this->managerRegistry = $managerRegistry;
     }
 
@@ -77,7 +86,7 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         }
 
         $organization = $this->getWebCatalogOrganization($contentNode);
-        $website = $this->getContentNodeWebsite($organization);
+        $website = $this->getContentNodeWebsite($contentNode);
         $absoluteUrl = $this->getTargetUrl($contentNode, $website);
 
         $result = [
@@ -123,16 +132,26 @@ class GetNodeDefaultVariantUrl extends AbstractAction
     }
 
     /**
-     * @param Organization $organization
+     * @param ContentNode $contentNode
      *
      * @return Website
      *
      * @throws ActionException
      */
-    private function getContentNodeWebsite(Organization $organization): Website
+    private function getContentNodeWebsite(ContentNode $contentNode): Website
     {
+        $currentWebCatalog = $contentNode->getWebCatalog();
+        $organization = $this->getWebCatalogOrganization($contentNode);
         $websites = $this->getWebsites($organization);
         if ($websites) {
+            // If current web catalog has system configuration, then use website from configuration.
+            foreach ($websites as $website) {
+                $catalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
+                if ($catalogId && $catalogId === $currentWebCatalog->getId()) {
+                    return $website;
+                }
+            }
+
             return reset($websites);
         }
 

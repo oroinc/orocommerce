@@ -4,6 +4,7 @@ services:
         arguments:
             - '@oro_action.expression.context_accessor'
             - '@oro_redirect.generator.canonical_url'
+            - '@oro_config.manager'
             - '@doctrine'
         tags:
             - { name: oro_action.action, alias: get_node_default_variant_url }
