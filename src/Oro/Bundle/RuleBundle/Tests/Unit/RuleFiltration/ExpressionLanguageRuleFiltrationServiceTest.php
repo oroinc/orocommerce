@@ -12,15 +12,9 @@ use Psr\Log\LoggerInterface;
 
 class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const EXPRESSION_VARIABLE = 'test';
+    private const EXPRESSION_VARIABLE = 'test';
 
-    /**
-     * @internal
-     */
-    const EXPRESSION_VALUE = 1;
+    private const EXPRESSION_VALUE = 1;
 
     /**
      * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -56,7 +50,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
      * @param RuleOwnerInterface[]|array $ruleOwners
      * @param RuleOwnerInterface[]|array $expectedRuleOwners
      */
-    public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners)
+    public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners): void
     {
         $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
 
@@ -73,7 +67,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /**
      * @return array
      */
-    public function ruleOwnersDataProvider()
+    public function ruleOwnersDataProvider(): array
     {
         $applicable = $this->createApplicableOwner('1');
         $notApplicable = $this->createNotApplicableOwner('2');
@@ -96,7 +90,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
         ];
     }
 
-    public function testLogError()
+    public function testLogError(): void
     {
         $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
 
@@ -123,9 +117,9 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /**
      * @param string $name
      *
-     * @return RuleOwnerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
-    private function createNotApplicableOwner($name)
+    private function createNotApplicableOwner(string $name): \PHPUnit\Framework\MockObject\MockObject
     {
         $rule = new Rule();
 
@@ -138,9 +132,9 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /**
      * @param string $name
      *
-     * @return RuleOwnerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
-    private function createApplicableOwner($name)
+    private function createApplicableOwner(string $name): \PHPUnit\Framework\MockObject\MockObject
     {
         $rule = new Rule();
 
@@ -153,9 +147,9 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /**
      * @param string $name
      *
-     * @return RuleOwnerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
-    private function createNullExpressionOwner($name)
+    private function createNullExpressionOwner(string $name): \PHPUnit\Framework\MockObject\MockObject
     {
         $rule = new Rule();
 
@@ -167,7 +161,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
-    private function createExceptionOwner()
+    private function createExceptionOwner(): \PHPUnit\Framework\MockObject\MockObject
     {
         $rule = new Rule();
 
@@ -181,7 +175,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
      *
      * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
-    private function createRuleOwner(RuleInterface $rule)
+    private function createRuleOwner(RuleInterface $rule): \PHPUnit\Framework\MockObject\MockObject
     {
         $ruleOwner = $this->createPartialMock(RuleOwnerInterface::class, ['getRule']);
         $ruleOwner->expects(static::any())
