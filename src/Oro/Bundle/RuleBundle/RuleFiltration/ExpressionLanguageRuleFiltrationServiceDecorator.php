@@ -6,6 +6,9 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
+/**
+ * This class makes rule not applicable in case if error was occurred during rule evaluation.
+ */
 class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltrationServiceInterface
 {
     /** @var ExpressionLanguage */
