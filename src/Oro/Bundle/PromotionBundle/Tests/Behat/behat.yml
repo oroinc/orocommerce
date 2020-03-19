@@ -63,6 +63,7 @@ oro_behat_extension:
           Type: 'oro_promotion[discountConfiguration][options][discount_type]'
           Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'
           Unit Of Quantity: 'oro_promotion[discountConfiguration][options][discount_product_unit_code]'
+          Expression: 'oro_promotion[rule][expression]'
 
     Coupon Form:
       selector: 'form[name="oro_promotion_coupon_type"]'
