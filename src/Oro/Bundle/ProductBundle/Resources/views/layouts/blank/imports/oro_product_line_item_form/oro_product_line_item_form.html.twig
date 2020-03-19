@@ -9,7 +9,9 @@
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
 
-    {% set unitAttr = {} %}
+    {% set unitAttr = {
+        'aria-label': 'oro.product.unit.aria_label'|trans
+    } %}
     {% if skipInputWidgets is not defined %}
         {% set skipInputWidgets = true %}
     {% endif %}

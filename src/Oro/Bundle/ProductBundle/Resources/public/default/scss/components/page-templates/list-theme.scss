@@ -75,7 +75,7 @@
 
         .product-view-quantity {
             &__unit {
-                a.select2-choice,
+                .select2-choice,
                 .select--full {
                     padding: $list-theme-product-view-quantity-unit-select2-inner-offset-desktop;
                 }
