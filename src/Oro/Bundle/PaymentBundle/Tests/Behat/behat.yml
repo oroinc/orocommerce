@@ -34,3 +34,4 @@ oro_behat_extension:
           Destination1PostalCodes: 'oro_payment_methods_configs_rule[destinations][0][postalCodes]'
           Country: 'oro_payment_methods_configs_rule[destinations][0][country]'
           Country2: 'oro_payment_methods_configs_rule[destinations][1][country]'
+          Expression: 'oro_payment_methods_configs_rule[rule][expression]'
