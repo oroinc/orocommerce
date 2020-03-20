@@ -524,7 +524,6 @@ class OrderControllerTest extends WebTestCase
 
     public function testSaveOrderWithEmptyProductErrorMessage()
     {
-        $this->markTestSkipped("Unskip in BB-18969");
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_create'));
 
         $form = $crawler->selectButton('Save')->form();
