@@ -32,7 +32,9 @@ oro:
             description: The names of attributes that are used to choose variants of a configurable product.
             yes.label: Yes
             no.label: No
-        unit.label: Unit
+        unit:
+            label: Unit
+            aria_label: Product Unit
         price.label: Price
         has_variants.label: Has Variants
         inventory_status:
