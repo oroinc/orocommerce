@@ -6,14 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
@@ -100,10 +105,14 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $productImage = $this->prepareProductImage();
+        $productImage = $this->prepareProductImage(35, 101);
 
-        $this->eventDispatcher->expects($this->exactly(2))
-            ->method('dispatch');
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage->getId(), true)
+            );
 
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
     }
@@ -203,10 +212,14 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostUpdate()
     {
-        $productImage = $this->prepareProductImage();
+        $productImage = $this->prepareProductImage(24, 102);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
+            ->with(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage->getId(), true)
+            )
             ->willReturn(true);
 
         $this->listener->postUpdate($productImage, $this->lifecycleArgs);
@@ -214,7 +227,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testFilePostUpdate()
     {
-        $productImage = $this->prepareProductImage();
+        $productImage = $this->prepareProductImage(76, 103);
 
         $this->productRepository->expects($this->once())
             ->method('findOneBy')
@@ -224,17 +237,49 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getRepository')
             ->willReturn($this->productRepository);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
+            ->with(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage->getId(), true)
+            )
             ->willReturn(true);
 
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
+    public function testPostFlush()
+    {
+        $this->listener->postUpdate($this->prepareProductImage(10, 101), $this->lifecycleArgs);
+        $this->listener->postUpdate($this->prepareProductImage(11, 101), $this->lifecycleArgs);
+        $this->listener->postUpdate($this->prepareProductImage(12, 102), $this->lifecycleArgs);
+        $this->listener->postUpdate($this->prepareProductImage(13, 103), $this->lifecycleArgs);
+        $this->listener->postUpdate($this->prepareProductImage(14, 103), $this->lifecycleArgs);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [],
+                    [
+                        101 => 101,
+                        102 => 102,
+                        103 => 103,
+                    ]
+                )
+            );
+
+        $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));
+    }
+
     /**
-     * @return ProductImage
+     * @param int $imageId
+     * @param int $productId
+     * @return StubProductImage
      */
-    private function prepareProductImage()
+    private function prepareProductImage(int $imageId, int $productId)
     {
         $parentProductImage = new ProductImage();
         $parentProductImage->setTypes(
@@ -246,10 +291,13 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $parentProduct = new Product();
+        $parentProduct = new ProductStub();
+        $parentProduct->setId($productId);
         $parentProduct->addImage($parentProductImage);
 
-        $productImage = new ProductImage();
+        $productImage = new StubProductImage();
+        $productImage->setId($imageId);
+        $productImage->setImage(new File());
         $productImage->addType(new ProductImageType('main'));
         $productImage->setProduct($parentProduct);
 
