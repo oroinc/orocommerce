@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,6 +24,11 @@ class ProductImageListener
      * @var int[]
      */
     protected $updatedProductImageIds = [];
+
+    /**
+     * @var int[]
+     */
+    protected $productIdsToReindex = [];
 
     /**
      * @var EventDispatcherInterface $eventDispatcher
@@ -150,22 +157,44 @@ class ProductImageListener
 
         $product = $productImage->getProduct();
         if ($product) {
-            $this->eventDispatcher->dispatch(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent(
-                    [
-                        Product::class],
-                    [],
-                    [
-                        $product->getId()
-                    ]
-                )
-            );
+            $productId = $product->getId();
+            $this->productIdsToReindex[$productId] = $productId;
         }
 
         $this->eventDispatcher->dispatch(
             ProductImageResizeEvent::NAME,
             new ProductImageResizeEvent($productImage->getId(), true)
         );
+    }
+
+    /**
+     * @param PostFlushEventArgs $event
+     */
+    public function postFlush(PostFlushEventArgs $event)
+    {
+        if ($this->productIdsToReindex) {
+            $this->eventDispatcher->dispatch(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [],
+                    $this->productIdsToReindex
+                )
+            );
+        }
+
+        $this->updatedProductImageIds = [];
+        $this->productIdsToReindex = [];
+    }
+
+    /**
+     * @param OnClearEventArgs $event
+     */
+    public function onClear(OnClearEventArgs $event)
+    {
+        if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
+            $this->updatedProductImageIds = [];
+            $this->productIdsToReindex = [];
+        }
     }
 }
