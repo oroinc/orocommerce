@@ -843,7 +843,7 @@ workflows:
                             - '@transit_workflow':
                                 entity: $checkout
                                 transition: continue_to_shipping_method
-                                workflow: 'b2b_flow_alternative_checkout'
+                                workflow: $.workflowName
 
             continue_to_shipping_method_definition:
                 preactions:
