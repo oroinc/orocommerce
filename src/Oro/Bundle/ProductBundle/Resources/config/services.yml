@@ -813,6 +813,8 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\AttachmentBundle\Entity\File', event: postUpdate, method: filePostUpdate }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
