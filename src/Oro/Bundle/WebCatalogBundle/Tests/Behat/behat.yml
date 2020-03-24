@@ -30,6 +30,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]'
 
+        Additional Web Catalog:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]'
+
         Content Node:
             selector: 'form[name="oro_web_catalog_content_node"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -42,13 +47,33 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customer-"]'
                         element: Select2Entity
+                    Restriction1 CustomerGroup:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
+                        element: Select2Entity
+                    Restriction1 Website:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_website-"]'
+                        element: Select2Entity
+                    Restriction1 Localization:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_localization-"]'
+                        element: Select2Entity
                     Restriction2 Customer:
                         type: 'css'
                         locator: 'div[id^="oro_web_catalog_content_node_scopes_1_customer-"]'
                         element: Select2Entity
-                    Restriction1 CustomerGroup:
+                    Restriction2 CustomerGroup:
                         type: 'css'
-                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_customerGroup-"]'
+                        element: Select2Entity
+                    Restriction2 Website:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_website-"]'
+                        element: Select2Entity
+                    Restriction2 Localization:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_localization-"]'
                         element: Select2Entity
                     Product:
                         type: css
@@ -72,6 +97,9 @@ oro_behat_extension:
 
         Content Node Remove First Restriction:
             selector: '[data-content="oro_web_catalog_content_node[scopes][0]"] .removeRow'
+
+        Content Node Remove Second Restriction:
+            selector: '[data-content="oro_web_catalog_content_node[scopes][1]"] .removeRow'
 
         Override Product Variant Configuration:
             selector: '[name="oro_web_catalog_content_node[contentVariants][0][overrideVariantConfiguration]"]'
@@ -118,6 +146,10 @@ oro_behat_extension:
         Content Variant Restriction Validation Error:
             selector: ".variant-collection .validation-failed"
 
+    pages:
+        Content Node Update:
+            class: Oro\Bundle\WebCatalogBundle\Tests\Behat\Page\ContentNodeUpdate
+            route: 'oro_content_node_update'
 
     suites:
         OroWebCatalogBundle:
