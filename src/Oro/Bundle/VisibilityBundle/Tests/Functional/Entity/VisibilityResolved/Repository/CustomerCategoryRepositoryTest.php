@@ -554,16 +554,6 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     }
 
     /**
-     * @return Category
-     */
-    protected function getMasterCatalog()
-    {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
-    }
-
-    /**
      * @return array
      */
     protected function getResolvedVisibilities()

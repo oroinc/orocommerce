@@ -36,7 +36,7 @@ Feature: Guest Checkout should always starts from enter credential step
     And I click "Add to Shopping List"
     When I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
@@ -46,7 +46,7 @@ Feature: Guest Checkout should always starts from enter credential step
   Scenario: Re-create order from guest shopping list after Billing Information step
     Given I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
@@ -69,7 +69,7 @@ Feature: Guest Checkout should always starts from enter credential step
   Scenario: Re-create order from guest shopping list after Shipping Information step
     Given I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
@@ -103,7 +103,7 @@ Feature: Guest Checkout should always starts from enter credential step
   Scenario: Re-create order from guest shopping list after Shipping Method step
     Given I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
@@ -140,7 +140,7 @@ Feature: Guest Checkout should always starts from enter credential step
   Scenario: Re-create order from guest shopping list after Payment Method step
     Given I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button
@@ -178,7 +178,7 @@ Feature: Guest Checkout should always starts from enter credential step
   Scenario: Finish order from guest shopping list
     Given I open shopping list widget
     And I click "View List"
-    And I click "Create Order"
+    And I click on "Create Order"
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
     And I should see "Continue as a Guest" button

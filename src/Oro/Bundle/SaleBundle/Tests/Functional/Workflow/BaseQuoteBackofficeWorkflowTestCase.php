@@ -350,7 +350,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     {
         $link = $crawler->selectLink($title);
         for ($i = 0; $i < $link->count(); $i++) {
-            if (trim($link->eq($i)->attr('title')) === $title) {
+            if (trim($link->eq($i)->attr('data-transition-label')) === $title) {
                 return $link->eq($i);
             }
         }

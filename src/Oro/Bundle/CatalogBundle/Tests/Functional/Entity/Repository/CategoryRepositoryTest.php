@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
@@ -18,7 +19,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CategoryRepositoryTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     /**
      * @var ManagerRegistry
@@ -47,7 +48,7 @@ class CategoryRepositoryTest extends WebTestCase
 
     public function testGetMasterCatalogRoot()
     {
-        $root = $this->repository->getMasterCatalogRoot($this->getOrganization());
+        $root = $this->getRootCategory();
         $this->assertInstanceOf(Category::class, $root);
 
         $defaultTitle = $root->getDefaultTitle();
@@ -92,17 +93,18 @@ class CategoryRepositoryTest extends WebTestCase
 
     public function testFindOneByDefaultTitle()
     {
-        $expectedCategory = $this->repository->getMasterCatalogRoot($this->getOrganization());
+        $expectedCategory = $this->getRootCategory();
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
 
-        $defaultOrganization = $this->getOrganization();
-        $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle, $defaultOrganization);
+        /** @var Category $actualCategory */
+        $actualCategory = $this->findCategory($expectedTitle);
 
         $this->assertInstanceOf(Category::class, $actualCategory);
         $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
-        $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category', $defaultOrganization));
+        $nonExistsCategory = $this->findCategory('Not existing category');
+        $this->assertNull($nonExistsCategory);
     }
 
     public function testGetCategoryMapByProducts()

@@ -6,10 +6,8 @@
     }
 
     .order-checkout-widget__table {
-        td {
-            &:first-child {
-                padding-right: 6px;
-            }
+        th {
+            padding-right: 6px;
         }
     }
 }

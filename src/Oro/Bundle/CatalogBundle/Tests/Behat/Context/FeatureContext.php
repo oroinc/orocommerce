@@ -6,8 +6,11 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -91,31 +94,46 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^tree level of category "(?P<category>[^"]*)" is (?P<level>[0-9]+)$/
+     * @Then /^tree level of category "(?P<title>[^"]*)" is (?P<level>[0-9]+)$/
      *
-     * @param string $category
+     * @param string $title
      * @param int $level
      */
-    public function treeLevelOfCategoryIs(string $category, int $level): void
+    public function treeLevelOfCategoryIs(string $title, int $level): void
     {
         $doctrine = $this->getContainer()->get('doctrine');
+        $manager = $doctrine->getManagerForClass(Category::class);
 
         /** @var Organization $organization */
-        $organization = $doctrine->getManagerForClass(Organization::class)
+        $organization = $doctrine
+            ->getManagerForClass(Organization::class)
             ->getRepository(Organization::class)
             ->getFirst();
 
-        $entityManager = $doctrine->getManagerForClass(Category::class);
-
-        /** @var Category $category */
-        $category = $entityManager
-            ->getRepository(Category::class)
-            ->findOneByDefaultTitle($category, $organization);
-
-        $entityManager->refresh($category);
-
-        $this->assertNotNull($category, sprintf('Category %s not found', $category));
-
+        $category = $this->getCategory($manager, $title, $organization);
         $this->assertEquals($level, $category->getLevel());
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $title
+     * @param OrganizationInterface $organization
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return Category
+     */
+    private function getCategory(ObjectManager $manager, string $title, OrganizationInterface $organization): Category
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $manager->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        $category = $queryBuilder->getQuery()->getOneOrNullResult();
+        $this->assertNotNull($category, sprintf('Category %s not found', $category));
+        $manager->refresh($category);
+
+        return $category;
     }
 }

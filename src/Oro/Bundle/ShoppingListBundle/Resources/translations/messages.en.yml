@@ -9,6 +9,8 @@ oro:
             label: Label
             description: The name of the shopping list.
             edit.tooltip: Edit Shopping List Label
+        inlineEditing:
+            input.aria_label: Shopping List Title
         notes:
             label: Notes
             description: Any additional notes made by the buyer.
@@ -26,6 +28,10 @@ oro:
         current.label: Current
         default.label: 'Shopping List'
         items.label: 'Item|Items'
+        link.aria_label: '{0} You do not have any items in %shoppinglist%|{1} %shoppinglist% contains 1 item|]1,Inf[ %shoppinglist% contains %count% items'
+        remove_item:
+            title: 'Remove %productName% from %shoppinglist%'
+            aria_label: 'Action Remove %productName% from %shoppinglist%'
         subtotal.label: Subtotal
         total.label: Grand Total
         totals.label: Totals
@@ -164,7 +170,9 @@ oro:
             success.message: 'The shopping list has been duplicated'
             error.customer_user_is_guest: 'Unable to duplicate as only one shopping list is allowed for unregistered users'
             restricted_products.message: 'Some products are not available and cannot be added to shopping list'
-            list.label: Duplicate List
+            list:
+                label: Duplicate List
+                aria_label: Duplicate Current Shopping List
 
         visitors.label: 'Visitors'
 
@@ -187,9 +195,10 @@ oro:
             view:
                 owner.label: Customer
                 view_options.label: View Options for this Shopping List
-                add_note.label: Add a Note to This Shopping List
-                add_note.placeholder: Enter your note
-
+                add_note:
+                    label: Add a Note to This Shopping List
+                    placeholder: Enter your note
+                    aria_label: 'Enter your note to %shoppingList%'
                 item.lable: Item
                 price.label: Price
 
@@ -201,9 +210,10 @@ oro:
                 item.label: 'Item #:'
                 qty.label: 'QTY #'
 
-                add_item_note.label: 'Add a Note to This Item'
-                add_item_note.placeholder: 'Enter your note'
-
+                add_item_note:
+                    label: 'Add a Note to This Item'
+                    placeholder: 'Enter your note'
+                    aria_label: 'Enter your note to %productName%'
                 not_have_available: 'You do not have available Shopping Lists'
                 not_products_available: 'The Shopping List is empty. Please add at least one product.'
                 empty: 'Your Shopping List Is Empty'

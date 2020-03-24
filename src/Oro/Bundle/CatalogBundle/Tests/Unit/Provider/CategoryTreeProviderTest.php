@@ -90,7 +90,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->masterCatalogRootProvider
             ->expects($this->never())
-            ->method('getMasterCatalogRootForCurrentOrganization');
+            ->method('getMasterCatalogRoot');
 
         $actual = $this->provider->getCategories($user, $rootCategory, false);
 
@@ -128,7 +128,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->masterCatalogRootProvider
             ->expects($this->once())
-            ->method('getMasterCatalogRootForCurrentOrganization')
+            ->method('getMasterCatalogRoot')
             ->willReturn($rootCategory);
 
         $actual = $this->provider->getCategories($user, null, false);

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -12,6 +13,8 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGro
 
 class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
+    use CatalogTrait;
+
     /**
      * @var CustomerGroupCategoryRepository
      */
@@ -431,10 +434,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     protected function getCategoryId($reference)
     {
         if ($reference === self::ROOT_CATEGORY) {
-            return $this->getContainer()->get('doctrine')
-                ->getRepository('OroCatalogBundle:Category')
-                ->getMasterCatalogRoot($this->getOrganization())
-                ->getId();
+            return $this->getRootCategory()->getId();
         }
 
         return $reference ? $this->getReference($reference)->getId() : null;

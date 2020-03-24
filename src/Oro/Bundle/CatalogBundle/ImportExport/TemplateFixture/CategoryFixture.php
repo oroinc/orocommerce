@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
 use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
-use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
@@ -17,7 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class CategoryFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    /** @var MasterCatalogRootProvider */
+    /** @var MasterCatalogRootProviderInterface */
     private $masterCatalogRootProvider;
 
     /** @var LocalizationManager */
@@ -32,9 +32,9 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
     }
 
     /**
-     * @param MasterCatalogRootProvider $masterCatalogRootProvider
+     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
      */
-    public function setMasterCatalogRootProvider(MasterCatalogRootProvider $masterCatalogRootProvider): void
+    public function setMasterCatalogRootProvider(MasterCatalogRootProviderInterface $masterCatalogRootProvider): void
     {
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
@@ -74,7 +74,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
         if ($key === 'Sample Category') {
             $localization = $this->localizationManager->getDefaultLocalization();
             $entity
-                ->setParentCategory($this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization())
+                ->setParentCategory($this->masterCatalogRootProvider->getMasterCatalogRoot())
                 ->addTitle((new CategoryTitle())->setString('Sample Category'))
                 ->addTitle(
                     (new CategoryTitle())

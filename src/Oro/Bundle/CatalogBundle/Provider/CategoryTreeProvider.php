@@ -25,19 +25,19 @@ class CategoryTreeProvider
     protected $eventDispatcher;
 
     /**
-     * @var MasterCatalogRootProvider
+     * @var MasterCatalogRootProviderInterface
      */
     private $masterCatalogRootProvider;
 
     /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
-     * @param MasterCatalogRootProvider $masterCatalogRootProvider
+     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
      */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
-        MasterCatalogRootProvider $masterCatalogRootProvider
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
@@ -53,7 +53,7 @@ class CategoryTreeProvider
     public function getCategories($user, $root = null, $includeRoot = true)
     {
         if (!$root) {
-            $root = $this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization();
+            $root = $this->masterCatalogRootProvider->getMasterCatalogRoot();
         }
 
         $categories = $this->registry->getManagerForClass(Category::class)

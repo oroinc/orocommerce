@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
@@ -51,13 +50,8 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
      */
     public function load(ObjectManager $manager)
     {
-        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
-
-        /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        $root               = $categoryRepository->getMasterCatalogRoot($defaultOrganization);
-
-        $this->addCategories($root, $this->categories, $this->categoryImages, $manager);
+        $category = $this->getCategory($manager);
+        $this->addCategories($category, $this->categories, $this->categoryImages, $manager);
 
         $manager->flush();
 
@@ -158,5 +152,25 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
 
         return $image;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Category
+     */
+    private function getCategory(ObjectManager $manager): Category
+    {
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $categoryRepository = $manager->getRepository(Category::class);
+        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
 }

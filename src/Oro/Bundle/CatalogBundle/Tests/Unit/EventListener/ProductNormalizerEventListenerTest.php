@@ -2,14 +2,20 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class ProductNormalizerEventListenerTest extends AbstractProductImportEventListenerTest
 {
     const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
+
+    /**
+     * @var AclHelper
+     */
+    private $aclHelper;
 
     /**
      * @var ProductNormalizerEventListener
@@ -23,8 +29,9 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
     {
         parent::setUp();
 
-        $tokenAccessor = $this->createMock(TokenAccessor::class);
-        $this->listener = new ProductNormalizerEventListener($this->registry, $tokenAccessor, self::CATEGORY_CLASS);
+        /** @var AclHelper $aclHelper */
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->listener = new ProductNormalizerEventListener($this->registry, $this->aclHelper, self::CATEGORY_CLASS);
     }
 
     public function tearDown()
@@ -36,6 +43,17 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
     public function testOnNormalize()
     {
         $product = $this->getPreparedProduct();
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($this->categoriesByProduct[$product->getSku()]);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->willReturn($query);
+
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);
         $this->assertEquals($product, $event->getProduct());
@@ -55,6 +73,17 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
     public function testOnClear()
     {
         $product = $this->getPreparedProduct();
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->exactly(2))
+            ->method('getOneOrNullResult')
+            ->willReturn($this->categoriesByProduct[$product->getSku()]);
+
+        $this->aclHelper
+            ->expects($this->exactly(2))
+            ->method('apply')
+            ->willReturn($query);
+
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);
         $this->listener->onClear();
@@ -66,6 +95,17 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
     {
         $product = (new Product())
             ->setSku('test');
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn(null);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->willReturn($query);
 
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);

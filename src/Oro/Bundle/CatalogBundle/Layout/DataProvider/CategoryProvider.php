@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -45,25 +46,31 @@ class CategoryProvider
     /** @var int */
     protected $cacheLifeTime;
 
+    /** @var MasterCatalogRootProviderInterface */
+    private $masterCatalogRootProvider;
+
     /**
      * @param RequestProductHandler  $requestProductHandler
      * @param ManagerRegistry        $registry
      * @param CategoryTreeProvider   $categoryTreeProvider
      * @param TokenAccessorInterface $tokenAccessor
      * @param LocalizationHelper     $localizationHelper
+     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
         CategoryTreeProvider $categoryTreeProvider,
         TokenAccessorInterface $tokenAccessor,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->registry = $registry;
         $this->categoryTreeProvider = $categoryTreeProvider;
         $this->tokenAccessor = $tokenAccessor;
         $this->localizationHelper = $localizationHelper;
+        $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
     /**
@@ -208,7 +215,7 @@ class CategoryProvider
             if ($categoryId) {
                 $this->categories[$categoryId] = $this->getCategoryRepository()->find($categoryId);
             } else {
-                $this->categories[$categoryId] = $this->getCurrentMasterCatalogRoot();
+                $this->categories[$categoryId] = $this->masterCatalogRootProvider->getMasterCatalogRoot();
             }
         }
 
@@ -244,16 +251,6 @@ class CategoryProvider
             $customerGroup ? $customerGroup->getId() : 0,
             $currentOrganization ? $currentOrganization->getId() : 0
         );
-    }
-
-    /**
-     * @return Category|null
-     */
-    private function getCurrentMasterCatalogRoot()
-    {
-        $organization = $this->tokenAccessor->getOrganization();
-
-        return $organization ? $this->getCategoryRepository()->getMasterCatalogRoot($organization) : null;
     }
 
     /**

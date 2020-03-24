@@ -80,10 +80,7 @@ class CategoryController extends AbstractController
      */
     public function indexAction()
     {
-        return [
-            'rootCategory' => $this->get(MasterCatalogRootProvider::class)
-                ->getMasterCatalogRootForCurrentOrganization()
-        ];
+        return ['rootCategory' => $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot()];
     }
 
     /**
@@ -104,7 +101,7 @@ class CategoryController extends AbstractController
     {
         $handler = $this->get(CategoryTreeHandler::class);
 
-        $root = $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRootForCurrentOrganization();
+        $root = $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot();
         $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
@@ -193,7 +190,7 @@ class CategoryController extends AbstractController
 
         if (is_array($result)) {
             $result['rootCategory'] = $this->get(MasterCatalogRootProvider::class)
-                ->getMasterCatalogRootForCurrentOrganization();
+                ->getMasterCatalogRoot();
         }
 
         return $result;

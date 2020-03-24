@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -12,7 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractCategoryRepositoryTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     const ROOT_CATEGORY = 'root';
 
@@ -49,9 +50,7 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
      */
     protected function getMasterCatalog()
     {
-        return $this->getManagerRegistry()->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
+        return $this->getRootCategory();
     }
 
     /**

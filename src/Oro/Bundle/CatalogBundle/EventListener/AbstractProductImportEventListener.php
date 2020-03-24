@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Gets categories depending on different criterias
@@ -21,9 +21,6 @@ abstract class AbstractProductImportEventListener
     /** @var string */
     protected $categoryClass;
 
-    /** @var TokenAccessor */
-    private $tokenAccessor;
-
     /** @var CategoryRepository */
     protected $categoryRepository;
 
@@ -33,15 +30,18 @@ abstract class AbstractProductImportEventListener
     /** @var array */
     protected $categoriesByProduct = [];
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /**
      * @param ManagerRegistry $registry
-     * @param TokenAccessor $tokenAccessor
+     * @param AclHelper $aclHelper
      * @param string $categoryClass
      */
-    public function __construct(ManagerRegistry $registry, TokenAccessor $tokenAccessor, $categoryClass)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper, string $categoryClass)
     {
         $this->registry = $registry;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->aclHelper = $aclHelper;
         $this->categoryClass = $categoryClass;
     }
 
@@ -74,8 +74,8 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByTitle[$categoryDefaultTitle];
         }
 
-        $organization = $this->tokenAccessor->getOrganization();
-        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle, $organization);
+        $categoryRepository = $this->getCategoryRepository();
+        $category = $this->getCategory($categoryRepository->findOneByDefaultTitleQueryBuilder($categoryDefaultTitle));
         if (!$category) {
             $this->categoriesByTitle[$categoryDefaultTitle] = null;
 
@@ -100,10 +100,8 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $qb = $this->getCategoryRepository()->findOneByProductSkuQueryBuilder($sku, $includeTitles)
-            ->andWhere('category.organization = :organization')
-            ->setParameter('organization', $product->getOrganization());
-        $category = $qb->getQuery()->getOneOrNullResult();
+        $categoryRepository = $this->getCategoryRepository();
+        $category = $this->getCategory($categoryRepository->findOneByProductSkuQueryBuilder($sku, $includeTitles));
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 
@@ -113,5 +111,18 @@ abstract class AbstractProductImportEventListener
         $this->categoriesByProduct[$sku] = $category;
 
         return $category;
+    }
+
+    /**
+     * @param $queryBuilder
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return Category|null
+     */
+    private function getCategory($queryBuilder): ?Category
+    {
+        $query = $this->aclHelper->apply($queryBuilder);
+
+        return $query->getOneOrNullResult();
     }
 }

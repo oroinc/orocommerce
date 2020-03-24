@@ -813,6 +813,8 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\AttachmentBundle\Entity\File', event: postUpdate, method: filePostUpdate }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
@@ -1381,6 +1383,15 @@ services:
             - '@oro_product.layout.data_provider.new_arrivals.cache_decorator.inner'
             - '@oro.cache.memory_cache_chain'
             - 'oro_product.layout.data_provider.new_arrivals'
+
+    oro_product.layout.data_provider.product_filtered_image:
+        parent: oro_layout.layout.data_provider.filtered_image.abstract
+        public: true
+        arguments:
+            - '@oro_attachment.manager'
+            - '@oro_product.provider.product_image_placeholder'
+        tags:
+            - { name: layout.data_provider, alias: product_filtered_image }
 
     oro_product.provider.segment:
         parent: oro_product.provider.segment.logging_errors

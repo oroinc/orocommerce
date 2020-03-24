@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepository;
 
-    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
+    /** @var AclHelper */
+    private $aclHelper;
 
     /** @var MasterCatalogRootProvider */
     private $provider;
@@ -24,8 +25,6 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
-        $this->tokenAccessor = $this->createMock(TokenAccessor::class);
-
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
@@ -38,23 +37,30 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($manager);
 
-        $this->provider = new MasterCatalogRootProvider($registry, $this->tokenAccessor);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+
+        $this->provider = new MasterCatalogRootProvider($registry, $this->aclHelper);
     }
 
     public function testGetMasterCatalogRootForCurrentOrganization()
     {
-        $organizationFromToken = new Organization();
         $category = new Category();
 
-        $this->tokenAccessor->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organizationFromToken);
-
-        $this->categoryRepository->expects($this->once())
-            ->method('getMasterCatalogRoot')
-            ->with($organizationFromToken)
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getSingleResult')
             ->willReturn($category);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->willReturn($query);
 
-        $this->provider->getMasterCatalogRootForCurrentOrganization();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->categoryRepository->expects($this->once())
+            ->method('getMasterCatalogRootQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $this->provider->getMasterCatalogRoot();
     }
 }

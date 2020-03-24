@@ -31,15 +31,18 @@
         '~class': ' shopping-list__item ' ~ (shoppingList.id == selectedShoppingList.id ? currentClass),
         'data-shopping-list-id': shoppingList.id
     }) %}
+    {% set itemsCount = shoppingList.lineItems.count %}
+
     <li {{ block('block_attributes') }}>
         <a href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"
            title="{{ shoppingList.label }}"
+           aria-label="{{ 'oro.shoppinglist.link.aria_label'|trans({'%count%': itemsCount, '%shoppinglist%': shoppingList.label }) }}"
            class="shopping-list__link"
         >
-            <div class="shopping-list__name">
+            <div class="shopping-list__name" aria-hidden="true">
                 <span class="shopping-list__title text-uppercase">
                     <span class='shopping-list__item-indicator'>
-                        <i class="fa-shopping-cart"></i>
+                        <span class="fa-shopping-cart"></span>
                     </span>
                     <span class="shopping-list__text">
                         <span data-page-component-line-clamp
@@ -48,7 +51,6 @@
                         >{{ shoppingList.label }}</span>
                     </span>
                 </span>
-                {% set itemsCount = shoppingList.lineItems.count %}
                 {% if itemsCount %}
                     <div class="shopping-list__desc">
                         <b>{{ shoppingList.lineItems.count }}</b> {{ 'oro.shoppinglist.items.label'|trans({'%count%': itemsCount}) }}

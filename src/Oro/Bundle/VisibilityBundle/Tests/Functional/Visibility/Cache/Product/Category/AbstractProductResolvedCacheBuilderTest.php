@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -11,7 +11,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 
 abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 {
-    use OrganizationTrait;
+    use OrganizationTrait, CatalogTrait;
 
     const ROOT = 'root';
 
@@ -37,16 +37,5 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();
         parent::tearDown();
-    }
-
-    /**
-     * @return Category
-     */
-    protected function getRootCategory()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot($this->getOrganization());
     }
 }

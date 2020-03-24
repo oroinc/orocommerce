@@ -5,7 +5,7 @@ namespace Oro\Bundle\CatalogBundle\JsTree;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
@@ -20,7 +20,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
     /** @var CategoryTreeProvider */
     protected $categoryTreeProvider;
 
-    /** @var MasterCatalogRootProvider */
+    /** @var MasterCatalogRootProviderInterface */
     private $masterCatalogRootProvider;
 
     /**
@@ -28,14 +28,14 @@ class CategoryTreeHandler extends AbstractTreeHandler
      *
      * @param TokenAccessorInterface $tokenAccessor
      * @param CategoryTreeProvider $categoryTreeProvider
-     * @param MasterCatalogRootProvider $masterCatalogRootProvider
+     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
      */
     public function __construct(
         $entityClass,
         ManagerRegistry $managerRegistry,
         TokenAccessorInterface $tokenAccessor,
         CategoryTreeProvider $categoryTreeProvider,
-        MasterCatalogRootProvider $masterCatalogRootProvider
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
@@ -60,9 +60,9 @@ class CategoryTreeHandler extends AbstractTreeHandler
      * @param bool $includeRoot
      * @return array
      */
-    public function createTreeByCurrentOrganizationMasterCatalogRoot($includeRoot = true)
+    public function createTreeByMasterCatalogRoot($includeRoot = true)
     {
-        $root = $this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization();
+        $root = $this->masterCatalogRootProvider->getMasterCatalogRoot();
         $tree = $this->getNodes($root, $includeRoot);
 
         return $this->formatTree($tree, $root, $includeRoot);

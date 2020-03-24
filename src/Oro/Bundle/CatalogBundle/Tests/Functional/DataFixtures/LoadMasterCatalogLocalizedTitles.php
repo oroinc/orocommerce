@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -19,20 +20,38 @@ class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $manager)
     {
-        /** @var Organization $organization */
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-        /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        $root               = $categoryRepository->getMasterCatalogRoot($organization);
-        $localizations      = $manager->getRepository('OroLocaleBundle:Localization')->findAll();
+        $localizations = $manager->getRepository('OroLocaleBundle:Localization')->findAll();
+        $category = $this->getCategory($manager);
 
         $title = new CategoryTitle();
         $title->setString('master');
         $title->setLocalization(reset($localizations));
-        $root->addTitle($title);
+        $category->addTitle($title);
 
         $manager->persist($title);
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return Category
+     */
+    private function getCategory(ObjectManager $manager): Category
+    {
+        /** @var Organization $organization */
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
+        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
 
     /**

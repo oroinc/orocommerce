@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\ImportExport\Strategy\CategoryAddOrReplaceStrategy;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -16,7 +17,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryAddOrReplaceStrategyTest extends WebTestCase
 {
-    use EntityTrait;
+    use EntityTrait, CatalogTrait;
 
     /** @var Context */
     private $context;
@@ -150,8 +151,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $category = $this->strategy->process(new Category());
 
         $categoryRepo = $this->getCategoryRepository();
-
-        $rootCategory = $categoryRepo->getMasterCatalogRoot($this->getReference('organization'));
+        $rootCategory = $this->getRootCategory();
         $maxLeft = $categoryRepo->getMaxLeft();
 
         $this->assertEquals(0, $category->getLevel(), 'Gedmo level field is invalid');
@@ -250,16 +250,5 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
 
         return $categoryRepo;
-    }
-
-    /**
-     * @return Category
-     */
-    private function getRootCategory(): Category
-    {
-        $categoryRepo = $this->getCategoryRepository();
-        $rootCategory = $categoryRepo->getMasterCatalogRoot($this->getReference('organization'));
-
-        return $rootCategory;
     }
 }

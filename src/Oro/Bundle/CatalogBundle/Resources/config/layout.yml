@@ -24,6 +24,7 @@ services:
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_security.token_accessor'
             - '@oro_locale.helper.localization'
+            - '@oro_catalog.provider.master_catalog_root'
         calls:
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
@@ -68,6 +69,15 @@ services:
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: categories_products }
+
+    oro_catalog.layout.data_provider.category_filtered_image:
+        parent: oro_layout.layout.data_provider.filtered_image.abstract
+        public: true
+        arguments:
+            - '@oro_attachment.manager'
+            - '@oro_catalog.provider.category_image_placeholder'
+        tags:
+            - { name: layout.data_provider, alias: category_filtered_image }
 
     oro_catalog.layout_context_configurator.product_categories:
         class: Oro\Bundle\CatalogBundle\Layout\Extension\ProductCategoriesContextConfigurator

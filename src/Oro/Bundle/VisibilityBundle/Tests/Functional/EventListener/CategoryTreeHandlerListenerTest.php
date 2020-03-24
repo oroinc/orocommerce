@@ -3,11 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -20,6 +20,8 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
  */
 class CategoryTreeHandlerListenerTest extends WebTestCase
 {
+    use CatalogTrait;
+
     /**
      * @var ScopeManager
      */
@@ -352,14 +354,9 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     protected function getActualCategories()
     {
         $customerUser = $this->getCustomerUser();
-
-        $doctrine =  $this->getContainer()->get('doctrine');
-        $defaultOrganization = $doctrine->getRepository(Organization::class)->getFirst();
-        $categoryRepository = $doctrine->getRepository(Category::class);
-        $root               = $categoryRepository->getMasterCatalogRoot($defaultOrganization);
         $categories = $this->getContainer()
             ->get('oro_catalog.provider.category_tree_provider')
-            ->getCategories($customerUser, $root);
+            ->getCategories($customerUser, $this->getRootCategory());
 
         $categoryTitles = [];
         foreach ($categories as $category) {

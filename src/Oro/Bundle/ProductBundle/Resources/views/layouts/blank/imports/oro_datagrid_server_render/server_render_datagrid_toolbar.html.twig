@@ -84,9 +84,10 @@
     {% if pageSize.hide == false and pageSize.items|length > 0 and toolbarPosition != 'bottom' %}
         <div{{ block('block_attributes') }}>
             <div class="page-size pull-right form-horizontal">
-                <span class="datagrid-tool__label">{{ "oro.datagrid.pagesize.labelShort"|trans }}: &nbsp;</span>
+                {% set labelId = 'datagrid-toolbar-label-'|uniqid %}
+                <span id="{{ labelId }}" class="datagrid-tool__label">{{ "oro.datagrid.pagesize.labelShort"|trans }}: &nbsp;</span>
                 <div class="action-selectbox-custom-in-pager">
-                    <select class="select select--size-s oro-select2--size-s" name="action" data-grid-pagesize-selector>
+                    <select aria-labelledby="{{ labelId }}" class="select select--size-s oro-select2--size-s" name="action" data-grid-pagesize-selector>
                         {% for value in pageSize.items %}
                             <option value="{{ value }}"
                                     data-grid-pagesize-trigger{% if value == perPage %} selected{% endif %}>

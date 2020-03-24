@@ -105,13 +105,20 @@ class CategoryImportExportHelper
     }
 
     /**
+     * Get root category by organization(do not use organization from session or check from acl!)
+     *
      * @param Organization $organization
      *
      * @return Category
      */
     public function getRootCategory(Organization $organization): Category
     {
-        return $this->getRepository()->getMasterCatalogRoot($organization);
+        $queryBuilder = $this->getRepository()->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
 
     /**
