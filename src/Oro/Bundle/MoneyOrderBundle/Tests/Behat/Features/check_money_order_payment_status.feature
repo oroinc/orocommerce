@@ -26,7 +26,7 @@ Feature: Check Money Order payment status
     And I save and close form
     Then I should see "Integration saved" flash message
 
-  Scenario: Create new Payment Rule for Check/Money Order integration
+  Scenario: Create new Payment Rule for Check/Money Order integration with invalid expression
     Given I operate as the Admin
     When I go to System/Payment Rules
     And I click "Create Payment Rule"
@@ -35,10 +35,12 @@ Feature: Check Money Order payment status
     And I fill in "Sort Order" with "1"
     And I select "CheckMoneyOrder" from "Method"
     And I click "Add Method Button"
+    And I fill "Payment Rule Form" with:
+      | Expression | name = 'test' |
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
-  Scenario: Successful order payment with Check/Money Order
+  Scenario: Check there is no errors on storefront
     Given I operate as the Buyer
     And There are products in the system available for order
     And I signed in as AmandaRCole@example.org on the store frontend
@@ -47,13 +49,27 @@ Feature: Check Money Order payment status
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    Then I should not see "Undefined index"
+
+  Scenario: Update Payment Rule for Check/Money Order integration with valid expression
+    Given I operate as the Admin
+    And I click "Edit"
+    And I fill "Payment Rule Form" with:
+      | Expression | |
+    And I save and close form
+    Then I should see "Payment rule has been saved" flash message
+
+  Scenario: Successful order payment with Check/Money Order
+    Given I operate as the Buyer
+    And on the "Payment" checkout step I go back to "Edit Shipping Method"
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Check/Money Order" on the "Payment" checkout step and press Continue
     And I fill "Checkout Order Review Form" with:
       | PO Number | TEST_PO_NUMBER |
     And I should see "Subtotal $10.00"
     And I should see "Shipping $3.00"
     And I should see "Total $13.00"
-    And I click "Submit Order"
+    When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Capture order payment with Check/Money Order
