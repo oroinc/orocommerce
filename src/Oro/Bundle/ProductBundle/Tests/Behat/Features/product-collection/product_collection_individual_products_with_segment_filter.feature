@@ -31,7 +31,7 @@ Feature: Product collection individual products with segment filter
     And I click "Add Button"
     Then I should see "Add Products"
     And I check PSKU12 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
       | PSKU12 | Product 12 |

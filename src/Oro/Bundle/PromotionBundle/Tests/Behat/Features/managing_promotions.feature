@@ -20,7 +20,7 @@ Feature: Managing promotions
       | Currency       | €    |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR1 in grid
@@ -47,7 +47,7 @@ Feature: Managing promotions
       | Discount Value (%) | 20 |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR2 in grid
@@ -75,7 +75,7 @@ Feature: Managing promotions
       | Currency                           | €            |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR3 in grid
@@ -105,7 +105,7 @@ Feature: Managing promotions
       | Maximum Qty Discount is Applied To | 10               |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR4 in grid
@@ -136,7 +136,7 @@ Feature: Managing promotions
     And I type "2" in "Limit, times"
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR5 in grid
@@ -168,7 +168,7 @@ Feature: Managing promotions
       | Apply Discount To  | X + Y Total |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR6 in grid
@@ -198,7 +198,7 @@ Feature: Managing promotions
       | Discount Value    | 30 |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR7 in grid
@@ -224,7 +224,7 @@ Feature: Managing promotions
       | Discount Value (%) | 50 |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR8 in grid

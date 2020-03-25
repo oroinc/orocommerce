@@ -48,7 +48,7 @@ Feature: Notes from shopping list are transferred to the checkout
     And I login as administrator
     And I go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
     Given I proceed as the User
     When I open page with shopping list List 2

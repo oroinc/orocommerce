@@ -21,9 +21,10 @@ define(function(require) {
             const currentLauncherIsPresent = !!_.filter(this.launchers, function(launcher) {
                 return launcher.action.is_current === true;
             }).length;
+            const isDropdown = this.$el.is('.dropdown-menu');
 
-            _.each(this.launchers, function(launcher, index) {
-                let $el = null;
+            this.launchers.forEach((launcher, index) => {
+                let $el;
 
                 if (currentLauncherIsPresent) {
                     $el = this.findContainer(launcher, launcher.action.is_current);
@@ -31,8 +32,10 @@ define(function(require) {
                     $el = this.findContainer(launcher, !index);
                 }
 
+                launcher.setOptions({withinDropdown: isDropdown});
                 $el.append(launcher.render().$el);
-            }, this);
+            });
+
             return this;
         },
 

@@ -12,7 +12,7 @@ Feature: Product collection adding popup select all
     When I click "All Added"
     And I click "Add Button"
     And I check all records in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I should see "A limit of selected products (5) was exceeded. Do you want to force add your selection?"
     And I click "Yes"
     Then I should see following grid:
@@ -36,7 +36,7 @@ Feature: Product collection adding popup select all
     And I click "All Added"
     And I click "Add Button"
     And I check all records in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU    | NAME      |
       | PSKU12 | Product 12 |
@@ -61,7 +61,7 @@ Feature: Product collection adding popup select all
     And I uncheck PSKU12 record in grid
     And I press next page button in grid "Add Products Popup"
     And I uncheck PSKU2 record in grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU    | NAME      |
       | PSKU10 | Product 10 |
@@ -81,7 +81,7 @@ Feature: Product collection adding popup select all
     And I click "Add Button"
     And I filter Name as is equal to "Product 1" in "Add Products Popup" grid
     And I check all records in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU    | NAME      |
       | PSKU1  | Product 1 |
@@ -93,7 +93,7 @@ Feature: Product collection adding popup select all
     And I click "Add Button"
     And I press next page button in grid "Add Products Popup"
     And I check All Visible records in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU    | NAME      |
       | PSKU2 | Product 2 |
