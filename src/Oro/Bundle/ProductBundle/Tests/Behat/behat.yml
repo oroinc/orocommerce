@@ -671,7 +671,7 @@ oro_behat_extension:
       selector: 'div.datagrid-massaction button'
 
     ProductFrontendMassActionButton:
-      selector: '.datagrid-massaction button.dropdown-toggle'
+      selector: '.datagrid-massaction button.dropdown-toggle:contains("Choose Action")'
 
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'

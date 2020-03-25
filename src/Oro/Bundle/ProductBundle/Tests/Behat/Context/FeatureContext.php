@@ -545,7 +545,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->oroMainContext->pressButton('Add Button');
         $this->waitForAjax();
         $this->gridContext->iCheckAllRecordsInGrid('Add Products Popup');
-        $this->oroMainContext->pressButtonInModalWindow('Add');
+        $this->oroMainContext->iClickOnSmthInElement('Add', 'UiDialog ActionPanel');
         $this->waitForAjax();
     }
 
