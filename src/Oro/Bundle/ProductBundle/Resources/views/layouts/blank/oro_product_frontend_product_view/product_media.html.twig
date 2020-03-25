@@ -89,12 +89,12 @@
         {% endfor %}
 
         {% set options = {
+            view: 'orofrontend/js/app/components/popup-gallery-widget',
             galleryImages: galleryImages
         } %}
 
         {% set popupGalleryAttr = {
-            'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
-            'data-page-component-options': options|json_encode,
+            'data-page-component-view': options|json_encode,
             'itemprop': 'productID',
             'content': product.id
         } %}
