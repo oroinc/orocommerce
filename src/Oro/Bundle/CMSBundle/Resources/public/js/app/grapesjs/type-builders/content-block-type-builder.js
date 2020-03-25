@@ -39,15 +39,12 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
             const contentBlockAlias = editor.Config.contentBlockAlias;
             const datagridName = 'cms-content-block-grid';
             const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
-            const routeParams = {
-                gridName: datagridName
-            };
 
             const dialog = new DialogWidget({
                 title: __('oro.cms.wysiwyg.content_block.title'),
                 url: routing.generate(
                     'oro_datagrid_widget',
-                    routeParams
+                    _.extend(editor.Config.requestParams, {gridName: datagridName})
                 ),
                 loadingElement: container,
                 dialogOptions: {

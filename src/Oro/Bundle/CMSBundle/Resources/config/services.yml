@@ -311,7 +311,6 @@ services:
             - '@oro_cms.layout_manager'
             - '@oro_cms.content_widget.type_registry'
         calls:
-            - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: oro_cms }

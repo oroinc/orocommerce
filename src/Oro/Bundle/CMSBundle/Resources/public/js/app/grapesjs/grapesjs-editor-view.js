@@ -79,6 +79,7 @@ const GrapesjsEditorView = BaseView.extend({
         wrapperIsBody: 0,
         exportWrapper: 1,
         pasteStyles: false,
+        requestParams: {},
 
         /**
          * Color picker options

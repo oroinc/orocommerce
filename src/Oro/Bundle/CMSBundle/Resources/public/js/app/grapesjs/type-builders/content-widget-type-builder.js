@@ -32,7 +32,7 @@ function createDialog(gridName, editor, onClose) {
 
     return new DialogWidget({
         title: __('oro.cms.wysiwyg.content_widget.title'),
-        url: routing.generate('oro_datagrid_widget', {gridName}),
+        url: routing.generate('oro_datagrid_widget', _.extend(editor.Config.requestParams, {gridName: gridName})),
         loadingElement: container,
         dialogOptions
     });

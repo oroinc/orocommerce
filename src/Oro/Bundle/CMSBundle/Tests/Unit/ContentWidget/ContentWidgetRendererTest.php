@@ -10,8 +10,6 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\Layout\Layout;
 use Oro\Component\Layout\LayoutBuilderInterface;
@@ -36,9 +34,6 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
@@ -59,7 +54,6 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->renderer = new ContentWidgetRenderer(
@@ -71,20 +65,13 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
         $this->setUpLoggerMock($this->renderer);
     }
 
-    public function testRenderWhenNoOrganization(): void
-    {
-        $this->assertLoggerErrorMethodCalled();
-
-        $this->assertEquals('', $this->renderer->render(self::SAMPLE_WIDGET));
-    }
-
     public function testRenderWhenNoContentWidget(): void
     {
         $this->assertLoggerErrorMethodCalled();
 
         $this->mockFindOneByName(null);
 
-        $this->assertEquals('', $this->renderer->render(self::SAMPLE_WIDGET, $this->getOrganization()));
+        $this->assertEquals('', $this->renderer->render(self::SAMPLE_WIDGET));
     }
 
     public function testRenderWhenException(): void
@@ -100,53 +87,11 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             '',
-            $this->renderer->render(self::SAMPLE_WIDGET, $this->getOrganization())
+            $this->renderer->render(self::SAMPLE_WIDGET)
         );
     }
 
-    public function testRenderWhenOrganizationInToken(): void
-    {
-        $this->tokenAccessor
-            ->method('getOrganization')
-            ->willReturn($this->getOrganization());
-
-        $this->renderer->setTokenAccessor($this->tokenAccessor);
-
-        $contentWidget = $this->mockContentWidget();
-        $this->mockFindOneByName($contentWidget);
-
-        $layoutContext = $this->createMock(Layout::class);
-        $layoutContext->expects($this->once())
-            ->method('render')
-            ->willReturn(self::SAMPLE_RESULT);
-
-        $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
-        $layoutBuilder->expects($this->once())
-            ->method('add')
-            ->with('content_widget_root', null, 'content_widget_root');
-        $layoutBuilder->expects($this->once())
-            ->method('getLayout')
-            ->with(
-                new LayoutContext(
-                    [
-                        'data' => [
-                            'settings' => self::SAMPLE_SETTINGS,
-                        ],
-                        'content_widget' => $contentWidget,
-                    ],
-                    ['content_widget']
-                )
-            )
-            ->willReturn($layoutContext);
-
-        $this->layoutManager->expects($this->once())
-            ->method('getLayoutBuilder')
-            ->willReturn($layoutBuilder);
-
-        $this->assertEquals(self::SAMPLE_RESULT, $this->renderer->render(self::SAMPLE_WIDGET));
-    }
-
-    public function testRenderWhenOrganizationAsArgument(): void
+    public function testRender(): void
     {
         $contentWidget = $this->mockContentWidget();
         $this->mockFindOneByName($contentWidget);
@@ -181,7 +126,7 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             self::SAMPLE_RESULT,
-            $this->renderer->render(self::SAMPLE_WIDGET, $this->getOrganization())
+            $this->renderer->render(self::SAMPLE_WIDGET)
         );
     }
 
@@ -201,17 +146,9 @@ class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repo = $this->createMock(ContentWidgetRepository::class));
 
         $repo
-            ->method('findOneByName')
-            ->with(self::SAMPLE_WIDGET, $this->getOrganization())
+            ->method('findOneBy')
+            ->with(['name' => self::SAMPLE_WIDGET])
             ->willReturn($contentWidget);
-    }
-
-    /**
-     * @return Organization|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getOrganization(): Organization
-    {
-        return $this->createMock(Organization::class);
     }
 
     /**

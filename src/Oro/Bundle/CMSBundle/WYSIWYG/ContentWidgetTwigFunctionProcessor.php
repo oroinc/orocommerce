@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterface
 {
     /** @var AclHelper */
-    private $aclHelper;
+    protected $aclHelper;
 
     /**
      * @param AclHelper $aclHelper
@@ -66,10 +66,7 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
 
         // Adding new widget usages
         if ($actualWidgetCalls) {
-            $contentWidgets = $em->getRepository(ContentWidget::class)
-                ->findAllByNames(\array_keys($actualWidgetCalls), $this->aclHelper);
-
-            foreach ($contentWidgets as $contentWidget) {
+            foreach ($this->getContentWidgets($processedDTO, \array_keys($actualWidgetCalls)) as $contentWidget) {
                 $usage = new ContentWidgetUsage();
                 $usage->setContentWidget($contentWidget);
                 $usage->setEntityClass($ownerEntityClass);
@@ -82,6 +79,19 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
         }
 
         return $isFlushNeeded;
+    }
+
+    /**
+     * @param WYSIWYGProcessedDTO $processedDTO
+     * @param array $names
+     * @return array
+     */
+    protected function getContentWidgets(WYSIWYGProcessedDTO $processedDTO, array $names): array
+    {
+        return $processedDTO->getProcessedEntity()
+            ->getEntityManager()
+            ->getRepository(ContentWidget::class)
+            ->findAllByNames($names, $this->aclHelper);
     }
 
     /**

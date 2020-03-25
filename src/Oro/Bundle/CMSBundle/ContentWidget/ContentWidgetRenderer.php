@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Layout\LayoutContext;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -21,16 +20,13 @@ class ContentWidgetRenderer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /** @var ManagerRegistry */
-    private $doctrine;
+    protected $doctrine;
 
     /** @var LayoutManager */
     private $layoutManager;
 
     /** @var ContentWidgetTypeRegistry */
     private $contentWidgetTypeRegistry;
-
-    /** @var TokenAccessorInterface|null */
-    private $tokenAccessor;
 
     /**
      * @param ManagerRegistry $doctrine
@@ -49,14 +45,6 @@ class ContentWidgetRenderer implements LoggerAwareInterface
     }
 
     /**
-     * @param TokenAccessorInterface $tokenAccessor
-     */
-    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor): void
-    {
-        $this->tokenAccessor = $tokenAccessor;
-    }
-
-    /**
      * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger): void
@@ -72,21 +60,7 @@ class ContentWidgetRenderer implements LoggerAwareInterface
      */
     public function render(string $widgetName, Organization $organization = null): string
     {
-        $organization = $organization ?? $this->getOrganization();
-        if (!$organization) {
-            $this->logger->error(
-                sprintf('Could not render content widget %s: cannot detect organization', $widgetName)
-            );
-
-            return '';
-        }
-
-        /** @var ContentWidget $contentWidget */
-        $contentWidget = $this->doctrine
-            ->getManagerForClass(ContentWidget::class)
-            ->getRepository(ContentWidget::class)
-            ->findOneByName($widgetName, $organization);
-
+        $contentWidget = $this->getContentWidget($widgetName, $organization);
         if (!$contentWidget) {
             $this->logger->error(
                 sprintf('Could not render content widget %s: cannot find content widget', $widgetName)
@@ -96,6 +70,18 @@ class ContentWidgetRenderer implements LoggerAwareInterface
         }
 
         return $this->renderWidget($contentWidget);
+    }
+
+    /**
+     * @param string $widgetName
+     * @param Organization|null $organization
+     * @return ContentWidget|null
+     */
+    protected function getContentWidget(string $widgetName, Organization $organization = null): ?ContentWidget
+    {
+        return $this->doctrine->getManagerForClass(ContentWidget::class)
+            ->getRepository(ContentWidget::class)
+            ->findOneBy(['name' => $widgetName]);
     }
 
     /**
@@ -134,13 +120,5 @@ class ContentWidgetRenderer implements LoggerAwareInterface
         }
 
         return '';
-    }
-
-    /**
-     * @return Organization|null
-     */
-    private function getOrganization(): ?Organization
-    {
-        return $this->tokenAccessor ? $this->tokenAccessor->getOrganization() : null;
     }
 }

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import routing from 'routing';
 import DigitalAssetDialogWidget from 'orodigitalasset/js/widget/digital-asset-dialog-widget';
 
@@ -58,7 +59,10 @@ const openDigitalAssetsCommand = {
 
         return new DigitalAssetDialogWidget({
             title: this.options.title,
-            url: routing.generate(this.options.routeName, this.options.routeParams || {}),
+            url: routing.generate(
+                this.options.routeName,
+                _.extend(editor.Config.requestParams, this.options.routeParams || {})
+            ),
             loadingElement: container,
             dialogOptions: {
                 appendTo: container

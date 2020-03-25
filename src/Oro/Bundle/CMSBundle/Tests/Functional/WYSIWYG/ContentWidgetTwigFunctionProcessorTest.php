@@ -10,6 +10,9 @@ use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetUsageRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentWidgetData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @group CommunityEdition
+ */
 class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 {
     /** @var \Doctrine\Common\Persistence\ObjectManager */
