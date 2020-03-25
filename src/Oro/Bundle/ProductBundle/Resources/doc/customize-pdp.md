@@ -116,20 +116,18 @@ Template:
 {% endblock %}
 
 {% block _product_image_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
         <div class="product-gallery product-gallery_vertical">
             <div class="product-gallery__image-holder">
                 <div class="product-gallery__image-holder__carousel" data-product-gallery>
                     <div class="product-gallery__image-holder__container">
                         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-                        <img src="{{ Image.url(productImage, 'product_extra_large') }}"
+                        <img src="{{ product_filtered_image(productImage, 'product_extra_large') }}"
                              alt="{{ product.names|localized_value }}"
                              width="378"
                              height="378"
                                 {% if productImage and isDesktopVersion() %}
-                                    data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                                    data-zoom-image="{{ product_filtered_image(productImage, 'product_original') }}"
                                     {% set options = {
                                     widgetModule: 'jquery-elevatezoom',
                                     widgetName: 'elevateZoom',
@@ -148,7 +146,7 @@ Template:
                         />
                     </div>
                     {% for productImage in product.imagesByType('additional') %}
-                        <img src="{{ Image.url(productImage.image, 'product_small') }}" width="82"  height="82"/>
+                        <img src="{{ product_filtered_image(productImage.image, 'product_small') }}" width="82"  height="82"/>
                     {% endfor %}
                 </div>
             </div>

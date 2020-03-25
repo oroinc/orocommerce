@@ -6,6 +6,9 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
+/**
+ * This class makes rule not applicable in case if error was occurred during rule evaluation.
+ */
 class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltrationServiceInterface
 {
     /** @var ExpressionLanguage */
@@ -56,16 +59,25 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
      *
      * @return bool
      */
-    private function expressionApplicable($expression, $values)
+    private function expressionApplicable($expression, $values): bool
     {
+        $result = false;
+
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new \ErrorException($message, $severity, $severity, $file, $line);
+        }, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+
         try {
-            return (bool) $this->expressionLanguage->evaluate($expression, $values);
+            $result = (bool) $this->expressionLanguage->evaluate($expression, $values);
         } catch (\Exception $e) {
             $this->logger->error(
                 'Rule condition evaluation error: ' . $e->getMessage(),
                 ['expression' => $expression, 'values' => $values]
             );
-            return false;
         }
+
+        restore_error_handler();
+
+        return $result;
     }
 }

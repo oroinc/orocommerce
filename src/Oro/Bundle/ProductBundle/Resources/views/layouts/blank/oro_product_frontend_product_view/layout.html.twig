@@ -1,9 +1,7 @@
 {# Product view Layout START #}
 {% block _product_view_container_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = Image.url(productImage, 'product_small') %}
+    {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -263,13 +261,12 @@
 
 {% block product_view_attribute_multiimages_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set collection = value %}
     {% set galleryImages = [] %}
     {% for item in collection %}
         {% set galleryImages = galleryImages|merge([{
-            src: Image.url(item.file, 'product_gallery_popup'),
+            src: product_filtered_image(item.file, 'product_gallery_popup'),
             alt: ''
         }]) %}
     {% endfor %}
@@ -290,7 +287,7 @@
         <div class="product-view__attribute-images-container show-less" data-role="items-container" {{ UI.attributes(popupGalleryAttr) }}>
             {%- for item in collection -%}
             <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
-                <img class="product-view__attribute-image" src="{{ Image.url(item.file, 'product_small') }}"/>
+                <img class="product-view__attribute-image" src="{{ product_filtered_image(item.file, 'product_small') }}"/>
             </div>
             {%- endfor -%}
         </div>
@@ -300,14 +297,13 @@
 
 {% block product_view_attribute_image_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set popupGalleryAttr = {
         'data-page-component-module': 'oroproduct/js/app/widget/product-popup-gallery-widget',
         'data-page-component-options': {
             bindWithSlider: false,
             galleryImages: [{
-                src: Image.url(value, 'product_gallery_popup'),
+                src: product_filtered_image(value, 'product_gallery_popup'),
             }]
         }|json_encode
     } %}
@@ -317,7 +313,7 @@
             <span class="product-view-attribute">{{ label|trans }}:</span>
         {% endif %}
         <span class="product-view__attribute-images-item" data-trigger-gallery-open>
-            <img class="product-view__attribute-image" src="{{ Image.url(value, 'product_small') }}"/>
+            <img class="product-view__attribute-image" src="{{ product_filtered_image(value, 'product_small') }}"/>
         </span>
     </div>
 {% endblock %}

@@ -37,7 +37,6 @@
 
 {% block _product_view_media_gallery_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set zoomOptions = {
         viewport: {
@@ -82,8 +81,8 @@
         {% set galleryImages = [] %}
         {% for productImage in productImages %}
             {% set galleryImages = galleryImages|merge([{
-                src: Image.url(productImage.image, 'product_gallery_popup'),
-                thumb: Image.url(productImage.image, 'product_small'),
+                src: product_filtered_image(productImage.image, 'product_gallery_popup'),
+                thumb: product_filtered_image(productImage.image, 'product_small'),
                 alt: product.names|localized_value
             }]) %}
         {% endfor %}
@@ -104,14 +103,14 @@
                     <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-view-media-gallery__image"
                              alt="{{ product.names|localized_value|e }}"
-                             data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                             data-zoom-image="{{ product_filtered_image(productImage.image, 'product_original') }}"
                                 {% if loop.first %}
-                                    src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                    src="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
                                     data-page-component-module="oroui/js/app/components/viewport-component"
                                     data-page-component-options="{{ zoomOptions|json_encode }}"
                                     itemprop="image"
                                 {% else %}
-                                    data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                    data-lazy="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
                                 {% endif %}
                         />
                     </div>
@@ -122,7 +121,7 @@
         <div class="product-view-media-gallery" itemprop="productID" content="{{ product.id}}">
             <div class="product-view-media-gallery__image-item">
                 <img class="product-view-media-gallery__image"
-                     src="{{ Image.url(null, 'product_gallery_main') }}"
+                     src="{{ product_image_placeholder('product_gallery_main') }}"
                      alt="{{ product.names|localized_value|e }}"
                      width="378"
                      height="378"
@@ -137,8 +136,7 @@
         <div class="product-view-media-gallery__nav loading slides-to-show-{{ navListOptions.slidesToShow }}" {{ UI.attributes(slideNavAttr) }}>
             {% for productImage in productImages %}
                 <div class="product-view-media-gallery__nav__item">
-                    <img class="product-view-media-gallery__nav__image"
-                         src="{{ Image.url(productImage.image, 'product_small') }}"/>
+                    <img class="product-view-media-gallery__nav__image" src="{{ product_filtered_image(productImage.image, 'product_small') }}"/>
                 </div>
             {% endfor %}
         </div>
@@ -147,7 +145,6 @@
 
 {% block _product_view_media_slider_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set imageListOptions = {
         slidesToShow: 1,
@@ -168,7 +165,7 @@
         {% if productImages|length == 0 %}
             <div class="product-view-media-slider__image-item">
                 <img class="product-view-media-slider__image"
-                     src="{{ Image.url(null, 'product_gallery_main') }}"
+                     src="{{ product_image_placeholder('product_gallery_main') }}"
                      alt="{{ product.names|localized_value|e }}"
                      width="378"
                      height="378"
@@ -180,9 +177,9 @@
                     <img class="product-view-media-slider__image"
                          alt="{{ product.names|localized_value|e }}"
                             {% if loop.first %}
-                                src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                src="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
                             {% else %}
-                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                data-lazy="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
                             {% endif %}
                     />
                 </div>

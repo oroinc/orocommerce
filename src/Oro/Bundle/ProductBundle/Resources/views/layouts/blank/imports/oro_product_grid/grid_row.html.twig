@@ -73,7 +73,6 @@
 {% endblock %}
 
 {% block  __oro_product_grid__product_view_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview',
         'href': product.view_link,
@@ -82,7 +81,7 @@
 
     {% set isNoImage = true %}
     {% if product.image is defined %}
-        {% set isNoImage = (product.image|trim) == (Image.url(null, 'product_large')|e|trim) %}
+        {% set isNoImage = (product.image|trim) == (product_image_placeholder('product_large')|e|trim) %}
     {% endif %}
 
     {% if popup_gallery and not isNoImage %}
@@ -110,7 +109,7 @@
 
     {% set isNoImage = true %}
     {% if product.image is defined %}
-        {% set isNoImage = (product.image|trim|split('/')|last) == (Image.url(null, 'product_large')|e|trim|split('/')|last) %}
+        {% set isNoImage = (product.image|trim|split('/')|last) == (product_image_placeholder('product_large')|e|trim|split('/')|last) %}
     {% endif %}
 
     {% if not isNoImage %}
@@ -142,7 +141,7 @@
         'itemprop': 'image'
     } %}
 
-    {% set image = product.image is defined ? asset(product.image|trim('/')) : Image.url(null, 'product_large') %}
+    {% set image = product.image is defined ? asset(product.image|trim('/')) : product_image_placeholder('product_large') %}
 
     <picture {{ block('block_attributes') }}>
         <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">

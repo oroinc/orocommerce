@@ -26,7 +26,7 @@
 
     @extend %base-transition;
 
-    &:focus,
+    &.focus-visible:focus,
     &:hover,
     .product-item__preview:hover + & {
         opacity: $view-product-gallery-hover-opacity;
