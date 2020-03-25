@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
@@ -28,27 +27,19 @@ class FrontendProductDatagridListener
     protected $themeHelper;
 
     /**
-     * @var CacheManager
-     */
-    protected $imagineCacheManager;
-
-    /**
      * @var ImagePlaceholderProviderInterface
      */
     protected $imagePlaceholderProvider;
 
     /**
      * @param DataGridThemeHelper $themeHelper
-     * @param CacheManager $imagineCacheManager
      * @param ImagePlaceholderProviderInterface $imagePlaceholderProvider
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
-        CacheManager $imagineCacheManager,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider
     ) {
         $this->themeHelper = $themeHelper;
-        $this->imagineCacheManager = $imagineCacheManager;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
     }
 

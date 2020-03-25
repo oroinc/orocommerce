@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -30,11 +29,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
     protected $themeHelper;
 
     /**
-     * @var CacheManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $imagineCacheManager;
-
-    /**
      * @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imagePlaceholderProvider;
@@ -42,12 +36,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
-        $this->imagineCacheManager = $this->createMock(CacheManager::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
-            $this->imagineCacheManager,
             $this->imagePlaceholderProvider
         );
     }
