@@ -104,7 +104,6 @@
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% if not is_one_shopping_list_enabled() %}
         {% set currentClass = 'checked' %}
         {% set attr = layout_attr_defaults(attr, {
@@ -179,8 +178,8 @@
                     <div class="shopping-list-dropdown__product-item">
                         <div class="shopping-list-dropdown__product-img">
                             {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
-                            {% set productImage = Image.image(productImageData, 'product_small') %}
-                            {{ productImage }}
+                            {% set productTitle = productImageData ? oro_file_title(productImageData) : product.names|localized_value|oro_html_strip_tags %}
+                            <img src="{{ product_filtered_image(productImageData, 'product_small') }}" title="{{ productTitle }}"/>
                         </div>
                         <div class="shopping-list-dropdown__product-base">
                             <div class="shopping-list-dropdown__product-total">

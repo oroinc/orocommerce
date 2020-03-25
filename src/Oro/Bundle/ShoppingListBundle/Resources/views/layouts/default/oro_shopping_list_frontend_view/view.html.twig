@@ -284,14 +284,17 @@
 
 {% block _shopping_list_line_items_list_row_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set class = matrixForm is null ?
         ' shopping-list-line-items__item' :
         'shopping-list-line-items__item--configurable'
     %}
     {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
-    {% set productImage = Image.image(productImageData, 'product_small', {alt: mainProduct.names|localized_value|oro_html_strip_tags}) %}
-    {% set productImageUrl = Image.url(productImageData, 'product_small') %}
+    {% set productImageUrl = product_filtered_image(productImageData, 'product_small') %}
+    {% set productImage %}
+        {% set productTitle = productImageData ? oro_file_title(productImageData) : mainProduct.names|localized_value|oro_html_strip_tags %}
+        <img src="{{ productImageUrl }}" alt="{{ productTitle }}"/>
+    {% endset %}
+
     {% set modelAttr = mainProduct.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
         'imageUrl': productImageUrl

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
@@ -14,6 +16,9 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
+    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $attachmentManager;
+
     /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $imagePlaceholderProvider;
 
@@ -22,9 +27,11 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
+        $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
+            ->add('oro_attachment.manager', $this->attachmentManager)
             ->add('oro_product.provider.product_image_placeholder', $this->imagePlaceholderProvider)
             ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
             ->getContainer($this);
@@ -94,6 +101,48 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => []
             ]
         ];
+    }
+
+    public function testGetProductFilteredImage(): void
+    {
+        $file = new File();
+        $filter = 'product_small';
+
+        $this->attachmentManager
+            ->expects($this->once())
+            ->method('getFilteredImageUrl')
+            ->with($file, $filter)
+            ->willReturn('/path/to/filtered/image');
+
+        $this->imagePlaceholderProvider
+            ->expects($this->never())
+            ->method('getPath');
+
+        $this->assertEquals(
+            '/path/to/filtered/image',
+            self::callTwigFunction($this->extension, 'product_filtered_image', [$file, $filter])
+        );
+    }
+
+    public function testGetProductFilteredImageWithoutFile(): void
+    {
+        $filter = 'product_small';
+        $path = '/some/test/path.npg';
+
+        $this->attachmentManager
+            ->expects($this->never())
+            ->method('getFilteredImageUrl');
+
+        $this->imagePlaceholderProvider
+            ->expects($this->once())
+            ->method('getPath')
+            ->with($filter)
+            ->willReturn($path);
+
+        $this->assertEquals(
+            $path,
+            self::callTwigFunction($this->extension, 'product_filtered_image', [null, $filter])
+        );
     }
 
     public function testGetProductImagePlaceholder()

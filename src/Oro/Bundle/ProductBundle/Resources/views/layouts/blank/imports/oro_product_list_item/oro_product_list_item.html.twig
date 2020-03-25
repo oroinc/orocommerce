@@ -1,8 +1,6 @@
 {% block __oro_product_list_item__product_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = Image.url(productImage, 'product_small') %}
+    {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -100,7 +98,6 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_view_image_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -116,9 +113,10 @@
     } %}
 
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
+    {% set productImageUrl = product_filtered_image(productImage, product_image_size) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
+        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
     </picture>
 {% endblock %}
 
