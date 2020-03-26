@@ -135,14 +135,6 @@
     }
 }
 
-@include only-desktop {
-    .shopping-list-widget {
-        &:hover > .header-row__toggle {
-            display: block;
-        }
-    }
-}
-
 @include breakpoint('desktop') {
     .shopping-list-widget {
         position: relative;

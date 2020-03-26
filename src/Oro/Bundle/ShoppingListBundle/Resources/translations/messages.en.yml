@@ -182,9 +182,12 @@ oro:
 
     frontend:
         shoppinglist:
-            trigger.aria_label: '{0} You do not have available Shopping Lists. Open to Create a New one|{1} You have 1 Shopping List. Open to view details|]1,Inf[ You have %count% Shopping Lists. Open to view details'
+            fieldset_legend: 'Set default Shopping List'
+            trigger:
+                aria_label: '{0} You do not have available Shopping Lists. Open to Create a New List|{1} You have 1 Shopping List. Open to view details|]1,Inf[ You have %count% Shopping Lists. Open to view details'
+                single_aria_label: 'You have a Shopping List. Open to view details'
             link.aria_label: '{0} %shoppinglist% is empty. View Details|{1} %shoppinglist% contains %count% item. Total cost is %total%. View Details|]1,Inf[ %shoppinglist% contains %count% items. Total cost is %total%. View Details'
-            radio.aria_label: 'Set the %shoppinglist% as Default'
+            radio.label: 'Set the %shoppinglist% as Default'
             radio.title: 'Set as Default'
             quick_order:
                 default_label: Quick Order (%date%)

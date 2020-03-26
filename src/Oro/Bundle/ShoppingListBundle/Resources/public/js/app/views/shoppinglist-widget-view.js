@@ -53,14 +53,19 @@ define(function(require) {
         },
 
         render: function() {
+            const $shoppingListWidget = this.$el.closest('.shopping-list-widget');
             const showShoppingListDropdown =
                 this.shoppingListCollection.length ||
-                this.$el.closest('.shopping-list-widget').find('.shopping-list-widget__create-btn').length;
+                $shoppingListWidget.find('.shopping-list-widget__create-btn').length;
 
-            this.$el.closest('.shopping-list-widget').toggleClass(
+            $shoppingListWidget.toggleClass(
                 'shopping-list-widget--disabled',
                 !showShoppingListDropdown
             );
+
+            $shoppingListWidget.find('.header-row__trigger')
+                .toggleClass('disabled', !showShoppingListDropdown)
+                .attr('disabled', !showShoppingListDropdown);
 
             this.updateLabel();
             this.updateRadio();
