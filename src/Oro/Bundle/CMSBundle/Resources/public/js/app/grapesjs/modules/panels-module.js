@@ -6,7 +6,6 @@ define(function(require) {
     const settingsTemplate = require('tpl-loader!orocms/templates/grapesjs-settings.html');
     const $ = require('jquery');
     const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
 
     /**
      * Create panel manager instance
@@ -17,17 +16,6 @@ define(function(require) {
         themes: [],
 
         settingsTemplate: settingsTemplate,
-
-        optionButtonTooltips: {
-            'sw-visibility': __('oro.cms.wysiwyg.option_panel.show_borders'),
-            'preview': __('oro.cms.wysiwyg.option_panel.preview'),
-            'fullscreen': __('oro.cms.wysiwyg.option_panel.fullscreen'),
-            'export-template': __('oro.cms.wysiwyg.option_panel.export'),
-            'undo': __('oro.cms.wysiwyg.option_panel.undo'),
-            'redo': __('oro.cms.wysiwyg.option_panel.redo'),
-            'gjs-open-import-webpage': __('oro.cms.wysiwyg.option_panel.import'),
-            'canvas-clear': __('oro.cms.wysiwyg.option_panel.clear_canvas')
-        },
 
         /**
          * @inheritDoc
@@ -69,8 +57,7 @@ define(function(require) {
 
             pn.buttons.each(function(button) {
                 button.set('attributes', {
-                    'data-toggle': 'tooltip',
-                    'title': this.optionButtonTooltips[button.id]
+                    'data-toggle': 'tooltip'
                 });
             }, this);
 

@@ -16,9 +16,11 @@ import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
-const MIN_EDITOR_WIDHT = 1100;
+const MIN_EDITOR_WIDTH = 1100;
+
 /**
  * Create grapesJS content builder
  * @type {*|void}
@@ -87,8 +89,15 @@ const GrapesjsEditorView = BaseView.extend({
          */
         colorPicker: {
             appendTo: 'body',
-            showPalette: false
-        }
+            showPalette: false,
+            chooseText: __('oro.cms.wysiwyg.color_picker.choose_text'),
+            cancelText: __('oro.cms.wysiwyg.color_picker.cancel_text')
+        },
+
+        /**
+         * Modal Export Title text
+         */
+        textViewCode: __('oro.cms.wysiwyg.export.title')
     },
 
     /**
@@ -183,15 +192,37 @@ const GrapesjsEditorView = BaseView.extend({
         'gjs-preset-webpage': {
             aviaryOpts: false,
             filestackOpts: null,
-            blocksBasicOpts: {
-                flexGrid: 1
+            formsOpts: {
+                labelInputName: __('oro.cms.wysiwyg.forms.label_input_name'),
+                labelTextareaName: __('oro.cms.wysiwyg.forms.label_textarea_name'),
+                labelSelectName: __('oro.cms.wysiwyg.forms.label_select_name'),
+                labelCheckboxName: __('oro.cms.wysiwyg.forms.label_checkbox_name'),
+                labelRadioName: __('oro.cms.wysiwyg.forms.label_radio_name'),
+                labelButtonName: __('oro.cms.wysiwyg.forms.label_button_name'),
+                labelTypeText: __('oro.cms.wysiwyg.forms.label_type_text'),
+                labelTypeEmail: __('oro.cms.wysiwyg.forms.label_type_email'),
+                labelTypePassword: __('oro.cms.wysiwyg.forms.label_type_password'),
+                labelTypeNumber: __('oro.cms.wysiwyg.forms.label_type_number'),
+                labelTypeSubmit: __('oro.cms.wysiwyg.forms.label_type_submit'),
+                labelTypeReset: __('oro.cms.wysiwyg.forms.label_type_reset'),
+                labelTypeButton: __('oro.cms.wysiwyg.forms.label_type_button'),
+                labelNameLabel: __('oro.cms.wysiwyg.forms.label_name_label'),
+                labelForm: __('oro.cms.wysiwyg.forms.label_form'),
+                labelSelectOption: __('oro.cms.wysiwyg.forms.label_select_option'),
+                labelOption: __('oro.cms.wysiwyg.forms.label_option'),
+                labelStateNormal: __('oro.cms.wysiwyg.forms.label_state_normal'),
+                labelStateSuccess: __('oro.cms.wysiwyg.forms.label_state_success'),
+                labelStateError: __('oro.cms.wysiwyg.forms.label_state_error')
             },
             navbarOpts: false,
             countdownOpts: false,
             modalImportContent: function(editor) {
                 return editor.getHtml() + '<style>' + editor.getCss() + '</style>';
             },
-            importViewerOptions: {}
+            importViewerOptions: {},
+            exportOpts: {
+                btnLabel: __('oro.cms.wysiwyg.export.btn_label')
+            }
         },
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
@@ -513,10 +544,13 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (_.isArray(toolbar)) {
             toolbar = toolbar.map(tool => {
+                if (_.isFunction(tool.command)) {
+                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
+
+                    return tool;
+                }
+
                 switch (tool.command) {
-                    case 'select-parent':
-                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
-                        break;
                     case 'tlb-move':
                         tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
                         break;
@@ -570,7 +604,7 @@ const GrapesjsEditorView = BaseView.extend({
         mediator.trigger('grapesjs:loaded', this.builder);
         mediator.trigger('page:afterChange');
 
-        this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDHT);
+        this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
     },
 
     /**
@@ -735,7 +769,7 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getPlugins: function() {
         return {
-            plugins: [ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
+            plugins: [i18nMessages, ContentParser, parserPostCSS, ...Object.keys(this.builderPlugins)],
             pluginsOpts: this.builderPlugins
         };
     }

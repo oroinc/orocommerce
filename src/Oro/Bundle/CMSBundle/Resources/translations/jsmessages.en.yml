@@ -9,12 +9,37 @@ oro.cms:
             undo: 'Undo'
             redo: 'Redo'
             clear_canvas: 'Clear Canvas'
+            settings: 'Settings'
+            open_Blocks: 'Open Blocks'
+            open_style_manager: 'Open Style Manager'
+            open_layer_manager: 'Open Layer Manager'
         theme_selector:
             placeholder: 'Type theme name'
         exclude_content_block: 'You are trying to add current content block inside itself. Please choose another one'
         content_block:
             title: 'Select content block'
             type: 'Content Block'
+        forms:
+            label_input_name: 'Input'
+            label_textarea_name: 'Textarea'
+            label_select_name: 'Select'
+            label_checkbox_name: 'Checkbox'
+            label_radio_name: 'Radio'
+            label_button_name: 'Button'
+            label_type_text: 'Text'
+            label_type_email: 'Email'
+            label_type_password: 'Password'
+            label_type_number: 'Number'
+            label_type_submit: 'Submit'
+            label_type_reset: 'Reset'
+            label_type_button: 'Button'
+            label_name_label: 'Label'
+            label_form: 'Form'
+            label_select_option: '- Select option -'
+            label_option: 'Option'
+            label_state_normal: 'Normal'
+            label_state_success: 'Success'
+            label_state_error: 'Error'
         content_widget:
             title: 'Select content widget'
             type: 'Content Widget'
@@ -29,18 +54,56 @@ oro.cms:
             code:
                 label: 'Code'
                 placeholder: 'Type code here'
-            link_button: 'Link Button'
-            table: 'Table'
+            table:
+                label: 'Table'
+                header_cell_label: 'Header Cell'
+                body_cell_label: 'Body Cell'
             digital_asset:
                 image: 'Image'
                 file: 'File'
-            text_basic: 'Text Section'
+            text_basic:
+                label: 'Text Section'
+                heading: 'Insert title here'
+                paragraph: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididuntut labore et dolore magna aliqua'
+            column1:
+                label: '1 Column'
+            column2:
+                label: '2 Columns'
+            column3:
+                label: '3 Columns'
+            column37:
+                label: '2 Columns 3/7'
+            text:
+                label: 'Text'
+                content: 'Insert your text here'
+            link:
+                label: 'Link'
+                content: 'Link'
+            link_block:
+                label: 'Link Block'
+            link_button:
+                label: 'Link Button'
+                content: 'Link Button'
+            image:
+                label: 'Image'
+            video:
+                label: 'Video'
+            map:
+                label: 'Map'
+            input:
+                label: 'Input'
+            quote:
+                label: 'Quote'
+                content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ipsum dolor sit'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
             label: 'Paste here your HTML/CSS and click Import'
             title: 'Import'
             button: 'Import'
+        export:
+            title: 'Code'
+            btn_label: 'Export to ZIP'
         toolbar:
             selectParent: 'Select Parent'
             move: 'Move'
@@ -48,6 +111,331 @@ oro.cms:
             delete: 'Delete'
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
+        asset_manager:
+            add_button: 'Add image'
+            input_plh: 'http://path/to/the/image.jpg'
+            modal_title: 'Select Image'
+            upload_title: 'Drop files here or click to upload'
+        block_manager:
+            categories:
+                basic: 'Basic'
+                forms: 'Forms'
+        selector_manager:
+            label: 'Classes'
+            selected: 'Selected'
+            empty_state: '- State -'
+            states:
+                hover: 'Hover'
+                active: 'Click'
+                even_odd: 'Even/Odd'
+        style_manager:
+            settings: 'Settings'
+            empty: 'Select an element before using Style Manager'
+            layer: 'Layer'
+            enable: 'Enable'
+            disable: 'Disable'
+            auto: 'Auto'
+            file_button: 'Images'
+            flex_container: 'Flex Container'
+            sectors:
+                general: 'General'
+                layout: 'Layout'
+                typography: 'Typography'
+                decorations: 'Decorations'
+                extra: 'Extra'
+                flex: 'Flex'
+                dimension: 'dimension'
+            properties:
+                float:
+                    name: 'Alignment'
+                    list:
+                        none: 'None'
+                        left: 'Left'
+                        right: 'Right'
+                display:
+                    name: 'Display'
+                position:
+                    name: 'Position'
+                top:
+                    name: 'Top'
+                right:
+                    name: 'Right'
+                bottom:
+                    name: 'Bottom'
+                left:
+                    name: 'Left'
+                width:
+                    name: 'Width'
+                max_width:
+                    name: 'Max-width'
+                min_width:
+                    name: 'Min-width'
+                height:
+                    name: 'Height'
+                Max_height:
+                    name: 'Max-height'
+                min_height:
+                    name: 'Min-height'
+                margin:
+                    name: 'Margin'
+                margin_top:
+                    name: 'Top'
+                margin_right:
+                    name: 'Right'
+                margin_bottom:
+                    name: 'Bottom'
+                margin_left:
+                    name: 'Left'
+                padding:
+                    name: 'Padding'
+                padding_top:
+                    name: 'Top'
+                padding_right:
+                    name: 'Right'
+                padding_bottom:
+                    name: 'Bottom'
+                padding_left:
+                    name: 'Left'
+                font_family:
+                    name: 'Font'
+                font_size:
+                    name: 'Font size'
+                font_weight:
+                    name: 'Weight'
+                letter_spacing:
+                    name: 'Letter spacing'
+                color:
+                    name: 'Font color'
+                line_height:
+                    name: 'Line height'
+                text_align:
+                    name: 'Text align'
+                text_align_left:
+                    name: 'Left'
+                text_align_center:
+                    name: 'Center'
+                text_align_right:
+                    name: 'Right'
+                text_align_justify:
+                    name: 'Justify'
+                text_decoration:
+                    name: 'Text decoration'
+                text_decoration_none:
+                    name: 'None'
+                text_decoration_underline:
+                    name: 'Underline'
+                text_decoration_line_through:
+                    name: 'Line through'
+                text_shadow:
+                    name: 'Text shadow'
+                text_shadow_h:
+                    name: 'X position'
+                text_shadow_v:
+                    name: 'Y position'
+                text_shadow_blur:
+                    name: 'Blur'
+                text_shadow_color:
+                    name: 'Color'
+                opacity:
+                    name: 'Opacity'
+                background_color:
+                    name: 'Background color'
+                border:
+                    name: 'Border'
+                border_width:
+                    name: 'Width'
+                border_style:
+                    name: 'Style'
+                border_color:
+                    name: 'Color'
+                border_radius:
+                    name: 'Border radius'
+                border_radius_top:
+                    name: 'Top'
+                border_radius_right:
+                    name: 'Right'
+                border_radius_bottom:
+                    name: 'Bottom'
+                border_radius_left:
+                    name: 'Left'
+                box_shadow:
+                    name: 'Box shadow'
+                box_shadow_h:
+                    name: 'X position'
+                box_shadow_v:
+                    name: 'Y position'
+                box_shadow_blur:
+                    name: 'Blur'
+                box_shadow_spread:
+                    name: 'Spread'
+                box_shadow_color:
+                    name: 'Color'
+                box_shadow_type:
+                    name: 'Shadow type'
+                background:
+                    name: 'Background'
+                background_image:
+                    name: 'Image'
+                background_repeat:
+                    name: 'Repeat'
+                background_position:
+                    name: 'Position'
+                background_attachment:
+                    name: 'Attachment'
+                background_size:
+                    name: 'Size'
+                transition:
+                    name: 'Transition'
+                transition_property:
+                    name: 'Property'
+                transition_duration:
+                    name: 'Duration'
+                transition_timing_function:
+                    name: 'Easing'
+                perspective:
+                    name: 'Perspective'
+                transform:
+                    name: 'Transform'
+                transform_rotate_x:
+                    name: 'Rotate X'
+                transform_rotate_y:
+                    name: 'Rotate Y'
+                transform_rotate_z:
+                    name: 'Rotate Z'
+                transform_scale_x:
+                    name: 'Scale X'
+                transform_scale_y:
+                    name: 'Scale Y'
+                transform_scale_z:
+                    name: 'Scale Z'
+                label_parent_flex:
+                    name: 'Flex Parent'
+                label_children_flex:
+                    name: 'Flex Children'
+                flex:
+                    name: 'Flex'
+                flex_order:
+                    name: 'Order'
+                flex_direction:
+                    name: 'Direction'
+                flex_direction_row:
+                    name: 'Row'
+                flex_direction_reverse:
+                    name: 'Row reverse'
+                flex_direction_column:
+                    name: 'Column'
+                flex_direction_column_reverse:
+                    name: 'Column reverse'
+                flex_start:
+                    name: 'Start'
+                flex_end:
+                    name: 'End'
+                flex_space_between:
+                    name: 'Space between'
+                flex_space_around:
+                    name: 'Space around'
+                flex_center:
+                    name: 'Center'
+                flex_stretch:
+                    name: 'Stretch'
+                flex_align_items:
+                    name: 'Center'
+                flex_grow:
+                    name: 'Grow'
+                flex_shrink:
+                    name: 'Shrink'
+                flex_basis:
+                    name: 'Basis'
+                flex_align_self:
+                    name: 'Align'
+                justify_content:
+                    name: 'Justify'
+        trait_manager:
+            empty: 'Select an element before using Trait Manager'
+            label: 'Component settings'
+            traits:
+                id:
+                    label: 'Id'
+                    placeholder: 'eg. Text here'
+                alt:
+                    label: 'Alt'
+                    placeholder: 'eg. Text here'
+                title:
+                    label: 'Title'
+                    placeholder: 'eg. Text here'
+                href:
+                    label: 'Href'
+                    placeholder: 'eg. https://google.com'
+                provider:
+                    label: 'Provider'
+                target:
+                    label: 'Target'
+                src:
+                    label: 'Source'
+                    placeholder: 'eg. ./media/video.mp4'
+                poster:
+                    label: 'Poster'
+                    placeholder: 'eg. ./media/image.jpg'
+                videoId:
+                    label: 'Video ID'
+                    placeholder: 'eg. jNQXAC9IVRw'
+                rel:
+                    label: 'Related'
+                modestbranding:
+                    label: 'Modest'
+                color:
+                    label: 'Color'
+                    placeholder: 'eg. FF0000'
+                autoplay:
+                    label: 'Autoplay'
+                loop:
+                    label: 'Loop'
+                controls:
+                    label: 'Controls'
+                options:
+                    target:
+                        this_window: 'This window'
+                        blank: 'New window'
+        device_manager:
+            devices:
+                desktop: 'Desktop'
+                tablet: 'Tablet'
+                tablet_small: 'Tablet Small'
+                mobile: 'Mobile'
+                mobile_small: 'Mobile Small'
+                mobile_landscape: 'Mobile Landscape'
+                mobile_big: 'Mobile Big'
+        format_block:
+            title: 'Text format'
+            normal: 'Normal Text'
+            h1: 'Heading 1'
+            h2: 'Heading 2'
+            h3: 'Heading 3'
+            h4: 'Heading 4'
+            h5: 'Heading 5'
+            h6: 'Heading 6'
+        simple_actions:
+            bold:
+                title: 'Bold'
+            italic:
+                title: 'Italic'
+            underline:
+                title: 'Underline'
+            strikethrough:
+                title: 'Strike-through'
+            insert_ordered_list:
+                 title: 'Ordered List'
+            insert_unordered_list:
+                title: 'Unordered List'
+            subscript:
+                title: 'Subscript'
+            superscript:
+                title: 'Superscript'
+            inline_widget:
+                title: 'Inline widget'
+        color_picker:
+            choose_text: 'Ok'
+            cancel_text: '⨯'
         settings:
             label: 'Settings'
         mobile:

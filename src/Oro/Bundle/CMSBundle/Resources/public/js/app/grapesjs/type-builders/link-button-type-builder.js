@@ -5,7 +5,7 @@ const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'link',
 
     button: {
-        label: __('oro.cms.wysiwyg.component.link_button'),
+        label: __('oro.cms.wysiwyg.component.link_button.label'),
         category: 'Basic',
         attributes: {
             'class': 'fa fa-hand-pointer-o'
@@ -16,7 +16,7 @@ const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             classes: ['btn', 'btn--info'],
             tagName: 'a',
-            content: 'Link Button'
+            content: __('oro.cms.wysiwyg.component.link_button.content')
         }
     },
 

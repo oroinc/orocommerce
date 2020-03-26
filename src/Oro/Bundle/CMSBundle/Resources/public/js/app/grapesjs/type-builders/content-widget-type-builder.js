@@ -221,9 +221,9 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     onInit() {
         this.editor.RichTextEditor.remove('inlineWidget');
         this.editor.RichTextEditor.add('inlineWidget', {
-            icon: '<i class="fa fa-object-ungroup"></i>',
+            icon: '<span class="fa fa-object-ungroup" aria-hidden="true"></span>',
             attributes: {
-                title: 'Inline widget'
+                title: __('oro.cms.wysiwyg.simple_actions.inline_widget.title')
             },
             result: rte => {
                 const selection = rte.selection();

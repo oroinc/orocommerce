@@ -1,5 +1,6 @@
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import tableResponsiveTemplate from 'tpl-loader!orocms/templates/grapesjs-table-responsive.html';
+import __ from 'orotranslation/js/translator';
 
 /**
  * Create responsive table component type for builder
@@ -8,7 +9,7 @@ const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
     componentType: 'table-responsive',
 
     button: {
-        label: 'Table',
+        label: __('oro.cms.wysiwyg.component.table.label'),
         category: 'Basic',
         attributes: {
             'class': 'fa fa-table'
