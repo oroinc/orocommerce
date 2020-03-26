@@ -1,22 +1,11 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
-        '~data-page-component-options': {
-            view: 'oroui/js/app/views/layout-subtree-view',
-            blockId: id,
-            reloadEvents: ['shopping-list:refresh', 'frontend:shopping-list-item-quantity:update', 'frontend:item:delete'],
-            keepAttrs: ['aria-label']
-        },
-        'data-dropdown-trigger': true,
-        '~class': " main-menu__item main-menu__item--nested",
-        'aria-label': 'oro.frontend.shoppinglist.trigger.aria_label'|trans({'%count%': shoppingLists|length}),
-        'role': 'button',
-        'tabindex': '0'
+        '~class': " main-menu__item main-menu__item--nested"
     }) %}
 
-    <div {{ block('block_attributes') }}>
+    <span {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
+    </span>
 {% endblock %}
 
 {% block _header_row_shopping_toggle_widget %}
@@ -39,7 +28,7 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
-    <div class="cart-widget__content">
+    <span class="cart-widget__content">
         <span class="cart-widget__icon" aria-hidden="true">
             {% if not is_one_shopping_list_enabled() %}
                 <span class="fa-clipboard"></span>
@@ -69,7 +58,7 @@
                 <span class="fa-angle-down" aria-hidden="true"></span>
             {% endif %}
         </span>
-    </div>
+    </span>
     {{ block_widget(block) }}
 {% endblock %}
 
@@ -92,14 +81,17 @@
     {% endif %}
 
     <div {{ block('block_attributes') }}>
-        {% for shoppingList in shoppingLists -%}
-            {% do block|merge_context({
-                shoppingList: shoppingList,
-                shoppingListProducts: shoppingListProducts,
-                productsMatchedPrices: productsMatchedPrices,
-            }) %}
-            {{ block('container_widget') }}
-        {%- endfor %}
+        <fieldset>
+            <legend class="sr-only">{{ 'oro.frontend.shoppinglist.fieldset_legend'|trans }}</legend>
+            {% for shoppingList in shoppingLists -%}
+                {% do block|merge_context({
+                    shoppingList: shoppingList,
+                    shoppingListProducts: shoppingListProducts,
+                    productsMatchedPrices: productsMatchedPrices,
+                }) %}
+                {{ block('container_widget') }}
+            {%- endfor %}
+        </fieldset>
     </div>
 {% endblock %}
 
@@ -110,7 +102,6 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " shopping-list-dropdown__item"
         }) %}
-
         <div {{ block('block_attributes') }}>
             <div class="shopping-list-dropdown__radio">
                 <label class="custom-radio {{ shoppingList.isCurrent ? currentClass }}"
@@ -120,9 +111,9 @@
                     data-boundary="viewport"
                     data-offset="2, 2"
                     title="{{ 'oro.frontend.shoppinglist.radio.title'|trans }}"
-                    aria-label="{{ 'oro.frontend.shoppinglist.radio.aria_label'|trans({'%shoppinglist%': shoppingList.label}) }}"
                     data-shopping-list-id="{{ shoppingList.id }}"
                     data-role="shopping-list-current-label">
+                    <span class="sr-only">{{ 'oro.frontend.shoppinglist.radio.label'|trans({'%shoppinglist%': shoppingList.label}) }}</span>
                     <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
                         value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}"
                         class="custom-radio__control">
@@ -249,6 +240,7 @@
             'btnCss': 'shopping-list-widget__create-btn',
             'iCss': 'fa-plus-circle',
             'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+            'ariaLabel' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
             'labelInIcon': false,
             'widget' : {
                 'type' : 'shopping-list-create',

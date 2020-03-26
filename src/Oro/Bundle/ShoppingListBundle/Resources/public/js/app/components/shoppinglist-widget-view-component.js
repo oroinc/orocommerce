@@ -5,7 +5,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const routing = require('routing');
     const $ = require('jquery');
-    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     const ShoppingListWidgetViewComponent = ViewComponent.extend({
@@ -30,11 +30,60 @@ define(function(require) {
 
             ShoppingListWidgetViewComponent.__super__.initialize.call(this, options);
 
-            this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
+            this.$el.on(`change.${this.cid}`, this.elements.radio, this._onCurrentShoppingListChange.bind(this));
+            this.$shoppingListWidget = this.$el.closest('.shopping-list-widget');
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            this.bindShoppingListWidgetEvents();
+
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
-            }, this));
+            });
+        },
+
+        bindShoppingListWidgetEvents: function() {
+            this.$shoppingListWidget.on({
+                [`mouseenter.${this.cid} click.${this.cid}`]: e => {
+                    const $widget = $(e.currentTarget);
+
+                    if (!$widget.hasClass('show')) {
+                        $widget.find('[data-toggle="dropdown"]').dropdown('bindKeepFocusInside');
+                        $widget.addClass('show-by-hover');
+                    }
+                },
+                [`mouseleave.${this.cid} hidden.bs.dropdown.${this.cid}`]: e => {
+                    const $widget = $(e.currentTarget);
+
+                    if ($widget.hasClass('show') && !this.hasFocus($widget.find('.header-row__toggle'))) {
+                        $widget.find('[data-toggle="dropdown"]').dropdown('unbindKeepFocusInside');
+                    }
+
+                    $widget.removeClass('show-by-hover');
+                },
+                [`focusin.${this.cid}`]: e => {
+                    const $widget = $(e.currentTarget);
+
+                    if (!$widget.hasClass('show') && this.hasFocus($widget.find('.header-row__toggle'))) {
+                        $widget.attr('data-skip-focus-decoration-inner-elements', '');
+
+                        setTimeout(() => {
+                            $widget.removeClass('show-by-hover');
+                            $widget.find('[data-toggle="dropdown"]').dropdown('toggle');
+                            $widget.removeAttr('data-skip-focus-decoration-inner-elements');
+                        }, 0);
+                    }
+                },
+                [`focusout.${this.cid}`]: e => {
+                    const $widget = $(e.currentTarget);
+
+                    if ($widget.hasClass('show') && !$.contains(e.currentTarget, e.relatedTarget)) {
+                        $widget.find('[data-toggle="dropdown"]').dropdown('toggle');
+                    }
+                }
+            });
+        },
+
+        hasFocus: function(el) {
+            return $.contains($(el)[0], document.activeElement);
         },
 
         /**
@@ -43,7 +92,6 @@ define(function(require) {
          * @param e
          */
         _onCurrentShoppingListChange: function(e) {
-            const self = this;
             const shoppingListId = parseInt($(e.target).val(), 10);
             const shoppingListLabel = $(e.target).data('label');
 
@@ -52,15 +100,16 @@ define(function(require) {
                 url: routing.generate('oro_api_set_shopping_list_current', {
                     id: shoppingListId
                 }),
-                success: function() {
-                    self.shoppingListCollection.each(function(model) {
+                success: () => {
+                    this.shoppingListCollection.each(function(model) {
                         model.set('is_current', model.get('id') === shoppingListId, {silent: true});
                     });
-                    self.shoppingListCollection.trigger('change');
+                    this.shoppingListCollection.trigger('change');
 
-                    const message = _.__('oro.shoppinglist.actions.shopping_list_set_as_default', {
+                    const message = __('oro.shoppinglist.actions.shopping_list_set_as_default', {
                         shoppingList: shoppingListLabel
                     });
+
                     mediator.execute('showFlashMessage', 'success', message);
                 }
             });
@@ -71,8 +120,11 @@ define(function(require) {
                 return;
             }
 
+            this.$el.off(`.${this.cid}`);
+            this.$shoppingListWidget.off(`.${this.cid}`);
+
             delete this.shoppingListCollection;
-            this.$el.off();
+            delete this.$shoppingListWidget;
 
             ShoppingListWidgetViewComponent.__super__.dispose.call(this);
         }
