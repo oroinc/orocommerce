@@ -13,7 +13,11 @@ const TextBasicTypeBuilder = BaseTypeBuilder.extend({
 
     execute: function() {
         this.editor.BlockManager.get(this.componentType).set({
-            label: __('oro.cms.wysiwyg.component.text_basic')
+            label: __('oro.cms.wysiwyg.component.text_basic.label'),
+            content: `<section class="bdg-sect">
+                <h1 class="heading">${__('oro.cms.wysiwyg.component.text_basic.heading')}</h1>
+                <p class="paragraph">${__('oro.cms.wysiwyg.component.text_basic.paragraph')}</p>
+            </section>`
         });
     }
 });

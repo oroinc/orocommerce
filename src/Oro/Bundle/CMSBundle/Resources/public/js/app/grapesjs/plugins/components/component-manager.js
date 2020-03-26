@@ -1,9 +1,14 @@
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import BaseClass from 'oroui/js/base-class';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
 
 const ComponentManager = BaseClass.extend({
     editorFormats: [
+        'bold',
+        'italic',
+        'underline',
+        'strikethrough',
         'link',
         'formatBlock',
         'insertOrderedList',
@@ -56,20 +61,20 @@ const ComponentManager = BaseClass.extend({
         RichTextEditor.add('formatBlock', {
             icon: selectTemplate({
                 options: {
-                    normal: 'Normal text',
-                    h1: 'Heading 1',
-                    h2: 'Heading 2',
-                    h3: 'Heading 3',
-                    h4: 'Heading 4',
-                    h5: 'Heading 5',
-                    h6: 'Heading 6'
+                    normal: __('oro.cms.wysiwyg.format_block.normal'),
+                    h1: __('oro.cms.wysiwyg.format_block.h1'),
+                    h2: __('oro.cms.wysiwyg.format_block.h2'),
+                    h3: __('oro.cms.wysiwyg.format_block.h3'),
+                    h4: __('oro.cms.wysiwyg.format_block.h4'),
+                    h5: __('oro.cms.wysiwyg.format_block.h5'),
+                    h6: __('oro.cms.wysiwyg.format_block.h6')
                 },
                 name: 'tag'
             }),
             event: 'change',
 
             attributes: {
-                'title': 'Text format',
+                'title': __('oro.cms.wysiwyg.format_block.title'),
                 'class': 'gjs-rte-action text-format-action'
             },
 
@@ -103,10 +108,10 @@ const ComponentManager = BaseClass.extend({
         });
 
         RichTextEditor.add('link', {
-            icon: '<i class="fa fa-link"></i>',
+            icon: '<span class="fa fa-link" aria-hidden="true"></span>',
             name: 'link',
             attributes: {
-                title: 'Link'
+                title: __('oro.cms.wysiwyg.component.link.label')
             },
 
             result: (rte, action) => {
@@ -173,16 +178,43 @@ const ComponentManager = BaseClass.extend({
             }
         });
 
-        const simpleActions = [
-            {command: 'insertOrderedList', icon: 'fa-list-ol', title: 'Ordered List'},
-            {command: 'insertUnorderedList', icon: 'fa-list-ul', title: 'Unordered List'},
-            {command: 'subscript', icon: 'fa-subscript', title: 'Subscript'},
-            {command: 'superscript', icon: 'fa-superscript', title: 'Superscript'}
-        ];
+        const simpleActions = [{
+            command: 'bold',
+            icon: '<b aria-hidden="true">B</b>',
+            title: __('oro.cms.wysiwyg.simple_actions.bold.title')
+        }, {
+            command: 'italic',
+            icon: '<i aria-hidden="true">I</i>',
+            title: __('oro.cms.wysiwyg.simple_actions.italic.title')
+        }, {
+            command: 'underline',
+            icon: '<u aria-hidden="true">U</u>',
+            title: __('oro.cms.wysiwyg.simple_actions.underline.title')
+        }, {
+            command: 'strikethrough',
+            icon: '<strike aria-hidden="true">S</strike>',
+            title: __('oro.cms.wysiwyg.simple_actions.strikethrough.title')
+        }, {
+            command: 'insertOrderedList',
+            icon: '<span class="fa fa-list-ol" aria-hidden="true"></span>',
+            title: __('oro.cms.wysiwyg.simple_actions.insert_ordered_list.title')
+        }, {
+            command: 'insertUnorderedList',
+            icon: '<span class="fa fa-list-ul" aria-hidden="true"></span>',
+            title: __('oro.cms.wysiwyg.simple_actions.insert_unordered_list.title')
+        }, {
+            command: 'subscript',
+            icon: '<span class="fa fa-subscript" aria-hidden="true"></span>',
+            title: __('oro.cms.wysiwyg.simple_actions.subscript.title')
+        }, {
+            command: 'superscript',
+            icon: '<span class="fa fa-superscript" aria-hidden="true"></span>',
+            title: __('oro.cms.wysiwyg.simple_actions.superscript.title')
+        }];
 
         simpleActions.forEach(item => {
             RichTextEditor.add(item.command, {
-                icon: `<i class="fa ${item.icon}"></i>`,
+                icon: item.icon,
                 attributes: {
                     title: item.title
                 },

@@ -4,16 +4,22 @@ import ContentBlockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/conten
 import ContentWidgetTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-widget-type-builder';
 import FileTypeBuilder from 'orocms/js/app/grapesjs/type-builders/file-type-builder';
 import ImageTypeBuilder from 'orocms/js/app/grapesjs/type-builders/image-type-builder';
+import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
 import TableTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-type-builder';
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
+import LinkTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-type-builder';
 import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
 import TextBasicTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-basic-type-builder';
+import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 import VideoTypeBuilder from 'orocms/js/app/grapesjs/type-builders/video-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
         Constructor: DefaultTypeBuilder
+    },
+    'quote': {
+        Constructor: QuoteTypeBuilder
     },
     'table': {
         Constructor: TableTypeBuilder
@@ -32,8 +38,14 @@ ComponentManager.registerComponentTypes({
     'code': {
         Constructor: CodeTypeBuilder
     },
+    'link': {
+        Constructor: LinkTypeBuilder
+    },
     'link-button': {
         Constructor: LinkButtonTypeBuilder
+    },
+    'text': {
+        Constructor: TextTypeBuilder
     },
     'text-basic': {
         Constructor: TextBasicTypeBuilder
