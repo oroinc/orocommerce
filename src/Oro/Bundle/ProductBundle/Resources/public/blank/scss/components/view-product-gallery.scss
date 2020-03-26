@@ -11,6 +11,7 @@
     color: $view-product-gallery-icon-color;
     font-size: $view-product-gallery-icon-size;
     text-shadow: $view-product-gallery-icon-text-shadow;
+    border: $view-product-gallery-border;
 
     justify-content: $view-product-gallery-justify-content;
     align-items: $view-product-gallery-align-items;
@@ -26,7 +27,8 @@
     @extend %base-transition;
 
     &:focus,
-    .product-item__preview:hover > & {
+    &:hover,
+    .product-item__preview:hover + & {
         opacity: $view-product-gallery-hover-opacity;
     }
 

@@ -87,6 +87,7 @@
 
     {% if popup_gallery and not isNoImage %}
         {% set options = {
+            view: 'orofrontend/js/app/components/popup-gallery-widget',
             ajaxMode: true,
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
@@ -95,8 +96,7 @@
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-module': "orofrontend/js/app/components/popup-gallery-widget",
-            'data-page-component-options': options|json_encode
+            'data-page-component-view': options|json_encode
         }) %}
     {% endif %}
 
