@@ -17,6 +17,8 @@ Feature: Product Attribute Multiple Images with DAM
     And I fill form with:
       | Label                   | Custom Images       |
       | File Size (MB)          | 10                  |
+      | Thumbnail Width         | 64                  |
+      | Thumbnail Height        | 64                  |
       | Maximum Number Of Files | 2                   |
       | Use DAM                 | Yes                 |
       | File Applications       | [default, commerce] |
