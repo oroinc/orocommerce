@@ -215,6 +215,7 @@ oro.pricing:
         manual.label: Manual
         generated.label: Generated
         type.label: Type
+        version.label: Version
 
     priceattributeprice:
         entity_label: Product Attribute Price

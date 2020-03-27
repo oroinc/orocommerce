@@ -84,6 +84,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 [$product]
             );
         }
+        /** @var CombinedProductPrice[] $prices */
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,
@@ -92,6 +93,9 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         );
         if ($expectedExists) {
             $this->assertNotEmpty($prices);
+            /** @var CombinedProductPrice $firstPrice */
+            $firstPrice = reset($prices);
+            $this->assertNotEmpty($firstPrice->getOriginPriceId());
         } else {
             $this->assertEmpty($prices);
         }
@@ -488,7 +492,13 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         );
 
         $prices = $repo->createQueryBuilder('prices')
-            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->select(
+                'prices.productSku',
+                'prices.quantity',
+                'prices.value',
+                'prices.currency',
+                'IDENTITY(prices.unit) as unit'
+            )
             ->where('prices.priceList = :priceList AND prices.product = :product')
             ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
             ->orderBy('prices.currency, prices.quantity, prices.value')

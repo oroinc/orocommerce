@@ -54,7 +54,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'pp.quantity',
                 'pp.value',
                 'pp.currency',
-                sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
+                sprintf('CAST(%d as boolean)', (int)$mergeAllowed),
+                'pp.id'
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $priceList);
@@ -90,7 +91,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'pp.quantity',
                 'pp.value',
                 'pp.currency',
-                sprintf('CAST(%d as boolean)', 1)
+                sprintf('CAST(%d as boolean)', 1),
+                'pp.originPriceId'
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $sourceCpl);
@@ -674,6 +676,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     'value',
                     'currency',
                     'mergeAllowed',
+                    'originPriceId',
                     'id'
                 ],
                 $qb
@@ -707,6 +710,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'value',
                 'currency',
                 'mergeAllowed',
+                'originPriceId',
                 'id'
             ],
             $qb

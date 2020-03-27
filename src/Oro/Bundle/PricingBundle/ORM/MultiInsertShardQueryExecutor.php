@@ -62,7 +62,10 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
             $rowsCount++;
             if ($rowsCount % $this->batchSize === 0) {
                 $batches[] = [
-                    $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount),
+                    $this->applyOnDuplicateKeyUpdate(
+                        $className,
+                        $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount)
+                    ),
                     $values,
                     $allTypes
                 ];
@@ -74,7 +77,10 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         }
         if ($rowsCount > 0) {
             $batches[] = [
-                $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount),
+                $this->applyOnDuplicateKeyUpdate(
+                    $className,
+                    $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount)
+                ),
                 $values,
                 $allTypes
             ];

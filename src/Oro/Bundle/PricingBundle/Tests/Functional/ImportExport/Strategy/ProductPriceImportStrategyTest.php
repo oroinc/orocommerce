@@ -3,17 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
+use Akeneo\Bundle\BatchBundle\Entity\JobInstance;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceImportStrategyTest extends WebTestCase
 {
+    private const VERSION = 100;
+
     /**
      * @var ProductPriceImportStrategy
      */
@@ -36,7 +40,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                LoadProductPrices::class
             ]
         );
 
@@ -54,7 +58,11 @@ class ProductPriceImportStrategyTest extends WebTestCase
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
 
-        $this->stepExecution = new StepExecution('step', new JobExecution());
+        $jobExecution = new JobExecution();
+        $jobInstance = new JobInstance();
+        $jobInstance->setRawConfiguration(['import' => ['importVersion' => self::VERSION]]);
+        $jobExecution->setJobInstance($jobInstance);
+        $this->stepExecution = new StepExecution('import', $jobExecution);
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(ProductPrice::class);
@@ -90,6 +98,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
         $this->assertEquals(1.2, $productPrice->getPrice()->getValue());
         $this->assertNotEmpty($productPrice->getProduct());
         $this->assertEquals($product->getSku(), $productPrice->getProduct()->getSku());
+        $this->assertEquals(self::VERSION, $productPrice->getVersion());
     }
 
     /**

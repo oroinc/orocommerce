@@ -6,6 +6,9 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 
+/**
+ * INSERT FROM SELECT shard aware pricing query executor
+ */
 class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
 {
     /**
@@ -22,6 +25,7 @@ class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
         $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
+        $sql = $this->applyOnDuplicateKeyUpdate($className, $sql);
 
         return $this->shardManager->getEntityManager()->getConnection()->executeUpdate($sql, $params, $types);
     }
