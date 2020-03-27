@@ -18,6 +18,8 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -84,8 +86,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             ->method('addEventListener')
             ->with(
                 FormEvents::POST_SUBMIT,
-                function () {
-                }
+                $this->isType('callable')
             );
 
         $this->formType->buildForm($builder, []);
@@ -162,18 +163,55 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @dataProvider fillDefaultSlugsDataProvider
+     * @dataProvider onPostSubmitDataProvider
      *
      * @param Collection $localizedSources
      * @param Collection $localizedSlugs
      * @param Collection $expectedLocalizedSlugs
      */
-    public function testFillDefaultSlugs(
+    public function testOnPostSubmit(
         Collection $localizedSources,
         Collection $localizedSlugs,
         Collection $expectedLocalizedSlugs
     ): void {
-        $this->formType->fillDefaultSlugs($localizedSources, $localizedSlugs);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig->expects($this->once())
+            ->method('getOption')
+            ->with('source_field')
+            ->willReturn('source_field_name');
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('getParent')
+            ->willReturn(null);
+        $form->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $sourceField = $this->createMock(FormConfigInterface::class);
+        $sourceField->expects($this->once())
+            ->method('getData')
+            ->willReturn($localizedSources);
+
+        $form->expects($this->once())
+            ->method('has')
+            ->with('source_field_name')
+            ->willReturn(true);
+        $form->expects($this->once())
+            ->method('get')
+            ->with('source_field_name')
+            ->willReturn($sourceField);
+        $form->expects($this->atLeastOnce())
+            ->method('getData')
+            ->willReturn($localizedSlugs);
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormEvent $event */
+        $event = $this->createMock(FormEvent::class);
+        $event->expects($this->exactly(2))
+            ->method('getForm')
+            ->willReturn($form);
+
+        $this->formType->onPostSubmit($event);
 
         $this->assertEquals($expectedLocalizedSlugs, $localizedSlugs);
     }
@@ -181,7 +219,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     /**
      * @return array
      */
-    public function fillDefaultSlugsDataProvider(): array
+    public function onPostSubmitDataProvider(): array
     {
         $localization = $this->createMock(Localization::class);
 

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Generator\SlugGenerator;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
@@ -18,6 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Manage slugs for each of system localizations.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LocalizedSlugType extends AbstractType
 {
@@ -72,51 +75,47 @@ class LocalizedSlugType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // Change update at of owning entity on slug collection change
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($options) {
-                $form = $event->getForm();
-                while ($form->getParent()) {
-                    $form = $form->getParent();
-                }
-
-                $data = $form->getData();
-                if ($data instanceof UpdatedAtAwareInterface) {
-                    $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-                }
-
-                if (isset($form[$options['source_field']])) {
-                    $localizedSources = $form[$options['source_field']]->getData();
-                    $localizedSlugs = $event->getForm()->getData();
-
-                    if ($localizedSources instanceof Collection && $localizedSlugs instanceof Collection) {
-                        $this->fillDefaultSlugs($localizedSources, $localizedSlugs);
-                    }
-                }
-            }
-        );
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
     /**
-     * @param Collection $localizedSources
-     * @param Collection $localizedSlugs
+     * Change update at of owning entity on slug collection change
+     *
+     * @param FormEvent $event
      */
-    public function fillDefaultSlugs(Collection $localizedSources, Collection $localizedSlugs): void
+    public function onPostSubmit(FormEvent $event): void
     {
-        /** @var LocalizedFallbackValue $localizedSource */
-        foreach ($localizedSources as $localizedSource) {
-            if (!$localizedSource->getString()) {
-                continue;
-            }
+        $form = $event->getForm();
+        $sourceFieldName = $form->getConfig()->getOption('source_field');
 
-            /** @var LocalizedFallbackValue $localizedSlug */
-            foreach ($localizedSlugs as $localizedSlug) {
-                if (($localizedSlug->getId() || $localizedSlug->getString())
-                    && $localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
-                    // Skips creating default slug as it is already defined.
-                    continue 2;
-                }
+        while ($form->getParent()) {
+            $form = $form->getParent();
+        }
+
+        $data = $form->getData();
+        if ($data instanceof UpdatedAtAwareInterface) {
+            $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
+        }
+
+        if ($form->has($sourceFieldName)) {
+            $localizedSources = $form->get($sourceFieldName)->getData();
+            $localizedSlugs = $event->getForm()->getData();
+
+            if ($localizedSources instanceof Collection && $localizedSlugs instanceof Collection) {
+                $this->fillDefaultSlugs($localizedSources, $localizedSlugs);
+            }
+        }
+    }
+
+    /**
+     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSources
+     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSlugs
+     */
+    private function fillDefaultSlugs(Collection $localizedSources, Collection $localizedSlugs): void
+    {
+        foreach ($localizedSources as $localizedSource) {
+            if (!$localizedSource->getString() || $this->isSlugExists($localizedSlugs, $localizedSource)) {
+                continue;
             }
 
             $localizedSlug = new LocalizedFallbackValue();
@@ -125,6 +124,35 @@ class LocalizedSlugType extends AbstractType
             $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
             $localizedSlugs->add($localizedSlug);
         }
+    }
+
+    /**
+     * Skips creating default slug as it is already defined
+     *
+     * @param Collection|AbstractLocalizedFallbackValue[] $localizedSlugs
+     * @param AbstractLocalizedFallbackValue $localizedSource
+     * @return bool
+     */
+    private function isSlugExists(Collection $localizedSlugs, AbstractLocalizedFallbackValue $localizedSource): bool
+    {
+        foreach ($localizedSlugs as $localizedSlug) {
+            if (!$localizedSlug->getId() && !$localizedSlug->getString()) {
+                continue;
+            }
+
+            if ($localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
+                return true;
+            }
+
+            if ($localizedSource->getLocalization() &&
+                $localizedSlug->getLocalization() &&
+                $localizedSource->getLocalization()->getId() === $localizedSlug->getLocalization()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
