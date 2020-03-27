@@ -46,6 +46,8 @@ Feature: Product attributes order
     And I click "Continue"
     And I fill form with:
       | File Size (MB)    | 10                  |
+      | Thumbnail Width   | 64                  |
+      | Thumbnail Height  | 64                  |
       | File Applications | [default, commerce] |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
@@ -119,5 +121,3 @@ Feature: Product attributes order
     When I reload the page
     Then I should see "Document Storefront Field" goes after "Drawing Storefront Field"
     And I should see "MultipleFiles Storefront Field" goes after "MultipleImages Storefront Field"
-
-
