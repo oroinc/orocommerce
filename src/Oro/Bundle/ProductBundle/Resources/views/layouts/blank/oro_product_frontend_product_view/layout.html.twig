@@ -261,7 +261,7 @@
     {% endif %}
 {% endblock %}
 
-{% block product_view_attribute_multiimages_widget %}
+{% block attribute_multiimages_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
@@ -298,6 +298,10 @@
     </div>
 {% endblock %}
 
+{% block product_view_attribute_multiimages_widget %}
+    {{ block('attribute_multiimages_widget') }}
+{% endblock %}
+
 {% block product_view_attribute_image_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
@@ -322,16 +326,42 @@
     </div>
 {% endblock %}
 
-{% block product_view_attribute_multifiles_widget %}
+{% block attribute_multifiles_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set filesAttr = {
         'data-page-component-view': 'oroui/js/app/views/show-more/table-show-more-view'
     } %}
 
     <div class="product-view__attribute-files show-more-view show-less" {{ UI.attributes(filesAttr) }}>
-        {{ block_widget(block) }}
+        {% set collection = value %}
+        <div class="table-responsive">
+            <table class="grid table">
+                <thead class="grid-header">
+                <tr class="grid-header-row">
+                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.file.label'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.mime_type.label'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.file_size.label'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.created_at.label'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody class="grid-body">
+                {%- for item in collection -%}
+                    <tr class="grid-row">
+                        <td class="grid-cell">{{ oro_file_view(item.file) }}</td>
+                        <td class="grid-cell">{{ item.file.extension|upper }}</td>
+                        <td class="grid-cell">{{ file_size(item.file.fileSize) }}</td>
+                        <td class="grid-cell">{{ item.file.createdAt|oro_format_datetime() }}</td>
+                    </tr>
+                {%- endfor -%}
+                </tbody>
+            </table>
+        </div>
         <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
     </div>
+{% endblock %}
+
+{% block product_view_attribute_multifiles_widget %}
+    {{ block('attribute_multifiles_widget') }}
 {% endblock %}
 
 {% block attribute_group_rest_attribute_widget %}
