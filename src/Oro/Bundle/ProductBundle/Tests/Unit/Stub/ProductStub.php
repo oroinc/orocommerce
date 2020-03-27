@@ -41,6 +41,14 @@ class ProductStub extends Product
     }
 
     /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * @return LocalizedFallbackValue|null
      */
     public function getDefaultName(): ?LocalizedFallbackValue

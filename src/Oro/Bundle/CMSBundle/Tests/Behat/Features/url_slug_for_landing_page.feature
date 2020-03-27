@@ -3,28 +3,34 @@ Feature: URL Slug for Landing Page
   As administrator
   I need to be able to create Landing Page with URL Slug
 
-  Scenario: Create New Landing Page with empty URL Slug
-    Given I login as administrator
-    When I open Landing Page Create page
-    And I fill in Landing Page Titles field with "Test Page"
-    Then I should see URL Slug field filled with "test-page"
-
-    When I fill in URL Slug field with ""
-    And I save and close form
-    Then I should be on Landing Page View page
-    And I should see Landing Page with:
-      | Title              | Test Page   |
-      | Slugs              | N/A         |
-
   Scenario: Create New Landing Page with non empty URL Slug
-    When I open Landing Page Create page
-    And I fill in Landing Page Titles field with "Other Page"
+    Given I login as administrator
+    And I open Landing Page Create page
+    When I fill in Landing Page Titles field with "Other Page"
     Then I should see URL Slug field filled with "other-page"
     When I save and close form
     And reload the page
-    And I should see Landing Page with:
-      | Title              | Other Page   |
-      | Slugs              | [/other-page]  |
+    Then I should see Landing Page with:
+      | Title | Other Page    |
+      | Slugs | [/other-page] |
+
+  Scenario: Create New Landing Page with empty URL Slug
+    Given I click "Edit"
+    When I fill in URL Slug field with ""
+    And I save and close form
+    And I reload the page
+    Then I should see Landing Page with:
+      | Title | Other Page |
+      | Slugs | N/A        |
+
+  Scenario: Create New Landing Page with non empty URL Slug
+    Given I open Landing Page Create page
+    When I type "Immediately saved page" in Landing Page Titles field
+    And I save and close form
+    And reload the page
+    Then I should see Landing Page with:
+      | Title | Immediately saved page    |
+      | Slugs | [/immediately-saved-page] |
 
   Scenario: Delete pages
     Given I go to Marketing/ Landing Pages
