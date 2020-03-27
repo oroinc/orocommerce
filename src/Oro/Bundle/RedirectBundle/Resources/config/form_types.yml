@@ -3,6 +3,8 @@ services:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
         arguments:
             - '@oro_redirect.helper.slugify_form_helper'
+        calls:
+            - ['setSlugGenerator', ['@oro_entity_config.slug.generator']]
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
 

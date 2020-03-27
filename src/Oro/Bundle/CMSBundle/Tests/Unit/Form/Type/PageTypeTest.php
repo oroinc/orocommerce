@@ -21,12 +21,18 @@ use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PageTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
@@ -328,5 +334,84 @@ class PageTypeTest extends FormIntegrationTestCase
             $formView->children['slugPrototypesWithRedirect']
                 ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
         );
+    }
+
+    public function testPreSetDataListener(): void
+    {
+        $event = $this->createMock(FormEvent::class);
+
+        $event
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($page = $this->createMock(Page::class));
+
+        $page
+            ->expects($this->atLeastOnce())
+            ->method('getId')
+            ->willReturn($pageId = 1);
+
+        $this->urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_cms_page_get_changed_urls', ['id' => $pageId])
+            ->willReturn($url = '/sample/url');
+
+        $event
+            ->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form = $this->createMock(FormInterface::class));
+
+        $form
+            ->expects($this->once())
+            ->method('add')
+            ->with(
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::class,
+                [
+                    'label' => 'oro.cms.page.slug_prototypes.label',
+                    'required' => false,
+                    'source_field' => 'titles',
+                    'get_changed_slugs_url' => $url
+                ]
+            );
+
+        $this->type->preSetDataListener($event);
+    }
+
+    public function testPreSetDataListenerWhenNoData(): void
+    {
+        $event = $this->createMock(FormEvent::class);
+
+        $event
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn(null);
+
+        $event
+            ->expects($this->never())
+            ->method('getForm');
+
+        $this->type->preSetDataListener($event);
+    }
+
+    public function testPreSetDataListenerWhenNoPageId(): void
+    {
+        $event = $this->createMock(FormEvent::class);
+
+        $event
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($page = $this->createMock(Page::class));
+
+        $page
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(null);
+
+        $event
+            ->expects($this->never())
+            ->method('getForm');
+
+        $this->type->preSetDataListener($event);
     }
 }
