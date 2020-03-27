@@ -18,6 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Manage slugs for each of system localizations.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LocalizedSlugType extends AbstractType
 {
@@ -86,8 +88,8 @@ class LocalizedSlugType extends AbstractType
                     $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
                 }
 
-                if (isset($form[$options['source_field']])) {
-                    $localizedSources = $form[$options['source_field']]->getData();
+                if ($form->has($options['source_field'])) {
+                    $localizedSources = $form->get($options['source_field'])->getData();
                     $localizedSlugs = $event->getForm()->getData();
 
                     if ($localizedSources instanceof Collection && $localizedSlugs instanceof Collection) {
@@ -99,30 +101,49 @@ class LocalizedSlugType extends AbstractType
     }
 
     /**
-     * @param Collection $localizedSources
-     * @param Collection $localizedSlugs
+     * @param Collection|LocalizedFallbackValue[] $localizedSources
+     * @param Collection|LocalizedFallbackValue[] $localizedSlugs
      */
     public function fillDefaultSlugs(Collection $localizedSources, Collection $localizedSlugs): void
     {
-        /** @var LocalizedFallbackValue $localizedSource */
         foreach ($localizedSources as $localizedSource) {
-            if (!$localizedSource->getString()) {
+            if (!$localizedSource->getString() || $this->isSlugExists($localizedSlugs, $localizedSource)) {
                 continue;
-            }
-
-            /** @var LocalizedFallbackValue $localizedSlug */
-            foreach ($localizedSlugs as $localizedSlug) {
-                if (($localizedSlug->getId() || $localizedSlug->getString())
-                    && $localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
-                    // Skips creating default slug as it is already defined.
-                    continue 2;
-                }
             }
 
             $localizedSlug = clone $localizedSource;
             $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
             $localizedSlugs->add($localizedSlug);
         }
+    }
+
+    /**
+     * Skips creating default slug as it is already defined
+     *
+     * @param Collection|LocalizedFallbackValue[] $localizedSlugs
+     * @param LocalizedFallbackValue $localizedSource
+     * @return bool
+     */
+    private function isSlugExists(Collection $localizedSlugs, LocalizedFallbackValue $localizedSource): bool
+    {
+        foreach ($localizedSlugs as $localizedSlug) {
+            if (!$localizedSlug->getId() && !$localizedSlug->getString()) {
+                continue;
+            }
+
+            if ($localizedSource->getLocalization() === $localizedSlug->getLocalization()) {
+                return true;
+            }
+
+            if ($localizedSource->getLocalization() &&
+                $localizedSlug->getLocalization() &&
+                $localizedSource->getLocalization()->getId() === $localizedSlug->getLocalization()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
