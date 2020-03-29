@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
@@ -69,6 +70,15 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
         $command = self::getContainer()->get('oro_pricing.tests.combined_price_list_schedule_command');
         $this->assertTrue($command->isActive());
+    }
+
+    public function testIsActiveWithAllActualSchedules()
+    {
+        $this->loadFixturesWithSchedules();
+        $this->updateActivationPlanActivity(true);
+
+        $command = self::getContainer()->get('oro_pricing.tests.combined_price_list_schedule_command');
+        $this->assertFalse($command->isActive());
     }
 
     /**
@@ -196,6 +206,21 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
             ->update(CombinedPriceList::class, 'cpl')
             ->set('cpl.pricesCalculated', ':pricesCalculated')
             ->setParameter('pricesCalculated', $pricesCalculated)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    protected function updateActivationPlanActivity($isActive): void
+    {
+        self::getContainer()->get('doctrine')
+            ->getManagerForClass(CombinedPriceListActivationRule::class)
+            ->createQueryBuilder()
+            ->update(CombinedPriceListActivationRule::class, 'rule')
+            ->set('rule.active', ':active')
+            ->setParameter('active', $isActive)
             ->getQuery()
             ->execute();
     }

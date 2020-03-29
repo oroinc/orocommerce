@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRulesForRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -27,7 +27,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                LoadCombinedPriceListsActivationRules::class,
+                LoadCombinedPriceListsActivationRulesForRepository::class,
             ]
         );
     }
@@ -345,17 +345,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     public function testGetCPLsForPriceCollectByTimeOffsetCount()
     {
-        /** @var CombinedPriceList $cpl */
-        $cpl = $this->getReference('2f');
-        $cpl->setPricesCalculated(true);
-        $this->getManager()->flush();
-
-        $cpl = $this->getReference('1f');
-        $cpl->setPricesCalculated(false);
-        $this->getManager()->flush();
-
         $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffsetCount(24);
-        $this->assertEquals(2, $cPriceLists);
+        $this->assertEquals(1, $cPriceLists);
     }
 
     /**
@@ -376,6 +367,17 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset($offsetHours);
         $this->assertCount($result, $cPriceLists);
+    }
+
+    public function testGetCPLsForPriceCollectByTimeOffsetCheckActivationRuleActivity()
+    {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getReference('2f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
+
+        $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset(24);
+        $this->assertCount(1, $cPriceLists);
     }
 
     /**
