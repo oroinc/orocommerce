@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Action\RemoveCheckoutSourceEntity;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -152,13 +153,11 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
             ->expects($this->exactly(4))
             ->method('dispatch');
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
 
-        $checkoutSource = $this->createMock(CheckoutSource::class);
-        $checkoutSource
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($shoppingList);
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList($shoppingList);
 
         $context = new \stdClass();
         $context->checkout = $this->getEntity(Checkout::class, [
@@ -179,5 +178,8 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 
         $this->action->initialize([$target]);
         $this->action->execute($context);
+
+        $this->assertNull($checkoutSource->getShoppingList());
+        $this->assertNull($checkoutSource->getEntity());
     }
 }

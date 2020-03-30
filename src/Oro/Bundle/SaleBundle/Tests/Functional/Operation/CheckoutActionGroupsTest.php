@@ -340,10 +340,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
             ],
             $completedData['orders']
         );
-        $this->assertEquals(
-            sprintf('Quote #%s', $checkout->getSourceEntity()->getQuote()->getId()),
-            $checkout->getCompletedData()->getStartedFrom()
-        );
+        $this->assertNull($checkout->getSourceEntity());
 
         // check remove source
         $this->getContainer()->get('doctrine')->getManagerForClass($checkoutSourceClass)->flush();
