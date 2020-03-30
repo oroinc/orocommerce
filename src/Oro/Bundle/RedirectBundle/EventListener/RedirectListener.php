@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class RedirectListener
 {
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     protected $userLocalizationManager;
 
@@ -42,14 +42,14 @@ class RedirectListener
     protected $websiteManager;
 
     /**
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      * @param SlugSourceEntityProviderInterface $slugSourceEntityProvider
      * @param ManagerRegistry $registry
      * @param CanonicalUrlGenerator $canonicalUrlGenerator
      * @param WebsiteManager $websiteManager
      */
     public function __construct(
-        UserLocalizationManager $userLocalizationManager,
+        UserLocalizationManagerInterface $userLocalizationManager,
         SlugSourceEntityProviderInterface $slugSourceEntityProvider,
         ManagerRegistry $registry,
         CanonicalUrlGenerator $canonicalUrlGenerator,

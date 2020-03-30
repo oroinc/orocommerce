@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserInterface;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Model\ContactInfo;
 use Oro\Bundle\SaleBundle\Model\ContactInfoFactoryInterface;
@@ -60,11 +60,11 @@ class ContactInfoProvider implements ContactInfoProviderInterface
     }
 
     /**
-     * @param CustomerUser|null $customerUser
+     * @param CustomerUserInterface|null $customerUser
      *
      * @return ContactInfo
      */
-    public function getContactInfo(CustomerUser $customerUser = null)
+    public function getContactInfo(CustomerUserInterface $customerUser = null)
     {
         $contactInfo = $this->getContactInformationByUserConfiguration($customerUser);
 
@@ -110,10 +110,10 @@ class ContactInfoProvider implements ContactInfoProviderInterface
     }
 
     /**
-     * @param CustomerUser|null $customerUser
+     * @param CustomerUserInterface|null $customerUser
      * @return ContactInfo|null
      */
-    private function getContactInformationByUserConfiguration(CustomerUser $customerUser = null): ?ContactInfo
+    private function getContactInformationByUserConfiguration(CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         if ($customerUser && $this->isUserConfigurationAllowed()) {
             $owner = $customerUser->getOwner();
@@ -132,10 +132,10 @@ class ContactInfoProvider implements ContactInfoProviderInterface
     }
 
     /**
-     * @param CustomerUser|null $customerUser
+     * @param CustomerUserInterface|null $customerUser
      * @return ContactInfo|null
      */
-    private function getContactInformationByDisplaySettings(CustomerUser $customerUser = null): ?ContactInfo
+    private function getContactInformationByDisplaySettings(CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         $selectedOption = $this->sourceOptionsProvider->getSelectedOption();
         if (!$customerUser && $selectedOption !== ContactInfoSourceOptionsProvider::DONT_DISPLAY) {

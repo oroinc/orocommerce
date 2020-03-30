@@ -443,3 +443,8 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider }
+
+    oro_cms.provider.privilege_category_provider:
+        class: Oro\Bundle\CMSBundle\Provider\PrivilegeCategoryProvider
+        tags:
+            - { name: oro_user.privilege_category }

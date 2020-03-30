@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
@@ -42,7 +42,7 @@ class SlugEntityGenerator
     private $redirectGenerator;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
@@ -51,14 +51,14 @@ class SlugEntityGenerator
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
      * @param UrlCacheInterface $urlCache
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
         RedirectGenerator $redirectGenerator,
         UrlCacheInterface $urlCache,
-        UserLocalizationManager $userLocalizationManager
+        UserLocalizationManagerInterface $userLocalizationManager
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
         $this->slugResolver = $slugResolver;
