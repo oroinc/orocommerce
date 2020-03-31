@@ -107,7 +107,6 @@ Feature: Previously purchased products
     And I click "Previously Purchased"
     Then I should see "Product 3"
 
-  @skip
   Scenario: Disable already ordered product. Check "Previously purchased products"
     Given I proceed as the Admin
     And go to Products / Products
@@ -118,12 +117,13 @@ Feature: Previously purchased products
     And I proceed as the Buyer
     And I follow "Account"
     And I click "Previously Purchased"
+    And reload the page
+    And I wait for products to load
     And I should not see "Product 3"
     When I type "Product" in "search"
     And I click "Search Button"
     Then should not see "SKU3"
 
-  @skip
   Scenario: Order was cancelled by Admin in Management console and should not be displayed in "Previously purchased products"
     Given I proceed as the Admin
     And go to Sales / Orders
