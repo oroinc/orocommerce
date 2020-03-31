@@ -100,7 +100,7 @@
         <div {{ UI.attributes(popupGalleryAttr) }}>
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
                 {% for productImage in productImages %}
-                    <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
+                    <div class="product-view-media-gallery__image-item" data-trigger-gallery-open tabindex="0">
                         <img class="product-view-media-gallery__image"
                              alt="{{ product.names|localized_value|e }}"
                              data-zoom-image="{{ product_filtered_image(productImage.image, 'product_original') }}"
