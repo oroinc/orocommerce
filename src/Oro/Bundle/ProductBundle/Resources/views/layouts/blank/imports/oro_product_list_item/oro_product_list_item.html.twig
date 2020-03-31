@@ -51,6 +51,12 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_view_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__preview',
+        'href': path('oro_product_frontend_product_view', {id: product.id}),
+        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.names|localized_value
+    }) %}
+
     {% if popup_gallery and product.imagesByType('listing')|length > 0 %}
         {% set options = {
             view: 'orofrontend/js/app/components/popup-gallery-widget',
@@ -58,7 +64,8 @@
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: product.names|localized_value
+            alt: product.names|localized_value,
+            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ product.id ~ '"]'
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -70,16 +77,16 @@
         {% endif %}
     {% endif %}
 
-    <div {{ block('block_attributes') }}>
+    <a {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
+    </a>
 {% endblock %}
 
 {% block __oro_product_list_item__product_popup_gallery_widget %}
     {% if product.imagesByType('listing')|length > 0 %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
-            'data-trigger-gallery-open': true,
+            'data-role': 'data-trigger-gallery-open-' ~ product.id,
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
@@ -100,12 +107,6 @@
         }
     }) %}
 
-    {% set attrLink = {
-        'class': ' product-item__preview',
-        'href': path('oro_product_frontend_product_view', {id: product.id}),
-        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.names|localized_value
-    } %}
-
     {% set attrImage = {
         'class': 'product-item__preview-image'
     } %}
@@ -113,11 +114,9 @@
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
     {% set productImageUrl = product_filtered_image(productImage, product_image_size) %}
 
-    <a {{ UI.attributes(attrLink) }}>
-        <picture {{ block('block_attributes') }}>
-            <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
-        </picture>
-    </a>
+    <picture {{ block('block_attributes') }}>
+        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
+    </picture>
 {% endblock %}
 
 {% block __oro_product_list_item__product_quick_view_widget %}

@@ -15,7 +15,7 @@
 
     justify-content: $view-product-gallery-justify-content;
     align-items: $view-product-gallery-align-items;
-    
+
     background: $view-product-gallery-background;
     opacity: $view-product-gallery-opacity;
 
@@ -26,10 +26,19 @@
 
     @extend %base-transition;
 
-    &.focus-visible:focus,
-    &:hover,
-    .product-item__preview:hover + & {
+    &:not(:disabled) {
+        cursor: $btn-cursor;
+    }
+
+    .product-item__preview:hover + &,
+    .product-item__preview:focus + &,
+    &.focus-visible,
+    &:hover {
         opacity: $view-product-gallery-hover-opacity;
+    }
+
+    &:hover {
+        background: $view-product-gallery-hover-background;
     }
 
     &__icon {

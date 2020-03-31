@@ -79,7 +79,7 @@ layout:
                                 __product_image_holder:
                                     __product_view:
                                         __product_view_image: ~
-                                        __product_popup_gallery: ~
+                                    __product_popup_gallery: ~
                                     __product_sticker_new: ~
                                     __product_quick_view: ~
                                 __product_title: ~

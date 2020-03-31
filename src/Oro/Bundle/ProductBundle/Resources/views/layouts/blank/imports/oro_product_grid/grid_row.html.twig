@@ -91,7 +91,8 @@
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: product.name
+            alt: product.name,
+            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ product.id ~ '"]'
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -115,12 +116,14 @@
     {% if not isNoImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
-            'data-trigger-gallery-open': true
+            'data-role': 'data-trigger-gallery-open-' ~ product.id,
+            'aria-label': 'oro.product.images.zoom.label'|trans,
+            'type': 'button'
         }) %}
 
-        <div {{ block('block_attributes') }}>
+        <button {{ block('block_attributes') }}>
             <span class="view-product-gallery__icon" aria-hidden="true"></span>
-        </div>
+        </button>
     {% endif %}
 {% endblock %}
 
