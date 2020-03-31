@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -165,7 +165,7 @@ class ProductImportWarningLogTest extends WebTestCase
         $processorResult = static::getContainer()
             ->get($processorServiceName)
             ->process(
-                $this->createNullMessage($messageData),
+                $this->createMessage($messageData),
                 $this->createSessionInterfaceMock()
             );
 
@@ -194,11 +194,11 @@ class ProductImportWarningLogTest extends WebTestCase
 
     /**
      * @param array $messageData
-     * @return NullMessage
+     * @return Message
      */
-    private function createNullMessage(array $messageData): NullMessage
+    private function createMessage(array $messageData): Message
     {
-        $message = new NullMessage();
+        $message = new Message();
 
         $message->setMessageId('abc');
         $message->setBody(json_encode($messageData));
