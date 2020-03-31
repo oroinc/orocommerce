@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 /**
@@ -53,8 +53,7 @@ class PriceListProductPricesReader extends EntityReader
     public function setSourceQuery(Query $query)
     {
         $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
         $this->setSourceIterator($this->createSourceIterator($query));
     }
 

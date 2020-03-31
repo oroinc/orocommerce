@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\ORM;
 
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 
 /**
  * INSERT FROM SELECT shard aware pricing query executor
@@ -21,8 +20,7 @@ class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
         $selectQuery = $selectQueryBuilder->getQuery();
         list($params, $types) = $this->helper->processParameterMappings($selectQuery);
         $selectQuery->useQueryCache(false);
-        $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $selectQuery->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
 
         $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
         $sql = $this->applyOnDuplicateKeyUpdate($className, $sql);

@@ -1221,8 +1221,15 @@ services:
                 name: oro_entity.query_hint
                 hint: oro_pricing.price_shard
                 alias: HINT_PRICE_SHARD
-                output_walker: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker
+                output_walker: true
                 walker_hint_provider: oro_pricing.orm_walker.price_shard_walker_hint_provider
+
+    oro_pricing.sql_walker.price_shard:
+        class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier
+        public: false
+        abstract: true
+        tags:
+            - { name: oro_entity.sql_walker }
 
     oro_pricing.manager.price_manager:
         class: Oro\Bundle\PricingBundle\Manager\PriceManager
