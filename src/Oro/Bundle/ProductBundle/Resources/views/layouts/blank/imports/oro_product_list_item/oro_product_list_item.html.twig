@@ -86,6 +86,7 @@
     {% if product.imagesByType('listing')|length > 0 %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
+            'data-trigger-gallery-open': '',
             'data-role': 'data-trigger-gallery-open-' ~ product.id,
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
