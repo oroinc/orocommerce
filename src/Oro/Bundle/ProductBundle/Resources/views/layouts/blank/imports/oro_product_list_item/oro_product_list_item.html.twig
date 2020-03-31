@@ -1,6 +1,8 @@
 {% block __oro_product_list_item__product_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
+    {% set productImageUrl = Image.url(productImage, 'product_small') %}
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -16,6 +18,11 @@
         },
         'data-layout': 'separate'
     }) %}
+
+    {% do block|merge_context({
+        '__prodactUniqId': 'prodact-'|uniqid,
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -65,7 +72,7 @@
             id: product.id,
             galleryFilter: 'product_gallery_popup',
             alt: product.names|localized_value,
-            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ product.id ~ '"]'
+            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ __prodactUniqId ~ '"]'
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -87,7 +94,7 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
             'data-trigger-gallery-open': '',
-            'data-role': 'data-trigger-gallery-open-' ~ product.id,
+            'data-role': 'data-trigger-gallery-open-' ~ __prodactUniqId,
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
@@ -98,6 +105,7 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_view_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -113,10 +121,9 @@
     } %}
 
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = product_filtered_image(productImage, product_image_size) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
     </picture>
 {% endblock %}
 
