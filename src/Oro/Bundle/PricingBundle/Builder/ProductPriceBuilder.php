@@ -50,11 +50,16 @@ class ProductPriceBuilder
     protected $priceListTriggerHandler;
 
     /**
-     * @param ManagerRegistry             $registry
+     * @var int|null
+     */
+    private $version;
+
+    /**
+     * @param ManagerRegistry $registry
      * @param ShardQueryExecutorInterface $shardInsertQueryExecutor
-     * @param PriceListRuleCompiler       $ruleCompiler
-     * @param PriceListTriggerHandler     $priceListTriggerHandler
-     * @param ShardManager                $shardManager
+     * @param PriceListRuleCompiler $ruleCompiler
+     * @param PriceListTriggerHandler $priceListTriggerHandler
+     * @param ShardManager $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -94,9 +99,31 @@ class ProductPriceBuilder
      */
     public function buildByPriceListWithoutTriggerSend(PriceList $priceList, array $products = [])
     {
+        if (!$products) {
+            $this->version = time();
+        }
         $this->buildByPriceListWithoutTriggers($priceList, $products);
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);
+        if ($products || count($priceList->getPriceRules()) === 0) {
+            $productsBatches = [$products];
+        } else {
+            $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
+                $this->shardManager,
+                $priceList,
+                $this->version,
+                PriceListTriggerHandler::BATCH_SIZE
+            );
+        }
+
+        foreach ($productsBatches as $batch) {
+            $this->priceListTriggerHandler->addTriggerForPriceList(
+                Topics::RESOLVE_COMBINED_PRICES,
+                $priceList,
+                $batch
+            );
+        }
+
+        $this->version = null;
     }
 
     public function flush()
@@ -110,11 +137,14 @@ class ProductPriceBuilder
      */
     protected function applyRule(PriceRule $priceRule, array $products = [])
     {
-        $this->shardInsertQueryExecutor->execute(
-            ProductPrice::class,
-            $this->ruleCompiler->getOrderedFields(),
-            $this->ruleCompiler->compile($priceRule, $products)
-        );
+        $fields = $this->ruleCompiler->getOrderedFields();
+        $qb = $this->ruleCompiler->compile($priceRule, $products);
+        if ($this->version) {
+            $fields[] = 'version';
+            $qb->addSelect((string)$qb->expr()->literal($this->version));
+        }
+
+        $this->shardInsertQueryExecutor->execute(ProductPrice::class, $fields, $qb);
     }
 
     /**

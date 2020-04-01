@@ -4,10 +4,14 @@ namespace Oro\Bundle\PricingBundle\ORM;
 
 use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Abstract implementation of ShardQueryExecutorInterface
+ */
 abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
 {
     /**
@@ -26,6 +30,18 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
     protected $shardManager;
 
     /**
+     * Unique field list by class. Used to construct ON DUPLICATE KEY UPDATE to prevent locking
+     *
+     * @var array
+     */
+    protected $uniqueFields = [];
+
+    /**
+     * @var int[]|array
+     */
+    protected $version = [];
+
+    /**
      * @param NativeQueryExecutorHelper $helper
      * @param ShardManager $shardManager
      */
@@ -36,13 +52,53 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
     }
 
     /**
+     * @param string $className
+     * @param array $fields
+     */
+    public function registerUniqueFields(string $className, array $fields)
+    {
+        $this->uniqueFields[$className] = $fields;
+    }
+
+    /**
      * {@inheritDoc}
      */
     abstract public function execute($className, array $fields, QueryBuilder $selectQueryBuilder);
 
     /**
-     * @param              $className
-     * @param array        $fields
+     * @param string $className
+     * @param string $sql
+     * @return string
+     */
+    protected function applyOnDuplicateKeyUpdate(string $className, string $sql)
+    {
+        if (empty($this->uniqueFields[$className])) {
+            return $sql;
+        }
+
+        $uniqueFields = $this->uniqueFields[$className]['search_fields'];
+        $updateField = $this->uniqueFields[$className]['update_field'];
+        $driver = $this->shardManager->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
+        switch ($driver) {
+            case DatabasePlatformInterface::DATABASE_MYSQL:
+                $sql .= sprintf(' ON DUPLICATE KEY UPDATE %1$s=VALUES(%1$s)', $updateField);
+                break;
+            case DatabasePlatformInterface::DATABASE_POSTGRESQL:
+                $sql .= sprintf(
+                    ' ON CONFLICT (' . implode(',', $uniqueFields) . ') DO UPDATE SET %1$s=EXCLUDED.%1$s',
+                    $updateField
+                );
+                break;
+            default:
+                return $sql;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @param $className
+     * @param array $fields
      * @param QueryBuilder $selectQueryBuilder
      *
      * @return string

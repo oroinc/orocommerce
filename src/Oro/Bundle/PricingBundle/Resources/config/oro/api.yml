@@ -171,6 +171,8 @@ api:
                     exclude: true
                 priceRule:
                     exclude: true
+                version:
+                    exclude: true
             filters:
                 fields:
                     priceList:

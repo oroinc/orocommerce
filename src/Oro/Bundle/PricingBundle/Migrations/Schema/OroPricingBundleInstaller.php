@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_17';
+        return 'v1_17_1';
     }
 
     /**
@@ -199,11 +199,13 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
             'oro_pricing_price_list_uidx'
         );
+        $table->addIndex(['price_list_id', 'version', 'product_id'], 'oro_price_version_idx', []);
     }
 
     /**
@@ -232,6 +234,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     {
         $table = $schema->createTable('oro_price_product_combined');
         $table->addColumn('id', 'guid', ['notnull' => false]);
+        $table->addColumn('origin_price_id', 'guid', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);

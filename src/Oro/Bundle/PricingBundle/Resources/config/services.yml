@@ -1189,18 +1189,24 @@ services:
             - { name: doctrine.event_listener, event: preRemove }
             - { name: doctrine.event_listener, event: postFlush }
 
-    oro_pricing.orm.insert_from_select_query_executor:
-        class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
+    oro_pricing.orm.abstract_shard_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\AbstractShardQueryExecutor
+        abstract: true
         arguments:
             - '@oro_entity.orm.native_query_executor_helper'
             - '@oro_pricing.shard_manager'
+        calls:
+            - ['registerUniqueFields', ['Oro\Bundle\PricingBundle\Entity\ProductPrice', {search_fields: ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'], update_field: 'value'}]]
+            - ['registerUniqueFields', ['Oro\Bundle\PricingBundle\Entity\CombinedProductPrice', {search_fields: ['combined_price_list_id', 'product_id', 'currency', 'unit_code', 'quantity'], update_field: 'value'}]]
+
+    oro_pricing.orm.insert_from_select_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
+        parent: oro_pricing.orm.abstract_shard_query_executor
 
     oro_pricing.orm.multi_insert_shard_query_executor:
         class: Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor
         shared: false
-        arguments:
-           - '@oro_entity.orm.native_query_executor_helper'
-           - '@oro_pricing.shard_manager'
+        parent: oro_pricing.orm.abstract_shard_query_executor
 
     oro_pricing.orm_walker.price_shard_walker_hint_provider:
         class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalkerHintProvider
@@ -1349,6 +1355,8 @@ services:
             - '@doctrine'
             - '@oro_pricing.price_rule_lexeme_trigger_handler'
             - '@oro_pricing.price_list_trigger_handler'
+        calls:
+            - ['setShardManager', ['@oro_pricing.shard_manager']]
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ImportExportBundle\Entity\ImportExportResult', event: postPersist }
 

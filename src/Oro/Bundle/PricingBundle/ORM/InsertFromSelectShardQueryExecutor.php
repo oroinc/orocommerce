@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 
 /**
- * Shard aware Insert From Select query executor
+ * INSERT FROM SELECT shard aware pricing query executor
  */
 class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
 {
@@ -23,6 +23,7 @@ class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor
         $selectQuery->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
 
         $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
+        $sql = $this->applyOnDuplicateKeyUpdate($className, $sql);
 
         return $this->shardManager->getEntityManager()->getConnection()->executeUpdate($sql, $params, $types);
     }
