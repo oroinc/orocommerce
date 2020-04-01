@@ -15,7 +15,7 @@
     &:not(:first-child) {
       .quick-order-add__label {
         display: none;
-      }  
+      }
     }
   }
 
@@ -201,6 +201,14 @@
         .btn-group { //override platform styles
           margin-left: 0;
           width: 100%;
+
+          .mass-action-controls {
+            width: 100%;
+          }
+
+          & + .btn-group {
+            margin-top: 5px;
+          }
 
           &.widget-content {
             margin: $quick-order-add-mobile-widget-content-margin;
