@@ -1,3 +1,4 @@
+@ticket-BB-19056
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
 Feature: Content Block
@@ -74,10 +75,35 @@ Feature: Content Block
     When I signed in as NancyJSallee@example.org on the store frontend
     Then I should see "Test block"
 
-  Scenario: Block with incorrect twig
+  Scenario: Block with different contents
     Given I proceed as the Admin
     And login as administrator
-    And I go to Marketing/ Content Blocks
+    And go to Marketing/ Content Blocks
+    And click "Create Content Block"
+    When fill "Content Block Form" with:
+      | Owner   | Main             |
+      | Alias   | test_block_alias |
+      | Titles  | Test Block Title |
+      | Enabled | True             |
+    And click "Add Content"
+    And fill "Content Block Form" with:
+      | Content Variant | Test variant 1 |
+    And click "Add Content"
+    And fill "Content Block Form" with:
+      | Content Variant 1 | Test variant 2 |
+    And I save and close form
+    Then I should see "Content block has been saved" flash message
+    And I should see "Test variant 1"
+    And I should see "Test variant 2"
+    # do save second time to check wysiwyg initialization with data
+    And I click "Edit"
+    And I save and close form
+    And  I should see "Content block has been saved" flash message
+    And I should see "Test variant 1"
+    And I should see "Test variant 2"
+
+  Scenario: Block with incorrect twig
+    Given I go to Marketing/ Content Blocks
     And I click "edit" on row "home-page-slider" in grid
     And I fill in WYSIWYG "Content Variant 1 Content" with "{{ widget(\"\"\")}}"
     When I save and close form
