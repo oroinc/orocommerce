@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
-use Doctrine\ORM\Query;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -490,10 +489,9 @@ class ProductPriceTest extends RestJsonApiTestCase
         $query = $queryBuilder->getQuery();
         $query->setHint('priceList', $this->getReference($priceListReference)->getId());
         $query->setHint(
-            PriceShardWalker::ORO_PRICING_SHARD_MANAGER,
+            PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')
         );
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getOneOrNullResult();
     }
@@ -534,10 +532,9 @@ class ProductPriceTest extends RestJsonApiTestCase
         $query->useQueryCache(false);
         $query->setHint('priceList', $this->getReference('price_list_3')->getId());
         $query->setHint(
-            PriceShardWalker::ORO_PRICING_SHARD_MANAGER,
+            PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')
         );
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getOneOrNullResult();
     }

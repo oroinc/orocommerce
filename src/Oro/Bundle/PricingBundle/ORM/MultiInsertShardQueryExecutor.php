@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\ORM;
 
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 
 /**
  * This executor should be used only for queries that will reduce result count after each execution by itself
@@ -36,8 +35,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         $columns = $this->getColumns($className, $fields);
         $selectQuery = $selectQueryBuilder->getQuery();
         $selectQuery->useQueryCache(false);
-        $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $selectQuery->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
 
         $iterator = new BufferedIdentityQueryResultIterator($selectQuery);
         $iterator->setBufferSize($this->batchSize);

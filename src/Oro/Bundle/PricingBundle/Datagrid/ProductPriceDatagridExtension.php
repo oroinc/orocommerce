@@ -15,7 +15,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -167,7 +167,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $selectedFields = $this->getSelectedFields($config, $dataColumns);
         $this->enabledPriceColumns = array_intersect_key($priceColumns, array_flip($selectedFields));
         if ($this->enabledPriceColumns) {
-            $config->getOrmQuery()->addHint(PriceShardWalker::HINT_PRICE_SHARD);
+            $config->getOrmQuery()->addHint(PriceShardOutputResultModifier::HINT_PRICE_SHARD);
             foreach ($this->enabledPriceColumns as $columnName => list($currencyIsoCode, $unitCode)) {
                 $this->addColumnToQueryConfig($config, $columnName, $currencyIsoCode, $unitCode);
             }

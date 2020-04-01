@@ -3,46 +3,27 @@
 namespace Oro\Bundle\PricingBundle\ORM\Walker;
 
 use Doctrine\ORM\Query\AST;
-use Doctrine\ORM\Query\SqlWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Component\DoctrineUtils\ORM\Walker\AbstractOutputResultModifier;
 
 /**
  * Query walker for price shard
- *
- * @deprecated use PriceShardOutputResultModifier instead
  */
-class PriceShardWalker extends SqlWalker
+class PriceShardOutputResultModifier extends AbstractOutputResultModifier
 {
-    const ORO_PRICING_SHARD_MANAGER = 'oro_pricing.shard_manager';
-    const HINT_PRICE_SHARD = 'HINT_PRICE_SHARD';
-
-    /**
-     * @var \Doctrine\ORM\Query\ParserResult
-     */
-    protected $parsingResult;
-
-    /**
-     * @var PriceShardOutputResultModifier
-     */
-    private $outputResultModifier;
+    public const ORO_PRICING_SHARD_MANAGER = 'oro_pricing.shard_manager';
+    public const HINT_PRICE_SHARD = 'HINT_PRICE_SHARD';
 
     /**
      * {@inheritdoc}
      */
-    public function __construct($query, $parserResult, array $queryComponents)
+    public function walkSelectStatement(AST\SelectStatement $AST, string $result)
     {
-        $this->parsingResult = $parserResult;
-        $this->outputResultModifier = new PriceShardOutputResultModifier($query, $parserResult, $queryComponents);
-        parent::__construct($query, $parserResult, $queryComponents);
-    }
+        if ($this->getQuery()->hasHint(self::ORO_PRICING_SHARD_MANAGER)) {
+            return $this->parseSql($result);
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function walkSelectStatement(AST\SelectStatement $AST)
-    {
-        $sql = parent::walkSelectStatement($AST);
-        return $this->outputResultModifier->walkSelectStatement($AST, $sql);
+        return $result;
     }
 
     /**
@@ -137,7 +118,7 @@ class PriceShardWalker extends SqlWalker
         $parameterName = null;
         $searchLength = $foundParameterPosition + strlen($parameterSet);
         $parameterNumber = substr_count($sql, '?', 0, $searchLength) - 1;
-        foreach ($this->parsingResult->getParameterMappings() as $name => $parameterApply) {
+        foreach ($this->parserResult->getParameterMappings() as $name => $parameterApply) {
             if (in_array($parameterNumber, $parameterApply)) {
                 $parameterName = $name;
                 break;

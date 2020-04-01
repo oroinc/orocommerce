@@ -11,7 +11,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -414,7 +414,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $ormQueryConfiguration
             ->expects(self::once())
             ->method('addHint')
-            ->with(PriceShardWalker::HINT_PRICE_SHARD);
+            ->with(PriceShardOutputResultModifier::HINT_PRICE_SHARD);
 
         $this->priceListRequestHandler
             ->expects(self::once())
