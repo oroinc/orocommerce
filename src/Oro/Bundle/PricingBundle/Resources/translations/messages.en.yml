@@ -216,6 +216,7 @@ oro.pricing:
         generated.label: Generated
         type.label: Type
         version.label: Version
+        price_input.aria_label: 'Product Price'
 
     priceattributeprice:
         entity_label: Product Attribute Price

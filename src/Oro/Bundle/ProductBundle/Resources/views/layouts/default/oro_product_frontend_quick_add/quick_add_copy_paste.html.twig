@@ -18,17 +18,18 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ ' quick-order-copy-paste__title'
     }) %}
-    <h3 {{ block('block_attributes') }}>
-        <i class="fa-paste"></i>
+    <h2 {{ block('block_attributes') }}>
+        <span class="fa-paste" aria-hidden="true"></span>
         {{ block_widget(block) }}
-    </h3>
+    </h2>
 {% endblock %}
 
 {% block _quick_add_copy_paste_description_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-copy-paste__description'
+        class: attr.class|default('') ~ ' quick-order-copy-paste__description label label--full',
+        for: 'oro_product_quick_add_copy_paste_copyPaste'
     }) %}
-    <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+    <label {{ block('block_attributes') }}>{{ block_widget(block) }}</label>
 {% endblock %}
 
 {% block _quick_add_copy_paste_form_buttons_widget %}

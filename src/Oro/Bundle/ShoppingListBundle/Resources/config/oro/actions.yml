@@ -39,6 +39,7 @@ operations:
 
     oro_shoppinglist_frontend_products_add_to_shoppinglist:
         extends: oro_shoppinglist_frontend_products_add_to_shoppinglist_base
+        order: 201
         routes:
             - oro_product_frontend_quick_add
 
