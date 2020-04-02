@@ -117,6 +117,9 @@ oro_behat_extension:
         mapping:
           Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
 
+    Canonical URL:
+      selector: "link[rel='canonical']"
+
   pages:
     Category Update:
       class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate
