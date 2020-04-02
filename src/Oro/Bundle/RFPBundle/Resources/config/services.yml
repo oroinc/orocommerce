@@ -195,6 +195,11 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_rfp.email.owner.provider:
+        class: Oro\Bundle\RFPBundle\Entity\Provider\EmailOwnerProvider
+        tags:
+            - { name: oro_email.owner.provider, order: 5}
+
     oro_rfp.updater.customer_user_reassign.request_updater:
         parent: oro_customer.updater.customer_user_reassign.abstract
         calls:
