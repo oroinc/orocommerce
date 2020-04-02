@@ -7,6 +7,8 @@ use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProviderInterface;
 /**
  * Decorates `web_catalog_title` layout data provider.
  * Returns web catalog meta title as a page title.
+ *
+ * @deprecated use SeoDataProvider instead
  */
 class SeoTitleDataProvider implements TitleDataProviderInterface
 {

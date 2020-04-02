@@ -52,7 +52,7 @@ services:
 
     oro_seo.layout.data_provider.webcatalog_title:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoTitleDataProvider
-        decorates: oro_web_catalog.layout.data_provider.title_data
+        deprecated: The "%service_id%" service is deprecated and will be removed in further versions.
         public: false
         arguments:
             - '@oro_seo.layout.data_provider.seo_data'
