@@ -31,7 +31,7 @@ layout:
             blockType: external_resource
             options:
                 rel: 'canonical'
-                href: '=data["category"].getCurrentCategory()!=null ? data["canonical"].getUrl(data["category"].getCurrentCategory()) : null'
+                href: '=data["category"].getCurrentCategory()!=null ? data["category_canonical_url"].getUrl(data["category"].getCurrentCategory(), data["category"].getIncludeSubcategoriesChoice(0)) : null'
         - '@add':
             id: entity_localized_urls
             parentId: head

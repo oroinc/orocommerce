@@ -77,3 +77,11 @@ services:
             - '@oro_catalog.layout.data_provider.category'
         tags:
             - { name: layout.context_configurator }
+
+    oro_catalog.layout.data_provider.canonical_url.category:
+        class: Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryCanonicalUrlDataProvider
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_website.resolver.website_system_url_resolver'
+        tags:
+            - { name: layout.data_provider, alias: category_canonical_url }
