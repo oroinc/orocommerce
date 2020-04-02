@@ -51,13 +51,13 @@ Feature: WYSIWYG field type as product attribute
     And I fill "ProductForm" with:
       | Product WYSIWYG_video Attribute Content | <div onclick=\"alert('test');\">Some Content</div> |
     And I save and close form
-    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: DIV (onclick)" error message
     When I fill "ProductForm" with:
       | Product WYSIWYG_video Attribute Content | <p id='WYSIWYG_escaped'>WYSIWYG_video Content <span>here!</span></p> |
     And I fill "ProductForm" with:
       | Product WYSIWYG_embed Field Content | <div onclick=\"alert('test');\">Some Content</div> |
     And I save and close form
-    Then I should see only "The entered content is not permitted in this field. Please remove the potentially unsecure elements, or contact the system administrators to lift the restrictions." error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: DIV (onclick)" error message
     When I fill "ProductForm" with:
       | Product WYSIWYG_embed Field Content | <p id='WYSIWYG_escaped'>WYSIWYG_embed Content <span>here!</span></p> |
     And I save and close form

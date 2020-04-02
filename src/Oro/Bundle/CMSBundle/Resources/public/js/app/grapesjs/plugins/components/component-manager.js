@@ -62,6 +62,7 @@ const ComponentManager = BaseClass.extend({
             icon: selectTemplate({
                 options: {
                     normal: __('oro.cms.wysiwyg.format_block.normal'),
+                    p: __('oro.cms.wysiwyg.format_block.p'),
                     h1: __('oro.cms.wysiwyg.format_block.h1'),
                     h2: __('oro.cms.wysiwyg.format_block.h2'),
                     h3: __('oro.cms.wysiwyg.format_block.h3'),
@@ -98,7 +99,7 @@ const ComponentManager = BaseClass.extend({
                 const select = action.btn.querySelector('[name="tag"]');
 
                 if (value !== 'false') {
-                    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(value) !== -1) {
+                    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
                         select.value = value;
                     } else {
                         select.value = 'normal';

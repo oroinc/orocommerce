@@ -262,7 +262,9 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.nodeType === 1 && el.matches('div.content-widget, span.content-widget-inline')) {
+        if (el.nodeType === 1 &&
+            (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
+        ) {
             result = {
                 type: this.componentType
             };
