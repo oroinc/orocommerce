@@ -29,6 +29,7 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         slugPrototype: 'product1'
         routeName: 'oro_product_frontend_product_view'
         routeParameters: []
+        organization: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     brand{1..2}:
@@ -55,6 +56,7 @@ Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     taxCode{1..2}:
         code: 'TaxCode<current()>'
         description: 'Tax Code <current()>'
+        organization: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -99,11 +101,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
+        organization: '@organization'
         __calls:
             - addTitle: ['@categoryTitle1']
             - setParentCategory: ['@root_category']
             - addProduct: ['@product1']
     category2:
+        organization: '@organization'
         __calls:
             - addTitle: ['@categoryTitle2']
             - setParentCategory: ['@root_category']

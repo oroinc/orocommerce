@@ -7,10 +7,12 @@ Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     product_tax_code_1:
         code: 'productTaxCode1'
+        organization: '@organization'
 Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
     customer_tax_code_1:
         owner: '@admin'
         code: 'customerTaxCode1'
+        organization: '@organization'
 Oro\Bundle\TaxBundle\Entity\Tax:
     tax_1:
         code: 'tax1'

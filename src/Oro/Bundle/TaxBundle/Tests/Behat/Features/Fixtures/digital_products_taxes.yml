@@ -4,8 +4,10 @@ include:
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
   tax_code_taxable_items:
     code: 'taxable_items'
+    organization: '@organization'
   tax_code_digital_items:
     code: 'digital_items'
+    organization: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision_digital:
