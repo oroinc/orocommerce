@@ -15,11 +15,11 @@
         <div class="order-review-options collapse-view__container" data-collapse-container>
             <div class="grid__row">
                 {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
-                <div class="grid__column grid__column--6" role="group" aria-labelledby={{ shippingDateId }}>
-                    <div class="label label--full" id="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</div>
+                <div class="grid__column grid__column--6" role="group">
+                    <label class="label label--full" for="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
                     <div class="checkout-form__datepicker datepicker-box">
                         <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
-                        {{ form_widget(form.ship_until) }}
+                        {{ form_widget(form.ship_until, {id: shippingDateId}) }}
                     </div>
                 </div>
                 <div class="grid__column grid__column--6">
