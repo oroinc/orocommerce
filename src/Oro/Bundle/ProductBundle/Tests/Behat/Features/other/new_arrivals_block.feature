@@ -271,20 +271,20 @@ Feature: New Arrivals Block
   Scenario: Check that product name is displayed properly
     Given I proceed as the User
     Then should see the following products in the "New Arrivals Block":
-      | Title            |
-      | Product6`"'&йёщ> |
+      | Title                  |
+      | Product6`"'&йёщ®&reg;> |
 
   Scenario: Check that alt attributes contain proper product name
     Given I open product gallery for "SKU6" product
-    Then I should see gallery image with alt "Product6`\"'&йёщ>"
+    Then I should see gallery image with alt "Product6`\"'&йёщ®&reg;>"
     When I click "Popup Gallery Widget Close"
-    Then I should see preview image with alt "Product6`\"'&йёщ>" for "SKU6" product
+    Then I should see preview image with alt "Product6`\"'&йёщ®&reg;>" for "SKU6" product
 
   Scenario: Check that product name is localized in shopping lists widget
     When I click "Add to Shopping List" for "SKU6" product
     And click "In Shopping List" for "SKU6" product
     Then I should see "UiDialog" with elements:
-      | Title | Product6`"'&йёщ> |
+      | Title | Product6`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: Check that product name is localized

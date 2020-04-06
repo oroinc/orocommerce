@@ -8,4 +8,4 @@ include:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locValue:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>

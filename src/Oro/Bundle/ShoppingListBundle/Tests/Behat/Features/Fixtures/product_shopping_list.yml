@@ -56,7 +56,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>
     locvalue2:
         string: 'Product with default unit'
     locvalue3:

@@ -3,7 +3,7 @@ include:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductName1:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>
 
     localProductName2:
         string: 'Product2'
