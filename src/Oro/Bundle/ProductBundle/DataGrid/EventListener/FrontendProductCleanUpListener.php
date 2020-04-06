@@ -62,7 +62,8 @@ class FrontendProductCleanUpListener
                 }
             }
 
-            $event->setRecords($records);
+            // re-order array keys
+            $event->setRecords(array_values($records));
         }
     }
 }
