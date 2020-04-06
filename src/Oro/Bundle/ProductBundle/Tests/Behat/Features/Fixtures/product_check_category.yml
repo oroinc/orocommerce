@@ -157,7 +157,7 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue2:
         string: 'Product2'
     locvalue3:
-        string: <("Product3`\"'&йёщ>")>
+        string: <("Product3`\"'&йёщ®&reg;>")>
 
 Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:

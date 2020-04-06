@@ -191,11 +191,11 @@
                             </div>
                             {% set routeOptions = {'id': product.id} %}
                             <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}" class="shopping-list-dropdown__product-title">
-                                {{- product.names|localized_value|oro_html_strip_tags -}}
+                                {{- product.names|localized_value|e -}}
                             </a>
                             <div class="shopping-list-dropdown__product-sku">
                                 {{- 'oro.frontend.shoppinglist.view.item.label'|trans }}
-                                <span class="shopping-list-dropdown__product-sku-value">{{ product.sku|oro_html_strip_tags }}</span>
+                                <span class="shopping-list-dropdown__product-sku-value">{{ product.sku|e }}</span>
                             </div>
                         </div>
                     </div>

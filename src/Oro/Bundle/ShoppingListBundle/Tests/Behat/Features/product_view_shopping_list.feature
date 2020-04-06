@@ -52,11 +52,13 @@ Feature: Product view shopping list
     And I click "Add to Shopping List"
     And I am on the homepage
     When I hover on "Shopping Cart"
-    Then I should see "Product1`\"'&йёщ>"
+    Then I should see "Product1`\"'&йёщ®&reg;>"
+    And I should not see "Product1`\"'&йёщ®®>"
 
   Scenario: Check that product name is displayed properly on shopping list view page
     When I open page with shopping list Shopping List
-    Then I should see "Product1`\"'&йёщ>"
+    Then I should see "Product1`\"'&йёщ®&reg;>"
+    And I should not see "Product1`\"'&йёщ®®>"
 
   Scenario: Check that product name is localized in shopping lists widget
     Given I click "Localization Switcher"
