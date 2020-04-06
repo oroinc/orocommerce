@@ -67,12 +67,14 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
     {
         $record = new ResultRecord(['id' => 1]);
         $deletedRecord = new ResultRecord(['id' => 2]);
-        $this->event->setRecords([$record, $deletedRecord]);
+        $thirdRecord = new ResultRecord(['id' => 3]);
+        $this->event->setRecords([$record, $deletedRecord, $thirdRecord]);
 
-        $this->configureQueryBuilder([['id' => 1]]);
+        $this->configureQueryBuilder([['id' => 1], ['id' => 3]]);
 
         $this->listener->onSearchResultAfter($this->event);
-        $this->assertCount(1, $this->event->getRecords());
+        $this->assertCount(2, $this->event->getRecords());
+        $this->assertEquals([$record, $thirdRecord], $this->event->getRecords());
     }
 
     /**
