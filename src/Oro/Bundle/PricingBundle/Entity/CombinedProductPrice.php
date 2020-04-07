@@ -47,9 +47,54 @@ class CombinedProductPrice extends BaseProductPrice
     protected $priceList;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
      */
     protected $mergeAllowed = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="origin_price_id", type="guid", nullable=true)
+     */
+    protected $originPriceId;
+
+    /**
+     * @return string|null
+     */
+    public function getOriginPriceId()
+    {
+        return $this->originPriceId;
+    }
+
+    /**
+     * @param string $originPriceId
+     * @return CombinedProductPrice
+     */
+    public function setOriginPriceId($originPriceId)
+    {
+        $this->originPriceId = $originPriceId;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMergeAllowed(): bool
+    {
+        return $this->mergeAllowed;
+    }
+
+    /**
+     * @param bool $mergeAllowed
+     * @return CombinedProductPrice
+     */
+    public function setMergeAllowed($mergeAllowed)
+    {
+        $this->mergeAllowed = $mergeAllowed;
+
+        return $this;
+    }
 }

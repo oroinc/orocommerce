@@ -51,7 +51,6 @@ Feature: Mass edit of Coupons codes
     And I check all records in grid
     And I click "Edit" link from mass action dropdown
     Then I should see "Mass Coupon Edit"
-    And I wait for action
     When I fill "Mass Coupon Edit Form" with:
       | Uses per Coupon  | 99        |
       | Uses per Person  | 100       |

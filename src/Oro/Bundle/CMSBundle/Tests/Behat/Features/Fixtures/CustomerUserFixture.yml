@@ -1,6 +1,8 @@
 Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     all_customers:
         name: 'All Customers'
+        organization: '@organization'
+        owner: '@admin'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
     company_a:

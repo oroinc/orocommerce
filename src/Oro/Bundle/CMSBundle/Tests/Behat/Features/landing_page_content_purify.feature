@@ -38,7 +38,7 @@ Feature: Landing Page content purify
       | Titles  | Other page                                                                              |
       | Content | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
     And I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: Iframe" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: IFRAME (src, allowfullscreen)" error message
     When I fill "CMS Page Form" with:
       | Content | <div>Some Content</div> |
     And I save and close form
@@ -64,15 +64,6 @@ Feature: Landing Page content purify
       | Content | {{ widget(\"\"\")}} |
     When I save and close form
     Then I should see only "The entered content contains invalid twig constructions." error message
-
-  Scenario: Create a new Landing Page with link using draggable attribute
-    When I go to Marketing / Landing Pages
-    And click "Create Landing Page"
-    And I fill "CMS Page Form" with:
-      | Titles  | Draggable attr                            |
-      | Content | <a draggable=\"true\" href=\"#\">Link</a> |
-    And I save and close form
-    Then I should see "Page has been saved" flash message
 
   Scenario: Create a new Landing Page with link using target attribute
     Given I go to Marketing / Landing Pages

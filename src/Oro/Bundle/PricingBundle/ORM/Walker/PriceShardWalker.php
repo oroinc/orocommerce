@@ -8,6 +8,8 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 /**
  * Query walker for price shard
+ *
+ * @deprecated use PriceShardOutputResultModifier instead
  */
 class PriceShardWalker extends SqlWalker
 {
@@ -20,11 +22,17 @@ class PriceShardWalker extends SqlWalker
     protected $parsingResult;
 
     /**
+     * @var PriceShardOutputResultModifier
+     */
+    private $outputResultModifier;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct($query, $parserResult, array $queryComponents)
     {
         $this->parsingResult = $parserResult;
+        $this->outputResultModifier = new PriceShardOutputResultModifier($query, $parserResult, $queryComponents);
         parent::__construct($query, $parserResult, $queryComponents);
     }
 
@@ -34,9 +42,7 @@ class PriceShardWalker extends SqlWalker
     public function walkSelectStatement(AST\SelectStatement $AST)
     {
         $sql = parent::walkSelectStatement($AST);
-        $sql = $this->parseSql($sql);
-
-        return $sql;
+        return $this->outputResultModifier->walkSelectStatement($AST, $sql);
     }
 
     /**

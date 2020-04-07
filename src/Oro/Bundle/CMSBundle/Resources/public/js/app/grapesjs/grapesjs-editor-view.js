@@ -171,7 +171,7 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * @property {String}
      */
-    wrapperSelector: '.page-content-editor, .fallback-item-value, .variant-collection',
+    wrapperSelector: '.page-content-editor, .fallback-item-value, .content-variant-item',
 
     /**
      * @property {Array}

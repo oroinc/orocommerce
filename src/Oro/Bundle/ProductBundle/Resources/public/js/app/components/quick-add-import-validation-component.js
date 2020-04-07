@@ -54,7 +54,7 @@ define(function(require) {
         },
 
         closeWidget: function(widget) {
-            widget.dispose();
+            widget.remove();
         },
 
         onWidgetRender: function() {

@@ -25,7 +25,6 @@ abstract class AbstractPriceCombiningStrategy implements
     InsertFromSelectExecutorAwareInterface,
     PriceCombiningStrategyFallbackAwareInterface
 {
-
     /**
      * @var CombinedPriceListTriggerHandler
      */

@@ -44,12 +44,12 @@ Feature: Content Block content purify
       | Customer Group  | Non-Authenticated Visitors                                                              |
       | Content Variant | Secure content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |
     When I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: Iframe" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: IFRAME (src, allowfullscreen)" error message
 
     When I fill "Content Block Form" with:
       | Content Variant | xss text <script></script> |
     And I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: Script" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: SCRIPT" error message
 
     When I fill "Content Block Form" with:
       | Content Variant | <div>Some Content</div> |
@@ -67,7 +67,7 @@ Feature: Content Block content purify
     When I fill "Content Block Form" with:
       | Content Variant | Same text <script></script> Same text |
     And I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: Script" error message
+    Then I should see "Please remove not permitted HTML-tags in the content field: SCRIPT" error message
 
     When I fill "Content Block Form" with:
       | Content Variant | Selective content <iframe src=\"https://www.youtube.com/embed/\" allowfullscreen></iframe> |

@@ -101,8 +101,8 @@
 {% block __oro_checkout_sidebar__enter_shipping_method_information_widget %}
     {% if checkout.shippingCost %}
         {{ 'oro.checkout.method_type.sidebar.label'|trans({
-            '%translatedMethodType%': get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans|oro_html_strip_tags,
-            '%translatedMethod%': get_shipping_method_label(checkout.shippingMethod)|trans|oro_html_strip_tags,
+            '%translatedMethodType%': get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans|e,
+            '%translatedMethod%': get_shipping_method_label(checkout.shippingMethod)|trans|e,
             '%price%': checkout.shippingCost|oro_format_price,
         })|raw }}
     {% endif %}

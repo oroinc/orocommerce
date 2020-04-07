@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
@@ -53,16 +54,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->insertFromSelectQueryExecutor = $this->getMockBuilder(InsertFromSelectShardQueryExecutor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->ruleCompiler = $this->getMockBuilder(PriceListRuleCompiler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->insertFromSelectQueryExecutor = $this->createMock(InsertFromSelectShardQueryExecutor::class);
+        $this->ruleCompiler = $this->createMock(PriceListRuleCompiler::class);
+        $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+
         $this->productPriceBuilder = new ProductPriceBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
@@ -135,7 +131,6 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($this->shardManager, $priceList, [$product]);
 
         $qb = $this->assertInsertCall($fields, [$rule1, $rule2], [$product]);
-
         $this->insertFromSelectQueryExecutor->expects($this->exactly(2))
             ->method('execute')
             ->with(
@@ -149,6 +144,56 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$product]);
 
         $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
+    }
+
+    public function testBuildByPriceListNoProductsProvided()
+    {
+        $priceList = new PriceList();
+
+        $rule = new PriceRule();
+        $rule->setPriority(10);
+
+        $priceList->setPriceRules(new ArrayCollection([$rule]));
+
+        $fields = ['field1', 'field2'];
+
+        $repo = $this->getRepositoryMock();
+        $repo->expects($this->once())
+            ->method('deleteGeneratedPrices')
+            ->with($this->shardManager, $priceList, []);
+        $repo->expects($this->once())
+            ->method('getProductsByPriceListAndVersion')
+            ->with(
+                $this->shardManager,
+                $priceList,
+                $this->isType('int'),
+                PriceListTriggerHandler::BATCH_SIZE
+            )
+            ->willReturn([[1], [2]]);
+
+        $qb = $this->assertInsertCall($fields, [$rule], []);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn(new Expr());
+        $qb->expects($this->once())
+            ->method('addSelect');
+
+        $this->insertFromSelectQueryExecutor->expects($this->once())
+            ->method('execute')
+            ->with(
+                ProductPrice::class,
+                array_merge($fields, ['version']),
+                $qb
+            );
+
+        $this->priceListTriggerHandler->expects($this->exactly(2))
+            ->method('addTriggerForPriceList')
+            ->withConsecutive(
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [1]],
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [2]]
+            );
+
+        $this->productPriceBuilder->buildByPriceList($priceList, []);
     }
 
     public function testBuildByPriceListWithoutTriggers()
@@ -166,7 +211,6 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         $fields = ['field1', 'field2'];
         $queryBuilder = $this->assertInsertCall($fields, [$rule]);
-
         $this->insertFromSelectQueryExecutor->expects($this->once())
             ->method('execute')
             ->with(
@@ -194,10 +238,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getRepositoryMock()
     {
-        $repo = $this->getMockBuilder(ProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $repo = $this->createMock(ProductPriceRepository::class);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')

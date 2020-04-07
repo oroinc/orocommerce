@@ -47,7 +47,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_11_2';
+        return 'v1_11_3';
     }
 
     /**
@@ -72,6 +72,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
+        $this->addOwnerToOroEmailAddress($schema);
     }
 
     /**
@@ -388,5 +389,28 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_rfp_request');
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function addOwnerToOroEmailAddress(Schema $schema)
+    {
+        $table = $schema->getTable('oro_email_address');
+
+        if ($table->hasColumn('owner_request_id')) {
+            return;
+        }
+
+        $table->addColumn('owner_request_id', 'integer', ['notnull' => false]);
+        $table->addIndex(['owner_request_id']);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rfp_request'),
+            ['owner_request_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
     }
 }

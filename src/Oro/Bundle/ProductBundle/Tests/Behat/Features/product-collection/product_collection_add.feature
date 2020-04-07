@@ -51,7 +51,7 @@ Feature: Product collection add
     And I am on homepage
     Then I should see "PSKU1"
     And I should not see "PSKU2"
-    And Page title equals to "CollectionMetaTitle"
+    And Page title equals to "Root Node"
     And Page meta title equals "CollectionMetaTitle"
     And Page meta keywords equals "CollectionMetaKeyword"
     And Page meta description equals "CollectionMetaDescription"

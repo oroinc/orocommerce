@@ -30,11 +30,11 @@ Feature: CPL activation rule processing
     And I click "Enter expression unit"
     And I click "Enter expression currency"
     And I fill "Price Calculation Rules Form" with:
-      | Price for quantity | pricelist[1].prices.quantity    |
-      | Price Unit         | pricelist[1].prices.unit        |
-      | Price Currency     | pricelist[1].prices.currency    |
-      | Calculate As       | pricelist[1].prices.value * 1.2 |
-      | Priority           | 1                               |
+      | Price for quantity | pricelist[1].prices.quantity * 10 |
+      | Price Unit         | pricelist[1].prices.unit          |
+      | Price Currency     | pricelist[1].prices.currency      |
+      | Calculate As       | pricelist[1].prices.value * 1.2   |
+      | Priority           | 1                                 |
     And I save and close form
     Then I should see "Price List has been saved" flash message
 
@@ -67,6 +67,6 @@ Feature: CPL activation rule processing
     Then I should see "Price List has been saved" flash message
     When I click "Recalculate"
     Then I should see "Product Prices have been successfully recalculated" flash message
-    And There are 1 prices in combined price list:
+    And There are 2 prices in combined price list:
       | priceListForWebsite |
       | Default Price List  |
