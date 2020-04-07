@@ -122,7 +122,7 @@ class Subtotal
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = (float) $amount;
 
         return $this;
     }

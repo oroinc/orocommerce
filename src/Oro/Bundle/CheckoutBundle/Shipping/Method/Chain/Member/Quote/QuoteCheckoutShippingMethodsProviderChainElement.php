@@ -4,12 +4,17 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Provides applicable shipping methods views and shipping prices for checkout created from Quote.
+ */
 class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
     /**
@@ -28,6 +33,11 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     private $quoteShippingConfigurationFactory;
 
     /**
+     * @var CheckoutShippingContextProvider|null
+     */
+    private $checkoutShippingContextProvider;
+
+    /**
      * @param CheckoutShippingContextFactory $checkoutShippingContextFactory
      * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
      * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
@@ -40,6 +50,15 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
         $this->checkoutShippingContextFactory = $checkoutShippingContextFactory;
         $this->shippingConfiguredPriceProvider = $shippingConfiguredPriceProvider;
         $this->quoteShippingConfigurationFactory = $quoteShippingConfigurationFactory;
+    }
+
+    /**
+     * @param CheckoutShippingContextProvider|null $checkoutShippingContextProvider
+     */
+    public function setCheckoutShippingContextProvider(
+        ?CheckoutShippingContextProvider $checkoutShippingContextProvider
+    ): void {
+        $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
     /**
@@ -72,7 +91,7 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
         }
 
         $configuration = $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote);
-        $context = $this->checkoutShippingContextFactory->create($checkout);
+        $context = $this->getShippingContext($checkout);
 
         return $this->shippingConfiguredPriceProvider->getApplicableMethodsViews($configuration, $context);
     }
@@ -95,13 +114,26 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
         }
 
         $configuration = $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote);
-        $context = $this->checkoutShippingContextFactory->create($checkout);
 
         return $this->shippingConfiguredPriceProvider->getPrice(
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType(),
             $configuration,
-            $context
+            $this->getShippingContext($checkout)
         );
+    }
+
+    /**
+     * @param Checkout $checkout
+     *
+     * @return ShippingContextInterface
+     */
+    private function getShippingContext(Checkout $checkout): ShippingContextInterface
+    {
+        if ($this->checkoutShippingContextProvider) {
+            return $this->checkoutShippingContextProvider->getContext($checkout);
+        }
+
+        return $this->checkoutShippingContextFactory->create($checkout);
     }
 }

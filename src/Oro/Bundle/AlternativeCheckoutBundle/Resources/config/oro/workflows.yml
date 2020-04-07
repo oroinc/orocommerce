@@ -1019,8 +1019,8 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                     - '@call_service_method':
-                        service: oro_checkout.factory.payment_context_factory
-                        method: create
+                        service: oro_checkout.provider.payment_context
+                        method: getContext
                         method_parameters: [$checkout]
                         attribute: $.result.paymentContext
                 preconditions:
@@ -1167,8 +1167,8 @@ workflows:
                                         state: $.result.currentCheckoutState
                                         token: $state_token
                             - '@call_service_method':
-                                service: oro_checkout.factory.payment_context_factory
-                                method: create
+                                service: oro_checkout.provider.payment_context
+                                method: getContext
                                 method_parameters: [$checkout]
                                 attribute: $.result.paymentContext
                 preconditions:

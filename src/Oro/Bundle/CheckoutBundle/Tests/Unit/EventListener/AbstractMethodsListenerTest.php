@@ -43,6 +43,11 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
     protected $contextFactory;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $checkoutContextProvider;
+
+    /**
      * @var AbstractMethodsListener
      */
     protected $listener;
@@ -60,15 +65,6 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
         $this->addressProvider = $this->getMockBuilder(OrderAddressProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-    }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->addressProvider,
-            $this->orderAddressManager,
-            $this->orderAddressSecurityProvider
-        );
     }
 
     protected function expectsNoInvocationOfManualEditGranted()
@@ -163,6 +159,58 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider manualEditGrantedDataProvider
+     * @param bool $shippingManualEdit
+     * @param bool $billingManualEdit
+     * @param array $methodConfigs
+     */
+    public function testOnStartCheckoutWhenIsApplicableAndManualEditGrantedAndContextProvider(
+        $shippingManualEdit,
+        $billingManualEdit,
+        array $methodConfigs
+    ): void {
+        $context = new ActionData(['checkout' => $this->getEntity(Checkout::class), 'validateOnStartCheckout' => true]);
+        $event = new ExtendableConditionEvent($context);
+
+        $addressSecurityProviderReturnMap = [];
+
+        if ($shippingManualEdit !== null) {
+            $addressSecurityProviderReturnMap[] = [AddressType::TYPE_SHIPPING, $shippingManualEdit];
+        }
+
+        if ($billingManualEdit !== null) {
+            $addressSecurityProviderReturnMap[] = [AddressType::TYPE_BILLING, $billingManualEdit];
+        }
+
+        $this->orderAddressSecurityProvider
+            ->expects($this->atLeast(1))
+            ->method('isManualEditGranted')
+            ->willReturnMap($addressSecurityProviderReturnMap);
+
+        $this->contextFactory
+            ->expects($this->never())
+            ->method('create');
+
+        $context = $this->createContext();
+        $this->checkoutContextProvider
+            ->expects($this->once())
+            ->method('getContext')
+            ->with($this->isInstanceOf(Checkout::class))
+            ->willReturn($context);
+
+        $this->configsRuleProvider
+            ->expects($this->once())
+            ->method($this->getConfigRuleProviderMethod())
+            ->with($context)
+            ->willReturn($methodConfigs);
+
+        $this->listener->setCheckoutContextProvider($this->checkoutContextProvider);
+        $this->listener->onStartCheckout($event);
+
+        $this->assertEquals(!empty($methodConfigs), $event->getErrors()->isEmpty());
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function expectsHasMethodsConfigsForAddressesInvocation(
@@ -245,6 +293,80 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectsHasMethodsConfigsForAddressesInvocation($expectedCalls, $onConsecutiveMethodConfigs);
 
+        $this->listener->onStartCheckout($event);
+
+        $this->assertEquals(!empty(array_filter($onConsecutiveMethodConfigs)), $event->getErrors()->isEmpty());
+    }
+
+    /**
+     * @dataProvider notManualEditDataProvider
+     *
+     * @param Checkout $checkout
+     * @param array $customerAddressesMap
+     * @param array $customerUserAddressesMap
+     * @param array $consecutiveAddresses
+     * @param int $expectedCalls
+     * @param array $onConsecutiveMethodConfigs
+     */
+    public function testOnStartCheckoutWhenIsManualEditNotGrantedAndContextProvider(
+        $checkout,
+        array $customerAddressesMap,
+        array $customerUserAddressesMap,
+        array $consecutiveAddresses,
+        $expectedCalls,
+        array $onConsecutiveMethodConfigs
+    ): void {
+        $context = new ActionData(['checkout' => $checkout, 'validateOnStartCheckout' => true]);
+
+        $event = new ExtendableConditionEvent($context);
+
+        $this->orderAddressSecurityProvider
+            ->expects($this->atLeast(1))
+            ->method('isManualEditGranted')
+            ->willReturnMap([
+                [AddressType::TYPE_SHIPPING, false],
+                [AddressType::TYPE_BILLING, false]
+            ]);
+
+        $customerAddressCount = count($customerAddressesMap);
+        $this->addressProvider
+            ->expects($this->exactly($customerAddressCount))
+            ->method('getCustomerAddresses')
+            ->willReturnMap($customerAddressesMap);
+
+        $customerUserAddressCount = count($customerUserAddressesMap);
+        $this->addressProvider
+            ->expects($this->exactly($customerUserAddressCount))
+            ->method('getCustomerUserAddresses')
+            ->willReturnMap($customerUserAddressesMap);
+
+        $orderAddress = $this->getEntity(OrderAddress::class, ['id' => 7]);
+
+        $this->orderAddressManager
+            ->expects($this->exactly($expectedCalls))
+            ->method('updateFromAbstract')
+            ->withConsecutive(...$consecutiveAddresses)
+            ->willReturn($orderAddress);
+
+        $paymentContext = $this->createContext();
+
+        $this->checkoutContextProvider
+            ->expects($this->exactly($expectedCalls))
+            ->method('getContext')
+            ->with($this->callback(function (Checkout $checkout) {
+                $this->assertInstanceOf(OrderAddress::class, $this->getAddressToCheck($checkout));
+
+                return $checkout instanceof Checkout;
+            }))
+            ->willReturn($paymentContext);
+
+        $this->configsRuleProvider
+            ->expects($this->exactly($expectedCalls))
+            ->method($this->getConfigRuleProviderMethod())
+            ->with($paymentContext)
+            ->willReturnOnConsecutiveCalls(...$onConsecutiveMethodConfigs);
+
+        $this->listener->setCheckoutContextProvider($this->checkoutContextProvider);
         $this->listener->onStartCheckout($event);
 
         $this->assertEquals(!empty(array_filter($onConsecutiveMethodConfigs)), $event->getErrors()->isEmpty());

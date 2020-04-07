@@ -4,9 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
+/**
+ * Provides applicable shipping methods views and shipping prices.
+ */
 class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
     /**
@@ -18,6 +23,11 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
      * @var CheckoutShippingContextFactory
      */
     private $checkoutShippingContextFactory;
+
+    /**
+     * @var CheckoutShippingContextProvider|null
+     */
+    private $checkoutShippingContextProvider;
 
     /**
      * @param ShippingPriceProviderInterface $shippingPriceProvider
@@ -32,6 +42,15 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     }
 
     /**
+     * @param CheckoutShippingContextProvider|null $checkoutShippingContextProvider
+     */
+    public function setCheckoutShippingContextProvider(
+        ?CheckoutShippingContextProvider $checkoutShippingContextProvider
+    ): void {
+        $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getApplicableMethodsViews(Checkout $checkout)
@@ -42,9 +61,7 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
             return $successorViews;
         }
 
-        $context = $this->checkoutShippingContextFactory->create($checkout);
-
-        return $this->shippingPriceProvider->getApplicableMethodsViews($context);
+        return $this->shippingPriceProvider->getApplicableMethodsViews($this->getShippingContext($checkout));
     }
 
     /**
@@ -58,12 +75,24 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
             return $successorPrice;
         }
 
-        $context = $this->checkoutShippingContextFactory->create($checkout);
-
         return $this->shippingPriceProvider->getPrice(
-            $context,
+            $this->getShippingContext($checkout),
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType()
         );
+    }
+
+    /**
+     * @param Checkout $checkout
+     *
+     * @return ShippingContextInterface
+     */
+    private function getShippingContext(Checkout $checkout): ShippingContextInterface
+    {
+        if ($this->checkoutShippingContextProvider) {
+            return $this->checkoutShippingContextProvider->getContext($checkout);
+        }
+
+        return $this->checkoutShippingContextFactory->create($checkout);
     }
 }

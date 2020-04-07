@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\PaymentMethodsListener;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -25,15 +26,19 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      */
     protected $contextFactory;
 
+    /**
+     * @var CheckoutPaymentContextProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $checkoutContextProvider;
+
     protected function setUp()
     {
         parent::setUp();
 
         $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
-        $this->contextFactory = $this->getMockBuilder(CheckoutPaymentContextFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextFactory = $this->createMock(CheckoutPaymentContextFactory::class);
+        $this->checkoutContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);
 
         $this->listener = new PaymentMethodsListener(
             $this->addressProvider,
@@ -42,13 +47,6 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
             $this->configsRuleProvider,
             $this->contextFactory
         );
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener, $this->contextFactory, $this->configsRuleProvider);
-
-        parent::tearDown();
     }
 
     /**

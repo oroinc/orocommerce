@@ -5,12 +5,16 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
+/**
+ * Checks if there are available payment methods when checkout starts.
+ */
 class PaymentMethodsListener extends AbstractMethodsListener
 {
     /**
@@ -32,6 +36,11 @@ class PaymentMethodsListener extends AbstractMethodsListener
      * @var OrderAddressSecurityProvider
      */
     private $orderAddressSecurityProvider;
+
+    /**
+     * @var CheckoutPaymentContextProvider|null
+     */
+    private $checkoutPaymentContextProvider;
 
     /**
      * @param OrderAddressProvider                          $addressProvider
@@ -56,12 +65,27 @@ class PaymentMethodsListener extends AbstractMethodsListener
     }
 
     /**
+     * @param CheckoutPaymentContextProvider|null $checkoutShippingContextProvider
+     */
+    public function setCheckoutContextProvider(
+        ?CheckoutPaymentContextProvider $checkoutShippingContextProvider
+    ): void {
+        $this->checkoutPaymentContextProvider = $checkoutShippingContextProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setBillingAddress($address);
-        $paymentContext = $this->contextFactory->create($checkout);
+
+        if ($this->checkoutPaymentContextProvider) {
+            $paymentContext = $this->checkoutPaymentContextProvider->getContext($checkout);
+        } else {
+            $paymentContext = $this->contextFactory->create($checkout);
+        }
+
         $paymentMethodsConfigs = $this->paymentProvider->getPaymentMethodsConfigsRules($paymentContext);
 
         return count($paymentMethodsConfigs) > 0;

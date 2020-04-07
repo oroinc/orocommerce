@@ -82,8 +82,8 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->checkoutSubtotalUpdater->recalculateCheckoutSubtotals($checkout, true);
-        $this->assertSame(100, $totalUsd->getSubtotal()->getAmount());
-        $this->assertSame(80, $totalEur->getSubtotal()->getAmount());
+        $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
+        $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
 
         $this->assertSame('price list 1', $totalUsd->getSubtotal()->getCombinedPriceList()->getName());
         $this->assertSame('price list 2', $totalEur->getSubtotal()->getCombinedPriceList()->getName());
@@ -118,8 +118,8 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();
-        $this->assertSame(100, $totalUsd->getSubtotal()->getAmount());
-        $this->assertSame(80, $totalEur->getSubtotal()->getAmount());
+        $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
+        $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
     }
 
     public function testRecalculateInvalidSubtotalsNoCheckouts()

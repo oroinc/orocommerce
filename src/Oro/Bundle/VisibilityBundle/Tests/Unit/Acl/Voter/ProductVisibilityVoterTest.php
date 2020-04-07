@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -43,6 +44,11 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
      */
     private $modifier;
 
+    /**
+     * @var ResolvedProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $resolvedProductVisibilityProvider;
+
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -56,6 +62,8 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->voter->setClassName(Product::class);
 
+        $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+
         $this->cache = $this->createMock(CacheProvider::class);
     }
 
@@ -66,8 +74,6 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
     public function testAbstainOnUnsupportedAttribute($attributes)
     {
         $product = new Product();
-
-        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token **/
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(
@@ -280,5 +286,69 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
             ->method('setMaxResults')
             ->with('1')
             ->willReturn($qb);
+    }
+
+    public function testVoteWhenNotFrontend(): void
+    {
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
+
+        $this->resolvedProductVisibilityProvider
+            ->expects($this->never())
+            ->method('isVisible');
+
+        $token = $this->createMock(TokenInterface::class);
+        $product = $this->createMock(Product::class);
+        $this->assertEquals(ProductVisibilityVoter::ACCESS_ABSTAIN, $this->voter->vote($token, $product, ['VIEW']));
+    }
+
+    /**
+     * @dataProvider voteDataProvider
+     *
+     * @param bool $isVisible
+     * @param int $expected
+     */
+    public function testVoteWhenVisibilityProvider(bool $isVisible, int $expected): void
+    {
+        $productId = 42;
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
+
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($product, false)
+            ->willReturn($productId);
+
+        $this->resolvedProductVisibilityProvider
+            ->expects($this->once())
+            ->method('isVisible')
+            ->with($productId)
+            ->willReturn($isVisible);
+
+        $token = $this->createMock(TokenInterface::class);
+        $this->voter->setResolvedProductVisibilityProvider($this->resolvedProductVisibilityProvider);
+        $this->assertEquals($expected, $this->voter->vote($token, $product, ['VIEW']));
+    }
+
+    /**
+     * @return array
+     */
+    public function voteDataProvider(): array
+    {
+        return [
+            'access granted' => [
+                'isVisible' => true,
+                'expected' => ProductVisibilityVoter::ACCESS_GRANTED,
+            ],
+            'access denied' => [
+                'isVisible' => false,
+                'expected' => ProductVisibilityVoter::ACCESS_DENIED,
+            ],
+        ];
     }
 }

@@ -17,6 +17,9 @@ class ResolvableMatcher implements MatcherInterface
     /** @var AddressResolverSettingsProvider */
     protected $settingsProvider;
 
+    /** @var MatcherInterface */
+    protected $matcher;
+
     /**
      * @param AddressMatcherRegistry          $addressMatcherRegistry
      * @param AddressResolverSettingsProvider $taxationSettingsProvider
@@ -42,8 +45,12 @@ class ResolvableMatcher implements MatcherInterface
      */
     private function getMatcherFromRegistry()
     {
-        return $this->addressMatcherRegistry->getMatcherByType(
-            $this->settingsProvider->getAddressResolverGranularity()
-        );
+        if (!$this->matcher) {
+            $this->matcher = $this->addressMatcherRegistry->getMatcherByType(
+                $this->settingsProvider->getAddressResolverGranularity()
+            );
+        }
+
+        return $this->matcher;
     }
 }

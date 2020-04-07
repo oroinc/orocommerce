@@ -7,16 +7,22 @@ use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Tests\Unit\Workflow\Action\AbstractSendEmailTemplateTest;
+use Oro\Bundle\EmailBundle\Tools\AggregatedEmailTemplatesSender;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
 
 class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
 {
+    /** @var AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject */
+    private $sender;
+
     /** @var SendOrderConfirmationEmail */
     private $action;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->sender = $this->createMock(AggregatedEmailTemplatesSender::class);
 
         $this->action = new SendOrderConfirmationEmail(
             $this->contextAccessor,
@@ -40,6 +46,37 @@ class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
      * @param string $logMessage
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
+    {
+        $this->sender->expects($this->once())
+            ->method('send')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with($logMessage);
+
+        $this->action->setSender($this->sender);
+        $this->action->initialize(
+            [
+                'from' => 'test@test.com',
+                'to' => 'test@test.com',
+                'template' => 'test',
+                'subject' => 'subject',
+                'body' => 'body',
+                'entity' => new \stdClass(),
+                'workflow' => 'test',
+            ]
+        );
+        $this->action->execute([]);
+    }
+
+    /**
+     * @dataProvider executeIgnoresExceptionsDataProvider
+     *
+     * @param \Throwable $exception
+     * @param string $logMessage
+     */
+    public function testExecuteIgnoresExceptionsWhenNoSender(\Throwable $exception, string $logMessage): void
     {
         $this->localizedTemplateProvider->expects($this->once())
             ->method('getAggregated')

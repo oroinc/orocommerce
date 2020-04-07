@@ -8,6 +8,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
+/**
+ * Abstract class for tax matcher.
+ */
 abstract class AbstractMatcher implements MatcherInterface
 {
     const CACHE_KEY_DELIMITER = ':';
@@ -76,7 +79,7 @@ abstract class AbstractMatcher implements MatcherInterface
         return implode(
             self::CACHE_KEY_DELIMITER,
             array_map(
-                function ($argument) {
+                static function ($argument) {
                     if ($argument instanceof Country) {
                         return $argument->getIso2Code();
                     } elseif ($argument instanceof Region) {

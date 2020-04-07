@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -20,6 +21,85 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
 {
     use WorkflowQueryTrait;
     use ResetCustomerUserTrait;
+
+    /**
+     * Used in CheckoutController::checkoutAction().
+     * Loads related entities to eliminate extra queries on checkout.
+     *
+     * @param int $checkoutId
+     *
+     * @return Checkout|null
+     */
+    public function findForCheckoutAction(int $checkoutId): ?Checkout
+    {
+        $qb = $this->createQueryBuilder('checkout');
+
+        /** @var Checkout $checkout */
+        $checkout = $qb
+            ->select(
+                'checkout',
+                'line_item',
+                'product',
+                'product_manage_inventory',
+                'product_minimum_quantity',
+                'product_maximum_quantity',
+                'product_highlight_low_inventory',
+                'product_is_upcoming',
+                'category',
+                'category_manage_inventory',
+                'category_minimum_quantity',
+                'category_maximum_quantity',
+                'category_highlight_low_inventory',
+                'category_is_upcoming'
+            )
+            ->leftJoin('checkout.lineItems', 'line_item')
+            ->leftJoin('line_item.product', 'product')
+            ->leftJoin('product.manageInventory', 'product_manage_inventory')
+            ->leftJoin('product.highlightLowInventory', 'product_highlight_low_inventory')
+            ->leftJoin('product.isUpcoming', 'product_is_upcoming')
+            ->leftJoin('product.minimumQuantityToOrder', 'product_minimum_quantity')
+            ->leftJoin('product.maximumQuantityToOrder', 'product_maximum_quantity')
+            ->leftJoin('product.category', 'category')
+            ->leftJoin('category.manageInventory', 'category_manage_inventory')
+            ->leftJoin('category.highlightLowInventory', 'category_highlight_low_inventory')
+            ->leftJoin('category.isUpcoming', 'category_is_upcoming')
+            ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
+            ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
+            ->where($qb->expr()->eq('checkout.id', ':id'))
+            ->setParameter('id', $checkoutId, Type::INTEGER)
+            ->getQuery()->getOneOrNullResult();
+
+        if ($checkout && $checkout->getLineItems()->count()) {
+            $lineItems = $checkout->getLineItems();
+            $productsIds = [];
+            foreach ($lineItems as $lineItem) {
+                if ($lineItem->getProduct()) {
+                    $productId = $lineItem->getProduct()->getId();
+                    $productsIds[$productId] = $productId;
+                }
+            }
+
+            $this->loadRelatedProductNames($productsIds);
+        }
+
+        return $checkout;
+    }
+
+    /**
+     * @param array $productIds
+     */
+    private function loadRelatedProductNames(array $productIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('partial product.{id}', 'product_name')
+            ->from(Product::class, 'product')
+            ->innerJoin('product.names', 'product_name')
+            ->where($qb->expr()->in('product', ':products'))
+            ->setParameter('products', $productIds)
+            ->getQuery()
+            ->execute();
+    }
 
     /**
      * @param int $checkoutId

@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -46,7 +47,11 @@ class CheckoutController extends Controller
     {
         $this->disableGarbageCollector();
 
-        $checkout = $this->getCheckoutWithRelations($checkout);
+        $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
+            ->getRepository(Checkout::class)
+            ->findForCheckoutAction($checkout->getId());
+
+        $this->prefetchProductsVisibility($checkout);
 
         $currentStep = $this->getCheckoutWorkflowHelper()
             ->processWorkflowAndGetCurrentStep($request, $checkout);
@@ -93,6 +98,22 @@ class CheckoutController extends Controller
     }
 
     /**
+     * @param Checkout $checkout
+     */
+    private function prefetchProductsVisibility(Checkout $checkout): void
+    {
+        $productIds = [];
+        foreach ($checkout->getLineItems() as $checkoutLineItem) {
+            if ($checkoutLineItem->getProduct()) {
+                $productId = $checkoutLineItem->getProduct()->getId();
+                $productIds[$productId] = $productId;
+            }
+        }
+
+        $this->get(ResolvedProductVisibilityProvider::class)->prefetch($productIds);
+    }
+
+    /**
      * @param CheckoutInterface $checkout
      *
      * @return mixed|WorkflowItem
@@ -115,17 +136,5 @@ class CheckoutController extends Controller
     private function getCheckoutWorkflowHelper()
     {
         return $this->get('oro_checkout.helper.checkout_workflow_helper');
-    }
-
-    /**
-     * @param Checkout $checkout
-     *
-     * @return Checkout|null
-     */
-    private function getCheckoutWithRelations(Checkout $checkout)
-    {
-        $repository = $this->get('doctrine')->getRepository(Checkout::class);
-
-        return $repository->getCheckoutWithRelations($checkout->getId());
     }
 }

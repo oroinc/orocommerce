@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Handles logic of checkout ajax requests.
+ */
 class AjaxCheckoutController extends Controller
 {
     /**
@@ -29,7 +32,7 @@ class AjaxCheckoutController extends Controller
     {
         /** @var Checkout $checkout */
         $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
-            ->getRepository(Checkout::class)->find($entityId);
+            ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
         if (!$checkout) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }

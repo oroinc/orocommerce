@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -20,6 +21,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var MethodsConfigsRulesByContextProviderInterface
      */
@@ -70,6 +73,21 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
      * {@inheritdoc}
      */
     public function getApplicableMethodsViews(ShippingContextInterface $context)
+    {
+        return $this->getMemoryCacheProvider()->get(
+            ['shipping_context' => $context],
+            function () use ($context) {
+                return $this->getActualApplicableMethodsViews($context);
+            }
+        );
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     *
+     * @return ShippingMethodViewCollection
+     */
+    protected function getActualApplicableMethodsViews(ShippingContextInterface $context)
     {
         $methodCollection = new ShippingMethodViewCollection();
 

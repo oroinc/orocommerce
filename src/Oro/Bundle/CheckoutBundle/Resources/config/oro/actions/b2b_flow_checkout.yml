@@ -440,12 +440,25 @@ action_groups:
             workflow:
                 type: string
         actions:
+            - '@count':
+                value: $.order.lineItems
+                attribute: $.orderLineItemsCount
             - '@send_order_confirmation_email':
-                  parameters:
-                      from: $.order.owner.email
-                      to: [$.order.customerUser, $.checkout.registeredCustomerUser]
-                      template: 'order_confirmation_email'
-                      entity: $.order
+                conditions:
+                    '@lte': [$.orderLineItemsCount, 10]
+                parameters:
+                    from: $.order.owner.email
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    template: 'order_confirmation_email'
+                    entity: $.order
+            - '@schedule_send_email_template':
+                conditions:
+                    '@gt': [$.orderLineItemsCount, 10]
+                parameters:
+                    from: $.order.owner.email
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    template: 'order_confirmation_email'
+                    entity: $.order
 
     b2b_flow_checkout_create_guest_customer_user:
         parameters:

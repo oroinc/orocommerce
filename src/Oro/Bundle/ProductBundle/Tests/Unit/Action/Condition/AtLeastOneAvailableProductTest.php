@@ -85,16 +85,34 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
         $options = [new PropertyPath('path.products')];
         $this->condition->initialize($options);
 
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('resetDQLPart')
+            ->with('select')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->with('p.id')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('setMaxResults')
+            ->with('1')
+            ->willReturnSelf();
+
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
+            ->with(AbstractQuery::HYDRATE_ARRAY)
             ->willReturn([]);
         $this->aclHelper
             ->expects($this->once())
             ->method('apply')
             ->with($this->queryBuilder)
             ->willReturn($query);
-
 
         $this->assertFalse($this->condition->evaluate(['path' => ['products' => $productsHolders]]));
     }
@@ -108,10 +126,29 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
         $options = [new PropertyPath('path.products')];
         $this->condition->initialize($options);
 
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('resetDQLPart')
+            ->with('select')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->with('p.id')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('setMaxResults')
+            ->with('1')
+            ->willReturnSelf();
+
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
-            ->willReturn([$productHolderOne]);
+            ->with(AbstractQuery::HYDRATE_ARRAY)
+            ->willReturn(['id' => 1]);
         $this->aclHelper
             ->expects($this->once())
             ->method('apply')
