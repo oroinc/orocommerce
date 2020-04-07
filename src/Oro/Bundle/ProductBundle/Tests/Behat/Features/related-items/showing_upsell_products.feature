@@ -151,20 +151,20 @@ Feature: Showing upsell products
     Then I should see "PSKU1" product
     When I click "View Details" for "PSKU1" product
     Then should see the following products in the "Upsell Products Block":
-      | Title                         |
-      | Product2Localization1`"'&йёщ> |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
 
   Scenario: Check that alt attributes are localized and displayed properly
     Given I open product gallery for "PSKU2" product
-    Then I should see gallery image with alt "Product2Localization1`\"'&йёщ>"
+    Then I should see gallery image with alt "Product2Localization1`\"'&йёщ®&reg;>"
     When I click "Popup Gallery Widget Close"
-    Then I should see preview image with alt "Product2Localization1`\"'&йёщ>" for "PSKU2" product
+    Then I should see preview image with alt "Product2Localization1`\"'&йёщ®&reg;>" for "PSKU2" product
 
   Scenario: Check that product name is localized and displayed properly in shopping lists widget
     When I click "Add to Shopping List" for "PSKU2" product
     And I click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2Localization1`"'&йёщ> |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
 #  Scenario: Check up-sell items are displayed as slider when "use slider on mobile" option is checked
@@ -213,11 +213,11 @@ Feature: Showing upsell products
     When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                         |
-      | Product2Localization1`"'&йёщ> |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2Localization1`"'&йёщ> |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "Two columns page" layout view
@@ -235,11 +235,11 @@ Feature: Showing upsell products
     When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                         |
-      | Product2Localization1`"'&йёщ> |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2Localization1`"'&йёщ> |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "List page" layout view
@@ -257,11 +257,11 @@ Feature: Showing upsell products
     When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                         |
-      | Product2Localization1`"'&йёщ> |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2Localization1`"'&йёщ> |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: "Add to Shopping List" button restrictions

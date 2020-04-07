@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -48,7 +47,6 @@ class EnableShardingOnConfig implements ProcessorInterface
         $queryBuilder->andWhere('e.priceList = :price_list_id')->setParameter('price_list_id', $priceListId);
 
         $config->addHint('priceList', $priceListId);
-        $config->addHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $config->addHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $config->addHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
     }
 }

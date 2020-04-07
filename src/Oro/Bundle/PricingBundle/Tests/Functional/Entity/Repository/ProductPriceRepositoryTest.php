@@ -57,6 +57,32 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
+    public function testGetProductsByPriceListAndVersion()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $update = $this->repository->createQueryBuilder('pp')
+            ->update(ProductPrice::class, 'pp')
+            ->set('pp.version', 100)
+            ->where('pp.priceList = :priceList')
+            ->andWhere('pp.product IN(:products)')
+            ->setParameters([
+                'priceList' => $priceList,
+                'products' => [$product1, $product3]
+            ]);
+        $update->getQuery()->execute();
+
+        $productIdBatches = iterator_to_array(
+            $this->repository->getProductsByPriceListAndVersion($this->shardManager, $priceList, 100, 2)
+        );
+        $this->assertCount(1, $productIdBatches);
+        $productIds = reset($productIdBatches);
+        $this->assertContains($product1->getId(), $productIds);
+        $this->assertContains($product3->getId(), $productIds);
+    }
+
     /**
      * @param string $productReference
      * @param array $priceReferences
@@ -550,22 +576,37 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     public function testSave()
     {
-        $price = new ProductPrice();
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $price->setPriceList($priceList);
-        $price->setProduct($this->getReference(LoadProductData::PRODUCT_1));
-        $price->setQuantity(111);
         $unit = new ProductUnit();
         $unit->setCode('item');
-        $price->setUnit($unit);
         $priceValue = new Price();
         $priceValue->setCurrency('USD');
         $priceValue->setValue(1);
+
+        $price = new ProductPrice();
+        $price->setVersion(100);
+        $price->setPriceList($priceList);
+        $price->setProduct($product);
+        $price->setQuantity(111);
+        $price->setUnit($unit);
         $price->setPrice($priceValue);
         $this->repository->save($this->shardManager, $price);
+
         $this->assertNotNull($price->getId());
+
         $priceFromDb = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
         $this->assertCount(1, $priceFromDb);
+
+        /** @var ProductPrice $firstPriceFromDb */
+        $firstPriceFromDb = reset($priceFromDb);
+        $this->assertEquals($price->getVersion(), $firstPriceFromDb->getVersion());
+        $this->assertEquals($price->getPriceList(), $firstPriceFromDb->getPriceList());
+        $this->assertEquals($price->getProduct(), $firstPriceFromDb->getProduct());
+        $this->assertEquals($price->getQuantity(), $firstPriceFromDb->getQuantity());
+        $this->assertEquals($price->getPrice(), $firstPriceFromDb->getPrice());
+        $this->assertEquals($price->getPriceRule(), $firstPriceFromDb->getPriceRule());
+        $this->assertEquals($price->getUnit()->getCode(), $firstPriceFromDb->getUnit()->getCode());
     }
 
     public function testRemove()

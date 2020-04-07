@@ -14,8 +14,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
-use Oro\Component\MessageQueue\Transport\MessageInterface;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -133,11 +132,11 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
      * @param string $messageId
      * @param string $body
      *
-     * @return MessageInterface
+     * @return Message
      */
     private function createMessage($messageId, $body)
     {
-        $message = new NullMessage();
+        $message = new Message();
         $message->setMessageId($messageId);
         $message->setBody($body);
 

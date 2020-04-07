@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
@@ -37,7 +37,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private $sluggableUrlProvider;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
@@ -54,13 +54,13 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * @param SluggableUrlProviderInterface $sluggableUrlProvider
      * @param ContextUrlProviderRegistry $contextUrlProvider
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      * @param ConfigManager $configManager
      */
     public function __construct(
         SluggableUrlProviderInterface $sluggableUrlProvider,
         ContextUrlProviderRegistry $contextUrlProvider,
-        UserLocalizationManager $userLocalizationManager,
+        UserLocalizationManagerInterface $userLocalizationManager,
         ConfigManager $configManager
     ) {
         $this->sluggableUrlProvider = $sluggableUrlProvider;

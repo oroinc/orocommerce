@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Url provider for Category entity.
+ */
 class CategoryContextUrlProvider implements ContextUrlProviderInterface
 {
     const CATEGORY_ROUTE_NAME = 'oro_product_frontend_product_index';
@@ -26,19 +29,19 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
     private $cache;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
     /**
      * @param RequestStack $requestStack
      * @param UrlCacheInterface $cache
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManager $userLocalizationManager
+        UserLocalizationManagerInterface $userLocalizationManager
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;

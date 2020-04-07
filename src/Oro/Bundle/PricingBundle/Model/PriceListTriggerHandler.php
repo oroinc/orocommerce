@@ -15,6 +15,7 @@ class PriceListTriggerHandler
 {
     const PRICE_LISTS_KEY = 'price_lists';
     const PRODUCTS_KEY = 'products';
+    public const BATCH_SIZE = 100;
 
     /**
      * @var PriceListTriggerFactory

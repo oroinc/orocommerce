@@ -41,8 +41,8 @@ Feature: Products webcatalog meta information
   Scenario: Meta information for product list page should be displayed correctly
     Given I am on homepage
     And I follow "Headlamps"
-    Then Page title equals to "Best products for you"
+    Then Page title equals to "Headlamps"
 
   Scenario: Meta information for product view page should be displayed correctly
     Given I am on "headlamps/220-lumen-rechargeable-headlamp"
-    Then Page title equals to "Best product"
+    Then Page title equals to "220 Lumen Rechargeable Headlamp"

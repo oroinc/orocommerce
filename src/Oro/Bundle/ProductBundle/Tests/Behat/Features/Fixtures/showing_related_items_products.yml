@@ -3,5 +3,5 @@ include:
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue2_loc1:
-        string: <("Product2Localization1`\"'&йёщ>")>
+        string: <("Product2Localization1`\"'&йёщ®&reg;>")>
         localization: '@localization1'

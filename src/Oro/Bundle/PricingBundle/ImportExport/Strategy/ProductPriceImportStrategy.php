@@ -55,6 +55,12 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
     {
         $this->refreshPrice($entity);
 
+        // Set version to track prices changed within import
+        $version = $this->context->getOption('importVersion');
+        if ($version) {
+            $entity->setVersion($version);
+        }
+
         return parent::afterProcessEntity($entity);
     }
 

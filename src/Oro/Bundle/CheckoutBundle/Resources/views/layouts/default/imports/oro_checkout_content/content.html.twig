@@ -270,9 +270,9 @@
         {% if mainProduct.isConfigurable %}
             {% set routeOptions = routeOptions|merge({'variantProductId': lineItem.product.id}) %}
         {% endif %}
-        <a class="checkout-order-summary__lineitem-name" href="{{ path('oro_product_frontend_product_view', routeOptions) }}" tabindex="-1">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
+        <a class="checkout-order-summary__lineitem-name" href="{{ path('oro_product_frontend_product_view', routeOptions) }}" tabindex="-1">{{ mainProduct.names|localized_value|e }}</a>
     {% else %}
-        {{ lineItem.freeFormProduct|oro_html_strip_tags }}
+        {{ lineItem.freeFormProduct|e }}
     {% endif %}
 {% endblock %}
 
@@ -294,7 +294,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout-order-summary__sku"
     }) %}
-    <div {{ block('block_attributes') }}>{{ productSku|oro_html_strip_tags }}</div>
+    <div {{ block('block_attributes') }}>{{ productSku|e }}</div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_configurable_products_widget %}

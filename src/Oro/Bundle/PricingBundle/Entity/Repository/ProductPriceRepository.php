@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -103,8 +103,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $query = $qb->getQuery();
 
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         $iterator = new BufferedQueryResultIterator($query);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
@@ -206,12 +205,11 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ])
             ->getQuery();
 
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return $query->getResult();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -263,6 +261,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             'quantity' => ':quantity',
             'value' => ':value',
             'currency' => ':currency',
+            'version' => ':version'
         ];
         if ($price->getId()) {
             $qb->update($tableName, 'price');
@@ -280,14 +279,15 @@ class ProductPriceRepository extends BaseProductPriceRepository
             $price->setId($id);
         }
         $qb
-            ->setParameter('price_rule_id', $price->getPriceRule() ? $price->getPriceRule()->getId(): null)
+            ->setParameter('price_rule_id', $price->getPriceRule() ? $price->getPriceRule()->getId() : null)
             ->setParameter('unit_code', $price->getProductUnitCode())
             ->setParameter('product_id', $price->getProduct()->getId())
             ->setParameter('price_list_id', $price->getPriceList()->getId())
             ->setParameter('product_sku', $price->getProductSku())
             ->setParameter('quantity', $price->getQuantity())
             ->setParameter('value', $price->getPrice()->getValue())
-            ->setParameter('currency', $price->getPrice()->getCurrency());
+            ->setParameter('currency', $price->getPrice()->getCurrency())
+            ->setParameter('version', $price->getVersion());
         $qb->execute();
     }
 
@@ -321,6 +321,50 @@ class ProductPriceRepository extends BaseProductPriceRepository
     public function findOneBy(array $criteria, array $orderBy = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     * @param PriceList $priceList
+     * @param int $version
+     * @param int $batchSize
+     * @return \Generator
+     */
+    public function getProductsByPriceListAndVersion(
+        ShardManager $shardManager,
+        PriceList $priceList,
+        int $version,
+        int $batchSize = self::BUFFER_SIZE
+    ) {
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
+        $connection = $this->_em->getConnection();
+        $qb = $connection->createQueryBuilder();
+
+        $qb->select('DISTINCT pp.product_id')
+            ->from($tableName, 'pp')
+            ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
+            ->andWhere($qb->expr()->eq('pp.version', ':version'))
+            ->setParameter('priceListId', $priceList->getId())
+            ->setParameter('version', $version);
+
+        $stmt = $qb->execute();
+
+        $batch = [];
+        $count = 0;
+        while ($productId = $stmt->fetchColumn()) {
+            $batch[] = $productId;
+            $count++;
+            if ($batchSize === $count) {
+                yield $batch;
+
+                $batch = [];
+                $count = 0;
+            }
+        }
+
+        if ($count) {
+            yield $batch;
+        }
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -15,7 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
@@ -54,7 +53,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'pp.quantity',
                 'pp.value',
                 'pp.currency',
-                sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
+                sprintf('CAST(%d as boolean)', (int)$mergeAllowed),
+                'pp.id'
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $priceList);
@@ -90,7 +90,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'pp.quantity',
                 'pp.value',
                 'pp.currency',
-                sprintf('CAST(%d as boolean)', 1)
+                sprintf('CAST(%d as boolean)', 1),
+                'pp.originPriceId'
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $sourceCpl);
@@ -519,8 +520,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 ->setParameter('product_max', $currentMax);
             $query = $invalidPricesQb->getQuery();
             $query->setHint('priceList', $priceList->getId());
-            $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+            $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
             $ids = $query->getScalarResult();
             $this->deletePricesByIds($ids);
             // +1 because between operator includes boundary values
@@ -581,8 +581,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $invalidPricesQb->setParameter('products', $products);
         $query = $invalidPricesQb->getQuery();
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $ids = $query->getScalarResult();
         $this->deletePricesByIds($ids);
     }
@@ -674,6 +673,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     'value',
                     'currency',
                     'mergeAllowed',
+                    'originPriceId',
                     'id'
                 ],
                 $qb
@@ -707,6 +707,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 'value',
                 'currency',
                 'mergeAllowed',
+                'originPriceId',
                 'id'
             ],
             $qb

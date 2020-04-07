@@ -11,8 +11,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
-use Oro\Component\MessageQueue\Transport\Null\NullSession;
 use Oro\Component\MessageQueue\Util\JSON;
 
 class ImageResizeMessageProcessorTest extends WebTestCase
@@ -23,6 +23,9 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     const PRODUCT_ORIGINAL_FILTER = 'product_original';
     const PRODUCT_GALLERY_MAIN = 'product_gallery_main';
 
+    /** @var ConnectionInterface */
+    private $connection;
+
     /** @var ImageResizeMessageProcessor */
     protected $processor;
 
@@ -31,10 +34,11 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures([LoadProductData::class]);
 
+        $this->connection = self::getContainer()->get('oro_message_queue.transport.connection');
         $this->processor = self::getContainer()->get('oro.product.message_processor.image_resize');
     }
 
-    public function testResizeProductImage()
+    public function testResizeProductImage(): void
     {
         $productImage = $this->createProductImage();
 
@@ -44,7 +48,8 @@ class ImageResizeMessageProcessorTest extends WebTestCase
             'force' => $force = true
         ]));
 
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, new NullSession()));
+        $session = $this->connection->createSession();
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
 
         $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);
         $this->assertValidImage($productImage, self::PRODUCT_SMALL_FILTER);
@@ -55,7 +60,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     /**
      * @return ProductImage
      */
-    private function createProductImage()
+    private function createProductImage(): ProductImage
     {
         $productImage = new ProductImage();
         $productImage->addType(ProductImageType::TYPE_MAIN);
@@ -76,7 +81,11 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         return $productImage;
     }
 
-    private function assertValidImage(ProductImage $productImage, $filterName)
+    /**
+     * @param ProductImage $productImage
+     * @param string $filterName
+     */
+    private function assertValidImage(ProductImage $productImage, string $filterName): void
     {
         $dimensions = $this->getAllDimensions();
         $filteredPath = $this->getFilteredImagePath($productImage, $filterName);
@@ -118,7 +127,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     /**
      * @return array
      */
-    private function getAllDimensions()
+    private function getAllDimensions(): array
     {
         $dimensions = [];
         $imageTypeProvider = self::getContainer()->get('oro_layout.provider.image_type');
@@ -135,7 +144,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
      * @param string $filterName
      * @return string
      */
-    private function getFilteredImagePath(ProductImage $productImage, $filterName)
+    private function getFilteredImagePath(ProductImage $productImage, $filterName): string
     {
         /** @var Website $defaultWebsite */
         $defaultWebsite = self::getContainer()
@@ -152,8 +161,6 @@ class ImageResizeMessageProcessorTest extends WebTestCase
 
         $websiteManager->onClear();
 
-        $filteredPath = self::getContainer()->getParameter('kernel.project_dir') . '/public' . $filteredUrl;
-
-        return $filteredPath;
+        return self::getContainer()->getParameter('kernel.project_dir') . '/public' . $filteredUrl;
     }
 }

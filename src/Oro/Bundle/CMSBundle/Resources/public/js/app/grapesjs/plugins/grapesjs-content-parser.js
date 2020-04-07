@@ -8,8 +8,8 @@ import {wrap} from 'underscore';
 import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
 
 const modelAttrStart = 'data-gjs-';
-const textTags = ['ul', 'ol', 'li'];
-const wrappedTags = ['ul', 'ol'];
+const textTags = ['ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+const wrappedTags = ['ul', 'ol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
 
 /**
  *
@@ -265,12 +265,16 @@ function parseNodes(el, config, ct = '', parent = false) {
         }
 
         if (textTags.includes(model.tagName)) {
-            model.layerable = 0;
-            model.selectable = 0;
-            model.hoverable = 0;
-            model.editable = 0;
-            model.highlightable = 0;
-            model.type = '';
+            model = Object.assign(model, {
+                layerable: 0,
+                selectable: 0,
+                hoverable: 0,
+                editable: 0,
+                draggable: 0,
+                droppable: 0,
+                highlightable: 0,
+                type: ''
+            });
         }
 
         if (wrappedTags.includes(model.tagName)) {
@@ -340,7 +344,7 @@ export default function ContentParser(editor) {
     editor.CssComposer.render = wrap(editor.CssComposer.render, func => {
         const result = func();
 
-        result.querySelectorAll('style').forEach(style => {
+        [].forEach.call(result.querySelectorAll('style'), style => {
             style.innerText = normalizeBgURLString(style.innerText)
                 .replace(/\{\{([\w\s\'\_\-\,\(\)]+)\}\}/g, (input, matched) => {
                     const imageId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(matched);

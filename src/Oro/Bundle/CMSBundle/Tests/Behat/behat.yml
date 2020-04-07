@@ -49,6 +49,10 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_content_block[contentVariants][0][content]"]'
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Content Variant 1:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

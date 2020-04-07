@@ -382,7 +382,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('cpl');
         $qb->select('distinct cpl')
             ->join(
-                'OroPricingBundle:CombinedPriceListActivationRule',
+                CombinedPriceListActivationRule::class,
                 'combinedPriceListActivationRule',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
@@ -393,7 +393,9 @@ class CombinedPriceListRepository extends BasePriceListRepository
                     $qb->expr()->isNull('combinedPriceListActivationRule.activateAt')
                 )
             )
-            ->setParameter('activateData', $activateDate);
+            ->andWhere($qb->expr()->eq('combinedPriceListActivationRule.active', ':active'))
+            ->setParameter('activateData', $activateDate)
+            ->setParameter('active', false);
 
         return $qb;
     }

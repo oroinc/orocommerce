@@ -10,7 +10,7 @@ use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTest;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\Message;
 use Symfony\Component\DomCrawler\Form;
 
 /**
@@ -389,7 +389,7 @@ class ImportExportTest extends AbstractImportExportTest
         $sentMessages = $this->getSentMessages();
         $exportMessageData = reset($sentMessages);
 
-        $message = new NullMessage();
+        $message = new Message();
         $message->setMessageId('abc');
         $message->setBody(json_encode($exportMessageData['message']));
 

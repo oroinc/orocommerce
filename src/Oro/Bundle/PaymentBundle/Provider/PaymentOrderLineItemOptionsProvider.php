@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -19,15 +19,15 @@ class PaymentOrderLineItemOptionsProvider
     private $htmlTagHelper;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
     /**
      * @param HtmlTagHelper $htmlTagHelper
-     * @param UserLocalizationManager $userLocalizationManager
+     * @param UserLocalizationManagerInterface $userLocalizationManager
      */
-    public function __construct(HtmlTagHelper $htmlTagHelper, UserLocalizationManager $userLocalizationManager)
+    public function __construct(HtmlTagHelper $htmlTagHelper, UserLocalizationManagerInterface $userLocalizationManager)
     {
         $this->htmlTagHelper = $htmlTagHelper;
         $this->userLocalizationManager = $userLocalizationManager;

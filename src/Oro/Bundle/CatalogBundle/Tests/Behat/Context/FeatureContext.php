@@ -136,4 +136,63 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         return $category;
     }
+
+    /**
+     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category including subcategories$/
+     *
+     * @param string $categoryName
+     */
+    public function assertCanonicalUrlForCategoryIncludingSubcategories($categoryName)
+    {
+        $this->assertCanonicalUrlForCategory($categoryName, 1);
+    }
+
+    /**
+     * @Then /^I assert canonical URL for "(?P<categoryName>.+)" category not including subcategories$/
+     *
+     * @param string $categoryName
+     */
+    public function assertCanonicalUrlForCategoryNotIncludingSubcategories($categoryName)
+    {
+        $this->assertCanonicalUrlForCategory($categoryName, 0);
+    }
+
+    /**
+     * @param string $categoryName
+     * @param int $includingSubcategories
+     */
+    private function assertCanonicalUrlForCategory(string $categoryName, int $includingSubcategories)
+    {
+        /** @var ObjectManager $manager */
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        /** @var Category $category */
+        $category = $manager->getRepository(Category::class)->findOneBy(['denormalizedDefaultTitle' => $categoryName]);
+
+        $canonicalElement = $this->createElement('Canonical URL');
+
+        static::assertEquals(
+            sprintf(
+                '%s/product/?categoryId=%s&includeSubcategories=%d',
+                $this->getCurrentApplicationUrl(),
+                $category->getId(),
+                $includingSubcategories
+            ),
+            $canonicalElement->getAttribute('href')
+        );
+    }
+
+    /**
+     * @return string
+     */
+    private function getCurrentApplicationUrl()
+    {
+        $currentUrl = $this->getSession()->getCurrentUrl();
+        $scheme = parse_url($currentUrl, PHP_URL_SCHEME);
+        $host = parse_url($currentUrl, PHP_URL_HOST);
+        $port = parse_url($currentUrl, PHP_URL_PORT);
+        if ($port) {
+            $port = ':' . $port;
+        }
+        return sprintf('%s://%s%s', $scheme, $host, $port);
+    }
 }

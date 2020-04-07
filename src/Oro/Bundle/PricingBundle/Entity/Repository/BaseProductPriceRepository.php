@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
@@ -12,7 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\Hydrator\ProductPriceDTOHydrator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -140,8 +139,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->setParameter('priceList', $priceList)
             ->getQuery();
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return (int)$query
             ->getSingleScalarResult();
@@ -170,8 +168,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $qb->setParameter('priceList', $priceListId);
             $query = $qb->getQuery();
             $query->useQueryCache(false);
-            $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+            $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
             $prices[] = $query->getResult();
         }
@@ -219,8 +216,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         $query = $qb->getQuery();
         $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return $query->getResult();
     }
@@ -335,8 +331,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         $query = $qb->getQuery();
         $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         $this->_em->getConfiguration()
             ->addCustomHydrationMode('ProductPriceDTOHydrator', ProductPriceDTOHydrator::class);
@@ -458,8 +453,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
         }
         $query = $qb->getQuery();
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return $query->getResult();
     }

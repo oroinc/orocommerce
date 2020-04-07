@@ -33,13 +33,14 @@ Feature: Product search
 
   Scenario: Results using the search and through the filter "all_text" should be equal
     Given I click "Search Button"
-    When I filter "Any Text" as contains "Product1`\"'&йёщ>"
+    When I filter "Any Text" as contains "Product1`\"'&йёщ®"
     Then number of records in "Product Frontend Grid" should be 1
-    And I should see "Product1`\"'&йёщ>" in grid "Product Frontend Grid"
-    When I type "Product1`\"'&йёщ>" in "search"
+    And I should see "Product1`\"'&йёщ®&reg;>" in grid "Product Frontend Grid"
+    And I should not see "Product1`\"'&йёщ®®>"
+    When I type "Product1`\"'&йёщ®" in "search"
     And click "Search Button"
     Then number of records in "Product Frontend Grid" should be 1
-    And I should see "Product1`\"'&йёщ>" in grid "Product Frontend Grid"
+    And I should see "Product1`\"'&йёщ®&reg;>" in grid "Product Frontend Grid"
 
   Scenario: Check whether the text in header of the page matches the search text
     Given I type "Search string" in "search"

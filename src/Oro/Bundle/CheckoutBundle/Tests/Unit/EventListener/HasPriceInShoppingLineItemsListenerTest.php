@@ -224,19 +224,6 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onStartCheckoutConditionCheck($event);
     }
 
-    public function testOnStartCheckoutConditionCheckWhenSourceEntityIsNotOfShoppingListType()
-    {
-        $shoppingList = new \stdClass();
-        $checkoutSource = new CheckoutSourceStub();
-        $checkoutSource->setShoppingList($shoppingList);
-        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
-
-        $context = new ActionData(['checkout' => $checkout]);
-        $event = new ExtendableConditionEvent($context);
-
-        $this->listener->onStartCheckoutConditionCheck($event);
-    }
-
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoPrices()
     {
         $event = $this->expectsPrepareLineItemsAndReturnPrices([]);

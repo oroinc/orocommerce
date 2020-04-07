@@ -11,6 +11,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTr
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
+/**
+ * Resolve combined price list schedules. Update CPL relation to Config, Website, Customer Group and Customer based on
+ * the actual activation rules.
+ */
 class CombinedPriceListScheduleResolver
 {
     /**
@@ -64,18 +68,22 @@ class CombinedPriceListScheduleResolver
         $this->getCombinedPriceListActivationRuleRepository()->deleteExpiredRules($time);
         $newRulesToApply = $this->getCombinedPriceListActivationRuleRepository()->getNewActualRules($time);
 
+        $updatedRelations = 0;
         if ($newRulesToApply) {
             foreach ($this->relationClasses as $className => $val) {
                 /** @var BasicCombinedRelationRepositoryTrait $repo */
                 $repo = $this->registry->getManagerForClass($className)->getRepository($className);
-                $repo->updateActuality($newRulesToApply);
+                $updatedRelations += $repo->updateActuality($newRulesToApply);
             }
             $this->getCombinedPriceListActivationRuleRepository()->updateRulesActivity($newRulesToApply, true);
         }
         $this->triggerHandler->startCollect();
         $this->updateCombinedPriceListConnection();
-        foreach ($newRulesToApply as $rule) {
-            $this->triggerHandler->process($rule->getCombinedPriceList());
+
+        if ($updatedRelations) {
+            foreach ($newRulesToApply as $rule) {
+                $this->triggerHandler->process($rule->getCombinedPriceList());
+            }
         }
         $this->triggerHandler->commit();
     }
@@ -117,8 +125,8 @@ class CombinedPriceListScheduleResolver
                 'fullChainPriceList' => $fullCPLId,
                 'active' => true,
             ]);
+            $currentFullCplId = (int)$this->configManager->get($currentCPLConfigKey);
             if ($currentRule) {
-                $currentFullCplId = (int)$this->configManager->get($currentCPLConfigKey);
                 if ($currentFullCplId !== $currentRule->getCombinedPriceList()->getId()) {
                     $this->configManager->set($currentCPLConfigKey, $currentRule->getCombinedPriceList()->getId());
                     $this->triggerHandler->process($currentRule->getCombinedPriceList());
@@ -127,8 +135,10 @@ class CombinedPriceListScheduleResolver
                 $currentCPL = $this->registry->getManagerForClass(CombinedPriceList::class)
                     ->find(CombinedPriceList::class, (int)$fullCPLId);
                 if ($currentCPL) {
-                    $this->configManager->set($currentCPLConfigKey, (int)$fullCPLId);
-                    $this->triggerHandler->process($currentCPL);
+                    if ($currentFullCplId !== $currentCPL->getId()) {
+                        $this->configManager->set($currentCPLConfigKey, $currentCPL->getId());
+                        $this->triggerHandler->process($currentCPL);
+                    }
                 } else {
                     $this->configManager->set($currentCPLConfigKey, null);
                 }
@@ -145,9 +155,9 @@ class CombinedPriceListScheduleResolver
     protected function getCombinedPriceListActivationRuleRepository()
     {
         if (!$this->activationRulesRepository) {
-            $className = 'OroPricingBundle:CombinedPriceListActivationRule';
-            $rulesManager = $this->registry->getManagerForClass($className);
-            $this->activationRulesRepository = $rulesManager->getRepository($className);
+            $this->activationRulesRepository = $this->registry
+                ->getManagerForClass(CombinedPriceListActivationRule::class)
+                ->getRepository(CombinedPriceListActivationRule::class);
         }
         return $this->activationRulesRepository;
     }

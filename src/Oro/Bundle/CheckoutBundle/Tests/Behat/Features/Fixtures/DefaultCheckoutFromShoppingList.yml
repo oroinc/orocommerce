@@ -8,4 +8,4 @@ include:
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>

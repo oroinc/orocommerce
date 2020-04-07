@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutSourceEntityRemoveEvent;
 use Oro\Component\Action\Action\RemoveEntity;
@@ -57,15 +56,16 @@ class RemoveCheckoutSourceEntity extends RemoveEntity
         }
 
         $this->eventDispatcher->dispatch(
-            CheckoutSourceEntityRemoveEvent::BEFORE_REMOVE,
-            new CheckoutSourceEntityRemoveEvent($checkoutSourceEntity)
+            new CheckoutSourceEntityRemoveEvent($checkoutSourceEntity),
+            CheckoutSourceEntityRemoveEvent::BEFORE_REMOVE
         );
 
-        $this->getEntityManager(ClassUtils::getClass($checkoutSourceEntity))->remove($checkoutSourceEntity);
+        $value->getSource()->clear();
+        $this->getEntityManager(\get_class($checkoutSourceEntity))->remove($checkoutSourceEntity);
 
         $this->eventDispatcher->dispatch(
-            CheckoutSourceEntityRemoveEvent::AFTER_REMOVE,
-            new CheckoutSourceEntityRemoveEvent($checkoutSourceEntity)
+            new CheckoutSourceEntityRemoveEvent($checkoutSourceEntity),
+            CheckoutSourceEntityRemoveEvent::AFTER_REMOVE
         );
     }
 }

@@ -50,14 +50,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: seo }
 
-    oro_seo.layout.data_provider.webcatalog_title:
-        class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoTitleDataProvider
-        decorates: oro_web_catalog.layout.data_provider.title_data
-        public: false
-        arguments:
-            - '@oro_seo.layout.data_provider.seo_data'
-            - '@oro_seo.layout.data_provider.webcatalog_title.inner'
-
     oro_seo.layout.data_provider.localized_urls_data:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\LocalizedLinksDataProvider
         arguments:
