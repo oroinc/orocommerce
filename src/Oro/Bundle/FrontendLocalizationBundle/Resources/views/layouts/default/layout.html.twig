@@ -45,6 +45,7 @@
     {% if localizations|length > 1 %}
         <div class="header-row__container hidden-on-desktop">
             <button class="header-row__trigger hidden-on-desktop"
+                aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}"
                 data-page-component-module="oroui/js/app/components/viewport-component"
                 data-page-component-options="{{ {
                     viewport: {
@@ -60,7 +61,7 @@
                     }
                 }|json_encode() }}"
             >
-                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large">
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large" aria-hidden="true">
                     <span class="fa-globe fa--dark-gray fa--no-offset"></span>
                 </span>
             </button>
