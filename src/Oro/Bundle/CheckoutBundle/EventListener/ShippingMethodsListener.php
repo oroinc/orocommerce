@@ -4,13 +4,16 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
+/**
+ * Checks if there available shipping methods when checkout starts.
+ */
 class ShippingMethodsListener extends AbstractMethodsListener
 {
     /**
@@ -19,9 +22,9 @@ class ShippingMethodsListener extends AbstractMethodsListener
     private $shippingProvider;
 
     /**
-     * @var CheckoutShippingContextFactory
+     * @var CheckoutShippingContextProvider
      */
-    private $contextFactory;
+    private $checkoutShippingContextProvider;
 
     /**
      * @var OrderAddressProvider
@@ -34,25 +37,25 @@ class ShippingMethodsListener extends AbstractMethodsListener
     private $orderAddressSecurityProvider;
 
     /**
-     * @param OrderAddressProvider                          $addressProvider
-     * @param OrderAddressSecurityProvider                  $orderAddressSecurityProvider
-     * @param OrderAddressManager                           $orderAddressManager
+     * @param OrderAddressProvider $addressProvider
+     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param OrderAddressManager $orderAddressManager
      * @param MethodsConfigsRulesByContextProviderInterface $shippingProvider
-     * @param CheckoutShippingContextFactory                $contextFactory
+     * @param CheckoutShippingContextProvider $checkoutShippingContextProvider
      */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
         MethodsConfigsRulesByContextProviderInterface $shippingProvider,
-        CheckoutShippingContextFactory $contextFactory
+        CheckoutShippingContextProvider $checkoutShippingContextProvider
     ) {
         parent::__construct($orderAddressManager);
 
         $this->addressProvider = $addressProvider;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->shippingProvider = $shippingProvider;
-        $this->contextFactory = $contextFactory;
+        $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
     /**
@@ -61,7 +64,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setShippingAddress($address);
-        $shippingContext = $this->contextFactory->create($checkout);
+        $shippingContext = $this->checkoutShippingContextProvider->getContext($checkout);
         $shippingMethodsConfigs = $this->shippingProvider->getShippingMethodsConfigsRules($shippingContext);
 
         return count($shippingMethodsConfigs) > 0;

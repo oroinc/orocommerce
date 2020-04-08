@@ -3,32 +3,30 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use MemoryCacheProviderAwareTestTrait;
 
     /**
      * @var CheckoutLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsConverter;
-
-    /**
-     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $authorizationChecker;
 
     /**
      * @var UserCurrencyManager
@@ -49,15 +47,17 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->checkoutLineItemsConverter->expects($this->any())
             ->method('convert')
-            ->will($this->returnCallback(function ($data) {
-                $result = new ArrayCollection();
-                foreach ($data as $productData) {
-                    $result->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $productData));
+            ->willReturnCallback(
+                function ($data) {
+                    $result = new ArrayCollection();
+                    foreach ($data as $productData) {
+                        $result->add($this->getEntity(OrderLineItem::class, $productData));
+                    }
+
+                    return $result;
                 }
-                return $result;
-            }));
+            );
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
     }
 
     /**
@@ -67,30 +67,48 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
      */
     private function getCheckoutLineItemsManager(array $providers)
     {
-        return new CheckoutLineItemsManager(
+        $checkoutLineItemsManager = new CheckoutLineItemsManager(
             $providers,
             $this->checkoutLineItemsConverter,
             $this->currencyManager,
-            $this->configManager,
-            $this->authorizationChecker
+            $this->configManager
+        );
+
+        $this->setMemoryCacheProvider($checkoutLineItemsManager);
+
+        return $checkoutLineItemsManager;
+    }
+
+    public function testGetDataWhenCache(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $disablePriceFilter = false;
+        $configVisibilityPath = 'oro_order.frontend_product_visibility';
+        $lineItems = $this->createMock(Collection::class);
+
+        $this->mockMemoryCacheProvider($lineItems);
+
+        $this->assertEquals(
+            $lineItems,
+            $this->getCheckoutLineItemsManager([])->getData($checkout, $disablePriceFilter, $configVisibilityPath)
         );
     }
 
     /**
      * @dataProvider getDataDataProvider
+     *
      * @param bool $withDataProvider
      * @param bool $isEntitySupported
      * @param bool $visible
      */
     public function testGetDataEntitySupported($withDataProvider, $isEntitySupported, $visible)
     {
+        $this->mockMemoryCacheProvider();
+
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted');
 
         $checkout = $this->getCheckout();
         $data = [];
@@ -117,13 +135,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetData(array $providerData, $disablePriceFilter, $visible, array $expectedData)
     {
+        $this->mockMemoryCacheProvider();
+
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 
@@ -316,13 +333,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetLineItemsWithoutQuantity(array $providerData, $visible, array $expectedData)
     {
+        $this->mockMemoryCacheProvider();
+
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 

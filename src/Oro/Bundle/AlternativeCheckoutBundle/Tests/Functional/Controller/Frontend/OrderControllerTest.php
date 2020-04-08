@@ -52,7 +52,7 @@ class OrderControllerTest extends FrontendWebTestCase
         $this->client->request('GET', '/'); // any page to authorize a user
 
         $checkouts = $this->getDatagridData(self::GRID_NAME);
-        $this->assertCount(4, $checkouts);
+        $this->assertCount(5, $checkouts);
     }
 
     /**

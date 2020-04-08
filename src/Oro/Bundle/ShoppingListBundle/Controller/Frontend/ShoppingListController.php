@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Provider\ButtonProvider;
+use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -34,7 +38,7 @@ class ShoppingListController extends AbstractController
      * )
      *
      * @param ShoppingList $shoppingList
-     * @return array
+     * @return array|Response
      *
      */
     public function viewAction(ShoppingList $shoppingList = null)
@@ -45,12 +49,33 @@ class ShoppingListController extends AbstractController
 
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+            $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
+                ->getRepository(ShoppingList::class)
+                ->findForViewAction($shoppingList->getId());
+
             $title = $shoppingList->getLabel();
+            $lineItems = $shoppingList->getLineItems()->toArray();
+
+            $frontendProductPricesDataProvider = $this->get(FrontendProductPricesDataProvider::class);
+
+            // All prices must be fetched before matched prices to enable more efficient caching (i.e. all prices
+            // already contain matched prices, so they will be returned without new DB queries)
+            $productPrices = $frontendProductPricesDataProvider->getProductsAllPrices($lineItems);
+            $allPrices = $this->get(ProductPriceFormatter::class)->formatProducts($productPrices);
+
+            $matchedPrice = $frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
+
             $totalWithSubtotalsAsArray = $this->get(TotalProcessorProvider::class)
                 ->getTotalWithSubtotalsAsArray($shoppingList);
+
+            $buttons = $this->getButtons($shoppingList);
         } else {
             $title = null;
             $totalWithSubtotalsAsArray = [];
+            $allPrices = [];
+            $matchedPrice = [];
+            $buttons = [];
         }
 
         return [
@@ -60,9 +85,26 @@ class ShoppingListController extends AbstractController
                 'totals' => [
                     'identifier' => 'totals',
                     'data' => $totalWithSubtotalsAsArray
-                ]
+                ],
+                'shopping_list_buttons' => ['data' => $buttons],
+                'all_prices' => ['data' => $allPrices],
+                'matched_price' => ['data' => $matchedPrice],
             ],
         ];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return array
+     */
+    private function getButtons(ShoppingList $shoppingList): array
+    {
+        return $this->get(ButtonProvider::class)->findAvailable(
+            $this->get(ButtonSearchContextProvider::class)
+                ->getButtonSearchContext()
+                ->setEntity(ShoppingList::class, ['id' => $shoppingList->getId()])
+        );
     }
 
     /**
@@ -147,6 +189,10 @@ class ShoppingListController extends AbstractController
             TotalProcessorProvider::class,
             UpdateHandler::class,
             TranslatorInterface::class,
+            ButtonProvider::class,
+            ButtonSearchContextProvider::class,
+            FrontendProductPricesDataProvider::class,
+            ProductPriceFormatter::class,
         ]);
     }
 }

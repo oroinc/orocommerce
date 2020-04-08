@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
@@ -24,6 +27,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use MemoryCacheProviderAwareTestTrait;
 
     /**
      * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -106,6 +110,18 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetApplicablePaymentMethodsWhenCache(): void
+    {
+        $methodViews = $this->createMock(ShippingMethodViewCollection::class);
+        $this->mockMemoryCacheProvider($methodViews);
+        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+
+        $this->assertEquals(
+            $methodViews,
+            $this->shippingPriceProvider->getApplicableMethodsViews($this->createMock(ShippingContextInterface::class))
+        );
+    }
+
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
      *
@@ -139,6 +155,20 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->getApplicableMethodsViews($context)
                 ->toArray()
         );
+    }
+
+    /**
+     * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
+     *
+     * @param array $shippingRules
+     * @param array $expectedData
+     */
+    public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(array $shippingRules, array $expectedData)
+    {
+        $this->mockMemoryCacheProvider();
+        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+
+        $this->testGetApplicableMethodsViews($shippingRules, $expectedData);
     }
 
     /**

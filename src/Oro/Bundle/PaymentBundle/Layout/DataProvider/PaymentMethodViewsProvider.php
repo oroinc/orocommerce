@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
@@ -25,7 +25,7 @@ class PaymentMethodViewsProvider
     protected $paymentMethodViewProvider;
 
     /**
-     * @var PaymentMethodProvider
+     * @var ApplicablePaymentMethodsProvider
      */
     protected $paymentMethodProvider;
 
@@ -36,13 +36,13 @@ class PaymentMethodViewsProvider
 
     /**
      * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
-     * @param PaymentMethodProvider $paymentMethodProvider
+     * @param ApplicablePaymentMethodsProvider $paymentMethodProvider
      * @param PaymentTransactionProvider $transactionProvider
      * @param CacheProvider $cacheProvider
      */
     public function __construct(
         PaymentMethodViewProviderInterface $paymentMethodViewProvider,
-        PaymentMethodProvider $paymentMethodProvider,
+        ApplicablePaymentMethodsProvider $paymentMethodProvider,
         PaymentTransactionProvider $transactionProvider,
         CacheProvider $cacheProvider
     ) {

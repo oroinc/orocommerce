@@ -4,13 +4,16 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
+/**
+ * Checks if there are available payment methods when checkout starts.
+ */
 class PaymentMethodsListener extends AbstractMethodsListener
 {
     /**
@@ -19,9 +22,9 @@ class PaymentMethodsListener extends AbstractMethodsListener
     private $paymentProvider;
 
     /**
-     * @var CheckoutPaymentContextFactory
+     * @var CheckoutPaymentContextProvider
      */
-    private $contextFactory;
+    private $checkoutPaymentContextProvider;
 
     /**
      * @var OrderAddressProvider
@@ -34,25 +37,25 @@ class PaymentMethodsListener extends AbstractMethodsListener
     private $orderAddressSecurityProvider;
 
     /**
-     * @param OrderAddressProvider                          $addressProvider
-     * @param OrderAddressSecurityProvider                  $orderAddressSecurityProvider
-     * @param OrderAddressManager                           $orderAddressManager
+     * @param OrderAddressProvider $addressProvider
+     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param OrderAddressManager $orderAddressManager
      * @param MethodsConfigsRulesByContextProviderInterface $paymentProvider
-     * @param CheckoutPaymentContextFactory                 $contextFactory
+     * @param CheckoutPaymentContextProvider $checkoutPaymentContextProvider
      */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
         MethodsConfigsRulesByContextProviderInterface $paymentProvider,
-        CheckoutPaymentContextFactory $contextFactory
+        CheckoutPaymentContextProvider $checkoutPaymentContextProvider
     ) {
         parent::__construct($orderAddressManager);
 
         $this->addressProvider = $addressProvider;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentProvider = $paymentProvider;
-        $this->contextFactory = $contextFactory;
+        $this->checkoutPaymentContextProvider = $checkoutPaymentContextProvider;
     }
 
     /**
@@ -61,7 +64,7 @@ class PaymentMethodsListener extends AbstractMethodsListener
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setBillingAddress($address);
-        $paymentContext = $this->contextFactory->create($checkout);
+        $paymentContext = $this->checkoutPaymentContextProvider->getContext($checkout);
         $paymentMethodsConfigs = $this->paymentProvider->getPaymentMethodsConfigsRules($paymentContext);
 
         return count($paymentMethodsConfigs) > 0;

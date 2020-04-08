@@ -26,6 +26,18 @@ product-1:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    minimumQuantityToOrder:
+        reference: product-1.minimumQuantityToOrder
+        scalarValue: 1
+    maximumQuantityToOrder:
+        reference: product-1.maximumQuantityToOrder
+        scalarValue: 99999
+    highlightLowInventory:
+        reference: product-1.highlightLowInventory
+        scalarValue: 0
+    isUpcoming:
+        reference: product-1.isUpcoming
+        scalarValue: 0
 product-2:
     productCode: product-2
     inventoryStatus: in_stock
@@ -120,6 +132,18 @@ product-5:
         scalarValue: null
         arrayValue: null
     attributeFamily: attribute_family_1
+    minimumQuantityToOrder:
+        reference: product-5.minimumQuantityToOrder
+        scalarValue: 1
+    maximumQuantityToOrder:
+        reference: product-5.maximumQuantityToOrder
+        scalarValue: 99999
+    highlightLowInventory:
+        reference: product-5.highlightLowInventory
+        scalarValue: 0
+    isUpcoming:
+        reference: product-5.isUpcoming
+        fallback: "category"
 product-6:
     productCode: product-6
     inventoryStatus: in_stock

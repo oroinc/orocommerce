@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Layout data provider for configurable products.
+ */
 class ConfigurableProductProvider
 {
     /**

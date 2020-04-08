@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Action\Condition;
 
+use Doctrine\ORM\Query;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
@@ -77,9 +78,14 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
         $products = $this->getProductIdsFromProductHolders($productHolderIterator);
 
         if (count($products) > 0) {
-            $queryBuilder = $this->productRepository->getProductsQueryBuilder($products);
+            $queryBuilder = $this->productRepository->getProductsQueryBuilder($products)
+                ->resetDQLPart('select')
+                ->select('p.id')
+                ->setMaxResults(1);
             $this->productManager->restrictQueryBuilder($queryBuilder, []);
-            $products = $this->aclHelper->apply($queryBuilder)->getResult();
+            $query = $this->aclHelper->apply($queryBuilder);
+
+            $products = $query->getResult(Query::HYDRATE_ARRAY);
         }
 
         return count($products) > 0;

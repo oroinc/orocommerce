@@ -30,6 +30,7 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Abstract class for load Products fixtures
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 abstract class AbstractLoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -269,6 +270,14 @@ abstract class AbstractLoadProductData extends AbstractFixture implements Depend
 
         if (!empty($item['backOrder'])) {
             $product->setBackOrder($this->createFieldFallbackValue($item['backOrder']));
+        }
+
+        if (!empty($item['highlightLowInventory'])) {
+            $product->setHighlightLowInventory($this->createFieldFallbackValue($item['highlightLowInventory']));
+        }
+
+        if (!empty($item['isUpcoming'])) {
+            $product->setIsUpcoming($this->createFieldFallbackValue($item['isUpcoming']));
         }
     }
 }

@@ -158,6 +158,11 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDataFromCache()
     {
+        $this->frontendProductPricesDataProvider
+            ->expects($this->atMost(2))
+            ->method('getProductsMatchedPrice')
+            ->willReturn([]);
+
         $enabledProduct = $this->getEntity(
             Product::class,
             ['id' => 3, 'sku' => 'PRODUCT_SKU', 'status' => Product::STATUS_ENABLED]

@@ -33,13 +33,16 @@ services:
 
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
-        public: false
         arguments:
             - !tagged_iterator checkout.data_provider.line_item
             - '@oro_checkout.data_provider.converter.checkout_line_items'
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
-            - '@security.authorization_checker'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.manager.checkout_line_items.cache']]
+
+    oro_checkout.data_provider.manager.checkout_line_items.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_checkout.layout.data_provider.line_items_totals:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider'
@@ -105,27 +108,31 @@ services:
         tags:
             - { name: oro_action.action, alias: get_order_line_items }
 
-    oro_checkout.layout.data_provider.shipping_context:
-        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
-        arguments:
-            - '@oro_checkout.factory.shipping_context_factory'
-            - '@oro_checkout.checkout_context.cache'
-        tags:
-            - { name: layout.data_provider, alias: checkout_shipping_context }
-
-    oro_checkout.layout.data_provider.payment_context:
-        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider'
+    oro_checkout.provider.payment_context:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider'
+        public: true
         arguments:
             - '@oro_checkout.factory.payment_context_factory'
-            - '@oro_checkout.checkout_context.cache'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_checkout.provider.payment_context.cache']]
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
 
-    oro_checkout.checkout_context.cache:
-        parent: doctrine_cache.abstract.array
-        public: false
+    oro_checkout.provider.payment_context.cache:
+        parent: oro.cache.provider.memory_cache
+
+    oro_checkout.provider.shipping_context:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider'
+        arguments:
+            - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.provider.shipping_context.cache'
         calls:
-            - [ setNamespace, [ 'checkout_context_cache' ] ]
+            - [setMemoryCacheProvider, ['@oro_checkout.provider.shipping_context.cache']]
+        tags:
+            - { name: layout.data_provider, alias: checkout_shipping_context }
+
+    oro_checkout.provider.shipping_context.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
@@ -301,8 +308,6 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper'
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
-            - '@oro_checkout.factory.shipping_context_factory'
-        public: false
         tags:
             - { name: checkout.workflow_state.mapper }
 
@@ -396,7 +401,6 @@ services:
 
     oro_checkout.factory.payment_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
-        public: true
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.provider.checkout_subtotal'
@@ -468,7 +472,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
         arguments:
             - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.provider.shipping_context'
 
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
@@ -488,7 +492,7 @@ services:
             - '@oro_order.order.provider.order_address_security'
             - '@oro_order.manager.order_address'
             - '@oro_shipping.provider.methods_configs_rules.by_context_required_parameters'
-            - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.provider.shipping_context'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
 
@@ -499,7 +503,7 @@ services:
             - '@oro_order.order.provider.order_address_security'
             - '@oro_order.manager.order_address'
             - '@oro_payment.provider.methods_configs_rules.by_context_required_parameters'
-            - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.provider.payment_context'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
 
@@ -527,9 +531,9 @@ services:
     oro_checkout.provider.payment_method_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\PaymentMethodProvider
         arguments:
-            - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.provider.payment_context'
             - '@oro_checkout.repository.checkout'
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.method.provider.applicable_methods_provider'
 
     oro_checkout.provider.result_messages:
         class: Oro\Bundle\CheckoutBundle\Provider\PaymentResultMessageProvider
@@ -708,6 +712,9 @@ services:
             - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
             - '@translator'
+
+    Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper:
+        alias: oro_checkout.helper.checkout_workflow_helper
 
     oro_checkout.condition.validate_checkout_addresses:
         class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'

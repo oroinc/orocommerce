@@ -168,7 +168,7 @@ services:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderPaymentMethod
         arguments:
             - '@oro_order.factory.payment_context'
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.method.provider.applicable_methods_provider'
             - 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm'
         tags:
             - { name: oro.api.processor, action: customize_form_data, requestType: frontend, event: post_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -90 }

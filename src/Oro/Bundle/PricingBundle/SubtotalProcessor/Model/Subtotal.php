@@ -110,7 +110,7 @@ class Subtotal
     /**
      * @return float
      */
-    public function getAmount()
+    public function getAmount(): float
     {
         return $this->amount;
     }
@@ -122,7 +122,7 @@ class Subtotal
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = (float) $amount;
 
         return $this;
     }

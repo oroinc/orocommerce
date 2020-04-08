@@ -56,23 +56,14 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     protected function prepareData($entity)
     {
         $lineItems = $entity->getLineItems();
-        $lineItemsPrices = $this->findPrices($lineItems);
-
+        $lineItemsPrices = $this->getLineItemsPrices($lineItems);
         $data = [];
 
         /** @var CheckoutLineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $unitCode = $lineItem->getProductUnitCode();
             $product = $lineItem->getProduct();
-
-            $price = $lineItem->getPrice();
-            if (!$price &&
-                $product &&
-                !$lineItem->isPriceFixed() &&
-                isset($lineItemsPrices[$product->getId()][$unitCode])
-            ) {
-                $price = $lineItemsPrices[$product->getId()][$unitCode];
-            }
+            $productId = $product ? $product->getId() : null;
 
             if ($this->isLineItemNeeded($lineItem)) {
                 $data[] = [
@@ -85,7 +76,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
                     'parentProduct' => $lineItem->getParentProduct(),
                     'freeFormProduct' => $lineItem->getFreeFormProduct(),
                     'fromExternalSource' => $lineItem->isFromExternalSource(),
-                    'price' => $price,
+                    'price' => $lineItem->getPrice() ?: ($lineItemsPrices[$productId][$unitCode] ?? null),
                 ];
             }
         }
@@ -98,19 +89,19 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
      *
      * @return array
      */
-    protected function findPrices(Collection $lineItems)
+    private function getLineItemsPrices(Collection $lineItems): array
     {
-        $lineItemsWithoutPrice = $lineItems->filter(
-            function (CheckoutLineItem $lineItem) {
-                return !$lineItem->isPriceFixed() && !$lineItem->getPrice() && $lineItem->getProduct();
+        $lineItemsWithoutPrice = [];
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem instanceof ProductHolderInterface && $lineItem->getProduct()) {
+                if (!$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
+                    $lineItemsWithoutPrice[] = $lineItem;
+                }
             }
-        )->toArray();
-
-        if (!$lineItemsWithoutPrice) {
-            return [];
         }
 
-        return $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItemsWithoutPrice);
+        return $lineItemsWithoutPrice ? $this->frontendProductPricesDataProvider
+            ->getProductsMatchedPrice($lineItemsWithoutPrice) : [];
     }
 
     /**

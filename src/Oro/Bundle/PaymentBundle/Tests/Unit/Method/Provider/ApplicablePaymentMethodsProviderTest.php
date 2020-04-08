@@ -2,16 +2,19 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
-class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
+class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use MemoryCacheProviderAwareTestTrait;
+
     /**
      * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -27,6 +30,11 @@ class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $paymentContextMock;
 
+    /**
+     * @var ApplicablePaymentMethodsProvider
+     */
+    private $provider;
+
     public function setUp()
     {
         $this->paymentMethodProviderMock = $this->createMock(PaymentMethodProviderInterface::class);
@@ -35,6 +43,23 @@ class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
             ->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
         $this->paymentContextMock = $this->createMock(PaymentContextInterface::class);
+
+        $this->provider = new ApplicablePaymentMethodsProvider(
+            $this->paymentMethodProviderMock,
+            $this->paymentMethodsConfigsRulesProviderMock
+        );
+    }
+
+    public function testGetApplicablePaymentMethodsWhenCache(): void
+    {
+        $paymentMethods = ['sample_method1'];
+        $this->mockMemoryCacheProvider($paymentMethods);
+        $this->setMemoryCacheProvider($this->provider);
+
+        $this->assertEquals(
+            $paymentMethods,
+            $this->provider->getApplicablePaymentMethods($this->paymentContextMock)
+        );
     }
 
     public function testGetApplicablePaymentMethods()
@@ -76,14 +101,17 @@ class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
             'SomeOtherType' => $someOtherTypeMethodMock,
         ];
 
-        $provider = new PaymentMethodProvider(
-            $this->paymentMethodProviderMock,
-            $this->paymentMethodsConfigsRulesProviderMock
-        );
-
-        $paymentMethods = $provider->getApplicablePaymentMethods($this->paymentContextMock);
+        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContextMock);
 
         $this->assertEquals($expectedPaymentMethodsMocks, $paymentMethods);
+    }
+
+    public function testGetApplicablePaymentMethodsWhenMemoryCacheProvider(): void
+    {
+        $this->mockMemoryCacheProvider();
+        $this->setMemoryCacheProvider($this->provider);
+
+        $this->testGetApplicablePaymentMethods();
     }
 
     /**

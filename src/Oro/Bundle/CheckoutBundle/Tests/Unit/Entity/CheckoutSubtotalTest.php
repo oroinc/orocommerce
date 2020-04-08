@@ -31,7 +31,7 @@ class CheckoutSubtotalTest extends \PHPUnit\Framework\TestCase
         $subtotal->setCombinedPriceList($combinedPriceList);
         $entity->setSubtotal($subtotal);
         $this->assertSame('USD', $entity->getSubtotal()->getCurrency());
-        $this->assertSame(123, $entity->getSubtotal()->getAmount());
+        $this->assertSame(123.0, $entity->getSubtotal()->getAmount());
         $this->assertSame('test price list', $entity->getSubtotal()->getCombinedPriceList()->getName());
     }
 

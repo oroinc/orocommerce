@@ -5,28 +5,64 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
+use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
-use Oro\Bundle\EmailBundle\Tests\Unit\Workflow\Action\AbstractSendEmailTemplateTest;
+use Oro\Bundle\EmailBundle\Tools\AggregatedEmailTemplatesSender;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
+class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var Processor|\PHPUnit\Framework\MockObject\MockObject */
+    private $emailProcessor;
+
+    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityNameResolver;
+
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $validator;
+
+    /** @var AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject */
+    private $sender;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
+    protected $dispatcher;
+
     /** @var SendOrderConfirmationEmail */
     private $action;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->contextAccessor->expects($this->any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->emailProcessor = $this->createMock(Processor::class);
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->sender = $this->createMock(AggregatedEmailTemplatesSender::class);
+
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcher::class);
 
         $this->action = new SendOrderConfirmationEmail(
             $this->contextAccessor,
             $this->emailProcessor,
             new EmailAddressHelper(),
             $this->entityNameResolver,
-            $this->registry,
             $this->validator,
-            $this->localizedTemplateProvider,
-            $this->emailOriginHelper
+            $this->sender
         );
 
         $this->action->setLogger($this->logger);
@@ -41,8 +77,8 @@ class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
-        $this->localizedTemplateProvider->expects($this->once())
-            ->method('getAggregated')
+        $this->sender->expects($this->once())
+            ->method('send')
             ->willThrowException($exception);
 
         $this->logger->expects($this->once())

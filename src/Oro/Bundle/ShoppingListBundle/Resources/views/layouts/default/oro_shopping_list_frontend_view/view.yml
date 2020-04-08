@@ -50,7 +50,7 @@ layout:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
+                        buttons: '=data["shopping_list_buttons"]'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
@@ -65,8 +65,8 @@ layout:
                         lineItems: '=data["oro_shopping_list_matrix_grid_shopping_list"].getSortedLineItems(data["entity"])'
                         shoppingList: '=data["entity"]'
                         lineItemErrors: '=data["oro_line_item_violations"].getLineItemErrors(data["entity"].getLineItems())'
-                        productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
-                        productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
+                        productsAllPrices: '=data["all_prices"]'
+                        productsMatchedPrice: '=data["matched_price"]'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
                         productsUnitSelectionVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getProductsUnitSelectionVisibilities(data["entity"])'
                         configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["entity"].getLineItems())'
@@ -145,7 +145,7 @@ layout:
                     blockType: combined_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
+                        buttons: '=data["shopping_list_buttons"]'
                 shopping_list_view_container_content:
                     blockType: container
                 shopping_list_view_container_checkout_message:

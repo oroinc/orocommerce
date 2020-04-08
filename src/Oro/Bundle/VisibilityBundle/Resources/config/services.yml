@@ -4,10 +4,10 @@ services:
         calls:
             - [setNamespace, ['product_visibility_permission']]
 
-    oro_visibility.event_listener.product_availability_cache:
+    oro_visibility.event_listener.product_visibility_cache:
         class: Oro\Bundle\VisibilityBundle\EventListener\ProductVisibilityCacheListener
         arguments:
-            - '@oro_visibility.product_visibility_permission.cache'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -18,9 +18,8 @@ services:
             - "@oro_entity.doctrine_helper"
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setModifier, ["@oro_visibility.model.product_visibility_query_builder_modifier"]]
             - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
-            - [setAttributePermissionCache, ["@oro_visibility.product_visibility_permission.cache"]]
+            - [setResolvedProductVisibilityProvider, ['@oro_visibility.provider.resolved_product_visibility_provider']]
         tags:
             - { name: security.voter }
 
@@ -598,3 +597,12 @@ services:
             - oro_product_visibility_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity, priority: -200 }
+
+    oro_visibility.provider.resolved_product_visibility_provider:
+        class: Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
+
+    Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider:
+        alias: oro_visibility.provider.resolved_product_visibility_provider

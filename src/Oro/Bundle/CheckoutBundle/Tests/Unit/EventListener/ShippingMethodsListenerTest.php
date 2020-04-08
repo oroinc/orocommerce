@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\ShippingMethodsListener;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -21,9 +21,9 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
     protected $configsRuleProvider;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
+     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $contextFactory;
+    protected $checkoutContextProvider;
 
     protected function setUp()
     {
@@ -31,7 +31,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
-        $this->contextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
+        $this->checkoutContextProvider = $this->getMockBuilder(CheckoutShippingContextProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -40,13 +40,13 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
             $this->orderAddressSecurityProvider,
             $this->orderAddressManager,
             $this->configsRuleProvider,
-            $this->contextFactory
+            $this->checkoutContextProvider
         );
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->contextFactory, $this->configsRuleProvider);
+        unset($this->listener, $this->checkoutContextProvider, $this->configsRuleProvider);
 
         parent::tearDown();
     }

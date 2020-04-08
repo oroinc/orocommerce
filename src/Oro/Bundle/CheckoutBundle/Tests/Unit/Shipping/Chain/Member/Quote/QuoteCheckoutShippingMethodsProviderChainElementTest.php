@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Shipping\Chain\Member\Quote;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote\QuoteCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -23,9 +23,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
     private $testedMethodsProvider;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
+     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $checkoutShippingContextFactoryMock;
+    private $checkoutShippingContextProvider;
 
     /**
      * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -39,7 +39,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
 
     public function setUp()
     {
-        $this->checkoutShippingContextFactoryMock = $this->getMockBuilder(CheckoutShippingContextFactory::class)
+        $this->checkoutShippingContextProvider = $this->getMockBuilder(CheckoutShippingContextProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -53,7 +53,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->getMock();
 
         $this->testedMethodsProvider = new QuoteCheckoutShippingMethodsProviderChainElement(
-            $this->checkoutShippingContextFactoryMock,
+            $this->checkoutShippingContextProvider,
             $this->shippingConfiguredPriceProviderMock,
             $this->quoteShippingConfigurationFactoryMock
         );
@@ -79,9 +79,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->method('getSourceEntity')
             ->willReturn($quoteDemandMock);
 
-        $this->checkoutShippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->once())
-            ->method('create')
+            ->method('getContext')
             ->with($checkoutMock)
             ->willReturn($shippingContextMock);
 
@@ -117,9 +117,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->never())
-            ->method('create');
+            ->method('getContext');
 
         $this->quoteShippingConfigurationFactoryMock
             ->expects($this->never())
@@ -159,9 +159,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->never())
-            ->method('create');
+            ->method('getContext');
 
         $this->quoteShippingConfigurationFactoryMock
             ->expects($this->never())
@@ -207,9 +207,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->method('getQuote')
             ->willReturn($quoteMock);
 
-        $this->checkoutShippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->once())
-            ->method('create')
+            ->method('getContext')
             ->with($checkoutMock)
             ->willReturn($shippingContextMock);
 
@@ -253,9 +253,9 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->never())
-            ->method('create');
+            ->method('getContext');
 
         $this->quoteShippingConfigurationFactoryMock
             ->expects($this->never())

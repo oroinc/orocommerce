@@ -49,11 +49,16 @@ services:
         arguments:
             - '@event_dispatcher'
 
-    oro_payment.method.provider.method_provider:
-        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
+    oro_payment.method.provider.applicable_methods_provider:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider'
         arguments:
             - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.methods_configs_rules.by_context.basic'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_payment.method.provider.applicable_methods_provider.cache']]
+
+    oro_payment.method.provider.applicable_methods_provider.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_payment.methods_provider.cache:
         parent: doctrine_cache.abstract.array
@@ -65,7 +70,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
             - '@oro_payment.payment_method_view.composite_provider'
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.method.provider.applicable_methods_provider'
             - '@oro_payment.provider.payment_transaction'
             - '@oro_payment.methods_provider.cache'
         tags:
@@ -145,14 +150,14 @@ services:
     oro_payment.condition.payment_method_applicable:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodApplicable'
         arguments:
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.method.provider.applicable_methods_provider'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_applicable' }
 
     oro_payment.condition.has_applicable_payment_methods:
         class: 'Oro\Bundle\PaymentBundle\Condition\HasApplicablePaymentMethods'
         arguments:
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.method.provider.applicable_methods_provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
 

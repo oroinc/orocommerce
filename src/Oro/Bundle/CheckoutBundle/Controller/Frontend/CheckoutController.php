@@ -7,18 +7,20 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Handles checkout logic
  */
-class CheckoutController extends Controller
+class CheckoutController extends AbstractController
 {
     /**
      * Create checkout form
@@ -46,9 +48,13 @@ class CheckoutController extends Controller
     {
         $this->disableGarbageCollector();
 
-        $checkout = $this->getCheckoutWithRelations($checkout);
+        $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
+            ->getRepository(Checkout::class)
+            ->findForCheckoutAction($checkout->getId());
 
-        $currentStep = $this->getCheckoutWorkflowHelper()
+        $this->prefetchProductsVisibility($checkout);
+
+        $currentStep = $this->get(CheckoutWorkflowHelper::class)
             ->processWorkflowAndGetCurrentStep($request, $checkout);
 
         $workflowItem = $this->getWorkflowItem($checkout);
@@ -87,9 +93,26 @@ class CheckoutController extends Controller
      */
     private function disableGarbageCollector()
     {
-        if ($this->container->get('kernel')->getEnvironment() === 'prod') {
+        if ($this->get(KernelInterface::class)->getEnvironment() === 'prod') {
             gc_disable();
         }
+    }
+
+    /**
+     * @param Checkout $checkout
+     */
+    private function prefetchProductsVisibility(Checkout $checkout): void
+    {
+        $productIds = [];
+        foreach ($checkout->getLineItems() as $checkoutLineItem) {
+            if ($checkoutLineItem->getProduct()) {
+                $productId = $checkoutLineItem->getProduct()->getId();
+                $productIds[$productId] = $productId;
+            }
+        }
+
+        $this->get(ResolvedProductVisibilityProvider::class)
+            ->prefetch($productIds);
     }
 
     /**
@@ -100,7 +123,7 @@ class CheckoutController extends Controller
      */
     protected function getWorkflowItem(CheckoutInterface $checkout)
     {
-        $item =  $this->getCheckoutWorkflowHelper()->getWorkflowItem($checkout);
+        $item =  $this->get(CheckoutWorkflowHelper::class)->getWorkflowItem($checkout);
 
         if (!$item) {
             throw $this->createNotFoundException('Unable to find correct WorkflowItem for current checkout');
@@ -110,22 +133,17 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @return CheckoutWorkflowHelper
+     * {@inheritdoc}
      */
-    private function getCheckoutWorkflowHelper()
+    public static function getSubscribedServices(): array
     {
-        return $this->get('oro_checkout.helper.checkout_workflow_helper');
-    }
-
-    /**
-     * @param Checkout $checkout
-     *
-     * @return Checkout|null
-     */
-    private function getCheckoutWithRelations(Checkout $checkout)
-    {
-        $repository = $this->get('doctrine')->getRepository(Checkout::class);
-
-        return $repository->getCheckoutWithRelations($checkout->getId());
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                KernelInterface::class,
+                CheckoutWorkflowHelper::class,
+                ResolvedProductVisibilityProvider::class,
+            ]
+        );
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 use Oro\Bundle\PaymentBundle\Condition\PaymentMethodApplicable;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 
 class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,13 +14,13 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodApplicable */
     protected $condition;
 
-    /** @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     protected function setUp()
     {
         $this->paymentMethodProvider = $this
-            ->getMockBuilder(PaymentMethodProvider::class)
+            ->getMockBuilder(ApplicablePaymentMethodsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 

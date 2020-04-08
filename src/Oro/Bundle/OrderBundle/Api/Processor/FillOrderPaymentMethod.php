@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Api\Processor;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -17,7 +17,7 @@ class FillOrderPaymentMethod implements ProcessorInterface
     /** @var OrderPaymentContextFactory */
     private $paymentContextFactory;
 
-    /** @var PaymentMethodProvider */
+    /** @var ApplicablePaymentMethodsProvider */
     private $paymentMethodProvider;
 
     /** @var string */
@@ -25,12 +25,12 @@ class FillOrderPaymentMethod implements ProcessorInterface
 
     /**
      * @param OrderPaymentContextFactory $paymentContextFactory
-     * @param PaymentMethodProvider      $paymentMethodProvider
-     * @param string                     $paymentMethodClass
+     * @param ApplicablePaymentMethodsProvider $paymentMethodProvider
+     * @param string $paymentMethodClass
      */
     public function __construct(
         OrderPaymentContextFactory $paymentContextFactory,
-        PaymentMethodProvider $paymentMethodProvider,
+        ApplicablePaymentMethodsProvider $paymentMethodProvider,
         string $paymentMethodClass
     ) {
         $this->paymentContextFactory = $paymentContextFactory;

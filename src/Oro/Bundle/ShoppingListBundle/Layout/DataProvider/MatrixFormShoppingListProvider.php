@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Provides sorted line items with matrix order form views.
+ */
 class MatrixFormShoppingListProvider
 {
     /** @var MatrixGridOrderFormProvider */
@@ -40,10 +43,9 @@ class MatrixFormShoppingListProvider
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $product = $lineItem->getParentProduct() ?: $lineItem->getProduct();
             $lineItemKey = $this->getLineItemKey($product->getId(), $lineItem->getProductUnitCode());
+            $matrixFormType = $this->getAvailableMatrixFormType($product, $lineItem);
 
             if (!isset($sortedLineItems[$lineItemKey])) {
-                $matrixFormType = $this->getAvailableMatrixFormType($product, $lineItem);
-
                 if ($matrixFormType === Configuration::MATRIX_FORM_INLINE) {
                     // Add matrix form view to line item data for applicable configurable products
                     $sortedLineItems[$lineItemKey]['matrixForm'] =
@@ -55,14 +57,15 @@ class MatrixFormShoppingListProvider
                     $this->addLineItemData(
                         $productVariants[$lineItem->getParentProduct()->getId()],
                         $lineItem,
-                        $lineItem->getProduct()
+                        $lineItem->getProduct(),
+                        $matrixFormType
                     );
                     continue;
                 }
             }
 
             // For regular products line item data will be added as usual
-            $this->addLineItemData($sortedLineItems, $lineItem, $product);
+            $this->addLineItemData($sortedLineItems, $lineItem, $product, $matrixFormType);
         }
 
         // Add grouped product variants to the beginning of the shopping list
@@ -77,14 +80,15 @@ class MatrixFormShoppingListProvider
      * @param array $array
      * @param LineItem $lineItem
      * @param Product $product
+     * @param string $matrixFormType
      */
-    protected function addLineItemData(&$array, LineItem $lineItem, Product $product)
+    protected function addLineItemData(&$array, LineItem $lineItem, Product $product, string $matrixFormType)
     {
         $lineItemKey = $this->getLineItemKey($product->getId(), $lineItem->getProductUnitCode());
 
         $array[$lineItemKey]['lineItems'][] = $lineItem;
         $array[$lineItemKey]['product'] = $product;
-        $array[$lineItemKey]['matrixFormType'] = $this->getAvailableMatrixFormType($product, $lineItem);
+        $array[$lineItemKey]['matrixFormType'] = $matrixFormType;
     }
 
     /**

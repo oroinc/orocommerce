@@ -55,7 +55,31 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->flush();
     }
 
-    public function testView()
+    public function testViewWhenNoId(): void
+    {
+        $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            )
+        );
+
+        /** @var ShoppingList $currentShoppingList */
+        $currentShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC);
+        $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+            ->setCurrent($user, $currentShoppingList);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_view'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
+        // operations only for ShoppingList with LineItems
+        $this->assertNotContains('Request Quote', $crawler->html());
+        $this->assertNotContains('Create Order', $crawler->html());
+    }
+
+    public function testView(): void
     {
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
         $this->initClient(
@@ -74,7 +98,7 @@ class ShoppingListControllerTest extends WebTestCase
         // assert current shopping list
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_view')
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $currentShoppingList->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($currentShoppingList->getLabel(), $crawler->html());

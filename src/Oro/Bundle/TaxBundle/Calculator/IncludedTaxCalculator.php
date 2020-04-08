@@ -10,10 +10,10 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 /**
  * (inclTax * taxRate) / (1 + taxRate)
  */
-class IncludedTaxCalculator implements TaxCalculatorInterface
+class IncludedTaxCalculator extends AbstractTaxCalculator
 {
     /** {@inheritdoc} */
-    public function calculate($amount, $taxRate)
+    protected function doCalculate(string $amount, string $taxRate): ResultElement
     {
         $inclTax = BigDecimal::of($amount);
         $taxRate = BigDecimal::of($taxRate)->abs();

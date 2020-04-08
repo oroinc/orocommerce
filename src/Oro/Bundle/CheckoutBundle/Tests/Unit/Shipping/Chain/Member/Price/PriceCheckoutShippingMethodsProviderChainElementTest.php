@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Shipping\Chain\Member\Price;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -24,9 +24,9 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
     private $shippingPriceProviderMock;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
+     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $shippingContextFactoryMock;
+    private $checkoutShippingContextProvider;
 
     public function setUp()
     {
@@ -35,14 +35,14 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingContextFactoryMock = $this
-            ->getMockBuilder(CheckoutShippingContextFactory::class)
+        $this->checkoutShippingContextProvider = $this
+            ->getMockBuilder(CheckoutShippingContextProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->testedMethodsProvider = new PriceCheckoutShippingMethodsProviderChainElement(
             $this->shippingPriceProviderMock,
-            $this->shippingContextFactoryMock
+            $this->checkoutShippingContextProvider
         );
     }
 
@@ -53,9 +53,9 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
         $expectedMethods = (new ShippingMethodViewCollection())
             ->addMethodView('flat_rate', ['identifier' => 'flat_rate']);
 
-        $this->shippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->once())
-            ->method('create')
+            ->method('getContext')
             ->with($checkoutMock)
             ->willReturn($shippingContextMock);
 
@@ -80,9 +80,9 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
         $successorMock = $this->getSuccessorMock();
         $this->testedMethodsProvider->setSuccessor($successorMock);
 
-        $this->shippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->never())
-            ->method('create');
+            ->method('getContext');
 
         $this->shippingPriceProviderMock
             ->expects($this->never())
@@ -117,9 +117,9 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->method('getShippingMethodType')
             ->willReturn($shippingMethodType);
 
-        $this->shippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->once())
-            ->method('create')
+            ->method('getContext')
             ->with($checkoutMock)
             ->willReturn($shippingContextMock);
 
@@ -150,9 +150,9 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
             ->expects($this->never())
             ->method('getShippingMethodType');
 
-        $this->shippingContextFactoryMock
+        $this->checkoutShippingContextProvider
             ->expects($this->never())
-            ->method('create');
+            ->method('getContext');
 
         $this->shippingPriceProviderMock
             ->expects($this->never())

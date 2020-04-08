@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
@@ -24,7 +24,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
     protected $paymentMethodViewProvider;
 
     /**
-     * @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
@@ -50,7 +50,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentMethodProvider = $this->createMock(PaymentMethodProvider::class);
+        $this->paymentMethodProvider = $this->createMock(ApplicablePaymentMethodsProvider::class);
 
         $this->cacheProvider = $this->createMock(CacheProvider::class);
 

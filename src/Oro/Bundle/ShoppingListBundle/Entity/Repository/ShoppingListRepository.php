@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -97,7 +98,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         if ($selectRelations) {
             $this->modifyQbWithRelations($qb);
         }
-        
+
         return $qb;
     }
 
@@ -135,5 +136,116 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             ->getSingleScalarResult();
 
         return (integer) $results;
+    }
+
+    /**
+     * Used in ShoppingListController::viewAction().
+     * Loads related entities to eliminate extra queries when displaying on view page.
+     *
+     * @param int $shoppingListId
+     *
+     * @return ShoppingList|null
+     */
+    public function findForViewAction(int $shoppingListId): ?ShoppingList
+    {
+        $qb = $this->createQueryBuilder('shopping_list');
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $qb
+            ->select(
+                'shopping_list',
+                'line_item',
+                'product',
+                'category',
+                'product_minimum_quantity',
+                'product_maximum_quantity',
+                'product_highlight_low_inventory',
+                'product_is_upcoming',
+                'category_minimum_quantity',
+                'category_maximum_quantity',
+                'category_highlight_low_inventory',
+                'category_is_upcoming'
+            )
+            ->leftJoin('shopping_list.lineItems', 'line_item')
+            ->leftJoin('line_item.product', 'product')
+            ->leftJoin('product.category', 'category')
+            ->leftJoin('product.highlightLowInventory', 'product_highlight_low_inventory')
+            ->leftJoin('product.isUpcoming', 'product_is_upcoming')
+            ->leftJoin('product.minimumQuantityToOrder', 'product_minimum_quantity')
+            ->leftJoin('product.maximumQuantityToOrder', 'product_maximum_quantity')
+            ->leftJoin('category.highlightLowInventory', 'category_highlight_low_inventory')
+            ->leftJoin('category.isUpcoming', 'category_is_upcoming')
+            ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
+            ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
+            ->where($qb->expr()->eq('shopping_list.id', ':shoppingListId'))
+            ->setParameter('shoppingListId', $shoppingListId, Type::INTEGER)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($shoppingList && $shoppingList->getLineItems()->count()) {
+            $lineItems = $shoppingList->getLineItems();
+            $productsIds = [];
+            foreach ($lineItems as $lineItem) {
+                $productId = $lineItem->getProduct()->getId();
+                $productsIds[$productId] = $productId;
+            }
+
+            $this->loadRelatedProductNames($productsIds);
+            $this->loadRelatedProductUnitPrecisions($productsIds);
+            $this->loadRelatedProductImages($productsIds);
+        }
+
+        return $shoppingList;
+    }
+
+    /**
+     * @param array $productIds
+     */
+    private function loadRelatedProductNames(array $productIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('partial product.{id}', 'product_name')
+            ->from(Product::class, 'product')
+            ->innerJoin('product.names', 'product_name')
+            ->where($qb->expr()->in('product', ':products'))
+            ->setParameter('products', $productIds)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param array $productIds
+     */
+    private function loadRelatedProductUnitPrecisions(array $productIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('partial product.{id}', 'unit_precision', 'primary_unit_precision')
+            ->from(Product::class, 'product')
+            ->leftJoin('product.unitPrecisions', 'unit_precision')
+            ->leftJoin('product.primaryUnitPrecision', 'primary_unit_precision')
+            ->where($qb->expr()->in('product', ':products'))
+            ->setParameter('products', $productIds)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param array $productsIds
+     */
+    private function loadRelatedProductImages(array $productsIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('partial product.{id}', 'product_image', 'product_image_image', 'product_image_type')
+            ->from(Product::class, 'product')
+            ->leftJoin('product.images', 'product_image')
+            ->leftJoin('product_image.image', 'product_image_image')
+            ->leftJoin('product_image.types', 'product_image_type')
+            ->where($qb->expr()->in('product', ':products'))
+            ->setParameter('products', $productsIds)
+            ->getQuery()
+            ->execute();
     }
 }

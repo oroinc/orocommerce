@@ -2,18 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Storage\ProductPriceStorageInterface;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Read prices from storage and return requested prices to the client in expected format.
  */
 class ProductPriceProvider implements ProductPriceProviderInterface
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var ProductPriceStorageInterface
      */
@@ -41,9 +47,14 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array
     {
-        return array_intersect(
-            $this->currencyManager->getAvailableCurrencies(),
-            $this->priceStorage->getSupportedCurrencies($scopeCriteria)
+        return $this->getMemoryCacheProvider()->get(
+            ['product_price_scope_criteria' => $scopeCriteria],
+            function () use ($scopeCriteria) {
+                return array_intersect(
+                    $this->currencyManager->getAvailableCurrencies(),
+                    $this->priceStorage->getSupportedCurrencies($scopeCriteria)
+                );
+            }
         );
     }
 
@@ -58,14 +69,18 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     ):array {
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
         if (empty($currencies)) {
-            /**
-             * There is no sense to get prices because of no allowed currencies present.
-             */
+            // There is no sense to get prices because of no allowed currencies present.
             return [];
         }
 
+        $productsIds = [];
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            $productsIds[$productId] = $productId;
+        }
+
         $productUnitCodes = $unitCode ? [$unitCode] : null;
-        $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
+        $prices = $this->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
 
         $result = [];
         foreach ($prices as $price) {
@@ -76,65 +91,156 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $productPriceCriteria
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     *
+     * @return array
      */
     public function getMatchedPrices(
         array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
     ): array {
-        $products = [];
+        return $this->getMemoryCacheProvider()->get(
+            [
+                'product_price_criteria' => array_values($productPriceCriteria),
+                'product_price_scope_criteria' => $scopeCriteria,
+            ],
+            function () use ($productPriceCriteria, $scopeCriteria) {
+                return $this->getActualMatchedPrices($productPriceCriteria, $scopeCriteria);
+            }
+        );
+    }
+
+    /**
+     * @param array $productPriceCriteria
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     *
+     * @return array
+     */
+    protected function getActualMatchedPrices(
+        array $productPriceCriteria,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ): array {
+        $productsIds = [];
         $productUnitCodes = [];
         $currencies = [];
         $result = [];
 
         /** @var ProductPriceCriteria $productPriceCriterion */
         foreach ($productPriceCriteria as $productPriceCriterion) {
-            $products[] = $productPriceCriterion->getProduct();
-            $productUnitCodes[] = $productPriceCriterion->getProductUnit()->getCode();
-            $currencies[] = $productPriceCriterion->getCurrency();
+            $productUnitCode = $productPriceCriterion->getProductUnit()->getCode();
+            $currency = $productPriceCriterion->getCurrency();
+            $productId = $productPriceCriterion->getProduct()->getId();
 
-            if (!\in_array($productPriceCriterion->getCurrency(), $currencies)) {
-                $currencies[] = $productPriceCriterion->getCurrency();
-            }
+            $productsIds[$productId] = $productId;
+            $productUnitCodes[$productUnitCode] = $productUnitCode;
+            $currencies[$currency] = $currency;
         }
 
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
+        $prices = $this->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
 
-        $prices = [];
-        /**
-         * There is no sense to get prices when no allowed currencies present.
-         */
-        if ($currencies) {
-            $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
+        $productPriceData = [];
+        foreach ($prices as $priceData) {
+            $key = $this->getKey(
+                $priceData->getProduct(),
+                $priceData->getUnit(),
+                $priceData->getPrice()->getCurrency()
+            );
+
+            $productPriceData[$key][] = $priceData;
         }
 
         foreach ($productPriceCriteria as $productPriceCriterion) {
-            $id = $productPriceCriterion->getProduct()->getId();
-            $code = $productPriceCriterion->getProductUnit()->getCode();
-            $quantity = $productPriceCriterion->getQuantity();
             $currency = $productPriceCriterion->getCurrency();
-
-            $productPrices = array_filter(
-                $prices,
-                function (ProductPriceInterface $priceData) use ($id, $code, $currency) {
-                    return $priceData->getProduct()->getId() === $id
-                        && $priceData->getUnit()->getCode() === $code
-                        && $priceData->getPrice()->getCurrency() === $currency;
-                }
+            $key = $this->getKey(
+                $productPriceCriterion->getProduct(),
+                $productPriceCriterion->getProductUnit(),
+                $currency
             );
-
-            $price = $this->matchPriceByQuantity($productPrices, $quantity);
+            $quantity = $productPriceCriterion->getQuantity();
+            $price = $this->matchPriceByQuantity($productPriceData[$key] ?? [], $quantity);
             if ($price !== null) {
-                $result[$productPriceCriterion->getIdentifier()] = Price::create(
-                    $price,
-                    $currency
-                );
+                $result[$productPriceCriterion->getIdentifier()] = Price::create($price, $currency);
             } else {
                 $result[$productPriceCriterion->getIdentifier()] = null;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     * @param array $productsIds
+     * @param array|null $productUnitCodes
+     * @param array|null $currencies
+     *
+     * @return array
+     */
+    private function getPrices(
+        ProductPriceScopeCriteriaInterface $scopeCriteria,
+        array $productsIds,
+        array $productUnitCodes = null,
+        array $currencies = null
+    ): array {
+        if (!$currencies) {
+            // There is no sense to get prices when no allowed currencies present.
+            return [];
+        }
+
+        $allPrices = null;
+        if ($productUnitCodes) {
+            /** @var ProductPriceDTO[]|null $allPrices */
+            $allPrices = $this->getMemoryCacheProvider()->get(
+                [
+                    'product_price_scope_criteria' => $scopeCriteria,
+                    $productsIds,
+                    $currencies,
+                    null,
+                ]
+            );
+        }
+
+        return (array) $this->getMemoryCacheProvider()->get(
+            [
+                'product_price_scope_criteria' => $scopeCriteria,
+                $productsIds,
+                $currencies,
+                $productUnitCodes,
+            ],
+            function () use ($allPrices, $scopeCriteria, $productsIds, $productUnitCodes, $currencies) {
+                if (!$allPrices) {
+                    return $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+                }
+
+                if ($productUnitCodes) {
+                    // Fetch prices from the previously fetched $allPrices collection.
+                    $prices = [];
+                    foreach ($allPrices as $price) {
+                        if (\in_array($price->getUnit()->getCode(), $productUnitCodes, false)) {
+                            $prices[] = $price;
+                        }
+                    }
+
+                    return $prices;
+                }
+
+                return $allPrices;
+            }
+        );
+    }
+
+    /**
+     * @param Product $product
+     * @param MeasureUnitInterface $unit
+     * @param string $currency
+     *
+     * @return string
+     */
+    private function getKey(Product $product, MeasureUnitInterface $unit, string $currency): string
+    {
+        return sprintf('%s|%s|%s', $product->getId(), $unit->getCode(), $currency);
     }
 
     /**

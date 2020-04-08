@@ -30,9 +30,9 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
     const ENTITY_1 = 'Entity1';
     const ENTITY_2 = 'Entity2';
 
-    const SUBTOTAL = 20;
+    const SUBTOTAL = 20.0;
     const SHIPPING_COST = 10;
-    const TOTAL = 30;
+    const TOTAL = 30.0;
 
     /**
      * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject

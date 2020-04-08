@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -12,26 +11,23 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVi
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\EventListener\ProductVisibilityCacheListener;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $cache;
+    /** @var ResolvedProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $resolvedProductVisibilityProvider;
 
-    /**
-     * @var ProductVisibilityCacheListener
-     */
+    /** @var ProductVisibilityCacheListener */
     private $listener;
 
     public function setUp()
     {
-        $this->cache = $this->createMock(CacheProvider::class);
-        $this->listener = new ProductVisibilityCacheListener($this->cache);
+        $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+        $this->listener = new ProductVisibilityCacheListener($this->resolvedProductVisibilityProvider);
     }
 
     public function testClearCacheOnFlush()
@@ -61,19 +57,18 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
                 new CustomerProductVisibilityResolved($scope, $secondProduct)
             ]);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
 
-        $this->cache->expects($this->at(0))
-            ->method('delete')
-            ->with('Oro\Bundle\ProductBundle\Entity\Product_1');
+        $this->resolvedProductVisibilityProvider->expects($this->at(0))
+            ->method('clearCache')
+            ->with(1);
 
-        $this->cache->expects($this->at(1))
-            ->method('delete')
-            ->with('Oro\Bundle\ProductBundle\Entity\Product_2');
+        $this->resolvedProductVisibilityProvider->expects($this->at(1))
+            ->method('clearCache')
+            ->with(2);
 
         $args = new OnFlushEventArgs($em);
 
@@ -101,8 +96,8 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
 
-        $this->cache->expects($this->never())
-            ->method('delete');
+        $this->resolvedProductVisibilityProvider->expects($this->never())
+            ->method('clearCache');
 
         $args = new OnFlushEventArgs($em);
 

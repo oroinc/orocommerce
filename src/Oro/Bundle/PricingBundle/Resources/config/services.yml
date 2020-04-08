@@ -93,9 +93,14 @@ services:
         arguments:
             - '@oro_pricing.storage.prices'
             - '@oro_pricing.user_currency_manager'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_pricing.provider.product_price.cache']]
 
     Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
         alias: 'oro_pricing.provider.product_price'
+
+    oro_pricing.provider.product_price.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
@@ -128,11 +133,13 @@ services:
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
-        public: false
         arguments:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+
+    Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider:
+        alias: oro_pricing.provider.frontend_product_prices
 
     oro_pricing.pricing_strategy.abstract_price_combining_strategy:
         class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
@@ -856,11 +863,13 @@ services:
 
     oro_pricing.formatter.product_price_formatter:
         class: 'Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter'
-        public: false
         arguments:
             - '@oro_locale.formatter.number'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
+
+    Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter:
+        alias: oro_pricing.formatter.product_price_formatter
 
     oro_pricing.duplicator.schedule:
         class: 'Oro\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'

@@ -4,17 +4,19 @@ namespace Oro\Bundle\CheckoutBundle\Provider;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider as PaymentBundleMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider as PaymentBundleMethodProvider;
 
+/**
+ * Provides applicable payment methods for given payment transaction.
+ */
 class PaymentMethodProvider
 {
     /**
-     * @var CheckoutPaymentContextFactory
+     * @var CheckoutPaymentContextProvider
      */
-    protected $contextFactory;
+    protected $checkoutPaymentContextProvider;
 
     /**
      * @var CheckoutRepository
@@ -27,16 +29,16 @@ class PaymentMethodProvider
     protected $paymentMethodProvider;
 
     /**
-     * @param CheckoutPaymentContextFactory $contextFactory
+     * @param CheckoutPaymentContextProvider $checkoutPaymentContextProvider
      * @param CheckoutRepository $checkoutRepository
      * @param PaymentBundleMethodProvider $paymentMethodProvider
      */
     public function __construct(
-        CheckoutPaymentContextFactory $contextFactory,
+        CheckoutPaymentContextProvider $checkoutPaymentContextProvider,
         CheckoutRepository $checkoutRepository,
         PaymentBundleMethodProvider $paymentMethodProvider
     ) {
-        $this->contextFactory = $contextFactory;
+        $this->checkoutPaymentContextProvider = $checkoutPaymentContextProvider;
         $this->checkoutRepository = $checkoutRepository;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
@@ -58,7 +60,7 @@ class PaymentMethodProvider
             return null;
         }
 
-        $context = $this->contextFactory->create($checkout);
+        $context = $this->checkoutPaymentContextProvider->getContext($checkout);
         if (!$context) {
             return null;
         }

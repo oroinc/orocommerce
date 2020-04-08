@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
@@ -140,7 +141,7 @@ class ShoppingList extends ExtendShoppingList implements
     protected $website;
 
     /**
-     * @var ArrayCollection|LineItem[]
+     * @var Collection|LineItem[]
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\LineItem",
@@ -158,7 +159,7 @@ class ShoppingList extends ExtendShoppingList implements
     protected $current = false;
 
     /**
-     * @var ArrayCollection|ShoppingListTotal[]
+     * @var Collection|ShoppingListTotal[]
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
@@ -281,7 +282,7 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * @return ArrayCollection|LineItem[]
+     * @return Collection|LineItem[]
      */
     public function getLineItems()
     {
@@ -317,7 +318,7 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * @return ArrayCollection|ShoppingListTotal[]
+     * @return Collection|ShoppingListTotal[]
      */
     public function getTotals()
     {

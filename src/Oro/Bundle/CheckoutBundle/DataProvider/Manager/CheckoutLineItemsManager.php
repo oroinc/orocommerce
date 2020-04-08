@@ -4,22 +4,23 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * This class provides obtaining Order line items from CheckoutInterface
  */
 class CheckoutLineItemsManager
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var iterable|CheckoutDataProviderInterface[]
      */
@@ -41,29 +42,21 @@ class CheckoutLineItemsManager
     protected $configManager;
 
     /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $authorizationChecker;
-
-    /**
      * @param iterable|CheckoutDataProviderInterface[] $providers
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         iterable $providers,
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
-        ConfigManager $configManager,
-        AuthorizationCheckerInterface $authorizationChecker
+        ConfigManager $configManager
     ) {
         $this->providers = $providers;
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -77,12 +70,33 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
+        return $this->getMemoryCacheProvider()->get(
+            ['checkout' => $checkout, $disablePriceFilter, $configVisibilityPath],
+            function () use ($checkout, $disablePriceFilter, $configVisibilityPath) {
+                return $this->getOrderLineItems($checkout, $disablePriceFilter, $configVisibilityPath);
+            }
+        );
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @param bool $disablePriceFilter
+     * @param string $configVisibilityPath
+     *
+     * @return Collection
+     */
+    protected function getOrderLineItems(
+        CheckoutInterface $checkout,
+        bool $disablePriceFilter = false,
+        string $configVisibilityPath = 'oro_order.frontend_product_visibility'
+    ): Collection {
+        $lineItems = new ArrayCollection();
+        $currency = $this->userCurrencyManager->getUserCurrency();
+        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($checkout)) {
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($checkout));
                 if (!$disablePriceFilter) {
-                    $currency = $this->userCurrencyManager->getUserCurrency();
-                    $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
                     $lineItems = $lineItems->filter(
                         function ($lineItem) use ($currency, $supportedStatuses) {
                             return $this->isLineItemHasCurrencyAndSupportedStatus(
@@ -94,11 +108,11 @@ class CheckoutLineItemsManager
                     );
                 }
 
-                return $lineItems;
+                break;
             }
         }
 
-        return new ArrayCollection();
+        return $lineItems;
     }
 
     /**
@@ -132,27 +146,6 @@ class CheckoutLineItemsManager
         }
 
         return $supportedStatuses;
-    }
-
-    /**
-     * @param object $lineItem
-     * @return bool
-     */
-    protected function isLineItemAvailable($lineItem)
-    {
-        if (!$lineItem instanceof ProductHolderInterface) {
-            return true;
-        }
-
-        $product = $lineItem->getProduct();
-        if (!$product) {
-            return true;
-        }
-
-        $isAvailable = $product->getStatus() === Product::STATUS_ENABLED
-            && $this->authorizationChecker->isGranted('VIEW', $product);
-
-        return $isAvailable;
     }
 
     /**

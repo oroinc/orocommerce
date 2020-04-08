@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Acl\Voter;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
@@ -15,30 +13,19 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $supportedAttributes = [BasicPermission::VIEW];
 
-    /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
-     * @var CacheProvider
-     */
-    private $attributePermissionCache;
+    /** @var ResolvedProductVisibilityProvider|null */
+    private $resolvedProductVisibilityProvider;
 
     /**
      * {@inheritdoc}
-    */
-    public function vote(TokenInterface $token, $object, array $attributes)
+     */
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
@@ -50,83 +37,27 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     /**
      * @inheritdoc
      */
-    protected function getPermissionForAttribute($class, $identifier, $attribute)
+    protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
-        if (in_array($attribute, $this->supportedAttributes, true)) {
-            if ($this->isVisible($class, $identifier)) {
-                return self::ACCESS_GRANTED;
-            }
-
-            return self::ACCESS_DENIED;
-        }
-
-        return self::ACCESS_ABSTAIN;
-    }
-
-    /**
-     * @param ProductVisibilityQueryBuilderModifier $modifier A ProductVisibilityQueryBuilderModifier instance
-     */
-    public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
-    {
-        $this->modifier = $modifier;
+        return $this->resolvedProductVisibilityProvider->isVisible($identifier)
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 
     /**
      * @param FrontendHelper $frontendHelper
      */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
+    public function setFrontendHelper(FrontendHelper $frontendHelper): void
     {
         $this->frontendHelper = $frontendHelper;
     }
 
     /**
-     * @param CacheProvider $attributePermissionCache
+     * @param ResolvedProductVisibilityProvider|null $resolvedProductVisibilityProvider
      */
-    public function setAttributePermissionCache(CacheProvider $attributePermissionCache)
-    {
-        $this->attributePermissionCache = $attributePermissionCache;
-    }
-
-    /**
-     * @param string $class
-     * @param int $identifier
-     * @return boolean
-     */
-    private function isVisible($class, $identifier)
-    {
-        if ($this->attributePermissionCache) {
-            $cacheKey = $this->getCacheKey($class, $identifier);
-            if ($this->attributePermissionCache->contains($cacheKey)) {
-                return $this->attributePermissionCache->fetch($cacheKey);
-            }
-        }
-
-        /** @var ProductRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository($class);
-
-        $qb = $repository->getProductsQueryBuilder([$identifier]);
-        $this->modifier->modify($qb);
-
-        $qb->resetDQLPart('select')
-            ->select('1')
-            ->setMaxResults(1);
-
-        $isVisible = !empty($qb->getQuery()->getScalarResult());
-
-        if ($this->attributePermissionCache && isset($cacheKey)) {
-            $this->attributePermissionCache->save($cacheKey, $isVisible);
-        }
-
-        return $isVisible;
-    }
-
-    /**
-     * @param string $class
-     * @param int $identifier
-     * @return string
-     */
-    private function getCacheKey($class, $identifier)
-    {
-        return $class . '_' . (string)$identifier;
+    public function setResolvedProductVisibilityProvider(
+        ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+    ): void {
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
     }
 }
