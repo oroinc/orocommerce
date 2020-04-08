@@ -4,7 +4,7 @@ include:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>
 
 Oro\Bundle\TranslationBundle\Entity\Translation:
     translation_product_unit_item_lang1:

@@ -314,19 +314,19 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 $qb->expr()->in('IDENTITY(price.product)', ':productIds')
             )
             ->setParameter('priceListId', $priceListId)
-            ->setParameter('productIds', $productIds)
+            ->setParameter('productIds', array_values($productIds))
             ->addOrderBy('IDENTITY(price.unit)')
             ->addOrderBy('price.quantity');
 
         if ($productUnitCodes) {
             $qb
                 ->andWhere($qb->expr()->in('IDENTITY(price.unit)', ':productUnitCodes'))
-                ->setParameter('productUnitCodes', $productUnitCodes);
+                ->setParameter('productUnitCodes', array_values($productUnitCodes));
         }
         if ($currencies) {
             $qb
                 ->andWhere($qb->expr()->in('price.currency', ':currencies'))
-                ->setParameter('currencies', $currencies);
+                ->setParameter('currencies', array_values($currencies));
         }
 
         $query = $qb->getQuery();

@@ -67,12 +67,12 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
     subtotals:
       groups: ['promotion']
     appliedCoupons:
-      groups: ['promotion']
+      groups: ['checkout', 'promotion']
 
 Oro\Bundle\PromotionBundle\Entity\AppliedCoupon:
   attributes:
     couponCode:
-      groups: ['promotion']
+      groups: ['checkout', 'promotion']
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
   attributes:

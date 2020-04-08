@@ -2,14 +2,20 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
+/**
+ * Returns applicable payment method for given payment context.
+ */
 class PaymentMethodProvider
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var PaymentMethodProviderInterface
      */
@@ -39,19 +45,30 @@ class PaymentMethodProvider
      */
     public function getApplicablePaymentMethods(PaymentContextInterface $context)
     {
+        return $this->getMemoryCacheProvider()->get(
+            ['payment_context' => $context],
+            function () use ($context) {
+                return $this->getActualApplicablePaymentMethods($context);
+            }
+        );
+    }
+
+    /**
+     * @param PaymentContextInterface $context
+     *
+     * @return array
+     */
+    protected function getActualApplicablePaymentMethods(PaymentContextInterface $context)
+    {
         $paymentMethodsConfigsRules = $this->paymentMethodsConfigsRulesProvider
             ->getPaymentMethodsConfigsRules($context);
 
-        $paymentMethods = [];
-
+        $paymentMethods = [[]];
         foreach ($paymentMethodsConfigsRules as $paymentMethodsConfigsRule) {
-            $paymentMethods = array_merge(
-                $paymentMethods,
-                $this->getPaymentMethodsForConfigsRule($paymentMethodsConfigsRule, $context)
-            );
+            $paymentMethods[] = $this->getPaymentMethodsForConfigsRule($paymentMethodsConfigsRule, $context);
         }
 
-        return $paymentMethods;
+        return array_merge(...$paymentMethods);
     }
 
     /**

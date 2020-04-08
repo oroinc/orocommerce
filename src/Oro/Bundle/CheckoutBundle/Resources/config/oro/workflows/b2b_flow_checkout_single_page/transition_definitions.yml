@@ -129,8 +129,8 @@ workflows:
                           checkout: $checkout
 
                     - '@call_service_method':
-                        service: oro_checkout.factory.payment_context_factory
-                        method: create
+                        service: oro_checkout.provider.payment_context
+                        method: getContext
                         method_parameters: [$checkout]
                         attribute: $.result.paymentContext
 
@@ -300,8 +300,8 @@ workflows:
             purchase_transition_definition:
                 preactions:
                     - '@call_service_method':
-                        service: oro_checkout.factory.payment_context_factory
-                        method: create
+                        service: oro_checkout.provider.payment_context
+                        method: getContext
                         method_parameters: [$checkout]
                         attribute: $.result.paymentContext
 

@@ -140,7 +140,7 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->totalManager->recalculateTotals($shoppingList, true);
-        $this->assertSame(100, $totalUSD->getSubtotal()->getAmount());
-        $this->assertSame(80, $totalEUR->getSubtotal()->getAmount());
+        $this->assertSame(100.0, $totalUSD->getSubtotal()->getAmount());
+        $this->assertSame(80.0, $totalEUR->getSubtotal()->getAmount());
     }
 }

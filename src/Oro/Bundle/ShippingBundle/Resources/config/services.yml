@@ -227,6 +227,8 @@ services:
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
             - '@event_dispatcher'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_shipping.shipping_price.provider.memory_cache']]
 
     oro_shipping.shipping_price.provider_enabled_methods_decorator:
         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator'
@@ -236,6 +238,9 @@ services:
         arguments:
              - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
              - '@oro_shipping.shipping_method_provider'
+
+    oro_shipping.shipping_price.provider.memory_cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'

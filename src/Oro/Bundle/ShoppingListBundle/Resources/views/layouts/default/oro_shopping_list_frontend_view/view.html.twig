@@ -290,7 +290,7 @@
         'shopping-list-line-items__item--configurable'
     %}
     {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
-    {% set productImage = Image.image(productImageData, 'product_small', {alt: mainProduct.names|localized_value|oro_html_strip_tags}) %}
+    {% set productImage = Image.image(productImageData, 'product_small', {alt: mainProduct.names|localized_value|e}) %}
     {% set productImageUrl = Image.url(productImageData, 'product_small') %}
     {% set modelAttr = mainProduct.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
@@ -360,14 +360,14 @@
         {% set routeOptions = routeOptions|merge({'variantProductId': lineItem.product.id}) %}
     {% endif %}
     <h2 class="product-item__title product-item__title--in-cart">
-        <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ mainProduct.names|localized_value|e }}</a>
     </h2>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
     <div>
         {{ 'oro.frontend.shoppinglist.view.item.label'|trans }}
-        <span class="product-item__sku-value">{{ mainProduct.sku|oro_html_strip_tags }}</span>
+        <span class="product-item__sku-value">{{ mainProduct.sku|e }}</span>
     </div>
 {% endblock %}
 
@@ -496,11 +496,11 @@
 
         <button class="item-remove btn btn--plain"
             title="{{ 'oro.shoppinglist.remove_item.title'|trans({
-                '%productName%': mainProduct.names|localized_value|oro_html_strip_tags,
+                '%productName%': mainProduct.names|localized_value|e,
                 '%shoppinglist%': shoppingList.label })
             }}"
             aria-label="{{ 'oro.shoppinglist.remove_item.aria_label'|trans({
-                '%productName%': mainProduct.names|localized_value|oro_html_strip_tags,
+                '%productName%': mainProduct.names|localized_value|e,
                 '%shoppinglist%': shoppingList.label })
             }}"
             {{ UI.renderPageComponentAttributes({
@@ -580,7 +580,7 @@
                 </div>
                 <div data-role="editor" class="editable__editor-container">
                     <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
-                              aria-label="{{ 'oro.frontend.shoppinglist.view.add_item_note.aria_label'|trans({'%productName%': mainProduct.names|localized_value|oro_html_strip_tags}) }}"
+                              aria-label="{{ 'oro.frontend.shoppinglist.view.add_item_note.aria_label'|trans({'%productName%': mainProduct.names|localized_value|e}) }}"
                               placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                 </div>
             </div>

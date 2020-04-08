@@ -132,9 +132,9 @@ Feature: Guest quick order form
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
-      | Product1`"'&йёщ> | 2 | items |
-      | Product2         | 4 | sets  |
-      | Product3         | 2 | items |
+      | Product1`"'&йёщ®&reg;> | 2 | items |
+      | Product2               | 4 | sets  |
+      | Product3               | 2 | items |
     And I uncheck "Save my data and create an account" on the checkout page
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
@@ -220,10 +220,10 @@ Feature: Guest quick order form
       | Notes                  | Test note for quote. |
       | PO Number              | PO Test 01           |
     And Request a Quote contains products
-      | Product2         | 2 | item |
-      | Product2         | 4 | set  |
-      | Product3         | 2 | item |
-      | Product1`"'&йёщ> | 5 | item |
+      | Product2               | 2 | item |
+      | Product2               | 4 | set  |
+      | Product3               | 2 | item |
+      | Product1`"'&йёщ®&reg;> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

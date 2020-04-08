@@ -3,13 +3,17 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use MemoryCacheProviderAwareTestTrait;
+
     /**
      * @var CheckoutShippingContextFactory| \PHPUnit\Framework\MockObject\MockObject
      */
@@ -94,5 +98,33 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 
         $shippingContext = $this->provider->getContext($this->checkout);
         $this->assertSame($context, $shippingContext);
+    }
+
+    public function testGetContextWhenMemoryCacheProviderAndCache(): void
+    {
+        $this->shippingContextFactory
+            ->expects($this->never())
+            ->method('create');
+
+        $context = $this->createMock(ShippingContextInterface::class);
+
+        $this->mockMemoryCacheProvider($context);
+        $this->setMemoryCacheProvider($this->provider);
+
+        $this->assertEquals($context, $this->provider->getContext($this->createMock(Checkout::class)));
+    }
+
+    public function testGetContextWhenMemoryCacheProviderAndNoCache(): void
+    {
+        $this->shippingContextFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with($checkout = $this->createMock(Checkout::class))
+            ->willReturn($context = $this->createMock(ShippingContextInterface::class));
+
+        $this->mockMemoryCacheProvider();
+        $this->provider->setMemoryCacheProvider($this->getMemoryCacheProvider());
+
+        $this->assertEquals($context, $this->provider->getContext($checkout));
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -20,6 +21,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CheckoutLineItemsManager
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var iterable|CheckoutDataProviderInterface[]
      */
@@ -77,12 +80,33 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
+        return $this->getMemoryCacheProvider()->get(
+            ['checkout' => $checkout, $disablePriceFilter, $configVisibilityPath],
+            function () use ($checkout, $disablePriceFilter, $configVisibilityPath) {
+                return $this->getOrderLineItems($checkout, $disablePriceFilter, $configVisibilityPath);
+            }
+        );
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @param bool $disablePriceFilter
+     * @param string $configVisibilityPath
+     *
+     * @return Collection
+     */
+    protected function getOrderLineItems(
+        CheckoutInterface $checkout,
+        bool $disablePriceFilter = false,
+        string $configVisibilityPath = 'oro_order.frontend_product_visibility'
+    ): Collection {
+        $lineItems = new ArrayCollection();
+        $currency = $this->userCurrencyManager->getUserCurrency();
+        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($checkout)) {
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($checkout));
                 if (!$disablePriceFilter) {
-                    $currency = $this->userCurrencyManager->getUserCurrency();
-                    $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
                     $lineItems = $lineItems->filter(
                         function ($lineItem) use ($currency, $supportedStatuses) {
                             return $this->isLineItemHasCurrencyAndSupportedStatus(
@@ -94,11 +118,11 @@ class CheckoutLineItemsManager
                     );
                 }
 
-                return $lineItems;
+                break;
             }
         }
 
-        return new ArrayCollection();
+        return $lineItems;
     }
 
     /**

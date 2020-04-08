@@ -3,11 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Acl\Voter;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
@@ -36,8 +38,22 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     private $attributePermissionCache;
 
     /**
+     * @var ResolvedProductVisibilityProvider|null
+     */
+    private $resolvedProductVisibilityProvider;
+
+    /**
+     * @param ResolvedProductVisibilityProvider|null $resolvedProductVisibilityProvider
+     */
+    public function setResolvedProductVisibilityProvider(
+        ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+    ): void {
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
+    }
+
+    /**
      * {@inheritdoc}
-    */
+     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
@@ -52,15 +68,15 @@ class ProductVisibilityVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        if (in_array($attribute, $this->supportedAttributes, true)) {
-            if ($this->isVisible($class, $identifier)) {
+        if ($this->resolvedProductVisibilityProvider) {
+            if ($this->resolvedProductVisibilityProvider->isVisible($identifier)) {
                 return self::ACCESS_GRANTED;
             }
-
-            return self::ACCESS_DENIED;
+        } elseif ($this->isVisible($class, $identifier)) {
+            return self::ACCESS_GRANTED;
         }
 
-        return self::ACCESS_ABSTAIN;
+        return self::ACCESS_DENIED;
     }
 
     /**
@@ -104,6 +120,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter
         /** @var ProductRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository($class);
 
+        /** @var QueryBuilder $qb */
         $qb = $repository->getProductsQueryBuilder([$identifier]);
         $this->modifier->modify($qb);
 

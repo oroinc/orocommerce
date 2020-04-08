@@ -2,55 +2,64 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class ShoppingListLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
+class ShoppingListLineItemsDataProviderTest extends TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|MockObject */
+    private $registry;
 
-    /**
-     * @var ShoppingListLineItemsDataProvider
-     */
-    protected $provider;
+    /** @var ShoppingListLineItemsDataProvider */
+    private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->setMethods(['getManagerForClass'])->disableOriginalConstructor()->getMockForAbstractClass();
 
         $this->provider = new ShoppingListLineItemsDataProvider($this->registry);
     }
 
-    public function testGetShoppingListLineItems()
+    public function testGetShoppingListLineItemsWhenNotInitialized(): void
     {
         /** @var LineItem[] $lineItems */
         $lineItems = [
-            $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
+            $this->getEntity(LineItem::class, ['id' => 1]),
         ];
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
+        $lazyCollection = $this->createMock(AbstractLazyCollection::class);
+        $lazyCollection
+            ->expects($this->once())
+            ->method('isInitialized')
+            ->willReturn(false);
 
-        $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList
+            ->expects($this->any())
+            ->method('getLineItems')
+            ->willReturn($lazyCollection);
+
+        $repo = $this->createMock(LineItemRepository::class);
         $repo->expects($this->once())
             ->method('getItemsWithProductByShoppingList')
             ->with($shoppingList)
             ->willReturn($lineItems);
 
-        $em = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->willReturn($repo);
@@ -63,12 +72,58 @@ class ShoppingListLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($lineItems, $this->provider->getShoppingListLineItems($shoppingList));
     }
 
+    public function testGetShoppingListLineItemsWhenArrayCollection(): void
+    {
+        $shoppingList = $this->createMock(ShoppingList::class);
+
+        $shoppingList
+            ->expects($this->any())
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection());
+
+        $this->registry
+            ->expects($this->never())
+            ->method('getManagerForClass');
+
+        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        // Second assert are using to be sure that local cache is used
+        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+    }
+
+    public function testGetShoppingListLineItemsWhenEmptyPersistentCollection(): void
+    {
+        $lazyCollection = $this->createMock(AbstractLazyCollection::class);
+        $lazyCollection
+            ->expects($this->once())
+            ->method('isInitialized')
+            ->willReturn(true);
+
+        $lazyCollection
+            ->expects($this->once())
+            ->method('toArray')
+            ->willReturn([]);
+
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList
+            ->expects($this->any())
+            ->method('getLineItems')
+            ->willReturn($lazyCollection);
+
+        $this->registry
+            ->expects($this->never())
+            ->method('getManagerForClass');
+
+        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        // Second assert are using to be sure that local cache is used
+        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+    }
+
     /**
      * @param LineItem[] $lineItems
      * @param Product[] $expectedProducts
      * @dataProvider productsDataProvider
      */
-    public function testGetProductsWithConfigurableVariants(array $lineItems, array $expectedProducts)
+    public function testGetProductsWithConfigurableVariants(array $lineItems, array $expectedProducts): void
     {
         $this->assertSame(
             $expectedProducts,
@@ -79,7 +134,7 @@ class ShoppingListLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function productsDataProvider()
+    public function productsDataProvider(): array
     {
         $simple1 = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
         $simple2 = $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]);

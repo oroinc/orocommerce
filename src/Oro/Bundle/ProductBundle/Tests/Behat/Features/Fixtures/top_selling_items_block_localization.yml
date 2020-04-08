@@ -9,7 +9,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locvalue1:
-    string: <("Product1`\"'&йёщ>")>
+    string: <("Product1`\"'&йёщ®&reg;>")>
   locvalue1_loc1:
     string: 'Product1 (Localization 1)'
     localization: '@localization1'

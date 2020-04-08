@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 
 /**
  * This listener clear product visibility cache on change related entities
@@ -18,11 +19,25 @@ class ProductVisibilityCacheListener
     private $cache;
 
     /**
+     * @var ResolvedProductVisibilityProvider|null
+     */
+    private $resolvedProductVisibilityProvider;
+
+    /**
      * @param CacheProvider $cache
      */
     public function __construct(CacheProvider $cache)
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * @param ResolvedProductVisibilityProvider|null $resolvedProductVisibilityProvider
+     */
+    public function setResolvedProductVisibilityProvider(
+        ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+    ): void {
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
     }
 
     /**
@@ -38,17 +53,26 @@ class ProductVisibilityCacheListener
             $unitOfWork->getScheduledEntityDeletions()
         );
 
-        $productIds = [];
+        $cleared = [];
         foreach ($entities as $entity) {
+            $product = null;
             if ($entity instanceof Product) {
-                $productIds[] = $entity->getId();
+                $product = $entity;
             } elseif ($entity instanceof BaseProductVisibilityResolved) {
-                $productIds[] = $entity->getProduct()->getId();
+                $product = $entity->getProduct();
             }
-        }
 
-        foreach (array_unique($productIds) as $productId) {
-            $this->cache->delete(Product::class . '_' . $productId);
+            if ($product) {
+                $productId = $product->getId();
+                if (!isset($cleared[$productId])) {
+                    if ($this->resolvedProductVisibilityProvider) {
+                        $this->resolvedProductVisibilityProvider->clearCache($productId);
+                    } else {
+                        $this->cache->delete(Product::class . '_' . $productId);
+                    }
+                    $cleared[$productId] = true;
+                }
+            }
         }
     }
 }

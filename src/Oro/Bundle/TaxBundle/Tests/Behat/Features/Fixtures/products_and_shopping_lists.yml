@@ -23,6 +23,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
         rule: '@shippingRule'
         methodConfigs: ['@shippingMethodConfig']
         currency: 'USD'
+        organization: '@organization'
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
@@ -80,11 +81,13 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'List 1'
         customerUser: '@amanda'
         organization: '@organization'
+        owner: '@admin'
         website: '@website1'
     shoppinglist2:
         label: 'List 2'
         customerUser: '@amanda'
         organization: '@organization'
+        owner: '@admin'
         website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
@@ -95,6 +98,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
         organization: '@organization'
+        owner: '@admin'
     lineitem2:
         product: '@product'
         quantity: '5'
@@ -102,6 +106,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist2'
         organization: '@organization'
+        owner: '@admin'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:

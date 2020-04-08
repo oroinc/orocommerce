@@ -111,7 +111,7 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @return ProductImageType[]|ArrayCollection
+     * @return ProductImageType[]|Collection
      */
     public function getTypes()
     {

@@ -3,13 +3,17 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use MemoryCacheProviderAwareTestTrait;
+
     /**
      * @var CheckoutPaymentContextFactory| \PHPUnit\Framework\MockObject\MockObject
      */
@@ -43,7 +47,7 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new CheckoutPaymentContextProvider($this->paymentContextFactory, $this->cacheProvider);
     }
 
-    public function testGetPaymentStatus()
+    public function testGetContext()
     {
         $context = new PaymentContext([]);
 
@@ -67,7 +71,7 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($context, $paymentContext);
     }
 
-    public function testGetPaymentStatusCached()
+    public function testGetContextCached()
     {
         $context = new PaymentContext([]);
 
@@ -92,5 +96,33 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
 
         $paymentContext = $this->provider->getContext($this->checkout);
         $this->assertSame($context, $paymentContext);
+    }
+
+    public function testGetContextWhenMemoryCacheProviderAndCache(): void
+    {
+        $this->paymentContextFactory
+            ->expects($this->never())
+            ->method('create');
+
+        $context = $this->createMock(PaymentContextInterface::class);
+
+        $this->mockMemoryCacheProvider($context);
+        $this->setMemoryCacheProvider($this->provider);
+
+        $this->assertEquals($context, $this->provider->getContext($this->createMock(Checkout::class)));
+    }
+
+    public function testGetDataWhenMemoryCacheProviderAndNoCache(): void
+    {
+        $this->paymentContextFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with($checkout = $this->createMock(Checkout::class))
+            ->willReturn($context = $this->createMock(PaymentContextInterface::class));
+
+        $this->mockMemoryCacheProvider();
+        $this->setMemoryCacheProvider($this->provider);
+
+        $this->assertEquals($context, $this->provider->getContext($checkout));
     }
 }

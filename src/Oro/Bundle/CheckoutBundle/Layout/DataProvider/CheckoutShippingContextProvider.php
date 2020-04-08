@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -12,6 +14,8 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
  */
 class CheckoutShippingContextProvider
 {
+    use MemoryCacheProviderAwareTrait;
+
     /** @var CacheProvider */
     private $cacheProvider;
 
@@ -34,11 +38,20 @@ class CheckoutShippingContextProvider
      */
     public function getContext(Checkout $entity)
     {
-        $contextHash = self::class . \md5(\serialize($entity));
-        $cachedContext = $this->cacheProvider->fetch($contextHash);
-        if (!$cachedContext) {
-            $cachedContext = $this->shippingContextFactory->create($entity);
-            $this->cacheProvider->save($contextHash, $cachedContext);
+        if ($this->memoryCacheProvider instanceof MemoryCacheProviderInterface) {
+            $cachedContext = $this->memoryCacheProvider->get(
+                ['checkout' => $entity],
+                function () use ($entity) {
+                    return $this->shippingContextFactory->create($entity);
+                }
+            );
+        } else {
+            $contextHash = self::class . \md5(\serialize($entity));
+            $cachedContext = $this->cacheProvider->fetch($contextHash);
+            if (!$cachedContext) {
+                $cachedContext = $this->shippingContextFactory->create($entity);
+                $this->cacheProvider->save($contextHash, $cachedContext);
+            }
         }
 
         return $cachedContext;

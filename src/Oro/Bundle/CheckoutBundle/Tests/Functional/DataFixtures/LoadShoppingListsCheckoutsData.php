@@ -20,6 +20,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     const CHECKOUT_1 = 'checkout.1';
     const CHECKOUT_2 = 'checkout.2';
     const CHECKOUT_3 = 'checkout.3';
+    const CHECKOUT_4 = 'checkout.4';
     const CHECKOUT_7 = 'checkout.7';
 
     const PAYMENT_METHOD = 'payment_term';
@@ -46,6 +47,10 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
             ->setQuantity(40)
             ->setProduct($product)
             ->setProductUnit($productUnit);
+        $lineItem5 = (new CheckoutLineItem())
+            ->setQuantity(50)
+            ->setProduct($product)
+            ->setProductUnit($productUnit);
 
         return [
             self::CHECKOUT_1 => [
@@ -61,6 +66,11 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
                 'source' => LoadShoppingLists::SHOPPING_LIST_3,
                 'checkout' => ['payment_method' => $paymentTermIdentifier],
                 'lineItems' => new ArrayCollection([$lineItem3]),
+            ],
+            self::CHECKOUT_4 => [
+                'source' => LoadShoppingLists::SHOPPING_LIST_4,
+                'checkout' => ['payment_method' => $paymentTermIdentifier],
+                'lineItems' => new ArrayCollection([$lineItem5]),
             ],
             self::CHECKOUT_7 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_7,

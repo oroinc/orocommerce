@@ -5,12 +5,16 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
+/**
+ * Checks if there available shipping methods when checkout starts.
+ */
 class ShippingMethodsListener extends AbstractMethodsListener
 {
     /**
@@ -32,6 +36,11 @@ class ShippingMethodsListener extends AbstractMethodsListener
      * @var OrderAddressSecurityProvider
      */
     private $orderAddressSecurityProvider;
+
+    /**
+     * @var CheckoutShippingContextProvider|null
+     */
+    private $checkoutShippingContextProvider;
 
     /**
      * @param OrderAddressProvider                          $addressProvider
@@ -56,12 +65,27 @@ class ShippingMethodsListener extends AbstractMethodsListener
     }
 
     /**
+     * @param CheckoutShippingContextProvider|null $checkoutShippingContextProvider
+     */
+    public function setCheckoutContextProvider(
+        ?CheckoutShippingContextProvider $checkoutShippingContextProvider
+    ): void {
+        $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setShippingAddress($address);
-        $shippingContext = $this->contextFactory->create($checkout);
+
+        if ($this->checkoutShippingContextProvider) {
+            $shippingContext = $this->checkoutShippingContextProvider->getContext($checkout);
+        } else {
+            $shippingContext = $this->contextFactory->create($checkout);
+        }
+
         $shippingMethodsConfigs = $this->shippingProvider->getShippingMethodsConfigsRules($shippingContext);
 
         return count($shippingMethodsConfigs) > 0;

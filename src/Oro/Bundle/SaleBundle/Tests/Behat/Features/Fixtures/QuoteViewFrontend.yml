@@ -4,7 +4,7 @@ include:
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     productName1:
-        string: <("Product1`\"'&йёщ>")>
+        string: <("Product1`\"'&йёщ®&reg;>")>
 
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:

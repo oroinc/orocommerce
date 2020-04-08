@@ -13,3 +13,5 @@ services:
             - '@oro_checkout.factory.shipping_context_factory'
             - '@oro_sale.quote.configured_shipping_price_provider'
             - '@oro_sale.quote.shipping_configuration_factory'
+        calls:
+            - ['setCheckoutShippingContextProvider', ['@oro_checkout.provider.shipping_context']]
