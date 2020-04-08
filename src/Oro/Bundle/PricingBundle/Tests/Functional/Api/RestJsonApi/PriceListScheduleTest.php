@@ -159,23 +159,83 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCreate()
     {
-        $data = $this->getRequestData('price_list_schedules_create.yml');
-        $response = $this->post(
-            ['entity' => 'pricelistschedules'],
-            $data
-        );
+        $data = [
+            'data' => [
+                'type'          => 'pricelistschedules',
+                'attributes'    => [
+                    'activeAt'     => '2017-04-12T14:11:39Z',
+                    'deactivateAt' => '2017-04-24T14:11:39Z'
+                ],
+                'relationships' => [
+                    'priceList' => ['data' => ['type' => 'pricelists', 'id' => '<toString(@price_list_1->id)>']]
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'pricelistschedules'], $data);
 
         $this->assertResponseContains($data, $response);
+
+        $schedule = $this->getEntityManager()->find(PriceListSchedule::class, (int)$this->getResourceId($response));
+        self::assertTrue($schedule->getPriceList()->getSchedules()->contains($schedule));
+    }
+
+    public function testCreateTogetherWithPriceList()
+    {
+        $data = [
+            'data'     => [
+                'type'          => 'pricelistschedules',
+                'attributes'    => [
+                    'activeAt'     => '2017-04-12T14:11:39Z',
+                    'deactivateAt' => '2017-04-24T14:11:39Z'
+                ],
+                'relationships' => [
+                    'priceList' => ['data' => ['type' => 'pricelists', 'id' => 'new_price_list']]
+                ]
+            ],
+            'included' => [
+                [
+                    'type'       => 'pricelists',
+                    'id'         => 'new_price_list',
+                    'attributes' => [
+                        'name'                => 'New Price List 1',
+                        'priceListCurrencies' => ['USD']
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'pricelistschedules'], $data);
+
+        $scheduleId = (int)$this->getResourceId($response);
+        $schedule = $this->getEntityManager()->find(PriceListSchedule::class, $scheduleId);
+        $expectedData = $data;
+        $expectedData['data']['id'] = (string)$scheduleId;
+        $expectedData['data']['relationships']['priceList']['data']['id'] = (string)$schedule->getPriceList()->getId();
+        $expectedData['included'][0]['id'] = (string)$schedule->getPriceList()->getId();
+        $expectedData['included'][0]['meta']['includeId'] = 'new_price_list';
+        $expectedData['included'][0]['relationships']['schedules']['data'][] = [
+            'type' => 'pricelistschedules',
+            'id'   => (string)$scheduleId
+        ];
+        $this->assertResponseContains($expectedData, $response);
+
+        self::assertTrue($schedule->getPriceList()->getSchedules()->contains($schedule));
     }
 
     public function testUpdate()
     {
         $scheduleId = $this->getReference('schedule.1')->getId();
 
-        $this->patch(
-            ['entity' => 'pricelistschedules', 'id' => (string)$scheduleId],
-            'price_list_schedules_update.yml'
-        );
+        $data = [
+            'data' => [
+                'type'       => 'pricelistschedules',
+                'id'         => '<toString(@schedule.1->id)>',
+                'attributes' => [
+                    'activeAt'     => '2017-04-12T14:11:39Z',
+                    'deactivateAt' => '2017-04-24T14:11:39Z'
+                ]
+            ]
+        ];
+        $this->patch(['entity' => 'pricelistschedules', 'id' => (string)$scheduleId], $data);
 
         /** @var PriceListSchedule $schedule */
         $schedule = $this->getEntityManager()->find(PriceListSchedule::class, $scheduleId);
@@ -291,12 +351,18 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCreateSchedulesIntersect()
     {
-        $data = $this->getRequestData('price_list_schedules_create.yml');
-        $response = $this->post(
-            ['entity' => 'pricelistschedules'],
-            $data
-        );
-        $this->assertResponseContains($data, $response);
+        $data = [
+            'data' => [
+                'type'          => 'pricelistschedules',
+                'attributes'    => [
+                    'activeAt'     => (new \DateTime('-2 day'))->format('c'),
+                    'deactivateAt' => (new \DateTime())->format('c')
+                ],
+                'relationships' => [
+                    'priceList' => ['data' => ['type' => 'pricelists', 'id' => '<toString(@price_list_1->id)>']]
+                ]
+            ]
+        ];
 
         $response = $this->post(['entity' => 'pricelistschedules'], $data, [], false);
         $this->assertResponseValidationError(

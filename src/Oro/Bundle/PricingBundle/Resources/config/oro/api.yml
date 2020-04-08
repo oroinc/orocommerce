@@ -22,7 +22,6 @@ api:
 
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
-            form_event_subscriber: oro_pricing.api_form_subscriber.add_schedules_to_price_list
             actions:
                 update:
                     fields:

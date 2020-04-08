@@ -126,9 +126,10 @@ services:
             - { name: oro.api.processor, action: delete, group: delete_data, price_list_customer_groups_to_update: exists, priority: -100 }
             - { name: oro.api.processor, action: delete_list, group: delete_data, price_list_customer_groups_to_update: exists, priority: -100 }
 
-    oro_pricing.api_form_subscriber.add_schedules_to_price_list:
-        class: Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber
-        public: true
+    oro_pricing.api.add_schedule_to_price_list:
+        class: Oro\Bundle\PricingBundle\Api\Processor\AddScheduleToPriceList
+        tags:
+           - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule }
 
     oro_pricing.api.update_price_by_value_and_currency:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
