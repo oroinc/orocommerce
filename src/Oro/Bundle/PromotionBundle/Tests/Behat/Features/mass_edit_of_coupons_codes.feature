@@ -35,7 +35,6 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       | Uses per Coupon  | 88        |
       | Uses per Person  | 99        |
-    And I click "Today"
     And I click "Apply"
     Then I should see "10 entities were edited" flash message
     And I filter Uses per Coupon as equals "88"
