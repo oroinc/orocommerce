@@ -22,6 +22,7 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
             - '@oro_security.acl_helper'
         calls:
+            - [setMaintenanceMode, ['@oro_platform.maintenance']]
             - [addUrlToMatchSlugFirst, ['/']]
         tags:
             - { name: container.hot_path }
