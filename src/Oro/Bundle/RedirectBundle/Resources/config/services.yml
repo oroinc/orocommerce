@@ -21,6 +21,7 @@ services:
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
             - '@oro_security.acl_helper'
+            - '@oro_platform.maintenance'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
         tags:

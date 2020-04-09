@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -24,8 +25,9 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
 {
-    const MATCH_SYSTEM = 'system';
-    const MATCH_SLUG = 'slug';
+    private const MATCH_SYSTEM = 'system';
+    private const MATCH_MAINTENANCE = 'maintenance';
+    private const MATCH_SLUG = 'slug';
 
     /**
      * @var RouterInterface
@@ -73,24 +75,32 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     private $aclHelper;
 
     /**
+     * @var MaintenanceMode
+     */
+    private $maintenanceMode;
+
+    /**
      * @param RouterInterface $router
      * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
      * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      * @param AclHelper $aclHelper
+     * @param MaintenanceMode $maintenanceMode
      */
     public function __construct(
         RouterInterface $router,
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        MaintenanceMode $maintenanceMode
     ) {
         $this->router = $router;
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
         $this->aclHelper = $aclHelper;
+        $this->maintenanceMode = $maintenanceMode;
     }
 
     /**
@@ -128,6 +138,12 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                     return [];
                 }
             },
+            self::MATCH_MAINTENANCE => function () {
+                // prevents http not found exception for slugged urls when maintenance mode is enabled
+                return $this->maintenanceMode->isOn()
+                    ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
+                    : [];
+            },
             self::MATCH_SLUG => function () use ($request) {
                 $url = $request->getPathInfo();
                 if ($this->matchedUrlDecisionMaker->matches($url)) {
@@ -154,6 +170,12 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                 } catch (ResourceNotFoundException $e) {
                     return [];
                 }
+            },
+            self::MATCH_MAINTENANCE => function () {
+                // prevents http not found exception for slugged urls when maintenance mode is enabled
+                return $this->maintenanceMode->isOn()
+                    ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
+                    : [];
             },
             self::MATCH_SLUG => function () use ($pathinfo) {
                 if ($this->matchedUrlDecisionMaker->matches($pathinfo)) {
@@ -191,10 +213,10 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected function getMatchersOrder($url)
     {
         if (!empty($this->matchSlugsFirst[$url])) {
-            return [self::MATCH_SLUG, self::MATCH_SYSTEM];
+            return [self::MATCH_MAINTENANCE, self::MATCH_SLUG, self::MATCH_SYSTEM];
         }
 
-        return [self::MATCH_SYSTEM, self::MATCH_SLUG];
+        return [self::MATCH_SYSTEM, self::MATCH_MAINTENANCE, self::MATCH_SLUG];
     }
 
     /**
