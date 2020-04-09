@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f11844575f80c23080f19cde03402412",
+    "content-hash": "fcb3185046e2391e6b2dda45cf2857c9",
     "packages": [
         {
             "name": "akeneo/batch-bundle",
@@ -5562,7 +5562,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "1ac72f71e7586aca743c4dfc8f03b6b870e95b54"
+                "reference": "17b7962931e1a7d23458905aa6eebffcfe30867f"
             },
             "require": {
                 "akeneo/batch-bundle": "0.4.11",
@@ -5656,7 +5656,7 @@
                 "sebastian/phpcpd": "4.0.*",
                 "squizlabs/php_codesniffer": "3.5.*",
                 "symfony/phpunit-bridge": "4.3.*",
-                "theofidry/alice-data-fixtures": "1.1.*"
+                "theofidry/alice-data-fixtures": "1.0.*"
             },
             "suggest": {
                 "ext-imap": "To improve parsing of email headers.",
@@ -12232,28 +12232,22 @@
         },
         {
             "name": "theofidry/alice-data-fixtures",
-            "version": "v1.1.2",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/AliceDataFixtures.git",
-                "reference": "fd84956848b95ece9aafb39865be009212e39bc7"
+                "reference": "5752bbf979a012bb804c00641478d4d3f879e51d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/fd84956848b95ece9aafb39865be009212e39bc7",
-                "reference": "fd84956848b95ece9aafb39865be009212e39bc7",
+                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/5752bbf979a012bb804c00641478d4d3f879e51d",
+                "reference": "5752bbf979a012bb804c00641478d4d3f879e51d",
                 "shasum": ""
             },
             "require": {
                 "nelmio/alice": "^3.1",
                 "php": "^7.1",
                 "psr/log": "^1.0"
-            },
-            "conflict": {
-                "doctrine/orm": "<2.5",
-                "illuminate/database": "<5.5",
-                "ocramius/proxy-manager": "<2.1",
-                "symfony/framework-bundle": "<3.4"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.1",
@@ -12307,7 +12301,7 @@
                 "orm",
                 "tests"
             ],
-            "time": "2019-12-01T12:31:52+00:00"
+            "time": "2017-12-21T21:36:53+00:00"
         },
         {
             "name": "theseer/fdomdocument",
