@@ -123,7 +123,7 @@ class ProductType extends AbstractType
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
                     'value_class' => ProductDescription::class,
-                    'field' => ['wysiwyg', 'wysiwygStyle', 'wysiwygProperties'],
+                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'use_tabs' => true,
                 ]

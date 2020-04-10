@@ -112,7 +112,7 @@ class CategoryType extends AbstractType
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
                     'value_class' => CategoryLongDescription::class,
-                    'field' => ['wysiwyg', 'wysiwygStyle', 'wysiwygProperties'],
+                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'use_tabs' => true,
                 ]
