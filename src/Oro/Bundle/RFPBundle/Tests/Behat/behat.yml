@@ -87,6 +87,21 @@ oro_behat_extension:
               type: 'xpath'
               locator: '//a[text()="Requests For Quote"]'
 
+        Edit Request Product Line Item:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//button[@data-role="edit"]'
+                type: xpath
+
+        Add Another Line:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//a[@data-role="lineitem-add"]'
+                type: xpath
+
+        Line Item Quantity:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//div[@data-role="lineitems"]/div[last()]//input[@data-name="field__quantity"]'
+                type: xpath
+
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage
