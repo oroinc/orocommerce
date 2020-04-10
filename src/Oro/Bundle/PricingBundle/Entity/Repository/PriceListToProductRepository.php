@@ -167,25 +167,19 @@ class PriceListToProductRepository extends EntityRepository
             ];
         } else {
             $sql = sprintf(
-                'INSERT INTO %s (price_list_id, product_id, is_manual) SELECT ?, ?, ? WHERE NOT EXISTS (%s)',
-                $table,
-                sprintf('SELECT id FROM %s WHERE price_list_id = ? AND product_id = ? LIMIT ?', $table)
+                'INSERT INTO %s (price_list_id, product_id, is_manual) values (?, ?, ?)'
+                . ' ON CONFLICT (product_id, price_list_id) DO NOTHING',
+                $table
             );
             $params = [
                 $priceList->getId(),
                 $product->getId(),
-                $isManual,
-                $priceList->getId(),
-                $product->getId(),
-                1
+                $isManual
             ];
             $types = [
                 Type::INTEGER,
                 Type::INTEGER,
-                Type::BOOLEAN,
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::INTEGER,
+                Type::BOOLEAN
             ];
         }
 
