@@ -16,7 +16,6 @@ Feature: Mass edit of Coupons codes
       | Promotion         | order Discount Promotion |
       | Uses per Coupon   | 77                       |
       | Uses per Person   | 88                       |
-    And I click "Today"
     And I click "Apply"
     Then I should see "2 entities were edited" flash message
     And I filter Uses per Coupon as equals "77"
