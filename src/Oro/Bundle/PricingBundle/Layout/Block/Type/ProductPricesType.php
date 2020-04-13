@@ -71,14 +71,12 @@ class ProductPricesType extends AbstractContainerType
         $attributeFamily = $options['attributeFamily'];
 
         $attribute = $this->getAttribute($attributeFamily);
-
         if (!$attribute) {
             return;
         }
 
-        $attributeOptions = $attribute->toArray('attribute');
-        $visibility = isset($attributeOptions['visible']) ? $attributeOptions['visible'] : true;
-        $options->setMultiple(['visible' => $visibility]);
+        $attributeOptions = $attribute->toArray('frontend');
+        $options->setMultiple(['visible' => $attributeOptions['is_displayable'] ?? true]);
 
         $this->attributeRenderRegistry->setAttributeRendered($attributeFamily, $attribute->getFieldName());
     }

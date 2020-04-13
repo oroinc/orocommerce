@@ -5,9 +5,13 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
+/**
+ * Updates the inventory status attribute configuration.
+ */
 class LoadDefaultAttributesData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -18,9 +22,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
      * @var array
      */
     private $fields = [
-        'inventory_status' => [
-            'visible' => false
-        ]
+        'inventory_status' => []
     ];
 
     /**
@@ -38,6 +40,10 @@ class LoadDefaultAttributesData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->makeProductAttributes($this->fields);
+        $this->makeProductAttributes(
+            $this->fields,
+            ExtendScope::ORIGIN_SYSTEM,
+            ['frontend' => ['is_displayable' => false]]
+        );
     }
 }

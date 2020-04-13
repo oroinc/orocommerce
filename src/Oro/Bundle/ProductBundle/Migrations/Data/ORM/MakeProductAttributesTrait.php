@@ -11,6 +11,9 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Contains methods to simplify fixtures for attributes.
+ */
 trait MakeProductAttributesTrait
 {
     use ContainerAwareTrait;
@@ -18,8 +21,9 @@ trait MakeProductAttributesTrait
     /**
      * @param array $fields
      * @param string $owner
+     * @param array $otherScopes
      */
-    private function makeProductAttributes(array $fields, $owner = ExtendScope::ORIGIN_SYSTEM)
+    private function makeProductAttributes(array $fields, $owner = ExtendScope::ORIGIN_SYSTEM, array $otherScopes = [])
     {
         $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
@@ -28,14 +32,17 @@ trait MakeProductAttributesTrait
         foreach ($fields as $field => $attributeOptions) {
             $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $field);
 
-            $options = [
-                'attribute' => array_merge([
-                    'is_attribute' => true,
-                ], $attributeOptions),
-                'extend' => [
-                    'owner' => $owner
-                ]
-            ];
+            $options = array_merge(
+                [
+                    'attribute' => array_merge([
+                        'is_attribute' => true,
+                    ], $attributeOptions),
+                    'extend' => [
+                        'owner' => $owner
+                    ]
+                ],
+                $otherScopes
+            );
 
             $configHelper->updateFieldConfigs($fieldConfigModel, $options);
             $entityManager->persist($fieldConfigModel);

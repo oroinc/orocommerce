@@ -213,7 +213,9 @@ class ComputeProductAttributes implements ProcessorInterface
                 continue;
             }
 
-            $visible = $this->configManager->getFieldConfig('attribute', Product::class, $fieldName)->is('visible');
+            $visible = $this->configManager->getFieldConfig('frontend', Product::class, $fieldName)
+                ->is('is_displayable');
+
             $targetFields = $this->getTargetFields($extendConfig);
             $fieldId = $row['id'];
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
@@ -21,20 +20,18 @@ class AttributeChangesListener
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var array */
-    protected static $activeStates = [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE];
-
     /** @var MessageProducerInterface */
     protected $producer;
+
+    /** @var array */
+    protected static $activeStates = [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE];
 
     /**
      * @param RequestStack $requestStack
      * @param MessageProducerInterface $producer
      */
-    public function __construct(
-        RequestStack $requestStack,
-        MessageProducerInterface $producer
-    ) {
+    public function __construct(RequestStack $requestStack, MessageProducerInterface $producer)
+    {
         $this->requestStack = $requestStack;
         $this->producer = $producer;
     }
@@ -95,12 +92,12 @@ class AttributeChangesListener
             return false;
         }
 
+        if ($isStateActive) {
+            return $this->isReindexRequiredInActiveState($configManager, $className, $fieldName, $isStateChanged);
+        }
+
         $attributeConfig = $configManager->getProvider('attribute')->getConfig($className, $fieldName);
         $attributeChangeSet = $configManager->getConfigChangeSet($attributeConfig);
-
-        if ($isStateActive) {
-            return $this->isReindexRequiredInActiveState($attributeConfig, $attributeChangeSet, $isStateChanged);
-        }
 
         $isSearchable = $attributeConfig->is('searchable');
         $isSearchableChanged = isset($attributeChangeSet['searchable']);
@@ -133,26 +130,38 @@ class AttributeChangesListener
      *  - visible:    no => yes
      * or when state of attribute changed and some of required parameters already enabled
      *
-     * @param ConfigInterface $config
-     * @param array $changeSet
+     * @param ConfigManager $configManager
+     * @param string $className
+     * @param string $fieldName,
      * @param bool $isStateChanged
      *
      * @return bool
      */
-    private function isReindexRequiredInActiveState(ConfigInterface $config, array $changeSet, $isStateChanged)
-    {
-        $isSearchable = $config->is('searchable');
-        $isFilterable = $config->is('filterable');
-        $isSortable = $config->is('sortable');
-        $isVisible = $config->is('visible');
+    private function isReindexRequiredInActiveState(
+        ConfigManager $configManager,
+        string $className,
+        string $fieldName,
+        bool $isStateChanged
+    ): bool {
+        $attributeConfig = $configManager->getProvider('attribute')->getConfig($className, $fieldName);
+        $frontendConfig = $configManager->getProvider('frontend')->getConfig($className, $fieldName);
+
+        $isSearchable = $attributeConfig->is('searchable');
+        $isFilterable = $attributeConfig->is('filterable');
+        $isSortable = $attributeConfig->is('sortable');
+        $isVisible = $frontendConfig->is('is_displayable');
 
         $isAnyOptionEnabled = array_filter([$isSearchable, $isFilterable, $isSortable, $isVisible]);
+
+        $attributeChangeSet = $configManager->getConfigChangeSet($attributeConfig);
+        $frontendChangeSet = $configManager->getConfigChangeSet($frontendConfig);
+
         $isAnyOptionChangedToEnabled = array_filter(
             [
-                isset($changeSet['searchable']),
-                $isFilterable && isset($changeSet['filterable']),
-                $isSortable && isset($changeSet['sortable']),
-                $isVisible && isset($changeSet['visible'])
+                isset($attributeChangeSet['searchable']),
+                $isFilterable && isset($attributeChangeSet['filterable']),
+                $isSortable && isset($attributeChangeSet['sortable']),
+                $isVisible && isset($frontendChangeSet['is_displayable'])
             ]
         );
 

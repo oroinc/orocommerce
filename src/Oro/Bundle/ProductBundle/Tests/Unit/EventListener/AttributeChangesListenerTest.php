@@ -81,17 +81,28 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $extendChangeSet
      * @param array $attributeConfigValues
      * @param array $attributeChangeSet
+     * @param array $frontendConfigValues
+     * @param array $frontendChangeSet
      */
     public function testPostFlush(
         \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected,
         array $extendConfigValues = [],
         array $extendChangeSet = [],
         array $attributeConfigValues = [],
-        array $attributeChangeSet = []
-    ) {
+        array $attributeChangeSet = [],
+        array $frontendConfigValues = [],
+        array $frontendChangeSet = []
+    ): void {
         $this->requestStack->push(new Request());
 
-        $this->setUpConfigManager($extendConfigValues, $extendChangeSet, $attributeConfigValues, $attributeChangeSet);
+        $this->setUpConfigManager(
+            $extendConfigValues,
+            $extendChangeSet,
+            $attributeConfigValues,
+            $attributeChangeSet,
+            $frontendConfigValues,
+            $frontendChangeSet
+        );
 
         $model = $this->getFieldConfigModel(Product::class);
 
@@ -574,150 +585,190 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
-            'attributeConfigValues' => ['visible' => true]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true]
         ];
 
         yield 'state changed from active to not active, visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
-            'attributeConfigValues' => ['visible' => true],
-            'attributeChangeSet' => ['visible' => [false, true]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true],
+            'frontendChangeSet' => ['is_displayable' => [false, true]]
         ];
 
         yield 'state changed from active to not active, not visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
-            'attributeConfigValues' => ['visible' => false]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false]
         ];
 
         yield 'state changed from active to not active, not visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
-            'attributeConfigValues' => ['visible' => false],
-            'attributeChangeSet' => ['visible' => [true, false]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
         // ----
         yield 'state changed from not active to active, visible and not changed' => [
             'expected' => $this->once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
-            'attributeConfigValues' => ['visible' => true]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true]
         ];
 
         yield 'state changed from not active to active, visible and changed' => [
             'expected' => $this->once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
-            'attributeConfigValues' => ['visible' => true],
-            'attributeChangeSet' => ['visible' => [false, true]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true],
+            'frontendChangeSet' => ['is_displayable' => [false, true]]
         ];
 
         yield 'state changed from not active to active, not visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
-            'attributeConfigValues' => ['visible' => false]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false]
         ];
 
         yield 'state changed from not active to active, not visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
-            'attributeConfigValues' => ['visible' => false],
-            'attributeChangeSet' => ['visible' => [true, false]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
         // ----
         yield 'state active and not changed, visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => true]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true]
         ];
 
         yield 'state active and not changed, visible and changed' => [
             'expected' => $this->once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => true],
-            'attributeChangeSet' => ['visible' => [false, true]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true],
+            'frontendChangeSet' => ['is_displayable' => [false, true]]
         ];
 
         yield 'state active and not changed, not visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => false]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false]
         ];
 
         yield 'state active and not changed, not visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => false],
-            'attributeChangeSet' => ['visible' => [true, false]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
         // ----
         yield 'state update and not changed, visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => true]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true]
         ];
 
         yield 'state update and not changed, visible and changed' => [
             'expected' => $this->once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => true],
-            'attributeChangeSet' => ['visible' => [false, true]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true],
+            'frontendChangeSet' => ['is_displayable' => [false, true]]
         ];
 
         yield 'state update and not changed, not visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => false]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false]
         ];
 
         yield 'state update and not changed, not visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
-            'attributeConfigValues' => ['visible' => false],
-            'attributeChangeSet' => ['visible' => [true, false]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
         // ----
         yield 'state changed from active to update, visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
-            'attributeConfigValues' => ['visible' => true]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true]
         ];
 
         yield 'state changed from active to update, visible and changed' => [
             'expected' => $this->once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
-            'attributeConfigValues' => ['visible' => true],
-            'attributeChangeSet' => ['visible' => [false, true]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => true],
+            'frontendChangeSet' => ['is_displayable' => [false, true]]
         ];
 
         yield 'state changed from active to update, not visible and not changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
-            'attributeConfigValues' => ['visible' => false]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false]
         ];
 
         yield 'state changed from active to update, not visible and changed' => [
             'expected' => $this->never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
-            'attributeConfigValues' => ['visible' => false],
-            'attributeChangeSet' => ['visible' => [true, false]]
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
     }
 
@@ -742,13 +793,17 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $extendChangeSet
      * @param array $attributeConfigValues
      * @param array $attributeChangeSet
+     * @param array $frontendConfigValues
+     * @param array $frontendChangeSet
      */
     protected function setUpConfigManager(
         array $extendConfigValues,
         array $extendChangeSet,
         array $attributeConfigValues,
-        array $attributeChangeSet
-    ) {
+        array $attributeChangeSet,
+        array $frontendConfigValues,
+        array $frontendChangeSet
+    ): void {
         /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $extendConfigId */
         $extendConfigId = $this->createMock(ConfigIdInterface::class);
         $extendConfig = new Config($extendConfigId, $extendConfigValues);
@@ -763,6 +818,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $attributeConfigId */
         $attributeConfigId = $this->createMock(ConfigIdInterface::class);
         $attributeConfig = new Config($attributeConfigId, $attributeConfigValues);
+        $frontendConfig = new Config($attributeConfigId, $frontendConfigValues);
 
         /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $attributeConfigProvider = $this->createMock(ConfigProvider::class);
@@ -771,12 +827,20 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($attributeConfig);
 
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
+        $frontendConfigProvider = $this->createMock(ConfigProvider::class);
+        $frontendConfigProvider->expects($this->any())
+            ->method('getConfig')
+            ->with(Product::class, self::FIELD_NAME)
+            ->willReturn($frontendConfig);
+
         $this->configManager->expects($this->any())
             ->method('getProvider')
             ->willReturnMap(
                 [
                     ['extend', $extendConfigProvider],
-                    ['attribute', $attributeConfigProvider]
+                    ['attribute', $attributeConfigProvider],
+                    ['frontend', $frontendConfigProvider]
                 ]
             );
         $this->configManager->expects($this->any())
@@ -784,7 +848,8 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturnMap(
                 [
                     [$extendConfig, $extendChangeSet],
-                    [$attributeConfig, $attributeChangeSet]
+                    [$attributeConfig, $attributeChangeSet],
+                    [$frontendConfig, $frontendChangeSet]
                 ]
             );
     }

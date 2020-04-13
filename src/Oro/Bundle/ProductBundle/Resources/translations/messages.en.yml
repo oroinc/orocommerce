@@ -151,8 +151,6 @@ oro:
                     searchable.tooltip: 'If enabled, attribute content can be found in the front store'
                     sortable.tooltip: 'Defines whether sorting is available for the attribute in the front store'
                     filterable.tooltip: 'Defines whether filter is available for the attribute in the front store'
-                    enabled.tooltip: 'Defines whether the attribute is enabled in the front store'
-                    visible.tooltip: 'Defines whether the attribute is visible or hidden'
 
         status:
             enabled: Enabled

@@ -28,8 +28,8 @@ Feature: Product attributes import with incorrect configuration
     And I see attribute.filterable column
     And I see attribute.filter_by column
     And I see attribute.sortable column
-    And I see attribute.enabled column
-    And I see attribute.visible column
+    And I see frontend.is_editable column
+    And I see frontend.is_displayable column
     And I see email.available_in_template column
     And I see datagrid.is_visible column
     And I see datagrid.show_filter column
@@ -47,9 +47,9 @@ Feature: Product attributes import with incorrect configuration
 
   Scenario: Import Product Attributes as "Serialized fields"
     Given I fill template with data:
-      | fieldName     | type     | entity.label  | entity.description | form.is_enabled | importexport.header | importexport.order | importexport.identity | importexport.excluded | attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable |
-      | DateTimeField | datetime | DateTimeField | description_value  | yes             | header_value1       | 19                 | no                    | no                    |                      | no                   | no                   | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               |
-      | TextField     | text     | TextField     | description_value  | yes             | header_value2       | 5                  | no                    | no                    |                      | yes                  | yes                  | exact_value         | no                 | yes               | yes               | yes                         | 0                   | no                   | 20             | yes                 | 10            | yes               |
+      | fieldName     | type     | entity.label  | entity.description | form.is_enabled | importexport.header | importexport.order | importexport.identity | importexport.excluded | attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | frontend.is_editable | frontend.is_displayable | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable |
+      | DateTimeField | datetime | DateTimeField | description_value  | yes             | header_value1       | 19                 | no                    | no                    |                      | no                   | no                   | exact_value         | yes                | yes                  | yes                     | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               |
+      | TextField     | text     | TextField     | description_value  | yes             | header_value2       | 5                  | no                    | no                    |                      | yes                  | yes                  | exact_value         | no                 | yes                  | yes                     | yes                         | 0                   | no                   | 20             | yes                 | 10            | yes               |
     When I import file
     And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     When I reload the page

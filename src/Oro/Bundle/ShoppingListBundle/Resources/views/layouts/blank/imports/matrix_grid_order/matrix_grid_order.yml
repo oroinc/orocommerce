@@ -38,6 +38,8 @@ layout:
                     blockType: form_start
                 __form_fields:
                     blockType: form_fields
+                    options:
+                        render_rest: false
                 __form_end:
                     blockType: form_end
                 __form_summary:

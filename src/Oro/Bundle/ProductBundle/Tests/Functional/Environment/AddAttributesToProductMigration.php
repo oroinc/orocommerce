@@ -219,7 +219,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             [
                 OroOptions::KEY => $this->getAttributeOptions([
                     'entity'    => ['label' => 'extend.entity.test.test_attr_invisible'],
-                    'attribute' => ['visible' => false]
+                    'frontend'  => ['is_displayable' => false]
                 ])
             ]
         );

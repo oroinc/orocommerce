@@ -28,11 +28,11 @@ layout:
                     blockType: form_fields
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
+                        render_rest: false
                 __rfp_form_end:
                     blockType: form_end
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
-                        render_rest: false
                 __rfp_form_actions:
                     blockType: container
                 __rfp_form_actions_back:

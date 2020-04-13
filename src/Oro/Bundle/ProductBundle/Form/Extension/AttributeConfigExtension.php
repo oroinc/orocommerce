@@ -16,12 +16,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Reorganizes form fields on the product attribute configuration page
+ */
 class AttributeConfigExtension extends AbstractTypeExtension
 {
     use AttributeConfigExtensionApplicableTrait;
 
     /** @var array */
-    protected static $frontendBlocks = ['attribute'];
+    protected static $frontendBlocks = ['attribute', 'frontend'];
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -74,7 +77,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
             $this->updateBlockConfig($child);
 
             if (isset($child->vars['block']) && $child->vars['block'] !== 'general') {
-                if ($child->vars['block'] === 'attribute') {
+                if (in_array($child->vars['block'], self::$frontendBlocks, true)) {
                     $child->vars['block'] = 'frontend';
                 } else {
                     $child->vars['subblock'] = $child->vars['block'];

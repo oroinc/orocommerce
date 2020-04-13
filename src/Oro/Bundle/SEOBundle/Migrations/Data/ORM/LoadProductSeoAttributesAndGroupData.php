@@ -8,11 +8,15 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
+/**
+ * Updates the SEO attributes configuration.
+ */
 class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -24,15 +28,9 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
 
     /** @var array */
     private $fields = [
-        'metaKeywords' => [
-            'visible' => false
-        ],
-        'metaDescriptions' => [
-            'visible' => false
-        ],
-        'metaTitles' => [
-            'visible' => false
-        ],
+        'metaKeywords' => [],
+        'metaDescriptions' => [],
+        'metaTitles' => [],
     ];
 
     /**
@@ -41,7 +39,11 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         if (!$this->skipIfAppliedPreviously()) {
-            $this->makeProductAttributes($this->fields);
+            $this->makeProductAttributes(
+                $this->fields,
+                ExtendScope::ORIGIN_SYSTEM,
+                ['frontend' => ['is_displayable' => false]]
+            );
             $this->addSeoGroup($manager);
         }
     }

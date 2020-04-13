@@ -168,10 +168,17 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 'subblocks' => ['attribute_config']
             ]
         ];
+        $frontendBlockConfig = [
+            'frontend' => [
+                'title' => 'Frontend options',
+                'priority' => 30,
+                'subblocks' => ['frontend_config']
+            ]
+        ];
         $backendBlockConfig = [
             'other' => [
                 'title' => 'Other',
-                'priority' => 30,
+                'priority' => 40,
                 'subblocks' => []
             ]
         ];
@@ -185,14 +192,19 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $child3->vars['block_config'] = $attributeBlockConfig;
 
         $child4 = new FormView();
-        $child4->vars['block'] = 'other';
-        $child4->vars['block_config'] = $backendBlockConfig;
+        $child4->vars['block'] = 'frontend';
+        $child4->vars['block_config'] = $frontendBlockConfig;
+
+        $child5 = new FormView();
+        $child5->vars['block'] = 'other';
+        $child5->vars['block_config'] = $backendBlockConfig;
 
         $view = new FormView();
         $view->children[] = $child1;
         $view->children[] = $child2;
         $view->children[] = $child3;
         $view->children[] = $child4;
+        $view->children[] = $child5;
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
@@ -237,12 +249,34 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
             $child3->vars['block_config']
         );
 
-        // check that block configurations of child4 changed for backend
+        // check that block configurations of child4 not changed for frontend
         $this->assertArrayHasKey('block', $child4->vars);
-        $this->assertEquals('backend', $child4->vars['block']);
-        $this->assertArrayHasKey('subblock', $child4->vars);
-        $this->assertEquals('other', $child4->vars['subblock']);
+        $this->assertEquals('frontend', $child4->vars['block']);
+        $this->assertArrayNotHasKey('subblock', $child4->vars);
         $this->assertArrayHasKey('block_config', $child4->vars);
+        $this->assertEquals(
+            [
+                'frontend' => [
+                    'title' => 'oro.product.entity_config.block_titles.frontend.label',
+                    'priority' => 20,
+                    'subblocks' => [
+                        'frontend' => [
+                            'title' => null,
+                            'priority' => 30,
+                            'subblocks' => ['frontend_config']
+                        ]
+                    ]
+                ]
+            ],
+            $child4->vars['block_config']
+        );
+
+        // check that block configurations of child4 changed for backend
+        $this->assertArrayHasKey('block', $child5->vars);
+        $this->assertEquals('backend', $child5->vars['block']);
+        $this->assertArrayHasKey('subblock', $child5->vars);
+        $this->assertEquals('other', $child5->vars['subblock']);
+        $this->assertArrayHasKey('block_config', $child5->vars);
         $this->assertEquals(
             [
                 'backend' => [
@@ -251,7 +285,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                     'subblocks' => $backendBlockConfig
                 ]
             ],
-            $child4->vars['block_config']
+            $child5->vars['block_config']
         );
     }
 

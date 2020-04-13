@@ -14,6 +14,9 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFami
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
+/**
+ * Updates entity field configuration for the product price attributes.
+ */
 class LoadPricesAttributeData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -69,8 +72,6 @@ class LoadPricesAttributeData extends AbstractFixture implements
                 'searchable' => false,
                 'filterable' => false,
                 'sortable' => false,
-                'enabled' => true,
-                'visible' => true
             ],
             'extend' => [
                 'is_extend' => false,

@@ -30,10 +30,10 @@ layout:
                             isProductUnitSelectionVisible: '=data.offsetExists("product")?data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
                             isUnitVisible: '=data.offsetExists("product")?data["oro_unit_visibility"].isUnitCodeVisible(data["oro_product_variant"].getProductVariantOrProduct(data).getPrimaryUnitPrecision().getUnit().getCode())'
                             product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+                            render_rest: false
                 line_item_form_end:
                     blockType: form_end
                     options:
-                        render_rest: false
                         form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 product_line_item_form_buttons:
                     blockType: container

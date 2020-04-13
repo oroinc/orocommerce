@@ -22,7 +22,6 @@ Feature: Limit product filters and sorters in product catalog
     When I fill form with:
       | Filterable | Yes |
       | Sortable   | Yes |
-      | Enabled    | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -35,7 +34,6 @@ Feature: Limit product filters and sorters in product catalog
     When I fill form with:
       | Filterable | Yes |
       | Sortable   | Yes |
-      | Enabled    | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
