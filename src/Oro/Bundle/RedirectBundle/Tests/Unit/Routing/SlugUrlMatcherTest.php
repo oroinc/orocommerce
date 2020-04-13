@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
@@ -52,6 +53,11 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     private $aclHelper;
 
     /**
+     * @var MaintenanceMode|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $maintenanceMode;
+
+    /**
      * @var SlugUrlMatcher
      */
     private $matcher;
@@ -63,6 +69,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->maintenanceMode = $this->createMock(MaintenanceMode::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -133,29 +140,31 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matcher->match($url);
     }
 
-    public function testMatchNotPerformedForNotMatchedUrl()
+    public function testMatchNotFoundNotMatchedRequestWhenMaintenanceIsOn(): void
     {
         $url = '/test';
 
+        $this->maintenanceMode->expects($this->once())
+            ->method('isOn')
+            ->willReturn(true);
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method($this->anything());
+
         /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
-        $baseMatcher = $this->getMockBuilder(Router::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matchedUrlDecisionMaker->expects($this->any())
-            ->method('matches')
-            ->willReturn(false);
-
-        $this->matcher->setBaseMatcher($baseMatcher);
-
+        $baseMatcher = $this->createMock(Router::class);
         $baseMatcher->expects($this->once())
             ->method('match')
             ->with($url)
             ->willThrowException(new ResourceNotFoundException());
 
-        $this->expectException(ResourceNotFoundException::class);
-        $this->expectExceptionMessage('No routes found for "/test"');
+        $this->matcher->setBaseMatcher($baseMatcher);
+        $this->matcher->setMaintenanceMode($this->maintenanceMode);
 
-        $this->matcher->match($url);
+        $this->assertEquals(
+            ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index'],
+            $this->matcher->match($url)
+        );
     }
 
     public function testMatchNotFoundMatchedRequest()
@@ -284,6 +293,33 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($attributes, $this->matcher->match($url));
     }
 
+    public function testMatchSlugFirstWhenMaintenanceIsOn(): void
+    {
+        $url = '/test';
+
+        $this->maintenanceMode->expects($this->once())
+            ->method('isOn')
+            ->willReturn(true);
+
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
+        $baseMatcher = $this->createMock(Router::class);
+        $baseMatcher->expects($this->never())
+            ->method('match');
+
+        $this->matcher->setBaseMatcher($baseMatcher);
+        $this->matcher->setMaintenanceMode($this->maintenanceMode);
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method($this->anything());
+
+        $this->matcher->addUrlToMatchSlugFirst($url);
+
+        $this->assertEquals(
+            ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index'],
+            $this->matcher->match($url)
+        );
+    }
+
     public function testSetContext()
     {
         /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
@@ -387,6 +423,33 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('No routes found for "/test"');
 
         $this->matcher->matchRequest($request);
+    }
+
+    public function testMatchRequestNotFoundNotMatchedRequestWhenMaintenanceIsOn(): void
+    {
+        $this->maintenanceMode->expects($this->once())
+            ->method('isOn')
+            ->willReturn(true);
+
+        $request = Request::create('/test');
+
+        /** @var RequestMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
+        $baseMatcher->expects($this->once())
+            ->method('matchRequest')
+            ->with($request)
+            ->willThrowException(new ResourceNotFoundException());
+
+        $this->matcher->setBaseMatcher($baseMatcher);
+        $this->matcher->setMaintenanceMode($this->maintenanceMode);
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method('matches');
+
+        $this->assertEquals(
+            ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index'],
+            $this->matcher->matchRequest($request)
+        );
     }
 
     public function testMatchRequest()
@@ -671,6 +734,34 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
 
         $this->matcher->addUrlToMatchSlugFirst($url);
         $this->assertEquals($attributes, $this->matcher->matchRequest($request));
+    }
+
+    public function testMatchRequestSlugFirstWhenMaintenanceIsOn(): void
+    {
+        $this->maintenanceMode->expects($this->once())
+            ->method('isOn')
+            ->willReturn(true);
+
+        $url = '/test';
+
+        $request = Request::create('/test');
+
+        /** @var RequestMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
+        $baseMatcher->expects($this->never())
+            ->method('matchRequest');
+
+        $this->matcher->setBaseMatcher($baseMatcher);
+        $this->matcher->setMaintenanceMode($this->maintenanceMode);
+
+        $this->matchedUrlDecisionMaker->expects($this->never())
+            ->method('matches');
+
+        $this->matcher->addUrlToMatchSlugFirst($url);
+        $this->assertEquals(
+            ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index'],
+            $this->matcher->matchRequest($request)
+        );
     }
 
     /**

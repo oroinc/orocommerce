@@ -14,9 +14,16 @@ Feature: Product Attribute Multiple Images with DAM
       | Field name    | custom_images   |
       | Type          | Multiple Images |
     And I click "Continue"
-    And I fill form with:
+    And I save form
+    Then I should see validation errors:
+      | File Size (MB)   | This value should not be blank. |
+      | Thumbnail Width  | This value should not be blank. |
+      | Thumbnail Height | This value should not be blank. |
+    When I fill form with:
       | Label                   | Custom Images       |
       | File Size (MB)          | 10                  |
+      | Thumbnail Width         | 64                  |
+      | Thumbnail Height        | 64                  |
       | Maximum Number Of Files | 2                   |
       | Use DAM                 | Yes                 |
       | File Applications       | [default, commerce] |

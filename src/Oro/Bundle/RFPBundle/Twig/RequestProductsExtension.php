@@ -38,7 +38,7 @@ class RequestProductsExtension extends AbstractExtension
 
             $items = [];
             foreach ($requestProduct->getRequestProductItems() as $productItem) {
-                $items[$productItem->getId()] = [
+                $items[] = [
                     'quantity' => $productItem->getQuantity(),
                     'price' => $productItem->getPrice(),
                     'unit' => $productItem->getProductUnitCode(),
@@ -47,7 +47,7 @@ class RequestProductsExtension extends AbstractExtension
 
             $data['items'] = $items;
 
-            $result[$product->getId()] = $data;
+            $result[] = $data;
         }
 
         return $result;
