@@ -120,7 +120,8 @@ class LateRegistrationType extends AbstractType
                 } else {
                     return ['Default'];
                 }
-            }
+            },
+            'dynamic_fields_disabled' => true,
         ]);
     }
 }
