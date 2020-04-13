@@ -1,4 +1,5 @@
 @regression
+@random-failed
 @ticket-BB-17734
 @fixture-OroPricingBundle:ProductPricesAudit.yml
 
