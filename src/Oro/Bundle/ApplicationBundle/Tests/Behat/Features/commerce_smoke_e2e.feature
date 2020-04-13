@@ -412,6 +412,8 @@ Feature: Commerce smoke e2e
       |First Name      |Branda                     |
       |Last Name       |Sanborn                    |
       |Email Address   |BrandaJSanborn1@example.org|
+    And click "Today"
+    And fill form with:
       |Password        |BrandaJSanborn1@example.org|
       |Confirm Password|BrandaJSanborn1@example.org|
       |Customer        |Smoke Customer             |
@@ -851,6 +853,8 @@ Feature: Commerce smoke e2e
       |First Name      |Lonnie                      |
       |Last Name       |Townsend                    |
       |Email Address   |LonnieVTownsend1@example.org|
+    And click "Today"
+    And fill form with:
       |Password        |LonnieVTownsend1@example.org|
       |Confirm Password|LonnieVTownsend1@example.org|
       |Customer        |OroCommerce                 |
