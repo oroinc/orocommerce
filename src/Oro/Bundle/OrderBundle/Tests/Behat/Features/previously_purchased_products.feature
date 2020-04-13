@@ -1,4 +1,5 @@
 @regression
+@random-failed
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased.yml
 Feature: Previously purchased products
@@ -117,8 +118,6 @@ Feature: Previously purchased products
     And I proceed as the Buyer
     And I follow "Account"
     And I click "Previously Purchased"
-    And reload the page
-    And I wait for products to load
     And I should not see "Product 3"
     When I type "Product" in "search"
     And I click "Search Button"
