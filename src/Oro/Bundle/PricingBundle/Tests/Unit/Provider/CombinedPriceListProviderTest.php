@@ -10,9 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
+use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
-use Oro\Bundle\PricingBundle\Provider\CombinedPriceListIdentifierProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -270,10 +270,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $priceList->expects($this->any())->method('getName')->willReturn($identifier);
         $priceList->expects($this->any())->method('getCurrencies')->willReturn(['USD']);
 
-        $strategy = $this->createMock([
-            PriceCombiningStrategyInterface::class,
-            CombinedPriceListIdentifierProviderInterface::class
-        ]);
+        $strategy = $this->createMock(MinimalPricesCombiningStrategy::class);
         $strategy->expects($this->once())
             ->method('getCombinedPriceListIdentifier')
             ->willReturn($identifier);
