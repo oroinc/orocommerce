@@ -29,13 +29,19 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(AppliedPromotionCollectionTableType::class);
 
-        $this->assertArraySubset([
-            'template_name' => 'OroPromotionBundle:AppliedPromotion:applied_promotions_edit_table.html.twig',
-            'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => ['view' => 'oropromotion/js/app/views/applied-promotion-collection-view'],
-            'attr' => ['class' => 'oro-promotions-collection'],
-            'entry_type' => AppliedPromotionType::class,
-        ], $form->getConfig()->getOptions());
+        $options = $form->getConfig()->getOptions();
+
+        $this->assertSame(
+            'OroPromotionBundle:AppliedPromotion:applied_promotions_edit_table.html.twig',
+            $options['template_name']
+        );
+        $this->assertSame('oroui/js/app/components/view-component', $options['page_component']);
+        $this->assertSame(
+            ['view' => 'oropromotion/js/app/views/applied-promotion-collection-view'],
+            $options['page_component_options']
+        );
+        $this->assertSame(['class' => 'oro-promotions-collection'], $options['attr']);
+        $this->assertSame(AppliedPromotionType::class, $options['entry_type']);
     }
 
     public function testGetParent()

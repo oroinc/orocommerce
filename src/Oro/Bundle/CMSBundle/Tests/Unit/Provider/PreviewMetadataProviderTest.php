@@ -34,7 +34,7 @@ class PreviewMetadataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($innerMetadata = ['sampleKey' => 'sampleValue']);
 
         $metadata = $this->provider->getMetadata($file);
-        $this->assertArraySubset($innerMetadata, $metadata);
+        $this->assertSame('sampleValue', $metadata['sampleKey']);
         $this->assertArrayHasKey('uuid', $metadata);
     }
 
@@ -52,7 +52,7 @@ class PreviewMetadataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($innerMetadata = ['sampleKey' => 'sampleValue']);
 
         $metadata = $this->provider->getMetadata($file);
-        $this->assertArraySubset($innerMetadata, $metadata);
+        $this->assertSame('sampleValue', $metadata['sampleKey']);
         $this->assertArrayHasKey('uuid', $metadata);
         $this->assertArrayHasKey('digitalAssetId', $metadata);
         $this->assertEquals($digitalAssetId, $metadata['digitalAssetId']);

@@ -91,15 +91,11 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
     public function testBuildForm()
     {
         $form = $this->factory->create(ProductPageVariantType::class, null);
+
         $this->assertTrue($form->has('productPageProduct'));
-
-        $expectedOptions = [
-            'autocomplete_alias' => 'oro_all_product_visibility_limited',
-            'grid_name' => 'all-products-select-grid'
-        ];
-
-        $formOptions = $form->get('productPageProduct')->getConfig()->getOptions();
-        $this->assertArraySubset($expectedOptions, $formOptions);
+        $productPageProductOptions = $form->get('productPageProduct')->getConfig()->getOptions();
+        $this->assertSame('oro_all_product_visibility_limited', $productPageProductOptions['autocomplete_alias']);
+        $this->assertSame('all-products-select-grid', $productPageProductOptions['grid_name']);
 
         $this->assertEquals(ProductPageContentVariantType::TYPE, $form->getConfig()->getOption('content_variant_type'));
     }

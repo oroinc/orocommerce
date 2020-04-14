@@ -130,7 +130,9 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('action', $transaction->getAction());
         $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertArraySubset($data, $transaction->getResponse());
+        $response = $transaction->getResponse();
+        $this->assertSame($data['PayerID'], $response['PayerID']);
+        $this->assertSame($data['token'], $response['token']);
     }
 
     /**

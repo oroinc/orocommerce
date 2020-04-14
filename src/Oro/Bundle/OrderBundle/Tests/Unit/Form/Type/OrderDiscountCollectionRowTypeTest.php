@@ -107,6 +107,6 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
     {
         $this->type->setDataClass(\stdClass::class);
         $form = $this->factory->create(OrderDiscountCollectionRowType::class);
-        static::assertArraySubset(['data_class' => \stdClass::class], $form->getConfig()->getOptions());
+        $this->assertSame(\stdClass::class, $form->getConfig()->getOptions()['data_class']);
     }
 }

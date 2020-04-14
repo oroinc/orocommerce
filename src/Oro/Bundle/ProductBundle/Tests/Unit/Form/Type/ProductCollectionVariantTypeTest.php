@@ -95,11 +95,9 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     public function testDefaultOptions()
     {
         $form = $this->factory->create(ProductCollectionVariantType::class, null);
-
-        $expectedDefaultOptions = [
-            'content_variant_type' => ProductCollectionContentVariantType::TYPE
-        ];
-
-        $this->assertArraySubset($expectedDefaultOptions, $form->getConfig()->getOptions());
+        $this->assertSame(
+            ProductCollectionContentVariantType::TYPE,
+            $form->getConfig()->getOptions()['content_variant_type']
+        );
     }
 }

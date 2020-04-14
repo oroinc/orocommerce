@@ -193,8 +193,12 @@ class LineItemRepositoryTest extends WebTestCase
             $shoppingListLabelList[$lineItem->getShoppingList()->getLabel()] = $lineItem->getShoppingList()->getLabel();
         }
 
-        $this->assertArraySubset($expectedProductSkuList, $productSkuList);
-        $this->assertArraySubset($expectedShoppingListLabelList, $shoppingListLabelList);
+        foreach ($expectedProductSkuList as $key => $value) {
+            static::assertEquals($productSkuList[$key], $value);
+        }
+        foreach ($expectedShoppingListLabelList as $key => $value) {
+            static::assertEquals($shoppingListLabelList[$key], $value);
+        }
     }
 
     /**
