@@ -18,6 +18,8 @@ use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -31,10 +33,10 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     /** @var AttributeChangesListener */
     protected $listener;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ConfigManager|MockObject */
     protected $configManager;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var MessageProducerInterface|MockObject */
     private $producer;
 
     protected function setUp(): void
@@ -144,17 +146,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider postFlushDataProvider
-     *
-     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected
-     * @param array $extendConfigValues
-     * @param array $extendChangeSet
-     * @param array $attributeConfigValues
-     * @param array $attributeChangeSet
-     * @param array $frontendConfigValues
-     * @param array $frontendChangeSet
      */
     public function testPostFlush(
-        \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected,
+        InvokedCount $expected,
         array $extendConfigValues = [],
         array $extendChangeSet = [],
         array $attributeConfigValues = [],
@@ -184,17 +178,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider postFlushDataProvider
-     *
-     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected
-     * @param array $extendConfigValues
-     * @param array $extendChangeSet
-     * @param array $attributeConfigValues
-     * @param array $attributeChangeSet
-     * @param array $frontendConfigValues
-     * @param array $frontendChangeSet
      */
     public function testPostFlushAfterImport(
-        \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected,
+        InvokedCount $expected,
         array $extendConfigValues = [],
         array $extendChangeSet = [],
         array $attributeConfigValues = [],
@@ -926,30 +912,30 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $frontendConfigValues,
         array $frontendChangeSet
     ): void {
-        /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $extendConfigId */
+        /** @var ConfigIdInterface|MockObject $extendConfigId */
         $extendConfigId = $this->createMock(ConfigIdInterface::class);
         $extendConfig = new Config($extendConfigId, $extendConfigValues);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $extendConfigProvider */
+        /** @var ConfigProvider|MockObject $extendConfigProvider */
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $extendConfigProvider->expects($this->any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($extendConfig);
 
-        /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $attributeConfigId */
+        /** @var ConfigIdInterface|MockObject $attributeConfigId */
         $attributeConfigId = $this->createMock(ConfigIdInterface::class);
         $attributeConfig = new Config($attributeConfigId, $attributeConfigValues);
         $frontendConfig = new Config($attributeConfigId, $frontendConfigValues);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
+        /** @var ConfigProvider|MockObject $attributeConfigProvider */
         $attributeConfigProvider = $this->createMock(ConfigProvider::class);
         $attributeConfigProvider->expects($this->any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($attributeConfig);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
+        /** @var ConfigProvider|MockObject $attributeConfigProvider */
         $frontendConfigProvider = $this->createMock(ConfigProvider::class);
         $frontendConfigProvider->expects($this->any())
             ->method('getConfig')
