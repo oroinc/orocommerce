@@ -37,7 +37,7 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
     /** @var AttributeFamilyChangesListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = new RequestStack();
 

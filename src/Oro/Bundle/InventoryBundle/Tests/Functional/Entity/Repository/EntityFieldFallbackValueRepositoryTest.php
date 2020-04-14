@@ -13,7 +13,7 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
     /** @var EntityFieldFallbackValueRepository */
     private $repo;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([

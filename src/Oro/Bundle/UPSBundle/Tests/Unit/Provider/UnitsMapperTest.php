@@ -19,7 +19,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
      */
     protected $mapper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();

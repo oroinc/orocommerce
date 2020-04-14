@@ -17,7 +17,7 @@ class ShippingMethodLabelTranslatorTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodLabelTranslator */
     private $shippingMethodTranslator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->formatter = $this->createMock(ShippingMethodLabelFormatter::class);

@@ -57,7 +57,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)

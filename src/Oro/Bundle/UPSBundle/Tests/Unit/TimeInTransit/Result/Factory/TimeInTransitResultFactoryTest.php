@@ -114,7 +114,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->estimatedArrivalFactory = $this->createMock(EstimatedArrivalFactoryInterface::class);
         $this->timeInTransitResultFactory = new TimeInTransitResultFactory($this->estimatedArrivalFactory);

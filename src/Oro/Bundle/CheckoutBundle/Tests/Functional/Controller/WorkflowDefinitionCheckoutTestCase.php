@@ -13,7 +13,7 @@ class WorkflowDefinitionCheckoutTestCase extends WebTestCase
     . "text()='Name']/following-sibling::div/div";
     const XPATH_FLOWCHART = "//div[@data-page-component-name = 'flowchart-container' ]";
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
     }

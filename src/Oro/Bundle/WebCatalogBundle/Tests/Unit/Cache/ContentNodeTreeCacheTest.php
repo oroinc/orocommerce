@@ -26,7 +26,7 @@ class ContentNodeTreeCacheTest extends \PHPUnit\Framework\TestCase
     /** @var ContentNodeTreeCache */
     private $contentNodeTreeCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->cache = $this->createMock(Cache::class);

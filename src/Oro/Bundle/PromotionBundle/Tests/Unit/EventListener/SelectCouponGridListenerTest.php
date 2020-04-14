@@ -25,7 +25,7 @@ class SelectCouponGridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->createMock(CouponApplicabilityQueryBuilderModifier::class);
         $this->listener = new SelectCouponGridListener($this->modifier);

@@ -15,7 +15,7 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
      */
     protected $fallbackFieldsFormView;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

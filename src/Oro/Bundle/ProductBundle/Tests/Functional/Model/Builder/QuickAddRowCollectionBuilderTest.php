@@ -15,7 +15,7 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
     /** @var QuickAddRowCollectionBuilder */
     private $quickAddRowCollectionBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadProductData::class]);

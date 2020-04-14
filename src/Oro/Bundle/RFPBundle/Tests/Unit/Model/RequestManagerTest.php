@@ -42,7 +42,7 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $websiteManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -98,7 +98,7 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
             ]],
         ];
         $request = new Request();
-        
+
         $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
         $unit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
 

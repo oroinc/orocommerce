@@ -33,7 +33,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->quoteProductFormatter = $this->createMock(QuoteProductFormatter::class);
         $this->configManager = $this->createMock(ConfigManager::class);

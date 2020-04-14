@@ -16,7 +16,7 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxBaseExclusionFactory */
     protected $taxBaseExclusionFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxBaseExclusionFactory = $this
             ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')

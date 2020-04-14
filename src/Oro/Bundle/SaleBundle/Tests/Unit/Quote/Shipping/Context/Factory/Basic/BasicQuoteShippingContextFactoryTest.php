@@ -49,7 +49,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $calculableQuoteFactoryMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingContextBuilderFactoryMock = $this
             ->getMockBuilder(ShippingContextBuilderFactoryInterface::class)

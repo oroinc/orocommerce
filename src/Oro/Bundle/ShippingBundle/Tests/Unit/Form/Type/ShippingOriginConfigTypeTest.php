@@ -12,7 +12,7 @@ class ShippingOriginConfigTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOriginConfigType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ShippingOriginConfigType();
     }

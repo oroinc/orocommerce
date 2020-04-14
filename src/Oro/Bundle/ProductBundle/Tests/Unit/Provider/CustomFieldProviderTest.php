@@ -32,7 +32,7 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extendConfigProvider = $this->getMockForClass(ConfigProvider::class);
         $this->entityConfigProvider = $this->getMockForClass(ConfigProvider::class);

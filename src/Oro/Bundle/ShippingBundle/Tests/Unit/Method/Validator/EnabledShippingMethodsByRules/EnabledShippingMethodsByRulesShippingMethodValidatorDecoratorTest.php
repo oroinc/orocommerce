@@ -53,7 +53,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->parentShippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
         $this->errorFactory = $this->createMock(

@@ -106,7 +106,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -133,7 +133,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->preTearDown();
 

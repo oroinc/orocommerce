@@ -20,7 +20,7 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
     /** @var FlatRateMethodType */
     protected $flatRateType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->flatRateType = new FlatRateMethodType(self::LABEL);
     }

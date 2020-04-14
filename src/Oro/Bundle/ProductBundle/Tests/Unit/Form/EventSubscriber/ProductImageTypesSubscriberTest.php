@@ -27,7 +27,7 @@ class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected $productImageTypesSubscriber;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productImageTypesSubscriber = new ProductImageTypesSubscriber([
             new ThemeImageType(

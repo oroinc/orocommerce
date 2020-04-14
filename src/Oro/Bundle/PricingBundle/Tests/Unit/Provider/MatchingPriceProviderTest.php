@@ -25,7 +25,7 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MatchingPriceProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -38,7 +38,7 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider, $this->doctrineHelper, $this->productPriceProvider);
     }

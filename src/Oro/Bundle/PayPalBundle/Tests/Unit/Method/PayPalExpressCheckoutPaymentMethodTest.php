@@ -60,7 +60,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);
@@ -81,7 +81,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->paymentConfig, $this->router, $this->gateway, $this->doctrineHelper, $this->expressCheckout);
     }

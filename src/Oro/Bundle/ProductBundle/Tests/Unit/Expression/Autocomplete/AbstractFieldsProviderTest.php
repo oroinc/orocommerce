@@ -27,7 +27,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()

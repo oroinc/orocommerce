@@ -20,7 +20,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutShippingMethodsProviderMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutShippingMethodsProviderMock = $this
             ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)

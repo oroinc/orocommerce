@@ -75,7 +75,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $variantFieldValueHandlerRegistry = new ProductVariantFieldValueHandlerRegistry();
 
@@ -152,7 +152,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->availabilityProvider,

@@ -20,7 +20,7 @@ class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var AddressMatcherRegistry */
     private $matcherRegistry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->regionMatcher = $this->createMock(MatcherInterface::class);
         $this->countryMatcher = $this->createMock(MatcherInterface::class);

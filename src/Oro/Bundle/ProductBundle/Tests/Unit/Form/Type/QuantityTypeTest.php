@@ -26,7 +26,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = $this->getQuantityType();
         $this->parentType = new QuantityParentTypeStub();

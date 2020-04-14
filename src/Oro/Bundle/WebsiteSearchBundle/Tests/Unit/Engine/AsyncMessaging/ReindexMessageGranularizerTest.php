@@ -28,7 +28,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
      */
     private $identifierRepository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->identifierRepository = $this->getMockBuilder(EntityIdentifierRepository::class)
             ->disableOriginalConstructor()

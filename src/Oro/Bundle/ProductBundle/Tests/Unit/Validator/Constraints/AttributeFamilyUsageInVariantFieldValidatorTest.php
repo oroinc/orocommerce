@@ -47,7 +47,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
             ->disableOriginalConstructor()
@@ -111,7 +111,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->validator,

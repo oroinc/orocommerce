@@ -12,14 +12,14 @@ class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var CategoryFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new CategoryFormViewListener($this->translator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 

@@ -24,7 +24,7 @@ class CompositePaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $secondProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->methods = [
             self::IDENTIFIER1 => $this->getMethodMock(self::IDENTIFIER1),

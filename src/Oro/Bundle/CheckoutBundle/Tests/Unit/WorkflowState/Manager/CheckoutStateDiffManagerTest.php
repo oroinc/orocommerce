@@ -18,13 +18,13 @@ class CheckoutStateDiffManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $mapperRegistry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mapperRegistry = $this->createMock(CheckoutStateDiffMapperRegistry::class);
         $this->checkoutStateDiffManager = new CheckoutStateDiffManager($this->mapperRegistry);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->mapperRegistry, $this->checkoutStateDiffManager);
     }

@@ -13,7 +13,7 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $inventoryLevelExportTypeExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->inventoryLevelExportTypeExtension = new InventoryLevelExportTypeExtension();
     }

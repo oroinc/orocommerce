@@ -17,7 +17,7 @@ class WeightUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var WeightUnitValueExtension */
     private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 

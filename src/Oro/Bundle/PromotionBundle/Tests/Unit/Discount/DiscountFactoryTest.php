@@ -25,7 +25,7 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $discountFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
         $this->discountFactory = new DiscountFactory($this->container);

@@ -27,7 +27,7 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->relatedAssigner = $this->createMock(AssignerStrategyInterface::class);

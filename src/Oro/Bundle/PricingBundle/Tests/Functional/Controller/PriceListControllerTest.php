@@ -36,7 +36,7 @@ class PriceListControllerTest extends WebTestCase
     const CURRENCY = 'USD';
     const ADD_NOTE_BUTTON_NAME = 'Add note';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

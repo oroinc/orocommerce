@@ -23,7 +23,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new OrderShippingTrackingCollectionType();
         parent::setUp();

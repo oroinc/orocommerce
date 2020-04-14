@@ -22,7 +22,7 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOptionLabelExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lengthUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
         $this->weightUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
@@ -37,7 +37,7 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ShippingOptionLabelExtension($container);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->extension,

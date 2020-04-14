@@ -32,7 +32,7 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
@@ -46,7 +46,7 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->scopeManager,

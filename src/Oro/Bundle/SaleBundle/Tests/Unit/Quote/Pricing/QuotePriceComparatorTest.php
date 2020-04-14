@@ -21,7 +21,7 @@ class QuotePriceComparatorTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject $provider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->quote = new Quote();
         $this->provider = $this->createMock(QuoteProductPriceProvider::class);

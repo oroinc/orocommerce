@@ -102,7 +102,7 @@ class OrderControllerTest extends WebTestCase
         return $submittedData;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -162,7 +162,7 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Customer $orderCustomer */
         $orderCustomer = $this->getReference('customer.level_1');
-        
+
         /** @var Product $product */
         $product = $this->getReference('product-1');
 
@@ -483,7 +483,7 @@ class OrderControllerTest extends WebTestCase
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
-      
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 

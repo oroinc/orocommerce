@@ -52,7 +52,7 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

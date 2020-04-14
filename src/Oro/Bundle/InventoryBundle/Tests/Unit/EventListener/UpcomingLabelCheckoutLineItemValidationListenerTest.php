@@ -20,7 +20,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Frame
     /** @var  LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->createMock(UpcomingLabelCheckoutLineItemValidator::class);
         $this->listener = new UpcomingLabelCheckoutLineItemValidationListener($this->validator);

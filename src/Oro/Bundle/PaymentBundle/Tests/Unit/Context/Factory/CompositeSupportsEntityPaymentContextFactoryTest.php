@@ -25,7 +25,7 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->results = [
             'resultOne' => new \stdClass(),

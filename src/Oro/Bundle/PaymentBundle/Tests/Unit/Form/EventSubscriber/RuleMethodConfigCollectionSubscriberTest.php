@@ -30,7 +30,7 @@ use Symfony\Component\Form\FormEvents;
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
     const PAYMENT_TYPE = 'payment_type_mock';
-    
+
     /**
      * @var RuleMethodConfigCollectionSubscriberProxy
      */
@@ -41,7 +41,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
      */
     protected $paymentMethodProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = new CompositePaymentMethodProvider([]);
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();

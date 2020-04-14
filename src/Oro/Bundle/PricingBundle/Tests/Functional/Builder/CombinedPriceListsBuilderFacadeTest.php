@@ -30,7 +30,7 @@ class CombinedPriceListsBuilderFacadeTest extends WebTestCase
      */
     private $cplRepo;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->facade = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');

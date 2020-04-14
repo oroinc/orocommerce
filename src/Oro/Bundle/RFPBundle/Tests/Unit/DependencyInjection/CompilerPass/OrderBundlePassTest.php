@@ -20,7 +20,7 @@ class OrderBundlePassTest extends \PHPUnit\Framework\TestCase
      */
     protected $containerBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->disableOriginalConstructor()

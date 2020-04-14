@@ -20,7 +20,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemEventListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
 

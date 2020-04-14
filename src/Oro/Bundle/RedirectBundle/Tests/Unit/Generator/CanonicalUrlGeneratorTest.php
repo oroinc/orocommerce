@@ -59,7 +59,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $canonicalUrlGenerator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

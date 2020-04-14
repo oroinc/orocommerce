@@ -24,7 +24,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleEntityListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createMock(Cache::class);
         $this->priceRuleChangeTriggerHandler = $this->createMock(PriceListTriggerHandler::class);

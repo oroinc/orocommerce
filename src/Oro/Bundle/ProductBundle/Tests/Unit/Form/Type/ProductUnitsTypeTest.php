@@ -17,7 +17,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
     protected $productUnitsProvider;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->productUnitsProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider')

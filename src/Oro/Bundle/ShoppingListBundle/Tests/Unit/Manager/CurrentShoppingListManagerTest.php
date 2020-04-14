@@ -49,7 +49,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);

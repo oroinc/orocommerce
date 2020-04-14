@@ -17,7 +17,7 @@ class ContactInfoAvailableUserOptionsProviderTest extends \PHPUnit\Framework\Tes
      */
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->provider = new ContactInfoAvailableUserOptionsProvider($this->configManager);

@@ -33,7 +33,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

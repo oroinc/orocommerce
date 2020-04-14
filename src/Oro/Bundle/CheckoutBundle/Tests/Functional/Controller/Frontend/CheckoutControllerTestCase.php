@@ -65,7 +65,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
      */
     protected static $checkoutUrl;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

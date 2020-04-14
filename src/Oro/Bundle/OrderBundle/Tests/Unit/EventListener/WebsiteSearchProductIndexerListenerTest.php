@@ -47,7 +47,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
         $this->website = $this->getEntity(Website::class, [ 'id' => self:: WEBSITE_ID ]);
@@ -60,7 +60,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->addFeature('previously_purchased_products');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->websiteContextManager);
         unset($this->website);

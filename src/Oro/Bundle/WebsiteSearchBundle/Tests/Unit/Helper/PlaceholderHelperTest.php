@@ -17,7 +17,7 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholderRegistry = $this->getMockBuilder(PlaceholderRegistry::class)
             ->disableOriginalConstructor()
@@ -29,7 +29,7 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->placeholderRegistry, $this->helper);
     }

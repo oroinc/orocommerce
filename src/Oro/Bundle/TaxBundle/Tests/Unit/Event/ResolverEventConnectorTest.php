@@ -20,7 +20,7 @@ class ResolverEventConnectorTest extends \PHPUnit\Framework\TestCase
      */
     protected $connector;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ResolverInterface $resolver */
         $this->resolver = $this->createMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');

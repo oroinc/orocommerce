@@ -30,7 +30,7 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framew
      */
     private $integrationIdentifierGeneratorMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->localizationHelperMock = $this->createMock(LocalizationHelper::class);
         $this->integrationIdentifierGeneratorMock = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

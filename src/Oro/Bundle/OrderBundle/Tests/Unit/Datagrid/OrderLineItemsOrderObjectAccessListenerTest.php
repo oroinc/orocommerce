@@ -23,7 +23,7 @@ class OrderLineItemsOrderObjectAccessListenerTest extends \PHPUnit\Framework\Tes
     /** @var OrderLineItemsOrderObjectAccessListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $registry = $this->createMock(ManagerRegistry::class);
         $repo = $this->createMock(ObjectRepository::class);

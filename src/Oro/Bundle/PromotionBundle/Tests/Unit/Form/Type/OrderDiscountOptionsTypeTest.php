@@ -23,7 +23,7 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->formType = new OrderDiscountOptionsType();

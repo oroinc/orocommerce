@@ -44,7 +44,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CurrentCurrencyProviderInterface */
     private $currentCurrencyProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

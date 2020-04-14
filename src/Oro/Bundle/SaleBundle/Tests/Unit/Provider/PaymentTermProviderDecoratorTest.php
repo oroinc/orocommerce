@@ -20,7 +20,7 @@ class PaymentTermProviderDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $decorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->innerProvider = $this->createMock(PaymentTermProvider::class);
         $this->decorator = new PaymentTermProviderDecorator($this->innerProvider);

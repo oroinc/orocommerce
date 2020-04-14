@@ -34,7 +34,7 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->decoratedProvider = $this->createMock(ProductsProviderInterface::class);
         $this->cache = $this->createMock(Cache::class);

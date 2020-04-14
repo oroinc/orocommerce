@@ -21,7 +21,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->roundingService->expects($this->any())

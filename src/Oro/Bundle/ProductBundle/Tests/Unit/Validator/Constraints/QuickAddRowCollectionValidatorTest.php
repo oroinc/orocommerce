@@ -29,7 +29,7 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
      */
     protected $validatorInterface;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
             ->disableOriginalConstructor()

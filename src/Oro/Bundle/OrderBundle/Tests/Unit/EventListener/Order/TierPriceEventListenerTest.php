@@ -35,7 +35,7 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->provider = $this->createMock(ProductPriceProviderInterface::class);
@@ -47,7 +47,7 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->priceScopeCriteriaFactory, $this->provider, $this->form);
     }

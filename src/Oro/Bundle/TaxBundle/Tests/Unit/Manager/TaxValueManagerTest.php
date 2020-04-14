@@ -33,7 +33,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineFlushProgressListener|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineFlushProgressListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->doctrineFlushProgressListener = $this->createMock(DoctrineFlushProgressListener::class);

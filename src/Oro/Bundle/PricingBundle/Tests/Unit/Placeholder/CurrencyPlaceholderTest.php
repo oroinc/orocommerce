@@ -17,7 +17,7 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $currencyManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
             ->disableOriginalConstructor()

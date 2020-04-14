@@ -8,7 +8,7 @@ use Symfony\Component\Intl\Currencies;
 
 class AjaxPriceListControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

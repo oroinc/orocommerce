@@ -13,7 +13,7 @@ class OrderPaymentCaptureTest extends WebTestCase
 {
     private const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([

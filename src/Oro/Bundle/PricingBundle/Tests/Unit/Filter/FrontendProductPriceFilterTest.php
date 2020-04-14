@@ -60,7 +60,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

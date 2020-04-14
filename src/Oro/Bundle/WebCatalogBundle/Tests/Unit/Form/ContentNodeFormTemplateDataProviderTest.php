@@ -16,7 +16,7 @@ class ContentNodeFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCas
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new ContentNodeFormTemplateDataProvider();
     }

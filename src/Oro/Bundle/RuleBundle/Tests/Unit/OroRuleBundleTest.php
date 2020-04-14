@@ -13,7 +13,7 @@ class OroRuleBundleTest extends \PHPUnit\Framework\TestCase
      */
     private $containerBuilderMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilderMock = $this->createMock(ContainerBuilder::class);
     }

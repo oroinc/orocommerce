@@ -18,7 +18,7 @@ class InventoryBackorderFallbackTest extends WebTestCase
     const VIEW_BACK_ORDER_XPATH =
         "//label[text() = 'Backorders']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadCategoryProductData::class]);

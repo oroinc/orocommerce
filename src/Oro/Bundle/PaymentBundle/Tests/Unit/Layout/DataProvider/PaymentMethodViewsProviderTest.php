@@ -43,7 +43,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $cacheProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodViewProvider = $this
             ->getMockBuilder(CompositePaymentMethodViewProvider::class)

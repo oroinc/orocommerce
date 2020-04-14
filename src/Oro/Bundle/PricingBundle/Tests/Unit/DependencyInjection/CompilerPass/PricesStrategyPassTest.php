@@ -19,13 +19,13 @@ class PricesStrategyPassTest extends \PHPUnit\Framework\TestCase
      */
     protected $compilerPass;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this->createMock(ContainerBuilder::class);
         $this->compilerPass = new PricesStrategyPass();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->containerBuilder, $this->compilerPass);
     }

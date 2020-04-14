@@ -28,7 +28,7 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
      */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductPrices::class]);

@@ -28,7 +28,7 @@ class LineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->quantityValidator = $this->createMock(QuantityToOrderValidatorService::class);
         $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator);

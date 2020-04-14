@@ -21,7 +21,7 @@ class TaxRuleControllerTest extends WebTestCase
 
     const TAX_RULE_SAVE_MESSAGE = 'Tax Rule has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

@@ -24,7 +24,7 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
      */
     private $testedProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->parentProviderMock = $this
             ->createMock(ShippingConfiguredPriceProviderInterface::class);

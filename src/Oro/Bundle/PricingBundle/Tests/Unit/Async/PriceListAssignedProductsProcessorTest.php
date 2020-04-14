@@ -42,7 +42,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListAssignedProductsProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);

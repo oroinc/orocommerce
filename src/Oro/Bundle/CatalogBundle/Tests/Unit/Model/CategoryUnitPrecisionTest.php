@@ -13,12 +13,12 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryUnitPrecision $entity */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entity = new CategoryUnitPrecision();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

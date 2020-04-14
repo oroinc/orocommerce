@@ -36,7 +36,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestC
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

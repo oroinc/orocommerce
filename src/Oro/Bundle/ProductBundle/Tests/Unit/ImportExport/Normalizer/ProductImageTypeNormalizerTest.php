@@ -18,7 +18,7 @@ class ProductImageTypeNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $productImageTypeNormalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
             ->disableOriginalConstructor()

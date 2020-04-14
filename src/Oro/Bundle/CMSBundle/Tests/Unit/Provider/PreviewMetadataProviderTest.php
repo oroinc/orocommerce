@@ -15,7 +15,7 @@ class PreviewMetadataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PreviewMetadataProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->innerPreviewMetadataProvider = $this->createMock(BasePreviewMetadataProvider::class);
 

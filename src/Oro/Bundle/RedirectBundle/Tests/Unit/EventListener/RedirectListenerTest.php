@@ -53,7 +53,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
         $this->slugSourceEntityProvider = $this->createMock(SlugSourceEntityProviderInterface::class);

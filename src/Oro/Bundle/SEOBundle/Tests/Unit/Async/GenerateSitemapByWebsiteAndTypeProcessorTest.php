@@ -53,7 +53,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);
 

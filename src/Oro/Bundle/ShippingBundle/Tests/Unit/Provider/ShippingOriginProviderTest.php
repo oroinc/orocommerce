@@ -34,7 +34,7 @@ class ShippingOriginProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $shippingOriginProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()

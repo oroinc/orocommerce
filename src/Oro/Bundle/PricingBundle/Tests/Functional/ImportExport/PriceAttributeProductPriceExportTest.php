@@ -20,7 +20,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
  */
 class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

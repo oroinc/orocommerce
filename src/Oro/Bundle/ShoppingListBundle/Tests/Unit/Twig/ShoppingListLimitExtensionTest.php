@@ -16,7 +16,7 @@ class ShoppingListLimitExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListLimitExtension */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
 

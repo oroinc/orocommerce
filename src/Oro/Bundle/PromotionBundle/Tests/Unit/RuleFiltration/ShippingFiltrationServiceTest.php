@@ -21,7 +21,7 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
      */
     protected $shippingFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->shippingFiltrationService = new ShippingFiltrationService($this->filtrationService);

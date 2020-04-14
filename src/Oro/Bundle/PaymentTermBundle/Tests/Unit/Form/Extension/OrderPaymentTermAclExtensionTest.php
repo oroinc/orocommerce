@@ -19,7 +19,7 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()

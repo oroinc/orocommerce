@@ -46,7 +46,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = $this->createMock(PreUpdateEventArgs::class);
         $this->reindexManager = $this->createMock(ProductReindexManager::class);
@@ -75,7 +75,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
         unset($this->website);

@@ -45,7 +45,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->createMock(TaxFactory::class);
 

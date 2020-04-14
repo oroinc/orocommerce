@@ -22,7 +22,7 @@ class ShoppingListWidgetExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(LayoutButtonProvider::class);
         $container = self::getContainerBuilder()

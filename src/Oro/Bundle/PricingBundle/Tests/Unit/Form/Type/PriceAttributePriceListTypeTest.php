@@ -18,7 +18,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
      */
     protected $priceAttributePriceListType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceAttributePriceListType = new PriceAttributePriceListType();
         $this->priceAttributePriceListType->setDataClass(self::DATA_CLASS);

@@ -36,7 +36,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);

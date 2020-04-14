@@ -50,7 +50,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->webCatalogProvider = $this->createMock(WebCatalogProvider::class);

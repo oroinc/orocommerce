@@ -37,7 +37,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -53,7 +53,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->context, $this->validator);
     }

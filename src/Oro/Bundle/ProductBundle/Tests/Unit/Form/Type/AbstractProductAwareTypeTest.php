@@ -14,7 +14,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     /** @var AbstractProductAwareTypeStub|AbstractProductAwareType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

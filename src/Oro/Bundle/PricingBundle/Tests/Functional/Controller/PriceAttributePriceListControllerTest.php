@@ -15,7 +15,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT = 'MAP';
     const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT = 'map';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

@@ -14,12 +14,12 @@ class DimensionsTest extends \PHPUnit\Framework\TestCase
     /** @var Dimensions */
     protected $model;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new Dimensions();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->model);
     }

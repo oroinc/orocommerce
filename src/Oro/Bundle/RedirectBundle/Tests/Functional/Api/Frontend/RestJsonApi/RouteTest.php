@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RouteTest extends WebCatalogTreeTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

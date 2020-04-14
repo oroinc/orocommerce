@@ -28,7 +28,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $addressProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->settingsProvider = $this
             ->getMockBuilder('\Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
@@ -38,7 +38,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
         $this->addressProvider = new TaxationAddressProvider($this->settingsProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->settingsProvider, $this->addressProvider);
     }

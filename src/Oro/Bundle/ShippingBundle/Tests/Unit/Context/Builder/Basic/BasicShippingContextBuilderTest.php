@@ -71,7 +71,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->customerMock = $this->createMock(Customer::class);
         $this->customerUserMock = $this->createMock(CustomerUser::class);

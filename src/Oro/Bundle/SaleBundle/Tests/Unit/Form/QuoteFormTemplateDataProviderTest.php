@@ -29,7 +29,7 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteFormTemplateDataProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = new EventDispatcher();
         $this->productPriceProvider = $this->createMock(QuoteProductPriceProvider::class);

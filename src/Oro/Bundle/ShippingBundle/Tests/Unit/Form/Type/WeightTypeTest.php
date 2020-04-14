@@ -17,7 +17,7 @@ class WeightTypeTest extends FormIntegrationTestCase
     /** @var WeightType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new WeightType();
         $this->formType->setDataClass(self::DATA_CLASS);

@@ -32,7 +32,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $translator = $this->createMockTranslator();
         $this->shardManager = $this->createMock(ShardManager::class);

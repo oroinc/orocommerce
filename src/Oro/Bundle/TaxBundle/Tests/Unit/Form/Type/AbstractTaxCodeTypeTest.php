@@ -13,7 +13,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = $this->createTaxCodeType();
         $this->formType->setDataClass($this->getDataClass());
@@ -35,7 +35,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 

@@ -41,7 +41,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $strategyRegister;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -54,7 +54,7 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider, $this->registry, $this->resolver);
     }

@@ -21,7 +21,7 @@ class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogUsageProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->repository = $this->createMock(WebsiteRepository::class);

@@ -38,7 +38,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
@@ -53,7 +53,7 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->managerRegistry, $this->eventDispatcher, $this->modelFactory, $this->repository);
     }

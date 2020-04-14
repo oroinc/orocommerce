@@ -34,7 +34,7 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $checker;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);

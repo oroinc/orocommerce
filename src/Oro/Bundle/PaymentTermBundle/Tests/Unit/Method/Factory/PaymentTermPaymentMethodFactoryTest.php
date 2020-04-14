@@ -37,7 +37,7 @@ class PaymentTermPaymentMethodFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
         $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);

@@ -14,13 +14,13 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var UnitValueFormatterInterface */
     protected $formatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(Translator::class);
         $this->formatter = $this->createFormatter();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formatter, $this->translator);
     }

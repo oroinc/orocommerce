@@ -31,7 +31,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
      */
     private $logger;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->service = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
             ->setMethods(['getFilteredRuleOwners'])->getMockForAbstractClass();

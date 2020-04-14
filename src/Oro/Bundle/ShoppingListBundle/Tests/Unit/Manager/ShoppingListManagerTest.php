@@ -67,7 +67,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityDeleteHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $deleteHandlerRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->lineItemRepository

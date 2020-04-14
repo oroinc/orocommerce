@@ -78,7 +78,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxRuleType();
         $this->formType->setDataClass(static::DATA_CLASS);
@@ -88,7 +88,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 

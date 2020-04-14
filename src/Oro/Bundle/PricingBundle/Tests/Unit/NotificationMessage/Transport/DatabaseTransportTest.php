@@ -21,7 +21,7 @@ class DatabaseTransportTest extends \PHPUnit\Framework\TestCase
      */
     protected $databaseTransport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->databaseTransport = new DatabaseTransport($this->registry);

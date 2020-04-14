@@ -23,14 +23,14 @@ abstract class AbstractPaymentMethodProvidersPassTest extends \PHPUnit\Framework
      */
     protected $containerBuilder;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->getMock();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->compilerPass, $this->containerBuilder);
     }

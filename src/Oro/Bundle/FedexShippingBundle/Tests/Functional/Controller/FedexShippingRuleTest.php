@@ -17,7 +17,7 @@ class FedexShippingRuleTest extends WebTestCase
 {
     use FedexIntegrationTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
 

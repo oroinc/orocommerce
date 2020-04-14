@@ -45,7 +45,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
@@ -61,7 +61,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->productPriceProvider,

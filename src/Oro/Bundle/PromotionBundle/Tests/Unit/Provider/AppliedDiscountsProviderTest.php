@@ -19,7 +19,7 @@ class AppliedDiscountsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->provider = new AppliedDiscountsProvider();
     }

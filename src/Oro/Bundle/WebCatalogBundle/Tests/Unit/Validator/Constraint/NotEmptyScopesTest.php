@@ -42,7 +42,7 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);

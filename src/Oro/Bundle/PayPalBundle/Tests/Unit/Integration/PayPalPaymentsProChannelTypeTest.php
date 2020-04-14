@@ -9,7 +9,7 @@ class PayPalPaymentsProChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalPaymentsProChannelType */
     private $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channel = new PayPalPaymentsProChannelType();
     }

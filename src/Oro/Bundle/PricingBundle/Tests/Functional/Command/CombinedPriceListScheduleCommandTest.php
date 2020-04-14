@@ -31,7 +31,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         self::getContainer()->get('oro_config.global')

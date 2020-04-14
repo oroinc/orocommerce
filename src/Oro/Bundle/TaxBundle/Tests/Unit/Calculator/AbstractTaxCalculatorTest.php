@@ -9,7 +9,7 @@ abstract class AbstractTaxCalculatorTest extends \PHPUnit\Framework\TestCase
     /** @var TaxCalculatorInterface */
     protected $calculator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calculator = $this->getCalculator();
     }

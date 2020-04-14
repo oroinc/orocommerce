@@ -42,7 +42,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
      */
     protected $featureChecker;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
@@ -51,7 +51,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
         $this->featureChecker = $this->createMock(FeatureChecker::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->manager,

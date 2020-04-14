@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

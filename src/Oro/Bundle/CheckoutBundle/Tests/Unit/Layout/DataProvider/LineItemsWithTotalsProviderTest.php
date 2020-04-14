@@ -30,7 +30,7 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this
             ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')

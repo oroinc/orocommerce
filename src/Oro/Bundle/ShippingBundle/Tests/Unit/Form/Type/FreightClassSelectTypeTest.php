@@ -17,7 +17,7 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     /** @var FreightClassesProvider */
     protected $provider;
     
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider')
             ->disableOriginalConstructor()

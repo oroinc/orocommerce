@@ -49,7 +49,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $sluggableEntityListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

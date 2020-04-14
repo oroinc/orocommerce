@@ -14,7 +14,7 @@ class NotEmptyConfigurableAttributesTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new NotEmptyConfigurableAttributes();
     }
@@ -22,7 +22,7 @@ class NotEmptyConfigurableAttributesTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint);
     }

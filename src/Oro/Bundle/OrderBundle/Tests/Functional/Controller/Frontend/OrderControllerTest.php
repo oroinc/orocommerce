@@ -34,7 +34,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected $numberFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

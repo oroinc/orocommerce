@@ -21,7 +21,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit\Framework\TestCase
     /** @var UniqueProductUnitShippingOptionsValidator */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new UniqueProductUnitShippingOptions();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -30,7 +30,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit\Framework\TestCase
         $this->validator->initialize($this->context);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }

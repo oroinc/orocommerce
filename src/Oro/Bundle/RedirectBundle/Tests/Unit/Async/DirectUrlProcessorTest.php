@@ -56,7 +56,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $urlCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->generator = $this->createMock(SlugEntityGenerator::class);

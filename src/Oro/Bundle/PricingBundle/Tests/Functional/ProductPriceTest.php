@@ -11,7 +11,7 @@ class ProductPriceTest extends WebTestCase
 {
     use ProductPriceReference;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

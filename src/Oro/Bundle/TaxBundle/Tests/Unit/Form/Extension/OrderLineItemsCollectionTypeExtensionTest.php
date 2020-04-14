@@ -31,7 +31,7 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
      */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxValueManager = $this->getMockBuilder(TaxValueManager::class)
             ->disableOriginalConstructor()

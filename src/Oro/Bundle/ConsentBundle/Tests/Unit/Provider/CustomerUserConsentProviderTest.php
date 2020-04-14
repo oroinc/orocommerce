@@ -39,7 +39,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->consentContextProvider = $this->createMock(ConsentContextProviderInterface::class);
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);

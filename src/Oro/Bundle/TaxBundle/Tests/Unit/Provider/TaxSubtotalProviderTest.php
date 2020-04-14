@@ -41,7 +41,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $taxationSettingsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $this->translator->expects($this->any())->method('trans')->willReturnCallback(
@@ -72,7 +72,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider, $this->taxManager);
     }

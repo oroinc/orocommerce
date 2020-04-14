@@ -29,7 +29,7 @@ class ContactInfoUserOptionsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->customerOptionProvider = $this->createMock(ContactInfoSourceOptionsProvider::class);

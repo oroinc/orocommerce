@@ -35,7 +35,7 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
      */
     protected $matcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
             ->disableOriginalConstructor()

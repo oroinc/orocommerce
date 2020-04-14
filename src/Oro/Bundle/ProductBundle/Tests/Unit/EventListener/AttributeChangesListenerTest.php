@@ -37,7 +37,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $producer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = new RequestStack();
         $this->producer = $this->createMock(MessageProducerInterface::class);

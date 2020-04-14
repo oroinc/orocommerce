@@ -12,7 +12,7 @@ class SystemConfigurationTest extends WebTestCase
     /** @var ConfigManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

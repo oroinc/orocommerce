@@ -16,7 +16,7 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
     /**
      * {@inheritdoc}Oro\Bundle\CommerceCrmEnterpriseTestBundle\Tests\Functional\BackendQueriesTest
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

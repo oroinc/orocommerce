@@ -33,7 +33,7 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
      */
     private $urlCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->persistentCache = $this->createMock(Cache::class);
         $this->localCache = $this->createMock(Cache::class);

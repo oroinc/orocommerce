@@ -22,7 +22,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())

@@ -123,7 +123,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()

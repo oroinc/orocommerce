@@ -28,7 +28,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new QuickAddType(new ProductsGrouperFactory());
 

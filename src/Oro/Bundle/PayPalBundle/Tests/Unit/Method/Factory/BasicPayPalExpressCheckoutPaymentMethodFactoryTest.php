@@ -49,7 +49,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
      */
     private $propertyAccessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);

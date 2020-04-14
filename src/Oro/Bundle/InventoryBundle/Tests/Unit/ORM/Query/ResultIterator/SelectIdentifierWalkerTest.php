@@ -43,7 +43,7 @@ class SelectIdentifierWalkerTest extends \PHPUnit\Framework\TestCase
      */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->query = $this->getMockBuilder(AbstractQuery::class)
             ->disableOriginalConstructor()

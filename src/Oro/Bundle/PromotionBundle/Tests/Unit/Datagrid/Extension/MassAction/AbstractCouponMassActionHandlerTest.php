@@ -39,7 +39,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);

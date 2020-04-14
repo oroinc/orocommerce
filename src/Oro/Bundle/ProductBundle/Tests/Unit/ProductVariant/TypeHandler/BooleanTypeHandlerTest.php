@@ -15,7 +15,7 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var BooleanTypeHandler */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->getMockBuilder(FormFactory::class)
             ->disableOriginalConstructor()

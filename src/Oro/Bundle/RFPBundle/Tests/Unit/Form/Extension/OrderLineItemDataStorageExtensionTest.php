@@ -39,7 +39,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $featureChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->sessionStorage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\DataStorageInterface')

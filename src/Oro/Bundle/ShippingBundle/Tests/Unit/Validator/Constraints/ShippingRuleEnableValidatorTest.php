@@ -33,7 +33,7 @@ class ShippingRuleEnableValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->ruleEnabledChecker = $this->createMock(ShippingRuleEnabledCheckerInterface::class);
         $this->constraint = new ShippingRuleEnable();

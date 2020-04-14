@@ -61,7 +61,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = new TestJobRunner();
 

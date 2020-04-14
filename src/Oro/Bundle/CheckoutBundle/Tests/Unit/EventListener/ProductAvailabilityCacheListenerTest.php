@@ -28,7 +28,7 @@ class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $entityManagerMockBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheProvider::class);
         $this->entityManagerMockBuilder = new EntityManagerMockBuilder();

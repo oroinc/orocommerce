@@ -41,7 +41,7 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
@@ -72,14 +72,14 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with('shippingTrackings')
             ->willReturnSelf();
-        
+
         $this->form->expects(static::once())
             ->method('getData')
             ->willReturn($formData);
 
         $persistedEntities = [];
         $removedEntities = [];
-        
+
         $this->order->expects(static::any())
             ->method('addShippingTracking')
             ->with(static::isInstanceOf('Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'))

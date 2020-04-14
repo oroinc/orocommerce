@@ -19,7 +19,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemConverterPass */
     private $compiler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->registry = $this->container->register('oro_checkout.line_item.converter_registry')

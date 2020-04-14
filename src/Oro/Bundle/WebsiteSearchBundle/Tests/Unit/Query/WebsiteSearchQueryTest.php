@@ -18,7 +18,7 @@ class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
     /** @var Query|\PHPUnit\Framework\MockObject\MockObject */
     protected $query;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->engine = $this->getMockBuilder(EngineInterface::class)
             ->getMock();

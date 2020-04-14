@@ -37,7 +37,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholderHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->aliasResolver = $this->createMock(EntityAliasResolver::class);

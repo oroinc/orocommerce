@@ -17,7 +17,7 @@ class DefaultContentVariantScopesResolverTest extends \PHPUnit\Framework\TestCas
      */
     private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new DefaultContentVariantScopesResolver();
     }

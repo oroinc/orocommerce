@@ -45,7 +45,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutSubtotalListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutSubtotalRepository = $this->createMock(CheckoutSubtotalRepository::class);
 

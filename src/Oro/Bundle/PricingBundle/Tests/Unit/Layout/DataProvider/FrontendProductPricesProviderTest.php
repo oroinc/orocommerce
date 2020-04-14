@@ -38,7 +38,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
@@ -55,7 +55,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->scopeCriteriaRequestHandler,

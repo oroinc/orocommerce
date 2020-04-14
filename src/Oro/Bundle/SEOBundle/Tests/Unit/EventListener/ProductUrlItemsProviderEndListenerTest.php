@@ -18,7 +18,7 @@ class ProductUrlItemsProviderEndListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $ProductUrlItemsProviderEndListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->webCatalogProductLimiter = $this->getMockBuilder(WebCatalogProductLimiter::class)
             ->disableOriginalConstructor()

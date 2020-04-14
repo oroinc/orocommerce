@@ -31,7 +31,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

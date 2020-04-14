@@ -13,7 +13,7 @@ class PrivilegeCategoryProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new PrivilegeCategoryProvider();
     }

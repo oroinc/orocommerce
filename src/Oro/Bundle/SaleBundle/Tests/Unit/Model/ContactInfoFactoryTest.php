@@ -19,7 +19,7 @@ class ContactInfoFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $nameFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->nameFormatter = $this->createMock(NameFormatter::class);
         $this->factory = new ContactInfoFactory($this->nameFormatter);

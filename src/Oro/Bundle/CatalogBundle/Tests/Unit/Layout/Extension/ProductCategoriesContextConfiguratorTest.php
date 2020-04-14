@@ -36,7 +36,7 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
     /** @var ProductCategoriesContextConfigurator */
     private $configurator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

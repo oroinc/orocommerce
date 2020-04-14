@@ -27,7 +27,7 @@ class AddressACLTest extends AbstractAddressACLTest
     /** @var string */
     protected $formName = 'oro_sale_quote';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

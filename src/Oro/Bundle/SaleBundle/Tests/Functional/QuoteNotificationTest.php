@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Form;
 
 class QuoteNotificationTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->markTestSkipped('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 

@@ -17,7 +17,7 @@ class TaxControllerTest extends WebTestCase
 
     const TAX_SAVE_MESSAGE = 'Tax has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

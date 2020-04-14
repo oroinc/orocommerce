@@ -28,7 +28,7 @@ class FrontendSegmentDatagridExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

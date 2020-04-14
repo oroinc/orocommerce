@@ -28,7 +28,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\T
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->paymentContextToRuleValuesConverter = $this

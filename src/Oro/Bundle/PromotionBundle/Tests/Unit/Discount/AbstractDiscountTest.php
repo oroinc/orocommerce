@@ -15,7 +15,7 @@ class AbstractDiscountTest extends \PHPUnit\Framework\TestCase
      */
     private $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = $this->getMockForAbstractClass(AbstractDiscount::class);
     }

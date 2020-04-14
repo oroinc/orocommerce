@@ -26,7 +26,7 @@ class ProductControllerTest extends WebTestCase
     /** @var ConfigManager $globalConfigManager */
     protected $globalConfigManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

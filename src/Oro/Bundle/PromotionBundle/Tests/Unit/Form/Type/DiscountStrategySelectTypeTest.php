@@ -23,7 +23,7 @@ class DiscountStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->strategyRegistry = $this->createMock(StrategyRegistry::class);
         $this->formType = new DiscountStrategySelectType($this->strategyRegistry);

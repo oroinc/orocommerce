@@ -25,7 +25,7 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);

@@ -28,7 +28,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit\Framewo
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->visibilityIndexer = $this->getMockBuilder(ProductVisibilityIndexer::class)
             ->disableOriginalConstructor()

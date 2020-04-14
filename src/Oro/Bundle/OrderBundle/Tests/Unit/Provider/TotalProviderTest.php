@@ -35,7 +35,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
     /** @var  \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
     protected $currencyProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->processorProvider =
@@ -58,7 +58,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider);
     }

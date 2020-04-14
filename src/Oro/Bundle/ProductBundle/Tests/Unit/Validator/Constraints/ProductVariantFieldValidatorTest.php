@@ -57,7 +57,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
@@ -72,7 +72,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->context,

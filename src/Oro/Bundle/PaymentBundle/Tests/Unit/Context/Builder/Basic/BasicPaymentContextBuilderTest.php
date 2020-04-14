@@ -67,7 +67,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private $shippingOriginMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()

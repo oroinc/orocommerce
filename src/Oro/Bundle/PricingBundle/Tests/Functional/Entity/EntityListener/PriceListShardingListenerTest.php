@@ -23,7 +23,7 @@ class PriceListShardingListenerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');

@@ -32,7 +32,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
      */
     protected $propertyPath;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestDataStorageExtension = $this->getMockBuilder(RequestDataStorageExtension::class)
             ->disableOriginalConstructor()

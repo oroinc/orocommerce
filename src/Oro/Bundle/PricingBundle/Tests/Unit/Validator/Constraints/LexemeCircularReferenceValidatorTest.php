@@ -58,7 +58,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->parser = $this->getMockBuilder(ExpressionParser::class)

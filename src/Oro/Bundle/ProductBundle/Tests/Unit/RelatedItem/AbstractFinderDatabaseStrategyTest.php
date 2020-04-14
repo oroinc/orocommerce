@@ -39,7 +39,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit\Framework\Tes
      */
     protected $configProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createRepositoryMock();
         $this->entityManager = $this->createMock(EntityManager::class);

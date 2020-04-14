@@ -32,7 +32,7 @@ class BeforeImportChunksListenerTest extends TestCase
     /** @var BeforeImportChunksListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->shardManager = $this->createMock(ShardManager::class);

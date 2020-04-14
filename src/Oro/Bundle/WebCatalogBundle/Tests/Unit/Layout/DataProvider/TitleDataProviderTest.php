@@ -20,7 +20,7 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TitleDataProvider */
     private $titleDataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

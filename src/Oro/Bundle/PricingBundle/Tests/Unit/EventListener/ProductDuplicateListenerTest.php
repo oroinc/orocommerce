@@ -66,7 +66,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $sourceProduct;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->product = new Product();
         $this->sourceProduct = new Product();
@@ -106,7 +106,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setPriceManager($this->priceManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->product,

@@ -38,7 +38,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->lexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);

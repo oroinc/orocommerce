@@ -20,7 +20,7 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $requestStack;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = self::createMock(RequestStack::class);
         $this->searchProductHandler = new SearchProductHandler($this->requestStack);

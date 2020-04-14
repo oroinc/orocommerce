@@ -30,7 +30,7 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
     /** @var AbstractExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

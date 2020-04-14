@@ -21,7 +21,7 @@ class StopProcessingRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCas
      */
     private $serviceDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->service = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
             ->setMethods(['getFilteredRuleOwners'])->getMockForAbstractClass();

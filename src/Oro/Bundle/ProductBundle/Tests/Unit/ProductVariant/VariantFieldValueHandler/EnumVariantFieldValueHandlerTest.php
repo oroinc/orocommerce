@@ -33,7 +33,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->enumValueProvider = $this->createMock(EnumValueProvider::class);
@@ -51,7 +51,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->doctrineHelper,

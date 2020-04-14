@@ -31,7 +31,7 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
      */
     private $builder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->packageOptionsFactory = new ShippingPackageOptionsFactory();
         $this->expressionLanguage = new ExpressionLanguage();

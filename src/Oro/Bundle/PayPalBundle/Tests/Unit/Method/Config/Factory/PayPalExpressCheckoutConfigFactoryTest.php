@@ -32,7 +32,7 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $payPalExpressCheckoutConfigFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

@@ -38,7 +38,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
      */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);

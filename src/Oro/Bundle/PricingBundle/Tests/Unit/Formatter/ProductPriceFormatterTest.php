@@ -36,7 +36,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected $unitValueFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->numberFormatter = $this->getMockBuilder(NumberFormatter::class)
             ->disableOriginalConstructor()->getMock();

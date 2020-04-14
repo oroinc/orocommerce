@@ -11,7 +11,7 @@ class PayPalPaymentsProTransportTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalPaymentsProTransport */
     private $transport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = new PayPalPaymentsProTransport();
     }

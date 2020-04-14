@@ -25,7 +25,7 @@ class DraftableFilterTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -37,7 +37,7 @@ class DraftableFilterTest extends WebTestCase
         $this->queryTracker->start();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->queryTracker->stop();
         parent::tearDown();

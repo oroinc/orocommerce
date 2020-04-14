@@ -14,7 +14,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
     const PRODUCT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
     const PRODUCT_TAX_CODE_SAVE_MESSAGE = 'Product Tax Code has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

@@ -49,7 +49,7 @@ class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

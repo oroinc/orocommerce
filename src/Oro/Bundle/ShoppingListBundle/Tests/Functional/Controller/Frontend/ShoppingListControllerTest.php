@@ -34,7 +34,7 @@ class ShoppingListControllerTest extends WebTestCase
     /** @var ConfigManager $configManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -465,7 +465,7 @@ class ShoppingListControllerTest extends WebTestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
         $this->configManager->reset(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY);

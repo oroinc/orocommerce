@@ -51,7 +51,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->category = $this->createMock(Category::class);
         $categoryRepository = $this->createMock(CategoryRepository::class);

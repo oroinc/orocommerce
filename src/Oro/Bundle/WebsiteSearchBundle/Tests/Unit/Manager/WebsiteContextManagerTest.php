@@ -27,7 +27,7 @@ class WebsiteContextManagerTest extends \PHPUnit\Framework\TestCase
     /** @var Website */
     private $website;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteRepositoryMock = $this->createMock(WebsiteRepository::class);
         $this->doctrineHelperMock = $this->createMock(DoctrineHelper::class);
@@ -41,7 +41,7 @@ class WebsiteContextManagerTest extends \PHPUnit\Framework\TestCase
         $this->websiteContextManager = new WebsiteContextManager($this->doctrineHelperMock);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelperMock);
         unset($this->websiteRepositoryMock);

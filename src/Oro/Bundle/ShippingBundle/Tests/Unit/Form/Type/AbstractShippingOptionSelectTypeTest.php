@@ -35,7 +35,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType, $this->formatter, $this->provider);
 

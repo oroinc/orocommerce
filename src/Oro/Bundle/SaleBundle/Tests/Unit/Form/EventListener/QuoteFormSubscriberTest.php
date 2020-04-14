@@ -51,7 +51,7 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 
     private $tierPrices = [];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

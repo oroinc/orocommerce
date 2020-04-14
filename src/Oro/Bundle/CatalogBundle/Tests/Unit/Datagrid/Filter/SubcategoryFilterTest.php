@@ -30,7 +30,7 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
     /** @var SubcategoryFilter */
     protected $filter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 

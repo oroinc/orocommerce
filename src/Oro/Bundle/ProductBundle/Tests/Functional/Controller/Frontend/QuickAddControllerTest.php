@@ -15,7 +15,7 @@ class QuickAddControllerTest extends WebTestCase
     const VALIDATION_RESULT_SELECTOR        = 'div.validation-info table tbody tr';
     const VALIDATION_ERRORS_SELECTOR        = 'div.import-errors ol li';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -144,7 +144,6 @@ class QuickAddControllerTest extends WebTestCase
      */
     protected function updateFormActionToDialog(Form $form)
     {
-        /** TODO Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'

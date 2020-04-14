@@ -19,7 +19,7 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->availabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()

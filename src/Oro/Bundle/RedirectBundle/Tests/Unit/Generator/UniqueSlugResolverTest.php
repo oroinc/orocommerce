@@ -42,7 +42,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $uniqueSlugResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);
         $this->aclHelper = $this->createMock(AclHelper::class);

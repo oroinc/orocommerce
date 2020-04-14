@@ -38,7 +38,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->uniqueVariantLinksProductValidatorMock = $this->createMock(ValidatorInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -54,7 +54,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->uniqueVariantLinksProductValidatorMock,

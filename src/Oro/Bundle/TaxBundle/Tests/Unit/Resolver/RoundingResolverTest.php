@@ -16,7 +16,7 @@ class RoundingResolverTest extends \PHPUnit\Framework\TestCase
     /** @var RoundingResolver */
     protected $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new RoundingResolver();
     }

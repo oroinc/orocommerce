@@ -23,7 +23,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->partialUpdateDriver = $this->createMock(CustomerPartialUpdateDriverInterface::class);
         $this->objectManager = $this->createMock(ObjectManager::class);

@@ -28,7 +28,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);

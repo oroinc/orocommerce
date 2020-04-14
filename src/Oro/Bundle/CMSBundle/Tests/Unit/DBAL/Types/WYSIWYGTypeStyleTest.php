@@ -11,12 +11,12 @@ class WYSIWYGTypeStyleTest extends \PHPUnit\Framework\TestCase
     /** @var Type */
     private $type;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Type::addType('wysiwyg_style', WYSIWYGStyleType::class);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = Type::getType('wysiwyg_style');
     }

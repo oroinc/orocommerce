@@ -17,7 +17,7 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit\Fram
     /** @var FrontendShoppingListProductUnitsQuantityProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productShoppingListsDataProvider = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider')
@@ -29,7 +29,7 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit\Fram
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->provider,

@@ -27,7 +27,7 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->orderPaymentContextFactory = $this->createMock(OrderPaymentContextFactory::class);

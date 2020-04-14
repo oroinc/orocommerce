@@ -38,7 +38,7 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
             ->disableOriginalConstructor()

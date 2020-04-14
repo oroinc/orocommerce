@@ -14,7 +14,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
     /** @var ConfigManager $configManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

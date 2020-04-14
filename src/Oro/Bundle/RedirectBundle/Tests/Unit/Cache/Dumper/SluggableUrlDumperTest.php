@@ -18,7 +18,7 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->slugRepository = $this->createMock(SlugRepository::class);
 

@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
     const QUERY = 'web_catalog_entit_indexer_listener_test_query_string';
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         OrmIndexerTest::checkSearchEngine($this);
@@ -33,17 +33,17 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
     {
         $container = $this->getContainer();
         $localizedFallbackValueManager = $container->get('doctrine')->getManagerForClass(LocalizedFallbackValue::class);
-        
+
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
-        
+
         // set WebCatalog for current Website
         $container->get('oro_config.global')->set(
             'oro_web_catalog.web_catalog',
             $webCatalog->getId(),
             $container->get('oro_website.manager')->getCurrentWebsite()
         );
-        
+
         /** @var ContentNode $contentNode */
         $contentNode = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_NODE_1);
         /** @var ContentVariant $contentVariant */
@@ -51,19 +51,19 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         /** @var ContentVariant $contentVariant */
         $contentVariant = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_VARIANT_1);
         $product = $contentVariant->getProductPageProduct();
-        
+
         /** @var LocalizedFallbackValue $metaDescription */
         $metaDescription = $contentNode->getMetaDescriptions()[0];
         $metaDescription->setString(self::QUERY);
-        
+
         $localizedFallbackValueManager->persist($metaDescription);
         $localizedFallbackValueManager->flush();
-        
+
         $container->get('event_dispatcher')->dispatch(
             ReindexationRequestEvent::EVENT_NAME,
             new ReindexationRequestEvent([Product::class], [], [$product->getId()], false)
         );
-        
+
         $query = $container->get('oro_product.website_search.repository.product')
             ->getSearchQuery(self::QUERY, 0, 1)
             ->addSelect(sprintf(
@@ -76,9 +76,9 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                 $notAssignedContentVariant->getId()
             ));
-        
+
         $results = $query->getResult();
-        
+
         $this->assertEquals(1, $results->getRecordsCount());
         $this->assertEquals($product->getId(), $results[0]->getRecordId());
         $this->assertEquals(1, $results[0]->getSelectedData()['assigned']);

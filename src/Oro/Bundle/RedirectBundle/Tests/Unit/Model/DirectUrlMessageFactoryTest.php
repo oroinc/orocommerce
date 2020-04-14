@@ -32,7 +32,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->getMockBuilder(ConfigManager::class)

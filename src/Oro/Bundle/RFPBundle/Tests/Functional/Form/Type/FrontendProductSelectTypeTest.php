@@ -15,7 +15,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->setDatagridName('products-select-grid-frontend');
         $this->setDataParameters(['scope' => 'rfp']);

@@ -46,7 +46,7 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->upsPriceCache = $this->createMock(UPSShippingPriceCache::class);

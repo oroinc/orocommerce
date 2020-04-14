@@ -31,7 +31,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
@@ -47,7 +47,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
     }

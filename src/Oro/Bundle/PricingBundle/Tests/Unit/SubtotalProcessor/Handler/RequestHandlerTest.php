@@ -30,7 +30,7 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|RequestHandler */
     protected $requestHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalProvider =
             $this->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')

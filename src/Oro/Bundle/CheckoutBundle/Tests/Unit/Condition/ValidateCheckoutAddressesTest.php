@@ -23,7 +23,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->condition = new ValidateCheckoutAddresses($this->validator);

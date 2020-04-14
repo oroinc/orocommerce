@@ -46,7 +46,7 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     private $localizationHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

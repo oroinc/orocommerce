@@ -25,7 +25,7 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
      */
     protected $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->converter = new LineItemsToDiscountLineItemsConverter($this->productPricesDataProvider);

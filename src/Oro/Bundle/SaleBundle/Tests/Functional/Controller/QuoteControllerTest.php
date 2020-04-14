@@ -68,7 +68,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$qid          = 'TestQuoteID - ' . time() . '-' . rand();
         self::$qidUpdated   = self::$qid . ' - updated';
@@ -77,7 +77,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

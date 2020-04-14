@@ -77,7 +77,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = $this->getMockBuilder(JobRunner::class)
             ->disableOriginalConstructor()
@@ -379,7 +379,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $message->expects($this->any())
             ->method('getMessageId')
             ->willReturn($messageId);
-        
+
         return $message;
     }
 }

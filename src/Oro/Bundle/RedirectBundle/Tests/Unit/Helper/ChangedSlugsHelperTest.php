@@ -54,7 +54,7 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $draftHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->slugGenerator = $this->getMockBuilder(SlugEntityGenerator::class)

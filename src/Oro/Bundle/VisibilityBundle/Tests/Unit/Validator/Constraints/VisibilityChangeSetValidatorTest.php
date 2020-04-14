@@ -25,7 +25,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new VisibilityChangeSet(['entityClass' => Customer::class]);
         $this->value = new ArrayCollection();

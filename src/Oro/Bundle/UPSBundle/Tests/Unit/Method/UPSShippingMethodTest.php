@@ -71,7 +71,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
      */
     protected $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transportProvider = $this->createMock(UPSTransportProvider::class);
 

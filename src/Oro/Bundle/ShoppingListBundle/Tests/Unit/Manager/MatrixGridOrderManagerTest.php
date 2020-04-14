@@ -31,7 +31,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     /** @var MatrixGridOrderManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->emptyMatrixGridManager = $this->createMock(EmptyMatrixGridInterface::class);

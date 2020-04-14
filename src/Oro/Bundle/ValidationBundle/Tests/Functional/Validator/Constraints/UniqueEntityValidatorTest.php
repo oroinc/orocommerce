@@ -36,7 +36,7 @@ class UniqueEntityValidatorTest extends WebTestCase
      */
     private $em;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 

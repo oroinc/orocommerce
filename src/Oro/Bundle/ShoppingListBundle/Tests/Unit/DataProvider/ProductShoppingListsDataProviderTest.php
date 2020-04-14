@@ -29,7 +29,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductShoppingListsDataProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currentShoppingListManager = $this
             ->getMockBuilder(CurrentShoppingListManager::class)

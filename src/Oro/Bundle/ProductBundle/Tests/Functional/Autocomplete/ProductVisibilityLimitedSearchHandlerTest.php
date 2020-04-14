@@ -23,7 +23,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
      */
     protected $firedEvent;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([

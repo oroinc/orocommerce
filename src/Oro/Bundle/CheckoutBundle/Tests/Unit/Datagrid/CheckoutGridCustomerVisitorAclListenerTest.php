@@ -17,7 +17,7 @@ class CheckoutGridCustomerVisitorAclListenerTest extends TestCase
     /** @var TokenStorage */
     private $tokenStorage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = new TokenStorage();
         $this->listener = new CheckoutGridCustomerVisitorAclListener($this->tokenStorage);

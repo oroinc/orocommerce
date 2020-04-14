@@ -23,7 +23,7 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListReferenceChecker;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->priceListReferenceChecker = new PriceListReferenceChecker($this->registry);
@@ -37,7 +37,7 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
         $repository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $repository->expects($this->once())
             ->method('getRelationIds')
             ->willReturn([1, 2]);

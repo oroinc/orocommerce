@@ -18,7 +18,7 @@ class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit\Framework\TestC
     /** @var RelatedItemDataProviderCacheDecorator */
     private $decorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dataProvider = $this->createMock(RelatedItemDataProviderInterface::class);
         $this->cache = $this->createMock(Cache::class);

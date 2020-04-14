@@ -21,7 +21,7 @@ class CouponPreviewExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $codeGenerator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->codeGenerator = $this->createMock(CodeGenerator::class);
 

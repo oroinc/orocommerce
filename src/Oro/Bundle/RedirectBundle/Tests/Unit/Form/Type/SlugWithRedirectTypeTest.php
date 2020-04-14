@@ -26,7 +26,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
             ->disableOriginalConstructor()
@@ -43,7 +43,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
     {
         /** @var SlugifyFormHelper $slugifyFormHelper */
         $slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
-        
+
         return [
             new PreloadedExtension(
                 [
@@ -171,7 +171,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 
         $this->formType->configureOptions($resolver);
     }
-    
+
     public function testBuildView()
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */

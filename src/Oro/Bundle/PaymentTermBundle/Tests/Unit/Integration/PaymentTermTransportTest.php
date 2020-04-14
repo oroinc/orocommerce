@@ -11,7 +11,7 @@ class PaymentTermTransportTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermTransport */
     private $transport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = new PaymentTermTransport();
     }

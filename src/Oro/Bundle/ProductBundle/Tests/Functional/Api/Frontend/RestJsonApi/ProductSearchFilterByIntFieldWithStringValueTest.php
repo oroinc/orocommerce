@@ -14,7 +14,7 @@ class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonA
 {
     use WebsiteSearchExtensionTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

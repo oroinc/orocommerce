@@ -21,7 +21,7 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
      */
     protected $productRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filter = new ComponentProcessorFilter($this->getProductRepository());
     }

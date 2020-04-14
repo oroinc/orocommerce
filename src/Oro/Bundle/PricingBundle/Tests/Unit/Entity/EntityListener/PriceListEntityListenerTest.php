@@ -33,7 +33,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListEntityListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
         $this->cache = $this->createMock(Cache::class);
@@ -72,7 +72,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceRuleLexemeTriggerHandler->expects($this->once())
             ->method('findEntityLexemes')
             ->willReturn([]);
-        
+
         $this->listener->preUpdate($priceList, $event);
         $this->assertFalse($priceList->isActual());
     }

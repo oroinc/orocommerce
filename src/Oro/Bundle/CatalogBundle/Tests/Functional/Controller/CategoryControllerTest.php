@@ -53,7 +53,7 @@ class CategoryControllerTest extends WebTestCase
      */
     protected $masterCatalog;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

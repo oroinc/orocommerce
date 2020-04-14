@@ -20,7 +20,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();

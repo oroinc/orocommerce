@@ -20,7 +20,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $shippingMethodViewFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProviderMock = $this
             ->getMockBuilder(ShippingMethodProviderInterface::class)

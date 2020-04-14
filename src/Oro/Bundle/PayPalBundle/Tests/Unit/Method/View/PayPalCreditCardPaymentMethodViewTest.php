@@ -29,7 +29,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')
             ->disableOriginalConstructor()

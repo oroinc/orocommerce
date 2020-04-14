@@ -21,7 +21,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -30,7 +30,7 @@ class QuoteControllerTest extends WebTestCase
         ]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_sale.enable_guest_quote', false);

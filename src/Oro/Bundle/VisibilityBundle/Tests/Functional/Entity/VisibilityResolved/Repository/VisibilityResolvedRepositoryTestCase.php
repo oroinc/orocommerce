@@ -39,7 +39,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -54,7 +54,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->registry->getManager()->clear();
         parent::tearDown();

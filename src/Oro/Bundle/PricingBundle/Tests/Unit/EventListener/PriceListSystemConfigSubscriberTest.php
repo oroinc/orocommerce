@@ -30,7 +30,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected $subscriber;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converterMock = $this
             ->getMockBuilder(PriceListConfigConverter::class)

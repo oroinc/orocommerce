@@ -33,7 +33,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedItemDataProvider */
     private $dataProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->finder = $this->getMockBuilder(FinderStrategyInterface::class)->getMock();
         $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)

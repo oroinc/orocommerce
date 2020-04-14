@@ -17,7 +17,7 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite('default');

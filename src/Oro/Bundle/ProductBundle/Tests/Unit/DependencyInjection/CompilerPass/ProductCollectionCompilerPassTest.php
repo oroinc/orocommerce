@@ -17,7 +17,7 @@ class ProductCollectionCompilerPassTest extends \PHPUnit\Framework\TestCase
      */
     private $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
 

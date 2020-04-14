@@ -14,7 +14,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

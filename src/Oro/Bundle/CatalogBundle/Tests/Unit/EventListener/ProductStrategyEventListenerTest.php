@@ -19,7 +19,7 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
      * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
-    
+
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
@@ -31,7 +31,7 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->aclHelper = $this->createMock(AclHelper::class);

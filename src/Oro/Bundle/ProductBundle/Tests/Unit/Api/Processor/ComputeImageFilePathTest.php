@@ -34,7 +34,7 @@ class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
     /** @var ComputeImageFilePath */
     protected $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -10,7 +10,7 @@ class CategoryControllerTest extends WebTestCase
 {
     use FallbackTestTrait;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

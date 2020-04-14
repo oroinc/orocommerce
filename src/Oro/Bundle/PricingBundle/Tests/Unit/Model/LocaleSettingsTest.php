@@ -25,7 +25,7 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
     /** @var LocaleSettings */
     protected $localeSettings;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->inner = $this->createMock(BaseLocaleSettings::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

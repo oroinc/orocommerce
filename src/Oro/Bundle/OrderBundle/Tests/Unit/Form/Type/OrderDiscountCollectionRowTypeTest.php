@@ -16,7 +16,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new OrderDiscountCollectionRowType();
         $this->type->setDataClass(OrderDiscount::class);

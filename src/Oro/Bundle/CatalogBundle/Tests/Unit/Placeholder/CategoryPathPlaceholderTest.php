@@ -9,7 +9,7 @@ class CategoryPathPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryPathPlaceholder */
     protected $placeholder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = new CategoryPathPlaceholder();
     }

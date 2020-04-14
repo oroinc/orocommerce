@@ -20,7 +20,7 @@ class TaxRateValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = new TaxRateValidator();
         $this->constraint = new TaxRate();

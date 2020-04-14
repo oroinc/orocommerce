@@ -37,7 +37,7 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $payPalConfigProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = 'paypal_payments_pro';
 
@@ -73,7 +73,7 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit\Framework\TestCase
         $factory->expects(static::exactly(2))
             ->method('createConfig')
             ->willReturn($config);
-        
+
         /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 

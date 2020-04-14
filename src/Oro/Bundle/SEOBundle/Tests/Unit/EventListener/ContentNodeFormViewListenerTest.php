@@ -15,14 +15,14 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new ContentNodeFormViewListener($this->translator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
     }

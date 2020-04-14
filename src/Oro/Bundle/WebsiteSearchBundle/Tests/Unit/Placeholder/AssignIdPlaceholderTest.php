@@ -11,7 +11,7 @@ class AssignIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $placeholder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = new AssignIdPlaceholder();
     }

@@ -24,7 +24,7 @@ class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new CouponCodeLength();
         $this->context = $this->createMock(ExecutionContextInterface::class);

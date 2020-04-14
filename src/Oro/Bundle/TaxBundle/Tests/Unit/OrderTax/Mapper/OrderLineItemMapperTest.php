@@ -38,7 +38,7 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
      */
     protected $eventDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->addressProvider = $this
             ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
@@ -62,7 +62,7 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->mapper);
     }

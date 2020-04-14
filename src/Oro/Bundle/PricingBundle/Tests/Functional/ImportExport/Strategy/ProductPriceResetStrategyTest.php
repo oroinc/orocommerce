@@ -42,7 +42,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
      */
     protected $stepExecution;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

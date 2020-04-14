@@ -33,7 +33,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->prophesize(ConfigManager::class);
         $this->doctrineHelper = $this->prophesize(DoctrineHelper::class);

@@ -16,7 +16,7 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityTaxListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(BuiltInTaxProvider::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
@@ -27,7 +27,7 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new EntityTaxListener($taxProviderRegistry, Order::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->taxManager);
     }

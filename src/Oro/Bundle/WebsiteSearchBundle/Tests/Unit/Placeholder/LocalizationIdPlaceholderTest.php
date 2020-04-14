@@ -14,7 +14,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
             ->disableOriginalConstructor()
@@ -23,7 +23,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->placeholder, $this->localizationProvider);
     }

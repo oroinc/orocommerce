@@ -14,7 +14,7 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteAcceptable */
     protected $condition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->condition = new QuoteAcceptable();
         $this->condition->setContextAccessor(new ContextAccessor());

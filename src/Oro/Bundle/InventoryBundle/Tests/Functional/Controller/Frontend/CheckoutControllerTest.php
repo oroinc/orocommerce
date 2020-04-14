@@ -45,7 +45,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected $configManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->emFallback = $this->registry->getManagerForClass(
@@ -55,7 +55,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->updateSystemQuantityLimits(null, null);
     }

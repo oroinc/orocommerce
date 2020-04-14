@@ -29,7 +29,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
      */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

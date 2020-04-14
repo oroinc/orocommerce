@@ -36,7 +36,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
 
@@ -63,7 +63,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->consentAcceptanceProvider,

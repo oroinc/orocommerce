@@ -35,7 +35,7 @@ class FedexRateServiceCachedClientTest extends TestCase
      */
     private $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
         $this->cache = $this->createMock(FedexResponseCacheInterface::class);

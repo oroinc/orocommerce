@@ -28,7 +28,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->productRepository = $this->createMock(ProductRepository::class);

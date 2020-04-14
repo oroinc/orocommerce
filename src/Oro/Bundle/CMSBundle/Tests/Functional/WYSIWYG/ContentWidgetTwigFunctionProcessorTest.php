@@ -21,7 +21,7 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
     /** @var ContentWidgetUsageRepository */
     private $usageRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadContentWidgetData::class]);

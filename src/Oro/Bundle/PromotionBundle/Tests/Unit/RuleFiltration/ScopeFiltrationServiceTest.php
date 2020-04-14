@@ -34,7 +34,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
      */
     private $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);

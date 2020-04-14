@@ -20,7 +20,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutErrorHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutErrorHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutErrorHandler = $this->getMockBuilder(CheckoutErrorHandler::class)
             ->disableOriginalConstructor()
@@ -29,7 +29,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
         $this->checkoutWorkflowExtension = new CheckoutWorkflowStateExtension($this->checkoutErrorHandler);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->checkoutErrorHandler, $this->checkoutWorkflowExtension);
     }

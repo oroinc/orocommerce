@@ -33,7 +33,7 @@ class DiscountsInformationDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

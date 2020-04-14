@@ -17,7 +17,7 @@ class ComponentProcessorPassTest extends \PHPUnit\Framework\TestCase
      */
     protected $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
@@ -26,7 +26,7 @@ class ComponentProcessorPassTest extends \PHPUnit\Framework\TestCase
         $this->compilerPass = new ComponentProcessorPass();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->container, $this->compilerPass);
     }

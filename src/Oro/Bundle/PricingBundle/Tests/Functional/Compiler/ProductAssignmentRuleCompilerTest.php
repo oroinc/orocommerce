@@ -29,7 +29,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
      */
     protected $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

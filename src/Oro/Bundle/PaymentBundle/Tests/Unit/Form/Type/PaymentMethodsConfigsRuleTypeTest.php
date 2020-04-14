@@ -49,7 +49,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->compositePaymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);

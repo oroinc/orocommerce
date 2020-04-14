@@ -22,7 +22,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
     use WebsiteSearchExtensionTrait;
     use PreviouslyPurchasedFeatureTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

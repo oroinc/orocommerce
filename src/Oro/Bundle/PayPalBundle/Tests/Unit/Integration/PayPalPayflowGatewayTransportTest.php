@@ -11,7 +11,7 @@ class PayPalPayflowGatewayTransportTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalPayflowGatewayTransport */
     private $transport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = new PayPalPayflowGatewayTransport();
     }

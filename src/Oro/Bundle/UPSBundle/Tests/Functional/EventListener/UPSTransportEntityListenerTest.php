@@ -10,7 +10,7 @@ use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
 class UPSTransportEntityListenerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules']);

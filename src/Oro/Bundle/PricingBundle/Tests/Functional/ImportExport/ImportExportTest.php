@@ -31,7 +31,7 @@ class ImportExportTest extends AbstractImportExportTest
      */
     protected $priceList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures(

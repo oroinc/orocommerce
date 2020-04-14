@@ -20,7 +20,7 @@ class ContentWidgetTypeSearchHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeSearchHandler */
     private $searchHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ContentWidgetTypeRegistry::class);
 

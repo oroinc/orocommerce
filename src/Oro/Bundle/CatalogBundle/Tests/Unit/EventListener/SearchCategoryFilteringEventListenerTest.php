@@ -48,7 +48,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     /** @var SearchCategoryFilteringEventListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestProductHandler = $this->getMockBuilder(RequestProductHandler::class)
             ->setMethods(['getCategoryId', 'getIncludeSubcategoriesChoice', 'getOverrideVariantConfiguration'])

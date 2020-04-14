@@ -20,7 +20,7 @@ class LineItemOptionsFormatterTest extends TestCase
     /** @var LineItemOptionsFormatter */
     private $lineItemOptionsFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
         $this->rounder = $this->createMock(RoundingServiceInterface::class);

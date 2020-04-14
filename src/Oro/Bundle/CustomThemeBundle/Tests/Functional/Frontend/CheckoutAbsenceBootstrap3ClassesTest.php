@@ -112,7 +112,7 @@ class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $config = $this->getContainer()->get('oro_config.global');
         $config->reset('oro_frontend.frontend_theme');

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));

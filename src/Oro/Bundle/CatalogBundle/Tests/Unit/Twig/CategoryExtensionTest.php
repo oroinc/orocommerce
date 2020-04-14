@@ -18,7 +18,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryExtension */
     protected $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->categoryTreeHandler = $this->getMockBuilder(CategoryTreeHandler::class)
             ->disableOriginalConstructor()

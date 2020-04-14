@@ -15,7 +15,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
  */
 class VisibilityCacheBuildCommandTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);

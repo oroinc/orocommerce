@@ -20,7 +20,7 @@ class BrandControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -75,7 +75,7 @@ class BrandControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Brand has been saved', $html);
     }
-    
+
     public function testUpdate()
     {
         $brand = $this->getFirstBrand();

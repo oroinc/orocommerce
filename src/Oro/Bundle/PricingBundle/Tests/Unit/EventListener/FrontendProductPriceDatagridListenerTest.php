@@ -40,7 +40,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
      */
     private $combinedProductPriceProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
 

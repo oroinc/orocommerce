@@ -30,8 +30,8 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
      * @var ResolveNodeSlugsMessageFactory
      */
     protected $factory;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
@@ -57,13 +57,13 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with('oro_redirect.redirect_generation_strategy')
             ->willReturn($strategy);
-        
+
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(
             ContentNode::class,
             $nodeParams
         );
-        
+
         $message = $this->factory->createMessage($contentNode);
         $this->assertEquals($expectedMessage, $message);
     }

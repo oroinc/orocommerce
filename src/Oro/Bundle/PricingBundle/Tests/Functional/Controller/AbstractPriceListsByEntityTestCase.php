@@ -53,7 +53,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      */
     abstract public function getMainFormName();
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -229,7 +229,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     protected function checkPriceListRelationExist(array $priceListsRelations, $priceListReference)
     {
         $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
-        
+
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
             if ($priceListRelation->getWebsite()->getId() == $website->getId()

@@ -17,7 +17,7 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCa
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->provider = new OpenOrdersSeparatePageConfigProvider($this->configManager);

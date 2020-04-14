@@ -35,7 +35,7 @@ class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListsFilter */
     protected $priceListsFilter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
         $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');

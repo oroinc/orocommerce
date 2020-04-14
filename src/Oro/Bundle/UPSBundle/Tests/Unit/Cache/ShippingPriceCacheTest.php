@@ -46,7 +46,7 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
      */
     private $cacheKey;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheProvider::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);

@@ -13,7 +13,7 @@ class OroWebsiteSearchExtensionTest extends ExtensionTestCase
     /** @var OroWebsiteSearchExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new OroWebsiteSearchExtension();
 

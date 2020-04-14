@@ -11,7 +11,7 @@ class CustomerGroupControllerTest extends WebTestCase
 {
     const ACCOUNT_GROUP_NAME = 'Customer_Group';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

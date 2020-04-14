@@ -28,7 +28,7 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
     /** @var HostAddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $hostAddressProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processorRegistry = $this->createMock(
             'Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry'
@@ -63,7 +63,7 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->gateway, $this->client, $this->requestRegistry, $this->processorRegistry);
     }

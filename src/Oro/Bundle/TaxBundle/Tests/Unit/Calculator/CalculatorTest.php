@@ -13,7 +13,7 @@ class CalculatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $settingsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()->getMock();

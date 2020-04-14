@@ -35,7 +35,7 @@ class ProductImageValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new ProductImage();
 

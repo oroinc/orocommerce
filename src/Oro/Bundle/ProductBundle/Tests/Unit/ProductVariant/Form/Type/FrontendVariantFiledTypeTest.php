@@ -43,7 +43,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()
@@ -76,7 +76,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
     }

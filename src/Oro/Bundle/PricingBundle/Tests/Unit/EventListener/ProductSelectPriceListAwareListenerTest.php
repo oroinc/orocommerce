@@ -42,7 +42,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCas
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()

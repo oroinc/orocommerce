@@ -41,7 +41,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $cacheProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 
@@ -59,7 +59,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->configManager, $this->taxBaseExclusionFactory, $this->addressModelFactory, $this->provider);
     }

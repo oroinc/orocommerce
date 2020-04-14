@@ -23,7 +23,7 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this
             ->getMockBuilder(ContainerBuilder::class)

@@ -73,7 +73,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

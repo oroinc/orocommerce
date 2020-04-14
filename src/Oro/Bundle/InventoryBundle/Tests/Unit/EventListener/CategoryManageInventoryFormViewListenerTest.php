@@ -11,7 +11,7 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
     /** @var CategoryManageInventoryFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 

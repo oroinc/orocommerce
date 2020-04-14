@@ -65,7 +65,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
      */
     protected $shippingMethodProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = new CompositeShippingMethodProvider([]);
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
@@ -152,7 +152,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
         $roundingService->expects($this->any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
-        
+
         /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
@@ -165,7 +165,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())

@@ -23,7 +23,7 @@ class ProductImageResizeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $producer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->listener = new ProductImageResizeListener($this->producer);

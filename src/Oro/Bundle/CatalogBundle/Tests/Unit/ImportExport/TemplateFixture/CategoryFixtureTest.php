@@ -26,7 +26,7 @@ class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
     private $localizationManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->templateManager = $this->createMock(TemplateManager::class);
         $this->masterCatalogRootProvider = $this->createMock(MasterCatalogRootProvider::class);

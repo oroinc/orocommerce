@@ -22,7 +22,7 @@ class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->formType = new ContactInfoManualTextType($this->configManager);

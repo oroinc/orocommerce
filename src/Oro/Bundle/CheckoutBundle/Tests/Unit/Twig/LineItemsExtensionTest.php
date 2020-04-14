@@ -33,7 +33,7 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemsExtension */
     protected $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->totalsProvider = self::createMock(TotalProcessorProvider::class);
         $this->lineItemSubtotalProvider = self::createMock(LineItemSubtotalProvider::class);

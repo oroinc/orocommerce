@@ -19,14 +19,14 @@ class NVPClientTest extends \PHPUnit\Framework\TestCase
     /** @var NVPClient */
     protected $client;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->httpClient = $this->createMock('Guzzle\Http\ClientInterface');
         $this->encoder = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface');
         $this->client = new NVPClient($this->httpClient, $this->encoder);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->client, $this->encoder, $this->httpClient);
     }

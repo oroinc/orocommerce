@@ -60,7 +60,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->locale = \Locale::getDefault();
         $this->formType = new ProductPriceType();
@@ -71,7 +71,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         \Locale::setDefault($this->locale);
         unset($this->formType);

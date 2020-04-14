@@ -29,7 +29,7 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
      */
     protected $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
         $this->checkoutLineItemsManager = $this
@@ -44,7 +44,7 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($eventDispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->action);
     }

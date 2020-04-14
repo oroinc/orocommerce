@@ -15,7 +15,7 @@ class CustomerControllerTest extends WebTestCase
     const CUSTOMER_NAME = 'Customer_name';
     const UPDATED_NAME = 'Customer_name_UP';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

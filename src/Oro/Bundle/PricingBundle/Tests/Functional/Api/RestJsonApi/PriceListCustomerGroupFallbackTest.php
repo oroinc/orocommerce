@@ -22,7 +22,7 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

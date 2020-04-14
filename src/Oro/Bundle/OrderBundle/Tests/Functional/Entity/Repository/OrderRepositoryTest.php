@@ -26,7 +26,7 @@ class OrderRepositoryTest extends WebTestCase
     /** @var OrderRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([

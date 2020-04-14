@@ -10,7 +10,7 @@ class RequestRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var RequestRegistry */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = new RequestRegistry();
     }

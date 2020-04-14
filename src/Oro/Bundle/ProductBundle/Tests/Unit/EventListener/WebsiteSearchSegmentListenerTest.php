@@ -30,7 +30,7 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteSearchSegmentListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
             ->disableOriginalConstructor()

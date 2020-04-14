@@ -60,7 +60,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected $processor;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->imageRepository = $this->createMock(EntityRepository::class);
         $this->imageDimensionsProvider = $this->createMock(ProductImagesDimensionsProvider::class);

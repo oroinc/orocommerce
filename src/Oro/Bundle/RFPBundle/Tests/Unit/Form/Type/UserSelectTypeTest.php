@@ -17,7 +17,7 @@ class UserSelectTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $registry */
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')

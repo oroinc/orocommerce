@@ -29,7 +29,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
      */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new WebCatalogScopeExtension();
 

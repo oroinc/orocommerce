@@ -32,7 +32,7 @@ abstract class CategoryInventoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->builder = $this->createMock(FormBuilderInterface::class);
         $this->builder

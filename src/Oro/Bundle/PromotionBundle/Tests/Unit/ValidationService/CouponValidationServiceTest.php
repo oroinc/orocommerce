@@ -23,7 +23,7 @@ class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
      */
     private $couponValidationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->couponUsageManager = $this->createMock(CouponUsageManager::class);
         $this->couponValidationService = new CouponValidationService($this->couponUsageManager);

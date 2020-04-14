@@ -18,7 +18,7 @@ class WYSIWYGFieldsFormDataTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->wysiwygFieldsProvider = $this->createMock(WYSIWYGFieldsProvider::class);
 

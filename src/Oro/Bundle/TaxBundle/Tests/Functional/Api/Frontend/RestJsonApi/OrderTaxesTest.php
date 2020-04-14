@@ -20,7 +20,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
     /** @var string */
     private $originalTaxationUseAsBaseOption;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([
@@ -36,7 +36,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $configManager = $this->getConfigManager();
         $configManager->set('oro_tax.use_as_base_by_default', $this->originalTaxationUseAsBaseOption);

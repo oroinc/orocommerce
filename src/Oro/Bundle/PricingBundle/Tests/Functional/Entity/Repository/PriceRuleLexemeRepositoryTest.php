@@ -20,7 +20,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     /** @var PriceRuleLexemeRepository */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadPriceRuleLexemes::class]);
@@ -29,8 +29,8 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository(PriceRuleLexeme::class);
     }
-    
-    protected function tearDown()
+
+    protected function tearDown(): void
     {
         $this->repository->invalidateCache();
     }

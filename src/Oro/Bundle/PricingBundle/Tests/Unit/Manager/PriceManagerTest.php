@@ -41,7 +41,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->unitOfWork = $this->createMock(UnitOfWork::class);
         $this->repository = $this->createMock(ProductPriceRepository::class);

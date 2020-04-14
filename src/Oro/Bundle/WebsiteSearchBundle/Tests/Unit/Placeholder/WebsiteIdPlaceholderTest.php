@@ -17,7 +17,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteIdPlaceholder */
     private $placeholder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
             ->disableOriginalConstructor()
@@ -26,7 +26,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->placeholder = new WebsiteIdPlaceholder($this->websiteManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->websiteManager, $this->placeholder);
     }

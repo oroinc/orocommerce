@@ -60,7 +60,7 @@ class QuoteProductTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->repository = $this->createMock(ProductUnitRepository::class);

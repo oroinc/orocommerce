@@ -27,7 +27,7 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
     /** @var ContentBlockRenderer */
     private $renderer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentBlockDataProvider = $this->createMock(ContentBlockDataProvider::class);
         $this->twig = $this->createMock(Environment::class);

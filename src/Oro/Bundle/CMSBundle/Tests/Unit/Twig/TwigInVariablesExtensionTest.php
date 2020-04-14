@@ -18,7 +18,7 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
 

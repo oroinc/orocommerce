@@ -25,7 +25,7 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
      */
     private $contentVariantSegmentProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);

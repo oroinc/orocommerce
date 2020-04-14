@@ -33,7 +33,7 @@ class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->upcomingProvider = $this->createMock(UpcomingProductProvider::class);
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

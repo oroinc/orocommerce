@@ -13,7 +13,7 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = new ProductVariantFieldValueHandlerRegistry();
     }
@@ -21,7 +21,7 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->registry);
     }

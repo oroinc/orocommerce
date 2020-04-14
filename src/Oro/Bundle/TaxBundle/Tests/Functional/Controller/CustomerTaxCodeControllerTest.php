@@ -13,7 +13,7 @@ class CustomerTaxCodeControllerTest extends WebTestCase
     const ACCOUNT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
     const ACCOUNT_TAX_CODE_SAVE_MESSAGE = 'Customer Tax Code has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

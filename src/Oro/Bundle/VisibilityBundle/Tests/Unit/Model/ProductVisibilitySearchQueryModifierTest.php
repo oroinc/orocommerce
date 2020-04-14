@@ -35,7 +35,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
      */
     protected $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = $this
             ->getMockBuilder(TokenStorageInterface::class)

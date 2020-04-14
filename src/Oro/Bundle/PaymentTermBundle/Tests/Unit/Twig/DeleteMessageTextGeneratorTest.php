@@ -24,7 +24,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermManager */
     protected $paymentTermManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->router->expects($this->any())

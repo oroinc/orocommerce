@@ -10,12 +10,12 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderRegistry */
     private $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = new PlaceholderRegistry();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->registry);
     }

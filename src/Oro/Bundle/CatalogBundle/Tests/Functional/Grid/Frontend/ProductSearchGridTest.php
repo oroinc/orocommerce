@@ -21,7 +21,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

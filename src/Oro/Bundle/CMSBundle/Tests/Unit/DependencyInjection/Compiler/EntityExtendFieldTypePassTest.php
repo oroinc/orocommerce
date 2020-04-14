@@ -18,7 +18,7 @@ class EntityExtendFieldTypePassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pass = new EntityExtendFieldTypePass();
         $this->container = $this->createMock(ContainerBuilder::class);

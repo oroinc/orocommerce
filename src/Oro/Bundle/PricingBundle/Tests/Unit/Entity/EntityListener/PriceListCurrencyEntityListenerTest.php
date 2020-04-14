@@ -27,7 +27,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createMock(Cache::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);

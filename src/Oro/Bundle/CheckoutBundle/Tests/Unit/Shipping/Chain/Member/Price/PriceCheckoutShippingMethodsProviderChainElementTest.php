@@ -28,7 +28,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
      */
     private $checkoutShippingContextProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingPriceProviderMock = $this
             ->getMockBuilder(ShippingPriceProvider::class)

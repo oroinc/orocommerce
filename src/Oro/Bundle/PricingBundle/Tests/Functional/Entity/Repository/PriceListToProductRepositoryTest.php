@@ -29,7 +29,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures(
@@ -44,7 +44,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
             ->getRepository('OroPricingBundle:PriceListToProduct');
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
-    
+
     public function testGetProductsWithoutPrices()
     {
         /** @var PriceList $priceList */

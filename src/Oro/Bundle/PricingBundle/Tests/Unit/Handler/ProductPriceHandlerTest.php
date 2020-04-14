@@ -47,7 +47,7 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $priceManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->request = new Request();

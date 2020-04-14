@@ -30,7 +30,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         getReference as protected;
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

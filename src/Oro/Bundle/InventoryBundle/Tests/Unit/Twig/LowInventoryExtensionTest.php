@@ -20,7 +20,7 @@ class LowInventoryExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $container = self::getContainerBuilder()
             ->add('oro_inventory.inventory.low_inventory_provider', new LowInventoryProviderStub())

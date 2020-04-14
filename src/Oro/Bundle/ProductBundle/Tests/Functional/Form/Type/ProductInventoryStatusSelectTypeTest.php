@@ -13,7 +13,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
      */
     protected $formFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

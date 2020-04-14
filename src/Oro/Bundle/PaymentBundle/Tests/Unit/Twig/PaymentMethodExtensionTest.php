@@ -31,7 +31,7 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodExtension */
     protected $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this->getMockBuilder(PaymentTransactionProvider::class)
             ->disableOriginalConstructor()

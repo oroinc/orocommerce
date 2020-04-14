@@ -21,7 +21,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->logger = $this->createMock('Psr\Log\LoggerInterface');
@@ -30,7 +30,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setLogger($this->logger);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->logger);
     }

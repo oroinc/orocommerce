@@ -15,7 +15,7 @@ class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCa
     /** @var \PHPUnit\Framework\MockObject\MockObject|RequestParameterBagFactory */
     protected $requestParameterBagFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestParameterBagFactory = $this
             ->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory')
@@ -25,7 +25,7 @@ class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener = new ProductGridWidgetRenderEventListener($this->requestParameterBagFactory);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->requestParameterBagFactory);
     }

@@ -38,7 +38,7 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loadFixtures($this->fixturesToLoad);
         $this->handler = static::getContainer()->get($this->getHandlerServiceName());

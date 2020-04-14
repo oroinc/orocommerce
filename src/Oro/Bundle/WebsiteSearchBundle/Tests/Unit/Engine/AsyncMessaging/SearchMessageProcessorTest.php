@@ -67,7 +67,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $jobRunner;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);
         $this->indexer

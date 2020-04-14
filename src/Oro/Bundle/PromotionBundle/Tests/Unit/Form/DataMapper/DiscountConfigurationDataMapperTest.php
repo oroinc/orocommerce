@@ -30,7 +30,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->dataMapper = new DiscountConfigurationDataMapper();

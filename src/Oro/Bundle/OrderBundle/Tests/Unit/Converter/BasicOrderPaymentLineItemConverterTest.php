@@ -32,7 +32,7 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $paymentLineItemBuilderFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentLineItemBuilderFactory = new BasicPaymentLineItemBuilderFactory();
         $this->collectionFactory = new DoctrinePaymentLineItemCollectionFactory();

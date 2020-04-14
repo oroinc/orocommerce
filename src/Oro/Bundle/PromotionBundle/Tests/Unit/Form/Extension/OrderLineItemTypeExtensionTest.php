@@ -49,7 +49,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);

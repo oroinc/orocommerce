@@ -40,7 +40,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
     const SAVE_MESSAGE = 'Tax Jurisdiction has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

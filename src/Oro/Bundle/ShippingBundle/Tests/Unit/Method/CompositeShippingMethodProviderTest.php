@@ -20,7 +20,7 @@ class CompositeShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider1 = $this->createMock(ShippingMethodProviderInterface::class);
         $this->provider2 = $this->createMock(ShippingMethodProviderInterface::class);

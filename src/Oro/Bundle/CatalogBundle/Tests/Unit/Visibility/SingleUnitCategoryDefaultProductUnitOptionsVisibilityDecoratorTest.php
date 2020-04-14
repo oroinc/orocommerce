@@ -21,7 +21,7 @@ class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecoratorTest extends
      */
     private $decorator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->optionsVisibility = $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);
         $this->singleUnitModeService = $this->createMock(SingleUnitModeServiceInterface::class);

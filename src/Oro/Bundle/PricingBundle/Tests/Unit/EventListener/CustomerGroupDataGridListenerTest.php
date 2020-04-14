@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CustomerGroupDataGridListenerTest extends AbstractPriceListRelationDataGridListenerTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $className = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository';
         $this->repository = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();

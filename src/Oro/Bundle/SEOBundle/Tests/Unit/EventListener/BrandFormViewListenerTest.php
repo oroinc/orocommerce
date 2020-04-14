@@ -12,14 +12,14 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var BrandFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new BrandFormViewListener($this->translator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 

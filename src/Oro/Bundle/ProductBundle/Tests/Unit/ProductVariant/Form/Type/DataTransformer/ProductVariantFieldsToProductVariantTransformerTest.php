@@ -19,7 +19,7 @@ class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Frame
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->parentProduct = new Product();
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)

@@ -54,7 +54,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->packageSettingsFactory = $this->createMock(

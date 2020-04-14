@@ -40,7 +40,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $promotionDiscountsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionProvider = $this->createMock(PromotionProvider::class);
         $this->discountFactory = $this->createMock(DiscountFactory::class);

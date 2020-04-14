@@ -17,7 +17,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

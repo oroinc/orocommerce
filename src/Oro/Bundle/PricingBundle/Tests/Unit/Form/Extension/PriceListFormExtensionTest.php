@@ -24,7 +24,7 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
      */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

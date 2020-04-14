@@ -38,7 +38,7 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->globalConfig = $this->createMock(ConfigManager::class);
@@ -54,7 +54,7 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->configManager,

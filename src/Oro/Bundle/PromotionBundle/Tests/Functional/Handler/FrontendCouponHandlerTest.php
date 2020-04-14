@@ -23,7 +23,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fixturesToLoad[] = LoadCheckoutData::class;
         $this->fixturesToLoad[] = LoadCombinedProductPrices::class;

@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListAddButtonTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -20,7 +20,7 @@ class ShoppingListAddButtonTest extends WebTestCase
     {
         $shoppingListRepo = $this->getContainer()->get('doctrine')
             ->getRepository('OroShoppingListBundle:ShoppingList');
-        
+
         $shoppingListsCount = count($shoppingListRepo->findAll());
 
         $crawler = $this->client->request(

@@ -25,7 +25,7 @@ class RelatedItemAclCheckTest extends \PHPUnit\Framework\TestCase
      */
     private $relatedItemAclCheck;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()

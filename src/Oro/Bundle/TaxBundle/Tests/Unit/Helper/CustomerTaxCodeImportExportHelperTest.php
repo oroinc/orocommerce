@@ -33,7 +33,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerTaxCode[] */
     private $customerTaxCodes;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->createCustomers();
         $this->createCustomersTaxCodes();

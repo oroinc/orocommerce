@@ -17,7 +17,7 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     /** @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this
             ->getMockBuilder(ApplicablePaymentMethodsProvider::class)

@@ -13,7 +13,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var ProductFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

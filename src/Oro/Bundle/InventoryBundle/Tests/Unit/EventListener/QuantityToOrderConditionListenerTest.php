@@ -45,7 +45,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
         $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener($this->validatorService);

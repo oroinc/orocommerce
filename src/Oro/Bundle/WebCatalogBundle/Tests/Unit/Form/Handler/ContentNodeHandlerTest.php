@@ -26,7 +26,7 @@ class ContentNodeHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

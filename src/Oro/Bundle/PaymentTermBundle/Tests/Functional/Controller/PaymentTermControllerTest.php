@@ -18,7 +18,7 @@ class PaymentTermControllerTest extends WebTestCase
     const CREATE_UPDATE_SUCCESS_MESSAGE = 'Payment term has been saved';
     const BLANK_MESSAGE = 'This value should not be blank.';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

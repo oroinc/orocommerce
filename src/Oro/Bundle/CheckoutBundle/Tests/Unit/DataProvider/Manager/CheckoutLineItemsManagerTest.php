@@ -38,7 +38,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
 

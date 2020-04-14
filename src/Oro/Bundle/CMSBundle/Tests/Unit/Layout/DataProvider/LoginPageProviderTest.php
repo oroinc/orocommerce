@@ -20,7 +20,7 @@ class LoginPageProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $managerRegistry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->provider = new LoginPageProvider($this->managerRegistry);

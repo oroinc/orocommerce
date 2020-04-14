@@ -16,7 +16,7 @@ class ParameterBagCommonShippingMethodValidatorResultFactoryTest extends \PHPUni
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = new Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory();
     }

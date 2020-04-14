@@ -18,7 +18,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new WebCatalogSelectType();
     }

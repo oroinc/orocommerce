@@ -12,7 +12,7 @@ class PriceResponseTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->priceResponse = new PriceResponse();
     }

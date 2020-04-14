@@ -35,7 +35,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()

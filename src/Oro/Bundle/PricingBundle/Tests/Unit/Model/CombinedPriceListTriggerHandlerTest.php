@@ -43,7 +43,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $events = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(CombinedProductPriceRepository::class);
 

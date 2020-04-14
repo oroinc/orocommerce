@@ -27,7 +27,7 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
      */
     protected $messenger;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->sender = $this->createMock(TransportInterface::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

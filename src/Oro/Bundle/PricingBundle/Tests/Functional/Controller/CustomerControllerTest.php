@@ -15,7 +15,7 @@ class CustomerControllerTest extends AbstractPriceListsByEntityTestCase
      */
     protected $customer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->customer = $this->getReference('customer.level_1_1');

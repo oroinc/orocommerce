@@ -60,7 +60,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceScopeCriteriaFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);

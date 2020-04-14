@@ -13,7 +13,7 @@ class RequestAdditionalNoteTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->requestAdditionalNote = new RequestAdditionalNote();
     }

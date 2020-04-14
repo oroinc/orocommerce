@@ -37,7 +37,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
     /** @var ConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 

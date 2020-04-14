@@ -25,7 +25,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected $cacheBuilderInterface = 'Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->builders = [
             $this->createMock($this->cacheBuilderInterface),

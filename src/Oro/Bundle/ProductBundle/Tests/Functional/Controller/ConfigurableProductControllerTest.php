@@ -25,7 +25,7 @@ class ConfigurableProductControllerTest extends WebTestCase
     const EXTENDED_FIELD_SIZE = 'size';
 
     /** {@inheritdoc} */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -33,7 +33,7 @@ class ConfigurableProductControllerTest extends WebTestCase
     }
 
     /** {@inheritdoc} */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

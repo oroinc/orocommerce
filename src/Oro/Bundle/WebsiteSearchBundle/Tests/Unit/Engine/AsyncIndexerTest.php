@@ -36,7 +36,7 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
      */
     private $inputValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 

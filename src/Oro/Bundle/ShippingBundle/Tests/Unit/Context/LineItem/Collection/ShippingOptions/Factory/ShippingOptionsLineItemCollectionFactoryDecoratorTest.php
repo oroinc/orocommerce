@@ -49,7 +49,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

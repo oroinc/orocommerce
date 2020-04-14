@@ -12,7 +12,7 @@ use Oro\DBAL\Types\MoneyType;
 
 class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

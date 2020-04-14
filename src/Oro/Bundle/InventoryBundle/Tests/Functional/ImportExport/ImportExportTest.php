@@ -40,7 +40,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         'Unit',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

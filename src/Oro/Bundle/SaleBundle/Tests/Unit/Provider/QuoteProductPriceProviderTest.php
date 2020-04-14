@@ -46,7 +46,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
@@ -63,7 +63,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->currencyProvider);
         unset($this->quoteProductPriceProvider);

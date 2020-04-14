@@ -19,7 +19,7 @@ class CompositeQueryFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $factory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->backendQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();
         $this->websiteQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();

@@ -51,7 +51,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

@@ -32,7 +32,7 @@ class RequestProductTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new RequestProductType();
         $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');

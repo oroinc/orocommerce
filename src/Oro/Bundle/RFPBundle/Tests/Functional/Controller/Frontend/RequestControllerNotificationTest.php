@@ -41,7 +41,7 @@ class RequestControllerNotificationTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -63,7 +63,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('swiftmailer.plugin.messagelogger')->clear();
     }

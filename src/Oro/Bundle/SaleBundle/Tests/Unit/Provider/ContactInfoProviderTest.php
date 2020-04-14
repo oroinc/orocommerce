@@ -52,7 +52,7 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $contactInfoFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->contactSourceProvider = $this->createMock(ContactInfoSourceOptionsProvider::class);

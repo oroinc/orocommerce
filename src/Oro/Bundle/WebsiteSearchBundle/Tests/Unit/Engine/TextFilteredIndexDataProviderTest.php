@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\TextFilteredIndexDataProvider;
 
 class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

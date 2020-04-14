@@ -10,7 +10,7 @@ use Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider\AbstractMethodViewP
 
 class MoneyOrderMethodViewProviderTest extends AbstractMethodViewProviderTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->createMock(MoneyOrderPaymentMethodViewFactoryInterface::class);
         $this->configProvider = $this->createMock(MoneyOrderConfigProviderInterface::class);

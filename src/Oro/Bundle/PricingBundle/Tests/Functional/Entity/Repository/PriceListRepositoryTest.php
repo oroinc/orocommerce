@@ -18,7 +18,7 @@ class PriceListRepositoryTest extends WebTestCase
      */
     protected $defaultPriceList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
@@ -29,7 +29,7 @@ class PriceListRepositoryTest extends WebTestCase
         $this->defaultPriceList = $this->getDefaultPriceList();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getRepository()->setDefault($this->defaultPriceList);
         parent::tearDown();

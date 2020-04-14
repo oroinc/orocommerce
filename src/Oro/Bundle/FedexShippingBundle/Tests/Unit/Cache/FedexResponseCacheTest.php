@@ -22,7 +22,7 @@ class FedexResponseCacheTest extends TestCase
      */
     private $fedexCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheProvider::class);
 

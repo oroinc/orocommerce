@@ -20,7 +20,7 @@ class FrontendPrepareWYSIWYGAdditionalFieldsTest extends \PHPUnit\Framework\Test
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->wysiwygFieldsProvider = $this->createMock(WYSIWYGFieldsProvider::class);
 

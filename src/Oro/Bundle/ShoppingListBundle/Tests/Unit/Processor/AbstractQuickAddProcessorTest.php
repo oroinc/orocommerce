@@ -41,7 +41,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->handler = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
@@ -83,7 +83,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->handler, $this->processor, $this->registry, $this->messageGenerator);
     }

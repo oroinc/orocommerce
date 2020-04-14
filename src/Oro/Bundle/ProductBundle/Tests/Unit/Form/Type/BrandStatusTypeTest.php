@@ -17,7 +17,7 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|BrandStatusProvider $brandStatusProvider */
     protected $brandStatusProvider;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->brandStatusProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\BrandStatusProvider')

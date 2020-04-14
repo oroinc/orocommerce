@@ -23,7 +23,7 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $virtualFieldsProductDecoratorFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->virtualFieldsProductDecoratorFactory = $this->createMock(VirtualFieldsProductDecoratorFactory::class);
 

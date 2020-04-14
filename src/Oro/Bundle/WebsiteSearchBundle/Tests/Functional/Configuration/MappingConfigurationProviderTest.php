@@ -21,7 +21,7 @@ class MappingConfigurationProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

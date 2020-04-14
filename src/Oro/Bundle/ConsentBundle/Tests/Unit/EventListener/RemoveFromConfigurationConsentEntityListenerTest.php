@@ -27,7 +27,7 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
      */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(ObjectRepository::class);
         $objectManager = $this->createMock(ObjectManager::class);
@@ -48,7 +48,7 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
         );
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->listener,

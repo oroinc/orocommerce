@@ -46,7 +46,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->integrationIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->typeIdentifierGenerator = $this->createMock(FedexMethodTypeIdentifierGeneratorInterface::class);

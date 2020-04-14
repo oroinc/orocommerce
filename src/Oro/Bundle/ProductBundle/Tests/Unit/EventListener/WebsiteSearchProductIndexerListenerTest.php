@@ -57,7 +57,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
         $this->websiteLocalizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);

@@ -27,7 +27,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /** @var array */
     protected $dataParameters = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

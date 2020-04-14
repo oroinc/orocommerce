@@ -15,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class AppliedCouponEntityListenerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([

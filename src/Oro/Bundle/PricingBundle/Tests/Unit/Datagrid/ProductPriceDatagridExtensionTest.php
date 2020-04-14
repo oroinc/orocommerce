@@ -37,7 +37,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
      */
     protected $featureChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -54,7 +54,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->authorizationChecker, $this->extension, $this->featureChecker);
 

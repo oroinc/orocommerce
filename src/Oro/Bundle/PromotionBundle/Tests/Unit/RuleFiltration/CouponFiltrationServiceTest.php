@@ -33,7 +33,7 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
      */
     private $couponFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

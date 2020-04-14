@@ -18,8 +18,8 @@ class RegionMatcherTest extends AbstractMatcherTest
      * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $countryMatcher;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class RegionMatcherTest extends AbstractMatcherTest
         $this->matcher->setCountryMatcher($this->countryMatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->countryMatcher);

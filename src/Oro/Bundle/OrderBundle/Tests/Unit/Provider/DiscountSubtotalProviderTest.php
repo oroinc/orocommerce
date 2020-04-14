@@ -39,7 +39,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
      */
     protected $tokenAccessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
@@ -72,7 +72,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }

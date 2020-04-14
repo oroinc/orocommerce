@@ -20,7 +20,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit\Framework\TestCase
      */
     protected $manager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->manager = $this
             ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')

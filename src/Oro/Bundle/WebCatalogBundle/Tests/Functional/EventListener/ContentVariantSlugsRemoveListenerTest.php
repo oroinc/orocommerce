@@ -14,7 +14,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariant
 
 class ContentVariantSlugsRemoveListenerTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadContentVariantSlugsData::class]);

@@ -39,7 +39,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxValueManager */
     protected $taxValueManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()

@@ -37,7 +37,7 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit\Framework\TestCas
      */
     protected $payPalConfigProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = 'paypal_payflow_gateway';
 

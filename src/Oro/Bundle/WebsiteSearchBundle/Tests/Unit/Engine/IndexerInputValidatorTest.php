@@ -28,7 +28,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $testable;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
 

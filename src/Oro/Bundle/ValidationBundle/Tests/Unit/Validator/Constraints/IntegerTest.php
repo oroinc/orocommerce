@@ -21,7 +21,7 @@ class IntegerTest extends \PHPUnit\Framework\TestCase
     /** @var string */
     protected $locale;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Integer();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -32,7 +32,7 @@ class IntegerTest extends \PHPUnit\Framework\TestCase
         \Locale::setDefault('en');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         \Locale::setDefault($this->locale);
 

@@ -40,7 +40,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $paymentTermSettingsRepositoryMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermConfigBySettingsFactoryMock = $this->createMock(
             PaymentTermConfigBySettingsFactoryInterface::class

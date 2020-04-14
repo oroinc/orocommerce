@@ -24,7 +24,7 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit\Framework\
     /** @var UniqueProductUnitShippingOptionsValidator */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new EnabledTypeConfigsValidationGroup();
         $this->context = $this->createMock(ExecutionContextInterface::class);

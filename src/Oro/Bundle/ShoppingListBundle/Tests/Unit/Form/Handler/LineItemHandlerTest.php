@@ -45,7 +45,7 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);

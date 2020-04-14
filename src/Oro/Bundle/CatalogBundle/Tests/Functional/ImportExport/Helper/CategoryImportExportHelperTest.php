@@ -14,7 +14,7 @@ class CategoryImportExportHelperTest extends WebTestCase
     /** @var CategoryImportExportHelper */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

@@ -16,7 +16,7 @@ class PaymentGuestAccessUrlPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->compilerPass = new PaymentGuestAccessUrlPass();
     }

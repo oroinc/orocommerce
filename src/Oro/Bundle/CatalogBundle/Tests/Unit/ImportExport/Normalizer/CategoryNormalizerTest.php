@@ -11,7 +11,7 @@ class CategoryNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryNormalizer */
     private $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->normalizer = new CategoryNormalizer($this->createMock(FieldHelper::class));
     }

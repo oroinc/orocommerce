@@ -27,7 +27,7 @@ class CategoryListenerTest extends WebTestCase
     /** @var Category  */
     private $rootCategory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

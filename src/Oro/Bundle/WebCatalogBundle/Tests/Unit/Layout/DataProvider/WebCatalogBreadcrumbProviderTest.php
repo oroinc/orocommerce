@@ -53,7 +53,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogBreadcrumbProvider */
     private $breadcrumbDataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->requestStack = $this->createMock(RequestStack::class);

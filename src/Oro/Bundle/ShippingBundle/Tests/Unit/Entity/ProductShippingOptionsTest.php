@@ -19,12 +19,12 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
     /** @var ProductShippingOptions $entity */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entity = new ProductShippingOptions();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

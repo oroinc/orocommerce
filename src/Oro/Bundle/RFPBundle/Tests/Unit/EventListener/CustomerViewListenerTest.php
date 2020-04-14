@@ -14,7 +14,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /** @var CustomerViewListener */
     protected $customerViewListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

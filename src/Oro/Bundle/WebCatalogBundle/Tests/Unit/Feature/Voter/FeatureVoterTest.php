@@ -18,16 +18,16 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
      * @var FeatureVoter
      */
     private $voter;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->voter = new FeatureVoter($this->configManager);
     }
-    
+
     public function testVoteAbstain()
     {
         $this->configManager->expects($this->never())
@@ -36,7 +36,7 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
         $vote = $this->voter->vote('some_feature');
         $this->assertEquals(VoterInterface::FEATURE_ABSTAIN, $vote);
     }
-    
+
     public function testVoteEnabled()
     {
         $scopeIdentifier = 1;
@@ -48,7 +48,7 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
         $vote = $this->voter->vote(FeatureVoter::FEATURE_NAME, $scopeIdentifier);
         $this->assertEquals(VoterInterface::FEATURE_ENABLED, $vote);
     }
-    
+
     public function testVoteDisabled()
     {
         $scopeIdentifier = 1;

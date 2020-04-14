@@ -17,7 +17,7 @@ class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileManager = $this->getMockBuilder(RobotsTxtFileManager::class)
             ->disableOriginalConstructor()

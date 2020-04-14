@@ -17,7 +17,7 @@ class CountryMatcherTest extends AbstractMatcherTest
      */
     protected $matcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

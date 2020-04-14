@@ -21,7 +21,7 @@ class EmptySlugProductStrategyEventListenerTest extends \PHPUnit\Framework\TestC
     /** @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $slugGenerator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->slugGenerator = $this->createMock(SlugGenerator::class);
 

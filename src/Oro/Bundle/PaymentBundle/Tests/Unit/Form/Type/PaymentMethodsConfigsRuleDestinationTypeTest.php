@@ -24,7 +24,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
         $this->formType = new PaymentMethodsConfigsRuleDestinationType($this->subscriber);
@@ -143,7 +143,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
         return $destination;
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -26,7 +26,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
     private $orderAddressProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

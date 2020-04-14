@@ -54,7 +54,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -11,7 +11,7 @@ class OrderTest extends WebTestCase
 {
     use EntityTestCaseTrait;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
     }

@@ -30,7 +30,7 @@ class FrontendProductListModifierTest extends \PHPUnit\Framework\TestCase
      */
     protected $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);

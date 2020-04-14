@@ -19,7 +19,7 @@ class ExpressionLanguageFunctionCompilerPassTest extends \PHPUnit\Framework\Test
      */
     private $definitionMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilderMock = $this->createMock(ContainerBuilder::class);
         $this->definitionMock = $this->createMock(Definition::class);

@@ -42,7 +42,7 @@ class EmptyMatrixGridManagerTest extends TestCase
      */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->lineItemFactory = $this->createMock(LineItemByShoppingListAndProductFactoryInterface::class);

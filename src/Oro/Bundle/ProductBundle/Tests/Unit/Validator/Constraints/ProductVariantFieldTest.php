@@ -16,7 +16,7 @@ class ProductVariantFieldTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new ProductVariantField();
     }
@@ -24,7 +24,7 @@ class ProductVariantFieldTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint);
     }

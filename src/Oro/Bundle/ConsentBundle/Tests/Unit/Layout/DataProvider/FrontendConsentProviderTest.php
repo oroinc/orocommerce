@@ -38,7 +38,7 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->consentDataProvider = $this->createMock(ConsentDataProvider::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

@@ -69,7 +69,7 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $doctrineHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->method('hasField')

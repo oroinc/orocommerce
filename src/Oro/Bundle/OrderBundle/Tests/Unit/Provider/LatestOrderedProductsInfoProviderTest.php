@@ -31,7 +31,7 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $latestOrderedProductsInfoProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->availableOrderStatusesProvider = $this->createMock(OrderStatusesProviderInterface::class);

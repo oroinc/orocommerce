@@ -14,7 +14,7 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 

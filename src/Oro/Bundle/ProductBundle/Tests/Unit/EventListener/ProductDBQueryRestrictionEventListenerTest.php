@@ -46,7 +46,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();

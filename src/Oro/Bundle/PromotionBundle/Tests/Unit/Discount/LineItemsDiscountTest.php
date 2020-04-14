@@ -20,7 +20,7 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
      */
     protected $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = new LineItemsDiscount();
     }

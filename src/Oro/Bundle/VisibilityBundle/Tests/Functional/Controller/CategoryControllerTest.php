@@ -37,7 +37,7 @@ class CategoryControllerTest extends WebTestCase
     /** @var ScopeManager */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

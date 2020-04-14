@@ -28,7 +28,7 @@ class ConfigurationListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->messageFactory = $this->createMock(MessageFactory::class);

@@ -30,7 +30,7 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $tokenStorage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceListTreeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
             ->disableOriginalConstructor()

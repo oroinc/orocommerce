@@ -13,12 +13,12 @@ class OptionsResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new OptionsResolver();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->resolver);
     }

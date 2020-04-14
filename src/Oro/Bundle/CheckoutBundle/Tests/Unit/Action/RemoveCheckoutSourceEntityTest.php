@@ -39,7 +39,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
     /** @var  MockObject|EventDispatcher */
     protected $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
 

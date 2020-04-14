@@ -24,7 +24,7 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
      */
     private $sitemapFileWriter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileSystem = $this->getMockBuilder(Filesystem::class)
             ->disableOriginalConstructor()

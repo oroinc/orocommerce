@@ -22,7 +22,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discountFormTypeProvider = new DiscountFormTypeProvider();
         parent::setUp();

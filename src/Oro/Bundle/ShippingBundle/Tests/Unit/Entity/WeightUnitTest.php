@@ -14,12 +14,12 @@ class WeightUnitTest extends \PHPUnit\Framework\TestCase
      */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entity = new WeightUnit();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

@@ -32,7 +32,7 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->session = $this->createMock(Session::class);

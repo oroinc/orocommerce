@@ -34,7 +34,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
      */
     protected $activationRulesRepository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

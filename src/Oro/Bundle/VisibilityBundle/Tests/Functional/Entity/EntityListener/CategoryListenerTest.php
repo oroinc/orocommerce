@@ -16,7 +16,7 @@ class CategoryListenerTest extends WebTestCase
     /** @var EntityManagerInterface */
     private $categoryManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         self::enableMessageBuffering();

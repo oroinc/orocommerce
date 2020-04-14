@@ -41,7 +41,7 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

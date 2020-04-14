@@ -77,7 +77,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -93,7 +93,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager = $this->createMock(WebsiteManager::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->session,

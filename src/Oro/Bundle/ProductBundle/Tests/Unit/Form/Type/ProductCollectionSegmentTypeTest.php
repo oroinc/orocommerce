@@ -65,7 +65,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entityProvider = $this->createMock(EntityProvider::class);
         $this->queryDesignerManager = $this->createMock(Manager::class);

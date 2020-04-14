@@ -16,7 +16,7 @@ class WebsiteQueryFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockBuilder */
     protected $engine;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->queryFactory    = $this->createMock(QueryFactoryInterface::class);
         $this->engine          = $this->createMock(EngineInterface::class);

@@ -41,7 +41,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxJurisdictionType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(static::DATA_CLASS);
@@ -51,7 +51,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 

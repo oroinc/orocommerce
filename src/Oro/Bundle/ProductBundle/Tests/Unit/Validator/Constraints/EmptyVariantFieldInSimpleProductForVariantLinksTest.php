@@ -16,7 +16,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksTest extends \PHPUnit\Frame
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
     }
@@ -24,7 +24,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksTest extends \PHPUnit\Frame
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint);
     }

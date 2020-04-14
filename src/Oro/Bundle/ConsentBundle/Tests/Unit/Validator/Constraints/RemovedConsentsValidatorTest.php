@@ -32,7 +32,7 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->consentRepository = $this->createMock(ConsentRepository::class);
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
@@ -53,7 +53,7 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->consentRepository);
         unset($this->validator);

@@ -13,7 +13,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
     /** @var CheckCheckoutStates */
     protected $condition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
             ->disableOriginalConstructor()
@@ -22,7 +22,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         $this->condition = new CheckCheckoutStates($this->diffManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->diffManager, $this->condition);
     }

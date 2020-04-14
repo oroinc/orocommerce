@@ -13,7 +13,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     /** @var ContentBlockResolver */
     protected $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $propertyAccessor = new PropertyAccessor;
         $this->resolver = new ContentBlockResolver($propertyAccessor);

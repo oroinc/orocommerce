@@ -52,7 +52,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $layoutCacheProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->dumper = $this->createMock(ContentNodeTreeCacheDumper::class);

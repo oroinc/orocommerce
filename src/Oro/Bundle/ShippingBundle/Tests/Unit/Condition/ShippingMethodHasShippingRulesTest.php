@@ -27,7 +27,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
      */
     protected $shippingMethodHasShippingRulesCondition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
             ->disableOriginalConstructor()

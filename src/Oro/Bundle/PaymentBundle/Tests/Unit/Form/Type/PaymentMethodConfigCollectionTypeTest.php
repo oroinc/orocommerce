@@ -31,7 +31,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->subscriber = new RuleMethodConfigCollectionSubscriberStub();
         $this->type = new PaymentMethodConfigCollectionType($this->subscriber);

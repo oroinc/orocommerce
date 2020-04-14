@@ -25,7 +25,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

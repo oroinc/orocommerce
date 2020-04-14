@@ -15,13 +15,13 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
     /** @var int|null */
     private $originalWebCatalog;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->originalWebCatalog = false;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (false !== $this->originalWebCatalog) {
             $configManager = $this->getConfigManager(null);

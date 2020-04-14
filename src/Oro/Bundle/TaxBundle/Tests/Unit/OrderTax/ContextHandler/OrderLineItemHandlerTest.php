@@ -71,7 +71,7 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $isProductTaxCodeDigital = false;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productTaxCode = (new ProductTaxCode())
             ->setCode(self::PRODUCT_TAX_CODE);

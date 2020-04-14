@@ -33,7 +33,7 @@ class UrlItemsProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         // also 2 pages created by main migrations

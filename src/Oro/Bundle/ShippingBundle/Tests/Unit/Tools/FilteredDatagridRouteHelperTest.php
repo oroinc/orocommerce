@@ -31,7 +31,7 @@ class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->datagridRouteHelper = $this->createMock(DatagridRouteHelper::class);
 
@@ -48,7 +48,7 @@ class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->datagridRouteHelper, $this->helper);
     }

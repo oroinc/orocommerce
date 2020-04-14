@@ -38,7 +38,7 @@ class LineItemValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(Registry::class);
         $this->repository = $this->createMock(LineItemRepository::class);

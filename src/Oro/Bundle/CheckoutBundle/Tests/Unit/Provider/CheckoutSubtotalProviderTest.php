@@ -47,7 +47,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /** @var ProductPriceScopeCriteriaFactory */
     protected $priceScopeCriteriaFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

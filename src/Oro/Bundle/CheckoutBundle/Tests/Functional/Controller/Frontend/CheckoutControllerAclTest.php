@@ -13,7 +13,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
  */
 class CheckoutControllerAclTest extends FrontendWebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite('default');

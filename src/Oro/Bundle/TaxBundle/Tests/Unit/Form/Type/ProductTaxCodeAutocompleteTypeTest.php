@@ -16,14 +16,14 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->formType = $this->createTaxCodeAutocompleteType();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 

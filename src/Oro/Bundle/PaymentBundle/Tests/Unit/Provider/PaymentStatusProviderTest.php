@@ -20,7 +20,7 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProcessorProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')

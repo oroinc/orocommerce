@@ -47,7 +47,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolvePaymentTermListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new ResolvePaymentTermEvent();
         $this->requestStack = $this->createMock(RequestStack::class);

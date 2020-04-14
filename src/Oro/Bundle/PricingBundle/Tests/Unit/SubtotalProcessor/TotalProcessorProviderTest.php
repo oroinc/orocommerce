@@ -43,7 +43,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     protected $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subtotalProviderRegistry =
@@ -70,7 +70,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }

@@ -6,9 +6,6 @@ use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-/**
- * TODO: Will be improved in BB-11517
- */
 class CouponGenerationTypeTest extends FormIntegrationTestCase
 {
     /**
@@ -21,7 +18,7 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
      */
     protected $couponGenerationType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

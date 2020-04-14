@@ -14,12 +14,12 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
     /** @var AddressExtractor */
     protected $extractor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extractor = new AddressExtractor(PropertyAccess::createPropertyAccessor());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extractor);
     }

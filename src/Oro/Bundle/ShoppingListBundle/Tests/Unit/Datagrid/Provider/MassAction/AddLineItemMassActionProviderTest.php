@@ -51,7 +51,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $authorizationChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

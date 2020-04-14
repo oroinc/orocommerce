@@ -10,12 +10,12 @@ class ReindexCommandTest extends WebTestCase
 {
     use SearchExtensionTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);
     }

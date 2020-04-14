@@ -24,7 +24,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->visibilityProvider = $this->getMockBuilder(ProductVisibilityProvider::class)
             ->disableOriginalConstructor()

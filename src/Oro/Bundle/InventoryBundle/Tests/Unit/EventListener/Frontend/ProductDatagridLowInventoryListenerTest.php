@@ -41,7 +41,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit\Framework\TestCas
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->lowInventoryProvider = $this->getMockBuilder(LowInventoryProvider::class)
             ->disableOriginalConstructor()

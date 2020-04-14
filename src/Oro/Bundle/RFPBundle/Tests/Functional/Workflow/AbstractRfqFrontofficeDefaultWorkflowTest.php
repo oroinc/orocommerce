@@ -28,7 +28,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -59,7 +59,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $shippingContextBuilderFactoryMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->checkoutSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);

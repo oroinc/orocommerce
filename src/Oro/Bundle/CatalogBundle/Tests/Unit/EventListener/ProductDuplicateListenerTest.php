@@ -52,7 +52,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $sourceProduct;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->product = new Product();
         $this->sourceProduct = new Product();

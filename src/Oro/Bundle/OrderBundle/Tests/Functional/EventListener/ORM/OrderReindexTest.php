@@ -31,7 +31,7 @@ class OrderReindexTest extends FrontendWebTestCase
     protected $managerRegistry;
 
     /** {@inheritdoc} */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

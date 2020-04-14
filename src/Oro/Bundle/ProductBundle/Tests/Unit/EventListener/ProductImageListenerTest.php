@@ -57,7 +57,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $productRepository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productImageEntityManager = $this->createMock(EntityManagerInterface::class);
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);

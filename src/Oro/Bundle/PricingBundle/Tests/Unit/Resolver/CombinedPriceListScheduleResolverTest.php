@@ -42,7 +42,7 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
      */
     private $resolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);

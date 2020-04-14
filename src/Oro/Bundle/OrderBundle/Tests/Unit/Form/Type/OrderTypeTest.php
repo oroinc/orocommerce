@@ -91,7 +91,7 @@ class OrderTypeTest extends TypeTestCase
     /** @var ValidatorInterface  */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder(OrderAddressSecurityProvider::class)

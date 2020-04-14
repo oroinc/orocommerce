@@ -15,7 +15,7 @@ class SurchargeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SurchargeProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->provider = new SurchargeProvider($this->dispatcher);

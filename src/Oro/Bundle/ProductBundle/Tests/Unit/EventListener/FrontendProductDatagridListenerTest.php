@@ -33,7 +33,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $imagePlaceholderProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);

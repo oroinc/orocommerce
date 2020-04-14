@@ -26,7 +26,7 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
      */
     protected $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->converter = new AssignedProductsConverter($this->fieldsProvider);

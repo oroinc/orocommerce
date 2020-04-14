@@ -10,7 +10,7 @@ class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var ProcessorRegistry */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = new ProcessorRegistry();
     }

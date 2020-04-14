@@ -20,7 +20,7 @@ class ProductControllerTest extends WebTestCase
 
     const CATEGORY_ID = 1;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

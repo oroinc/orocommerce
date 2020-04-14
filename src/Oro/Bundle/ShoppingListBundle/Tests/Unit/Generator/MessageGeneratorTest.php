@@ -17,14 +17,14 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var MessageGenerator */
     protected $generator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->generator = new MessageGenerator($this->translator, $this->router);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->router, $this->generator);
     }

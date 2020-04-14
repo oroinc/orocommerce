@@ -15,7 +15,7 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Helper\FieldHelper')
             ->disableOriginalConstructor()

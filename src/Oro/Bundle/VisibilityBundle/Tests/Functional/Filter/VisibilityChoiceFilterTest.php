@@ -8,7 +8,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFilterProductV
 
 class VisibilityChoiceFilterTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);

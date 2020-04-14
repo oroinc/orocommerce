@@ -16,7 +16,7 @@ class WidgetExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetRenderer|\PHPUnit\Framework\MockObject\MockObject */
     private $renderer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->renderer = $this->createMock(ContentWidgetRenderer::class);
         $this->extension = new WidgetExtension($this->renderer);

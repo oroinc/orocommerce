@@ -27,7 +27,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
     /** @var ShoppingListTotalRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
@@ -41,7 +41,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingListTotal::class);
         $this->repository = $this->manager->getRepository(ShoppingListTotal::class);
     }
-    
+
     public function testInvalidateByCombinedPriceList()
     {
         /** @var ShoppingList $shoppingList */

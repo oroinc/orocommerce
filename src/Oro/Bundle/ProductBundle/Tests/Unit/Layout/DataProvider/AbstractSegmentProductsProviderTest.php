@@ -57,7 +57,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);

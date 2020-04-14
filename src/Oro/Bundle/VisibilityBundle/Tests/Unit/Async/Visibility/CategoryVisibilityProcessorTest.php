@@ -36,7 +36,7 @@ class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryVisibilityProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);

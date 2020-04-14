@@ -29,7 +29,7 @@ class FrontendProductListModifierTest extends WebTestCase
      */
     protected $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

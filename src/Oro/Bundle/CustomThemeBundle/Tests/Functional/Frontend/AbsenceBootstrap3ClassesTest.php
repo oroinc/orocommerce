@@ -15,7 +15,7 @@ class AbsenceBootstrap3ClassesTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $authHeader = $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $this->initClient([], $authHeader);
@@ -84,7 +84,7 @@ class AbsenceBootstrap3ClassesTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $config = $this->getContainer()->get('oro_config.global');
         $config->reset('oro_frontend.frontend_theme');

@@ -18,7 +18,7 @@ class MatchingSlugHydratorTest extends WebTestCase
      */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->repository = self::getContainer()->get('doctrine')->getRepository(Slug::class);

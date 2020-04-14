@@ -25,7 +25,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()

@@ -22,7 +22,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
      */
     private $serviceDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->service = $this->getMockBuilder(DefaultShippingMethodSetter::class)
             ->disableOriginalConstructor()

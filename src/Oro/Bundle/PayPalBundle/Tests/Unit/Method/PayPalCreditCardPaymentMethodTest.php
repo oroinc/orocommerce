@@ -41,7 +41,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gateway = $this->getMockBuilder('Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway')
             ->disableOriginalConstructor()

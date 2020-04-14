@@ -33,7 +33,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

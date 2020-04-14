@@ -23,7 +23,7 @@ class ProductUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productFormExtension = new ProductUpcomingFormExtension();
         $this->builder = $this->createMock(FormBuilderInterface::class);

@@ -23,7 +23,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
@@ -32,7 +32,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new OrderPaymentTermEventListener($this->paymentTermProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->paymentTermProvider);
     }

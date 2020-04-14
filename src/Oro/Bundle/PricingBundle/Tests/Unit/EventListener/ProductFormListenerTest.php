@@ -29,14 +29,14 @@ class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $featureChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceManager = $this->createMock(PriceManager::class);
         $this->listener = new ProductFormListener($this->priceManager);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->priceManager, $this->listener, $this->featureChecker);
     }

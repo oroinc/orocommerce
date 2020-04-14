@@ -19,7 +19,7 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new ProductVariantLinksDataTransformer();
         $this->transformer->transform(new ArrayCollection());

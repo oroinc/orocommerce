@@ -36,7 +36,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $repository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->insertExecutor = $this

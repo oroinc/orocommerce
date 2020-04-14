@@ -40,7 +40,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = $this->createMock(
             'Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'

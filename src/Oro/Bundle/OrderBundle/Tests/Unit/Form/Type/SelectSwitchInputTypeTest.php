@@ -15,7 +15,7 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new SelectSwitchInputType();

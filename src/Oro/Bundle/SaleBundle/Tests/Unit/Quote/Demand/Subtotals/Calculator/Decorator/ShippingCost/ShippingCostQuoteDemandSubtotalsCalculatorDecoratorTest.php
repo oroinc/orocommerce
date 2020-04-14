@@ -43,7 +43,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit\F
      */
     private $shippingCostQuoteDemandSubtotalsCalculatorDecorator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->quoteShippingContextFactoryMock = $this
             ->getMockBuilder(ShippingContextFactoryInterface::class)

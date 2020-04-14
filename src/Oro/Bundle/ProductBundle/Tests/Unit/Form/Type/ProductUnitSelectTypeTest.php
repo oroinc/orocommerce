@@ -30,7 +30,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 

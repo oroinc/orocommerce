@@ -19,7 +19,7 @@ class MethodRenamingListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodConfigRepository = $this->createMock(ShippingMethodConfigRepository::class);
         $this->listener = new MethodRenamingListener($this->shippingMethodConfigRepository);

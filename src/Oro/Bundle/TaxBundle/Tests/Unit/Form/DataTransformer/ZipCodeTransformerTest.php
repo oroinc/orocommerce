@@ -13,12 +13,12 @@ class ZipCodeTransformerTest extends \PHPUnit\Framework\TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new ZipCodeTransformer();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->transformer);
     }

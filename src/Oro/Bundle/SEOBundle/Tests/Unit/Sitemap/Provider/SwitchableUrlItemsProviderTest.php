@@ -32,7 +32,7 @@ class SwitchableUrlItemsProviderTest extends TestCase
      */
     private $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->configManager = $this->createMock(ConfigManager::class);

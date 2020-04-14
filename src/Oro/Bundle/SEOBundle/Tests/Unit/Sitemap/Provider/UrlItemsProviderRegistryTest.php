@@ -12,7 +12,7 @@ class UrlItemsProviderRegistryTest extends \PHPUnit\Framework\TestCase
      */
     private $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $providers = [
             'first_provider' => $this->getProviderMock(),

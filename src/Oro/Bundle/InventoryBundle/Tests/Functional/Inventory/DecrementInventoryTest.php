@@ -45,7 +45,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
      */
     protected $precisionBottleQuantity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->doctrineHelper = static::getContainer()->get('oro_entity.doctrine_helper');

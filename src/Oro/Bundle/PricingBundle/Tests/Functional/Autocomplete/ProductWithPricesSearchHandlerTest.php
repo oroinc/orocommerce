@@ -19,7 +19,7 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
     /** @var ProductWithPricesSearchHandler */
     private $searchHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

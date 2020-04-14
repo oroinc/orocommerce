@@ -19,7 +19,7 @@ class AlphanumericTest extends \PHPUnit\Framework\TestCase
     /** @var RegexValidator */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Alphanumeric();
         $this->context = $this->createMock(ExecutionContextInterface::class);

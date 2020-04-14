@@ -37,7 +37,7 @@ class BrandTypeTest extends WebTestCase
      */
     protected $tokenManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
         $localeSettings = $this->createMock(LocaleSettings::class);
@@ -55,7 +55,7 @@ class BrandTypeTest extends WebTestCase
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->type);
     }

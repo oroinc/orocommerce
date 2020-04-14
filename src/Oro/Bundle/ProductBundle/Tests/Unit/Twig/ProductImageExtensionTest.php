@@ -25,7 +25,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductExtension */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);

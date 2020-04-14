@@ -28,7 +28,7 @@ class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
      */
     protected $scheduleFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->scheduleIntervalChecker = $this->createMock(ScheduleIntervalChecker::class);

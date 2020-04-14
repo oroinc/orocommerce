@@ -23,7 +23,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
     /** @var int|null */
     private $originalShoppingListLimit;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([
@@ -43,7 +43,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->originalShoppingListLimit = $this->getShoppingListLimit();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         if ($this->getShoppingListLimit() !== $this->originalShoppingListLimit) {

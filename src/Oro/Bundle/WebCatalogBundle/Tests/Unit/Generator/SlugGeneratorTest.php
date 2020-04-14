@@ -51,7 +51,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $slugUrlDiffer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
         $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)

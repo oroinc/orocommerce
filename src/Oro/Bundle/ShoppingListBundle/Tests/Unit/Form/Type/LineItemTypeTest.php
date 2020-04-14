@@ -39,7 +39,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         'kg'
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new LineItemType();
         $this->type->setDataClass(self::DATA_CLASS);

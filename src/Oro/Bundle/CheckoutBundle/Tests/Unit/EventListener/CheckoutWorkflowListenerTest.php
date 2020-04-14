@@ -22,7 +22,7 @@ class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutWorkflowListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(CheckoutRepository::class)
             ->disableOriginalConstructor()
@@ -44,7 +44,7 @@ class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new CheckoutWorkflowListener($registry, self::ENTITY_CLASS);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->workflowScopeManager);
     }

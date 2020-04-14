@@ -36,7 +36,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productRepository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()

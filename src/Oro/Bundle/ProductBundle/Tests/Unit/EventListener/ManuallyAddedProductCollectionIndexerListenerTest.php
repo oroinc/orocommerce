@@ -47,7 +47,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);

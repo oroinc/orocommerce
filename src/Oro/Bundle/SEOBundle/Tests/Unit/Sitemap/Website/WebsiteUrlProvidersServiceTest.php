@@ -29,7 +29,7 @@ class WebsiteUrlProvidersServiceTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteUrlProvidersService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->urlItemsProviderRegistry = $this->createMock(UrlItemsProviderRegistryInterface::class);

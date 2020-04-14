@@ -22,7 +22,7 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
@@ -35,7 +35,7 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
     }

@@ -20,7 +20,7 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reindexManager = $this->createMock(ProductReindexManager::class);
         $this->listener = new PreviouslyPurchasedFeatureToggleListener($this->reindexManager);
@@ -29,7 +29,7 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
         unset($this->reindexManager);

@@ -19,7 +19,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
      */
     private $placeholderResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = $this->createMock(PlaceholderInterface::class);
 

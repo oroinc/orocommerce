@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
 
 class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         OrmIndexerTest::checkSearchEngine($this);

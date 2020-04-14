@@ -48,7 +48,7 @@ abstract class AbstractShippingLineItemTest extends \PHPUnit\Framework\TestCase
      */
     protected $dimensionsMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->priceMock = $this->createMock(Price::class);
 

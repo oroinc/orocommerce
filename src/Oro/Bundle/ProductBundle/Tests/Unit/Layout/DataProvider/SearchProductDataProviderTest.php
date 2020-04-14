@@ -17,7 +17,7 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SearchProductDataProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->searchProductHandler = $this->createMock(SearchProductHandler::class);
         $this->translator = $this->createMock(Translator::class);

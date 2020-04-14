@@ -24,7 +24,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     protected $shippingPriceProvider;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
@@ -39,7 +39,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->condition, $this->shippingMethodProvider);
     }

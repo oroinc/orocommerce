@@ -18,7 +18,7 @@ class UniquePriceListValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var  UniquePriceListValidator */
     protected $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->constraint = new UniquePriceList();

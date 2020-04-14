@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCus
 
 class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->enableVisitor();

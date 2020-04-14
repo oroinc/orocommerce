@@ -23,7 +23,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionOptionsResolver */
     protected $optionsResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->optionsResolver = $this->createMock(TransitionOptionsResolver::class);

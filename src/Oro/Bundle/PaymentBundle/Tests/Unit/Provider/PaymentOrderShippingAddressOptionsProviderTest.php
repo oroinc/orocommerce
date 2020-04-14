@@ -19,11 +19,11 @@ class PaymentOrderShippingAddressOptionsProviderTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->provider = new PaymentOrderShippingAddressOptionsProvider();
     }
-    
+
     public function testGetShippingAddressOptions(): void
     {
         $region = new Region('Region');

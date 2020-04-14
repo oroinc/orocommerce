@@ -41,7 +41,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $checkoutShippingMethodsProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);
         $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);

@@ -21,7 +21,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
      */
     protected $regionMatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +34,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         $this->matcher->setRegionMatcher($this->regionMatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->regionMatcher);

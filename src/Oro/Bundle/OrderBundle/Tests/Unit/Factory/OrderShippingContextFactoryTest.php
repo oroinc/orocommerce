@@ -52,7 +52,7 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
      */
     private $contextBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()

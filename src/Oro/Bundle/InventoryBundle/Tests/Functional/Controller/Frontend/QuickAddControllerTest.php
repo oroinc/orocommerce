@@ -32,7 +32,7 @@ class QuickAddControllerTest extends WebTestCase
      */
     protected $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

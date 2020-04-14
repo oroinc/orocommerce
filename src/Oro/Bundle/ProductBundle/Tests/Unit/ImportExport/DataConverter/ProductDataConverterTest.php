@@ -30,7 +30,7 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $localeSettings;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
 

@@ -34,7 +34,7 @@ class LineItemOptionsProviderTest extends TestCase
     /** @var LineItemOptionsProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderLineItemOptionsProvider = $this->createMock(PaymentOrderLineItemOptionsProvider::class);
         $this->taxAmountProvider = $this->createMock(TaxAmountProvider::class);

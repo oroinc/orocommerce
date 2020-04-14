@@ -25,7 +25,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new ZipCodeFields();
         $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
@@ -34,7 +34,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->initialize($this->context);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }

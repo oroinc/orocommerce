@@ -24,7 +24,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(VariantFieldProvider::class);
 
@@ -37,7 +37,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->validator, $this->context, $this->provider);
     }

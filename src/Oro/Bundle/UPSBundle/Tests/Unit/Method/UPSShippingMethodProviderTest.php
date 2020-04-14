@@ -16,7 +16,7 @@ class UPSShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->methodBuilder = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
 

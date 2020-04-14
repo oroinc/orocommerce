@@ -13,7 +13,7 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
  */
 class ProductUnitTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

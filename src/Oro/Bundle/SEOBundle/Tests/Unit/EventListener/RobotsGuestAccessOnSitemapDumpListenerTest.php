@@ -19,7 +19,7 @@ class RobotsGuestAccessOnSitemapDumpListenerTest extends \PHPUnit\Framework\Test
      */
     private $robotsGuestAccessOnSitemapDumpListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->robotsTxtIndexingRulesManager = $this->createMock(RobotsTxtIndexingRulesBySitemapManager::class);
         $this->robotsGuestAccessOnSitemapDumpListener = new RobotsGuestAccessOnSitemapDumpListener(

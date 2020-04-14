@@ -11,7 +11,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
  */
 class OrderShippingTrackingTest extends RestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

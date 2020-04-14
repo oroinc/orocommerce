@@ -20,7 +20,7 @@ class CategoryWriterTest extends EntityWriterTest
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepo;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

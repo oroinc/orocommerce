@@ -34,7 +34,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new ProductPriceAllowedUnits();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -46,7 +46,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }

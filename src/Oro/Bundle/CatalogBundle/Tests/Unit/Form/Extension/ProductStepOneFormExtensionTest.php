@@ -28,7 +28,7 @@ class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->defaultProductUnitProvider = $this
             ->getMockBuilder('Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider')

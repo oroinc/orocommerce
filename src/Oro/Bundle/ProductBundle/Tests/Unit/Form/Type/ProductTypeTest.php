@@ -113,7 +113,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->defaultProductUnitProvider = $this
             ->getMockBuilder(ChainDefaultProductUnitProvider::class)

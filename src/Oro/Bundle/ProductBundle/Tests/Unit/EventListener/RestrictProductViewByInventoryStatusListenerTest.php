@@ -26,7 +26,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 

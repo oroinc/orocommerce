@@ -56,7 +56,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $symmetricCrypter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingService = $this->createMock(ShippingService::class);
 

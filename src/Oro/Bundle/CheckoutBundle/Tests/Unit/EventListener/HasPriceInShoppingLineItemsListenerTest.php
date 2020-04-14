@@ -50,7 +50,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
      */
     private $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);

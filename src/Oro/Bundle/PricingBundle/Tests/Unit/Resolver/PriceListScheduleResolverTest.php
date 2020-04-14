@@ -14,7 +14,7 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new PriceListScheduleResolver();
     }

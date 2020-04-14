@@ -41,7 +41,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->converter = $this->createMock(ConsentConfigConverter::class);
@@ -57,7 +57,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->provider,

@@ -18,7 +18,7 @@ class ShardManagerTest extends WebTestCase
      */
     private $manager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->initClient();

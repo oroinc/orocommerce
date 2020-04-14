@@ -14,7 +14,7 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
      */
     protected $doctrine;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadPriceListFallbackSettings::class]);

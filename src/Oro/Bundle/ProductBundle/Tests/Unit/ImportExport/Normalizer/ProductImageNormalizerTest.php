@@ -40,7 +40,7 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $eventDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider * */
         $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)

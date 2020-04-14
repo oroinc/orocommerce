@@ -36,7 +36,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
      */
     protected $paymentTermAssociationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)

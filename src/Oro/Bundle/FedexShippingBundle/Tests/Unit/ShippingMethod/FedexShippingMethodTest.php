@@ -43,7 +43,7 @@ class FedexShippingMethodTest extends TestCase
      */
     private $rateServiceClient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->rateServiceRequestSettingsFactory = $this->createMock(
             FedexRateServiceRequestSettingsFactoryInterface::class

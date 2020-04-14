@@ -32,7 +32,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->formType = new BuyXGetYDiscountOptionsType();

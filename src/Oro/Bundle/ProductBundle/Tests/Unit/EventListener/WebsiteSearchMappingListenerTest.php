@@ -33,7 +33,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteSearchMappingListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeManager = $this->createMock(AttributeManager::class);
         $this->attributeTypeRegistry = $this->createMock(AttributeTypeRegistry::class);

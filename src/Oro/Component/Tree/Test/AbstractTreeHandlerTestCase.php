@@ -5,6 +5,9 @@ namespace Oro\Component\Tree\Test;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
+/**
+ * Provides a few assertions for testing trees (category tree, etc.)
+ */
 abstract class AbstractTreeHandlerTestCase extends WebTestCase
 {
     /**
@@ -12,7 +15,7 @@ abstract class AbstractTreeHandlerTestCase extends WebTestCase
      */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

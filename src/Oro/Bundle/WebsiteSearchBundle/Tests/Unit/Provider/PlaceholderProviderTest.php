@@ -24,7 +24,7 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $mappingProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = $this->getMockBuilder(PlaceholderInterface::class)
             ->disableOriginalConstructor()

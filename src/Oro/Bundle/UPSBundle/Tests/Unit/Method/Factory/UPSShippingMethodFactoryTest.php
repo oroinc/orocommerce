@@ -62,7 +62,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = $this->createMock(UPSTransport::class);
         $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);

@@ -22,7 +22,7 @@ class SaveCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
@@ -32,7 +32,7 @@ class SaveCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
     }

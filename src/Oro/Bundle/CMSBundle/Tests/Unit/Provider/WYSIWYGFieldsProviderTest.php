@@ -24,7 +24,7 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $wysiwygFieldsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 

@@ -32,7 +32,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
         $this->orderAddressSecurityProvider->expects($this->any())

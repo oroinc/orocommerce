@@ -10,7 +10,7 @@ class ProductTypeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductTypeProvider */
     protected $productTypeProvider;
 
-    protected function setup()
+    protected function setUp(): void
     {
         $this->productTypeProvider = new ProductTypeProvider();
     }

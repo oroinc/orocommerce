@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
  */
 class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

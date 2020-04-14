@@ -21,7 +21,7 @@ class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit\Framewo
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()

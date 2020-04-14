@@ -32,7 +32,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $messageFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->provider = $this->createMock(RoutingInformationProvider::class);

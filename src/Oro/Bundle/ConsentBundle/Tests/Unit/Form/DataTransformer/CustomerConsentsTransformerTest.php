@@ -27,7 +27,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->consentAcceptanceProvider = $this->createMock(
@@ -43,7 +43,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelper);
         unset($this->consentAcceptanceProvider);

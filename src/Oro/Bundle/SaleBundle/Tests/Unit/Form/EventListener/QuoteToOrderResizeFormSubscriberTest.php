@@ -17,7 +17,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
      */
     protected $subscriber;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

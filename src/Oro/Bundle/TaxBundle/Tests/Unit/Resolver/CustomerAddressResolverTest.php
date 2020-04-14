@@ -16,7 +16,7 @@ class CustomerAddressResolverTest extends \PHPUnit\Framework\TestCase
     protected $itemResolver;
 
     /** {@inheritdoc} */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->itemResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver')
             ->disableOriginalConstructor()

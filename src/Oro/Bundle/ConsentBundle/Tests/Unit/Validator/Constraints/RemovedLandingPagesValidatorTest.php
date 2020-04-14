@@ -32,7 +32,7 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pageRepository = $this->createMock(PageRepository::class);
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
@@ -53,7 +53,7 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->pageRepository);
         unset($this->validator);

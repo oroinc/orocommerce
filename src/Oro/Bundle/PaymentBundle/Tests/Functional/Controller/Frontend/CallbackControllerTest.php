@@ -10,7 +10,7 @@ class CallbackControllerTest extends WebTestCase
 {
     const ALLOWED_REMOTE_ADDR = '173.0.81.1';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

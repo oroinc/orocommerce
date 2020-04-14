@@ -29,7 +29,7 @@ class TaxCodesCacheTest extends \PHPUnit\Framework\TestCase
      */
     private $taxCodesCache;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheProvider::class);
 

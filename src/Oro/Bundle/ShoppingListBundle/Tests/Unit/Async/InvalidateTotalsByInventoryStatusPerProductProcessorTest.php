@@ -42,7 +42,7 @@ class InvalidateTotalsByInventoryStatusPerProductProcessorTest extends \PHPUnit\
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->messageFactory = $this->createMock(MessageFactory::class);

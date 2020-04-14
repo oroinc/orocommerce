@@ -53,7 +53,7 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionExecutorServiceLink = $this->createMock(ServiceLink::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
