@@ -117,7 +117,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $messageId = 777;
+        $messageId = '777';
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
@@ -161,7 +161,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $session = $this->createMock(SessionInterface::class);
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
 
-        $messageId = 777;
+        $messageId = '777';
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
@@ -207,7 +207,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $messageId = 777;
+        $messageId = '777';
         $message = $this->getMessage($messageId);
         $websites = $this->getWebsites();
         $providerNames = [];

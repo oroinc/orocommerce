@@ -34,7 +34,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSubtotal()
     {
-        $subtotal = 111;
+        $subtotal = 111.0;
         $this->discountContext
             ->expects($this->once())
             ->method('getSubtotal')

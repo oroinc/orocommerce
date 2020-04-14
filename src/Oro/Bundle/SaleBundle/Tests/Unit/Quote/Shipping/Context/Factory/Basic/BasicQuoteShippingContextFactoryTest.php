@@ -80,7 +80,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $quoteId = 5;
         $currency = 'USD';
-        $amount = 20;
+        $amount = 20.0;
         $subTotal = Price::create($amount, $currency);
 
         $totalMock = $this->getTotalMock($amount, $currency);

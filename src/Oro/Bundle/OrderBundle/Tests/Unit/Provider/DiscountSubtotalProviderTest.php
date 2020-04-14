@@ -104,7 +104,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($subtotalMock);
         $subtotalMock->expects($this->once())
             ->method('getAmount')
-            ->willReturn(1000);
+            ->willReturn(1000.0);
 
         $order = new Order();
         $discount1 = new OrderDiscount();

@@ -95,13 +95,13 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $discountContext = $this->createMock(DiscountContext::class);
         $discountContext->expects($this->once())
             ->method('getTotalLineItemsDiscount')
-            ->willReturn(10);
+            ->willReturn(10.0);
         $discountContext->expects($this->once())
             ->method('getSubtotalDiscountTotal')
-            ->willReturn(5);
+            ->willReturn(5.0);
         $discountContext->expects($this->once())
             ->method('getShippingDiscountTotal')
-            ->willReturn(8);
+            ->willReturn(8.0);
         $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($entity)

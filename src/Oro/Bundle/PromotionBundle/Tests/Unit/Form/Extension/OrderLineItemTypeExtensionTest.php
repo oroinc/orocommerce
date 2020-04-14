@@ -233,7 +233,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
                     'currency' => 'USD',
                     'price' => 1.34,
                     'quantity' => 7,
-                    'discountAmount' => 3,
+                    'discountAmount' => 3.0,
                 ],
                 'expectedData' => [
                     'currency' => 'USD',

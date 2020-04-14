@@ -77,7 +77,7 @@ class DisabledDiscountDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDiscountValue()
     {
-        $discountValue = 77;
+        $discountValue = 77.0;
         $this->discount
             ->expects($this->once())
             ->method('getDiscountValue')
