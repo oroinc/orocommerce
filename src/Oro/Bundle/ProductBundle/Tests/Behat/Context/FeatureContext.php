@@ -313,7 +313,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $message = $popup->getText();
         $popup->find('css', 'i.popover-close')->click();
 
-        self::assertContains($title, $message, sprintf(
+        static::assertStringContainsString($title, $message, \sprintf(
             'Expect that "%s" error message contains "%s" string, but it isn\'t',
             $message,
             $title
@@ -1725,8 +1725,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         foreach ($items as $item) {
             try {
-                self::assertContains($SKU, $item->getHtml());
-                self::assertContains($unit, $item->getElement('Order Summary Products GridProductLineUnit')->getHtml());
+                static::assertStringContainsString($SKU, $item->getHtml());
+                static::assertStringContainsString(
+                    $unit,
+                    $item->getElement('Order Summary Products GridProductLineUnit')->getHtml()
+                );
 
                 $productItem = $item;
                 break;
@@ -1757,8 +1760,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         foreach ($items as $item) {
             try {
-                self::assertContains($SKU, $item->getHtml());
-                self::assertContains($unit, $item->getElement('Product unit dropdown')->getHtml());
+                static::assertStringContainsString($SKU, $item->getHtml());
+                static::assertStringContainsString(
+                    $unit,
+                    $item->getElement('Product unit dropdown')->getHtml()
+                );
 
                 $productItem = $item;
                 break;

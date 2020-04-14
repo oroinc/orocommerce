@@ -58,9 +58,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
         $this->assertNotEmpty($content);
-        $this->assertContains(LoadProductData::PRODUCT_1, $content);
-        $this->assertContains(LoadProductData::PRODUCT_2, $content);
-        $this->assertContains(LoadProductData::PRODUCT_3, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testSearchAction(): void
@@ -70,9 +70,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
         $this->assertNotEmpty($content);
-        $this->assertContains(LoadProductData::PRODUCT_1, $content);
-        $this->assertContains(LoadProductData::PRODUCT_2, $content);
-        $this->assertContains(LoadProductData::PRODUCT_3, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
+        static::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testIndexActionInSubfolder()
@@ -176,10 +176,10 @@ class ProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($product->getSku(), $result->getContent());
-        $this->assertContains($product->getDefaultName()->getString(), $result->getContent());
+        static::assertStringContainsString($product->getSku(), $result->getContent());
+        static::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->translator->trans(
                 'oro.frontend.product.view.request_a_quote'
             ),

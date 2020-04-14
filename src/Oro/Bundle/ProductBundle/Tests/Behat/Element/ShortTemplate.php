@@ -9,17 +9,9 @@ class ShortTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Short Page';
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertGroupWithValue($groupName, TableNode $table)
     {
-        self::assertNotContains(
-            $groupName,
-            $this->getText(),
-            '',
-            true
-        );
+        static::assertStringNotContainsStringIgnoringCase($groupName, $this->getText());
     }
 
     /**

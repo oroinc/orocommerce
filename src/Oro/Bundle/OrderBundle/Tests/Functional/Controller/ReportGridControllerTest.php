@@ -37,13 +37,13 @@ class ReportGridControllerTest extends WebTestCase
 
         $this->assertCount(5, $result['data']);
 
-        $this->assertContains('10 Liters', $content);
-        $this->assertContains('15 Liters', $content);
-        $this->assertContains('35 Liters', $content);
-        $this->assertContains('40 Liters', $content);
-        $this->assertContains('"timePeriod":"2-1-2000"', $content);
-        $this->assertContains('"timePeriod":"3-1-2000"', $content);
-        $this->assertContains('"timePeriod":"2-2-2000"', $content);
+        static::assertStringContainsString('10 Liters', $content);
+        static::assertStringContainsString('15 Liters', $content);
+        static::assertStringContainsString('35 Liters', $content);
+        static::assertStringContainsString('40 Liters', $content);
+        static::assertStringContainsString('"timePeriod":"2-1-2000"', $content);
+        static::assertStringContainsString('"timePeriod":"3-1-2000"', $content);
+        static::assertStringContainsString('"timePeriod":"2-2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByMonth()
@@ -53,11 +53,11 @@ class ReportGridControllerTest extends WebTestCase
 
         $this->assertCount(4, $result['data']);
 
-        $this->assertContains('25 Liters', $content);
-        $this->assertContains('35 Liters', $content);
-        $this->assertContains('40 Liters', $content);
-        $this->assertContains('"timePeriod":"1-2000"', $content);
-        $this->assertContains('"timePeriod":"2-2000"', $content);
+        static::assertStringContainsString('25 Liters', $content);
+        static::assertStringContainsString('35 Liters', $content);
+        static::assertStringContainsString('40 Liters', $content);
+        static::assertStringContainsString('"timePeriod":"1-2000"', $content);
+        static::assertStringContainsString('"timePeriod":"2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByQuarter()
@@ -67,9 +67,9 @@ class ReportGridControllerTest extends WebTestCase
 
         $this->assertCount(3, $result['data']);
 
-        $this->assertContains('40 Liters', $content);
-        $this->assertContains('60 Liters', $content);
-        $this->assertContains('"timePeriod":"1-2000"', $content);
+        static::assertStringContainsString('40 Liters', $content);
+        static::assertStringContainsString('60 Liters', $content);
+        static::assertStringContainsString('"timePeriod":"1-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYear()
@@ -79,8 +79,8 @@ class ReportGridControllerTest extends WebTestCase
 
         $this->assertCount(3, $result['data']);
 
-        $this->assertContains('40 Liters', $content);
-        $this->assertContains('"timePeriod":"2000"', $content);
+        static::assertStringContainsString('40 Liters', $content);
+        static::assertStringContainsString('"timePeriod":"2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYearAndNoDates()

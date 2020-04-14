@@ -158,7 +158,7 @@ class CommerceMainContext extends OroFeatureContext implements
         self::assertNotEmpty($activeTab);
 
         foreach ($table->getRows() as $row) {
-            self::assertContains($this->fixStepArgument($row[0]), $activeTab->getText());
+            static::assertStringContainsString($this->fixStepArgument($row[0]), $activeTab->getText());
         }
     }
 }

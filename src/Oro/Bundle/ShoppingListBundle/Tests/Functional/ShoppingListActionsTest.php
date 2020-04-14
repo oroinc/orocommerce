@@ -48,7 +48,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
     }
 

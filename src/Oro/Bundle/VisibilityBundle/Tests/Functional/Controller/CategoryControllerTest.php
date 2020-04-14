@@ -67,7 +67,7 @@ class CategoryControllerTest extends WebTestCase
             json_encode([$this->group->getId() => ['visibility' => $visibilityForCustomerGroup]])
         );
 
-        $this->assertNotContains('grid-customer-category-visibility-grid', $crawler->html());
+        static::assertStringNotContainsString('grid-customer-category-visibility-grid', $crawler->html());
 
         $crawler = $this->client->request(
             'GET',
@@ -107,8 +107,8 @@ class CategoryControllerTest extends WebTestCase
             '{"wrong_id":{"visibility":"hidden"}}'
         );
 
-        $this->assertContains('This value is not valid', $crawler->html());
-        $this->assertContains('invalidDataMessage', $crawler->html());
+        static::assertStringContainsString('This value is not valid', $crawler->html());
+        static::assertStringContainsString('invalidDataMessage', $crawler->html());
     }
 
     /**

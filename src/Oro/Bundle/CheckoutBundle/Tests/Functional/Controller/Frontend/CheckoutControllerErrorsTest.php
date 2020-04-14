@@ -77,13 +77,13 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $noProductsError = $translator
             ->trans('oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message');
-        static::assertContains($noProductsError, $crawler->html());
+        static::assertStringContainsString($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        static::assertContains($noProductsError, $crawler->html());
+        static::assertStringContainsString($noProductsError, $crawler->html());
 
         $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
         $url = $this->getUrl('oro_shopping_list_frontend_remove_product', [
@@ -104,7 +104,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $noProductsError = $translator->trans(
             'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
         );
-        static::assertContains($noProductsError, $crawler->html());
+        static::assertStringContainsString($noProductsError, $crawler->html());
     }
 
     public function testCheckoutErrorsOnNotAvailableShippingMethods()
@@ -114,25 +114,25 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Shipping Method step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains('The selected shipping method is not available.', $crawler->html());
-        static::assertContains(
+        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        static::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -141,15 +141,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Payment step
         $crawler = $this->client->submit($form);
-        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Payment step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains('The selected shipping method is not available.', $crawler->html());
-        static::assertContains(
+        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        static::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -158,15 +158,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler); //order content has changed
-        static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Order Review step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains('The selected shipping method is not available.', $crawler->html());
-        static::assertContains(
+        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        static::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -179,30 +179,30 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         //Payment step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
 
         //Payment step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains('The selected payment method is not available.', $crawler->html());
-        static::assertContains(
+        static::assertStringContainsString('The selected payment method is not available.', $crawler->html());
+        static::assertStringContainsString(
             'Please return to the payment method selection step and select a different one.',
             $crawler->html()
         );
@@ -211,15 +211,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler);
-        static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
 
         //Order Review step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertContains('The selected payment method is not available.', $crawler->html());
-        static::assertContains(
+        static::assertStringContainsString('The selected payment method is not available.', $crawler->html());
+        static::assertStringContainsString(
             'Please return to the payment method selection step and select a different one.',
             $crawler->html()
         );

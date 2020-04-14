@@ -71,12 +71,9 @@ class ProductImportWarningLogTest extends WebTestCase
             ->expects($this->once())
             ->method('critical')
             ->with($this->callback(function ($loggedMessage) use ($expectedMessagePart) {
-                $this->assertContains(
-                    $expectedMessagePart,
-                    $loggedMessage
-                );
+                static::assertStringContainsString($expectedMessagePart, $loggedMessage);
 
-                return $loggedMessage;
+                return true;
             }));
     }
 

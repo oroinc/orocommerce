@@ -31,7 +31,7 @@ class WorkflowDefinitionCheckoutTestCase extends WebTestCase
         );
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->filterXPath(self::XPATH_FLOWCHART)->count());
-        $this->assertContains($checkoutName, $crawler->filterXPath(self::XPATH_FLOW_NAME)->text());
+        static::assertStringContainsString($checkoutName, $crawler->filterXPath(self::XPATH_FLOW_NAME)->text());
         $this->assertEquals($recordGroupsName, $crawler->filterXPath(self::XPATH_RECORD_GROUPS)->text());
     }
 }

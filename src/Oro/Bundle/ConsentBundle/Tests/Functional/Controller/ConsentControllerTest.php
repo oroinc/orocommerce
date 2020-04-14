@@ -57,7 +57,7 @@ class ConsentControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('consents-grid', $crawler->html());
+        static::assertStringContainsString('consents-grid', $crawler->html());
     }
 
     /**
@@ -119,7 +119,7 @@ class ConsentControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_update', ['id' => $id]));
 
         $html = $crawler->html();
-        $this->assertContains(self::CONSENT_TEST_NAME, $html);
+        static::assertStringContainsString(self::CONSENT_TEST_NAME, $html);
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -200,9 +200,9 @@ class ConsentControllerTest extends WebTestCase
     {
         $html = $crawler->html();
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
-        $this->assertContains($assertText, $html);
-        $this->assertContains($consentName, $html);
-        $this->assertContains($contentNode->getDefaultTitle()->getString(), $html);
+        static::assertStringContainsString($assertText, $html);
+        static::assertStringContainsString($consentName, $html);
+        static::assertStringContainsString($contentNode->getDefaultTitle()->getString(), $html);
         $this->assertEquals($consentName, $crawler->filter('h1.page-title__entity-title')->html());
     }
 

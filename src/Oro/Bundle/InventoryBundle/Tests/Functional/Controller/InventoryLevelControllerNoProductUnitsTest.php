@@ -50,7 +50,7 @@ class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $msg = 'Please add at least one Unit of Quantity to the current product to enable inventory management.';
-        $this->assertContains($msg, $crawler->html());
+        static::assertStringContainsString($msg, $crawler->html());
     }
 
     /**

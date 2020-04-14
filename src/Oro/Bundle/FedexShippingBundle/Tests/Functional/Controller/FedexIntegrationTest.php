@@ -53,7 +53,7 @@ class FedexIntegrationTest extends WebTestCase
             $this->createFormValues($form, $settingsData)
         );
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('Integration saved', $crawler->html());
+        static::assertStringContainsString('Integration saved', $crawler->html());
 
         $settings = $this->getFedexIntegrationSettings();
         $this->assertSettingsCorrect($settings, $settingsData);
@@ -72,9 +72,9 @@ class FedexIntegrationTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_integration_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('oro-integration-grid', $crawler->html());
-        static::assertContains('fedex-logo.png', $crawler->html());
-        static::assertContains('FedEx', $crawler->html());
+        static::assertStringContainsString('oro-integration-grid', $crawler->html());
+        static::assertStringContainsString('fedex-logo.png', $crawler->html());
+        static::assertStringContainsString('FedEx', $crawler->html());
     }
 
     /**

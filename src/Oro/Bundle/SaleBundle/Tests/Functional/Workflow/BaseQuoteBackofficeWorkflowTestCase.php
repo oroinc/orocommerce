@@ -197,7 +197,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $form = $crawler->selectButton('Submit')->form();
         $this->client->submit($form);
 
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -234,7 +234,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     {
         $crawler = $this->openQuoteWorkflowWidget();
 
-        $this->assertContains(static::WORKFLOW_TITLE, $crawler->html());
+        static::assertStringContainsString(static::WORKFLOW_TITLE, $crawler->html());
         $link = $this->selectExactLink($linkTitle, $crawler);
         $this->assertNotEmpty($link, 'Transit button not found ' . $linkTitle);
 
@@ -274,7 +274,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 
         $this->assertNotEmpty($crawler->html());
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(static::WORKFLOW_TITLE, $crawler->html());
+        static::assertStringContainsString(static::WORKFLOW_TITLE, $crawler->html());
 
         return $crawler;
     }
@@ -325,7 +325,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
     protected function assertSendToCustomer()

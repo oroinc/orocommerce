@@ -38,7 +38,6 @@ class ShoppingListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains($shoppingList->getLabel(), $html);
+        static::assertStringContainsString($shoppingList->getLabel(), $crawler->html());
     }
 }

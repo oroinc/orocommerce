@@ -42,7 +42,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $content = $crawler->filter('.checkout-order-summary')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
     }
 

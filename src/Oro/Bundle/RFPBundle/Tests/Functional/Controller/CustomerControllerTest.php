@@ -34,7 +34,7 @@ class CustomerControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $urlCustomerCustomerView);
         $gridAttr = $crawler->filter('[id^=grid-customer-view-rfq-grid]')->first()->attr('data-page-component-options');
         $gridJsonElements = json_decode(html_entity_decode($gridAttr), true);
-        $this->assertContains($request->getCustomerUser()->getFullName(), $gridAttr);
+        static::assertStringContainsString($request->getCustomerUser()->getFullName(), $gridAttr);
         $this->assertCount(
             count(LoadRequestData::getRequestsFor('customer', $customer->getName())),
             $gridJsonElements['data']['data']

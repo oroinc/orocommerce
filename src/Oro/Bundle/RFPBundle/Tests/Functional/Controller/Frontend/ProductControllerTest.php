@@ -44,7 +44,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testViewProductWithRequestQuoteAvailable()
     {
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->translator->trans('oro.frontend.product.view.request_a_quote'),
             $this->viewProduct()->getContent()
         );
@@ -60,7 +60,7 @@ class ProductControllerTest extends WebTestCase
         $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->globalConfigManager->flush();
 
-        $this->assertNotContains(
+        static::assertStringNotContainsString(
             $this->translator->trans('oro.frontend.product.view.request_a_quote'),
             $this->viewProduct()->getContent()
         );
@@ -79,8 +79,8 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($product->getSku(), $result->getContent());
-        $this->assertContains($product->getDefaultName()->getString(), $result->getContent());
+        static::assertStringContainsString($product->getSku(), $result->getContent());
+        static::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
         return $result;
     }

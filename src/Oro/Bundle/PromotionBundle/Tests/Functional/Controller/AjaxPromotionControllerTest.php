@@ -37,7 +37,7 @@ class AjaxPromotionControllerTest extends WebTestCase
         static::assertJsonResponseStatusCodeEquals($result, 200);
         $jsonContent = json_decode($result->getContent(), true);
 
-        $this->assertContains($promotion->getRule()->getName(), $jsonContent);
+        static::assertStringContainsString($promotion->getRule()->getName(), $jsonContent);
     }
 
     public function testGetPromotionDataByAppliedPromotionAction()
@@ -60,6 +60,6 @@ class AjaxPromotionControllerTest extends WebTestCase
         static::assertJsonResponseStatusCodeEquals($result, 200);
         $jsonContent = json_decode($result->getContent(), true);
 
-        $this->assertContains($promotion->getRule()->getName(), $jsonContent);
+        static::assertStringContainsString($promotion->getRule()->getName(), $jsonContent);
     }
 }

@@ -131,7 +131,7 @@ class ProductImageImportTest extends WebTestCase
         $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
         preg_match('/^.*"?(export_template_[a-z0-9_]+.csv)"?$/', $contentDisposition, $matches);
 
-        static::assertContains(
+        static::assertStringContainsString(
             $this->getFileContent($expectedCsvFilePath),
             $this->client->getResponse()->getContent()
         );

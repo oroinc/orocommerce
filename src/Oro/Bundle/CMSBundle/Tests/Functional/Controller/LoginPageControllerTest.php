@@ -32,9 +32,12 @@ class LoginPageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_loginpage_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('cms-login-page-grid', $crawler->html());
+        static::assertStringContainsString('cms-login-page-grid', $crawler->html());
         $this->assertEquals('Customer Login Pages', $crawler->filter('h1.oro-subtitle')->html());
-        $this->assertNotContains('Create Login Page', $crawler->filter('div.title-buttons-container')->html());
+        static::assertStringNotContainsString(
+            'Create Login Page',
+            $crawler->filter('div.title-buttons-container')->html()
+        );
     }
 
     /**
@@ -95,8 +98,8 @@ class LoginPageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(static::TOP_CONTENT_UPDATE, $html);
-        $this->assertContains(static::BOTTOM_CONTENT_UPDATE, $html);
+        static::assertStringContainsString(static::TOP_CONTENT_UPDATE, $html);
+        static::assertStringContainsString(static::BOTTOM_CONTENT_UPDATE, $html);
     }
 
     /**
@@ -118,9 +121,9 @@ class LoginPageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains('Login form has been saved', $html);
-        $this->assertContains($topContent, $html);
-        $this->assertContains($bottomContent, $html);
+        static::assertStringContainsString('Login form has been saved', $html);
+        static::assertStringContainsString($topContent, $html);
+        static::assertStringContainsString($bottomContent, $html);
 
         self::assertArrayNotHasKey('oro_cms_login_page[css]', $form);
     }

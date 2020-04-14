@@ -32,8 +32,8 @@ class ReindexCommandTest extends WebTestCase
 
         $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct ' .
             'and website ID 123...';
-        $this->assertContains($expectedOutput, $result);
-        $this->assertContains('Reindex finished successfully.', $result);
+        static::assertStringContainsString($expectedOutput, $result);
+        static::assertStringContainsString('Reindex finished successfully.', $result);
     }
 
     public function testImproperEntityIdCommand()
@@ -47,7 +47,7 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = 'Splitting entities makes only sense with --scheduled';
-        $this->assertContains($expectedOutput, $result);
+        static::assertStringContainsString($expectedOutput, $result);
     }
 
     public function testSyncRangeProductIdCommand()
@@ -61,9 +61,9 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct';
-        $this->assertContains($expectedOutput, $result);
-        $this->assertContains('Generating indexation requests for an ID range of 1-1000...', $result);
-        $this->assertContains('Reindex finished successfully.', $result);
+        static::assertStringContainsString($expectedOutput, $result);
+        static::assertStringContainsString('Generating indexation requests for an ID range of 1-1000...', $result);
+        static::assertStringContainsString('Reindex finished successfully.', $result);
     }
 
     public function testSplitProductIdCommand()
@@ -78,9 +78,9 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct';
-        $this->assertContains($expectedOutput, $result);
-        $this->assertContains('Generating indexation requests 1000 entities each...', $result);
-        $this->assertContains('Reindex finished successfully.', $result);
+        static::assertStringContainsString($expectedOutput, $result);
+        static::assertStringContainsString('Generating indexation requests 1000 entities each...', $result);
+        static::assertStringContainsString('Reindex finished successfully.', $result);
     }
 
     public function testRangeProductIdCommand()
@@ -95,9 +95,9 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct';
-        $this->assertContains($expectedOutput, $result);
-        $this->assertContains('Generating indexation requests for an ID range of 1-5000...', $result);
-        $this->assertContains('Reindex finished successfully.', $result);
+        static::assertStringContainsString($expectedOutput, $result);
+        static::assertStringContainsString('Generating indexation requests for an ID range of 1-5000...', $result);
+        static::assertStringContainsString('Reindex finished successfully.', $result);
     }
 
     public function testRangeSplitProductIdCommand()
@@ -112,9 +112,12 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct';
-        $this->assertContains($expectedOutput, $result);
-        $this->assertContains('Generating indexation requests 40 entities each for an ID range of 1-5000...', $result);
-        $this->assertContains('Reindex finished successfully.', $result);
+        static::assertStringContainsString($expectedOutput, $result);
+        static::assertStringContainsString(
+            'Generating indexation requests 40 entities each for an ID range of 1-5000...',
+            $result
+        );
+        static::assertStringContainsString('Reindex finished successfully.', $result);
     }
 
     public function testEmptyClassForGivenIdsCommand()

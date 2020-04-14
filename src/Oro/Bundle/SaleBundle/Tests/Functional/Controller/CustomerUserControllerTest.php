@@ -37,11 +37,11 @@ class CustomerUserControllerTest extends WebTestCase
         );
         $gridAttr = $crawler->filter('[id^=grid-customer-user-view-quote-grid]')
             ->first()->attr('data-page-component-options');
-        $gridJsonElements = json_decode(html_entity_decode($gridAttr), true);
+        $gridJsonElements = \json_decode(\html_entity_decode($gridAttr), true);
 
-        $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);
+        static::assertStringContainsString($quote->getOwner()->getFullName(), $gridAttr);
         $this->assertCount(
-            count(LoadQuoteData::getQuotesFor('customerUser', $customerUser->getEmail())),
+            \count(LoadQuoteData::getQuotesFor('customerUser', $customerUser->getEmail())),
             $gridJsonElements['data']['data']
         );
     }

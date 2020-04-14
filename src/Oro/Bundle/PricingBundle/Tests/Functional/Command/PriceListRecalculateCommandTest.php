@@ -121,7 +121,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::getDefaultName(), $params);
-        $this->assertContains($expectedMessage, $result);
+        static::assertStringContainsString($expectedMessage, $result);
         $this->assertCombinedPriceCount($expectedCount);
 
         $this->assertCount($expectedMesssages, $this->getSentMessages());

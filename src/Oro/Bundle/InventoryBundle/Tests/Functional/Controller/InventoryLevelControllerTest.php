@@ -26,7 +26,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_inventory_level_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('inventory-grid', $crawler->html());
+        static::assertStringContainsString('inventory-grid', $crawler->html());
     }
 
     public function testUpdateAction()

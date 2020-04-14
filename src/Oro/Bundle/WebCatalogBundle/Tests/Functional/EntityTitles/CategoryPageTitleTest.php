@@ -30,12 +30,12 @@ class CategoryPageTitleTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
             $crawler->filter('title')->html()
         );
 
-        $this->assertContains(
+        static::assertStringContainsString(
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
             $crawler->filter('h1.category-title')->html()
         );

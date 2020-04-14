@@ -75,7 +75,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->getContainer()->get('translator')->trans($expectedMessage),
             $this->client->getResponse()->getContent()
         );

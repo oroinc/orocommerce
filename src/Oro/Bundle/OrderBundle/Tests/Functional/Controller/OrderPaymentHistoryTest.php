@@ -38,7 +38,7 @@ class OrderPaymentHistoryTest extends WebTestCase
             $this->getUrl('oro_order_view', ['id' => $order->getId()])
         );
 
-        static::assertContains(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
     }
 
     public function testOrderViewPagePaymentTransactionSectionNotVisible()
@@ -58,7 +58,7 @@ class OrderPaymentHistoryTest extends WebTestCase
             $this->getUrl('oro_order_view', ['id' => $order->getId()])
         );
 
-        static::assertNotContains(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
+        static::assertStringNotContainsString(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
     }
 
     /**

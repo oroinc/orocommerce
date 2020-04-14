@@ -121,7 +121,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->shippingMethodHasShippingRulesCondition->compile('$factoryAccessor');
 
-        $this->assertContains('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
+        static::assertStringContainsString('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
     }
 
     public function testSetContextAccessor()

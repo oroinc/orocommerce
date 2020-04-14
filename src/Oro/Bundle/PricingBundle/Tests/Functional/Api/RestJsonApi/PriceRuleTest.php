@@ -53,15 +53,15 @@ class PriceRuleTest extends RestJsonApiTestCase
         $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
+        static::assertStringContainsString(
             'One of fields: Currency, Currency Expression should be blank',
             $response->getContent()
         );
-        static::assertContains(
+        static::assertStringContainsString(
             'One of fields: Quantity, Quantity Expression should be blank',
             $response->getContent()
         );
-        static::assertContains(
+        static::assertStringContainsString(
             'One of fields: Product Unit, Product Unit Expression should be blank',
             $response->getContent()
         );
@@ -74,7 +74,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
+        static::assertStringContainsString(
             'One of fields: Currency, Currency Expression is required',
             $response->getContent()
         );

@@ -59,7 +59,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
         $this->assertContains('region_route', $options);
-        $this->assertContains('oro_api_country_get_regions', $options['region_route']);
+        $this->assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**

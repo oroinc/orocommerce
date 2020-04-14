@@ -44,9 +44,9 @@ class AjaxCouponControllerTest extends WebTestCase
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $jsonContent = json_decode($result->getContent(), true);
-        $this->assertContains('grid-container', $jsonContent);
-        $this->assertContains($coupon1->getCode(), $jsonContent);
-        $this->assertContains($coupon2->getCode(), $jsonContent);
+        static::assertStringContainsString('grid-container', $jsonContent);
+        static::assertStringContainsString($coupon1->getCode(), $jsonContent);
+        static::assertStringContainsString($coupon2->getCode(), $jsonContent);
     }
 
     public function testGetAddedCouponsTableActionWhenNoIds()

@@ -23,7 +23,10 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->updateCategory($categoryId, '123', '321', null, null);
         $form = $crawler->selectButton('Save')->form();
 
-        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $crawler->html());
+        static::assertStringNotContainsString(
+            'The CSRF token is invalid. Please try to resubmit the form.',
+            $crawler->html()
+        );
         $this->assertEquals(
             '123.00',
             $form['oro_catalog_category[minimumQuantityToOrder][scalarValue]']->getValue()
@@ -40,7 +43,10 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->updateCategory($categoryId, null, null, 'systemConfig', 'systemConfig');
         $form = $crawler->selectButton('Save')->form();
 
-        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $crawler->html());
+        static::assertStringNotContainsString(
+            'The CSRF token is invalid. Please try to resubmit the form.',
+            $crawler->html()
+        );
         $this->assertEquals(
             'systemConfig',
             $form['oro_catalog_category[minimumQuantityToOrder][fallback]']->getValue()

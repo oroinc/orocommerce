@@ -44,7 +44,7 @@ class BrandControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Product Brands', $crawler->filter('h1.oro-subtitle')->html());
-        $this->assertContains('brand-grid', $crawler->html());
+        static::assertStringContainsString('brand-grid', $crawler->html());
     }
 
     public function testCreateBrand()
@@ -73,7 +73,7 @@ class BrandControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains('Brand has been saved', $html);
+        static::assertStringContainsString('Brand has been saved', $html);
     }
 
     public function testUpdate()
@@ -99,7 +99,7 @@ class BrandControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Brand has been saved", $result->getContent());
+        static::assertStringContainsString("Brand has been saved", $result->getContent());
         $this->assertEquals(
             $nameDefaultNew,
             $crawler->filter('input[name="oro_product_brand[names][values][default]"]')->extract(['value'])[0]

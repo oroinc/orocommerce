@@ -153,7 +153,7 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         $this->post($routeParameters, $parameters);
         $response = $this->post($routeParameters, $parameters, [], false);
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
+        static::assertStringContainsString(
             'unique entity constraint',
             $response->getContent()
         );

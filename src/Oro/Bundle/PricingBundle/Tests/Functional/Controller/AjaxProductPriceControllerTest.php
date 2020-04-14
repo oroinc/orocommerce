@@ -130,7 +130,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertRegExp('/"savedId":[\s\d-]*/i', $html);
         $error = $this->getContainer()->get('translator')
             ->trans($message, [], 'validators');
-        $this->assertContains($error, $html);
+        static::assertStringContainsString($error, $html);
     }
 
     /**

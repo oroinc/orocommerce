@@ -43,7 +43,7 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $this->assertContains('Import Excel .CSV File', $response->getContent());
+        static::assertStringContainsString('Import Excel .CSV File', $response->getContent());
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -60,7 +60,7 @@ class QuickAddControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         if ($formErrorMessage) {
-            $this->assertContains(htmlentities($formErrorMessage), $crawler->html());
+            static::assertStringContainsString(htmlentities($formErrorMessage), $crawler->html());
         } else {
             $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
         }

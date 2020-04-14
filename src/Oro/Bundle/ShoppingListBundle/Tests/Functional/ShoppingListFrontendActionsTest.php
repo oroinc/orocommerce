@@ -47,7 +47,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
     }
 

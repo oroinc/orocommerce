@@ -213,13 +213,13 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $priceList = $this->createPriceList($assignmentRule);
         $qb = $this->getQueryBuilder($priceList);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             'FROM Oro\Bundle\ProductBundle\Entity\Product t1'
             . ' LEFT JOIN t1.category t2'
             . ' WHERE',
             $qb->getDQL()
         );
-        $this->assertNotContains(
+        static::assertStringNotContainsString(
             'FROM Oro\Bundle\ProductBundle\Entity\Product t1'
             . ' LEFT JOIN Oro\Bundle\CatalogBundle\Entity\Category t2 WITH t1 MEMBER OF t2.products'
             . ' WHERE',

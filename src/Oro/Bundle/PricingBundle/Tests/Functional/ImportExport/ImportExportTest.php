@@ -265,7 +265,7 @@ class ImportExportTest extends AbstractImportExportTest
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
         $this->assertEquals(1, $crawler->filter('.import-errors')->count());
-        $this->assertContains($errorMessage, $crawler->filter('.import-errors')->html());
+        static::assertStringContainsString($errorMessage, $crawler->filter('.import-errors')->html());
     }
 
     /**
@@ -289,7 +289,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($strategy, $result->getContent());
+        static::assertStringContainsString($strategy, $result->getContent());
 
         $this->assertFileExists($this->file);
 

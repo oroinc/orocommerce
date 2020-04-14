@@ -57,7 +57,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('region_route', $options);
-        $this->assertContains('oro_api_country_get_regions', $options['region_route']);
+        $this->assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**

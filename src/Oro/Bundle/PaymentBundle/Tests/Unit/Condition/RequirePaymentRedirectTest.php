@@ -93,7 +93,7 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->compile('');
-        $this->assertContains(RequirePaymentRedirect::NAME, $result);
-        $this->assertContains('payment_method', $result);
+        static::assertStringContainsString(RequirePaymentRedirect::NAME, $result);
+        static::assertStringContainsString('payment_method', $result);
     }
 }

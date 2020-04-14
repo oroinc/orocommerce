@@ -124,7 +124,7 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('orders-grid', $crawler->html());
+        static::assertStringContainsString('orders-grid', $crawler->html());
         $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -371,14 +371,14 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Order has been saved', $html);
+        static::assertStringContainsString('Order has been saved', $html);
 
         $html = $crawler->html();
 
-        $this->assertContains(self::ORDER_PO_NUMBER_UPDATED, $html);
-        $this->assertContains($orderCustomerAddress->getPostalCode(), $html);
-        $this->assertContains($orderCustomerAddress->getStreet(), $html);
-        $this->assertContains(strtoupper($orderCustomerAddress->getCity()), $html);
+        static::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
+        static::assertStringContainsString($orderCustomerAddress->getPostalCode(), $html);
+        static::assertStringContainsString($orderCustomerAddress->getStreet(), $html);
+        static::assertStringContainsString(strtoupper($orderCustomerAddress->getCity()), $html);
 
         // Check address on edit
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
@@ -388,15 +388,15 @@ class OrderControllerTest extends WebTestCase
 
         // Check form values
         $formValues = $form->getValues();
-        $this->assertContains(
+        static::assertStringContainsString(
             $orderCustomerAddress->getPostalCode(),
             $formValues['oro_order_type['. $addressType .'][postalCode]']
         );
-        $this->assertContains(
+        static::assertStringContainsString(
             $orderCustomerAddress->getStreet(),
             $formValues['oro_order_type['. $addressType .'][street]']
         );
-        $this->assertContains(
+        static::assertStringContainsString(
             $orderCustomerAddress->getCity(),
             $formValues['oro_order_type['. $addressType .'][city]']
         );
@@ -519,7 +519,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains(self::ORDER_PO_NUMBER_UPDATED, $html);
+        static::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
     }
 
     public function testSaveOrderWithEmptyProductErrorMessage()
@@ -549,7 +549,7 @@ class OrderControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
-        $this->assertContains('Please choose Product', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('Please choose Product', $this->client->getResponse()->getContent());
     }
 
     /**

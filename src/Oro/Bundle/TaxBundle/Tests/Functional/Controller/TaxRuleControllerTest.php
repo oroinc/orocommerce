@@ -41,7 +41,7 @@ class TaxRuleControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('tax-taxe-rules-grid', $crawler->html());
+        static::assertStringContainsString('tax-taxe-rules-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -146,7 +146,7 @@ class TaxRuleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains($id . ' - View - Tax Rules - Taxes', $html);
+        static::assertStringContainsString($id . ' - View - Tax Rules - Taxes', $html);
 
         $this->assertViewPage(
             $html,
@@ -191,7 +191,7 @@ class TaxRuleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::TAX_RULE_SAVE_MESSAGE, $html);
+        static::assertStringContainsString(self::TAX_RULE_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $customerTaxCode, $productTaxCode, $tax, $taxJurisdiction, $description);
     }
 
@@ -211,10 +211,10 @@ class TaxRuleControllerTest extends WebTestCase
         TaxJurisdiction $taxJurisdiction,
         $description
     ) {
-        $this->assertContains($description, $html);
-        $this->assertContains($customerTaxCode->getCode(), $html);
-        $this->assertContains($productTaxCode->getCode(), $html);
-        $this->assertContains($tax->getCode(), $html);
-        $this->assertContains($taxJurisdiction->getCode(), $html);
+        static::assertStringContainsString($description, $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString($productTaxCode->getCode(), $html);
+        static::assertStringContainsString($tax->getCode(), $html);
+        static::assertStringContainsString($taxJurisdiction->getCode(), $html);
     }
 }

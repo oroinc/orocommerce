@@ -64,10 +64,10 @@ class AddressACLTest extends AbstractAddressACLTest
 
         if (!empty($expected)) {
             // Check shipping addresses
-            $this->assertContains('Shipping Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
             $this->checkAddresses($crawler, $this->formName, self::SHIPPING_ADDRESS, $expected);
         } else {
-            $this->assertNotContains('Shipping Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringNotContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
         }
     }
 
@@ -571,10 +571,10 @@ class AddressACLTest extends AbstractAddressACLTest
 
         if (!empty($expected)) {
             // Check billing addresses
-            $this->assertContains('Billing Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
             $this->checkAddresses($crawler, $this->formName, self::BILLING_ADDRESS, $expected);
         } else {
-            $this->assertNotContains('Billing Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringNotContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
         }
     }
 

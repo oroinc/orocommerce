@@ -50,9 +50,9 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer group has been saved', $html);
-        $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString('Customer group has been saved', $html);
+        static::assertStringContainsString(self::ACCOUNT_GROUP_NAME, $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
 
         /** @var CustomerGroup $taxCustomerGroup */
         $taxCustomerGroup = $this->getContainer()->get('doctrine')
@@ -83,7 +83,7 @@ class CustomerGroupControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
 
     /**
@@ -103,7 +103,7 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains(self::ACCOUNT_GROUP_NAME, $grid);
+        static::assertStringContainsString(self::ACCOUNT_GROUP_NAME, $grid);
     }
 
     /**

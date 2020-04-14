@@ -100,7 +100,7 @@ class RequestControllerTest extends WebTestCase
             return;
         }
 
-        static::assertContains('frontend-requests-grid', $crawler->html());
+        static::assertStringContainsString('frontend-requests-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(['gridName' => 'frontend-requests-grid']);
 
@@ -139,7 +139,7 @@ class RequestControllerTest extends WebTestCase
 
             $this->assertEquals($request->getPoNumber(), $testedData[$request->getId()]['poNumber']);
             if ($request->getShipUntil()) {
-                $this->assertContains(
+                static::assertStringContainsString(
                     $request->getShipUntil()->format('Y-m-d'),
                     $testedData[$request->getId()]['shipUntil']
                 );
@@ -187,7 +187,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         foreach ($shouldContainText as $expectedText) {
-            $this->assertContains(
+            static::assertStringContainsString(
                 $expectedText,
                 $result->getContent()
             );
@@ -200,7 +200,7 @@ class RequestControllerTest extends WebTestCase
 
         if (isset($expectedData['hideButtonEdit'])) {
             $buttonEdit = $crawler->filter('.controls-list')->html();
-            static::assertNotContains('edit', $buttonEdit);
+            static::assertStringNotContainsString('edit', $buttonEdit);
         }
     }
 
@@ -613,7 +613,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData($result->getContent(), $expected);
     }
@@ -768,7 +768,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData(
             $result->getContent(),
@@ -835,7 +835,7 @@ class RequestControllerTest extends WebTestCase
     protected function assertContainsRequestData($html, $fields)
     {
         foreach ($fields as $fieldValue) {
-            $this->assertContains($fieldValue, $html);
+            static::assertStringContainsString($fieldValue, $html);
         }
     }
 }

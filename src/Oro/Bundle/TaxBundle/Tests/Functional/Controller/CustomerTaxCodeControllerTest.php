@@ -80,7 +80,10 @@ class CustomerTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Customer Tax Codes - Taxes', $html);
+        static::assertStringContainsString(
+            self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Customer Tax Codes - Taxes',
+            $html
+        );
 
         $this->assertViewPage(
             $html,
@@ -110,7 +113,7 @@ class CustomerTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_SAVE_MESSAGE, $html);
+        static::assertStringContainsString(self::ACCOUNT_TAX_CODE_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description);
     }
 
@@ -121,7 +124,7 @@ class CustomerTaxCodeControllerTest extends WebTestCase
      */
     protected function assertViewPage($html, $code, $description)
     {
-        $this->assertContains($code, $html);
-        $this->assertContains($description, $html);
+        static::assertStringContainsString($code, $html);
+        static::assertStringContainsString($description, $html);
     }
 }

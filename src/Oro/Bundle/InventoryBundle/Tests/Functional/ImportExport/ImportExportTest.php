@@ -284,7 +284,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->client->submit($form);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('url', $response);
-        $this->assertContains('.csv', $response['url']);
+        static::assertStringContainsString('.csv', $response['url']);
 
         $fileContent = $this->downloadFile($response['url']);
         $this->assertEquals($fileContent[0], $expectedHeader);

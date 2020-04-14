@@ -36,9 +36,9 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
-        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
-        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_PAY_TO_VALUE, $crawler->html());
-        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_SEND_TO_VALUE, $crawler->html());
+        static::assertStringContainsString(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
+        static::assertStringContainsString(LoadMoneyOrderSettingsData::MONEY_ORDER_PAY_TO_VALUE, $crawler->html());
+        static::assertStringContainsString(LoadMoneyOrderSettingsData::MONEY_ORDER_SEND_TO_VALUE, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
@@ -55,7 +55,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
-        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
+        static::assertStringContainsString(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
 
         return $crawler;
     }
@@ -86,7 +86,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
-        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
         static::assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
         static::assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
 
@@ -146,7 +146,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
-        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getFakeForm($crawler);

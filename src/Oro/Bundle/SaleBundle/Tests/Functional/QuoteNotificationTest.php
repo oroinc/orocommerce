@@ -52,6 +52,6 @@ class QuoteNotificationTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('The email was sent', $crawler->html());
+        static::assertStringContainsString('The email was sent', $crawler->html());
     }
 }

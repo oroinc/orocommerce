@@ -73,13 +73,13 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
 
         $customerTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_customer_tax_code_view', [
             'id' => $customerTaxCode->getId(),
         ]);
 
-        $this->assertContains($customerTaxCodeLink, $html);
+        static::assertStringContainsString($customerTaxCodeLink, $html);
     }
 
     /**
@@ -99,7 +99,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
-        $this->assertContains(self::CUSTOMER_NAME, $grid);
+        static::assertStringContainsString(self::CUSTOMER_NAME, $grid);
     }
 
     /**
@@ -181,8 +181,8 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_2);
 
-        $this->assertContains($customerTaxCode->getCode(), $html);
-        $this->assertContains('(Defined for Customer Group)', $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString('(Defined for Customer Group)', $html);
     }
 
     /**
@@ -212,7 +212,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer has been saved', $html);
+        static::assertStringContainsString('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating, $customerTaxCode);
     }
 
@@ -233,11 +233,11 @@ class CustomerControllerTest extends WebTestCase
         CustomerTaxCode $customerTaxCode
     ) {
         $groupName = $group->getName();
-        $this->assertContains($name, $html);
-        $this->assertContains($parent->getName(), $html);
-        $this->assertContains($groupName, $html);
-        $this->assertContains($internalRating->getName(), $html);
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        static::assertStringContainsString($name, $html);
+        static::assertStringContainsString($parent->getName(), $html);
+        static::assertStringContainsString($groupName, $html);
+        static::assertStringContainsString($internalRating->getName(), $html);
+        static::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
 
     /**

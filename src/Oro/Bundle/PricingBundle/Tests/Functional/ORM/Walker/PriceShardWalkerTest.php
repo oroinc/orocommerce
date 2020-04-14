@@ -50,9 +50,9 @@ DQL;
         $this->getContainer()->get('oro_pricing.shard_manager')->setEnableSharding(true);
         $this->getContainer()->get('oro_entity.query_hint_resolver')->resolveHints($query, ['HINT_PRICE_SHARD']);
         $sql = $query->getSQL();
-        $this->assertContains(' oro_price_product_1 ', $sql);
-        $this->assertContains(' oro_price_product_2 ', $sql);
-        $this->assertNotContains(' oro_price_product ', $sql);
+        static::assertStringContainsString(' oro_price_product_1 ', $sql);
+        static::assertStringContainsString(' oro_price_product_2 ', $sql);
+        static::assertStringNotContainsString(' oro_price_product ', $sql);
     }
 
     public function testWalkSelectStatementLevel1()
@@ -73,7 +73,7 @@ DQL;
 
         $this->getContainer()->get('oro_entity.query_hint_resolver')->resolveHints($query, ['HINT_PRICE_SHARD']);
         $sql = $query->getSQL();
-        $this->assertContains(' oro_price_product_1 ', $sql);
-        $this->assertNotContains(' oro_price_product ', $sql);
+        static::assertStringContainsString(' oro_price_product_1 ', $sql);
+        static::assertStringNotContainsString(' oro_price_product ', $sql);
     }
 }

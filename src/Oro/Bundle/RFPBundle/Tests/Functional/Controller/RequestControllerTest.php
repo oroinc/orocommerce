@@ -29,7 +29,7 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('rfp-requests-grid', $crawler->html());
+        static::assertStringContainsString('rfp-requests-grid', $crawler->html());
 
         $this->assertContainsRequestData(
             LoadRequestData::FIRST_NAME,
@@ -57,7 +57,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(
+        static::assertStringContainsString(
             sprintf('%s %s - Requests For Quote - Sales', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
             $result->getContent()
         );
@@ -106,7 +106,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData(
             $updatedFirstName,
@@ -117,9 +117,18 @@ class RequestControllerTest extends WebTestCase
             $result->getContent()
         );
 
-        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::USER1)->getFullName(),
+            $result->getContent()
+        );
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(),
+            $result->getContent()
+        );
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(),
+            $result->getContent()
+        );
     }
 
     /**
@@ -132,11 +141,11 @@ class RequestControllerTest extends WebTestCase
      */
     protected function assertContainsRequestData($firstName, $lastName, $email, $poNumber, $date, $html)
     {
-        $this->assertContains($firstName, $html);
-        $this->assertContains($lastName, $html);
-        $this->assertContains($email, $html);
-        $this->assertContains($poNumber, $html);
-        $this->assertContains($date, $html);
+        static::assertStringContainsString($firstName, $html);
+        static::assertStringContainsString($lastName, $html);
+        static::assertStringContainsString($email, $html);
+        static::assertStringContainsString($poNumber, $html);
+        static::assertStringContainsString($date, $html);
     }
 
     /**

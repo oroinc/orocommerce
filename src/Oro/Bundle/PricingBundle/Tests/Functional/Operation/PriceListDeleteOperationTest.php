@@ -31,7 +31,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, Response::HTTP_OK);
-        $this->assertContains('Price List deleted', $crawler->html());
+        static::assertStringContainsString('Price List deleted', $crawler->html());
     }
 
     public function testDeleteDefault()

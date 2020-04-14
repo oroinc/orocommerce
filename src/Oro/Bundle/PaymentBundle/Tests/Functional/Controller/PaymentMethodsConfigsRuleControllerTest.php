@@ -50,7 +50,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_payment_methods_configs_rule_index'));
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('payment-methods-configs-rule-grid', $crawler->html());
+        static::assertStringContainsString('payment-methods-configs-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Payment Rule')->attr('href');
         static::assertEquals($this->getUrl('oro_payment_methods_configs_rule_create'), $href);
 
@@ -181,8 +181,8 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $crawler->html();
 
-        static::assertContains('Payment rule has been saved', $html);
-        static::assertContains('No', $html);
+        static::assertStringContainsString('Payment rule has been saved', $html);
+        static::assertStringContainsString('No', $html);
 
         return $name;
     }
@@ -207,11 +207,11 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $crawler->html();
 
-        static::assertContains($paymentRule->getRule()->getName(), $html);
+        static::assertStringContainsString($paymentRule->getRule()->getName(), $html);
         $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
         $destination = $paymentRule->getDestinations();
-        static::assertContains((string)$destination[0], $html);
-        static::assertContains($this->getReference('payment_term:channel_1')->getName(), $html);
+        static::assertStringContainsString((string)$destination[0], $html);
+        static::assertStringContainsString($this->getReference('payment_term:channel_1')->getName(), $html);
     }
 
     protected function checkCurrenciesOnPage($currency, $html)
@@ -275,7 +275,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $html = $crawler->html();
-        static::assertContains('Payment rule has been saved', $html);
+        static::assertStringContainsString('Payment rule has been saved', $html);
 
         $paymentRule = $this->getPaymentMethodsConfigsRuleByName($newName);
         static::assertEquals($id, $paymentRule->getId());
@@ -321,11 +321,11 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $response->getContent();
 
-        static::assertContains($paymentRule->getRule()->getName(), $html);
+        static::assertStringContainsString($paymentRule->getRule()->getName(), $html);
         $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
         $destination = $paymentRule->getDestinations();
-        static::assertContains((string)$destination[0], $html);
-        static::assertContains($this->getReference('payment_term:channel_1')->getName(), $html);
+        static::assertStringContainsString((string)$destination[0], $html);
+        static::assertStringContainsString($this->getReference('payment_term:channel_1')->getName(), $html);
     }
 
     /**

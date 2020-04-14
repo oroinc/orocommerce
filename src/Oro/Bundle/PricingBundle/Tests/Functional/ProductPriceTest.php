@@ -38,7 +38,7 @@ class ProductPriceTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(
+        static::assertStringContainsString(
             'Product has duplication of product prices. ' .
             'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.',
             $crawler->html()

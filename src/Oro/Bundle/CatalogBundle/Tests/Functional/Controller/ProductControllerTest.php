@@ -74,7 +74,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['sku'], LoadProductData::PRODUCT_9);
+            static::assertStringContainsString($data['sku'], LoadProductData::PRODUCT_9);
         }
     }
 

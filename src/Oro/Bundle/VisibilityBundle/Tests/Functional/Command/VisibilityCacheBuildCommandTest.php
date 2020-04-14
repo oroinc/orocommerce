@@ -49,7 +49,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         // Run command and check result messages
         $result = $this->runCommand(VisibilityCacheBuildCommand::getDefaultName(), $params);
         foreach ($expectedMessages as $message) {
-            $this->assertContains($message, $result);
+            static::assertStringContainsString($message, $result);
         }
 
         // Check that all resolved tables are filled

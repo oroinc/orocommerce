@@ -228,8 +228,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexForContextEntityIds()
@@ -252,7 +252,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexForSpecificWebsiteWithDependentEntities()
@@ -286,14 +286,14 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
 
         $items = $this->getResultItems(['alias' => 'oro_employee_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexForSpecificWebsiteWithCustomBatchSize()
@@ -314,8 +314,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexWithRestriction()
@@ -349,7 +349,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexWithAllRestricted()
@@ -407,14 +407,14 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $otherWebsite->getId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
 
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testWrongMappingException()

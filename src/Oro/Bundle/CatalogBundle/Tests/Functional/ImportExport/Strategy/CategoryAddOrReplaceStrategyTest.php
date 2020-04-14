@@ -168,7 +168,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $category = $this->strategy->process($rootCategory);
 
         $this->assertNull($category);
-        $this->assertContains(
+        static::assertContains(
             'Error in row #0. Skipping category "All Products". Root category cannot have a parent',
             $this->context->getErrors()
         );

@@ -62,7 +62,7 @@ class ProductControllerTest extends ProductHelperTestCase
             static::assertContains($checkbox->attr('value'), $defaultPriceList->getCurrencies());
         }
 
-        static::assertContains(
+        static::assertStringContainsString(
             static::getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
             $crawler->filter('.sidebar-items .show-tier-prices-choice')->html()
         );
@@ -281,7 +281,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         /** @var ProductPrice $price */
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
@@ -324,7 +324,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request(
             'GET',
@@ -488,8 +488,8 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertContains('Export Price Attribute Data', $crawler->html());
-        static::assertContains('Import file', $crawler->html());
+        static::assertStringContainsString('Export Price Attribute Data', $crawler->html());
+        static::assertStringContainsString('Import file', $crawler->html());
     }
 
     /**

@@ -101,7 +101,7 @@ class QuickAddControllerTest extends WebTestCase
             $errorMessage,
             ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
-        $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
+        static::assertStringContainsString($errorMessage, $this->client->getResponse()->getContent());
     }
 
     /**
@@ -147,7 +147,7 @@ class QuickAddControllerTest extends WebTestCase
             ]
         );
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->getUrl('oro_rfp_frontend_request_create'),
             $this->client->getResponse()->headers->get('location')
         );

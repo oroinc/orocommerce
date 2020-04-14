@@ -32,7 +32,7 @@ class ProductActionsTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
         $content = $result->getContent();
-        $this->assertContains('redirectUrl', $content);
+        static::assertStringContainsString('redirectUrl', $content);
 
         $resultData = json_decode($content, true);
         $this->assertArrayHasKey('redirectUrl', $resultData);

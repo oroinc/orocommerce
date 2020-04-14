@@ -37,7 +37,7 @@ class ShoppingListAddButtonTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Shopping List Name', $result->getContent());
+        static::assertStringContainsString('Shopping List Name', $result->getContent());
 
         $form = $crawler->selectButton('Create')->form();
         $form['oro_shopping_list_type[label]'] = 'TestShoppingList';

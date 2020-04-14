@@ -139,8 +139,8 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->compile('');
-        $this->assertContains(PaymentMethodSupports::NAME, $result);
-        $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $result);
-        $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $result);
+        static::assertStringContainsString(PaymentMethodSupports::NAME, $result);
+        static::assertStringContainsString($this->paymentMethod[self::PAYMENT_METHOD_KEY], $result);
+        static::assertStringContainsString($this->paymentMethod[self::ACTION_NAME_KEY], $result);
     }
 }

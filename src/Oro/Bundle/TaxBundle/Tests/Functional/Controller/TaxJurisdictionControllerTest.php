@@ -51,7 +51,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_jurisdiction_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('tax-jurisdiction-grid', $crawler->html());
+        static::assertStringContainsString('tax-jurisdiction-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -124,7 +124,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::CODE_UPDATED . ' - View - Tax Jurisdictions - Taxes', $html);
+        static::assertStringContainsString(self::CODE_UPDATED . ' - View - Tax Jurisdictions - Taxes', $html);
 
         $this->assertViewPage(
             $html,
@@ -178,7 +178,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::SAVE_MESSAGE, $html);
+        static::assertStringContainsString(self::SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description, $countryFull, $stateFull);
     }
 
@@ -228,9 +228,9 @@ class TaxJurisdictionControllerTest extends WebTestCase
      */
     protected function assertViewPage($html, $code, $description, $country, $state)
     {
-        $this->assertContains($code, $html);
-        $this->assertContains($description, $html);
-        $this->assertContains($country, $html);
-        $this->assertContains($state, $html);
+        static::assertStringContainsString($code, $html);
+        static::assertStringContainsString($description, $html);
+        static::assertStringContainsString($country, $html);
+        static::assertStringContainsString($state, $html);
     }
 }

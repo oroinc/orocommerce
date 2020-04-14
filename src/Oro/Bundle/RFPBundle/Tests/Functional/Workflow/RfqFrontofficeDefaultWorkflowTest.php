@@ -147,7 +147,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $this->assertEquals('open', $this->request->getInternalStatus()->getId());
 
         $crawler = $this->openEntityViewPage($this->request);
-        $this->assertContains('customer notes', $crawler->html());
+        static::assertStringContainsString('customer notes', $crawler->html());
     }
 
     /**

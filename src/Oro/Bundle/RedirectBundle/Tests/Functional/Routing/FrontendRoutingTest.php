@@ -37,7 +37,7 @@ class FrontendRoutingTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, 200);
         $pageHtml = $crawler->html();
-        $this->assertContains($page->getContent(), $pageHtml);
+        static::assertStringContainsString($page->getContent(), $pageHtml);
 
         $crawler = $this->client->request(
             'GET',
@@ -47,7 +47,7 @@ class FrontendRoutingTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($result, 200);
         $slugPageHtml = $crawler->html();
 
-        $this->assertContains($page->getContent(), $slugPageHtml);
+        static::assertStringContainsString($page->getContent(), $slugPageHtml);
     }
 
     public function testSlugRoutingAuthentication()

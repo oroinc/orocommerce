@@ -29,26 +29,26 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         //Payment step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPayment($crawler, ExpressCheckoutMethodStub::TYPE);
-        $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         //Submit order
         $form = $crawler->selectButton('Submit Order')->form();
@@ -70,9 +70,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         //Go back to checkout
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
-        $this->assertContains(self::EDIT_BILLING_SIGN, $crawler->html());
-        $this->assertContains(self::EDIT_SHIPPING_INFO_SIGN, $crawler->html());
-        $this->assertContains(self::EDIT_SHIPPING_METHOD_SIGN, $crawler->html());
-        $this->assertContains(self::EDIT_PAYMENT_SIGN, $crawler->html());
+        static::assertStringContainsString(self::EDIT_BILLING_SIGN, $crawler->html());
+        static::assertStringContainsString(self::EDIT_SHIPPING_INFO_SIGN, $crawler->html());
+        static::assertStringContainsString(self::EDIT_SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertStringContainsString(self::EDIT_PAYMENT_SIGN, $crawler->html());
     }
 }

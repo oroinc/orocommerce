@@ -30,7 +30,7 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
     public function assertTitle($title)
     {
         $currentTitleText = $this->getStepTitle();
-        self::assertContains(
+        static::assertStringContainsString(
             $title,
             $currentTitleText,
             sprintf('Current title "%s" does not contain expected "%s" ', $currentTitleText, $title)
@@ -43,7 +43,7 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
     public function assertNotTitle($title)
     {
         $currentTitleText = $this->getStepTitle();
-        self::assertNotContains(
+        static::assertStringNotContainsString(
             $title,
             $currentTitleText,
             sprintf('Current title "%s" was not expected to contain "%s"', $currentTitleText, $title)

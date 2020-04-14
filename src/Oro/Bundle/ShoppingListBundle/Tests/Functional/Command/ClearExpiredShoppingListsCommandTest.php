@@ -22,7 +22,7 @@ class ClearExpiredShoppingListsCommandTest extends WebTestCase
     {
         $result = $this->runCommand(ClearExpiredShoppingListsCommand::getDefaultName());
 
-        $this->assertContains('Clear expired guest shopping lists completed', $result);
+        static::assertStringContainsString('Clear expired guest shopping lists completed', $result);
 
         $customerVisitor = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);
         $this->assertEmpty($customerVisitor->getShoppingLists());

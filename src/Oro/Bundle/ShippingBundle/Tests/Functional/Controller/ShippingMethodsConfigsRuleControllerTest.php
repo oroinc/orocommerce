@@ -113,8 +113,8 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $crawler->html();
 
-        $this->assertContains('Shipping rule has been saved', $html);
-        $this->assertContains('No', $html);
+        static::assertStringContainsString('Shipping rule has been saved', $html);
+        static::assertStringContainsString('No', $html);
 
         return $name;
     }
@@ -131,7 +131,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('shipping-methods-configs-rule-grid', $crawler->html());
+        static::assertStringContainsString('shipping-methods-configs-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Shipping Rule')->attr('href');
         static::assertEquals($this->getUrl('oro_shipping_methods_configs_rule_create'), $href);
 
@@ -237,14 +237,14 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $crawler->html();
 
-        $this->assertContains($shippingRule->getRule()->getName(), $html);
+        static::assertStringContainsString($shippingRule->getRule()->getName(), $html);
         $destination = $shippingRule->getDestinations();
-        $this->assertContains((string)$destination[0], $html);
+        static::assertStringContainsString((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
         $label = $this->shippingMethodProvider
             ->getShippingMethod($methodConfigs[0]->getMethod())
             ->getLabel();
-        $this->assertContains($this->translator->trans($label), $html);
+        static::assertStringContainsString($this->translator->trans($label), $html);
     }
 
     /**
@@ -307,7 +307,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $html = $crawler->html();
-        static::assertContains('Shipping rule has been saved', $html);
+        static::assertStringContainsString('Shipping rule has been saved', $html);
 
         $shippingRule = $this->getShippingMethodsConfigsRuleByName($newName);
         static::assertEquals($id, $shippingRule->getId());
@@ -351,14 +351,14 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $response->getContent();
 
-        static::assertContains($shippingRule->getRule()->getName(), $html);
+        static::assertStringContainsString($shippingRule->getRule()->getName(), $html);
         $destination = $shippingRule->getDestinations();
-        static::assertContains((string)$destination[0], $html);
+        static::assertStringContainsString((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
         $label = $this->shippingMethodProvider
             ->getShippingMethod($methodConfigs[0]->getMethod())
             ->getLabel();
-        static::assertContains($this->translator->trans($label), $html);
+        static::assertStringContainsString($this->translator->trans($label), $html);
     }
 
     /**
@@ -526,7 +526,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('Shipping rule has been saved', $crawler->html());
+        static::assertStringContainsString('Shipping rule has been saved', $crawler->html());
     }
 
     public function testDeleteButtonNotVisible()

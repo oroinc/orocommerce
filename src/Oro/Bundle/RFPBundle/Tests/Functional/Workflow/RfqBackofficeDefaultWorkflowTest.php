@@ -212,11 +212,11 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $form = $button->form(['oro_workflow_transition[notes]' => 'test notes']);
         $this->client->followRedirects(true);
         $this->client->submit($form);
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
 
         // check that notes added and status changed
         $this->assertBackofficeTransition(null, 'more_info_requested', 'submitted', ['Delete']);
-        $this->assertContains('test notes', $this->openRequestPage($this->request)->html());
+        static::assertStringContainsString('test notes', $this->openRequestPage($this->request)->html());
     }
 
     /**
@@ -310,7 +310,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     {
         $crawler = $this->openRequestWorkflowWidget($request);
 
-        $this->assertContains('RFQ Management Flow', $crawler->html());
+        static::assertStringContainsString('RFQ Management Flow', $crawler->html());
         $link = $crawler->selectLink($linkTitle);
         $this->assertNotEmpty($link, 'Transit button not found');
 
@@ -351,7 +351,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $this->assertNotEmpty($crawler->html());
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('RFQ Management Flow', $crawler->html());
+        static::assertStringContainsString('RFQ Management Flow', $crawler->html());
 
         return $crawler;
     }
