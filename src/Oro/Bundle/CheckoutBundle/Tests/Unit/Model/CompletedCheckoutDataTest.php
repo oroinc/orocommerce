@@ -15,7 +15,7 @@ class CompletedCheckoutDataTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('USD', $data->getCurrency());
         $this->assertEquals(42, $data->getItemsCount());
-        $this->assertInternalType('array', $data->getOrderData());
+        $this->assertIsArray($data->getOrderData());
         $this->assertEquals(['entityAlias' => 'test', 'entityId' => 105], $data->getOrderData());
         $this->assertEquals('test string', $data->getStartedFrom());
         $this->assertEquals(100.2, $data->getSubtotal());

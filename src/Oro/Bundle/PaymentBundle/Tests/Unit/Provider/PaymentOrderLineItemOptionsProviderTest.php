@@ -100,7 +100,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $models);
 
         /** @var LineItemOptionModel $model1 */
@@ -140,7 +140,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertEmpty($models);
     }
 
@@ -151,7 +151,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertEmpty($models);
     }
 

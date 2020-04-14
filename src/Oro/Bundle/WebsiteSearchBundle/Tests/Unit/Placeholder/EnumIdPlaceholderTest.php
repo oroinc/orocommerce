@@ -16,7 +16,7 @@ class EnumIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals(EnumIdPlaceholder::NAME, $this->placeholder->getPlaceholder());
     }
 

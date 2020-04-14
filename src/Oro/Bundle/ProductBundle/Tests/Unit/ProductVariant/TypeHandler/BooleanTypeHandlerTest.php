@@ -52,7 +52,7 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
                 $this->assertArrayHasKey('choice_attr', $options);
 
                 $callback = $options['choice_attr'];
-                $this->assertInternalType('callable', $callback);
+                $this->assertIsCallable($callback);
 
                 $this->assertEquals(['disabled' => 'disabled'], $callback(false, 'No', 0));
                 $this->assertEquals([], $callback(true, 'Yes', 1));

@@ -145,7 +145,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         $metadata = $this->productPriceFilter->getMetadata();
 
         $this->assertArrayHasKey('unitChoices', $metadata);
-        $this->assertInternalType('array', $metadata['unitChoices']);
+        $this->assertIsArray($metadata['unitChoices']);
         $this->assertEquals(
             [
                 [

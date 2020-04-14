@@ -81,10 +81,10 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->toArray();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('@' . RequirePaymentRedirect::NAME, $result);
         $resultSection = $result['@' . RequirePaymentRedirect::NAME];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains('payment_method', $resultSection['parameters']);
     }

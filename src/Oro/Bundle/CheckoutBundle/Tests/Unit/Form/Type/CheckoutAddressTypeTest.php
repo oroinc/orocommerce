@@ -75,7 +75,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
     {
         $type = new CheckoutAddressType();
 
-        $this->assertInternalType('string', $type->getParent());
+        $this->assertIsString($type->getParent());
         $this->assertEquals(OrderAddressType::class, $type->getParent());
     }
 

@@ -16,7 +16,7 @@ class CategoryPathPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals(CategoryPathPlaceholder::NAME, $this->placeholder->getPlaceholder());
     }
 

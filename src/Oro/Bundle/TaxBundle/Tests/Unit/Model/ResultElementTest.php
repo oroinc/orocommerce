@@ -66,7 +66,7 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
     {
         $resultElement = $this->createResultElementModel();
         $resultElement->offsetSet('index', BigDecimal::of('2'));
-        $this->assertInternalType('string', $resultElement->getOffset('index'));
+        $this->assertIsString($resultElement->getOffset('index'));
         $this->assertEquals('2', $resultElement->getOffset('index'));
     }
 }

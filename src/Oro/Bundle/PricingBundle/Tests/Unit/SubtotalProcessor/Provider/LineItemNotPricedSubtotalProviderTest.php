@@ -149,7 +149,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($currency, $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, (float)$subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
     }
@@ -240,7 +240,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals(0, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
     }

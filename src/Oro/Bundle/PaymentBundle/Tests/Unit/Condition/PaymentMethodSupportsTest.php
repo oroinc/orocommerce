@@ -126,10 +126,10 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->toArray();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('@' . PaymentMethodSupports::NAME, $result);
         $resultSection = $result['@' . PaymentMethodSupports::NAME];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $resultSection['parameters']);
         $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $resultSection['parameters']);

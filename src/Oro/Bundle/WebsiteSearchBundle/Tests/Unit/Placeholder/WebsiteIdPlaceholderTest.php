@@ -33,7 +33,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('WEBSITE_ID', $this->placeholder->getPlaceholder());
     }
 
@@ -48,7 +48,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
         $value = $this->placeholder->replaceDefault('string_WEBSITE_ID');
 
-        $this->assertInternalType('string', $value);
+        $this->assertIsString($value);
         $this->assertEquals('string_1', $value);
     }
 

@@ -73,7 +73,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(ucfirst(ShippingCostSubtotalProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals(200, $subtotal->getSortOrder());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($costAmount, $subtotal->getAmount());
     }
 }

@@ -36,6 +36,6 @@ abstract class AbstractTaxCalculatorTest extends \PHPUnit\Framework\TestCase
 
     public function testAmountKey()
     {
-        $this->assertInternalType('string', $this->getCalculator()->getAmountKey());
+        $this->assertIsString($this->getCalculator()->getAmountKey());
     }
 }

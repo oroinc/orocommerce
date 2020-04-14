@@ -26,7 +26,7 @@ class OroCatalogBundleTest extends \PHPUnit\Framework\TestCase
             return !in_array($pass, $passesBeforeBuild, true);
         }));
 
-        $this->assertInternalType('array', $passes);
+        $this->assertIsArray($passes);
         $this->assertCount(2, $passes);
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
         $this->assertAttributeEquals(

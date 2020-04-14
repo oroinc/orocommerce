@@ -114,7 +114,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->quoteProductPriceProvider->getTierPrices($quote);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount($tierPricesCount, $result);
     }
 
@@ -168,7 +168,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount($tierPricesCount, $result);
     }
 

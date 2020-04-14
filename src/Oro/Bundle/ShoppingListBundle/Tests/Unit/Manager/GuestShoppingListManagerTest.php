@@ -202,7 +202,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($em);
 
         $result = $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertInstanceOf(ShoppingList::class, $result[0]);
     }
 

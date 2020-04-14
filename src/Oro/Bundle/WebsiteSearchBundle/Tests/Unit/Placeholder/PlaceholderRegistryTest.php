@@ -69,7 +69,7 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->registry->addPlaceholder($placeholder);
         $this->registry->addPlaceholder($placeholder2);
 
-        $this->assertInternalType('array', $this->registry->getPlaceholders());
+        $this->assertIsArray($this->registry->getPlaceholders());
         $this->assertEquals(
             [
                 'TEST_PLACEHOLDER' => $placeholder,

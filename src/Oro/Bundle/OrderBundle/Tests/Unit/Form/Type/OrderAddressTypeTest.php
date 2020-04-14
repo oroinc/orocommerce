@@ -104,7 +104,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     {
         $type = new OrderAddressType($this->orderAddressSecurityProvider);
 
-        $this->assertInternalType('string', $type->getParent());
+        $this->assertIsString($type->getParent());
         $this->assertEquals(AddressFormType::class, $type->getParent());
     }
 

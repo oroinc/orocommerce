@@ -41,7 +41,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
+        $this->assertIsString($this->formType->getName());
         $this->assertEquals('oro_tax_zip_code_type', $this->formType->getName());
     }
 

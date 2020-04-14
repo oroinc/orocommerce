@@ -14,8 +14,8 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
+        $this->assertIsArray($form->getConfig()->getOption('offers'));
+        $this->assertIsArray($form->getConfig()->getOption('choices'));
     }
 
     public function testOffersOption()
@@ -24,9 +24,9 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class, null, ['offers' => $offers]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
+        $this->assertIsArray($form->getConfig()->getOption('offers'));
         $this->assertEquals($offers, $form->getConfig()->getOption('offers'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
+        $this->assertIsArray($form->getConfig()->getOption('choices'));
         $this->assertEquals([0, 1], $form->getConfig()->getOption('choices'));
     }
 
@@ -40,8 +40,8 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class, null, ['offers' => 1]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
-        $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
+        $this->assertIsArray($form->getConfig()->getOption('offers'));
+        $this->assertIsArray($form->getConfig()->getOption('choices'));
     }
 
     public function testFinishView()

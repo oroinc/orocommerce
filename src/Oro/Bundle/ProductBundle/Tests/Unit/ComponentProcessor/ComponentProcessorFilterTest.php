@@ -98,7 +98,7 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 
         $filteredData = $this->filter->filterData($data, $dataParameters);
 
-        $this->assertInternalType('array', $filteredData);
+        $this->assertIsArray($filteredData);
         $this->assertCount(2, $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
         $this->assertEquals(
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][0],

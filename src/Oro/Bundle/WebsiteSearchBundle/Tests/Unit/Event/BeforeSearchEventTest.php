@@ -36,7 +36,7 @@ class BeforeSearchEventTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContext()
     {
-        $this->assertInternalType('array', $this->event->getContext());
+        $this->assertIsArray($this->event->getContext());
         $this->assertSame([], $this->event->getContext());
     }
 }

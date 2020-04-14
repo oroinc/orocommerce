@@ -123,7 +123,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
             $this->serializer
         );
 
-        $this->assertInternalType('string', $type->getParent());
+        $this->assertIsString($type->getParent());
         $this->assertEquals(Select2ChoiceType::class, $type->getParent());
     }
 

@@ -129,7 +129,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertInternalType('string', $this->formType->getParent());
+        $this->assertIsString($this->formType->getParent());
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 

@@ -28,7 +28,7 @@ class BasePriceListTest extends \PHPUnit\Framework\TestCase
     {
         $priceList = $this->createPriceList();
 
-        $this->assertInternalType('array', $priceList->getCurrencies());
+        $this->assertIsArray($priceList->getCurrencies());
         $this->assertCount(0, $priceList->getCurrencies());
 
         $this->assertInstanceOf(

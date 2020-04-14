@@ -18,7 +18,7 @@ class AssignIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('ASSIGN_ID', $this->placeholder->getPlaceholder());
     }
 

@@ -37,7 +37,7 @@ class CategoryVisibilityTest extends \PHPUnit\Framework\TestCase
             CategoryVisibility::getDefault($entity->getCategory())
         );
         $visibilityList = CategoryVisibility::getVisibilityList($category);
-        $this->assertInternalType('array', $visibilityList);
+        $this->assertIsArray($visibilityList);
         $this->assertNotEmpty($visibilityList);
         $this->assertEquals(CategoryVisibility::VISIBILITY_TYPE, CategoryVisibility::getScopeType());
     }

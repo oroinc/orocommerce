@@ -116,7 +116,7 @@ class DiscountsInformationDataProviderTest extends \PHPUnit\Framework\TestCase
     ) {
         $this->assertTrue($result->contains($lineItem));
         $info = $result->get($lineItem);
-        $this->assertInternalType('array', $info);
+        $this->assertIsArray($info);
         $this->assertArrayHasKey('total', $info);
         $this->assertInstanceOf(Price::class, $info['total']);
         $this->assertEquals($currency, $info['total']->getCurrency());

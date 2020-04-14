@@ -107,7 +107,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
-        $this->assertInternalType('array', $totals);
+        $this->assertIsArray($totals);
         $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         $this->assertEquals(
             $totals[TotalProcessorProvider::TYPE],

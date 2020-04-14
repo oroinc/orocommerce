@@ -132,7 +132,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
         $this->assertEquals('Discount', $secondDiscountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());
-        $this->assertInternalType('float', $firstDiscountSubtotal->getAmount());
+        $this->assertIsFloat($firstDiscountSubtotal->getAmount());
         $this->assertEquals(150, $firstDiscountSubtotal->getAmount());
         $this->assertEquals(100, $secondDiscountSubtotal->getAmount());
         $this->assertEquals(100, $threadDiscountSubtotal->getAmount());
@@ -167,7 +167,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($description, $discountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
         $this->assertEquals(50, $discountSubtotal->getSortOrder());
-        $this->assertInternalType('float', $discountSubtotal->getAmount());
+        $this->assertIsFloat($discountSubtotal->getAmount());
         $this->assertEquals(150, $discountSubtotal->getAmount());
     }
 
