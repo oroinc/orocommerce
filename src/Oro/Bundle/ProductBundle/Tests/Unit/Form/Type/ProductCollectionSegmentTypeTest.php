@@ -142,7 +142,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('name'));
         $options = $form->get('name')->getConfig()->getOptions();
         $this->assertSame(true, $options['required']);
-        $this->assertSame([new NotBlank()], $options['constraints']);
+        $this->assertEquals([new NotBlank()], $options['constraints']);
     }
 
     public function testGetBlockPrefix()
