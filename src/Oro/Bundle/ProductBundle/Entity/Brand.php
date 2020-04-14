@@ -63,6 +63,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *      )
  * })
  * @Config(
+ *      routeName="oro_product_brand_index",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-briefcase"

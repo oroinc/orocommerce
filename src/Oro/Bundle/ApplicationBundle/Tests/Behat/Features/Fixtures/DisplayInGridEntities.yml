@@ -1,0 +1,233 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  brand_name:
+    string: 'New Brand'
+  payment_term_label:
+    string: 'New Payment Term'
+  flat_rate_label:
+    string: 'New Flat Rate'
+  consent_name:
+    string: 'New Consent'
+  content_node_title:
+    string: 'New Content Node'
+  page_label:
+    string: 'New Page Label'
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+  web_catalog_entity:
+    name: 'New Web Catalog'
+    description: ''
+    organization: '@organization'
+    owner: '@business_unit'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+  brand_entity:
+    owner: '@business_unit'
+    organization: '@organization'
+    __calls:
+      - addName: ['@brand_name']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision_entity:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  product_name:
+    string: 'New Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product_entity:
+    sku: 'NEW_SKU'
+    primaryUnitPrecision: '@precision_entity'
+    __calls:
+      - addName: ['@product_name']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    owner: '@business_unit'
+    organization: '@organization'
+    attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+  segment_entity:
+    name: 'New Segment'
+    type: '@segment_dynamic_type'
+    entity: 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
+    definition: ''
+    organization: '@organization'
+    owner: '@business_unit'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer_entity:
+    name: 'New Customer'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\WebsiteBundle\Entity\Website:
+  website_entity:
+    name: 'New Website'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  customer_user_entity:
+    email: 'new_customer_user@example.org'
+    username: 'new_customer_user@example.org'
+    password: ''
+    salt: ''
+    firstName: 'New'
+    lastName: 'Customer User'
+    enabled: '1'
+    confirmed: '1'
+    customer: '@customer_entity'
+    organization: '@organization'
+    roles: []
+    owner: '@admin'
+    website: '@website_entity'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+  rule_entity:
+    name: 'New Rule'
+    enabled: true
+    sortOrder: 1
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+  payment_term_entity:
+    label: New Payment Term
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
+  payment_term_settings_entity:
+    __calls:
+      - addLabel: ['@payment_term_label']
+      - addShortLabel: ['@payment_term_label']
+    channel: '@payment_term_channel_entity'
+
+Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
+  flat_rate_settings_entity:
+    __calls:
+      - addLabel: ['@flat_rate_label']
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+  payment_term_channel_entity:
+    type: 'payment_term'
+    name: 'New Payment Term Channel'
+    enabled: true
+    organization: '@organization'
+    transport: '@payment_term_settings_entity'
+  flat_rate_channel_entity:
+    type: 'flat_rate'
+    name: 'New Flat Rate Channel'
+    enabled: true
+    organization: '@organization'
+    transport: '@flat_rate_settings_entity'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+  payment_method_config_entity:
+    type: '<("payment_term_".@payment_term_channel_entity->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+  payment_methods_configs_rule_entity:
+    rule: '@rule_entity'
+    methodConfigs: ['@payment_method_config_entity']
+    currency: 'USD'
+    organization: '@organization'
+
+Oro\Bundle\RFPBundle\Entity\Request:
+  request_entity:
+    po_number: '0000001'
+    first_name: 'New'
+    last_name: 'Request'
+    email: 'new_request@example.org'
+    company: 'Company A'
+    organization: '@organization'
+    owner: '@admin'
+    customer_user: '@customer_user_entity'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+  order_entity:
+    organization: '@organization'
+    owner: '@admin'
+    customer: '@customer_entity'
+    customerUser: '@customer_user_entity'
+    identifier: 'NewOrder'
+    website: '@website_entity'
+    currency: 'USD'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+  page_entity:
+    __calls:
+      - addTitle: ['@page_label']
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+  content_variant_entity:
+    type: 'cms_page'
+    cmsPage: '@page_entity'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+  content_node_entity:
+    __calls:
+      - addTitle: ['@content_node_title']
+      - addContentVariant: ['@content_variant_entity']
+    webCatalog: '@web_catalog_entity'
+
+Oro\Bundle\ConsentBundle\Entity\Consent:
+  consent_entity:
+    __calls:
+      - addName: ['@consent_name']
+    contentNode: '@content_node_entity'
+    organization: '@organization'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+  quote_entity:
+    organization: '@organization'
+    owner: '@admin'
+    customerUser: '@customer_user_entity'
+    poNumber: 'PO1'
+    qid: '1'
+    website: '@website_entity'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  shoppinglist_entity:
+    label: 'New ShoppingList'
+    customerUser: '@customer_user_entity'
+    organization: '@organization'
+    website: '@website_entity'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+  discount_configuration_entity:
+    type: 'line_item'
+    options:
+      discount_type: 'amount'
+      discount_currency: 'USD'
+      discount_product_unit_code: 'item'
+      discount_value: 1
+      apply_to: 'each_item'
+      maximum_qty: 100
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+  promotion_entity:
+    __calls:
+      - addScope: ['@default_scope']
+    rule: '@rule_entity'
+    productsSegment: '@segment_entity'
+    discountConfiguration: '@discount_configuration_entity'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+  shipping_method_type_config_entity:
+    type: 'primary'
+    enabled: true
+    options:
+      price: 1.5
+      type: 'per_order'
+      handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+  shipping_method_config_entity:
+    method: '<("flat_rate_".@flat_rate_channel_entity->getId())>'
+    typeConfigs: ['@shipping_method_type_config_entity']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+  shippingMethodsConfigsRule:
+    rule: '@rule_entity'
+    methodConfigs: ['@shipping_method_config_entity']
+    currency: 'USD'
+    organization: '@organization'

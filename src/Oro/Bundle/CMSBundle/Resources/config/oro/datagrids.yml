@@ -38,6 +38,7 @@ datagrids:
                     data_name: title
 
     cms-login-page-grid:
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\LoginPage'
         acl_resource: oro_cms_loginpage_view
         options:
             entity_pagination: true
@@ -67,7 +68,7 @@ datagrids:
                 acl_resource:  oro_cms_loginpage_view
                 rowAction:     true
 
-    cms-page-grid:
+    base-cms-page-grid:
         acl_resource: oro_cms_page_view
         options:
             entity_pagination: true
@@ -116,7 +117,11 @@ datagrids:
                     type: string
                     data_name: title
 
-    cms-content-block-grid:
+    cms-page-grid:
+        extends: base-cms-page-grid
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\Page'
+
+    base-cms-content-block-grid:
         acl_resource: oro_cms_content_block_view
         options:
             entityHint: oro.cms.contentblock.entity_plural_label
@@ -202,6 +207,10 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_cms_content_block_view
                 rowAction:     true
+
+    cms-content-block-grid:
+        extends: base-cms-content-block-grid
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\ContentBlock'
 
     cms-content-widget-grid:
         source:
@@ -312,7 +321,7 @@ datagrids:
                 - contentWidgetTypes
 
     cms-content-widget-pages-grid:
-        extends: cms-page-grid
+        extends: base-cms-page-grid
         source:
             query:
                 join:
@@ -326,7 +335,7 @@ datagrids:
                 - content_widget_id
 
     cms-content-widget-content-blocks-grid:
-        extends: cms-content-block-grid
+        extends: base-cms-content-block-grid
         source:
             query:
                 join:
@@ -357,7 +366,7 @@ datagrids:
                     enabled: false
 
     cms-page-drafts-grid:
-        extends: cms-page-grid
+        extends: base-cms-page-grid
         source:
             query:
                 select:
