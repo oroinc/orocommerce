@@ -131,22 +131,18 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithWrongEntity()
     {
+        $this->expectException(\RuntimeException::class);
         $this->appliedDiscountsProvider->expects($this->never())
             ->method('getDiscountsAmountByOrder');
 
         $this->provider->getCachedSubtotal(new \stdClass());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithoutId()
     {
+        $this->expectException(\RuntimeException::class);
         $order = new Order();
 
         $this->appliedDiscountsProvider->expects($this->never())

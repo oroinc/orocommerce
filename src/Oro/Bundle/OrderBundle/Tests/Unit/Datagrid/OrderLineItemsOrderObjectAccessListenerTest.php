@@ -58,11 +58,9 @@ class OrderLineItemsOrderObjectAccessListenerTest extends \PHPUnit\Framework\Tes
         $this->listener->onBuildBefore($this->event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testOnBuildBeforeWhenAccessIsNotGranted()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);

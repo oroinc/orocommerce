@@ -88,13 +88,13 @@ class PricesStrategyPassTest extends \PHPUnit\Framework\TestCase
         $this->compilerPass->process($this->containerBuilder);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Attribute "alias" is missing for "oro_pricing.price_strategy" tag at
-     * "service.name.1" service
-     */
     public function testProcessTypeIsMissing()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Attribute "alias" is missing for "oro_pricing.price_strategy" tag at "service.name.1" service'
+        );
+
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')

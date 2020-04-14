@@ -28,12 +28,11 @@ class CheckoutShipUntilTypeTest extends FormIntegrationTestCase
         $this->assertSame('0', $form->getConfig()->getOption('minDate'));
     }
 
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
-     * @expectedExceptionMessage The option "checkout" with value stdClass is invalid.
-     */
     public function testRequiredOption()
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectExceptionMessage('The option "checkout" with value stdClass is invalid.');
+
         $this->factory->create(CheckoutShipUntilType::class, new \DateTime(), ['checkout' => new \stdClass()]);
     }
 }

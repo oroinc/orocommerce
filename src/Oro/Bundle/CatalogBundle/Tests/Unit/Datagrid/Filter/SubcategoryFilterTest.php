@@ -59,12 +59,11 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
         $this->filter->getForm();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Invalid filter datasource adapter provided
-     */
     public function testApplyExceptionForWrongFilterDatasourceAdapter()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid filter datasource adapter provided');
+
         /** @var FilterDatasourceAdapterInterface $datasource */
         $datasource = $this->createMock(FilterDatasourceAdapterInterface::class);
 

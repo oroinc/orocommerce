@@ -44,12 +44,13 @@ class CompletedCheckoutDataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data, $newData);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage You cannot deserialize CompletedCheckoutData from anything, except array or null
-     */
     public function testJsonDeserializeException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'You cannot deserialize CompletedCheckoutData from anything, except array or null'
+        );
+
         CompletedCheckoutData::jsonDeserialize(new \stdClass());
     }
 

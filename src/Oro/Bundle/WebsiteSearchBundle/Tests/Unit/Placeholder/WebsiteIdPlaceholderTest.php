@@ -52,12 +52,11 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('string_1', $value);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Current website is not defined.
-     */
     public function testReplaceWithoutWebsiteId()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Current website is not defined.');
+
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn(null);

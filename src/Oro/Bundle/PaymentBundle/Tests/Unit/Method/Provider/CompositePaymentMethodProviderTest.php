@@ -80,12 +80,10 @@ class CompositePaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp  /There is no payment method for "\w+" identifier/
-     */
     public function testGetPaymentMethodExceptionTriggered()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/There is no payment method for "\w+" identifier/');#z
         $this->compositeProvider->getPaymentMethod(self::WRONG_IDENTIFIER);
     }
 

@@ -93,12 +93,11 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current cpl
-     */
     public function testReplaceDefaultCplNotFound()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current cpl");
+
         $user = new CustomerUser();
         $customer = new Customer();
         $user->setCustomer($customer);

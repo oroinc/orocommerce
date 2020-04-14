@@ -52,12 +52,11 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Missing "method_identifier" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "method_identifier" option');
+
         $this->assertInstanceOf(
             ShippingMethodHasShippingRules::class,
             $this->shippingMethodHasShippingRulesCondition->initialize([])

@@ -104,11 +104,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         return [[1], [null]];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutPermission()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(true);
@@ -120,11 +118,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->createForShoppingList(new ShoppingList());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutUser()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(false);

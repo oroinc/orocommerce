@@ -316,12 +316,11 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $property->setValue($this->extension, $offers);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "Oro\Bundle\OrderBundle\Form\Section\SectionProvider" expected, "NULL" given
-     */
     public function testSectionProviderInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"Oro\Bundle\OrderBundle\Form\Section\SectionProvider" expected, "NULL" given');
+
         $extension = new OrderLineItemDataStorageExtension(
             $this->requestStack,
             $this->sessionStorage,

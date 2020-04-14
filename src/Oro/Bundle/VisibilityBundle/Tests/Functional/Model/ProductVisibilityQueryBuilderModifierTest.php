@@ -170,7 +170,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::productConfigPath not configured', get_class($this->modifier));
-        $this->expectException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage($message);
         $this->modifier->modify($queryBuilder);
     }
@@ -183,7 +183,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::categoryConfigPath not configured', get_class($this->modifier));
-        $this->expectException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage($message);
         $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->modify($queryBuilder);

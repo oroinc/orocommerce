@@ -75,12 +75,11 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage TaxTransformerInterface is missing for stdClass
-     */
     public function testTransformerNotFound()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('TaxTransformerInterface is missing for stdClass');
+
         $taxable = new Taxable();
         $taxable->setClassName('stdClass');
         $this->factory->expects($this->once())->method('create')->willReturn($taxable);
@@ -511,11 +510,9 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($taxValue, $this->manager->createTaxValue($objectToTax));
     }
 
-    /**
-     * @expectedException \Oro\Bundle\TaxBundle\Exception\TaxationDisabledException
-     */
     public function testExceptionWhenTaxationDisabled()
     {
+        $this->expectException(\Oro\Bundle\TaxBundle\Exception\TaxationDisabledException::class);
         $this->taxationEnabled = false;
 
         $this->manager->getTax(new \stdClass());

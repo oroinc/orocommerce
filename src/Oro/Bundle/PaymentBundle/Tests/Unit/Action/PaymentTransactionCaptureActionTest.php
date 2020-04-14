@@ -131,12 +131,12 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
     /**
      * @param array $options
      *
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
      *
      * @dataProvider executeWrongOptionsDataProvider
      */
     public function testExecuteWrongOptions($options)
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException::class);
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('testPaymentMethodType');
 

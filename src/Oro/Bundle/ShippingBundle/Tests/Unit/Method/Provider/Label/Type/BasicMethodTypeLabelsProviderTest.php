@@ -68,12 +68,11 @@ class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->getLabels($methodId, [$typeId1, $typeId2]);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Shipping method with identifier: method_id, does not exist.
-     */
     public function testGetLabelsNoMethod()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Shipping method with identifier: method_id, does not exist.');
+
         $methodId = 'method_id';
 
         $this->methodProvider->expects(static::once())

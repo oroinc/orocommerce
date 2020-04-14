@@ -124,13 +124,15 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     }
 
     //@codingStandardsIgnoreStart
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily", "stdClass" given
-     */
     //@codingStandardsIgnoreEnd
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Entity must be instance of "%s", "stdClass" given',
+            AttributeFamily::class
+        ));
+
         $this->validator->validate(new \stdClass(), new AttributeFamilyUsageInVariantField());
     }
 

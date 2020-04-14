@@ -144,11 +144,9 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @expectedException \Oro\Component\Exception\UnexpectedTypeException
-     */
     public function testOnProductViewException()
     {
+        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
         /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(BeforeListRenderEvent::class);
         $event->expects($this->once())

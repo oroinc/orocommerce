@@ -40,21 +40,19 @@ class ShardManagerTest extends WebTestCase
         $this->assertSame('oro_price_product_1', $actual);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Required attribute 'priceList' for generation of shard name missing.
-     */
     public function testGetShardNameExceptionWhenParamMissing()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Required attribute 'priceList' for generation of shard name missing.");
+
         $this->manager->getEnabledShardName(ProductPrice::class, []);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Wrong type of 'priceList' to generate shard name.
-     */
     public function testGetShardNameExceptionWhenParamNotValid()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Wrong type of 'priceList' to generate shard name.");
+
         $this->manager->getEnabledShardName(ProductPrice::class, ['priceList' => new \stdClass()]);
     }
 

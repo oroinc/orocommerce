@@ -39,12 +39,11 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([OrderType::class], OrderPaymentTermAclExtension::getExtendedTypes());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage ACL resource not configured
-     */
     public function testBuildWithoutAclResource()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('ACL resource not configured');
+
         $this->extension->setAclResource(null);
         $builder = $this->createMock(FormBuilderInterface::class);
 

@@ -48,12 +48,13 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         unset($this->service, $this->context);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
         $this->service->validate(new \stdClass(), new ProductVariantLinks());
     }
 

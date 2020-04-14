@@ -52,12 +52,13 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\Tes
         $this->assertSame($knownTypeHandler, $actualType);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value handler "unknown" for variant field was not found. Known types: type1, type2
-     */
     public function testGetVariantTypeHandlerWithUnknownType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Value handler "unknown" for variant field was not found. Known types: type1, type2'
+        );
+
         $knownTypeHandler1 = $this->createHandler('type1');
         $knownTypeHandler2 = $this->createHandler('type2');
         $this->registry->addHandler($knownTypeHandler1);

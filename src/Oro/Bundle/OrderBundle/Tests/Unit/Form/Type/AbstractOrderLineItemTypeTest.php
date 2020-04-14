@@ -70,12 +70,11 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage SectionProvider not injected
-     */
     public function testSettingsProviderMissing()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('SectionProvider not injected');
+
         $formType = $this->getFormType();
 
         $view = new FormView();

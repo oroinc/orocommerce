@@ -54,12 +54,13 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array or (\Traversable and \ArrayAccess)", "stdClass" given
-     */
     public function testPreSetDataInvalid()
     {
+        $this->expectException(\Symfony\Component\Form\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "array or (\Traversable and \ArrayAccess)", "stdClass" given'
+        );
+
         /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 

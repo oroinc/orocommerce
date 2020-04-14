@@ -37,12 +37,11 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         unset($this->listener, $this->paymentTermProvider);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser must belong to Customer
-     */
     public function testThrowExceptionWhenCustomerUserHasWrongCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser must belong to Customer');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
@@ -75,12 +74,11 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onOrderEvent($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser without Customer is not allowed
-     */
     public function testCustomerUserWithoutOrderCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser without Customer is not allowed');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
@@ -97,12 +95,11 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onOrderEvent($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser without Customer is not allowed
-     */
     public function testCustomerUserWithoutCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser without Customer is not allowed');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 

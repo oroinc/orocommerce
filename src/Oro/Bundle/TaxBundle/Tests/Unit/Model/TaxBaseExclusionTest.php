@@ -44,12 +44,11 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Option values is "val", one of "destination,shipping_origin" allowed
-     */
     public function testAddInvalidOptionSetter()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Option values is "val", one of "destination,shipping_origin" allowed');
+
         $this->createModel()->setOption('val');
     }
 

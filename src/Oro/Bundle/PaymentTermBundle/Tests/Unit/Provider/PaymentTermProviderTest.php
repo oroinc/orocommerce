@@ -260,12 +260,11 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($paymentTerm, $this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Object expected, "array" given
-     */
     public function testGetObjectPaymentTermNotAnObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Object expected, "array" given');
+
         $this->provider->getObjectPaymentTerm([]);
     }
 

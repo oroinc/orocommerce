@@ -95,12 +95,11 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($transaction->isActive());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unsupported action "wrong_action"
-     */
     public function testExecuteException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported action "wrong_action"');
+
         $transaction = new PaymentTransaction();
         $transaction->setAction('wrong_action');
 

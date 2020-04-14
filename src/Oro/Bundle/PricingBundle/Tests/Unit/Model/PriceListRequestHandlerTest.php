@@ -161,12 +161,11 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($priceList, $handler->getPriceList());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Default PriceList not found
-     */
     public function testDefaultPriceListNotFound()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Default PriceList not found');
+
         $this->initEm();
         $this->repository->expects($this->once())->method('getDefault')->willReturn(null);
         $this->repository->expects($this->never())->method('find');

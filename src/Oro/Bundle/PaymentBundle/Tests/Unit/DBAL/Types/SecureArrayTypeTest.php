@@ -30,12 +30,11 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
         $this->crypter = new DefaultCrypter('key');
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Crypter is not set
-     */
     public function testMcryptMissingError()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Crypter is not set');
+
         $platform = new DatabasePlatformMock();
 
         $this->type->convertToPHPValue('encoded_string', $platform);

@@ -26,12 +26,11 @@ class RequestRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($request, $this->registry->getRequest('X'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Request with type "X" is missing. Registered requests are ""
-     */
     public function testGetInvalidRequest()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Request with type "X" is missing. Registered requests are ""');
+
         $this->registry->getRequest('X');
     }
 

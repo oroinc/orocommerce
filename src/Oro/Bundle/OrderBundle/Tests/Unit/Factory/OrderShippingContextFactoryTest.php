@@ -190,11 +190,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->assertNull($this->factory->create(new Order()));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnsupportedEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->factory->create(new \stdClass());
     }
 

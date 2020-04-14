@@ -45,11 +45,9 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         return parent::createContext();
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testWithInvalidConstraint()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(new Order(), $this->createMock(Constraint::class));
     }
 

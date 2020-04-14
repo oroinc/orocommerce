@@ -20,12 +20,11 @@ class ProductsChangeRelationEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([$product1, $product2], $event->getProducts());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage At least one product must be passed
-     */
     public function testNoProductsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('At least one product must be passed');
+
         new ProductsChangeRelationEvent([]);
     }
 }

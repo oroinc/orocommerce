@@ -58,14 +58,13 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Object "stdClass" must implement interface "Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface"
-     */
-    // @codingStandardsIgnoreEnd
     public function testGetPaymentMethodWidgetNameEmpty()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Object "stdClass" must implement interface "Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface"'
+        );
+
         $entity = new \stdClass();
         $prefix = 'test_prefix';
 

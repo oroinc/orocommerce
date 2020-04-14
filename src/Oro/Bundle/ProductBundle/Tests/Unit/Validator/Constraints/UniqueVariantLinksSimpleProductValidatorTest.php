@@ -63,12 +63,13 @@ class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
         $this->uniqueVariantLinksSimpleProductValidator->validate(
             new \stdClass(),
             new UniqueVariantLinksSimpleProduct()

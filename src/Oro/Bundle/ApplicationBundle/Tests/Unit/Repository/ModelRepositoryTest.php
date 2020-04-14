@@ -8,6 +8,7 @@ use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
 use Oro\Bundle\ApplicationBundle\Repository\ModelRepository;
+use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestCustomModel;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestMultiEntityModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -239,10 +240,10 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
      * @param string $entityClass
      * @param string $expectedException
      * @dataProvider constructExceptionsDataProvider
-     * @expectedException \LogicException
      */
     public function testConstructExceptions($modelClass, $entityClass, $expectedException)
     {
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage($expectedException);
 
         new ModelRepository(
@@ -279,13 +280,16 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
     }
 
     //@codingStandardsIgnoreStart
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Default repository can create only instances of AbstractModel. You have to create custom repository for model "Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestCustomModel".
-     */
     //@codingStandardsIgnoreEnd
     public function testFindNotAbstractEntity()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Default repository can create only instances of AbstractModel.'
+            . ' You have to create custom repository for model "%s".',
+            TestCustomModel::class
+        ));
+
         $identifier = 1;
         $entity = new \DateTime();
 
@@ -311,13 +315,14 @@ class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
     }
 
     //@codingStandardsIgnoreStart
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Object manager for class "Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestEntity" is not defined
-     */
     //@codingStandardsIgnoreEnd
     public function testFindNoObjectManager()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'Object manager for class "Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestEntity" is not defined'
+        );
+
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)

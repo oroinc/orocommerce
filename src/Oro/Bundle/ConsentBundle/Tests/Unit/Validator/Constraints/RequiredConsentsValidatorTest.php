@@ -69,12 +69,11 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Incorrect type of the value!
-     */
     public function testIncorrectTypeValidateValue()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Incorrect type of the value!');
+
         $this->validator->validate('', $this->constraint);
     }
 

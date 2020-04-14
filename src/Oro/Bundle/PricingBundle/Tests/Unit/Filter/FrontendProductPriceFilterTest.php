@@ -82,12 +82,11 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Invalid filter datasource adapter provided
-     */
     public function testThrowsExceptionForWrongFilterDatasourceAdapter()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid filter datasource adapter provided');
+
         $ds = $this->createMock(FilterDatasourceAdapterInterface::class);
         $this->filter->apply(
             $ds,

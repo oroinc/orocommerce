@@ -417,22 +417,20 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->assertContains('Reindexed product', $items[1]->getTitle());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no such entity in mapping config.
-     */
     public function testWrongMappingException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('There is no such entity in mapping config.');
+
         $this->setClassSupportedExpectation('stdClass', false);
         $this->indexer->reindex(\stdClass::class, []);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no such entity in mapping config.
-     */
     public function testSaveForNotSupportedEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('There is no such entity in mapping config.');
+
         $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -531,12 +529,11 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->assertItemsCount(4);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Entity ids passed into context. Please provide single class of entity
-     */
     public function testReindexException()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Entity ids passed into context. Please provide single class of entity');
+
         $this->indexer->reindex(
             ['class1', 'class2'],
             [

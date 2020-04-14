@@ -37,12 +37,13 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new PlaceholderProvider($this->placeholder, $this->mappingProvider);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot find name field for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct class
-     */
     public function testGetPlaceholderFieldNameWhenFieldNotExists()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Cannot find name field for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct class'
+        );
+
         $this->mappingProvider
             ->expects($this->once())
             ->method('getEntityMapParameter')

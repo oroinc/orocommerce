@@ -45,12 +45,13 @@ class WebsiteSearchMappingProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The search alias for the entity "Oro\TestBundle\Entity\UnknownEntity" not found.
-     */
     public function testGetEntityAliasesForUnknownEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The search alias for the entity "Oro\TestBundle\Entity\UnknownEntity" not found.'
+        );
+
         $this->getProvider()->getEntityAliases(
             ['Oro\TestBundle\Entity\TestEntity', 'Oro\TestBundle\Entity\UnknownEntity']
         );

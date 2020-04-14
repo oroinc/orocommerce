@@ -47,12 +47,11 @@ class TaxFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($taxable, $anotherTaxable);
     }
 
-    /**
-     * @expectedException \Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException
-     * @expectedExceptionMessage Can't find Tax Mapper for object "stdClass"
-     */
     public function testCreateThrowExceptionWithoutMapper()
     {
+        $this->expectException(\Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException::class);
+        $this->expectExceptionMessage('Can\'t find Tax Mapper for object "stdClass"');
+
         $this->factory->create(new \stdClass());
     }
 

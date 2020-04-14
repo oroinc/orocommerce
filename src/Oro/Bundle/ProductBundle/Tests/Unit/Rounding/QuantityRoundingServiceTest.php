@@ -19,11 +19,9 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
         return new QuantityRoundingService($this->configManager);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testDefaultPrecision()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->service->round(15.1);
     }
 

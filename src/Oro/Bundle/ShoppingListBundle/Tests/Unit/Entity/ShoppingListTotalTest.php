@@ -29,11 +29,9 @@ class ShoppingListTotalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(125.0, $instance->getSubtotal()->getAmount());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testExceptionWhenDifferentSubtotalValue()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $shoppingList = new ShoppingList();
         $instance = new ShoppingListTotal($shoppingList, 'USD');
         $subtotal = (new Subtotal())->setCurrency('EUR')->setAmount(125);

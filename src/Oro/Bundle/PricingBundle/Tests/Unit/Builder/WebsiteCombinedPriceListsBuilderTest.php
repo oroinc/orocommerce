@@ -63,12 +63,11 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $this->builder->setFallbackClassName($this->fallbackClass);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage test exception
-     */
     public function testBuildWithException()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('test exception');
+
         $website = new Website();
         $this->priceListToEntityRepository
             ->expects($this->once())

@@ -62,12 +62,11 @@ class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
         $this->priceListsFilter->setRegistry($this->registry);
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Parameter relation_class_name is required
-     */
     public function testInitEntityAliasExceptions()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Parameter relation_class_name is required');
+
         $this->priceListsFilter->init('price_list', []);
     }
 

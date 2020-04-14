@@ -303,12 +303,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($website, $shoppingList->getWebsite());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage The customer user does not exist in the security context.
-     */
     public function testCreateWhenNoCustomerUser()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The customer user does not exist in the security context.');
+
         $this->tokenAccessor->expects($this->once())
             ->method('getUser')
             ->willReturn(null);
@@ -400,12 +399,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Can not save not simple product
-     */
     public function testAddLineItemNotAllowedProductType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Can not save not simple product');
+
         $shoppingList = new ShoppingList();
         $lineItem = new LineItem();
         $configurableProduct = new Product();

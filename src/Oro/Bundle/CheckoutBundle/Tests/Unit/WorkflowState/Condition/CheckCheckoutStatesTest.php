@@ -41,12 +41,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "state1" option
-     */
     public function testInitializeWithoutState1()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "state1" option');
+
         $options = [
             'entity' => new \stdClass(),
         ];
@@ -54,12 +53,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "state2" option
-     */
     public function testInitializeWithoutState2()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "state2" option');
+
         $options = [
             'entity' => new \stdClass(),
             'state1' => ['state1'],

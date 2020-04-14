@@ -97,12 +97,11 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     abstract public function restrictionGridDataProvider();
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Search handler is not fully configured
-     */
     public function testAllDependenciesInjectedException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Search handler is not fully configured');
+
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
             Product::class,
             new RequestStack(),

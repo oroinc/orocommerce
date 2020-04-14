@@ -24,19 +24,15 @@ class FallbackProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor->configureOptions($resolver);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testGetCodeThrowsException()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->processor->getCode();
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testGetNameThrowsException()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->processor->getName();
     }
 }

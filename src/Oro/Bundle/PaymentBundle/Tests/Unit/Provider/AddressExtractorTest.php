@@ -58,13 +58,14 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
      * @param mixed $object
      * @param string $property
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Object does not contains billingAddress
      *
      * @dataProvider extractFailedDataProvider
      */
     public function testExtractFailed($object, $property)
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Object does not contains billingAddress');
+
         $this->expectExceptionMessage(sprintf('Object does not contains %s', $property));
         $this->extractor->extractAddress($object, $property);
     }
@@ -90,24 +91,22 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, "stdClass" found
-     */
     public function testWrongType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, "stdClass" found');
+
         $entity = new \stdClass();
         $entity->billingAddress = new \stdClass();
 
         $this->extractor->extractAddress($entity, 'billingAddress');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Object should not be empty
-     */
     public function testNotAnObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Object should not be empty');
+
         $this->extractor->extractAddress(null);
     }
 

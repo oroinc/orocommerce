@@ -166,11 +166,9 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($shippingContextMock, $actualContext);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnsupportedEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->basicQuoteShippingContextFactory->create(new \stdClass());
     }
 

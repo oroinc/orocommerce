@@ -50,12 +50,11 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($placeholder, $retrievedPlaceholder);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder "UNKNOWN_PLACEHOLDER" does not exist.
-     */
     public function testGetPlaceholderUnknownName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Placeholder "UNKNOWN_PLACEHOLDER" does not exist.');
+
         $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
         $this->registry->addPlaceholder($placeholder);
 

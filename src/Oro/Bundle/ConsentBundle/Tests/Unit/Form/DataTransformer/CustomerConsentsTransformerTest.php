@@ -104,13 +104,13 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider reverseTransformInvalidDataProvider
      *
-     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
      *
      * @param string $invalidData
      * @param string $exceptionMessage
      */
     public function testReverseTransformInvalidData($invalidData, $exceptionMessage)
     {
+        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
         $this->dataTransformer->reverseTransform($invalidData);

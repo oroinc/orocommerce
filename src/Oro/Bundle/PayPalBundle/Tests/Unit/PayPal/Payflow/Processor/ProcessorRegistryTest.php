@@ -25,12 +25,11 @@ class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($processor, $this->registry->getProcessor('PayPal'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Processor "not_supported" is missing. Registered processors are ""
-     */
     public function testGetInvalidProcessor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Processor "not_supported" is missing. Registered processors are ""');
+
         $this->registry->getProcessor('not_supported');
     }
 

@@ -83,12 +83,13 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->constraint->getDefaultOption());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
-     */
     public function testNotExpectedValueException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

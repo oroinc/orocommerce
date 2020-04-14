@@ -32,11 +32,9 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
         unset($this->registry, $this->placeholder);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testGetPlaceholderNotIntendedToRun()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->placeholder->getPlaceholder();
     }
 

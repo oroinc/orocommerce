@@ -28,21 +28,19 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
-     */
     public function testGetCustomerAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: billing, shipping');
+
         $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
-     */
     public function testGetCustomerUserAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: billing, shipping');
+
         $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 

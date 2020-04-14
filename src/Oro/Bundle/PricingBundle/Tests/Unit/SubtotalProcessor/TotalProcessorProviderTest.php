@@ -96,11 +96,9 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testGetSubtotalsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->provider->getSubtotals(null);
     }
 
@@ -186,12 +184,11 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage SubtotalAwareInterface" expected, but "stdClass" given
-     */
     public function testProviderIsSubtotalCacheAwareButEntityIsNotShouldFail()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('SubtotalAwareInterface" expected, but "stdClass" given');
+
         /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject $subtotalProvider */
         $subtotalProvider = $this
             ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')

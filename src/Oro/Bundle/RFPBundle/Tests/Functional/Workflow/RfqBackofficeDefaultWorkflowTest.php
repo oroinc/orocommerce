@@ -78,12 +78,11 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         );
     }
 
-    /**
-     * @expectedException \Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
-     * @expectedExceptionMessage Workflow "b2b_rfq_frontoffice_default" not found
-     */
     public function testTransitFrontofficeTransition()
     {
+        $this->expectException(\Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException::class);
+        $this->expectExceptionMessage('Workflow "b2b_rfq_frontoffice_default" not found');
+
         $frontoffice = $this->systemManager->getWorkflow('b2b_rfq_frontoffice_default');
         $item = $frontoffice->getWorkflowItemByEntityId($this->request->getId());
 

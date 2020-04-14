@@ -14,12 +14,11 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered
-     */
     public function testGetIdentifierFailed()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered');
+
         $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1));
     }
 
@@ -34,9 +33,6 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException
-     * @expectedExceptionMessage
-     *
      * @dataProvider identifierDataProvider
      * @param string $identifier
      * @param int $expectedId

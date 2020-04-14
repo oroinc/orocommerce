@@ -24,12 +24,11 @@ class TextSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetSorterStorageFieldType()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getSorterStorageFieldType();
     }
 
@@ -54,12 +53,11 @@ class TextSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetSortableFieldNameException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getSortableFieldName($this->attribute);
     }
 }

@@ -134,12 +134,11 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($transaction->isSuccessful());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unsupported action "wrong_action"
-     */
     public function testExecuteException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported action "wrong_action"');
+
         $transaction = $this->createTransaction('wrong_action');
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
     }

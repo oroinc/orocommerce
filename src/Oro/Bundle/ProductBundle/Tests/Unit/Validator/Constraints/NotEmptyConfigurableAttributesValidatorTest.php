@@ -42,12 +42,13 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         unset($this->validator, $this->context, $this->provider);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), new NotEmptyConfigurableAttributes());
     }
 

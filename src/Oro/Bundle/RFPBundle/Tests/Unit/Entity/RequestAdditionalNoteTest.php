@@ -50,12 +50,11 @@ class RequestAdditionalNoteTest extends AbstractTest
         $this->assertFalse($this->requestAdditionalNote->isTypeAllowed('unknown type'));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Type "unknown type" is not allowed
-     */
     public function testSetTypeWithException()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Type "unknown type" is not allowed');
+
         $this->requestAdditionalNote->setType('unknown type');
     }
 }

@@ -139,23 +139,25 @@ class UpcomingProductProviderTest extends WebTestCase
     }
 
     /**
-     * @expectedException \LogicException
      * @dataProvider hideLabelsProvider
      * @param bool $enabled
      */
     public function testGetAvailabilityDateForNonUpcomingProduct(bool $enabled): void
     {
+        $this->expectException(\LogicException::class);
+
         $this->setHideLabelsPastAvailabilityDateOption($enabled);
         $this->getUpcomingProductProvider()->getAvailabilityDate($this->getReference(LoadProductData::PRODUCT_2));
     }
 
     /**
-     * @expectedException \LogicException
      * @dataProvider hideLabelsProvider
      * @param bool $enabled
      */
     public function testGetAvailabilityDateForNonUpcomingProduct2(bool $enabled): void
     {
+        $this->expectException(\LogicException::class);
+
         $this->setHideLabelsPastAvailabilityDateOption($enabled);
         $this->getUpcomingProductProvider()->getAvailabilityDate($this->getReference(LoadProductData::PRODUCT_6));
     }

@@ -98,12 +98,11 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage PaymentTerm #1 not found
-     */
     public function testGetDeleteMessageTextForDataGridWithoutPaymentTerm()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('PaymentTerm #1 not found');
+
         $this->paymentTermManager->expects($this->once())->method('getReference')->willReturn(null);
 
         $this->extension->getDeleteMessageTextForDataGrid(1);

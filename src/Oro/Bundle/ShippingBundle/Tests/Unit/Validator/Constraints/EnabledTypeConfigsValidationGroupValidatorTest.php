@@ -94,12 +94,13 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit\Framework\
         $this->validator->validate($data, $this->constraint);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array or Traversable and Countable", "string" given
-     */
     public function testUnexpectedValue()
     {
+        $this->expectException(UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "array or Traversable and Countable", "string" given'
+        );
+
         $this->validator->validate('test', $this->constraint);
     }
 

@@ -122,12 +122,13 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($productPrice, $this->constraint);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\BaseProductPrice", "NULL" given
-     */
     public function testNotExpectedValueException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'must be instance of "Oro\Bundle\PricingBundle\Entity\BaseProductPrice", "NULL" given'
+        );
+
         $this->validator->validate(null, $this->constraint);
     }
 

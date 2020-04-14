@@ -41,12 +41,11 @@ class ProductVariantTypeHandlerRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($knownTypeHandler, $actualType);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Handler for type "unknown" was not found. Known types: type1, type2
-     */
     public function testGetVariantTypeHandlerWithUnknownType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Handler for type "unknown" was not found. Known types: type1, type2');
+
         $knownTypeHandler1 = $this->createTypeHandler('type1');
         $knownTypeHandler2= $this->createTypeHandler('type2');
         $this->registry->addHandler($knownTypeHandler1);

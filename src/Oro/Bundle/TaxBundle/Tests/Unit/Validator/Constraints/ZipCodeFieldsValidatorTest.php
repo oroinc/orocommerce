@@ -161,12 +161,13 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate(new ZipCode(), $this->constraint);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
-     */
     public function testValidateWrongEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 }

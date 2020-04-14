@@ -102,12 +102,11 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $transformer->transform($input));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
-     * @expectedExceptionMessage User with email "unknown_email@example.com" does not exist
-     */
     public function testTransformException()
     {
+        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectExceptionMessage('User with email "unknown_email@example.com" does not exist');
+
         $transformer = new UserIdToEmailTransformer($this->createRegistryMock());
         $transformer->transform('unknown_email@example.com');
     }
@@ -154,12 +153,11 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
-     * @expectedExceptionMessage User with ID "100500" does not exist
-     */
     public function testReverseTransformException()
     {
+        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectExceptionMessage('User with ID "100500" does not exist');
+
         $unknownEmailId = 100500;
 
         $transformer = new UserIdToEmailTransformer($this->createRegistryMock());

@@ -248,11 +248,9 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($imageCopy, $productImageCopy->getImage());
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testDuplicateFailed()
     {
+        $this->expectException(\Exception::class);
         $product = (new Product())
             ->setSku(self::PRODUCT_SKU)
             ->setPrimaryUnitPrecision($this->prepareUnitPrecision(

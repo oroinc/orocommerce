@@ -494,12 +494,11 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Missing option "type" for "sku" field
-     */
     public function testGetEntitiesDataConfigMissing()
     {
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Missing option "type" for "sku" field');
+
         $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
 
         $this->eventDispatcher->expects($this->atLeastOnce())->method('dispatch')

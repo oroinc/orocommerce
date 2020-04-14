@@ -29,7 +29,7 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetPaymentMethodView()
     {
         $testView = $this->getTypeMock('test_method_view');
-            
+
         /** @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $viewProvider->expects($this->any())->method('getPaymentMethodView')
@@ -46,12 +46,10 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($paymentMethodView, $testView);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp  /There is no payment method view for "\w+"/
-     */
     public function testGetPaymentMethodViewExceptionTriggered()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/There is no payment method view for "\w+"/');#z
         $registry = new CompositePaymentMethodViewProvider([]);
         $registry->getPaymentMethodView('not_exists_payment_method');
     }

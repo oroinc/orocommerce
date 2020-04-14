@@ -18,12 +18,13 @@ class WYSIWYGFieldsNameValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel supported only, NULL given
-     */
     public function testValidatorArguments(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel supported only, NULL given'
+        );
+
         $constraint = new WYSIWYGFieldsName();
         $validator = new WYSIWYGFieldsNameValidator();
         $validator->validate(null, $constraint);

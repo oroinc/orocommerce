@@ -43,11 +43,9 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInitializeWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertNotInstanceOf(AbstractCondition::class, $this->condition->initialize([]));
     }
 

@@ -41,11 +41,9 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         return new QuantityUnitPrecisionValidator($this->roundingService);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidConstraint()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 

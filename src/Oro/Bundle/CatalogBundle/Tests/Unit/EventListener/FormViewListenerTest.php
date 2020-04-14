@@ -137,11 +137,9 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @expectedException \Oro\Component\Exception\UnexpectedTypeException
-     */
     public function testOnProductViewInvalidEntity()
     {
+        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
         $scrollData = new ScrollData();
 
         $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());

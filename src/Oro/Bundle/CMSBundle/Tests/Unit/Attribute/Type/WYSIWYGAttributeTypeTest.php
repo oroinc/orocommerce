@@ -64,12 +64,11 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetSortableValue()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getAttributeType()->getSortableValue($this->attribute, 'text', $this->localization);
     }
 }

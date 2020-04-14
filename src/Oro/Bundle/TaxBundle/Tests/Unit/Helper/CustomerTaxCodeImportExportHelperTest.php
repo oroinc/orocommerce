@@ -94,11 +94,11 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
-     * @expectedException \Doctrine\ORM\EntityNotFoundException
      * @param array $data
      */
     public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
     {
+        $this->expectException(\Doctrine\ORM\EntityNotFoundException::class);
         $this->doctrineShouldReturnTagsByCode();
         $this->manager->denormalizeCustomerTaxCode($data);
     }

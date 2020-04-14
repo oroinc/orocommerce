@@ -52,12 +52,11 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('string_1', $value);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current localization
-     */
     public function testGetValueWithUnknownLocalization()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current localization");
+
         $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn(null);
