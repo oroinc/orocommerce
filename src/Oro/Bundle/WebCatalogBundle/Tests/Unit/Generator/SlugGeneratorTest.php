@@ -102,21 +102,20 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
         $this->assertCount(1, $contentNode->getLocalizedUrls());
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
@@ -259,20 +258,19 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
@@ -314,20 +312,19 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
@@ -367,21 +364,20 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setSlugPrototype('test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl('/parent/node/test-url')
+            ->setSlugPrototype('test-url')
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText('/parent/node/test-url')];
+        $expectedUrl = (new LocalizedFallbackValue())->setText('/parent/node/test-url');
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
             $this->assertNull($slug->getLocalization());
         }
     }
@@ -443,24 +439,21 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setSlugPrototype('test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-                ->setLocalization($localization)
-        ];
+        $expectedSlug =(new Slug())
+            ->setUrl('/parent/node/test-url')
+            ->setSlugPrototype('test-url')
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope)
+            ->setLocalization($localization);
 
-        $expectedUrls = [
-            (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
-        ];
+        $expectedUrl = (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
