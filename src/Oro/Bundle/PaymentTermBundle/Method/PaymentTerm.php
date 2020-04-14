@@ -5,9 +5,7 @@ namespace Oro\Bundle\PaymentTermBundle\Method;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
-use Oro\Bundle\PaymentBundle\Method\Action\PurchaseActionInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
@@ -17,7 +15,7 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 /**
  * Implements Payment Term payment method
  */
-class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, PurchaseActionInterface
+class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
 {
     use LoggerAwareTrait;
 

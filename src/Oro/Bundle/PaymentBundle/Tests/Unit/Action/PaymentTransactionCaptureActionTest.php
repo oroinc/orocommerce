@@ -4,8 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class PaymentTransactionCaptureActionTest extends AbstractActionTest
@@ -218,7 +218,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ],
         ];
 
-        $paymentMethod = $this->createMock([PaymentMethodInterface::class, CaptureActionInterface::class]);
+        $paymentMethod = $this->createMock(PaymentMethodWithPostponedCaptureInterface::class);
         $paymentMethod->expects($this->once())->method('useSourcePaymentTransaction')->willReturn(true);
         $paymentMethod->expects(static::once())
             ->method('execute')
