@@ -69,8 +69,8 @@ class LineItemOptionsFormatterTest extends TestCase
 
         $this->assertEquals($expected['name'], $actual->getName());
         $this->assertEquals($expected['description'], $actual->getDescription());
-        $this->assertEquals($expected['cost'], round($actual->getCost(), 2), '', 1e-6);
-        $this->assertEquals($expected['qty'], $actual->getQty(), '', 1e-6);
+        $this->assertEqualsWithDelta($expected['cost'], round($actual->getCost(), 2), 1e-6);
+        $this->assertEqualsWithDelta($expected['qty'], $actual->getQty(), 1e-6);
         $this->assertEquals($expected['currency'], $actual->getCurrency());
         $this->assertEquals($expected['unit'], $actual->getUnit());
     }

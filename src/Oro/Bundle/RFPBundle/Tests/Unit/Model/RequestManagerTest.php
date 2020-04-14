@@ -82,8 +82,8 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected->getWebsite(), $actual->getWebsite());
         $this->assertEquals($expected->getCustomer(), $actual->getCustomer());
         $this->assertEquals($expected->getCustomerUser(), $actual->getCustomerUser());
-        $this->assertEquals($expected->getCreatedAt(), $actual->getCreatedAt(), '', 5);
-        $this->assertEquals($expected->getUpdatedAt(), $actual->getUpdatedAt(), '', 5);
+        $this->assertEqualsWithDelta($expected->getCreatedAt(), $actual->getCreatedAt(), 5);
+        $this->assertEqualsWithDelta($expected->getUpdatedAt(), $actual->getUpdatedAt(), 5);
     }
 
     public function testAddProductItemToRequest()
