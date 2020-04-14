@@ -402,10 +402,6 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
                 'precision' => 2,
                 'quantity'  => 5.55
             ],
-            'string quantity' => [
-                'precision' => 2,
-                'quantity'  => '5.55'
-            ]
         ];
     }
 }
