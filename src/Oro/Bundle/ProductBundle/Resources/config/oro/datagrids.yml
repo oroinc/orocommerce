@@ -304,6 +304,7 @@ datagrids:
 
     products-grid:
         extends: products-select-grid-base
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             query:
                 join:
