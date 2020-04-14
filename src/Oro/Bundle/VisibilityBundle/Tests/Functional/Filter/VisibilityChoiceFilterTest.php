@@ -56,7 +56,7 @@ class VisibilityChoiceFilterTest extends WebTestCase
             },
             $result['data']
         );
-        $this->assertEquals($customers, $resultCustomers, '', 0, 10, true);
+        static::assertEqualsCanonicalizing($customers, $resultCustomers);
         $this->assertSame($total, $result['options']['totalRecords']);
     }
 
