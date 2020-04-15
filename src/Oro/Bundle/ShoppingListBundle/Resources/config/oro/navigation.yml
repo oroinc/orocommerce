@@ -15,6 +15,12 @@ navigation:
                 extras:
                     description: 'oro.shoppinglist.menu.shortcut_shopping_list.description'
 
+            frontend_shopping_lists:
+                label:           'oro.shoppinglist.menu.shopping_lists.label'
+                route:           'oro_shopping_list_frontend_index'
+                acl_resource_id: 'oro_shopping_list_frontend_view'
+                position:        45
+
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
                 route:           'oro_shopping_list_frontend_view'
@@ -34,9 +40,15 @@ navigation:
             frontend_menu:
                 children:
                     frontend_shopping_list: ~
+                    oro_customer_menu_customer_user_index:
+                        children:
+                            frontend_shopping_lists: ~
+            oro_customer_menu:
+                children:
+                    frontend_shopping_lists: ~
 
     titles:
         oro_shopping_list_index: ~
         oro_shopping_list_view:  '%label%'
-        # TODO: join this somehow with index
+        oro_shopping_list_frontend_index: ~
         oro_shopping_list_frontend_view:  '%label%'

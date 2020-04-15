@@ -79,6 +79,35 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertStringNotContainsString('Create Order', $crawler->html());
     }
 
+    public function testIndex(): void
+    {
+        $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            )
+        );
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains('my-shopping-lists-grid', $crawler->html());
+
+        $response = $this->client->requestFrontendGrid(
+            'my-shopping-lists-grid',
+            ['my-shopping-lists-grid[customer_user_id]' => $user->getId()],
+            true
+        );
+
+        $data = $this->getJsonResponseContent($response, 200)['data'];
+
+        $this->assertCount(1, $data);
+        $this->assertArrayHasKey('label', $data[0]);
+        $this->assertEquals('shopping_list_customer1_user_basic', $data[0]['label']);
+    }
+
     public function testView(): void
     {
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
