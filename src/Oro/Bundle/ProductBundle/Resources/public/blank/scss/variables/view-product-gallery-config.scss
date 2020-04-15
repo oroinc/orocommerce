@@ -9,6 +9,7 @@ $view-product-gallery-right: 0 !default;
 $view-product-gallery-bottom: 0 !default;
 $view-product-gallery-justify-content: center !default;
 $view-product-gallery-align-items: center !default;
+$view-product-gallery-border: none !default;
 $view-product-gallery-icon: $fa-var-search-plus !default;
 $view-product-gallery-icon-size: 20px !default;
 $view-product-gallery-icon-color: get-color('additional', 'base') !default;
@@ -16,6 +17,7 @@ $view-product-gallery-icon-text-shadow: 0 0 2px get-color('additional', 'dark') 
 $view-product-gallery-hover-icon-size: 50px !default;
 $view-product-gallery-opacity: 0 !default;
 $view-product-gallery-hover-opacity: 1 !default;
+$view-product-gallery-hover-background: rgba(get-color('additional', 'dark'), .6) !default
 $view-product-gallery-width: 50px !default;
 $view-product-gallery-height: 50px !default;
 $view-product-gallery-border-radius: 100% 0 0 0 !default;

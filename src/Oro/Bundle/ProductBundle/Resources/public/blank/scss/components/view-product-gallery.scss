@@ -11,10 +11,11 @@
     color: $view-product-gallery-icon-color;
     font-size: $view-product-gallery-icon-size;
     text-shadow: $view-product-gallery-icon-text-shadow;
+    border: $view-product-gallery-border;
 
     justify-content: $view-product-gallery-justify-content;
     align-items: $view-product-gallery-align-items;
-    
+
     background: $view-product-gallery-background;
     opacity: $view-product-gallery-opacity;
 
@@ -25,9 +26,19 @@
 
     @extend %base-transition;
 
-    &:focus,
-    .product-item__preview:hover > & {
+    &:not(:disabled) {
+        cursor: $btn-cursor;
+    }
+
+    .product-item__preview:hover + &,
+    .product-item__preview:focus + &,
+    &.focus-visible,
+    &:hover {
         opacity: $view-product-gallery-hover-opacity;
+    }
+
+    &:hover {
+        background: $view-product-gallery-hover-background;
     }
 
     &__icon {

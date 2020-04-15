@@ -88,19 +88,19 @@
         {% endfor %}
 
         {% set options = {
+            view: 'orofrontend/js/app/components/popup-gallery-widget',
             galleryImages: galleryImages
         } %}
 
         {% set popupGalleryAttr = {
-            'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
-            'data-page-component-options': options|json_encode,
+            'data-page-component-view': options|json_encode,
             'itemprop': 'productID',
             'content': product.id
         } %}
         <div {{ UI.attributes(popupGalleryAttr) }}>
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
                 {% for productImage in productImages %}
-                    <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
+                    <div class="product-view-media-gallery__image-item" data-trigger-gallery-open tabindex="0">
                         <img class="product-view-media-gallery__image"
                              alt="{{ product.names|localized_value|e }}"
                              data-zoom-image="{{ product_filtered_image(productImage.image, 'product_original') }}"
