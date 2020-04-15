@@ -430,7 +430,7 @@ services:
             - '@oro_product.related_item.related_product.assigner_database_strategy'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct}
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct}
 
     oro_product.api.get.related_product.acl_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemAclCheck
