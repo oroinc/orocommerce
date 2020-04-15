@@ -57,6 +57,11 @@
         },
         'data-layout': 'separate'
     }) %}
+
+    {% do block|merge_context({
+        '__prodactUniqId': 'prodact-'|uniqid,
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block('container_widget') }}
     </div>
@@ -87,16 +92,17 @@
 
     {% if popup_gallery and not isNoImage %}
         {% set options = {
+            view: 'orofrontend/js/app/components/popup-gallery-widget',
             ajaxMode: true,
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: product.name
+            alt: product.name,
+            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ __prodactUniqId ~ '"]'
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-module': "orofrontend/js/app/components/popup-gallery-widget",
-            'data-page-component-options': options|json_encode
+            'data-page-component-view': options|json_encode
         }) %}
     {% endif %}
 
@@ -116,12 +122,15 @@
     {% if not isNoImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
-            'data-trigger-gallery-open': true
+            'data-trigger-gallery-open': '',
+            'data-role': 'data-trigger-gallery-open-' ~ __prodactUniqId,
+            'aria-label': 'oro.product.images.zoom.label'|trans,
+            'type': 'button'
         }) %}
 
-        <div {{ block('block_attributes') }}>
+        <button {{ block('block_attributes') }}>
             <span class="view-product-gallery__icon" aria-hidden="true"></span>
-        </div>
+        </button>
     {% endif %}
 {% endblock %}
 
