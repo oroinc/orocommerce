@@ -8,6 +8,7 @@ oro_behat_extension:
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroWorkflowBundle::FeatureContext
         - OroFormBundle::FormContext
         - OroCheckoutBundle::FeatureContext
