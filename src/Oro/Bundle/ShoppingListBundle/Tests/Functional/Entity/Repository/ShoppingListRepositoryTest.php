@@ -251,6 +251,29 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertNotProxyOrInitialized($category->getIsUpcoming(), EntityFieldFallbackValue::class);
     }
 
+    public function testGetLineItemsCount(): void
+    {
+        $shoppingList1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $shoppingList2 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+
+        $this->assertEquals(
+            [
+                $shoppingList1->getId() => 1,
+                $shoppingList2->getId() => 3,
+            ],
+            $this->getRepository()->getLineItemsCount([$shoppingList1, $shoppingList2])
+        );
+    }
+
+    public function testSetLineItemsCount(): void
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+
+        $this->assertEquals(1, $shoppingList->getLineItemsCount());
+        $this->getRepository()->setLineItemsCount($shoppingList, 2);
+        $this->assertEquals(2, $shoppingList->getLineItemsCount());
+    }
+
     /**
      * @param object $value
      * @param string $expectedClass

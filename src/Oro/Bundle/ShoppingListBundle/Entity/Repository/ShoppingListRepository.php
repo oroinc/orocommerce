@@ -248,4 +248,52 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param int[]|ShoppingList[] $shoppingLists
+     * @return array
+     */
+    public function getLineItemsCount(array $shoppingLists): array
+    {
+        $qb = $this->createQueryBuilder('sl');
+        $qb->resetDQLPart('select')
+            ->select('sl.id AS id')
+            ->addSelect('COUNT(li.id) AS count')
+            ->addSelect('IDENTITY(li.parentProduct) AS withParent')
+            ->leftJoin('sl.lineItems', 'li')
+            ->where($qb->expr()->in('sl.id', ':shopping_lists'))
+            ->setParameter('shopping_lists', $shoppingLists)
+            ->groupBy('sl.id, li.parentProduct');
+
+        $result = [];
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            if (!isset($result[$row['id']])) {
+                $result[$row['id']] = 0;
+            }
+
+            $result[$row['id']] += $row['withParent'] ? 1 : $row['count'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param int $count
+     */
+    public function setLineItemsCount(ShoppingList $shoppingList, int $count): void
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+        $qb->update($this->getClassName(), 'sl')
+            ->set('sl.line_items_count', ':count')
+            ->andWhere($qb->expr()->eq('sl.id', ':id'))
+            ->setParameter('count', $count)
+            ->setParameter('id', $shoppingList->getId())
+            ->getQuery()
+            ->execute();
+
+        $entityManager->refresh($shoppingList);
+    }
 }

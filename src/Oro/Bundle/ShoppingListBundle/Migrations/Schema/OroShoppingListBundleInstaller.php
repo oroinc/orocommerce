@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -30,7 +31,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_8_1';
     }
 
     /**
@@ -91,6 +92,17 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
+        $table->addColumn('line_items_count', 'smallint', [
+            'default' => 0,
+            'unsigned' => true,
+            OroOptions::KEY => [
+                'entity' => ['label' => 'oro.shoppinglist.line_items_count.label'],
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_SYSTEM,
+                ]
+            ]
+        ]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_shop_lst_created_at_idx', []);
     }
