@@ -546,6 +546,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }
 
+    oro_shopping_list.event_listener.shopping_list_line_items_count:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLineItemsCountListener
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+
     oro_shopping_list.async.invalidate_totals_by_inventory_status_per_product_processor:
         class: Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerProductProcessor
         arguments:

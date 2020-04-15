@@ -25,6 +25,7 @@ oro:
         line_items:
             label: Line Items
             description: The collection of shopping list items.
+        line_items_count.label: Line Items Count
         current.label: Current
         default.label: 'Shopping List'
         items.label: 'Item|Items'
