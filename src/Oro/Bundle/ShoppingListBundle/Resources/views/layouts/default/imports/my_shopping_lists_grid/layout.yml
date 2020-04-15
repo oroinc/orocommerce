@@ -1,0 +1,22 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: my-shopping-lists-grid
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.hideTitle
+            optionValue: '.page-title-wrapper'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_parameters
+            optionValue:
+                customer_user_id: '=data["current_user"].getCurrentUser().getId()'

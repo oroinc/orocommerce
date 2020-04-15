@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -39,7 +40,6 @@ class ShoppingListController extends AbstractController
      *
      * @param ShoppingList $shoppingList
      * @return array|Response
-     *
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
@@ -105,6 +105,18 @@ class ShoppingListController extends AbstractController
                 ->getButtonSearchContext()
                 ->setEntity(ShoppingList::class, ['id' => $shoppingList->getId()])
         );
+    }
+
+    /**
+     * @Route("/my", name="oro_shopping_list_frontend_index")
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_view")
+     *
+     * @return array
+     */
+    public function indexAction(): array
+    {
+        return [];
     }
 
     /**

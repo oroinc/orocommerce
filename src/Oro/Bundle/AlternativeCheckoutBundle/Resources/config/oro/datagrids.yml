@@ -1,0 +1,4 @@
+datagrids:
+    my-shopping-lists-grid:
+        action_configuration:
+            b2b_flow_alternative_checkout_start_from_shoppinglist: false

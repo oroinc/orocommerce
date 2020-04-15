@@ -164,3 +164,8 @@ datagrids:
                 acl_resource: oro_checkout_frontend_checkout
                 rowAction: true
         action_configuration: ['@oro_checkout.datagrid.action_permission_provider', "getPermissions"]
+
+    my-shopping-lists-grid:
+        action_configuration:
+            b2b_flow_checkout_start_from_shoppinglist: false
+            b2b_flow_checkout_single_page_start_from_shoppinglist: false

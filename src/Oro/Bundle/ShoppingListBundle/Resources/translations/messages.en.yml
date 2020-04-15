@@ -74,6 +74,7 @@ oro:
 
         menu:
             sales_tab.label: Sales
+            shopping_lists.label: My Shopping Lists
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the customer users
 
@@ -183,6 +184,8 @@ oro:
 
     frontend:
         shoppinglist:
+            name.label: 'Name'
+            line_items_count.label: 'Items'
             fieldset_legend: 'Set default Shopping List'
             trigger:
                 aria_label: '{0} You do not have available Shopping Lists. Open to Create a New List|{1} You have 1 Shopping List. Open to view details|]1,Inf[ You have %count% Shopping Lists. Open to view details'
