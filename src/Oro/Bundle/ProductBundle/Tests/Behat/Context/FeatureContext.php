@@ -1774,4 +1774,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         return $productItem;
     }
+
+    /**
+     * @When /^(?:|I )attach "(?P<fileName>.*)" for Product Images/
+     * @param string $fileName
+     */
+    public function iAttachFileToField(string $fileName)
+    {
+        $importFileLink = $this->createElement('Import Choose File Link');
+        $importFileLink->click();
+
+        $importFile = $this->createElement('Import Choose File');
+        $importFile->setValue($fileName);
+    }
 }
