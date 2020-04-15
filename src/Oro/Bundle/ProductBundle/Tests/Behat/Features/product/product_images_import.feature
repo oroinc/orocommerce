@@ -137,3 +137,16 @@ Feature: Product Images Import
     When click "View Details" for "SKU2" product
     Then I should see an "Uploaded Product Image" element
     And should not see an "Empty Product Image" element
+
+  Scenario: Check a work validation after clicking "Choose File"
+    Given I proceed as the Admin
+    And I go to Products/Products
+    And I click "Import file"
+    And I open "Product Images" import tab
+    When I click "Validate"
+    Then I should see "This value should not be blank."
+    And I click "Cancel"
+    And I click "Import file"
+    And I open "Product Images" import tab
+    When I attach "product_images_import/dog1.jpg" for Product Images
+    Then I should not see "This value should not be blank."

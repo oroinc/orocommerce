@@ -1122,6 +1122,13 @@ oro_behat_extension:
     Product Segment Content Widget Slider Next:
       selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
 
+    Import Choose File Link:
+      selector: ".import-widget-content .tab-pane.active .input-widget-file"
+
+    Import Choose File:
+      selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
