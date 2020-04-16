@@ -68,11 +68,8 @@ class OrderAddressSelectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $object = $options['object'];
-        $addressType = $options['address_type'];
-
         /** @var CustomerOwnerAwareInterface $object */
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($object, $addressType) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $address = $event->getData();
 
             if ($address === self::ENTER_MANUALLY) {
@@ -194,25 +191,5 @@ class OrderAddressSelectType extends AbstractType
         });
 
         return $data;
-    }
-
-    /**
-     * @param OrderAddress|null $checkoutAddress
-     *
-     * @return int|string
-     */
-    private function getSelectedAddressKey(OrderAddress $checkoutAddress = null)
-    {
-        $selectedKey = null;
-        if ($checkoutAddress) {
-            $selectedKey = OrderAddressSelectType::ENTER_MANUALLY;
-            if ($checkoutAddress->getCustomerAddress()) {
-                $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerAddress());
-            } elseif ($checkoutAddress->getCustomerUserAddress()) {
-                $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerUserAddress());
-            }
-        }
-
-        return $selectedKey;
     }
 }

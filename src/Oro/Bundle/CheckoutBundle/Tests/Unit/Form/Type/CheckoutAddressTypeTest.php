@@ -7,6 +7,8 @@ use Oro\Bundle\AddressBundle\Form\Type\AddressType as AddressFormType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
@@ -130,6 +132,49 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
                     'label' => 'new address'
                 ],
                 'expectedData' => $this->getOrderAddress('new address'),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider preSetDataDataProvider
+     *
+     * @param OrderAddress|null $orderAddress
+     * @param OrderAddress|null $expectedAddress
+     */
+    public function testPreSetData(?OrderAddress $orderAddress, ?OrderAddress $expectedAddress): void
+    {
+        $form = $this->factory->create(CheckoutAddressType::class, $orderAddress, [
+            'object' => new Checkout(),
+            'addressType' => 'billing'
+        ]);
+
+        $this->assertEquals($expectedAddress, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function preSetDataDataProvider(): array
+    {
+        $orderAddress = $this->getOrderAddress('sample address');
+
+        return [
+            ['orderAddress' => $orderAddress, 'expectedOrderAddress' => $orderAddress],
+            ['orderAddress' => null, 'expectedOrderAddress' => null],
+            [
+                'orderAddress' => (clone $orderAddress)->setCustomerAddress(new CustomerAddress()),
+                'expectedOrderAddress' => null,
+            ],
+            [
+                'orderAddress' => (clone $orderAddress)->setCustomerUserAddress(new CustomerUserAddress()),
+                'expectedOrderAddress' => null,
+            ],
+            [
+                'orderAddress' => (clone $orderAddress)
+                    ->setCustomerUserAddress(new CustomerUserAddress())
+                    ->setCustomerAddress(new CustomerAddress()),
+                'expectedOrderAddress' => null,
             ],
         ];
     }

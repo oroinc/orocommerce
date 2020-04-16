@@ -40,6 +40,7 @@ class CheckoutAddressSelectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Checkout $object */
         $object = $options['object'];
         $addressType = $options['address_type'];
         /** @var TypedOrderAddressCollection $collection */
@@ -54,14 +55,18 @@ class CheckoutAddressSelectType extends AbstractType
             $builder->setData($selectedKey);
         }
 
-        /** @var Checkout $object */
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($object, $addressType) {
             $address = $event->getData();
             if ($address === OrderAddressSelectType::ENTER_MANUALLY) {
                 if ($addressType === AddressType::TYPE_BILLING) {
-                    $event->setData($object->getBillingAddress());
+                    $orderAddress = $object->getBillingAddress();
                 } elseif ($addressType === AddressType::TYPE_SHIPPING) {
-                    $event->setData($object->getShippingAddress());
+                    $orderAddress = $object->getShippingAddress();
+                }
+
+                if (isset($orderAddress) && !$orderAddress->getCustomerAddress()
+                    && !$orderAddress->getCustomerUserAddress()) {
+                    $event->setData($orderAddress);
                 }
             }
         });

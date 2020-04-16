@@ -50,6 +50,9 @@ oro_behat_extension:
     Edit Billing Information:
       selector: '[data-title="Edit Billing Information"]'
 
+    Edit Shipping Information:
+      selector: '[data-title="Edit Shipping Information"]'
+
     Checkout Shipping Method:
       selector: '[data-content="shipping_method_form"] .checkout-form__radio label'
 
