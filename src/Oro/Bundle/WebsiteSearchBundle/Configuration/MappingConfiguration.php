@@ -47,10 +47,23 @@ class MappingConfiguration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('name')->end()
                             ->enumNode('type')
+                                ->isRequired()
+                                ->cannotBeEmpty()
                                 ->values($this->fieldTypes)
                             ->end()
                             ->booleanNode('store')->end()
                             ->booleanNode('default_search_field')->end()
+                            ->booleanNode('fulltext')->defaultTrue()->end()
+                        ->end()
+                        ->validate()
+                            ->always(
+                                function ($value) {
+                                    if ($value['type'] !== Query::TYPE_TEXT) {
+                                        $value['fulltext'] = false;
+                                    }
+                                    return $value;
+                                }
+                            )
                         ->end()
                     ->end()
                 ->end()

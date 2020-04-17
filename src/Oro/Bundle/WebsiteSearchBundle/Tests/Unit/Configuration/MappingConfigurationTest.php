@@ -28,6 +28,9 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
         return $processor->processConfiguration($configuration, $configs);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testFieldsAreMerged()
     {
         $configs = [
@@ -83,7 +86,8 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         [
                             'name'  => 'productThirdField',
                             'type'  => 'text',
-                            'store' => false
+                            'store' => false,
+                            'fulltext' => false,
                         ]
                     ]
                 ]
@@ -97,11 +101,13 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                     'pageFirstField' => [
                         'name' => 'pageFirstField',
                         'type' => 'text',
-                        'default_search_field' => true
+                        'default_search_field' => true,
+                        'fulltext' => true,
                     ],
                     'pageSecondField' => [
                         'name' => 'pageSecondField',
-                        'type' => 'integer'
+                        'type' => 'integer',
+                        'fulltext' => false,
                     ]
                 ]
             ],
@@ -110,16 +116,19 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                 'fields' => [
                     'productFirstField' => [
                         'name' => 'productFirstField',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'fulltext' => true,
                     ],
                     'productSecondField' => [
                         'name' => 'productSecondField',
-                        'type' => 'decimal'
+                        'type' => 'decimal',
+                        'fulltext' => false,
                     ],
                     'productThirdField' => [
                         'name'  => 'productThirdField',
                         'type'  => 'text',
-                        'store' => false
+                        'store' => false,
+                        'fulltext' => false,
                     ]
                 ]
             ]
