@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -14,6 +15,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Ensures that extend entity cache can be built after the changes made to some inventory-related entities.
+ */
 class EntityConfigRelationsMigration
 {
     const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
@@ -62,8 +66,8 @@ class EntityConfigRelationsMigration
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
-        $tables = $configConnection->getSchemaManager()->listTableNames();
-        if (!in_array('oro_entity_config', $tables, true)) {
+
+        if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
             return;
         }
 

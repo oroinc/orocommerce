@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Tools\ActivityListEntityConfigDumperExtension;
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -16,6 +17,9 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\NoteBundle\Entity\Note;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Ensures that extend entity cache can be built after the removal of shipping rule-related entities.
+ */
 class EntityConfigRelationsMigration
 {
     /**
@@ -65,8 +69,8 @@ class EntityConfigRelationsMigration
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
-        $tables = $configConnection->getSchemaManager()->listTableNames();
-        if (!in_array('oro_entity_config', $tables, true)) {
+
+        if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
             return;
         }
 
