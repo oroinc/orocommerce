@@ -164,6 +164,7 @@ oro:
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
                     tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
+                my_shopping_lists_page_enabled.label: 'Enable "My Shopping Lists" page'
 
         privilege:
             category.shopping.label: 'Shopping'

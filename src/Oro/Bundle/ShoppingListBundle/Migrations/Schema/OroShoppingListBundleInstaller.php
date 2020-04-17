@@ -94,7 +94,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('line_items_count', 'smallint', [
             'default' => 0,
-            'unsigned' => true,
             OroOptions::KEY => [
                 'entity' => ['label' => 'oro.shoppinglist.line_items_count.label'],
                 'extend' => [

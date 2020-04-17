@@ -22,6 +22,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolationPerTest
  */
 class ShoppingListControllerTest extends WebTestCase
@@ -79,8 +80,41 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertStringNotContainsString('Create Order', $crawler->html());
     }
 
+    public function testIndexWhenDisabledAndEnabled(): void
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            )
+        );
+
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
+
+        $this->enableMyShoppingListsPage(true);
+
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $this->enableMyShoppingListsPage(false);
+    }
+
+    /**
+     * @param bool $isEnabled
+     */
+    private function enableMyShoppingListsPage(bool $isEnabled): void
+    {
+        $configManager = $this->getContainer()->get(ConfigManager::class);
+        $configManager->set('oro_shopping_list.my_shopping_lists_page_enabled', $isEnabled);
+        $configManager->flush();
+    }
+
     public function testIndex(): void
     {
+        $this->enableMyShoppingListsPage(true);
+
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
         $this->initClient(
             [],
@@ -106,6 +140,8 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('label', $data[0]);
         $this->assertEquals('shopping_list_customer1_user_basic', $data[0]['label']);
+
+        $this->enableMyShoppingListsPage(false);
     }
 
     public function testView(): void

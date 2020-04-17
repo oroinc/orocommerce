@@ -28,7 +28,6 @@ class AddLineItemsCountField implements Migration, OrderedMigrationInterface
         if (!$table->hasColumn('line_items_count')) {
             $table->addColumn('line_items_count', 'smallint', [
                 'default' => 0,
-                'unsigned' => true,
                 OroOptions::KEY => [
                     'entity' => ['label' => 'oro.shoppinglist.line_items_count.label'],
                     'extend' => [

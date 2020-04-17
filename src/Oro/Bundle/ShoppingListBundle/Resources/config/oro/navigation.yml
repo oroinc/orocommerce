@@ -20,6 +20,8 @@ navigation:
                 route:           'oro_shopping_list_frontend_index'
                 acl_resource_id: 'oro_shopping_list_frontend_view'
                 position:        45
+                extras:
+                    condition: "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
 
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'

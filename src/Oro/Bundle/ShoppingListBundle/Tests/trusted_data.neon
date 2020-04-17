@@ -14,3 +14,5 @@ trusted_data:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getCustomerVisitorSubquery: true
             ensureShoppingListJoined: true
+        Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
+            getClassName: true
