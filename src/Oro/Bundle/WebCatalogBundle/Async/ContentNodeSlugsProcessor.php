@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
@@ -102,6 +103,10 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
                 'webCatalogId' => $contentNode->getWebCatalog()->getId()
             ]);
+        } catch (UniqueConstraintViolationException $e) {
+            $em->rollback();
+
+            return self::REQUEUE;
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(

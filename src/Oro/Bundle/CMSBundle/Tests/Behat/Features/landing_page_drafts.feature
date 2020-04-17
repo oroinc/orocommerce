@@ -23,10 +23,10 @@ Feature: Landing Page Drafts
     Then I should see "Page has been saved" flash message
     When I click "Create draft"
     Then I should see "UiWindow" with elements:
-      | Title        | Action Confirmation                                                                                                                    |
-      | Content      | Only the changes from the following fields will be transferred to a draft: metaKeywords, metaDescriptions, metaTitles, content, titles |
-      | okButton     | Yes                                                                                                                                    |
-      | cancelButton | Cancel                                                                                                                                 |
+      | Title        | Action Confirmation                                                                                                                                    |
+      | Content      | Only the changes from the following fields will be transferred to a draft: metaDescriptions, metaTitles, metaKeywords, slugPrototypes, titles, content |
+      | okButton     | Yes                                                                                                                                                    |
+      | cancelButton | Cancel                                                                                                                                                 |
     When I click "Yes" in confirmation dialogue
     Then I should not see following page actions:
       | Save As draft |
@@ -109,7 +109,7 @@ Feature: Landing Page Drafts
     Then I should see "Draft has been saved" flash message
     And I reload the page
     And I should see Landing Page Draft with:
-      | Title | Draft 2      |
+      | Title | Draft 2    |
       | Slugs | [/draft-2] |
     And I should not see "CMS Page Drafts Grid" grid
 
@@ -133,7 +133,7 @@ Feature: Landing Page Drafts
     And I reload the page
     Then I should see Landing Page with:
       | Title | New Title    |
-      | Slugs | [/test-page] |
+      | Slugs | [/new-landing-page] |
     And I should see available page actions:
       | Create draft |
     And I should see following grid:
@@ -171,7 +171,7 @@ Feature: Landing Page Drafts
     Then I should see "Draft has been saved" flash message
     And I reload the page
     And I should see Landing Page Draft with:
-      | Title | Draft 2      |
+      | Title | Draft 2    |
       | Slugs | [/draft-2] |
     When I go to Marketing/ Landing Pages
     And I click view "New Title" in grid

@@ -18,13 +18,29 @@ class MatchingSlugHydrator extends AbstractHydrator
     protected function hydrateAllData()
     {
         $rows = $this->_stmt->fetchAll(\PDO::FETCH_ASSOC);
-        foreach ($rows as $row) {
+        foreach ($rows as $key => $row) {
             $id = [key($this->_rsm->aliasMap) => ''];
             $nonemptyComponents = [];
-            $data = $this->gatherRowData($row, $id, $nonemptyComponents);
+            $rows[$key] = $this->gatherRowData($row, $id, $nonemptyComponents);
+        }
 
-            if ($data['scalars']['matchedScopeId'] || !$this->hasScopes($data['data']['slug']['id'])) {
-                return [$this->_uow->createEntity(Slug::class, $data['data']['slug'], $this->_hints)];
+        usort($rows, function ($a, $b) {
+            if ($a['scalars']['matchedScopeId'] === null && $b['scalars']['matchedScopeId'] === null) {
+                return 0;
+            }
+            if ($a['scalars']['matchedScopeId'] === null) {
+                return 1;
+            }
+            if ($b['scalars']['matchedScopeId'] === null) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        foreach ($rows as $row) {
+            if ($row['scalars']['matchedScopeId'] || !$this->hasScopes($row['data']['slug']['id'])) {
+                return [$this->_uow->createEntity(Slug::class, $row['data']['slug'], $this->_hints)];
             }
         }
 

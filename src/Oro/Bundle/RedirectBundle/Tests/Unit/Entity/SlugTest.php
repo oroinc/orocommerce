@@ -7,10 +7,12 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class SlugTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
     
     public function testProperties()
     {
@@ -20,7 +22,7 @@ class SlugTest extends \PHPUnit\Framework\TestCase
             ['slugPrototype', 'page'],
             ['routeName', 'oro_cms_page_view'],
             ['routeParameters', ['id' => 1]],
-            ['localization', new Localization()]
+            ['localization', new Localization()],
         ];
 
         $this->assertPropertyAccessors(new Slug(), $properties);
@@ -54,5 +56,18 @@ class SlugTest extends \PHPUnit\Framework\TestCase
             'x' => 2.3
         ];
         $this->assertSame($expected, $slug->getRouteParameters());
+    }
+
+    public function testFillScopesHash()
+    {
+        $slug = new Slug();
+        $localization = $this->getEntity(Localization::class, ['id' => 42]);
+        $slug->setLocalization($localization);
+        self::assertEquals(md5(':42'), $slug->getScopesHash());
+        $scope = $this->getEntity(Scope::class, ['id' => 425]);
+        $slug->addScope($scope);
+        $scope2 = $this->getEntity(Scope::class, ['id' => 420]);
+        $slug->addScope($scope2);
+        self::assertEquals(md5('420,425:42'), $slug->getScopesHash());
     }
 }

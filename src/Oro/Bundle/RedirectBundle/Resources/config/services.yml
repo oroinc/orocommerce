@@ -137,6 +137,16 @@ services:
             - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
 
+    Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator:
+        alias: oro_redirect.generator.slug_entity
+
+    oro_redirect.twig_extension:
+        class: Oro\Bundle\RedirectBundle\Twig\TwigExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
     oro_redirect.generator.redirect:
         class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator
         arguments:
@@ -419,13 +429,6 @@ services:
             - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }
-
-    oro_redirect.event_listener.draft_restrict_slug_increment_listener:
-        class: Oro\Bundle\RedirectBundle\EventListener\DraftRestrictSlugIncrementListener
-        arguments:
-            - '@doctrine.orm.entity_manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_redirect.event.restrict_slug_increment, method: onRestrictSlugIncrementEvent }
 
     oro_redirect.provider.slug_source_entity_provider_registry:
         class: Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderRegistry
