@@ -241,12 +241,7 @@ class SlugEntityGenerator
     private function getResolvedSlugUrls(SluggableInterface $entity)
     {
         $slugUrls = $this->prepareSlugUrls($entity);
-        $prefix = sprintf(
-            '~^\%s?(%s\%s)?(.+)~',
-            Slug::DELIMITER,
-            preg_quote(trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER), '~'),
-            Slug::DELIMITER
-        );
+        $prefix = $this->getSlugPrefix($entity);
 
         foreach ($slugUrls as $slugUrl) {
             $url = $this->slugResolver->resolve($slugUrl, $entity);
@@ -256,6 +251,26 @@ class SlugEntityGenerator
         }
 
         return $slugUrls;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return Collection|SlugUrl[]
+     */
+    public function getSlugsByEntitySlugPrototypes(SluggableInterface $entity)
+    {
+        $slugUrls = $this->prepareSlugUrls($entity);
+        $prefix = $this->getSlugPrefix($entity);
+
+        $routeData = $this->routingInformationProvider->getRouteData($entity);
+        $slugs = new ArrayCollection();
+        foreach ($slugUrls as $slugUrl) {
+            $slugUrl->setSlug(preg_replace($prefix, '$2', $slugUrl->getUrl()));
+
+            $slugs->add($this->createSlug($routeData, $slugUrl));
+        }
+
+        return $slugs;
     }
 
     /**
@@ -288,5 +303,19 @@ class SlugEntityGenerator
         }
 
         return 0;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return string
+     */
+    private function getSlugPrefix(SluggableInterface $entity): string
+    {
+        return sprintf(
+            '~^\%s?(%s\%s)?(.+)~',
+            Slug::DELIMITER,
+            preg_quote(trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER), '~'),
+            Slug::DELIMITER
+        );
     }
 }

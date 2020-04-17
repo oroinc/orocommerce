@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Async;
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
@@ -70,25 +71,17 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $em = null;
         try {
             $messageData = JSON::decode($message->getBody());
             $className = $this->messageFactory->getEntityClassFromMessage($messageData);
             $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
 
-            return self::REJECT;
-        }
-
-        $em = null;
-        try {
             /** @var EntityManagerInterface $em */
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
@@ -99,6 +92,19 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
             $this->actualizeUrlCache();
+        } catch (InvalidArgumentException $e) {
+            $this->logger->error(
+                'Queue Message is invalid',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
+        } catch (UniqueConstraintViolationException $e) {
+            if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
+                $em->rollback();
+            }
+
+            return self::REQUEUE;
         } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during Direct URL generation',

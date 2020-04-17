@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
@@ -176,6 +177,55 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertRollback();
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessWithUniqueConstraintException()
+    {
+        $contentNodeId = 42;
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => new WebCatalog()]);
+
+        $body = [
+            ResolveNodeSlugsMessageFactory::ID => $contentNodeId,
+            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+        ];
+
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(JSON::encode($body));
+
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityFromMessage')
+            ->with($body)
+            ->willReturn($contentNode);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($body)
+            ->willReturn(true);
+
+        $this->defaultVariantScopesResolver->expects($this->once())
+            ->method('resolve')
+            ->willThrowException($this->createMock(UniqueConstraintViolationException::class));
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects($this->once())
+            ->method('rollback');
+        $em->expects($this->never())
+            ->method('commit');
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ContentNode::class)
+            ->willReturn($em);
+
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->assertEquals(MessageProcessorInterface::REQUEUE, $this->processor->process($message, $session));
     }
 
     public function testProcessContentNodeNotFound()

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
@@ -155,6 +156,22 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessUniqueConstraintException()
+    {
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+
+        $exception = $this->createMock(UniqueConstraintViolationException::class);
+        $message = $this->prepareMessage();
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willThrowException($exception);
+
+        $this->assertTransactionRollback();
+
+        $this->assertEquals(DirectUrlProcessor::REQUEUE, $this->processor->process($message, $session));
     }
 
     public function testProcessExceptionInClosedTransaction()
@@ -344,11 +361,9 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $em = $this->assertTransactionStarted();
 
         $conn = $this->createMock(Connection::class);
-        $conn->expects($this->once())
-            ->method('getTransactionNestingLevel')
+        $conn->method('getTransactionNestingLevel')
             ->willReturn(1);
-        $em->expects($this->once())
-            ->method('getConnection')
+        $em->method('getConnection')
             ->willReturn($conn);
 
         $em->expects($this->once())

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
@@ -19,12 +20,15 @@ use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -146,6 +150,27 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             'sluggableEntities',
             $this->sluggableEntityListener
         );
+    }
+
+    public function testPostPersistWithDraft()
+    {
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $args **/
+        $args = $this->createMock(LifecycleEventArgs::class);
+
+        $entity = $this->getEntity(Page::class, ['id' => 1, 'draftUuid' => 42]);
+        $args->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($entity);
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+        $this->messageFactory->expects($this->never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->sluggableEntityListener->postPersist($args);
+        $this->sluggableEntityListener->postFlush();
     }
 
     public function testOnFlushDisabledDirectUrl()

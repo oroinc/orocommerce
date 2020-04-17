@@ -35,6 +35,7 @@ oro:
             localization.label: Localization
             slug_prototype.label: Slug Prototype
             parameters_hash.label: Parameters Hash
+            scopes_hash.label: Scopes Hash
 
         system_configuration:
             groups:

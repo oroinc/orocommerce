@@ -394,4 +394,30 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(new ArrayCollection(), $this->generator->prepareSlugUrls($sluggableEntity));
     }
+
+    public function testGetSlugsByEntitySlugPrototypes()
+    {
+        /** @var LocalizedFallbackValue $slugPrototype */
+        $slugPrototype = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something']);
+        $entity = (new SluggableEntityStub())->addSlugPrototype($slugPrototype);
+
+        $routeData = new RouteData('someRoute');
+        $this->routingInformationProvider->expects($this->any())
+            ->method('getRouteData')
+            ->with($entity)
+            ->willReturn($routeData);
+
+        $this->routingInformationProvider->expects($this->any())
+            ->method('getUrlPrefix')
+            ->with($entity)
+            ->willReturn('prefix');
+
+        $slugs = $this->generator->getSlugsByEntitySlugPrototypes($entity);
+
+        $this->assertInstanceOf(ArrayCollection::class, $slugs);
+        $this->assertCount(1, $slugs);
+        /** @var Slug $slug */
+        $slug = $slugs->first();
+        $this->assertEquals('/prefix/something', $slug->getUrl());
+    }
 }

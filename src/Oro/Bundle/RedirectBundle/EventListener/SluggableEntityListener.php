@@ -8,6 +8,8 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
+use Oro\Bundle\DraftBundle\Helper\DraftHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
@@ -193,6 +195,10 @@ class SluggableEntityListener implements OptionalListenerInterface
      */
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
+        if ($entity instanceof DraftableInterface && DraftHelper::isDraft($entity)) {
+            return;
+        }
+
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
             $createRedirect = true;
             if ($entity->getSlugPrototypesWithRedirect()) {
