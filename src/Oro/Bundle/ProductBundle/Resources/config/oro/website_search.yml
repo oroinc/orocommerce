@@ -10,12 +10,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: status
             type: text
+            fulltext: false
         -
             name: type
             type: text
+            fulltext: false
         -
             name: inventory_status
             type: text
+            fulltext: false
         -
             name: is_variant
             type: integer
@@ -34,15 +37,19 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: image_product_large
             type: text
+            fulltext: false
         -
             name: image_product_medium
             type: text
+            fulltext: false
         -
             name: product_units
             type: text
+            fulltext: false
         -
             name: primary_unit
             type: text
+            fulltext: false
         -
             name: attribute_family_id
             type: integer
