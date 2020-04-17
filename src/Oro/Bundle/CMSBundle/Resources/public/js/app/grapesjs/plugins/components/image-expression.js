@@ -8,16 +8,15 @@ export default class ImageExpression {
      */
     constructor(editor, ...options) {
         this.editor = editor;
-        this.applyInlineBackground = this.applyInlineBackground.bind(this);
         this.onLoad = this.onLoad.bind(this);
 
+        this.normalizeBgURLString = this.normalizeBgURLString.bind(this);
         this.bindEvents();
     }
 
     destroy() {
         this.unbindEvents();
 
-        delete this.applyInlineBackground;
         delete this.onLoad;
     }
 
@@ -25,7 +24,7 @@ export default class ImageExpression {
      * Bind event listeners
      */
     bindEvents() {
-        this.editor.on('component:styleUpdate:background-image', this.applyInlineBackground);
+        this.editor.on('component:styleUpdate:background-image', this.normalizeBgURLString);
         this.editor.on('load', this.onLoad);
     }
 
@@ -33,63 +32,24 @@ export default class ImageExpression {
      * Bind event listeners
      */
     unbindEvents() {
-        this.editor.off('component:styleUpdate:background-image', this.applyInlineBackground);
+        this.editor.off('component:styleUpdate:background-image', this.normalizeBgURLString);
         this.editor.off('load', this.onLoad);
     }
 
     /**
-     * Apply background image after change property
      * @param model
      */
-    applyInlineBackground(model) {
-        if (!model) {
-            return;
-        }
+    normalizeBgURLString(model) {
+        const styles = model.getStyle();
+        const imgId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(styles['background-image']);
 
-        const selected = this.editor.getSelected();
-        this.emulateInlineBackground(selected.getStyle(), selected.view.$el);
-    }
+        // Replace 'wysiwyg_image' placeholder by real url
+        if (imgId) {
+            const url = imgId.map(id => {
+                return `url("${DigitalAssetHelper.getImageUrl(id)}")`;
+            }).join(', ');
 
-    /**
-     * Add inline style with background image
-     * @param style
-     * @param elem
-     */
-    emulateInlineBackground(style, elem) {
-        if (style['background-image'] && style['background-image'] !== 'none') {
-            const imageId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(style['background-image']);
-
-            if (imageId) {
-                const url = imageId.map(id => {
-                    return `url("${DigitalAssetHelper.getImageUrl(id)}")`;
-                }).join(', ');
-
-                if (url !== elem.css('background-image')) {
-                    elem.css('background-image', url);
-                }
-            }
-        } else {
-            elem.css('background-image', '');
-        }
-    }
-
-    /**
-     * Emulate background after editor loaded
-     * @param model
-     */
-    triggerStyleChange(model) {
-        const rule = model.rule;
-
-        if (rule) {
-            const style = rule.get('style');
-
-            this.emulateInlineBackground(style, model.view.$el);
-        }
-
-        const components = model.get('components');
-
-        if (components.length) {
-            components.forEach(this.triggerStyleChange.bind(this));
+            model.setStyle({'background-image': url});
         }
     }
 
@@ -97,8 +57,6 @@ export default class ImageExpression {
      * on load listener
      */
     onLoad() {
-        const wrapper = this.editor.getWrapper();
-
-        this.triggerStyleChange(wrapper);
+        this.normalizeBgURLString(this.editor.getWrapper());
     }
 }
