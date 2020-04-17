@@ -52,6 +52,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => false,
                     'scope' => 'app',
                 ],
+                'my_shopping_lists_page_enabled' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
             ]
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));

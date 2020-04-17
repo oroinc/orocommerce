@@ -74,6 +74,12 @@ system_configuration:
                 label: oro.shoppinglist.system_configuration.fields.create_shopping_list_for_new_guest.label
                 tooltip: oro.shoppinglist.system_configuration.fields.create_shopping_list_for_new_guest.tooltip
                 required: false
+        oro_shopping_list.my_shopping_lists_page_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.my_shopping_lists_page_enabled.label
+                required: false
 
     tree:
         system_configuration:
@@ -103,3 +109,4 @@ system_configuration:
                                     shopping_list_options:
                                         children:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
+                                            - oro_shopping_list.my_shopping_lists_page_enabled

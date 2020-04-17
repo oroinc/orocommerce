@@ -30,6 +30,8 @@ api:
                     property_path: _
                     form_options:
                         mapped: false
+                line_items_count:
+                    exclude: true
             actions:
                 update:
                     fields:

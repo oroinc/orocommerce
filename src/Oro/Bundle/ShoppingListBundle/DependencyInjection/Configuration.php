@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
                 'shopping_list_limit' => ['value' => 0, 'type' => 'integer'],
                 'mass_adding_on_product_listing_enabled' => ['value' => true, 'type' => 'boolean'],
                 'create_shopping_list_for_new_guest' => ['value' => false, 'type' => 'boolean'],
+                'my_shopping_lists_page_enabled' => ['value' => false, 'type' => 'boolean'],
             ]
         );
 
