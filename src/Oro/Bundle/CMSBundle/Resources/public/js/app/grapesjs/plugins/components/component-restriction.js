@@ -37,9 +37,7 @@ define(function(require) {
      */
     function computedTagData(node, mirror) {
         const attrs = [];
-        node.attributes.forEach(attr => {
-            attrs.push(attr.name);
-        });
+        _.each(node.attributes, attr => attrs.push(attr.name));
         const tagName = node.nodeName.toLowerCase();
         let tagMirror = '';
         if (mirror) {

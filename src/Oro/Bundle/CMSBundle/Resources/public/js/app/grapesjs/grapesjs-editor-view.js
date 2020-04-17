@@ -79,7 +79,7 @@ const GrapesjsEditorView = BaseView.extend({
         avoidFrameOffset: true,
         allowScripts: 1,
         wrapperIsBody: 0,
-        exportWrapper: 1,
+        exportWrapper: 0,
         pasteStyles: false,
         requestParams: {},
 
@@ -363,7 +363,16 @@ const GrapesjsEditorView = BaseView.extend({
      * Initialize builder instance
      */
     initBuilder: function() {
-        const components = _.isEmpty(this.JSONcomponents) ? escapeWrapper(this.$el.val()) : this.JSONcomponents;
+        let components;
+        let wrapperAttrs;
+
+        if (_.isEmpty(this.JSONcomponents)) {
+            components = escapeWrapper(this.$el.val());
+        } else if (_.isArray(this.JSONcomponents)) {
+            components = this.JSONcomponents;
+        } else {
+            ({components, wrapperAttrs} = this.JSONcomponents);
+        }
 
         this.builder = grapesJS.init({
             avoidInlineStyle: 1,
@@ -372,12 +381,16 @@ const GrapesjsEditorView = BaseView.extend({
             ...this._prepareBuilderOptions()
         });
 
+        if (_.isObject(wrapperAttrs)) {
+            wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
+        }
+
         // Ensures all changes to sectors, properties and types are applied.
         this.builder.StyleManager.getSectors().reset(styleManagerModule);
 
-        this.builder.setIsolatedStyle(
-            this.$stylesInputElement.val()
-        );
+        const pureStyles = this.builder.getPureStyle(this.$stylesInputElement.val());
+
+        this.builder.setStyle(pureStyles);
 
         mediator.trigger('grapesjs:created', this.builder);
 
@@ -534,9 +547,10 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {Object}
      */
     getEditorComponents() {
-        const components = this.builder.getComponents();
-
-        return components.length ? JSON.stringify(components) : '';
+        return JSON.stringify({
+            components: this.builder.getComponents(),
+            wrapperAttrs: this.builder.getWrapper().getAttributes()
+        });
     },
 
     componentSelected(model) {
