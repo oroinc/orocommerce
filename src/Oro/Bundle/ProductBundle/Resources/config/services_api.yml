@@ -21,14 +21,6 @@ parameters:
             'oro.product.product_unit.{unit}.value.label': '{0} none|]0,1] {short}|]1,Inf] {short_plural}'
 
 services:
-    oro_product.api.rest.remove_product_search_single_item_routes:
-        parent: oro_frontend.api.rest.routing_options_resolver.remove_single_item_routes
-        arguments:
-            index_0: 'frontend_rest_api'
-            index_1: Oro\Bundle\ProductBundle\Api\Model\ProductSearch
-        tags:
-            - { name: oro.api.routing_options_resolver, view: frontend_rest_json_api, priority: -10 }
-
     oro_product.api_doc.documentation_provider.frontend_sku_common_docs:
         class: Oro\Bundle\ApiBundle\ApiDoc\DocumentationProvider
         arguments:

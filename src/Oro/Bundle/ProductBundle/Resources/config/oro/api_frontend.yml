@@ -317,6 +317,7 @@ api:
                     minimalPrice:
                         property_path: decimal.minimal_price_CPL_ID_CURRENCY
             actions:
+                get: false
                 create: false
                 update: false
                 delete: false
