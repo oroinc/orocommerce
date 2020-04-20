@@ -4,7 +4,7 @@ api:
             documentation_resource: '@OroWebCatalogBundle/Resources/doc/api/web_catalog.md'
             fields:
                 tree:
-                    data_type: array
+                    data_type: objects
                     property_path: _
             actions:
                 get_list: false

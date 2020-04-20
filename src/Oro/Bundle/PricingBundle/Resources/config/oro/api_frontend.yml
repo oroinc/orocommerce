@@ -4,14 +4,14 @@ api:
             documentation_resource: '@OroPricingBundle/Resources/doc/api_frontend/product.md'
             fields:
                 prices:
-                    data_type: array
+                    data_type: objects
                     property_path: _
 
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
             documentation_resource: '@OroPricingBundle/Resources/doc/api_frontend/product_search.md'
             fields:
                 minimalPrices:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on:
                         # see Oro\Bundle\PricingBundle\Api\Processor\UpdateDependsOnConfigForMinimalPriceField
