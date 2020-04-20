@@ -53,7 +53,7 @@ api:
                     form_options:
                         mapped: false
                 taxes:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     form_options:
                         mapped: false

@@ -110,10 +110,10 @@ api:
                     data_type: string
                     property_path: _
                 urls:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                 images:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on:
                         - smallImage.id

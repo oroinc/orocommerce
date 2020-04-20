@@ -1276,14 +1276,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'not found http exception',
-                'detail' => 'Unsupported request.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdate()
@@ -1301,7 +1294,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToCreate()
@@ -1334,7 +1327,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToDeleteList()

@@ -45,7 +45,10 @@ class CompleteContentFieldMetadata implements ProcessorInterface
         $classNames = [];
         $contentVariantTypes = $this->contentVariantTypeRegistry->getContentVariantTypes();
         foreach ($contentVariantTypes as $contentVariantType) {
-            $classNames[] = $contentVariantType->getApiResourceClassName();
+            $className = $contentVariantType->getApiResourceClassName();
+            if ($className) {
+                $classNames[] = $className;
+            }
         }
         $association->setAcceptableTargetClassNames($classNames);
     }

@@ -31,7 +31,7 @@ api:
                     exclude: true
                     max_results: -1
                 files:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on: [ types.type, image.id, image.filename ]
             filters:
@@ -149,7 +149,7 @@ api:
                     property_path: _
                     max_results: -1
                 unitPrecisions:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on:
                         - unitPrecisions.id
@@ -168,7 +168,7 @@ api:
                     data_type: string
                     property_path: _
                 urls:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                 inventoryStatus:
                     property_path: inventory_status
@@ -235,13 +235,13 @@ api:
                     target_class: Extend\Entity\EV_Prod_Inventory_Status
                     target_type: to-one
                 unitPrecisions:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on:
                         - text.product_units
                         - text.primary_unit
                 images:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     depends_on:
                         - text.image_product_medium
@@ -317,6 +317,7 @@ api:
                     minimalPrice:
                         property_path: decimal.minimal_price_CPL_ID_CURRENCY
             actions:
+                get: false
                 create: false
                 update: false
                 delete: false

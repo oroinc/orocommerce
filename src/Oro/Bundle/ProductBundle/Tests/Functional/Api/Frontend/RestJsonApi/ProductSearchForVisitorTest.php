@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUser
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
 {
@@ -47,14 +48,7 @@ class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'not found http exception',
-                'detail' => 'Unsupported request.'
-            ],
-            $response,
-            404
-        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdate()
@@ -72,7 +66,7 @@ class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToCreate()
@@ -105,7 +99,7 @@ class ProductSearchForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToDeleteList()
