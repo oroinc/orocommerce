@@ -20,7 +20,7 @@ api:
                 lineItems:
                     max_results: -1
                 discounts:
-                    data_type: array
+                    data_type: objects
                     max_results: -1
                     exclusion_policy: all
                     fields:
@@ -32,7 +32,7 @@ api:
                     form_options:
                         mapped: false
                 shippingTrackings:
-                    data_type: array
+                    data_type: objects
                     max_results: -1
                     exclusion_policy: all
                     fields:
@@ -84,7 +84,7 @@ api:
                     form_options:
                         mapped: false
                 paymentMethod:
-                    data_type: array
+                    data_type: objects
                     property_path: _
                     exclusion_policy: all
                     fields:
