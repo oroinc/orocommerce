@@ -18,7 +18,9 @@ class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 
         $rfpRequest = $this->createMock(RFPRequest::class);
 
-        $requestProductsObject = $this->createPartialMock(\stdClass::class, ['map', 'toArray']);
+        $requestProductsObject = $this->getMockBuilder(\stdClass::class)
+            ->addMethods(['map', 'toArray'])
+            ->getMock();
         $requestProductsObject->expects($this->atLeastOnce())
             ->method('map')
             ->willReturn($requestProductsObject);
