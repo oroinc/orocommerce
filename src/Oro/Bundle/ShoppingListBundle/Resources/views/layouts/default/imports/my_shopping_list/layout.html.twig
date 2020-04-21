@@ -1,0 +1,113 @@
+{% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
+    <div class="datagrid-toolbar__side" data-section="left-side">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
+    <div class="datagrid-toolbar__rightside" data-section="right-side">
+        <% if (toolbarPosition !== 'bottom') { %>
+            {{ block_widget(block) }}
+        <% } %>
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__container_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__header_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__header_title_container_widget %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block __my_shopping_list__header_title_icon_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' fa-shopping-cart'
+    }) %}
+
+    <span {{ block('block_attributes') }}></span>
+{% endblock %}
+
+{% block __my_shopping_list__header_title_text_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' cart-order-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ shoppingList.label }}
+    </h1>
+{% endblock %}
+
+{% block __my_shopping_list__header_title_status_widget %}
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}
+
+{% block __my_shopping_list__header_owner_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-owner'
+    }) %}
+
+    {% set label = shoppingList.customerUser|oro_format_name|default('N/A'|trans)|e %}
+
+    <div{{ block('block_attributes') }}>
+        {{ 'oro.frontend.shoppinglist.view.assigned_to.label'|trans}}:
+        {% if is_granted('VIEW', shoppingList.customerUser) %}
+            {{ UI.link({
+                'path': path('oro_customer_frontend_customer_user_view', {id: shoppingList.customerUser.id}),
+                'label': label,
+                'class': 'info-list__link'
+            }) }}
+        {% else %}
+            {{ label }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__line_items_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__checkout_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' order-checkout-widget'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__totals_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' shipping-list-view-total-container order-checkout-widget__container-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__combined_button_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' order-checkout-widget__col',
+        'data-name': 'empty-items__hide'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block('combined_buttons_widget') }}
+    </div>
+{% endblock %}

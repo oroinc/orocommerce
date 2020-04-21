@@ -22,12 +22,43 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         );
     }
 
+    public function testGetCurrent(): void
+    {
+        $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP);
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+
+        $shoppingList = $this->getContainer()
+            ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
+            ->getCurrent();
+
+        $expectedShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL);
+
+        $this->assertFalse(null === $shoppingList);
+        $this->assertEquals($expectedShoppingList->getId(), $shoppingList->getId());
+    }
+
+    public function testIsCurrent(): void
+    {
+        $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP);
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+
+        $provider = $this->getContainer()
+            ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists');
+
+        $this->assertTrue(
+            $provider->isCurrent($this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL))
+        );
+        $this->assertFalse(
+            $provider->isCurrent($this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL))
+        );
+    }
+
     /**
      * @dataProvider ACLProvider
      * @param array $shoppingLists
      * @param string $user
      */
-    public function testGetShoppingLists($shoppingLists, $user)
+    public function testGetShoppingLists(array $shoppingLists, string $user): void
     {
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
@@ -47,7 +78,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
     /**
      * @return array
      */
-    public function ACLProvider()
+    public function ACLProvider(): array
     {
         return [
             'VIEW (anonymous user)' => [

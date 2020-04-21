@@ -10,9 +10,3 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue: 'oro.shoppinglist.entity_plural_label'
-
-        - '@appendOption':
-            id: my_shopping_lists_datagrid
-            optionName: grid_render_parameters.toolbarOptions.itemsCounter
-            optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_lists'

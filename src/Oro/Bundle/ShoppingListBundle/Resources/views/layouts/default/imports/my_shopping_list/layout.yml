@@ -1,0 +1,73 @@
+layout:
+    imports:
+        -
+            id: my_shopping_list_line_items_grid
+            root: __line_items
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%label%': '=data["entity"].getLabel()'
+
+        - '@addTree':
+            items:
+                __container:
+                    blockType: container
+                __header:
+                    blockType: container
+                __header_title_container:
+                    blockType: container
+                __header_title_icon:
+                    blockType: block
+                __header_title_text:
+                    blockType: shopping_list_awere_block
+                    options:
+                        shoppingList: '=data["entity"]'
+                __header_title_status:
+                    blockType: text
+                    options:
+                        visible: '=data["oro_shopping_list_customer_user_shopping_lists"].isCurrent(data["entity"])'
+                        text: 'oro.frontend.shoppinglist.view.is_default.label'
+                __header_owner:
+                    blockType: shopping_list_awere_block
+                    options:
+                        visible: '=data["entity"].getCustomerUser()!=null'
+                        shoppingList: '=data["entity"]'
+                __line_items:
+                    blockType: container
+                __checkout_container:
+                    blockType: container
+                __totals:
+                    blockType: price_totals
+                    options:
+                        visible: '=data["entity"]!=null'
+                        totals: '=data["totals"]'
+                        events:
+                            - 'frontend:item:delete'
+                            - 'frontend:shopping-list-item-quantity:update'
+                        entityClassName: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                        entityId: '=data["entity"]!=null ? data["entity"].getId() : null'
+                        skipMaskView: true
+                __combined_button:
+                    blockType: combined_buttons
+                    options:
+                        visible: '=data["entity"]!=null'
+                        buttons: '=data["shopping_list_buttons"]'
+            tree:
+                __root:
+                    __container:
+                        __header:
+                            __header_title_container:
+                                __header_title_icon: ~
+                                __header_title_text: ~
+                                __header_title_status: ~
+                            __header_owner: ~
+                        __line_items: ~
+                        __checkout_container:
+                            __totals: ~
+                            __combined_button: ~

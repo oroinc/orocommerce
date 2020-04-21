@@ -202,7 +202,9 @@ oro:
                 last_updated.label: 'Last Updated'
                 show_more.label: 'Show More'
             view:
+                is_default.label: 'Default'
                 owner.label: Customer
+                assigned_to.label: 'Assigned To'
                 view_options.label: View Options for this Shopping List
                 add_note:
                     label: Add a Note to This Shopping List
@@ -266,3 +268,15 @@ oro:
                     added.label: 'Product has been added to "%shoppinglist%"'
                     removed.label: 'Product has been removed from "%shoppinglist%"'
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
+
+                sku.label: 'SKU'
+                item.label: 'Item'
+                inventory_status.label: ''
+                quantity.label: 'Qty'
+                price.label: 'Price'
+                subtotal.label: 'Subtotal'
+
+                filter:
+                    inventory_status.label: 'Availability'
+                    quantity.label: 'Quantity'
+                    unit.label: 'Unit'
