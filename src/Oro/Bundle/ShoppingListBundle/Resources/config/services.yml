@@ -620,3 +620,13 @@ services:
             - '@oro_shopping_list.manager.shopping_list_limit'
         tags:
             - { name: layout.context_configurator }
+
+    oro_shopping_list.datagrid.event_listener.my_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEventListener
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_product.layout.data_provider.configurable_products'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.my-shopping-list-line-items-grid, method: onResultAfter }

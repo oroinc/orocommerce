@@ -59,6 +59,17 @@ class CustomerUserShoppingListsProvider
     }
 
     /**
+     * @param ShoppingList $shoppingList
+     * @return bool
+     */
+    public function isCurrent(ShoppingList $shoppingList): bool
+    {
+        $current = $this->getCurrent();
+
+        return $current && $current->getId() === $shoppingList->getId();
+    }
+
+    /**
      * @return ShoppingList[]
      */
     public function getShoppingLists()

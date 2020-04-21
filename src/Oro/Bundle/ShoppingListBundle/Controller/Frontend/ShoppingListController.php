@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Oro\Bundle\ActionBundle\Provider\ButtonProvider;
 use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
@@ -20,7 +21,6 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -110,19 +110,51 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my", name="oro_shopping_list_frontend_index")
+     * @Route("/my", name="oro_shopping_list_frontend_my_index")
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
      *
      * @return array
      */
-    public function indexAction(): array
+    public function indexMyAction(): array
     {
+        if (!$this->getUser() instanceof CustomerUser) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (!$this->get(ConfigManager::class)->get('oro_shopping_list.my_shopping_lists_page_enabled')) {
-            throw new NotFoundHttpException();
+            throw $this->createNotFoundException();
         }
 
         return [];
+    }
+
+    /**
+     * @Route("/my/{id}", name="oro_shopping_list_frontend_my_view", requirements={"id"="\d+"})
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_view")
+     *
+     * @param ShoppingList $shoppingList
+     * @return array
+     */
+    public function viewMyAction(ShoppingList $shoppingList): array
+    {
+        $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+        $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
+            ->getRepository(ShoppingList::class)
+            ->findForViewAction($shoppingList->getId());
+
+        return [
+            'data' => [
+                'entity' => $shoppingList,
+                'totals' => [
+                    'identifier' => 'totals',
+                    'data' => $this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($shoppingList)
+                ],
+                'shopping_list_buttons' => ['data' => $this->getButtons($shoppingList)],
+            ],
+        ];
     }
 
     /**

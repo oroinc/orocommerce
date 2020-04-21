@@ -15,13 +15,14 @@ navigation:
                 extras:
                     description: 'oro.shoppinglist.menu.shortcut_shopping_list.description'
 
-            frontend_shopping_lists:
+            frontend_my_shopping_lists:
                 label:           'oro.shoppinglist.menu.shopping_lists.label'
-                route:           'oro_shopping_list_frontend_index'
+                route:           'oro_shopping_list_frontend_my_index'
                 acl_resource_id: 'oro_shopping_list_frontend_view'
                 position:        45
                 extras:
-                    condition: "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
+                    routes:      ['oro_shopping_list_frontend_my_index', 'oro_shopping_list_frontend_my_view']
+                    condition:   "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
 
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
@@ -44,13 +45,14 @@ navigation:
                     frontend_shopping_list: ~
                     oro_customer_menu_customer_user_index:
                         children:
-                            frontend_shopping_lists: ~
+                            frontend_my_shopping_lists: ~
             oro_customer_menu:
                 children:
-                    frontend_shopping_lists: ~
+                    frontend_my_shopping_lists: ~
 
     titles:
         oro_shopping_list_index: ~
         oro_shopping_list_view:  '%label%'
-        oro_shopping_list_frontend_index: ~
+        oro_shopping_list_frontend_my_index: ~
+        oro_shopping_list_frontend_my_view: '%label%'
         oro_shopping_list_frontend_view:  '%label%'

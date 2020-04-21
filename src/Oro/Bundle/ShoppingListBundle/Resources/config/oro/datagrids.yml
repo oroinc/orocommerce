@@ -256,7 +256,7 @@ datagrids:
         properties:
             view_link:
                 type:  url
-                route: oro_shopping_list_frontend_view
+                route: oro_shopping_list_frontend_my_view
                 params: [ id ]
             update_link:
                 type:  url
@@ -276,7 +276,112 @@ datagrids:
                 link:          update_link
                 icon:          pencil-square-o
                 acl_resource:  oro_shopping_list_frontend_update
-                rowAction:     true
+
+    my-shopping-list-line-items-grid:
+        acl_resource: oro_shopping_list_frontend_view
+        options:
+            entityHint: oro.shoppinglist.lineitem.entity_plural_label
+            frontend: true
+            toolbarOptions:
+                placement:
+                    bottom: true
+        source:
+            type: orm
+            query:
+                select:
+                    - GROUP_CONCAT(lineItem.id)
+                    - COALESCE(parentProduct.id, product.id) as mainProductId
+                    - COALESCE(parentProduct.sku, product.sku) as productSku
+                    - COALESCE(parentProduct.skuUppercase, product.skuUppercase) as productSkuUppercase
+                    - COALESCE(parentProduct.denormalizedDefaultName, product.denormalizedDefaultName) as productName
+                    - COALESCE(parentProduct.denormalizedDefaultNameUppercase, product.denormalizedDefaultNameUppercase) as productNameUppercase
+                    - (SELECT GROUP_CONCAT(innerLineItem.id)
+                        FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
+                        WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
+                        AND innerLineItem.unit = lineItem.unit) as lineItemIds
+                from:
+                    - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
+                join:
+                    inner:
+                        - { join: lineItem.product, alias: product }
+                    left:
+                        - { join: lineItem.parentProduct, alias: parentProduct }
+                        - { join: lineItem.unit, alias: unit}
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                where:
+                    and:
+                        - IDENTITY(lineItem.shoppingList) = :shopping_list_id
+                groupBy: mainProductId, unit.code
+            bind_parameters:
+                - shopping_list_id
+        columns:
+            productSku:
+                label:         oro.frontend.shoppinglist.lineitem.sku.label
+            item:
+                label:         oro.frontend.shoppinglist.lineitem.item.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/item.html.twig
+            inventoryStatus:
+                label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/inventory_status.html.twig
+            quantity:
+                label:         oro.frontend.shoppinglist.lineitem.quantity.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/quantity.html.twig
+            price:
+                label:         oro.frontend.shoppinglist.lineitem.price.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/price.html.twig
+            subtotal:
+                label:         oro.frontend.shoppinglist.lineitem.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/subtotal.html.twig
+        sorters:
+            columns:
+                productSku:
+                    data_name: productSku
+                item:
+                    data_name: productName
+            default:
+                productSku: ASC
+        filters:
+            columns:
+                productSku:
+                    type:             string
+                    data_name:        productSkuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                item:
+                    type:             string
+                    data_name:        productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                inventoryStatus:
+                    type:             choice
+                    data_name:        product.inventory_status
+                    options:
+                        field_options:
+                            choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                            multiple: true
+                    label:            oro.frontend.shoppinglist.lineitem.filter.inventory_status.label
+                quantity:
+                    type:             number
+                    data_name:        lineItem.quantity
+                    label:            oro.frontend.shoppinglist.lineitem.filter.quantity.label
+                unit:
+                    type:             choice
+                    data_name:        lineItem.unit
+                    label:            oro.frontend.shoppinglist.lineitem.filter.unit.label
+                    options:
+                        field_options:
+                            multiple: true
+                        field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view

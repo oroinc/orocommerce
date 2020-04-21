@@ -8,21 +8,26 @@ layout:
         - '@setOption':
             id: __datagrid
             optionName: grid_name
-            optionValue: my-shopping-lists-grid
+            optionValue: my-shopping-list-line-items-grid
+
+        - '@setOption':
+            id: __datagrid
+            optionName: split_to_cells
+            optionValue: true
 
         - '@appendOption':
             id: __datagrid
             optionName: grid_parameters
             optionValue:
-                customer_user_id: '=data["current_user"].getCurrentUser().getId()'
+                shopping_list_id: '=data["entity"].getId()'
 
         - '@setOption':
             id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.hideTitle
-            optionValue: '.page-title-wrapper'
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
 
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_lists'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'

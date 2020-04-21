@@ -90,12 +90,12 @@ class ShoppingListControllerTest extends WebTestCase
             )
         );
 
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
 
         $this->enableMyShoppingListsPage(true);
 
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->enableMyShoppingListsPage(false);
@@ -111,20 +111,20 @@ class ShoppingListControllerTest extends WebTestCase
         $configManager->flush();
     }
 
-    public function testIndex(): void
+    public function testIndexMy(): void
     {
         $this->enableMyShoppingListsPage(true);
 
-        $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
+        $user = $this->getContainer()
+            ->get('oro_customer_user.manager')
+            ->findUserByEmail(BaseLoadCustomerData::AUTH_USER);
+
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
-                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
-                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
-            )
+            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('my-shopping-lists-grid', $crawler->html());
@@ -137,11 +137,58 @@ class ShoppingListControllerTest extends WebTestCase
 
         $data = $this->getJsonResponseContent($response, 200)['data'];
 
-        $this->assertCount(1, $data);
-        $this->assertArrayHasKey('label', $data[0]);
-        $this->assertEquals('shopping_list_customer1_user_basic', $data[0]['label']);
+        $expectedLabels = [
+            LoadShoppingLists::SHOPPING_LIST_1 . '_label',
+            LoadShoppingLists::SHOPPING_LIST_2 . '_label',
+            LoadShoppingLists::SHOPPING_LIST_3 . '_label',
+            LoadShoppingLists::SHOPPING_LIST_4 . '_label',
+            LoadShoppingLists::SHOPPING_LIST_5 . '_label',
+            LoadShoppingLists::SHOPPING_LIST_8 . '_label',
+        ];
+
+        $this->assertCount(6, $data);
+        $this->assertCount(
+            0,
+            array_filter(
+                $data,
+                static function (array $row) use ($expectedLabels) {
+                    return !\in_array($row['label'], $expectedLabels, true);
+                }
+            )
+        );
 
         $this->enableMyShoppingListsPage(false);
+    }
+
+    public function testViewMy(): void
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
+        );
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_my_view', ['id' => $shoppingList->getId()])
+        );
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains('my-shopping-list-line-items-grid', $crawler->html());
+
+        $response = $this->client->requestFrontendGrid(
+            'my-shopping-list-line-items-grid',
+            ['my-shopping-list-line-items-grid[shopping_list_id]' => $shoppingList->getId()],
+            true
+        );
+
+        $data = $this->getJsonResponseContent($response, 200)['data'];
+
+        $this->assertCount(1, $data);
+        $this->assertArrayHasKey('item', $data[0]);
+        $this->assertContains('product-1.names.default', $data[0]['item']);
     }
 
     public function testView(): void

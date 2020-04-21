@@ -1,0 +1,7 @@
+layout:
+    imports:
+        -
+            id: my_shopping_list
+            root: page_content
+
+    actions: []
