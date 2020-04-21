@@ -21,7 +21,10 @@ navigation:
                 acl_resource_id: 'oro_shopping_list_frontend_view'
                 position:        45
                 extras:
-                    routes:      ['oro_shopping_list_frontend_my_index', 'oro_shopping_list_frontend_my_view']
+                    routes:
+                                 - 'oro_shopping_list_frontend_my_index'
+                                 - 'oro_shopping_list_frontend_my_view'
+                                 - 'oro_shopping_list_frontend_my_view_all'
                     condition:   "config_value('oro_shopping_list.my_shopping_lists_page_enabled')"
 
             frontend_shopping_list:
@@ -55,4 +58,5 @@ navigation:
         oro_shopping_list_view:  '%label%'
         oro_shopping_list_frontend_my_index: ~
         oro_shopping_list_frontend_my_view: '%label%'
+        oro_shopping_list_frontend_my_view_all: '%label%'
         oro_shopping_list_frontend_view:  '%label%'

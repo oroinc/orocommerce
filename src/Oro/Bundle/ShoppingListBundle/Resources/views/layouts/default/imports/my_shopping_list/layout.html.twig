@@ -91,6 +91,37 @@
     </div>
 {% endblock %}
 
+{% block __my_shopping_list__summary_container_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __my_shopping_list__summary_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' shipping-list-view-total-container order-checkout-widget__container-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="order-checkout-widget__container">
+            <div class="totals-container">
+                <table class="order-checkout-widget__table pull-right">
+                    <tbody>
+                    <tr>
+                        <th class="order-checkout-widget__total">
+                            <span>Summary</span>
+                        </th>
+                        <td>
+                            <span>{{ 'oro.frontend.shoppinglist.view.items.label'|trans({'%count%': shoppingList.lineItemsCount}) }}</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block __my_shopping_list__totals_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ ' shipping-list-view-total-container order-checkout-widget__container-wrapper'
