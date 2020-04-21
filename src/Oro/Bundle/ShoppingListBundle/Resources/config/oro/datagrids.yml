@@ -383,6 +383,16 @@ datagrids:
                             multiple: true
                         field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
 
+    my-shopping-list-all-line-items-grid:
+        extends: my-shopping-list-line-items-grid
+        options:
+            toolbarOptions:
+                pagination:
+                    onePage: true
+                pageSize:
+                    items: [10000]
+                    default_per_page: 10000
+
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
         extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'

@@ -42,6 +42,12 @@ layout:
                     blockType: container
                 __checkout_container:
                     blockType: container
+                __summary_container:
+                    blockType: container
+                __summary:
+                    blockType: shopping_list_awere_block
+                    options:
+                        shoppingList: '=data["entity"]'
                 __totals:
                     blockType: price_totals
                     options:
@@ -69,5 +75,7 @@ layout:
                             __header_owner: ~
                         __line_items: ~
                         __checkout_container:
-                            __totals: ~
+                            __summary_container:
+                                __summary: ~
+                                __totals: ~
                             __combined_button: ~

@@ -8,12 +8,17 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
 
+        - '@setOption':
+              id: datagrid
+              optionName: grid_name
+              optionValue: my-shopping-list-all-line-items-grid
+
         - '@add':
-            id: datagrid_show_all_link
+            id: datagrid_show_less_link
             parentId: datagrid_toolbar_leftside_container
             blockType: link
             options:
-                route_name: oro_shopping_list_frontend_my_view_all
+                route_name: oro_shopping_list_frontend_my_view
                 route_parameters:
                     id: '=data["entity"].getId()'
-                text: 'oro.frontend.shoppinglist.btn.show_all.label'
+                text: 'oro.frontend.shoppinglist.btn.show_less.label'
