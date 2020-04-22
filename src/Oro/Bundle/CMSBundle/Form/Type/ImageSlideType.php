@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
+use Oro\Bundle\FormBundle\Form\Type\LinkTargetType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -70,17 +71,10 @@ class ImageSlideType extends AbstractType
             ]
         )->add(
             'displayInSameWindow',
-            ChoiceType::class,
+            LinkTargetType::class,
             [
-                'label' => 'oro.cms.imageslide.display_in_same_window.label',
                 'tooltip' => 'oro.cms.imageslide.form.tooltip.display_in_same_window.label',
                 'required' => true,
-                'placeholder' => false,
-                'choices' => [
-                    'oro.cms.imageslide.display_in_same_window.value.yes' => 1,
-                    'oro.cms.imageslide.display_in_same_window.value.no' => 0,
-
-                ],
             ]
         )->add(
             'title',
