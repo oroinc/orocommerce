@@ -503,8 +503,8 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'products' => [1 => 1],
                 'productUnitCodes' => ['item' => 'item'],
                 'prices' => [
-                    $this->createPrice(15, self::TEST_CURRENCY, 5, 'item'),
                     $this->createPrice(10, self::TEST_CURRENCY, 10, 'item'),
+                    $this->createPrice(15, self::TEST_CURRENCY, 5, 'item'),
                 ],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
