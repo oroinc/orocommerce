@@ -4,8 +4,8 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -18,57 +18,83 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
 {
     use ContainerAwareTrait;
 
+    private const BATCH_SIZE = 20;
+    private const RELATIONS = [
+        'manageInventory',
+        'highlightLowInventory',
+        'inventoryThreshold',
+        'lowInventoryThreshold',
+        'minimumQuantityToOrder',
+        'maximumQuantityToOrder',
+        'decrementQuantity',
+        'backOrder',
+        'isUpcoming'
+    ];
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        /** @var EntityRepository $repository */
-        $repository = $manager->getRepository(Product::class);
-        $qb = $repository->createQueryBuilder('p');
-        $qb->select('p');
-        $qb->where($qb->expr()->orX(
-            $qb->expr()->in('p.manageInventory', $this->getSubQuery($manager, 'manageInventory')),
-            $qb->expr()->in('p.highlightLowInventory', $this->getSubQuery($manager, 'highlightLowInventory')),
-            $qb->expr()->in('p.inventoryThreshold', $this->getSubQuery($manager, 'inventoryThreshold')),
-            $qb->expr()->in('p.lowInventoryThreshold', $this->getSubQuery($manager, 'lowInventoryThreshold')),
-            $qb->expr()->in('p.minimumQuantityToOrder', $this->getSubQuery($manager, 'minimumQuantityToOrder')),
-            $qb->expr()->in('p.maximumQuantityToOrder', $this->getSubQuery($manager, 'maximumQuantityToOrder')),
-            $qb->expr()->in('p.decrementQuantity', $this->getSubQuery($manager, 'decrementQuantity')),
-            $qb->expr()->in('p.backOrder', $this->getSubQuery($manager, 'backOrder')),
-            $qb->expr()->in('p.isUpcoming', $this->getSubQuery($manager, 'isUpcoming'))
-        ));
-        $qb->orderBy('p.id');
-        $qb->groupBy('p.id');
-        $qb->setParameter('count', 1);
+        $duplicateListener = $this->container->get('oro_seo.event_listener.product_duplicate');
 
-        /** @var Product[] $products */
-        $products = new BufferedQueryResultIterator($qb->getQuery());
+        $productIds = $this->getAffectedProductIds($manager);
 
-        $duplicateListener = $this->container->get('oro_inventory.event_listener.product_duplicate');
-        foreach ($products as $product) {
+        $counter = 0;
+        foreach ($productIds as $productId) {
+            /** @var Product $product */
+            $product = $manager->getReference(Product::class, $productId);
             $event = new ProductDuplicateAfterEvent($product, $product);
             $duplicateListener->onDuplicateAfter($event);
+
+            ++ $counter;
+
+            if ($counter > self::BATCH_SIZE) {
+                $manager->clear();
+            }
         }
     }
 
     /**
      * @param ObjectManager $manager
-     * @param string $key
-     *
-     * @return string
+     * @return array
      */
-    private function getSubQuery(ObjectManager $manager, $key)
+    private function getAffectedProductIds(ObjectManager $manager): array
     {
-        /** @var EntityRepository $repository */
-        $repository = $manager->getRepository(Product::class);
-        $qb = $repository->createQueryBuilder(sprintf('sub_%s_p', $key));
-        $qb->select(sprintf('sub_%s_f.id', $key));
-        $qb->leftJoin(sprintf('sub_%s_p.%s', $key, $key), sprintf('sub_%s_f', $key));
-        $qb->orderBy(sprintf('sub_%s_f.id', $key));
-        $qb->groupBy(sprintf('sub_%s_f.id', $key));
-        $qb->having($qb->expr()->gt($qb->expr()->count(sprintf('sub_%s_f.id', $key)), ':count'));
+        $productIds = [];
 
-        return $qb->getDQL();
+        foreach (self::RELATIONS as $relation) {
+            $dql = $this->getDQL($relation);
+
+            /** @var EntityManager $manager */
+            $query = $manager->createQuery($dql);
+            $queryResult = $query->getResult(AbstractQuery::HYDRATE_ARRAY);
+
+            if ($queryResult) {
+                $result = array_column($queryResult, 'ids');
+
+                foreach ($result as $item) {
+                    $productIds = array_merge($productIds, explode(',', $item));
+                }
+            }
+        }
+
+        return array_unique($productIds);
+    }
+
+    private function getDQL(string $relation)
+    {
+        $dql = sprintf(
+            <<<DQL
+SELECT DISTINCT GROUP_CONCAT(CAST(p.id AS TEXT), '') AS ids
+FROM Oro\Bundle\ProductBundle\Entity\Product p
+INNER JOIN Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue efv WITH p.%s = efv
+GROUP BY efv.id
+HAVING COUNT(efv.id) > 1
+DQL,
+            $relation
+        );
+
+        return $dql;
     }
 }
