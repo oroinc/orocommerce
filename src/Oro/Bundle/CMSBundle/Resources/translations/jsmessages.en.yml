@@ -144,7 +144,7 @@ oro.cms:
                 decorations: 'Decorations'
                 extra: 'Extra'
                 flex: 'Flex'
-                dimension: 'dimension'
+                dimension: 'Dimension'
             properties:
                 float:
                     name: 'Alignment'
