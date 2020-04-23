@@ -1,5 +1,3 @@
-import DigitalAssetHelper from 'orocms/js/app/grapesjs/helpers/digital-asset-helper';
-
 export default class ImageExpression {
     /**
      * @constructor
@@ -8,7 +6,6 @@ export default class ImageExpression {
      */
     constructor(editor, ...options) {
         this.editor = editor;
-        this.onLoad = this.onLoad.bind(this);
 
         this.normalizeBgURLString = this.normalizeBgURLString.bind(this);
         this.bindEvents();
@@ -16,8 +13,6 @@ export default class ImageExpression {
 
     destroy() {
         this.unbindEvents();
-
-        delete this.onLoad;
     }
 
     /**
@@ -25,7 +20,7 @@ export default class ImageExpression {
      */
     bindEvents() {
         this.editor.on('component:styleUpdate:background-image', this.normalizeBgURLString);
-        this.editor.on('load', this.onLoad);
+        this.editor.on('load', this.normalizeBgURLString);
     }
 
     /**
@@ -33,30 +28,11 @@ export default class ImageExpression {
      */
     unbindEvents() {
         this.editor.off('component:styleUpdate:background-image', this.normalizeBgURLString);
-        this.editor.off('load', this.onLoad);
+        this.editor.off('load', this.normalizeBgURLString);
     }
 
-    /**
-     * @param model
-     */
-    normalizeBgURLString(model) {
-        const styles = model.getStyle();
-        const imgId = DigitalAssetHelper.getDigitalAssetIdFromTwigTag(styles['background-image']);
-
-        // Replace 'wysiwyg_image' placeholder by real url
-        if (imgId) {
-            const url = imgId.map(id => {
-                return `url("${DigitalAssetHelper.getImageUrl(id)}")`;
-            }).join(', ');
-
-            model.setStyle({'background-image': url});
-        }
-    }
-
-    /**
-     * on load listener
-     */
-    onLoad() {
-        this.normalizeBgURLString(this.editor.getWrapper());
+    normalizeBgURLString() {
+        // Need re-render all styles to show images with the correct url in the canvas for preview but do not save that.
+        this.editor.CssComposer.render();
     }
 }
