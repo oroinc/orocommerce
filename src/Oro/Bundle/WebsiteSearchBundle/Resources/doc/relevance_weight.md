@@ -63,7 +63,7 @@ Then, register this event listener in the DI container:
 
 ```yml
     acme_test.event_listener.website_search.set_website_search_relevance_weight:
-        class: 'Acme\Bundle\TestBundle\EventListener\SetWebsiteSearchRelevanceWeightListener'
+        class: Acme\Bundle\TestBundle\EventListener\SetWebsiteSearchRelevanceWeightListener
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onIndexEntity }
 ```

@@ -23,7 +23,7 @@ Here is an example of such listener definition:
 ```yaml
 services:
     oro_product.product_visibility_restriction_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
+        class: Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener
         arguments:
             - '@oro_product.product.manager'
             - '@oro_website_search.provider.search_mapping'
@@ -184,7 +184,7 @@ Below is an example of search repository service declaration:
 services:
     oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
-        class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
+        class: Oro\Bundle\ProductBundle\Search\ProductRepository
         calls:
             - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
 ```
