@@ -87,7 +87,7 @@ class DemoTaxProvider implements TaxProviderInterface
 
 services:
     acme_demo.tax_provider.demo:
-        class: 'Acme\Bundle\DemoBundle\Provider\DemoTaxProvider'
+        class: Acme\Bundle\DemoBundle\Provider\DemoTaxProvider
         tags:
             - { name: oro_tax.tax_provider, alias: demo, priority: 10 }
 

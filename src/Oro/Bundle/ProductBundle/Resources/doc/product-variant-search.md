@@ -163,7 +163,7 @@ Here is an example of how you can implement this:
 ```yml
 services:
     oro_product.provider.website_search_index_data.product_variants:
-        class: 'Oro\Bundle\ProductBundle\Search\ProductVariantProviderDecorator'
+        class: Oro\Bundle\ProductBundle\Search\ProductVariantProviderDecorator
         decorates: 'oro_product.provider.website_search_index_data'
         decoration_inner_name: 'oro_product.provider.website_search_index_data.original'
         arguments:
