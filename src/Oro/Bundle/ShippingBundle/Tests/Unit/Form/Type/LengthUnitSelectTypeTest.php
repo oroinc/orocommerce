@@ -17,6 +17,6 @@ class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(LengthUnitSelectType::NAME, $this->formType->getBlockPrefix());
+        static::assertEquals(LengthUnitSelectType::NAME, $this->formType->getBlockPrefix());
     }
 }

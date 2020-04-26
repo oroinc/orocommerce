@@ -36,18 +36,19 @@ class MessengerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddTransport()
     {
-        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
+        $messenger = new Messenger(
+            $this->createMock(TransportInterface::class),
+            $this->createMock(EventDispatcherInterface::class)
+        );
         $transport = $this->createMock(TransportInterface::class);
-        $this->assertAttributeCount(1, 'transports', $this->messenger);
-        $this->assertAttributeContains($this->sender, 'transports', $this->messenger);
+        $transport->expects($this->exactly(2)) // 1 on the first remove(), and only 1 on the second remove
+            ->method('remove');
+        $messenger->addTransport($transport);
+        $messenger->remove('channel', 'topic');
 
+        // Check that even after we attempt to add the same transport twice it would be not called twice anyway
         $this->messenger->addTransport($transport);
-        $this->assertAttributeCount(2, 'transports', $this->messenger);
-        $this->assertAttributeContains($transport, 'transports', $this->messenger);
-
-        // Check that transpor was not added twice
-        $this->messenger->addTransport($transport);
-        $this->assertAttributeCount(2, 'transports', $this->messenger);
+        $messenger->remove('channel', 'topic');
     }
 
     public function testSend()

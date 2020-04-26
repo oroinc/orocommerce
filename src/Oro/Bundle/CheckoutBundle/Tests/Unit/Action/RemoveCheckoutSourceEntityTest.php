@@ -8,9 +8,11 @@ use Oro\Bundle\CheckoutBundle\Action\RemoveCheckoutSourceEntity;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutSourceEntityRemoveEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Action\ActionInterface;
+use Oro\Component\Action\Exception\InvalidParameterException;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,19 +23,13 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContextAccessor
-     */
+    /** @var ContextAccessor */
     protected $contextAccessor;
 
-    /**
-     * @var MockObject|ManagerRegistry
-     */
+    /** @var MockObject|ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var ActionInterface
-     */
+    /** @var ActionInterface */
     protected $action;
 
     /** @var  MockObject|EventDispatcher */
@@ -45,137 +41,153 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 
         $this->registry = $this->createMock(ManagerRegistry::class);
 
-        $this->action = new RemoveCheckoutSourceEntity($this->contextAccessor, $this->registry);
+        $this->action = new class($this->contextAccessor, $this->registry) extends RemoveCheckoutSourceEntity {
+            public function xexecuteAction($context)
+            {
+                $this->executeAction($context);
+            }
+        };
 
         /** @var EventDispatcher $dispatcher */
         $this->dispatcher = $this->createMock(EventDispatcher::class);
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    /**
-     * @dataProvider invalidOptionsDataProvider
-     * @param array $options
-     */
-    public function testInitializeException(array $options)
+    public function testExecuteNotAnObjectException()
     {
-        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
-        $this->action->initialize($options);
-    }
-
-    /**
-     * @return array
-     */
-    public function invalidOptionsDataProvider()
-    {
-        return [
-            [[]],
-            [[1, 2]]
-        ];
-    }
-
-    public function testInitialize()
-    {
-        $target = new \stdClass();
-        $this->action->initialize([$target]);
-        $this->assertAttributeEquals($target, 'target', $this->action);
-    }
-
-    public function testExecuteNotObjectException()
-    {
-        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Action "remove_checkout_source_entity" expects reference to entity as parameter, string is given.'
+            \sprintf(
+                'Action "remove_checkout_source_entity" expects entity instanceof "%s", "string" is given.',
+                CheckoutInterface::class
+            )
         );
 
-        $this->dispatcher
-            ->expects($this->once())
-            ->method('dispatch');
+        $context = $this->createContextStub(null);
 
-        $context = new \stdClass();
-        $target = 'checkout';
-        $this->action->initialize([$target]);
-        $this->action->execute($context);
+        $this->action->initialize(['checkout']);
+        $this->action->xexecuteAction($context);
     }
 
     public function testExecuteIncorrectObjectException()
     {
-        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            sprintf(
+            \sprintf(
                 'Action "remove_checkout_source_entity" expects entity instanceof "%s", "stdClass" is given.',
                 CheckoutInterface::class
             )
         );
 
-        $this->dispatcher
-            ->expects($this->once())
-            ->method('dispatch');
+        $context = $this->createContextStub(new \stdClass());
 
-        $context = new \stdClass();
-        $context->checkout = new \stdClass();
-        $target = new PropertyPath('checkout');
-        $this->action->initialize([$target]);
-        $this->action->execute($context);
+        $this->action->initialize([new PropertyPath('checkout')]);
+        $this->action->xexecuteAction($context);
     }
 
-    public function testExecuteObjectWithEmptySourceEntityException()
+    public function testExecuteWithCheckoutWithEmptySourceEntity()
     {
-        $this->dispatcher
-            ->expects($this->exactly(2))
-            ->method('dispatch');
+        $this->dispatcher->expects(static::never())->method('dispatch');
+        $this->registry->expects(static::never())->method('getManagerForClass');
 
-        $this->registry
-            ->expects($this->never())
-            ->method('getManagerForClass');
+        $context = $this->createContextStub(
+            $this->createCheckoutMock(null, null)
+        );
 
-        $checkoutSource = $this->createMock(CheckoutSource::class);
-        $checkoutSource
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn(null);
-
-        $context = new \stdClass();
-        $context->checkout = $this->getEntity(Checkout::class, [
-            'source' => $checkoutSource
-        ]);
-        $target = new PropertyPath('checkout');
-        $this->action->initialize([$target]);
-        $this->action->execute($context);
+        $this->action->initialize([new PropertyPath('checkout')]);
+        $this->action->xexecuteAction($context);
     }
 
     public function testExecute()
     {
-        $this->dispatcher
-            ->expects($this->exactly(4))
-            ->method('dispatch');
-
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $checkoutSource = $this->createMock(CheckoutSource::class);
+        $checkoutSource->method('getEntity')->willReturn($shoppingList);
+        $checkoutSource->expects(static::once())->method('clear');
 
-        $checkoutSource = new CheckoutSourceStub();
-        $checkoutSource->setShoppingList($shoppingList);
+        $this->dispatcher->expects(static::exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [
+                    static::logicalAnd(
+                        static::isInstanceOf(CheckoutSourceEntityRemoveEvent::class),
+                        static::callback(
+                            static function (CheckoutSourceEntityRemoveEvent $event) use ($shoppingList) {
+                                static::identicalTo($shoppingList)->evaluate(
+                                    $event->getCheckoutSourceEntity(),
+                                    ' ' . __FILE__ . ':' .  __LINE__
+                                );
+                                return true;
+                            }
+                        )
+                    ),
+                    static::equalTo(CheckoutSourceEntityRemoveEvent::BEFORE_REMOVE)
+                ],
+                [
+                    static::logicalAnd(
+                        static::isInstanceOf(CheckoutSourceEntityRemoveEvent::class),
+                        static::callback(
+                            static function (CheckoutSourceEntityRemoveEvent $event) use ($shoppingList) {
+                                static::identicalTo($shoppingList)->evaluate(
+                                    $event->getCheckoutSourceEntity(),
+                                    ' ' . __FILE__ . ':' .  __LINE__
+                                );
+                                return true;
+                            }
+                        )
+                    ),
+                    static::equalTo(CheckoutSourceEntityRemoveEvent::AFTER_REMOVE)
+                ]
+            )
+        ->willReturnArgument(2);
 
-        $context = new \stdClass();
-        $context->checkout = $this->getEntity(Checkout::class, [
-            'source' => $checkoutSource
-        ]);
-        $target = new PropertyPath('checkout');
+        $context = $this->createContextStub(
+            $this->createCheckoutMock($checkoutSource, $shoppingList)
+        );
 
         $em = $this->createMock(EntityManager::class);
-        $em->expects($this->once())
-            ->method('remove')
-            ->with($shoppingList);
+        $em->expects(static::once())->method('remove')->with($shoppingList);
 
-        $this->registry
-            ->expects($this->once())
+        $this->registry->expects(static::once())
             ->method('getManagerForClass')
             ->with(ShoppingList::class)
-            ->will($this->returnValue($em));
+            ->willReturn($em);
 
-        $this->action->initialize([$target]);
-        $this->action->execute($context);
+        $this->action->initialize([new PropertyPath('checkout')]);
+        $this->action->xexecuteAction($context);
+    }
 
-        $this->assertNull($checkoutSource->getShoppingList());
-        $this->assertNull($checkoutSource->getEntity());
+    private function createContextStub($checkout): object
+    {
+        return new class($checkout) {
+            public $checkout;
+
+            public function __construct($checkout)
+            {
+                $this->checkout = $checkout;
+            }
+        };
+    }
+
+    /**
+     * @return Checkout|MockObject
+     */
+    private function createCheckoutMock(
+        ?MockObject $source,
+        ?CheckoutSourceEntityInterface $sourceEntity
+    ) {
+        $checkout = $this->getMockBuilder(Checkout::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getSource', 'getSourceEntity'])
+            ->getMock();
+        $checkout->method('getSource')->willReturn($source);
+
+        if (null !== $sourceEntity) {
+            $checkout->method('getSourceEntity')->willReturn($sourceEntity);
+            $source->method('getEntity')->willReturn($sourceEntity);
+        }
+
+        return $checkout;
     }
 }

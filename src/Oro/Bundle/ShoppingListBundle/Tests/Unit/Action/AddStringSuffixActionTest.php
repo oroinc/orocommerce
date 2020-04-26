@@ -11,46 +11,33 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AddStringSuffixAction
-     */
+    /** @var AddStringSuffixAction */
     protected $action;
 
     protected function setUp(): void
     {
-        $this->action = new AddStringSuffixAction(new ContextAccessor());
+        $this->action = new class(new ContextAccessor()) extends AddStringSuffixAction {
+            public function xgetOptions(): array
+            {
+                return $this->options;
+            }
+        };
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
         $this->action->setDispatcher($dispatcher);
     }
 
-    /**
-     * @param array $options
-     *
-     * @dataProvider optionsDataProvider
-     */
-    public function testInitialize(array $options)
+    public function testInitialize()
     {
+        $options = [
+            'attribute' => new PropertyPath('attribute'),
+            'string' => 'label',
+            'stringSuffix' => ' some additional string',
+            'maxLength' => 5,
+        ];
         $this->action->initialize($options);
 
-        static::assertAttributeEquals($options, 'options', $this->action);
-    }
-
-    /**
-     * @return array
-     */
-    public function optionsDataProvider()
-    {
-        return [
-            [
-                [
-                    'attribute' => new PropertyPath('attribute'),
-                    'string' => 'label',
-                    'stringSuffix' => ' some additional string',
-                    'maxLength' => 5,
-                ],
-            ]
-        ];
+        static::assertEquals($options, $this->action->xgetOptions());
     }
 
     /**

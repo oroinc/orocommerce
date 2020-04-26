@@ -34,9 +34,15 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
     {
         $from = 'test';
 
-        $redirect = new Redirect();
+        $redirect = new class() extends Redirect {
+            public function xgetFromHash(): string
+            {
+                return $this->fromHash;
+            }
+        };
+
         $redirect->setFrom($from);
 
-        $this->assertAttributeEquals(md5($from), 'fromHash', $redirect);
+        static::assertEquals(md5($from), $redirect->xgetFromHash());
     }
 }

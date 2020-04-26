@@ -38,11 +38,12 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
 
     public function testSetGetUnitPrecision()
     {
-        $this->assertNull($this->entity->getUnitPrecision());
+        static::assertNull($this->entity->getUnitPrecision());
 
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals(null, 'unit', $this->entity);
-        $this->assertAttributeEquals(null, 'precision', $this->entity);
+        $this->entity->loadUnitPrecision();
+        static::assertNull($this->entity->getUnitPrecision()->getPrecision());
+        static::assertNull($this->entity->getUnitPrecision()->getUnit());
 
         $precision = 11.1;
         $unit = new ProductUnit();
@@ -52,22 +53,23 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
         $this->entity->loadUnitPrecision();
 
         $unitPrecision = $this->entity->getUnitPrecision();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision', $unitPrecision);
-        $this->assertEquals($precision, $unitPrecision->getPrecision());
-        $this->assertSame($unit, $unitPrecision->getUnit());
+        static::assertInstanceOf(CategoryUnitPrecision::class, $unitPrecision);
+        static::assertEquals($precision, $unitPrecision->getPrecision());
+        static::assertSame($unit, $unitPrecision->getUnit());
 
         $unitPrecision = CategoryUnitPrecision::create(3, new ProductUnit('set'));
         $this->entity->setUnitPrecision($unitPrecision);
-        $this->assertSame($unitPrecision, $this->entity->getUnitPrecision());
+        static::assertSame($unitPrecision, $this->entity->getUnitPrecision());
 
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals($unitPrecision->getPrecision(), 'precision', $this->entity);
-        $this->assertAttributeEquals($unitPrecision->getUnit(), 'unit', $this->entity);
+        static::assertEquals($unitPrecision->getPrecision(), $this->entity->getUnitPrecision()->getPrecision());
+        static::assertEquals($unitPrecision->getUnit(), $this->entity->getUnitPrecision()->getUnit());
 
         $this->setProperty($this->entity, 'unitPrecision', null);
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals(null, 'precision', $this->entity);
-        $this->assertAttributeEquals(null, 'unit', $this->entity);
+        $this->entity->loadUnitPrecision();
+        static::assertNull($this->entity->getUnitPrecision()->getPrecision());
+        static::assertNull($this->entity->getUnitPrecision()->getUnit());
     }
 
     public function testToString()

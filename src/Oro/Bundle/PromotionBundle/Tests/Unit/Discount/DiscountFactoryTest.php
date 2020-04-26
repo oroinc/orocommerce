@@ -9,20 +9,17 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedTypeException;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContainerInterface|MockObject */
     protected $container;
 
-    /**
-     * @var DiscountFactory
-     */
+    /** @var DiscountFactory */
     protected $discountFactory;
 
     protected function setUp(): void
@@ -42,14 +39,24 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
         $this->discountFactory->addType($type1, $serviceName1);
         $this->discountFactory->addType($type2, $serviceName2);
 
-        $this->assertAttributeEquals(
-            [
-                $type1 => $serviceName1,
-                $type2 => $serviceName2
-            ],
-            'typeToServiceMap',
-            $this->discountFactory
-        );
+        $this->container->expects(static::exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [$serviceName1],
+                [$serviceName2]
+            )
+            ->willReturn($this->createMock(DiscountInterface::class));
+
+        $configuration1 = $this->createMock(DiscountConfiguration::class);
+        $configuration1->method('getOptions')->willReturn([]);
+        $configuration1->method('getType')->willReturn($type1);
+
+        $this->discountFactory->create($configuration1);
+
+        $configuration2 = $this->createMock(DiscountConfiguration::class);
+        $configuration2->method('getOptions')->willReturn([]);
+        $configuration2->method('getType')->willReturn($type2);
+        $this->discountFactory->create($configuration2);
     }
 
     public function testCreate()
@@ -57,7 +64,7 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
         $type = 'oro_promotion.test_type';
         $serviceName = 'oro_promotion.test_type.service';
 
-        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount */
+        /** @var DiscountInterface|MockObject $discount */
         $discount = $this->createMock(DiscountInterface::class);
 
         $configurationOptions = ['option' => 'option_value'];
@@ -85,7 +92,7 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
         $type = 'oro_promotion.test_type';
         $serviceName = 'oro_promotion.test_type.service';
 
-        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount */
+        /** @var DiscountInterface|MockObject $discount */
         $discount = $this->createMock(DiscountInterface::class);
 
         $configurationOptions = ['option' => 'option_value'];

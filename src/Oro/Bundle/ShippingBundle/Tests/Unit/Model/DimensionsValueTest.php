@@ -38,10 +38,10 @@ class DimensionsValueTest extends \PHPUnit\Framework\TestCase
     {
         $model = DimensionsValue::create(12, 34, 56);
 
-        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\DimensionsValue', $model);
-        $this->assertAttributeSame(12, 'length', $model);
-        $this->assertAttributeSame(34, 'width', $model);
-        $this->assertAttributeSame(56, 'height', $model);
+        static::assertInstanceOf(DimensionsValue::class, $model);
+        static::assertSame(12, $model->getLength());
+        static::assertSame(34, $model->getWidth());
+        static::assertSame(56, $model->getHeight());
     }
 
     /**
