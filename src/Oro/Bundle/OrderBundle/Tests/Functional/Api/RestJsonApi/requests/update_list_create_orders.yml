@@ -1,0 +1,103 @@
+data:
+    -
+        type: orders
+        attributes:
+            identifier: 'new_order 1'
+            poNumber: '2345678'
+            shipUntil: '2017-04-12'
+            currency: 'USD'
+        relationships:
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: line_item_1
+                    -
+                        type: orderlineitems
+                        id: line_item_2
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order->organization->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@simple_order->customerUser->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@simple_order->customer->id)>'
+    -
+        type: orders
+        attributes:
+            identifier: 'new_order 2'
+            poNumber: '2345679'
+            shipUntil: '2017-04-12'
+            currency: 'USD'
+        relationships:
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: line_item_3
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order->organization->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@simple_order->customerUser->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@simple_order->customer->id)>'
+included:
+    -
+        type: orderlineitems
+        id: line_item_1
+        attributes:
+            quantity: 1
+            value: 10
+            currency: 'USD'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'
+    -
+        type: orderlineitems
+        id: line_item_2
+        attributes:
+            quantity: 1
+            value: 10
+            currency: 'USD'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->code)>'
+    -
+        type: orderlineitems
+        id: line_item_3
+        attributes:
+            quantity: 3
+            value: 30
+            currency: 'USD'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'
