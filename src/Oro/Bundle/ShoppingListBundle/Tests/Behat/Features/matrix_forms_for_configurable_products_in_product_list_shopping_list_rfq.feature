@@ -558,7 +558,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
@@ -586,7 +586,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | 2        | N/A      |          |
     And I click on "Shopping List Dropdown"
-    And I click "Remove From Shopping List"
+    And I click "Remove From Shopping List" in "ShoppingListButtonGroupMenu" element
     And I follow "Shopping List" link within flash message "Product has been removed from \"Shopping List\""
     Then I should see "The Shopping List is empty"
 
@@ -605,7 +605,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click on "Shopping List Dropdown"
+    And I click "Add to Shopping List" in "ShoppingListButtonGroupMenu" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -630,7 +631,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Attribute 1" with "Value 12"
     And I fill in "Attribute 2" with "Value 23"
     And I fill in "Attribute 3" with "Value 32"
-    And I click "Add to Shopping List"
+    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     #next 6 lines related to @ticket-BB-10500
     And I should see text matching "Attribute 1: Value 12"
@@ -704,7 +705,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click "Add to Shopping List" in modal window
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see "Update"
@@ -726,12 +727,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | -        | -        | 3        |
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
-    And I click "Update Shopping List"
+    And I click "Update Shopping List" in modal window
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
     And type "CNFB" in "search"
     And click "Search Button"
     And I should see "Update Shopping List" for "CNFB" product
-    And I click "Update Shopping List"
+    And I click "Update Shopping List" in "ShoppingListButtonGroup" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 1        | 1        | N/A      |
@@ -744,7 +745,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | -        | -        | -        |
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
-    And I click "Update Shopping List"
+    And I click "Update Shopping List" in modal window
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I should see "Update"
     And I click "Update"
@@ -783,7 +784,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 |          | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        |          |
-    And I click "Add to Shopping List"
+    And I click on "Shopping List Dropdown"
+    And I click "Add to Shopping List" in "ShoppingListButtonGroupMenu" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see text matching "Attribute 1: Value 11"
@@ -807,7 +809,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
-    And I click "Add to Shopping List"
+    And I click "Add to Shopping List" in "Product General Information" element
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
     And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
@@ -867,7 +869,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | -        | -        | 3        |
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
-    And I click "Update Shopping List"
+    And I click "Update Shopping List" in "ShoppingListButtonGroup" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -893,7 +895,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
@@ -908,7 +910,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | 1        | -        |
       | Value 14 | -        | -        | 1        |
     And I click on "Shopping List Dropdown"
-    And I click "Create New Shopping List"
+    And I click "Create New Shopping List" in "ShoppingListButtonGroupMenu" element
     And I fill in "Shopping List Name" with "Product B Shopping List"
     And I click "Create and Add"
     Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
@@ -922,7 +924,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | 3        | -        |
       | Value 14 | -        | -        | 5        |
     And I click on "Shopping List Dropdown"
-    And I click "Update Product B Shopping List"
+    And I click "Update Product B Shopping List" in "ShoppingListButtonGroupMenu" element
     And I should see "Shopping list \"Product B Shopping List\" was updated successfully"
     When I click "Product B Shopping List"
     And I should see an "Matrix Grid Form" element
@@ -953,8 +955,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create and Add"
     Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
     And I should see "Product has been added to \"Product C Shopping List\""
-
-    When I click "Product C Shopping List"
+    Then I hover on "Shopping Cart"
+    When I click "Product C Shopping List" on shopping list widget
     Then I should see "Product B Shopping List 4 Items"
     And I should see "Product C Shopping List 1 Item"
 
@@ -964,7 +966,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "View Details" for "CNFA" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
-    And I click "Remove From Shopping List"
+    And I click "Remove From Shopping List" in "ShoppingListButtonGroupMenu" element
     Then I should see "Product has been removed from \"Shopping List\""
     And I open shopping list widget
     And I click "View Details"
@@ -982,7 +984,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
-    And I click "Add to Product C Shopping List"
+    And I click on "Shopping List Dropdown"
+    And I click "Add to Product C Shopping List" in "ShoppingListButtonGroupMenu" element
     Then I should see an "Matrix Grid Form" element
 
   Scenario: Check matrix form disabled

@@ -114,9 +114,7 @@
         <div class="quick-order-import__content">
             <label role="button" tabindex="0" class="btn btn--large" for="{{ form.file.vars.id }}"
                 aria-label="{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.aria_label'|trans }}"
-                >
-                {{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}
-            </label>
+                >{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}</label>
             {{ form_widget(form.file, {attr: {class:'hidden'}}) }}
         </div>
     {% endspaceless %}

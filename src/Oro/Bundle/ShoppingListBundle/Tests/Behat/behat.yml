@@ -19,6 +19,12 @@ oro_behat_extension:
     ShoppingListAdd:
       selector: '.add-to-shopping-list-button'
 
+    ShoppingListButtonGroup:
+      selector: '[data-product-dropdown-root]'
+
+    ShoppingListButtonGroupMenu:
+      selector: '[data-product-dropdown-root] .dropdown-menu.show'
+
     ShoppingListForm:
       selector: '.shopping-lists-popup__item'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
