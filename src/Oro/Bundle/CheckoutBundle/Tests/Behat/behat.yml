@@ -256,7 +256,7 @@ oro_behat_extension:
 
     Paste Your Order Input Field:
       selector:
-        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste-uid")]'
+        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste")]'
         type: xpath
 
     Assigned To Input Field:

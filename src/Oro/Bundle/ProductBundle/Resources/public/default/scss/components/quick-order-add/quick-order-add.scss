@@ -196,6 +196,10 @@
 
         .pull-left {
           width: 100%;
+
+          &:nth-child(2) {
+            margin: $quick-order-add-mobile-widget-content-margin;
+          }
         }
 
         .btn-group { //override platform styles
@@ -204,14 +208,6 @@
 
           .mass-action-controls {
             width: 100%;
-          }
-
-          & + .btn-group {
-            margin-top: 5px;
-          }
-
-          &.widget-content {
-            margin: $quick-order-add-mobile-widget-content-margin;
           }
 
           a:not(.dropdown-toggle) {

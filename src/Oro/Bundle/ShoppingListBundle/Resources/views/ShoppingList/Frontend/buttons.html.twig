@@ -58,8 +58,9 @@
     }) %}
 
     {% set buttonOptions = {
+        'role': 'button',
         'dataAttributes': dataAttributes,
-        'btnCss': 'btn btn--block add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'btn btn--block add-to-shopping-list-button ' ~ options.aCss,
         'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
@@ -78,7 +79,7 @@
     {% endif %}
 
     <div class="btn-group btn-group--flex icons-holder btn-group--loading">
-        {{ UI.clientBtn(buttonOptions) }}
+        {{ UI.clientLink(buttonOptions) }}
     </div>
 {% endmacro %}
 
