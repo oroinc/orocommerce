@@ -27,6 +27,7 @@ api:
                         currency:
                             form_options:
                                 mapped: false
+                update_list: true
 
         Extend\Entity\EV_Order_Internal_Status:
             actions: false
