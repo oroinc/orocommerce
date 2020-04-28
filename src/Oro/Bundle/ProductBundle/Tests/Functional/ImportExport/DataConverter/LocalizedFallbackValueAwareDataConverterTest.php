@@ -5,8 +5,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
@@ -107,8 +110,12 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $container = $this->getContainer();
 
         $this->loadFixtures(
-            ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData']
+            [LoadLocalizationData::class, LoadOrganization::class]
         );
+
+        $organization = $this->getReference('organization');
+        $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
+        $this->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->converter = new LocalizedFallbackValueAwareDataConverter(
             $container->get('oro_entity.helper.field_helper'),
