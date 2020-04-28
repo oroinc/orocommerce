@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
@@ -122,5 +123,56 @@ class ContentNodeControllerTest extends WebTestCase
                 "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
             )->count()
         );
+    }
+
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        $localization = $this->getContainer()->get('oro_locale.manager.localization')->getDefaultLocalization(false);
+
+        /** @var ContentNode $contentNodeReference */
+        $contentNodeReference = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(ContentNode::class);
+        $contentNode = $entityManager->find(ContentNode::class, $contentNodeReference->getId());
+
+        $contentNode->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($localization);
+
+        $contentNode->addSlugPrototype($slugPrototype);
+        $entityManager->flush($contentNode);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_content_node_update', ['id' => $contentNode->getId()])
+        );
+
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $formValues['oro_web_catalog_content_node']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $localization->getId() => ['value' => 'english-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_content_node_get_changed_urls', ['id' => $contentNode->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English (United States)' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 }
