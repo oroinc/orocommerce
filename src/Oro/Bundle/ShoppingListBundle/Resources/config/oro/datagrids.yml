@@ -283,6 +283,14 @@ datagrids:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
             frontend: true
             toolbarOptions:
+                pageSize:
+                    items:
+                        - 10
+                        - 25
+                        - 50
+                        - 100
+                        - label: oro.shoppinglist.datagrid.toolbar.pageSize.all.label
+                          size: 10000
                 placement:
                     bottom: true
         source:

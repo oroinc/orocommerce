@@ -249,8 +249,6 @@ oro:
                 create_order: 'Create Order'
                 delete: 'Delete'
                 delete_item_aria_label: 'Delete this Shopping list item'
-                show_all.label: 'Show All'
-                show_less.label: 'Show Less'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
