@@ -12,6 +12,9 @@ oro:
             add_to_new_shopping_list: Create New Shopping List
         datagrid:
             add_to_shopping_list: Add To Shopping List
+            toolbar:
+                pageSize:
+                    all.label: All
         actions:
             add_to_shopping_list: Add to {{ shoppingList }}
             line_items_in_shopping_list: '{{ lineItems }} in {{ shoppingList }}'
@@ -35,3 +38,6 @@ oro:
                 delete_title: Delete Confirmation
             matrix_grid_order:
                 item_number: 'Item #'
+            btn:
+                show_all.label: 'Show All'
+                show_less.label: 'Show Less'

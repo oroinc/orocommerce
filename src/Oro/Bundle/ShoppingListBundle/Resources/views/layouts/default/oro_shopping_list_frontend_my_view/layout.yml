@@ -9,14 +9,12 @@ layout:
             themes: 'layout.html.twig'
 
         - '@add':
-            id: datagrid_show_all_link
+            id: datagrid_toggle_paginaton_view
             parentId: datagrid_toolbar_leftside_container
-            blockType: link
+            blockType: block
             options:
-                route_name: oro_shopping_list_frontend_my_view_all
-                route_parameters:
-                    id: '=data["entity"].getId()'
-                text: 'oro.frontend.shoppinglist.btn.show_all.label'
+                attr:
+                    data-page-component-view: 'orodatagrid/js/app/views/toggle-pagination-view'
 
         - '@setOption':
             id: page_content
