@@ -957,6 +957,20 @@ oro_behat_extension:
         type: xpath
         locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
 
+    Content Node Titles Localization Form Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+
+    Content Node Titles Localization Form:
+      selector: 'form[name="oro_web_catalog_content_node"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Default Value: 'oro_web_catalog_content_node[titles][values][default]'
+          Use Default: 'oro_web_catalog_content_node[titles][values][localizations][1][use_fallback]'
+          English (United States): 'oro_web_catalog_content_node[titles][values][localizations][1][value]'
+
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
 
