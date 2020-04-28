@@ -1,26 +1,35 @@
 <% if (_.isMobile()) { %>
-    <label class="btn btn--default btn--size-s">
-        <input type="checkbox" tabindex="-1" data-checkbox-change-visible class="custom-checkbox__input">
+    <label tabindex="0" class="btn btn--default btn--size-s">
+        <input type="checkbox" tabindex="-1"
+               data-checkbox-change-visible class="custom-checkbox__input">
         <span class="icon-selector icon--no-offset"></span>
     </label>
 <% } else { %>
     <% var togglerId = _.uniqueId('dropdown-') %>
     <div class="datagrid-massaction">
-        <div class="dropdown datagrid-massaction__toggle datagrid-massaction__toggle--size-m">
-            <button class="datagrid-massaction__invisible" type="button" id="<%- togglerId %>" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.label') %>"></button>
-            <label class="custom-checkbox">
-                <input type="checkbox" name="is_default" class="custom-checkbox__input" data-select aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.input.aria_label') %>">
+        <div class="btn-group dropdown">
+            <label class="btn btn--default btn--size-s custom-checkbox">
+                <input type="checkbox" name="is_default" class="custom-checkbox__input"
+                       data-input-widget-options="<%- JSON.stringify({checkedParentCssClass:null}) %>"
+                       data-select>
                 <span class="custom-checkbox__icon" aria-hidden="true"></span>
+                <span class="sr-only"><%- _.__('oro.datagrid.headerCell.selectAllVisible.input.aria_label') %></span>
             </label>
+            <button class="btn btn--default btn--size-s dropdown-toggle dropdown-toggle--no-offset"
+                    id="<%- togglerId %>" data-toggle="dropdown"
+                    data-placement="bottom-center"
+                    data-modifiers="<%- JSON.stringify({preventOverflow: {enabled: false}, hide: {enabled: false}}) %>"
+                    aria-haspopup="true" aria-expanded="false"
+                    aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.label') %>"
+            ></button>
             <ul class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>">
                 <li class="all-visible">
-                    <a href="#" class="action" data-select-all-visible>
+                    <a href="#" class="action dropdown-item" role="button" data-select-all-visible>
                         <%- _.__('oro.datagrid.headerCell.selectAll.allVisible') %>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="action" data-select-none>
+                    <a href="#" class="action dropdown-item" role="button" data-select-none>
                         <%- _.__('oro.datagrid.headerCell.selectAll.none') %>
                     </a>
                 </li>

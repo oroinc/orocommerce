@@ -24,7 +24,7 @@ Feature: Product collection add mass action
   Scenario: Check Add button for Excluded tab popup when no products selected
     When I click on "Add Button"
     Then I should see "Add Products"
-    When I click "Add" in modal window
+    When I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -35,7 +35,7 @@ Feature: Product collection add mass action
     And I check PSKU4 record in "Add Products Popup" grid
     And I press next page button in grid "Add Products Popup"
     And I check PSKU2 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
       | PSKU11 | Product 11 |
@@ -53,7 +53,7 @@ Feature: Product collection add mass action
   Scenario: Check Add button for Manually Added tab popup when no products selected
     When I click on "Add Button"
     Then I should see "Add Products"
-    When I click "Add" in modal window
+    When I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
