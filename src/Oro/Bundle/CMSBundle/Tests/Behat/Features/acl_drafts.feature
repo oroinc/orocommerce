@@ -24,10 +24,10 @@ Feature: ACL Drafts
   Scenario: Prepare draft from John Doe
     When I click "Create draft"
     Then I should see "UiWindow" with elements:
-      | Title        | Action Confirmation                                                                                                                    |
-      | Content      | Only the changes from the following fields will be transferred to a draft: metaKeywords, metaDescriptions, metaTitles, content, titles |
-      | okButton     | Yes                                                                                                                                    |
-      | cancelButton | Cancel                                                                                                                                 |
+      | Title        | Action Confirmation                                                                                                                                    |
+      | Content      | Only the changes from the following fields will be transferred to a draft: metaDescriptions, metaTitles, metaKeywords, slugPrototypes, titles, content |
+      | okButton     | Yes                                                                                                                                                    |
+      | cancelButton | Cancel                                                                                                                                                 |
     When I click "Yes" in confirmation dialogue
     Then I should see "Draft has been saved" flash message
     And I should see URL Slug field filled with "page"

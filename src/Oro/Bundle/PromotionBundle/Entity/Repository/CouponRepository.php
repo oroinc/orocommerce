@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
+/**
+ * Coupon ORM Entity repository.
+ */
 class CouponRepository extends EntityRepository
 {
     /**
@@ -43,5 +46,39 @@ class CouponRepository extends EntityRepository
             ->getQuery()->getArrayResult();
 
         return array_column($result, 'id');
+    }
+
+    /**
+     * @param string $couponCode
+     * @param bool $caseInsensitive
+     * @return Coupon|null
+     */
+    public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false)
+    {
+        $qb = $this->createQueryBuilder('coupon');
+        if ($caseInsensitive) {
+            $field = 'coupon.codeUppercase';
+            $code = strtoupper($couponCode);
+        } else {
+            $field = 'coupon.code';
+            $code = $couponCode;
+        }
+
+        $qb->where($qb->expr()->eq($field, ':code'))
+            ->setParameter('code', $code);
+
+        /** @var Coupon[] $result */
+        $result = $qb->getQuery()->getResult();
+        if (!$result || count($result) !== 1) {
+            return null;
+        }
+        $coupon = reset($result);
+
+        // MySQL does not perform case-sensitive search by default, this check added to make search platform independent
+        if ($coupon && !$caseInsensitive && $coupon->getCode() !== $couponCode) {
+            return null;
+        }
+
+        return $coupon;
     }
 }

@@ -19,6 +19,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Async processor to generate sitemap files.
+ */
 class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -118,20 +121,15 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
                 $message->getMessageId(),
                 Topics::GENERATE_SITEMAP,
                 function (JobRunner $jobRunner, Job $job) use ($websites) {
-                    $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
+                    $this->createFinishJobs($job, $websites);
+
                     foreach ($websites as $website) {
                         $providerNames = $this->getProvidersNamesByWebsite($website);
                         $this->canonicalUrlGenerator->clearCache($website);
                         foreach ($providerNames as $type) {
                             $this->scheduleGeneratingSitemapForWebsiteAndType($jobRunner, $website, $type);
                         }
-
-                        $context->addDependentJob(
-                            Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                            $this->indexMessageFactory->createMessage($website, $this->version)
-                        );
                     }
-                    $this->dependentJobService->saveDependentJob($context);
 
                     return true;
                 }
@@ -156,6 +154,22 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         }
 
         return $result ? self::ACK : self::REJECT;
+    }
+
+    /**
+     * @param Job $job
+     * @param array $websites
+     */
+    private function createFinishJobs(Job $job, array $websites): void
+    {
+        $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
+        foreach ($websites as $website) {
+            $context->addDependentJob(
+                Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
+                $this->indexMessageFactory->createMessage($website, $this->version)
+            );
+        }
+        $this->dependentJobService->saveDependentJob($context);
     }
 
     /**

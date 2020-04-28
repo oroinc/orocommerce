@@ -86,7 +86,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
             $this->assertNotTitle($oldTitle);
             return true;
-        }, 3);
+        }, 6);
 
         if ($spinExecutionResult === null) {
             $this->assertNotTitle($oldTitle);

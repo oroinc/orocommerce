@@ -22,7 +22,7 @@ Feature: Single Page Checkout State Validation
     And I login as administrator
     And go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
 
   Scenario: Create order from Shopping List 1 and verify quantity

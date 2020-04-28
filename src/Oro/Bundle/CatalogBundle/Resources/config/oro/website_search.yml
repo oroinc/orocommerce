@@ -6,6 +6,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: category_path
             type: text
+            fulltext: false
         -
             name: category_title_LOCALIZATION_ID
             type: text

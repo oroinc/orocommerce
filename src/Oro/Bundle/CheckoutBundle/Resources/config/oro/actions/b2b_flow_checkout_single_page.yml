@@ -45,8 +45,6 @@ operations:
             - '@assign_value': [$.visitor_email, $.workflowItem.data.email]
 
             - '@assign_value': [$.address, $.data.billingAddress]
-            - '@assign_value': [$.address.customerAddress, null]
-            - '@assign_value': [$.address.customerUserAddress, null]
             - '@tree':
                 conditions:
                     '@and':
@@ -106,8 +104,6 @@ operations:
                     form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
         form_init:
             - '@assign_value': [$.address, $.data.shippingAddress]
-            - '@assign_value': [$.address.customerAddress, null]
-            - '@assign_value': [$.address.customerUserAddress, null]
             - '@tree':
                 conditions:
                     '@and':

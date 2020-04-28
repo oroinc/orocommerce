@@ -62,10 +62,6 @@ class OrderAddressType extends AbstractType
                 $event->setData(null);
             }
 
-            if (!$form->has('customerAddress')) {
-                return;
-            }
-
             $address = $form->get('customerAddress')->getData();
             if ($address instanceof OrderAddress) {
                 $event->setData($address);

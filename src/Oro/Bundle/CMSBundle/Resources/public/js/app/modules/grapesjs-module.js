@@ -13,6 +13,7 @@ import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-buil
 import TextBasicTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-basic-type-builder';
 import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 import VideoTypeBuilder from 'orocms/js/app/grapesjs/type-builders/video-type-builder';
+import RadioTypeBuilder from 'orocms/js/app/grapesjs/type-builders/radio-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
@@ -55,6 +56,9 @@ ComponentManager.registerComponentTypes({
     },
     'image': {
         Constructor: ImageTypeBuilder
+    },
+    'radio': {
+        Constructor: RadioTypeBuilder
     },
     'video': {
         Constructor: VideoTypeBuilder

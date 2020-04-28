@@ -165,6 +165,9 @@ oro:
                 promotion_general.title: General Options
             fields:
                 feature_enabled.label: Enable Promotions
+                case_insensitive_coupon_search:
+                    label: Case-Insensitive Coupon Codes
+                    tooltip: If this option is enabled the letter case will be ignored when applying coupon codes. For example, "freeship" and "FREESHIP" will be considered equal.
                 discount_strategy.label: Discount Strategy
 
         controller:
@@ -204,6 +207,7 @@ oro:
             owner.label: Owner
             id.label: Id
             code.label: Coupon Code
+            code_uppercase.label: Coupon Code (Uppercase)
             promotion.label: Promotion
             enabled:
                 label: Enabled

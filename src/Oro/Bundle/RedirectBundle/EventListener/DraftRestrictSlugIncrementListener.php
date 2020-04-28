@@ -9,6 +9,9 @@ use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
 
 /**
  * Slug URLs should not be unique for draft entities
+ *
+ * @deprecated since 4.1. All draft will be restricted during message creation
+ * See Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener::scheduleEntitySlugCalculation
  */
 class DraftRestrictSlugIncrementListener
 {

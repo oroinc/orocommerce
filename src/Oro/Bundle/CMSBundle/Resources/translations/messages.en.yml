@@ -122,11 +122,7 @@ oro.cms:
         content_widget.label: Content Widget
         slide_order.label: Slide Order
         url.label: URL
-        display_in_same_window:
-            label: Target
-            value:
-                no: New Window
-                yes: Same Window
+        display_in_same_window.label: Target Window
         title.label: Title
         text.label: Text
         text_alignment:

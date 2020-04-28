@@ -5,7 +5,11 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('oro.cms.page.titles.singular_label'|trans, entity.defaultTitle) }}
-            {{ Redirect.renderGeneratedSlugs(entity.slugs) }}
+            {% set slugCollection = entity.slugs %}
+            {% if slugCollection is empty %}
+                {% set slugCollection = entity|get_slug_urls_for_prototypes %}
+            {% endif %}
+            {{ Redirect.renderGeneratedSlugs(slugCollection) }}
         </div>
     </div>
 </div>

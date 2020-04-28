@@ -545,7 +545,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->oroMainContext->pressButton('Add Button');
         $this->waitForAjax();
         $this->gridContext->iCheckAllRecordsInGrid('Add Products Popup');
-        $this->oroMainContext->pressButtonInModalWindow('Add');
+        $this->oroMainContext->iClickOnSmthInElement('Add', 'UiDialog ActionPanel');
         $this->waitForAjax();
     }
 
@@ -1773,5 +1773,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         );
 
         return $productItem;
+    }
+
+    /**
+     * @When /^(?:|I )attach "(?P<fileName>.*)" for Product Images/
+     * @param string $fileName
+     */
+    public function iAttachFileToField(string $fileName)
+    {
+        $importFileLink = $this->createElement('Import Choose File Link');
+        $importFileLink->click();
+
+        $importFile = $this->createElement('Import Choose File');
+        $importFile->setValue($fileName);
     }
 }

@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchMappingListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\EnumSearchableAttributeTypeStub;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
@@ -132,7 +133,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class)
             ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4]);
 
-        $attributeType = new EnumSearchableAttributeType(new EnumAttributeType());
+        $attributeType = new EnumSearchableAttributeTypeStub(new EnumAttributeType());
 
         $this->attributeTypeRegistry->expects($this->any())
             ->method('getAttributeType')
@@ -197,19 +198,23 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                         $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
                             'name' => $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME,
-                            'type' => Query::TYPE_INTEGER
+                            'type' => Query::TYPE_INTEGER,
+                            'fulltext' => false,
                         ],
                         $attribute2->getFieldName() . '_priority' => [
                             'name' => $attribute2->getFieldName() . '_priority',
-                            'type' => Query::TYPE_INTEGER
+                            'type' => Query::TYPE_INTEGER,
+                            'fulltext' => false,
                         ],
                         $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
                             'name' => $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME,
-                            'type' => Query::TYPE_INTEGER
+                            'type' => Query::TYPE_INTEGER,
+                            'fulltext' => false,
                         ],
                         $attribute3->getFieldName() . '_priority' => [
                             'name' => $attribute3->getFieldName() . '_priority',
-                            'type' => Query::TYPE_INTEGER
+                            'type' => Query::TYPE_INTEGER,
+                            'fulltext' => false,
                         ],
                     ]
                 ],

@@ -18,7 +18,7 @@ Feature: Product collection individual products
     And I click "Add Button"
     Then I should see "Add Products"
     When I check PSKU5 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
@@ -32,7 +32,7 @@ Feature: Product collection individual products
     And I click "Add Button"
     Then I should see "Add Products"
     When I check PSKU4 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
@@ -48,7 +48,7 @@ Feature: Product collection individual products
     And I click "Add Button"
     Then I should see "Add Products"
     When I check PSKU5 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
@@ -68,7 +68,7 @@ Feature: Product collection individual products
       | PSKU4 | Product 4 |
     When I click "Add Button"
     When I check PSKU5 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
@@ -97,7 +97,7 @@ Feature: Product collection individual products
     And I check PSKU7 record in "Add Products Popup" grid
     And I press next page button in grid "Add Products Popup"
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU9 | Product 9 |

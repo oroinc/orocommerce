@@ -210,7 +210,7 @@ Feature: Override product variations functionality
     And I click on "Add Button"
     And I check 1GB82 record in "Add Products Popup" grid
     And I check 1GB83 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU   | NAME                 |
       | 1GB83 | Slip-On Clog         |
@@ -263,7 +263,7 @@ Feature: Override product variations functionality
     And I click "Excluded"
     And I click "Add Button"
     And I check 1GB82 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I click "All Added"
     Then I should see following grid:
       | SKU   | NAME                 |

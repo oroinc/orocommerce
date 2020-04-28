@@ -70,14 +70,14 @@ To add custom logic to providers, each provider dispatches events on start and e
 For example, for limitations which are included in the web catalog (there are products from Product Content Variants, products included in categories and subcategories from Category Content Variants, products from Product Collection Variants) there are two listeners for these events:
 ```yaml
     oro_seo.event_listener.url_items_provider_start:
-        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener'
+        class: Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener
         arguments:
             - '@oro_seo.limiter.web_catalog_product_limiter'
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_start.product, method: onStart }
 
     oro_seo.event_listener.url_items_provider_end:
-        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener'
+        class: Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener
         arguments:
             - '@oro_seo.limiter.web_catalog_product_limiter'
         tags:

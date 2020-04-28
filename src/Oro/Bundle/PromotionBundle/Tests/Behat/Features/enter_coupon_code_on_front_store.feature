@@ -1,3 +1,4 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
@@ -9,11 +10,17 @@ Feature: Enter coupon code on Front Store
   As a site user
   I need to have ability to add and manage coupons on Front Store
 
-  Scenario: Entered coupon should give discount on checkout page
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    And I login as administrator and use in "second_session" as "Admin"
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+    And I proceed as the Admin
+    And I login as administrator
     And I disable inventory management
-    And I proceed as the Buyer
+
+  Scenario: Entered coupon should give discount on checkout page
+    Given I proceed as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     And I open shopping list widget
     And I click "View Details"
     When I scroll to "Create Order"
@@ -21,7 +28,10 @@ Feature: Enter coupon code on Front Store
     Then I should see "Checkout"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
-    And I type "coupon-1" in "CouponCodeInput"
+    When I type "CoupoN-1" in "CouponCodeInput"
+    And I click "Apply"
+    Then I should see "Invalid coupon code, please try another one"
+    When I type "coupon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "coupon-1 First Promotion Label" in the "Coupons List" element

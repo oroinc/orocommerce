@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryWithDoctrineIterableResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -201,7 +201,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      */
     protected function getResultIterator(WebsiteInterface $website, $version)
     {
-        $resultIterator = new BufferedQueryResultIterator(
+        $resultIterator = new BufferedQueryWithDoctrineIterableResultIterator(
             $this->getQueryBuilder($website, $version)
         );
         $resultIterator->setBufferSize(self::BUFFER_SIZE);

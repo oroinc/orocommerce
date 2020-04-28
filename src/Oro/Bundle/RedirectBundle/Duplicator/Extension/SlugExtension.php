@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Duplicator\Extension;
 
-use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
+use DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter;
 use DeepCopy\Filter\Filter;
 use DeepCopy\Matcher\Matcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -11,6 +11,7 @@ use Oro\Bundle\DraftBundle\Duplicator\Extension\AbstractDuplicatorExtension;
 use Oro\Bundle\DraftBundle\Duplicator\Matcher\PropertiesNameMatcher;
 use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
 
 /**
@@ -36,7 +37,7 @@ class SlugExtension extends AbstractDuplicatorExtension
      */
     public function getFilter(): Filter
     {
-        return new DoctrineCollectionFilter();
+        return new DoctrineEmptyCollectionFilter();
     }
 
     /**
@@ -57,9 +58,7 @@ class SlugExtension extends AbstractDuplicatorExtension
      */
     public function isSupport(DraftableInterface $source): bool
     {
-        $properties = $this->getSlugProperties($source);
-
-        return !empty($properties);
+        return $source instanceof SlugAwareInterface;
     }
 
     /**

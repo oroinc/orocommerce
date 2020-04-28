@@ -56,6 +56,7 @@ api:
                                 constraints:
                                     - Count:
                                         min: 1
+                update_list: true
 
         Extend\Entity\EV_Prod_Inventory_Status:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'

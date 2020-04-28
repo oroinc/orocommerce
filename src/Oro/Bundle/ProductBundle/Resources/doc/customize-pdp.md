@@ -312,7 +312,7 @@ Also, we need to create a **product_variants** data provider used in the **confi
 services:
 ...
     acme_product.layout.data_provider.product_variants:
-        class: 'Acme\Bundle\ProductBundle\Layout\DataProvider\ProductVariantsProvider'
+        class: Acme\Bundle\ProductBundle\Layout\DataProvider\ProductVariantsProvider
         tags:
             - { name: layout.data_provider, alias: product_variants }
 ...

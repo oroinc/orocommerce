@@ -44,7 +44,7 @@ $form->add(
 
 ```yml
 acme_demo.event_listener.form_listener:
-    class: 'Acme\Bundle\DemoBundle\EventListener\BeforeFlushFormListener'
+    class: Acme\Bundle\DemoBundle\EventListener\BeforeFlushFormListener
     lazy: true
     tags:
         - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.__FORM_NAME__, method: beforeFlush }

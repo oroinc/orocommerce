@@ -30,7 +30,7 @@ Feature: Promotion CRUD
 #      | Descriptions                 | Promotion description |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     Then I should see "Promotion has been saved" flash message
 
@@ -62,7 +62,7 @@ Feature: Promotion CRUD
       | Customer Group | All Customers       |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     Then I should see "Should be chosen only one field. Customer Group or Customer."
 
@@ -75,7 +75,7 @@ Feature: Promotion CRUD
       | Discount Value | 10.0                |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save and close form
     Then I should see "N/A" in the "Restrictions" element
     When I click "Edit"

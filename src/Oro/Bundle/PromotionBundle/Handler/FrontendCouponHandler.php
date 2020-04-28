@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Handler;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
@@ -12,6 +13,9 @@ use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationSe
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handle coupon applicability and apply it by code.
+ */
 class FrontendCouponHandler extends AbstractCouponHandler
 {
     /**
@@ -23,6 +27,11 @@ class FrontendCouponHandler extends AbstractCouponHandler
      * @var EntityCouponsProviderInterface
      */
     private $entityCouponsProvider;
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
 
     /**
      * @var array
@@ -44,6 +53,14 @@ class FrontendCouponHandler extends AbstractCouponHandler
     public function setEntityCouponsProviderService(EntityCouponsProviderInterface $entityCouponsProvider)
     {
         $this->entityCouponsProvider = $entityCouponsProvider;
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function setConfigManager(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -91,7 +108,9 @@ class FrontendCouponHandler extends AbstractCouponHandler
             throw new LogicException('Coupon code is not specified in request parameters');
         }
 
-        return $this->getRepository(Coupon::class)->findOneBy(['code' => $couponCode]);
+        $caseInsensitive = (bool)$this->configManager->get('oro_promotion.case_insensitive_coupon_search');
+
+        return $this->getRepository(Coupon::class)->getSingleCouponByCode($couponCode, $caseInsensitive);
     }
 
     /**

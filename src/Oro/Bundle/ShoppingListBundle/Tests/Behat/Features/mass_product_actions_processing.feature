@@ -54,7 +54,7 @@ Feature: Mass Product Actions processing
     And click "Create and Add"
     Then should see 'Shopping list "Shopping List of Amanda" was created successfully' flash message
     When I hover on "Shopping Cart"
-    And click "Shopping List of Amanda"
+    And click "Shopping List of Amanda" on shopping list widget
     Then I should see following line items in "Shopping List Line Items Table":
       | SKU   | Quantity | Unit |
       | PSKU1 | 10       | set  |
@@ -72,7 +72,7 @@ Feature: Mass Product Actions processing
     And I click "Add to Shopping List of Amanda" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "1 product was added" flash message
     When I hover on "Shopping Cart"
-    And click "Shopping List of Amanda"
+    And click "Shopping List of Amanda" on shopping list widget
     Then I should see following line items in "Shopping List Line Items Table":
       | SKU   | Quantity | Unit |
       | PSKU1 | 10       | set  |

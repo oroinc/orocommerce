@@ -3,6 +3,7 @@ datagrids:
         options:
             entityHint: oro.consent.entity_plural_label
             entity_pagination: true
+        extended_entity_name: 'Oro\Bundle\ConsentBundle\Entity\Consent'
         source:
             type:         orm
             query:
