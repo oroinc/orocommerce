@@ -36,6 +36,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => 'apply_all',
                     'scope' => 'app'
                 ],
+                Configuration::CASE_INSENSITIVE_COUPON_SEARCH => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

@@ -22,6 +22,13 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
+        oro_promotion.case_insensitive_coupon_search:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.promotion.system_configuration.fields.case_insensitive_coupon_search.label
+                tooltip: oro.promotion.system_configuration.fields.case_insensitive_coupon_search.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -34,4 +41,5 @@ system_configuration:
                                     promotion_general:
                                         children:
                                             - oro_promotion.feature_enabled
+                                            - oro_promotion.case_insensitive_coupon_search
                                             - oro_promotion.discount_strategy

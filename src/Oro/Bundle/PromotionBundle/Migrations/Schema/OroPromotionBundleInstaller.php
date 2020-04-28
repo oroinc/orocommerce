@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -126,6 +126,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('enabled', 'boolean', ['default' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
+        $table->addColumn('code_uppercase', 'string', ['length' => 255]);
         $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('uses_per_person', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('created_at', 'datetime', []);
@@ -136,6 +137,7 @@ class OroPromotionBundleInstaller implements
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_promotion_coupon_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_promotion_coupon_updated_at', []);
+        $table->addIndex(['code_uppercase'], 'idx_oro_promotion_coupon_code_upper', []);
     }
 
     /**

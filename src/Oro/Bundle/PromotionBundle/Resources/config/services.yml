@@ -373,6 +373,12 @@ services:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
         public: false
 
+    oro_promotion.coupon_entity_name_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\CouponEntityNameProvider
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_promotion.mapper.applied_promotion:
         class: Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper
         public: true
@@ -688,6 +694,7 @@ services:
         calls:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
             - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
+            - [setConfigManager, ['@oro_config.manager']]
             - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
 
     oro_promotion.handler.frontend_coupon_remove_handler:
