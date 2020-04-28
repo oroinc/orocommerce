@@ -4,8 +4,8 @@
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-shopping-list-page.yml
-@skip
-Feature: Enter coupon code on Front Store
+
+Feature: Enter coupon code case insensitive on Front Store
   In order to apply discount coupons on Front Store
   As a site user
   I need to have ability to add and manage coupons on Front Store
@@ -17,6 +17,11 @@ Feature: Enter coupon code on Front Store
     And I proceed as the Admin
     And I login as administrator
     And I disable inventory management
+    When follow "Commerce/Sales/Promotions" on configuration sidebar
+    And uncheck "Use default" for "Case-Insensitive Coupon Codes" field
+    And I check "Case-Insensitive Coupon Codes"
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Entered coupon should give discount on checkout page
     Given I proceed as the Buyer
@@ -28,41 +33,19 @@ Feature: Enter coupon code on Front Store
     Then I should see "Checkout"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
-    When I type "CoupoN-1" in "CouponCodeInput"
-    And I click "Apply"
-    Then I should see "Invalid coupon code, please try another one"
-    When I type "coupon-1" in "CouponCodeInput"
+    And I type "CoUpoN-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "coupon-1 First Promotion Label" in the "Coupons List" element
     And I should see "Discount -$1.00" in the "Subtotals" element
 
   Scenario: Entered invalid coupon should not pass validation
-    When I type "coupon-1" in "CouponCodeInput"
+    When I type "cOUpon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "This coupon has been already added"
-    When I type "not-existing-coupon" in "CouponCodeInput"
-    And I click "Apply"
-    Then I should see "Invalid coupon code, please try another one"
-    And I should not see "not-existing-coupon" in the "Coupons List" element
-
-  Scenario: Removed coupon should not give discount
-    When I click "Coupon Delete Button"
-    Then I should see "Coupon code has been removed" flash message
-    And I should not see "coupon-1 First Promotion Label"
-    And I should see "I have a Coupon Code"
-    And I should not see "Discount -$1.00" in the "Subtotals" element
-
-  Scenario: Coupon promotion label should have fallback as promotion name
-    When I scroll to "I have a Coupon Code"
-    And I click "I have a Coupon Code"
-    And I type "coupon-2" in "Coupon Code Input"
-    And I click "Apply"
-    Then I should see "coupon-2 Second Promotion Name" in the "Coupons List" element
 
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
-    Given I should see "Discount -$1.00" in the "Subtotals" element
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    When I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue

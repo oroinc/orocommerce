@@ -60,7 +60,7 @@ class CouponSearchHandlerTest extends WebTestCase
             $result,
             [
                 LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
-                LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL,
+                LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL
             ]
         );
     }
@@ -72,12 +72,13 @@ class CouponSearchHandlerTest extends WebTestCase
     private function assertSearchResult(array $result, array $expectedCodes)
     {
         $searchItems = $result['results'];
-        $this->assertCount(count($expectedCodes), $searchItems);
         $resultCodes = [];
         array_map(function (array $searchResult) use (&$resultCodes) {
             $resultCodes[] = $searchResult['code'];
         }, $searchItems);
 
-        $this->assertEquals(sort($expectedCodes), sort($resultCodes));
+        sort($expectedCodes);
+        sort($resultCodes);
+        $this->assertEquals($expectedCodes, $resultCodes);
     }
 }
