@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -93,7 +94,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         $qb = $this->createQueryBuilder('rule')
             ->andWhere('rule.activateAt <= :now OR rule.activateAt IS NULL')
             ->andWhere('rule.expireAt > :now OR rule.expireAt IS NULL')
-            ->setParameter('now', $now);
+            ->setParameter('now', $now, Type::DATETIME);
 
         return $qb;
     }
@@ -106,7 +107,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'rule')
             ->where('rule.expireAt < :now')
-            ->setParameter('now', $now)
+            ->setParameter('now', $now, Type::DATETIME)
             ->getQuery()
             ->execute();
     }
