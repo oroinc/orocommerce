@@ -5,7 +5,7 @@ define(function(require, exports, module) {
     const $ = require('jquery');
     const routing = require('routing');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
-    const SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
+    const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
     const config = require('module-config').default(module.id);
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
         }
     };
 
-    const BackendSelectHeaderCell = SelectHeaderCell.extend({
+    const BackendActionHeaderCell = ActionHeaderCell.extend({
         /** @property */
         autoRender: true,
 
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
          * @inheritDoc
          */
         initialize: function(options) {
-            BackendSelectHeaderCell.__super__.initialize.call(this, options);
+            BackendActionHeaderCell.__super__.initialize.call(this, options);
             this.selectState = options.selectState;
             this.massActionsInSticky = options.massActionsInSticky;
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.canUse, 50), this));
@@ -76,7 +76,7 @@ define(function(require, exports, module) {
          */
         dispose: function() {
             delete this.shoppingListCollection;
-            return BackendSelectHeaderCell.__super__.dispose.call(this);
+            return BackendActionHeaderCell.__super__.dispose.call(this);
         },
 
         canUse: function(selectState) {
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
         },
 
         getTemplateData: function() {
-            const data = BackendSelectHeaderCell.__super__.getTemplateData.call(this);
+            const data = BackendActionHeaderCell.__super__.getTemplateData.call(this);
 
             data.massActionsInSticky = this.massActionsInSticky;
             data.actionsLength = this.subview('actionsPanel').actions.length;
@@ -117,6 +117,7 @@ define(function(require, exports, module) {
         render: function() {
             this.$el.empty();
             this.renderActionsPanel();
+            this.canUse(this.selectState);
             return this;
         },
 
@@ -132,5 +133,5 @@ define(function(require, exports, module) {
         }
     });
 
-    return BackendSelectHeaderCell;
+    return BackendActionHeaderCell;
 });
