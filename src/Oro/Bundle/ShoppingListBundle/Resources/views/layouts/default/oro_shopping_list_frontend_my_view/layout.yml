@@ -17,3 +17,18 @@ layout:
                 route_parameters:
                     id: '=data["entity"].getId()'
                 text: 'oro.frontend.shoppinglist.btn.show_all.label'
+
+        - '@setOption':
+            id: page_content
+            optionName: attr.class
+            optionValue: 'page-content--has-sidebar-right'
+
+        - '@move':
+            id: page_content
+            parentId: page_main_content
+            siblingId: page_sidebar
+            prepend: true
+
+        - '@move':
+            id: checkout_container
+            parentId: page_sidebar
