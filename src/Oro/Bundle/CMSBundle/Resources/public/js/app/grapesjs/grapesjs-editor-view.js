@@ -490,16 +490,16 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     setAlternativeFields: function() {
-        const fieldPrefix = this.$el.attr('data-name');
-        const styleFiledName = fieldPrefix + '-style';
-        const propertiesFiledName = fieldPrefix + '-properties';
+        const fieldPrefix = this.$el.attr('data-ftid');
+        const styleFiledName = fieldPrefix + '_style';
+        const propertiesFiledName = fieldPrefix + '_properties';
 
         if (!this.$stylesInputElement.length) {
-            this.$stylesInputElement = $('[data-name="' + styleFiledName + '"]');
+            this.$stylesInputElement = this.form.find('[data-ftid="' + styleFiledName + '"]');
         }
 
         if (!this.$propertiesInputElement.length) {
-            this.$propertiesInputElement = $('[data-name="' + propertiesFiledName + '"]');
+            this.$propertiesInputElement = this.form.find('[data-ftid="' + propertiesFiledName + '"]');
         }
     },
 
