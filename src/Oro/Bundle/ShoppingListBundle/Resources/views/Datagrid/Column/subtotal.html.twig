@@ -29,7 +29,7 @@
 
         {% if productMatchedPrice is not null %}
             <div data-name="price-value">
-                {{ (productMatchedPrice.value * quantity)|oro_format_currency({'currency': productMatchedPrice.currency}) }}
+                {{ (productMatchedPrice.value * lineItem.quantity)|oro_format_currency({'currency': productMatchedPrice.currency}) }}
             </div>
         {% else %}
             <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
