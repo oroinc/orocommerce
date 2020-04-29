@@ -263,7 +263,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             ->leftJoin('sl.lineItems', 'li')
             ->where($qb->expr()->in('sl.id', ':shopping_lists'))
             ->setParameter('shopping_lists', $shoppingLists)
-            ->groupBy('sl.id, li.parentProduct');
+            ->groupBy('sl.id, li.parentProduct, li.unit');
 
         $result = [];
         foreach ($qb->getQuery()->getArrayResult() as $row) {
