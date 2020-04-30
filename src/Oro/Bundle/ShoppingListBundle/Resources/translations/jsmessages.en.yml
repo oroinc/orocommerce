@@ -39,5 +39,9 @@ oro:
             matrix_grid_order:
                 item_number: 'Item #'
             btn:
-                show_all.label: 'Show All'
-                show_less.label: 'Show Less'
+                show_all:
+                    aria_label: 'Show all added products on one page'
+                    label: 'Show All'
+                show_less:
+                    aria_label: 'Show all added products with pagination'
+                    label: 'Show Less'

@@ -1,3 +1,8 @@
 {% block _datagrid_toggle_paginaton_view_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' datagrid-toggle-pagination',
+        'data-page-component-view': 'orodatagrid/js/app/views/toggle-pagination-view'
+    }) %}
+
     <div {{ block('block_attributes') }}></div>
 {% endblock %}

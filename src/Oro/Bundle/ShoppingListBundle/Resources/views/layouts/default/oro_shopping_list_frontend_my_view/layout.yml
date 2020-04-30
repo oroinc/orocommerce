@@ -12,9 +12,6 @@ layout:
             id: datagrid_toggle_paginaton_view
             parentId: datagrid_toolbar_leftside_container
             blockType: block
-            options:
-                attr:
-                    data-page-component-view: 'orodatagrid/js/app/views/toggle-pagination-view'
 
         - '@setOption':
             id: page_content

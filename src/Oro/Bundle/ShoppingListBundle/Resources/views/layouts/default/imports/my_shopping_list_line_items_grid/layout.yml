@@ -31,3 +31,9 @@ layout:
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
                 transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'
+
+        - '@setOption':
+              id: __datagrid
+              optionName: grid_render_parameters.toolbarOptions.itemsCounter
+              optionValue:
+                  className: 'datagrid-tool datagrid-tool--short'
