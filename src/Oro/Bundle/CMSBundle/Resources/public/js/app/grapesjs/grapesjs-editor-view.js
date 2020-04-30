@@ -20,6 +20,7 @@ import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
 const MIN_EDITOR_WIDTH = 1100;
+const LOCK_PASTE_ATTR = 'data-lock-paste';
 
 /**
  * Create grapesJS content builder
@@ -439,7 +440,16 @@ const GrapesjsEditorView = BaseView.extend({
         $(this.builder.Canvas.getBody()).on(
             'paste',
             '[contenteditable="true"]',
-            this.onPasteContent.bind(this)
+            function(e) {
+                // Prevent recursive call of "paste" event in IE11
+                if (e.target.hasAttribute(LOCK_PASTE_ATTR)) {
+                    e.target.removeAttribute(LOCK_PASTE_ATTR);
+                } else if (!this.builderOptions.pasteStyles) {
+                    e.preventDefault();
+
+                    this.onPasteContent(e);
+                }
+            }.bind(this)
         );
     },
 
@@ -590,11 +600,22 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     onPasteContent(e) {
-        if (!this.builderOptions.pasteStyles) {
-            e.preventDefault();
-            const text = e.originalEvent.clipboardData.getData('text');
+        if (e.originalEvent.clipboardData) {
+            const content = e.originalEvent.clipboardData.getData('text/plain');
 
-            e.target.ownerDocument.execCommand('insertText', false, text);
+            e.target.ownerDocument.execCommand('insertText', false, content);
+        } else if (window.clipboardData) {
+            const data = window.clipboardData.getData('Text');
+            let content;
+
+            try {
+                content = JSON.parse(data).content;
+            } catch (e) {
+                content = data;
+            }
+
+            e.target.setAttribute(LOCK_PASTE_ATTR, '');
+            e.target.ownerDocument.execCommand('paste', false, content);
         }
     },
 
