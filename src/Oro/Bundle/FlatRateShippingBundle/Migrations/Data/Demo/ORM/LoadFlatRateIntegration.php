@@ -13,8 +13,7 @@ use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\MigrationBundle\Entity\DataFixture;
-use Oro\Bundle\MigrationBundle\Entity\Repository\DataFixtureRepository;
+use Oro\Bundle\MigrationBundle\Fixture\RenamedFixtureInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -29,14 +28,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configures an integration instance and adds a shipping rule to enable flat rate shipping ($10 per order).
  */
-class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadFlatRateIntegration extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface,
+    RenamedFixtureInterface
 {
-    /**
-     * @internal
-     */
-    const PREVIOUS_CLASS_NAME = 'Oro\Bundle\FlatRateBundle\Migrations\Data\ORM\LoadFlatRateIntegration';
-    const MAIN_USER_ID = 1;
-
     /**
      * @var ContainerInterface
      */
@@ -64,38 +60,25 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
     /**
      * {@inheritDoc}
      */
+    public function getPreviousClassNames(): array
+    {
+        return [
+            'Oro\\Bundle\\FlatRateBundle\\Migrations\\Data\\ORM\\LoadFlatRateIntegration',
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function load(ObjectManager $manager)
     {
         if (!$this->container) {
             return;
         }
 
-        // Migration could be loaded before renaming of FlatRateBundle to FlatRateShippingBundle
-        if ($this->isFixtureAlreadyLoaded()) {
-            return;
-        }
-
         $channel = $this->loadIntegration($manager);
 
         $this->loadShippingRule($manager, $channel);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isFixtureAlreadyLoaded()
-    {
-        $fixtures = $this->getDataFixtureRepository()->findByClassName(static::PREVIOUS_CLASS_NAME);
-
-        return count($fixtures) > 0;
-    }
-
-    /**
-     * @return DataFixtureRepository|\Doctrine\ORM\EntityRepository
-     */
-    private function getDataFixtureRepository()
-    {
-        return $this->container->get('oro_entity.doctrine_helper')->getEntityRepository(DataFixture::class);
     }
 
     /**
