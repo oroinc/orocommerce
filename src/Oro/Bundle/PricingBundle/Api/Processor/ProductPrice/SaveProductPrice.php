@@ -31,8 +31,9 @@ class SaveProductPrice implements ProcessorInterface
     {
         /** @var SingleItemContext $context */
 
+        /** @var ProductPrice|null $entity */
         $entity = $context->getResult();
-        if (!$entity instanceof ProductPrice) {
+        if (null === $entity) {
             return;
         }
 

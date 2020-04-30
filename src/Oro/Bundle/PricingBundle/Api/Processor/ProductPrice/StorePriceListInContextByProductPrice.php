@@ -7,7 +7,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Saves priceListId from ProductPrice entity to the context for later use.
+ * Saves a price list ID from product price to the context for later use.
  */
 class StorePriceListInContextByProductPrice implements ProcessorInterface
 {
@@ -16,12 +16,13 @@ class StorePriceListInContextByProductPrice implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        $productPrice = $context->getResult();
-        if (!$productPrice instanceof ProductPrice) {
+        /** @var ProductPrice|null $entity */
+        $entity = $context->getResult();
+        if (null === $entity) {
             return;
         }
 
-        $priceList = $productPrice->getPriceList();
+        $priceList = $entity->getPriceList();
         if (null === $priceList || !$priceList->getId()) {
             return;
         }

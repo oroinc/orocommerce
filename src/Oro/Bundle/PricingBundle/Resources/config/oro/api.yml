@@ -19,6 +19,8 @@ api:
                     actions:
                         update_relationship: false
                         add_relationship: false
+            actions:
+                update_list: true
 
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
@@ -28,6 +30,7 @@ api:
                         priceList:
                             form_options:
                                 mapped: false
+                update_list: true
             subresources:
                 priceList:
                     actions:
@@ -41,6 +44,7 @@ api:
                         priceList:
                             form_options:
                                 mapped: false
+                update_list: true
             subresources:
                 priceList:
                     actions:
@@ -59,6 +63,8 @@ api:
                 currency:
                     form_options:
                         mapped: false
+            actions:
+                update_list: true
 
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
@@ -188,3 +194,4 @@ api:
                         priceList:
                             form_options:
                                 mapped: false
+                update_list: true
