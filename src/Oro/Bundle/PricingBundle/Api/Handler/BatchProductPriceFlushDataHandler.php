@@ -54,8 +54,6 @@ class BatchProductPriceFlushDataHandler implements BatchFlushDataHandlerInterfac
             }
         }
 
-        $this->priceManager->flush();
-
         $this->innerHandler->flushData($items);
     }
 

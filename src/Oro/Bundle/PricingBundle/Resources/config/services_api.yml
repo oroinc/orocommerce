@@ -242,8 +242,8 @@ services:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
             - { name: oro.api.processor, action: get, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
 
-    oro_pricing.api.save_product_price:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\SaveProductPrice
+    oro_pricing.api.persist_product_price:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\PersistProductPrice
         arguments:
             - '@oro_pricing.manager.price_manager'
         tags:
