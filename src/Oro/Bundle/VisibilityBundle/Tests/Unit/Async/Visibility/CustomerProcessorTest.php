@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CustomerProcessor;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -18,179 +17,195 @@ use Psr\Log\LoggerInterface;
 
 class CustomerProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $logger;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $messageFactory;
+    /** @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $partialUpdateDriver;
 
-    /**
-     * @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $driver;
-
-    /**
-     * @var CustomerProcessor
-     */
-    protected $processor;
+    /** @var CustomerProcessor */
+    private $processor;
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)
-            ->getMock();
-        $this->messageFactory = $this->getMockBuilder(MessageFactoryInterface::class)
-            ->getMock();
-        $this->driver = $this->getMockBuilder(CustomerPartialUpdateDriverInterface::class)
-            ->getMock();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->partialUpdateDriver = $this->createMock(CustomerPartialUpdateDriverInterface::class);
+
         $this->processor = new CustomerProcessor(
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->logger,
-            $this->messageFactory,
-            $this->driver
+            $this->partialUpdateDriver
         );
     }
 
-    public function testProcessWithCustomer()
+    /**
+     * @param mixed $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage($body): MessageInterface
     {
-        $data = ['id' => 1];
-        $body = JSON::encode($data);
-
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->never()))
-            ->method('rollback');
-        $em->expects(($this->once()))
-            ->method('commit');
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->with(BaseVisibilityResolved::class)
-            ->willReturn($em);
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->getMockBuilder(MessageInterface::class)
-            ->getMock();
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn($body);
+            ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->getMockBuilder(SessionInterface::class)
-            ->getMock();
-
-        $customer = new Customer();
-
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
-            ->with($data)
-            ->willReturn($customer);
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($message, $session)
-        );
+        return $message;
     }
 
-    public function testProcessReject()
+    /**
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
     {
-        $data = ['test' => 1];
-        $body = JSON::encode($data);
+        return $this->createMock(SessionInterface::class);
+    }
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->once()))
-            ->method('rollback');
-        $em->expects(($this->never()))
-            ->method('commit');
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->with(BaseVisibilityResolved::class)
-            ->willReturn($em);
+    public function testProcessWithInvalidMessage()
+    {
         $this->logger->expects($this->once())
-            ->method('error');
-
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
-            ->with($data)
-            ->willThrowException(new InvalidArgumentException());
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->getMockBuilder(MessageInterface::class)
-            ->getMock();
-        $message->expects($this->once())
-            ->method('getBody')
-            ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->getMockBuilder(SessionInterface::class)
-            ->getMock();
+            ->method('critical')
+            ->with('Got invalid message.');
 
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $session)
+            $this->processor->process($this->getMessage('invalid'), $this->getSession())
         );
     }
 
-    public function testProcessRequeue()
+    public function testProcessWithEmptyMessage()
     {
-        $data = ['test' => 1];
-        $body = JSON::encode($data);
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage([]), $this->getSession())
+        );
+    }
+
+    public function testProcess()
+    {
+        $body = ['id' => 1];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->never()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [BaseVisibilityResolved::class, $em],
+                [Customer::class, $em]
+            ]);
+
+        $customer = new Customer();
+        $em->expects($this->once())
+            ->method('find')
+            ->with(Customer::class, $body['id'])
+            ->willReturn($customer);
+        $this->partialUpdateDriver->expects($this->once())
+            ->method('updateCustomerVisibility')
+            ->with($this->identicalTo($customer));
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessWhenCustomerNotFound()
+    {
+        $body = ['id' => 1];
+
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
         $em->expects(($this->once()))
             ->method('rollback');
         $em->expects(($this->never()))
             ->method('commit');
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->with(BaseVisibilityResolved::class)
-            ->willReturn($em);
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [BaseVisibilityResolved::class, $em],
+                [Customer::class, $em]
+            ]);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(Customer::class, $body['id'])
+            ->willReturn(null);
+        $this->partialUpdateDriver->expects($this->never())
+            ->method('updateCustomerVisibility');
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during update Customer Visibility.',
+                ['exception' => new EntityNotFoundException('Customer was not found.')]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessException()
+    {
+        $body = ['id' => 1];
+
+        $exception = new \Exception('some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [BaseVisibilityResolved::class, $em],
+                [Customer::class, $em]
+            ]);
+
         $this->logger->expects($this->once())
             ->method('error');
 
         $customer = new Customer();
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
-            ->with($data)
+        $em->expects($this->once())
+            ->method('find')
+            ->with(Customer::class, $body['id'])
             ->willReturn($customer);
-        $this->driver->expects($this->once())
+        $this->partialUpdateDriver->expects($this->once())
             ->method('updateCustomerVisibility')
-            ->with($customer)
-            ->willThrowException(new \Exception());
+            ->with($this->identicalTo($customer))
+            ->willThrowException($exception);
 
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->getMockBuilder(MessageInterface::class)
-            ->getMock();
-        $message->expects($this->once())
-            ->method('getBody')
-            ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->getMockBuilder(SessionInterface::class)
-            ->getMock();
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during update Customer Visibility.',
+                ['exception' => $exception]
+            );
 
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
-            $this->processor->process($message, $session)
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
 }

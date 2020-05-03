@@ -2,50 +2,38 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 class CategoryListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
-    /**
-     * @var EntityManager
-     */
-    protected $categoryManager;
+    /** @var EntityManagerInterface */
+    private $categoryManager;
 
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
+    /** @var CategoryRepository */
+    private $categoryRepository;
 
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
+        self::enableMessageBuffering();
+
         $this->categoryManager = self::getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
+            ->getManagerForClass(Category::class);
         $this->categoryRepository = $this->categoryManager
-            ->getRepository('OroCatalogBundle:Category');
-
-        $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
-
-        $this->cleanScheduledMessages();
-    }
-
-    /**
-     * @return ProductMessageHandler
-     */
-    protected function getMessageHandler()
-    {
-        return self::getContainer()->get('oro_visibility.model.product_message_handler');
+            ->getRepository(Category::class);
     }
 
     public function testChangeProductCategory()
@@ -62,10 +50,8 @@ class CategoryListenerTest extends WebTestCase
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            Topics::CHANGE_PRODUCT_CATEGORY,
             ['id' => $product->getId()]
         );
     }
@@ -79,20 +65,16 @@ class CategoryListenerTest extends WebTestCase
         $category->removeProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            Topics::CHANGE_PRODUCT_CATEGORY,
             ['id' => $product->getId()]
         );
 
         $category->addProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            Topics::CHANGE_PRODUCT_CATEGORY,
             ['id' => $product->getId()]
         );
     }

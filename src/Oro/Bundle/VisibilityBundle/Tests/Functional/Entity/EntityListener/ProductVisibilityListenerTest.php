@@ -3,40 +3,39 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductVisibilityListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
-    /** @var  Product */
-    protected $product;
+    /** @var Product */
+    private $product;
 
-    /** @var  Registry */
-    protected $registry;
+    /** @var Registry */
+    private $registry;
 
-    /** @var  CustomerGroup */
-    protected $customerGroup;
+    /** @var CustomerGroup */
+    private $customerGroup;
 
-    /** @var  Customer */
-    protected $customer;
+    /** @var Customer */
+    private $customer;
 
     /**
      * {@inheritdoc}
@@ -44,33 +43,45 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function setUp()
     {
         $this->initClient();
-
-        $this->loadFixtures([
-            LoadProductVisibilityData::class,
-        ]);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
+        self::enableMessageBuffering();
 
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->customerGroup = $this->getReference(LoadGroups::GROUP1);
         $this->customer = $this->getReference('customer.level_1');
-
-        $this->cleanScheduledMessages();
-    }
-
-    /**
-     * @return VisibilityMessageHandler
-     */
-    protected function getMessageHandler()
-    {
-        return $this->getContainer()->get('oro_visibility.visibility_message_handler');
     }
 
     /**
      * @return ScopeManager
      */
-    protected function getScopeManager()
+    private function getScopeManager(): ScopeManager
     {
         return $this->getContainer()->get('oro_scope.scope_manager');
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    private function getManagerForProductVisibility(): EntityManagerInterface
+    {
+        return $this->registry->getManagerForClass(ProductVisibility::class);
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    private function getManagerForCustomerGroupProductVisibility(): EntityManagerInterface
+    {
+        return $this->registry->getManagerForClass(CustomerGroupProductVisibility::class);
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    private function getManagerForCustomerProductVisibility(): EntityManagerInterface
+    {
+        return $this->registry->getManagerForClass(CustomerProductVisibility::class);
     }
 
     public function testChangeProductVisibilityToHidden()
@@ -83,7 +94,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->remove($visibility);
         $entityManager->flush();
 
-        $this->cleanScheduledMessages();
+        self::getMessageCollector()->clear();
 
         // Create new product visibility entity
         $visibility = new ProductVisibility();
@@ -95,16 +106,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $this->product->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => ProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -119,17 +125,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
-
+                'entity_class_name' => ProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -144,16 +144,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => ProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -169,16 +164,14 @@ class ProductVisibilityListenerTest extends WebTestCase
         $visibility->setVisibility(ProductVisibility::CATEGORY);
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => null, //null because default value will be deleted
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                // no "id" because default value will be deleted
+                'entity_class_name' => ProductVisibility::class,
+                'target_class_name' => Product::class,
+                'target_id'         => $visibility->getProduct()->getId(),
+                'scope_id'          => $visibility->getScope()->getId()
             ]
         );
     }
@@ -199,16 +192,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerGroupProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -222,16 +210,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerGroupProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -245,16 +228,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerGroupProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -267,18 +245,17 @@ class ProductVisibilityListenerTest extends WebTestCase
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $expectedMessage = [
-            VisibilityMessageFactory::ID => null, //null because default value will be deleted
-            VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
-            VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-            VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-            VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+            // no "id" because default value will be deleted
+            'entity_class_name' => CustomerGroupProductVisibility::class,
+            'target_class_name' => Product::class,
+            'target_id'         => $visibility->getProduct()->getId(),
+            'scope_id'          => $visibility->getScope()->getId()
         ];
 
         $entityManager->flush();
-        $this->sendScheduledMessages();
 
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             $expectedMessage
         );
     }
@@ -292,7 +269,8 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
         $entityManager->remove($visibility);
         $entityManager->flush();
-        $this->cleanScheduledMessages();
+
+        self::getMessageCollector()->clear();
 
         $visibility = new CustomerProductVisibility();
         $visibility->setScope($scope);
@@ -302,16 +280,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -325,16 +298,11 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
@@ -348,23 +316,17 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerProductVisibility();
         $entityManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             [
-                VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
-                VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-                VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-                VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+                'entity_class_name' => CustomerProductVisibility::class,
+                'id'                => $visibility->getId()
             ]
         );
     }
 
     public function testChangeCustomerProductVisibilityToCustomerGroup()
     {
-        $this->cleanScheduledMessages();
         // Already exists customer group product visibility with `CATEGORY` value
         $visibility = $this->getReference('product-2.visibility.customer.level_1');
         $visibility->setVisibility(CustomerProductVisibility::CUSTOMER_GROUP);
@@ -372,43 +334,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerProductVisibility();
 
         $expectedMessage = [
-            VisibilityMessageFactory::ID => null, // because default value will be deleted
-            VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
-            VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
-            VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
-            VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
+            // no "id" because default value will be deleted
+            'entity_class_name' => CustomerProductVisibility::class,
+            'target_class_name' => Product::class,
+            'target_id'         => $visibility->getProduct()->getId(),
+            'scope_id'          => $visibility->getScope()->getId()
         ];
 
         $entityManager->flush();
-        $this->sendScheduledMessages();
 
         self::assertMessageSent(
-            'oro_visibility.visibility.resolve_product_visibility',
+            Topics::RESOLVE_PRODUCT_VISIBILITY,
             $expectedMessage
         );
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getManagerForProductVisibility()
-    {
-        return $this->registry->getManagerForClass(ProductVisibility::class);
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getManagerForCustomerGroupProductVisibility()
-    {
-        return $this->registry->getManagerForClass(CustomerGroupProductVisibility::class);
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getManagerForCustomerProductVisibility()
-    {
-        return $this->registry->getManagerForClass(CustomerProductVisibility::class);
     }
 }

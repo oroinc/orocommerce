@@ -4,12 +4,14 @@ namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -17,51 +19,40 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * Resolves visibility by Product entity
+ * Resolves visibility for a product when its category is changed.
  */
-class ProductProcessor implements MessageProcessorInterface
+class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /** @var CacheBuilderInterface */
+    private $cacheBuilder;
+
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
-     * @var ProductMessageFactory
-     */
-    protected $messageFactory;
-
-    /**
-     * @var CacheBuilderInterface
-     */
-    protected $cacheBuilder;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var string
-     */
-    protected $resolvedVisibilityClassName = '';
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ProductMessageFactory $messageFactory
+     * @param ManagerRegistry $doctrine
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
      */
     public function __construct(
-        ManagerRegistry $registry,
-        ProductMessageFactory $messageFactory,
+        ManagerRegistry $doctrine,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->logger = $logger;
-        $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedTopics()
+    {
+        return [Topics::CHANGE_PRODUCT_CATEGORY];
     }
 
     /**
@@ -69,24 +60,26 @@ class ProductProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
-
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->messageFactory->getProductFromMessage($messageData);
-
-            $this->resolveVisibilityByEntity($visibilityEntity);
-            $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
+        $body = JSON::decode($message->getBody());
+        if (!isset($body['id'])) {
+            $this->logger->critical('Got invalid message.');
 
             return self::REJECT;
+        }
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(ProductVisibilityResolved::class);
+        $em->beginTransaction();
+        try {
+            $product = $this->getProduct($body['id']);
+            if ($this->cacheBuilder instanceof ProductCaseCacheBuilderInterface) {
+                $this->cacheBuilder->productCategoryChanged($product);
+            }
+            $em->commit();
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Product Visibility resolve by Product',
+                'Unexpected exception occurred during Product Visibility resolve by Product.',
                 ['exception' => $e]
             );
 
@@ -101,29 +94,21 @@ class ProductProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param string $className
+     * @param int $productId
+     *
+     * @return Product
+     *
+     * @throws EntityNotFoundException if a product does not exist
      */
-    public function setResolvedVisibilityClassName($className)
+    public function getProduct(int $productId): Product
     {
-        $this->resolvedVisibilityClassName = $className;
-    }
-
-    /**
-     * All resolved product visibility entities should be stored together, so entity manager should be the same too
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->registry->getManagerForClass($this->resolvedVisibilityClassName);
-    }
-
-    /**
-     * @param object|Product $entity
-     */
-    protected function resolveVisibilityByEntity($entity)
-    {
-        if ($this->cacheBuilder instanceof ProductCaseCacheBuilderInterface) {
-            $this->cacheBuilder->productCategoryChanged($entity);
+        /** @var Product|null $product */
+        $product = $this->doctrine->getManagerForClass(Product::class)
+            ->find(Product::class, $productId);
+        if (null === $product) {
+            throw new EntityNotFoundException('Product was not found.');
         }
+
+        return $product;
     }
 }

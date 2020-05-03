@@ -2,38 +2,27 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
 
 class CategoryListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
-    /**
-     * @var EntityManager
-     */
-    protected $categoryManager;
+    /** @var EntityManagerInterface */
+    private $categoryManager;
 
     protected function setUp()
     {
         $this->initClient();
+        self::enableMessageBuffering();
 
         $this->categoryManager = self::getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category');
-
-        $this->cleanScheduledMessages();
-    }
-
-    /**
-     * @return CategoryMessageHandler
-     */
-    protected function getMessageHandler()
-    {
-        return self::getContainer()->get('oro_visibility.model.category_message_handler');
     }
 
     /**
@@ -54,15 +43,13 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($parentCategory);
         $this->categoryManager->flush();
 
-        $this->cleanScheduledMessages();
+        self::getMessageCollector()->clear();
 
         $newCategory->setParentCategory($parentCategory);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.category_position_change',
+            Topics::CATEGORY_POSITION_CHANGE,
             ['id' => $newCategory->getId()]
         );
     }
@@ -73,16 +60,14 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($newCategory);
         $this->categoryManager->flush();
 
-        $this->cleanScheduledMessages();
+        self::getMessageCollector()->clear();
 
         $id = $newCategory->getId();
         $this->categoryManager->remove($newCategory);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.category_remove',
+            Topics::CATEGORY_REMOVE,
             ['id' => $id]
         );
     }

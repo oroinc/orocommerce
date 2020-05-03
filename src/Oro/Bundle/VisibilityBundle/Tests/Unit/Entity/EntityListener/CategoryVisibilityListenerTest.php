@@ -2,43 +2,43 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Async\Topics;
-use Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryVisibilityListener;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
+class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageProducer;
 
-    /** @var ProductVisibilityListener */
+    /** @var CategoryVisibilityListener */
     private $visibilityListener;
 
     protected function setUp()
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
-        $this->visibilityListener = new ProductVisibilityListener($this->messageProducer);
+        $this->visibilityListener = new CategoryVisibilityListener($this->messageProducer);
     }
 
     public function testPostPersist()
     {
         $entityId = 123;
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => $entityId]);
 
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(
-                Topics::RESOLVE_PRODUCT_VISIBILITY,
-                ['entity_class_name' => ProductVisibility::class, 'id' => $entityId]
+                Topics::CHANGE_CATEGORY_VISIBILITY,
+                ['entity_class_name' => CategoryVisibility::class, 'id' => $entityId]
             );
 
         $this->visibilityListener->postPersist($entity);
@@ -48,13 +48,13 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $entityId = 123;
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => $entityId]);
 
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(
-                Topics::RESOLVE_PRODUCT_VISIBILITY,
-                ['entity_class_name' => ProductVisibility::class, 'id' => $entityId]
+                Topics::CHANGE_CATEGORY_VISIBILITY,
+                ['entity_class_name' => CategoryVisibility::class, 'id' => $entityId]
             );
 
         $this->visibilityListener->preUpdate($entity);
@@ -65,22 +65,22 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $entityId = 123;
         $targetEntityId = 234;
         $scopeId = 345;
-        /** @var Product $targetEntity */
-        $targetEntity = $this->getEntity(Product::class, ['id' => $targetEntityId]);
+        /** @var Category $targetEntity */
+        $targetEntity = $this->getEntity(Category::class, ['id' => $targetEntityId]);
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => $entityId]);
         $entity->setTargetEntity($targetEntity);
         $entity->setScope($scope);
 
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(
-                Topics::RESOLVE_PRODUCT_VISIBILITY,
+                Topics::CHANGE_CATEGORY_VISIBILITY,
                 [
-                    'entity_class_name' => ProductVisibility::class,
-                    'target_class_name' => Product::class,
+                    'entity_class_name' => CategoryVisibility::class,
+                    'target_class_name' => Category::class,
                     'target_id'         => $targetEntityId,
                     'scope_id'          => $scopeId
                 ]
@@ -92,7 +92,7 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPostPersistWhenDisabled()
     {
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => 123]);
 
         $this->messageProducer->expects($this->never())
             ->method('send');
@@ -104,7 +104,7 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdateWhenDisabled()
     {
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => 123]);
 
         $this->messageProducer->expects($this->never())
             ->method('send');
@@ -115,12 +115,12 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPreRemoveWhenDisabled()
     {
-        /** @var Product $targetEntity */
-        $targetEntity = $this->getEntity(Product::class, ['id' => 234]);
+        /** @var Category $targetEntity */
+        $targetEntity = $this->getEntity(Category::class, ['id' => 234]);
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 345]);
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+        $entity = $this->getEntity(CategoryVisibility::class, ['id' => 123]);
         $entity->setTargetEntity($targetEntity);
         $entity->setScope($scope);
 

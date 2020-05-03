@@ -3,105 +3,419 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $messageFactory;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $logger;
+    /** @var CacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheBuilder;
 
-    /**
-     * @var CacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cacheBuilder;
-
-    /**
-     * @var ProductMessageHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productMessageHandler;
-
-    /**
-     * @var CategoryVisibilityProcessor
-     */
-    protected $categoryVisibilityProcessor;
+    /** @var CategoryVisibilityProcessor */
+    private $processor;
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->cacheBuilder = $this->createMock(CacheBuilderInterface::class);
-        $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->categoryVisibilityProcessor = new CategoryVisibilityProcessor(
-            $this->registry,
-            $this->messageFactory,
+
+        $this->processor = new CategoryVisibilityProcessor(
+            $this->doctrine,
             $this->logger,
-            $this->cacheBuilder,
-            $this->productMessageHandler
+            $this->cacheBuilder
         );
-        $this->categoryVisibilityProcessor->setResolvedVisibilityClassName(CategoryVisibilityResolved::class);
     }
+
+    /**
+     * @param mixed $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage($body): MessageInterface
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(JSON::encode($body));
+
+        return $message;
+    }
+
+    /**
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
+    {
+        return $this->createMock(SessionInterface::class);
+    }
+
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals(
+            [Topics::CHANGE_CATEGORY_VISIBILITY],
+            CategoryVisibilityProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcessWithInvalidMessage()
+    {
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage('invalid'), $this->getSession())
+        );
+    }
+
+    public function testProcessWithEmptyMessage()
+    {
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage([]), $this->getSession())
+        );
+    }
+
+    public function testProcessWithInvalidMessageDueToEntityClassDoesNotExist()
+    {
+        $body = ['entity_class_name' => 'Test\UnknownClass', 'id' => 42];
+
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
     public function testProcess()
     {
-        $data = ['test' => 42];
-        $body = json_encode($data);
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $body = ['entity_class_name' => CategoryVisibility::class, 'id' => 42];
+
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
         $em->expects(($this->never()))
             ->method('rollback');
-        $em->expects($this->once())
+        $em->expects(($this->once()))
             ->method('commit');
-        $this->registry->expects($this->once())
+
+        $this->doctrine->expects($this->exactly(2))
             ->method('getManagerForClass')
-            ->with(CategoryVisibilityResolved::class)
-            ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-        $visibilityEntity = new CategoryVisibility();
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
-            ->with($data)
-            ->willReturn($visibilityEntity);
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [CategoryVisibility::class, $em]
+            ]);
+
+        $visibility = new CategoryVisibility();
+        $em->expects($this->once())
+            ->method('find')
+            ->with(CategoryVisibility::class, $body['id'])
+            ->willReturn($visibility);
         $this->cacheBuilder->expects($this->once())
             ->method('resolveVisibilitySettings')
-            ->with($visibilityEntity);
+            ->with($this->identicalTo($visibility));
+
         $this->assertEquals(
             MessageProcessorInterface::ACK,
-            $this->categoryVisibilityProcessor->process($message, $session)
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessEntityNotFound()
+    {
+        $body = ['entity_class_name' => CategoryVisibility::class, 'id' => 42];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [CategoryVisibility::class, $em]
+            ]);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with(CategoryVisibility::class, $body['id'])
+            ->willReturn(null);
+        $this->cacheBuilder->expects($this->never())
+            ->method('resolveVisibilitySettings');
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve.',
+                ['exception' => new EntityNotFoundException('Entity object was not found.')]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessWithoutEntityId()
+    {
+        $body = [
+            'entity_class_name' => CategoryVisibility::class,
+            'target_class_name' => Category::class,
+            'target_id'         => 12,
+            'scope_id'          => 1
+        ];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->never()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(3))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [$body['target_class_name'], $em],
+                [Scope::class, $em]
+            ]);
+
+        $category = new Category();
+        $scope = new Scope();
+        $em->expects($this->exactly(2))
+            ->method('find')
+            ->willReturnMap([
+                [$body['target_class_name'], $body['target_id'], $category],
+                [Scope::class, $body['scope_id'], $scope]
+            ]);
+        $this->cacheBuilder->expects($this->once())
+            ->method('resolveVisibilitySettings')
+            ->with($this->isInstanceOf(CategoryVisibility::class))
+            ->willReturnCallback(function (CategoryVisibility $visibility) use ($category, $scope) {
+                $this->assertSame($category, $visibility->getTargetEntity());
+                $this->assertSame($scope, $visibility->getScope());
+                $this->assertSame(CategoryVisibility::CONFIG, $visibility->getVisibility());
+            });
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessWithoutEntityIdAndScopeNotFound()
+    {
+        $body = [
+            'entity_class_name' => CategoryVisibility::class,
+            'target_class_name' => Category::class,
+            'target_id'         => 12,
+            'scope_id'          => 1
+        ];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(3))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [$body['target_class_name'], $em],
+                [Scope::class, $em]
+            ]);
+
+        $category = new Category();
+        $em->expects($this->exactly(2))
+            ->method('find')
+            ->willReturnMap([
+                [$body['target_class_name'], $body['target_id'], $category],
+                [Scope::class, $body['scope_id'], null]
+            ]);
+        $this->cacheBuilder->expects($this->never())
+            ->method('resolveVisibilitySettings');
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve.',
+                ['exception' => new EntityNotFoundException('Scope object object was not found.')]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessWithoutEntityIdAndTargetEntityNotFound()
+    {
+        $body = [
+            'entity_class_name' => CategoryVisibility::class,
+            'target_class_name' => Category::class,
+            'target_id'         => 12,
+            'scope_id'          => 1
+        ];
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [$body['target_class_name'], $em]
+            ]);
+
+        $em->expects($this->once())
+            ->method('find')
+            ->with($body['target_class_name'], $body['target_id'])
+            ->willReturn(null);
+        $this->cacheBuilder->expects($this->never())
+            ->method('resolveVisibilitySettings');
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve.',
+                ['exception' => new EntityNotFoundException('Target object was not found.')]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessDeadlock()
+    {
+        $body = ['entity_class_name' => CategoryVisibility::class, 'id' => 42];
+
+        $exception = $this->createMock(DeadlockException::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [CategoryVisibility::class, $em]
+            ]);
+
+        $visibility = new CategoryVisibility();
+        $em->expects($this->once())
+            ->method('find')
+            ->with(CategoryVisibility::class, $body['id'])
+            ->willReturn($visibility);
+        $this->cacheBuilder->expects($this->once())
+            ->method('resolveVisibilitySettings')
+            ->with($this->identicalTo($visibility))
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REQUEUE,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessException()
+    {
+        $body = ['entity_class_name' => CategoryVisibility::class, 'id' => 42];
+
+        $exception = new \Exception('some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [CategoryVisibilityResolved::class, $em],
+                [CategoryVisibility::class, $em]
+            ]);
+
+        $visibility = new CategoryVisibility();
+        $em->expects($this->once())
+            ->method('find')
+            ->with(CategoryVisibility::class, $body['id'])
+            ->willReturn($visibility);
+        $this->cacheBuilder->expects($this->once())
+            ->method('resolveVisibilitySettings')
+            ->with($this->identicalTo($visibility))
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
 }
