@@ -405,7 +405,7 @@
 {% block _checkout_button_continue_right_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="order-checkout-widget text-right">
+        <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
                 <button type="submit" class="btn btn--size-m btn--info checkout__submit-btn">
                     {{- transitionData.transition.label|trans({},'workflows') -}}

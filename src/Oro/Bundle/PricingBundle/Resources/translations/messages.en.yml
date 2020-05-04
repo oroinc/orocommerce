@@ -343,7 +343,8 @@ oro.pricing:
             unit_price:
                 short_label: 'per unit'
                 long_label: 'Unit price'
-
+        summary: 'Summary'
+        sammary_count: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
     notification:
         price_list:
             error:

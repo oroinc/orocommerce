@@ -4,7 +4,21 @@
     position: relative;
     margin-top: $offset-y;
 
+    padding-top: 0;
+
     @include clearfix();
+
+    &--offset-none {
+        margin-top: 0;
+    }
+
+    &.in-sticky {
+        @if $page-main-offset-top {
+            padding-top: $page-main-offset-top;
+
+            transition: padding .15s linear;
+        }
+    }
 
     &__container-wrapper {
         margin-bottom: $offset-y-m;
@@ -15,18 +29,23 @@
     &__container {
         float: right;
 
-        padding: $offset-y;
+        padding: 20px;
 
-        border-radius: 3px;
+        border-radius: 4px;
         background: get-color('additional', 'base');
 
-        &--lg {
+        &--fixed-width {
             width: 280px;
         }
     }
 
     &__table {
         width: 100%;
+
+        th,
+        td {
+            padding: $offset-y-s 0;
+        }
 
         th {
             text-align: left;
@@ -35,13 +54,42 @@
         td {
             text-align: right;
         }
+
+        $presentation-selector: & + '-presentation';
+
+        tr:not(#{$presentation-selector}) {
+            &:first-child {
+                th,
+                td {
+                    padding-top: 0;
+                }
+            }
+
+            &:last-child {
+                th,
+                td {
+                    padding-bottom: 0;
+                }
+            }
+        }
+
+        #{$presentation-selector} {
+            td {
+                padding: 14px 0 20px;
+            }
+        }
+    }
+
+    &__divider {
+        margin: 0;
+        height: 1px;
+
+        border: none;
+        background-color: get-color('additional', 'light');
     }
 
     &__total {
-        padding-top: $offset-y-s + 1px;
-
         font-size: $base-font-size + 4px;
-
         font-weight: 700;
     }
 
@@ -57,8 +105,11 @@
 
     &__quote {
         float: right;
+    }
 
-        width: 320px;
+    &__summary {
+        font-size: $base-font-size--m;
+        font-weight: bold;
     }
 
     [data-toggle="tooltip"] {
@@ -68,14 +119,9 @@
 
 @include breakpoint('tablet-small') {
     .order-checkout-widget {
-        &__container-wrapper {
-            margin: ($offset-y-m*2) 0;
-        }
-
         &__container {
             &__lg {
                 width: 100%;
-                padding: $offset-y ($offset-x*2);
             }
         }
 

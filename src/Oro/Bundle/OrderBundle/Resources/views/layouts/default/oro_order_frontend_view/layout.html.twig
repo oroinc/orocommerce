@@ -36,8 +36,8 @@
 
 {% block order_total_widget %}
     <div class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container--lg">
-            <table class="order-checkout-widget__table pull-right">
+        <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
+            <table class="order-checkout-widget__table">
                 {% for subtotal in subtotals %}
                 <tr>
                     <td>{{ subtotal.label }}</td>
@@ -45,7 +45,7 @@
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
+                    <td class="order-checkout-widget__total">{{ total.label }}</td>
                     <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>
@@ -54,7 +54,7 @@
 {% endblock %}
 
 {% block _order_after_line_items_grid_widget %}
-    <div class="order-checkout-widget text-right">
+    <div class="order-checkout-widget">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
