@@ -37,8 +37,8 @@
 {% endblock %}
 
 {% block __my_shopping_list__header_title_text_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' cart-order-title'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' cart-order-title'
     }) %}
 
     <h1 {{ block('block_attributes') }}>
@@ -82,8 +82,18 @@
 {% endblock %}
 
 {% block __my_shopping_list__checkout_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' order-checkout-widget'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-checkout-widget order-checkout-widget--offset-none ',
+        'data-sticky-target': 'top-sticky-panel',
+        'data-sticky': {
+            isSticky: true,
+            affixed: true,
+            autoWidth: false,
+            moveToPanel: false,
+            viewport: {
+                minScreenType: 'desktop'
+            }
+        }
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -92,39 +102,8 @@
 {% endblock %}
 
 {% block __my_shopping_list__summary_container_widget %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __my_shopping_list__summary_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' shipping-list-view-total-container order-checkout-widget__container-wrapper'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        <div class="order-checkout-widget__container">
-            <div class="totals-container">
-                <table class="order-checkout-widget__table pull-right">
-                    <tbody>
-                    <tr>
-                        <th class="order-checkout-widget__total">
-                            <span>Summary</span>
-                        </th>
-                        <td>
-                            <span>{{ 'oro.frontend.shoppinglist.view.items.label'|trans({'%count%': shoppingList.lineItemsCount}) }}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block __my_shopping_list__totals_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' shipping-list-view-total-container order-checkout-widget__container-wrapper'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-checkout-widget__container-wrapper '
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -133,12 +112,10 @@
 {% endblock %}
 
 {% block __my_shopping_list__combined_button_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' order-checkout-widget__col',
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-checkout-widget__col',
         'data-name': 'empty-items__hide'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block('combined_buttons_widget') }}
-    </div>
+    {{ block('combined_buttons_widget') }}
 {% endblock %}

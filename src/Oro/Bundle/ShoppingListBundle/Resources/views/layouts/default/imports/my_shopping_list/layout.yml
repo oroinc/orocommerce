@@ -44,10 +44,6 @@ layout:
                     blockType: container
                 __summary_container:
                     blockType: container
-                __summary:
-                    blockType: shopping_list_awere_block
-                    options:
-                        shoppingList: '=data["entity"]'
                 __totals:
                     blockType: price_totals
                     options:
@@ -59,6 +55,8 @@ layout:
                         entityClassName: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
                         entityId: '=data["entity"]!=null ? data["entity"].getId() : null'
                         skipMaskView: true
+                        vars:
+                            itemsCount: '=data["entity"].getLineItemsCount()'
                 __combined_button:
                     blockType: combined_buttons
                     options:
@@ -76,6 +74,5 @@ layout:
                         __line_items: ~
                         __checkout_container:
                             __summary_container:
-                                __summary: ~
                                 __totals: ~
                             __combined_button: ~

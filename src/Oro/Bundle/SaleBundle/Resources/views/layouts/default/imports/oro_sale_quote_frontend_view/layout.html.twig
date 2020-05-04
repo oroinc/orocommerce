@@ -165,7 +165,7 @@
 {% endblock %}
 
 {% block _quote_view_accept_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

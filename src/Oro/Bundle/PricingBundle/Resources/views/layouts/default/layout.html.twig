@@ -38,7 +38,7 @@
         entityClassName: oro_url_class_name(entityClassName),
         entityId: entityId,
         skipMaskView: skipMaskView,
-        data: totals
+        data: totals,
     }%}
     {% if selectors is defined %}
         {% set options = options|merge({selectors: selectors}) %}
@@ -49,9 +49,22 @@
     <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
         <div class="totals-container">
             {% block data_totals_container %}
-                <div class="order-checkout-widget__container">
+                <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
                     <div class="totals-container">
-                        <table class="order-checkout-widget__table pull-right">
+                        <table class="order-checkout-widget__table">
+                            {% if itemsCount is defined %}
+                            <tbody>
+                                <tr>
+                                    <th class="order-checkout-widget__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
+                                    <td>{{ 'oro.pricing.frontend.sammary_count'|trans({'%count%': itemsCount}) }}</td>
+                                </tr>
+                                <tr aria-hidden="true" class="order-checkout-widget__table-presentation">
+                                    <td colspan="2">
+                                        <hr class="order-checkout-widget__divider">
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {% endif %}
                             <tbody data-totals-container></tbody>
                         </table>
                     </div>
