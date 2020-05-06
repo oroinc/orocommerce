@@ -251,4 +251,45 @@ class LineItemRepository extends EntityRepository
             ->where($qb->expr()->in('li.id', ':ids'))
             ->getQuery()->execute(['ids' => $ids]);
     }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $allowedInventoryStatuses
+     */
+    public function deleteNotAllowedLineItemsFromShoppingList(
+        ShoppingList $shoppingList,
+        array $allowedInventoryStatuses
+    ): void {
+        $lineItemsQb = $this->createQueryBuilder('line_item');
+        $lineItemsQuery = $lineItemsQb
+            ->select('line_item.id')
+            ->innerJoin('line_item.product', 'product')
+            ->where(
+                $lineItemsQb->expr()->orX(
+                    $lineItemsQb->expr()->notIn('IDENTITY(product.inventory_status)', ':allowedInventoryStatuses'),
+                    $lineItemsQb->expr()->eq('product.status', ':status')
+                ),
+                $lineItemsQb->expr()->eq('line_item.shoppingList', ':shoppingList')
+            )
+            ->setParameter('allowedInventoryStatuses', $allowedInventoryStatuses)
+            ->setParameter('status', Product::STATUS_DISABLED)
+            ->setParameter('shoppingList', $shoppingList)
+            ->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+
+        $lineItemsQuery->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+
+        $ids = $lineItemsQuery->getResult($identifierHydrationMode);
+        if ($ids) {
+            $deleteQb = $this->getEntityManager()->createQueryBuilder();
+            $deleteQb->delete()
+                ->from($this->getEntityName(), 'line_item')
+                ->where($deleteQb->expr()->in('line_item.id', ':ids'))
+                ->getQuery()
+                ->execute(['ids' => $ids]);
+        }
+    }
 }

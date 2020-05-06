@@ -302,8 +302,7 @@ class ShoppingListManager
             ->getRepository(LineItem::class);
 
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-        $repository->deleteItemsByShoppingListAndInventoryStatuses($shoppingList, $allowedStatuses);
-        $repository->deleteDisabledItemsByShoppingList($shoppingList);
+        $repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
     }
 
     /**
