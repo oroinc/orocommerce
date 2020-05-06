@@ -13,44 +13,59 @@
 {% endblock %}
 
 {% block __my_shopping_list__container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-profile customer-profile--no-offset'
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block __my_shopping_list__header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-profile__title-wrapper'
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block __my_shopping_list__header_title_container_widget %}
-    {{ block_widget(block) }}
-{% endblock %}
-
-{% block __my_shopping_list__header_title_icon_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' fa-shopping-cart'
+{%- block __my_shopping_list__header_icon_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' badge fa-shopping-cart',
+        'aria-hidden': true
     }) %}
 
     <span {{ block('block_attributes') }}></span>
-{% endblock %}
+{%- endblock -%}
 
-{% block __my_shopping_list__header_title_text_widget %}
+{%- block __my_shopping_list__header_title_container_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' cart-order-title'
+        '~class': ' page-title with-ellipsis'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>
-        {{ shoppingList.label }}
-    </h1>
-{% endblock %}
+    <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+{%- endblock -%}
 
-{% block __my_shopping_list__header_title_status_widget %}
+{%- block __my_shopping_list__header_title_text_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title__text page-title__text--offset-x-end-s'
+    }) %}
+
+    <span {{ block('block_attributes') }}>{{ shoppingList.label }}</span>
+{%- endblock -%}
+
+{%- block __my_shopping_list__header_status_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' badge-rectangle'
+    }) %}
+
     <span {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </span>
-{% endblock %}
+{%- endblock -%}
 
 {% block __my_shopping_list__header_owner_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
@@ -76,6 +91,10 @@
 {% endblock %}
 
 {% block __my_shopping_list__line_items_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': '  my-shopping-list-datagrid-container'
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
