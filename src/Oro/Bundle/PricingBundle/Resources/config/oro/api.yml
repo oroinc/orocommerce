@@ -166,6 +166,8 @@ api:
         Oro\Bundle\PricingBundle\Entity\ProductPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
             fields:
+                id:
+                    data_type: string
                 value:
                     form_options:
                         mapped: false

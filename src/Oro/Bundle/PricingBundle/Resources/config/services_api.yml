@@ -171,20 +171,18 @@ services:
             - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice }
 
     oro_pricing.api.normalize_product_price_id:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\NormalizeInputProductPriceId
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\NormalizeProductPriceId
         arguments:
-            - '@oro_api.doctrine_helper'
-            - '@validator'
+            - '@oro_api.value_normalizer'
         tags:
             - { name: oro.api.processor, action: get, group: normalize_input, requestType: rest, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
             - { name: oro.api.processor, action: delete, group: normalize_input, requestType: rest, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
             - { name: oro.api.processor, action: update, group: normalize_input, requestType: rest, class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
 
-    oro_pricing.api.normalize_product_price:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\NormalizeOutputProductPriceId
+    oro_pricing.api.compute_product_price_id:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ComputeProductPriceId
         tags:
-            - { name: oro.api.processor, action: get, group: finalize, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
-            - { name: oro.api.processor, action: get_list, group: finalize, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.set_price_list_in_context_by_product_price:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\StorePriceListInContextByProductPrice
@@ -192,18 +190,8 @@ services:
             - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
             - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
-    oro_pricing.api.load_normalized_entity:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\LoadNormalizedProductPriceWithNormalizedId
-        arguments:
-            - '@oro_api.action_processor_bag'
-        tags:
-            - { name: oro.api.processor, action: update, group: normalize_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice}
-            - { name: oro.api.processor, action: create, group: normalize_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice}
-
     oro_pricing.api.handle_price_list_filter:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\HandlePriceListFilter
-        arguments:
-            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
             - { name: oro.api.processor, action: delete_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }

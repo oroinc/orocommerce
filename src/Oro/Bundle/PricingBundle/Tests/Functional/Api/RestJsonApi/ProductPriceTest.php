@@ -16,7 +16,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProductPriceTest extends RestJsonApiTestCase
 {
@@ -76,6 +78,35 @@ class ProductPriceTest extends RestJsonApiTestCase
             [
                 'title'  => 'filter constraint',
                 'detail' => 'The "priceList" filter is required.'
+            ],
+            $response
+        );
+    }
+
+    public function testGetListWhenPriceListFilterContainsIdOfNotExistingPriceList()
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '9999']]
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
+    public function testTryToGetListWhenPriceListFilterContainsNotIntegerValue()
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => 'invalid']],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'filter constraint',
+                'detail' => 'Expected integer value. Given "invalid".',
+                'source' => ['parameter' => 'filter[priceList]']
             ],
             $response
         );
@@ -255,12 +286,13 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $priceList = $this->getReference('price_list_1');
+        $priceListId = $priceList->getId();
         $product1Id = $this->getReference('product-1')->getId();
         $product2Id = $this->getReference('product-2')->getId();
 
         $this->cdelete(
             ['entity' => 'productprices'],
-            ['filter' => ['priceList' => $priceList->getId()]]
+            ['filter' => ['priceList' => (string)$priceListId]]
         );
 
         self::assertSame(
@@ -271,8 +303,6 @@ class ProductPriceTest extends RestJsonApiTestCase
             )
         );
 
-        $priceListId = $this->getReference('price_list_1')->getId();
-
         $message = self::getSentMessage(Topics::RESOLVE_COMBINED_PRICES);
         self::assertIsArray($message);
         self::assertArrayHasKey('product', $message);
@@ -280,6 +310,18 @@ class ProductPriceTest extends RestJsonApiTestCase
         $productIds = $message['product'][$priceListId];
         sort($productIds);
         self::assertEquals([$product1Id, $product2Id], $productIds);
+    }
+
+    public function testDeleteListWhenPriceListFilterContainsIdOfNotExistingPriceList()
+    {
+        $this->cleanScheduledMessages();
+
+        $this->cdelete(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '9999']]
+        );
+
+        self::assertEmptyMessages(Topics::RESOLVE_COMBINED_PRICES);
     }
 
     public function testTryToDeleteListWithoutPriceListFilter()
@@ -319,7 +361,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToGetWithWrongPriceListInId()
+    public function testTryToGetWithWrongPriceListId()
     {
         $response = $this->get(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId('price_list_2')],
@@ -338,11 +380,67 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToGetWithNotExistingId()
+    public function testTryToGetWhenProductListDoesNotExist()
     {
-        $notExistingId = $this->getFirstProductPrice()->getId() . 'a-' . $this->getReference('price_list_1')->getId();
         $response = $this->get(
-            ['entity' => 'productprices', 'id' => $notExistingId],
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPrice()->getId() . '-9999'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    public function testTryToGetWhenProductPriceIdIsNotGuid()
+    {
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => 'invalid-' . $this->getReference('price_list_1')->getId()],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    public function testTryToGetWhenProductListIdIsNotInteger()
+    {
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPrice()->getId() . '-invalid'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    public function testTryToGetWhenIdIsInvalid()
+    {
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => 'invalid'],
             [],
             [],
             false
