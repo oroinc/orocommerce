@@ -16,28 +16,26 @@ class PriceRoundingServiceTest extends AbstractRoundingServiceTest
     /** {@inheritdoc} */
     protected function prepareConfigManager($roundingType, $precision)
     {
-        $this->configManager->expects($this->any())
+        $this->configManager->expects($this->atMost(2))
             ->method('get')
             ->with($this->isType('string'))
-            ->will(
-                $this->returnValueMap(
+            ->willReturnMap(
+                [
                     [
-                        [
-                            'oro_pricing.rounding_type',
-                            PriceRoundingService::ROUND_HALF_UP,
-                            false,
-                            null,
-                            $roundingType,
-                        ],
-                        [
-                            'oro_pricing.precision',
-                            PriceRoundingService::FALLBACK_PRECISION,
-                            false,
-                            null,
-                            $precision,
-                        ],
-                    ]
-                )
+                        'oro_pricing.rounding_type',
+                        PriceRoundingService::ROUND_HALF_UP,
+                        false,
+                        null,
+                        $roundingType,
+                    ],
+                    [
+                        'oro_pricing.precision',
+                        PriceRoundingService::FALLBACK_PRECISION,
+                        false,
+                        null,
+                        $precision,
+                    ],
+                ]
             );
     }
 
@@ -45,6 +43,9 @@ class PriceRoundingServiceTest extends AbstractRoundingServiceTest
     {
         $this->prepareConfigManager(PriceRoundingService::ROUND_HALF_UP, PriceRoundingService::FALLBACK_PRECISION);
 
+        $this->assertEquals(15.1235, $this->service->round(15.123456));
+
+        // check local cache
         $this->assertEquals(15.1235, $this->service->round(15.123456));
     }
 }
