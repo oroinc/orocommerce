@@ -22,13 +22,13 @@ layout:
                     blockType: container
                 __header_title_container:
                     blockType: container
-                __header_title_icon:
+                __header_icon:
                     blockType: block
                 __header_title_text:
                     blockType: shopping_list_awere_block
                     options:
                         shoppingList: '=data["entity"]'
-                __header_title_status:
+                __header_status:
                     blockType: text
                     options:
                         visible: '=data["oro_shopping_list_customer_user_shopping_lists"].isCurrent(data["entity"])'
@@ -67,9 +67,9 @@ layout:
                     __container:
                         __header:
                             __header_title_container:
-                                __header_title_icon: ~
+                                __header_icon: ~
                                 __header_title_text: ~
-                                __header_title_status: ~
+                                __header_status: ~
                             __header_owner: ~
                         __line_items: ~
                         __checkout_container:
