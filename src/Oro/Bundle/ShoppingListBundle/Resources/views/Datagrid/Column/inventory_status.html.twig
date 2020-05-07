@@ -5,5 +5,5 @@
 {% endif %}
 
 {% for lineItem in lineItems %}
-    <div class="shopping-list-line-items__status">{{ lineItem.product.InventoryStatus }}</div>
+    <div class="{{ lineItem.product.InventoryStatus.getId() }}">{{ lineItem.product.InventoryStatus }}</div>
 {% endfor %}
