@@ -163,43 +163,49 @@
         <div {{ block('block_attributes') }}>
             {% if shoppingList.lineItems|length > 0 %}
             <div class="shopping-list-dropdown__product-list">
-                {% for lineItem in shoppingList.lineItems|default([]) %}
-                    {% set product = lineItem.product %}
-                    {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code] is defined ? productsMatchedPrices[shoppingList.id][product.id][lineItem.unit.code] : null %}
-
-                    <div class="shopping-list-dropdown__product-item">
-                        <div class="shopping-list-dropdown__product-img">
-                            {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
-                            {% set productImage = Image.image(productImageData, 'product_small') %}
-                            {{ productImage }}
-                        </div>
+                {% for lineItem in shoppingList.lineItems|default([])|slice(0, 11) %}
+                    {% if loop.index == 11 %}
                         <div class="shopping-list-dropdown__product-base">
-                            <div class="shopping-list-dropdown__product-total">
-                                {% set quantity = lineItem.quantity %}
-                                {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}
-                                    {{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}
-                                {% else %}
-                                    {{ quantity }}
-                                {% endif %}
-                                <span aria-hidden="true">|</span>
-                                {% if productMatchedPrice is not null %}
-                                    <span data-name="price-value">
-                                        {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
-                                    </span>
-                                {% else %}
-                                    <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</span>
-                                {% endif %}
+                            <span class="shopping-list-dropdown__ellipsis">...</span>
+                        </div>
+                    {% else %}
+                        {% set product = lineItem.product %}
+                        {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code] is defined ? productsMatchedPrices[shoppingList.id][product.id][lineItem.unit.code] : null %}
+
+                        <div class="shopping-list-dropdown__product-item">
+                            <div class="shopping-list-dropdown__product-img">
+                                {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
+                                {% set productImage = Image.image(productImageData, 'product_small') %}
+                                {{ productImage }}
                             </div>
-                            {% set routeOptions = {'id': product.id} %}
-                            <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}" class="shopping-list-dropdown__product-title">
-                                {{- product.names|localized_value|e -}}
-                            </a>
-                            <div class="shopping-list-dropdown__product-sku">
-                                {{- 'oro.frontend.shoppinglist.view.item.label'|trans }}
-                                <span class="shopping-list-dropdown__product-sku-value">{{ product.sku|e }}</span>
+                            <div class="shopping-list-dropdown__product-base">
+                                <div class="shopping-list-dropdown__product-total">
+                                    {% set quantity = lineItem.quantity %}
+                                    {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}
+                                        {{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}
+                                    {% else %}
+                                        {{ quantity }}
+                                    {% endif %}
+                                    <span aria-hidden="true">|</span>
+                                    {% if productMatchedPrice is not null %}
+                                        <span data-name="price-value">
+                                            {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
+                                        </span>
+                                    {% else %}
+                                        <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                                {% set routeOptions = {'id': product.id} %}
+                                <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}" class="shopping-list-dropdown__product-title">
+                                    {{- product.names|localized_value|e -}}
+                                </a>
+                                <div class="shopping-list-dropdown__product-sku">
+                                    {{- 'oro.frontend.shoppinglist.view.item.label'|trans }}
+                                    <span class="shopping-list-dropdown__product-sku-value">{{ product.sku|e }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             </div>
             {% else %}
