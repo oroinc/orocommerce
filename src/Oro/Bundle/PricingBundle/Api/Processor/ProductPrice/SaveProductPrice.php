@@ -9,7 +9,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Saves a product price to the database using the price manager.
+ * Registers a product price in the price manager.
  */
 class SaveProductPrice implements ProcessorInterface
 {
@@ -31,14 +31,12 @@ class SaveProductPrice implements ProcessorInterface
     {
         /** @var SingleItemContext $context */
 
+        /** @var ProductPrice|null $entity */
         $entity = $context->getResult();
-        if (!$entity instanceof ProductPrice) {
+        if (null === $entity) {
             return;
         }
 
         $this->priceManager->persist($entity);
-        $this->priceManager->flush();
-
-        $context->setId($entity->getId());
     }
 }
