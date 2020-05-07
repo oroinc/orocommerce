@@ -20,7 +20,7 @@
     }) %}
 
     {% do block|merge_context({
-        '__prodactUniqId': 'prodact-'|uniqid,
+        '__productUniqId': 'product-'|uniqid,
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -72,7 +72,7 @@
             id: product.id,
             galleryFilter: 'product_gallery_popup',
             alt: product.names|localized_value,
-            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ __prodactUniqId ~ '"]'
+            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ __productUniqId ~ '"]'
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -94,7 +94,7 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
             'data-trigger-gallery-open': '',
-            'data-role': 'data-trigger-gallery-open-' ~ __prodactUniqId,
+            'data-role': 'data-trigger-gallery-open-' ~ __productUniqId,
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}

@@ -1,0 +1,31 @@
+/* @theme: blank; */
+
+.my-shopping-list-datagrid-container {
+    .grid-body-cell-item {
+        width: 400px;
+    }
+}
+
+@include breakpoint('tablet') {
+    .my-shopping-list-datagrid-container {
+        .grid-body-cell-item {
+            width: 360px;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .my-shopping-list-datagrid-container {
+        .grid-body-cell-item {
+            width: 280px;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .my-shopping-list-datagrid-container {
+        .grid-body-cell-item {
+            width: 200px;
+        }
+    }
+}

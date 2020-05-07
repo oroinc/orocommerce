@@ -14,7 +14,7 @@
 
     &.in-sticky {
         @if $page-main-offset-top {
-            padding-top: $page-main-offset-top;
+            padding-top: $offset-y-m;
 
             transition: padding .15s linear;
         }

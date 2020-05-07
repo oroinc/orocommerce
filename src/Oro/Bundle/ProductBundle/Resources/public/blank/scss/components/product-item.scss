@@ -129,6 +129,13 @@
                 @include img-fluid();
             }
         }
+
+        &--tiny {
+            width: $product-item-image-holder-tiny-width;
+            height: $product-item-image-holder-tiny-height;
+
+            border: $product-item-image-holder-tiny-border;
+        }
     }
 
     &__preview {

@@ -14,13 +14,13 @@
 {% endfor %}
 
 {% if total is not null %}
-    <div data-name="price-value">
+    <div class="bold" data-name="price-value">
         {{ total|oro_format_currency({'currency': oro_currency()}) }}
     </div>
 {% elseif (lineItems|first).parentProduct is empty %}
-    <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
+    <div class="bold" data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
 {% else %}
-    <div data-name="price-not-found">&nbsp</div>
+    <div class="bold" data-name="price-not-found">&nbsp</div>
 {% endif %}
 
 {% if (lineItems|first).parentProduct is not empty %}
@@ -28,11 +28,11 @@
         {% set productMatchedPrice = matchedPrices[lineItem.product.id][lineItem.unit.code] is not empty ? matchedPrices[lineItem.product.id][lineItem.unit.code] : null %}
 
         {% if productMatchedPrice is not null %}
-            <div data-name="price-value">
+            <div class="bold" data-name="price-value">
                 {{ (productMatchedPrice.value * lineItem.quantity)|oro_format_currency({'currency': productMatchedPrice.currency}) }}
             </div>
         {% else %}
-            <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
+            <div class="bold" data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
         {% endif %}
     {% endfor %}
 {% endif %}

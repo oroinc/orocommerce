@@ -7,57 +7,106 @@
 
 {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
 
-<div {% if productImageData %}
-    {{ UI.attributes({
-        'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
-        'data-page-component-options': {
-            ajaxMode: true,
-            ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
-            id: mainProduct.id,
-            galleryFilter: 'product_gallery_popup',
-            alt: mainProduct.names|localized_value
-        }|json_encode
-    }) }}
-{% endif %}>
-    <div class="product-item__image-holder" data-trigger-gallery-open="true" style="float: left;">
-        <picture class="product-item__preview-picture"
-                 data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ {
-                     view: 'orofrontend/js/app/views/object-fit-polyfill-view'
-                 }|json_encode }}"
-        >
-            {{ Image.image(productImageData, 'product_small', {
-                class: 'product-item__preview-image',
-                alt: mainProduct.names|localized_value|e
-            }) }}
-        </picture>
+<div class="product-item">
+    <div class="grid-line-items">
+        <div class="grid-line-items__row grid-line-items__row--offset-y-end">
+            {% if productImageData %}
+                {% set productUniqId = 'product-'|uniqid %}
+                <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
+                    <div {{ UI.attributes({
+                        'class': 'product-item__preview',
+                        'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
+                        'data-page-component-options': {
+                            ajaxMode: true,
+                            ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
+                            id: mainProduct.id,
+                            galleryFilter: 'product_gallery_popup',
+                            alt: mainProduct.names|localized_value,
+                            uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ productUniqId ~ '"]'
+                        }|json_encode
+                    }) }}>
+                        <picture class="product-item__preview-picture"
+                                 data-page-component-module="oroui/js/app/components/view-component"
+                                 data-page-component-options="{{ {
+                                     view: 'orofrontend/js/app/views/object-fit-polyfill-view'
+                                 }|json_encode }}"
+                        >
+                            {{ Image.image(productImageData, 'product_small', {
+                                class: 'product-item__preview-image',
+                                alt: mainProduct.names|localized_value|e
+                            }) }}
+                        </picture>
+                    </div>
+                    <button class="view-product-gallery stretched" data-role="{{'data-trigger-gallery-open-' ~ productUniqId }}" aria-label="{{ 'oro.product.images.zoom.label'|trans }}">
+                        <span class="view-product-gallery__icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+            {% else %}
+                <div class="product-item__image-holder product-item__image-holder--tiny">
+                    {{ Image.image(productImageData, 'product_small', {
+                        class: 'product-item__preview-image',
+                        alt: mainProduct.names|localized_value|e
+                    }) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="grid-line-items__row">
+            {% set clipLength = 30 %}
+            <div class="grid-line-items__row-item">
+                {% set mainProductName = mainProduct.names|localized_value|e %}
+                {% set productNameClipClassName = 'grid-line-items__title' %}
+                {% set productNameLinkClipClassName = '' %}
+                {% if mainProductName|length >= clipLength %}
+                    {% set productNameClipClassName = productNameClipClassName ~ ' grid-line-items__clip-placeholder' %}
+                    {% set productNameLinkClipClassName = 'grid-line-items__ellipsis' %}
+                    <div class="grid-line-items__clip-title-container">
+                 {% endif %}
+                        <h3 class="{{ productNameClipClassName }}">
+                            <a {% if productNameLinkClipClassName|length > 0 %}class="{{ productNameLinkClipClassName }}"{% endif %}
+                               href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}"
+                               title="{{ mainProductName }}">{{ mainProductName }}</a>
+                        </h3>
+                {% if mainProductName|length >= clipLength %}
+                    </div>
+                {% endif %}
+            </div>
+            {% if firstLineItem.notes is defined and firstLineItem.notes|length > 0 %}
+                <div class="grid-line-items__row-item">
+                    {% set productNoteClipClassName = 'grid-line-items__text' %}
+                    {% if firstLineItem.notes|length >= clipLength %}
+                        {% set productNoteClipClassName = productNoteClipClassName ~' grid-line-items__ellipsis' %}
+                        <div class="grid-line-items__clip-text-container">
+                            <div class="grid-line-items__clip-placeholder">
+                    {% endif %}
+                                <div class="{{ productNoteClipClassName }}">{{ firstLineItem.notes }}</div>
+                     {% if firstLineItem.notes|length >= clipLength %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
     </div>
+
+    {# Will be refactored at BB-19262 #}
+    {% if firstLineItem.parentProduct is not empty %}
+        {% set configurableProducts = record.getValue('configurableProducts') %}
+        <br>
+        <br>
+        <br>
+        {% for lineItem in lineItems %}
+            <div>
+                {% for field in configurableProducts[lineItem.product.id] ?? [] %}
+                    <span>{{ field.label|trans }}: {{ field.value }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            <div class="shopping-list-line-items__note">
+                {{ lineItem.notes }}
+            </div>
+            {% if not loop.last %}
+                <hr>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {# Will be refactored at BB-19262 END #}
 </div>
-
-<h5>
-    <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|e }}</a>
-</h5>
-
-{% if firstLineItem.parentProduct is not empty %}
-    {% set configurableProducts = record.getValue('configurableProducts') %}
-    <br>
-    <br>
-    <br>
-    {% for lineItem in lineItems %}
-        <div>
-            {% for field in configurableProducts[lineItem.product.id] ?? [] %}
-                <span>{{ field.label|trans }}: {{ field.value }}</span>{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        </div>
-        <div class="shopping-list-line-items__note">
-            {{ lineItem.notes }}
-        </div>
-        {% if not loop.last %}
-            <hr>
-        {% endif %}
-    {% endfor %}
-{% else %}
-    <span class="shopping-list-line-items__note">
-        {{ firstLineItem.notes }}
-    </span>
-{% endif %}

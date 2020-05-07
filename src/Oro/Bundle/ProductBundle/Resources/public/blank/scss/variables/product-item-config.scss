@@ -9,6 +9,10 @@ $product-item-title-gallery-view-line-height: 1.35 !default;
 
 $product-item-image-holder-list-view-max-width: 316px !default;
 
+$product-item-image-holder-tiny-width: 32px !default;
+$product-item-image-holder-tiny-height: $product-item-image-holder-tiny-width !default;
+$product-item-image-holder-tiny-border: 1px solid get-color('additional', 'light') !default;
+
 $product-item-sku-value-color: get-color('primary', 'dark') !default;
 
 // tablet-small
