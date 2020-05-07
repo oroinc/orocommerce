@@ -10,6 +10,9 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityExcepti
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Data converter that prepares promotion context data based on shopping list entity to filter applicable promotions.
+ */
 class ShoppingListContextDataConverter implements ContextDataConverterInterface
 {
     /**
@@ -81,7 +84,11 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         ];
 
         $currency = $this->userCurrencyManager->getUserCurrency();
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
+
+        $subtotal = $entity->getSubtotal();
+        if (!$subtotal || !$subtotal->getAmount()) {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
+        }
 
         return [
             self::CUSTOMER_USER => $customerUser,

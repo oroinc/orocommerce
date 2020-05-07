@@ -8,6 +8,9 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Data converter that prepares discount context based on shopping list entity to calculate discounts.
+ */
 class ShoppingListDiscountContextConverter implements DiscountContextConverterInterface
 {
     /**
@@ -52,10 +55,13 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
             );
         }
 
-        $discountContext = new DiscountContext();
+        $subtotal = $sourceEntity->getSubtotal();
+        if (!$subtotal || !$subtotal->getAmount()) {
+            $currency = $this->currencyManager->getUserCurrency();
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
+        }
 
-        $currency = $this->currencyManager->getUserCurrency();
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
+        $discountContext = new DiscountContext();
         $discountContext->setSubtotal($subtotal->getAmount());
 
         $discountLineItems = $this->lineItemsConverter->convert($sourceEntity->getLineItems()->toArray());
