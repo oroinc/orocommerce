@@ -38,7 +38,7 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
@@ -51,12 +51,11 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    public function testConvert()
+    public function testConvert(): void
     {
         $sourceEntity = new ShoppingList();
         $amount = 100;
         $currency = 'USD';
-        $sourceEntity->setSubtotal((new Subtotal())->setAmount($amount));
 
         /** @var LineItem $lineItem */
         $lineItem = $this->getEntity(LineItem::class, ['id' => 42]);
@@ -87,7 +86,40 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedDiscountContext, $this->converter->convert($sourceEntity));
     }
 
-    public function testConvertUnsupportedException()
+    public function testConvertWithCalculatedSubtotal(): void
+    {
+        $amount = 100;
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntity(LineItem::class, ['id' => 42]);
+
+        $sourceEntity = new ShoppingList();
+        $sourceEntity->addLineItem($lineItem);
+        $sourceEntity->setSubtotal((new Subtotal())->setAmount($amount));
+
+        $this->currencyManager->expects($this->never())
+            ->method('getUserCurrency');
+
+        $this->lineItemNotPricedSubtotalProvider->expects($this->never())
+            ->method('getSubtotalByCurrency');
+
+        $discountLineItems = [
+            (new DiscountLineItem())->setSubtotal($amount)
+        ];
+
+        $this->lineItemsConverter->expects($this->once())
+            ->method('convert')
+            ->with([$lineItem])
+            ->willReturn($discountLineItems);
+
+        $expectedDiscountContext = new DiscountContext();
+        $expectedDiscountContext->setSubtotal($amount);
+        $expectedDiscountContext->setLineItems($discountLineItems);
+
+        $this->assertEquals($expectedDiscountContext, $this->converter->convert($sourceEntity));
+    }
+
+    public function testConvertUnsupportedException(): void
     {
         $entity = new \stdClass();
         $this->expectException(UnsupportedSourceEntityException::class);
@@ -99,9 +131,9 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
     /**
      * @dataProvider supportsDataProvider
      * @param object $entity
-     * @param boolean $isSupported
+     * @param bool $isSupported
      */
-    public function testSupports($entity, $isSupported)
+    public function testSupports(object $entity, bool $isSupported): void
     {
         $this->assertSame($isSupported, $this->converter->supports($entity));
     }
@@ -109,7 +141,7 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
     /**
      * @return array
      */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             'supported entity' => [

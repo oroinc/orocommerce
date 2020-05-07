@@ -53,7 +53,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->criteriaDataProvider = $this->createMock(CriteriaDataProvider::class);
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
@@ -69,19 +69,19 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testSupportsForWrongEntity()
+    public function testSupportsForWrongEntity(): void
     {
         $entity = new \stdClass();
         $this->assertFalse($this->converter->supports($entity));
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $entity = new ShoppingList();
         $this->assertTrue($this->converter->supports($entity));
     }
 
-    public function testGetContextDataWhenThrowsException()
+    public function testGetContextDataWhenThrowsException(): void
     {
         $entity = new \stdClass();
         $this->expectException(UnsupportedSourceEntityException::class);
@@ -90,7 +90,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->converter->getContextData($entity);
     }
 
-    public function testGetContextData()
+    public function testGetContextData(): void
     {
         $customerGroup = new CustomerGroup();
         $customer = new Customer();
@@ -125,7 +125,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $currency = $this->getCurrency();
         $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
 
-        $this->lineItemNotPricedSubtotalProvider->expects($this->any())
+        $this->lineItemNotPricedSubtotalProvider->expects($this->once())
             ->method('getSubtotalByCurrency')
             ->with($entity, $currency)
             ->willReturn($subtotal);
@@ -140,6 +140,57 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::CRITERIA => $scopeCriteria,
         ];
         $this->assertEquals($expectedData, $this->converter->getContextData($entity));
+    }
+
+    public function testGetContextDataWithCalculatedSubtotal(): void
+    {
+        $customerGroup = new CustomerGroup();
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $website = new Website();
+        $lineItem = new LineItem();
+
+        $subtotalAmount = 100.0;
+        $subtotal = new Subtotal();
+        $subtotal->setAmount($subtotalAmount);
+
+        $entity = new ShoppingList();
+        $entity->setCustomerUser($customerUser);
+        $entity->addLineItem($lineItem);
+        $entity->setSubtotal($subtotal);
+
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getWebsite')
+            ->with($entity)
+            ->willReturn($website);
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getCustomer')
+            ->with($entity)
+            ->willReturn($customer);
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getCustomerUser')
+            ->with($entity)
+            ->willReturn($customerUser);
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getCustomerGroup')
+            ->with($entity)
+            ->willReturn($customerGroup);
+
+        $this->lineItemNotPricedSubtotalProvider->expects($this->never())
+            ->method('getSubtotalByCurrency');
+
+        $this->assertEquals(
+            [
+                ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
+                ContextDataConverterInterface::CUSTOMER => $customer,
+                ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
+                ContextDataConverterInterface::LINE_ITEMS => $this->getDiscountLineItems([$lineItem]),
+                ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
+                ContextDataConverterInterface::CURRENCY => $this->getCurrency(),
+                ContextDataConverterInterface::CRITERIA => $this->getScopeCriteria($customer, $customerGroup, $website),
+            ],
+            $this->converter->getContextData($entity)
+        );
     }
 
     /**
