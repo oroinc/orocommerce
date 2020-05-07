@@ -1160,6 +1160,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext
+        - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext

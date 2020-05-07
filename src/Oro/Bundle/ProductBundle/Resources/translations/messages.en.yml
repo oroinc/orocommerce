@@ -527,6 +527,7 @@ oro:
                         This setting manages the availability of simple products that represent individual
                         variations of a configurable product. It does not affect standalone simple products.
                     everywhere.label: 'Everywhere'
+                    hide_catalog.label: 'Hide from the catalog and search'
                     hide_completely.label: 'Hide completely'
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'

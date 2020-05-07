@@ -45,6 +45,9 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
         }
 
         $searchQuery = $this->repository->getFilterSkuQuery(array_keys($products));
+        // Add marker `autocomplete_record_id` to be able to determine query context in listeners
+        // `autocomplete_record_id` is used to be same to Quick Order Form behaviour
+        $searchQuery->addSelect('integer.product_id as autocomplete_record_id');
         /** @var Item[] $filteredProducts */
         $filteredProducts = $searchQuery->getResult();
 

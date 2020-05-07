@@ -547,6 +547,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.display_simple_variations.tooltip
                 choices:
                     oro.product.system_configuration.fields.display_simple_variations.everywhere.label: everywhere
+                    oro.product.system_configuration.fields.display_simple_variations.hide_catalog.label: hide_catalog
                     oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely
 
         oro_product.limit_filters_sorters_on_product_listing:
