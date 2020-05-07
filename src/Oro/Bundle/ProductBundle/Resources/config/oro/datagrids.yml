@@ -145,6 +145,7 @@ datagrids:
             skip_acl_apply: true
             query:
                 select:
+                    - integer.product_id as autocomplete_record_id
                     - text.sku as sku
                     - text.names_LOCALIZATION_ID as productName
                     - text.status as status
