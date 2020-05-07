@@ -215,6 +215,7 @@ define(function(require) {
 
         initButtons: function() {
             this.findAllButtons()
+                .attr('role', 'button')
                 .off('click' + this.eventNamespace())
                 .on('click' + this.eventNamespace(), _.bind(this.onClick, this));
         },

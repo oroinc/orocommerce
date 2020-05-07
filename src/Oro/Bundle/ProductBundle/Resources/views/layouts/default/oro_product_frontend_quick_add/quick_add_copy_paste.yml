@@ -31,6 +31,7 @@ layout:
                         attr:
                             class: 'btn btn--info'
                             disabled: 'disabled'
+                            aria-label: 'oro.product.frontend.quick_add.continue.aria_label'
                 quick_add_copy_paste_title:
                     blockType: text
                     options:

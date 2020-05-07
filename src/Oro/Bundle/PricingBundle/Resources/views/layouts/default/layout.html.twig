@@ -112,7 +112,10 @@
           data-toggle="popover"
           data-placement="bottom"
           data-close="false"
-          data-class="prices-hint-content">
-        <i class="popover-trigger"></i>
+          data-class="prices-hint-content"
+          role="button"
+          aria-label="{{ 'oro.pricing.view_all_prices'|trans }}"
+    >
+        <span class="popover-trigger" aria-hidden="true"></span>
     </span>
 {% endblock %}
