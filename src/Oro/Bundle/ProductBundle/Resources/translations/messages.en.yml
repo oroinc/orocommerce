@@ -18,6 +18,7 @@ oro:
         sku:
             label: SKU
             placeholder: "Enter Product Name or Item Number"
+            aria_label: Product
             not_found: Item Number Cannot Be Found
             description: The code of the product.
         back_order:
@@ -27,6 +28,7 @@ oro:
             label: Qty
             placeholder: "Qty #"
             aria_label: Product Quantity
+        remove_row.aria_label: "Remove the current row"
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
@@ -593,9 +595,13 @@ oro:
                     title: 'Upload your order'
                     title_dialog: 'Import Excel .CSV File'
                     description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
-                    label_directions: 'Get Directions'
+                    label_directions:
+                        label: 'Get Directions'
+                        aria_label: 'Get Directions of how to import multiple products using an CSV, XLSX or ODS file'
                     continue.label: Submit
-                    choose_file.label: Choose File
+                    choose_file:
+                        label: Choose File
+                        aria_label: 'Choose CSV, XLSX or ODS file to import multiple products'
                 import_validation:
                     back: Back
                     title: Import validation results
@@ -613,7 +619,9 @@ oro:
                     empty_file:
                         error.message: 'We have not been able to identify any product references in the uploaded file.'
 
-                continue.label: Verify Order
+                continue:
+                    label: Verify Order
+                    aria_label: Verify Inserted Line Items
                 cancel.label: Cancel
                 add_to_form.label: Add to Form
                 messages:

@@ -34,7 +34,7 @@ layout:
                     blockType: link
                     options:
                         route_name: 'oro_product_frontend_quick_add_import'
-                        text: 'oro.product.frontend.quick_add.import_from_file.label_directions'
+                        text: 'oro.product.frontend.quick_add.import_from_file.label_directions.label'
                 quick_add_import_form_submit:
                     blockType: button
                     options:

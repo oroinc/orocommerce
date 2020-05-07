@@ -797,6 +797,9 @@ oro_behat_extension:
     Default Page Prices:
       selector: '.product-prices__table'
 
+    Product General Information:
+      selector: '.product-view__main'
+
     Short Page Prices:
       selector: '.product-view__content .product-price'
 

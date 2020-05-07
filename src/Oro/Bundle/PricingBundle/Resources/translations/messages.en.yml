@@ -180,6 +180,7 @@ oro.pricing:
     add_product_price: Add Product Price
     add_price_list: Add Price List
     no_price_lists: No price lists
+    view_all_prices: Additional Product Prices
 
     productprice:
         entity_label: Product Price
@@ -216,6 +217,7 @@ oro.pricing:
         generated.label: Generated
         type.label: Type
         version.label: Version
+        price_input.aria_label: 'Product Price'
 
     priceattributeprice:
         entity_label: Product Attribute Price
