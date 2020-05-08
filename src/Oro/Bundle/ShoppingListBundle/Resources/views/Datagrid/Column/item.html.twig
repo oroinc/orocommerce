@@ -54,32 +54,35 @@
             {% set clipLength = 30 %}
             <div class="grid-line-items__row-item">
                 {% set mainProductName = mainProduct.names|localized_value|e %}
-                {% set productNameClipClassName = 'grid-line-items__title' %}
-                {% set productNameLinkClipClassName = '' %}
-                {% if mainProductName|length >= clipLength %}
-                    {% set productNameClipClassName = productNameClipClassName ~ ' grid-line-items__clip-placeholder' %}
+                {% set productNameClipClassName = '' %}
+                {% if mainProductName|length < clipLength %}
+                    {% block product_name %}
+                        <h3 class="grid-line-items__title {{ productNameClipClassName }}">
+                            <a{% if productNameLinkClipClassName is defined %} class="{{ productNameLinkClipClassName }}"{% endif %}
+                                href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}"
+                                title="{{ mainProductName }}">{{ mainProductName }}</a>
+                        </h3>
+                    {% endblock %}
+                {% else %}
+                    {% set productNameClipClassName = 'grid-line-items__clip-placeholder' %}
                     {% set productNameLinkClipClassName = 'grid-line-items__ellipsis' %}
                     <div class="grid-line-items__clip-title-container">
-                 {% endif %}
-                        <h3 class="{{ productNameClipClassName }}">
-                            <a {% if productNameLinkClipClassName|length > 0 %}class="{{ productNameLinkClipClassName }}"{% endif %}
-                               href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}"
-                               title="{{ mainProductName }}">{{ mainProductName }}</a>
-                        </h3>
-                {% if mainProductName|length >= clipLength %}
+                        {{ block('product_name') }}
                     </div>
                 {% endif %}
             </div>
             {% if firstLineItem.notes is defined and firstLineItem.notes|length > 0 %}
                 <div class="grid-line-items__row-item">
-                    {% set productNoteClipClassName = 'grid-line-items__text' %}
-                    {% if firstLineItem.notes|length >= clipLength %}
-                        {% set productNoteClipClassName = productNoteClipClassName ~' grid-line-items__ellipsis' %}
+                    {% set productNoteClipClassName = '' %}
+                    {% if firstLineItem.notes|length < clipLength %}
+                        {% block product_notes %}
+                            <div class="grid-line-items__text {{ productNoteClipClassName }}">{{ firstLineItem.notes }}</div>
+                        {% endblock %}
+                    {% else %}
+                        {% set productNoteClipClassName = 'grid-line-items__ellipsis' %}
                         <div class="grid-line-items__clip-text-container">
                             <div class="grid-line-items__clip-placeholder">
-                    {% endif %}
-                                <div class="{{ productNoteClipClassName }}">{{ firstLineItem.notes }}</div>
-                     {% if firstLineItem.notes|length >= clipLength %}
+                                {{ block('product_notes') }}
                             </div>
                         </div>
                     {% endif %}
