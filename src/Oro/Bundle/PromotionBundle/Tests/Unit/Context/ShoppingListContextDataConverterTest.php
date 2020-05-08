@@ -203,7 +203,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $currency = $this->getCurrency();
         $this->shoppingListTotalManager->expects($this->once())
             ->method('getShoppingListTotalForCurrency')
-            ->with($entity, $currency)
+            ->with($entity, $currency, false)
             ->willReturn($shoppingListTotal);
 
         $this->assertEquals(

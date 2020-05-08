@@ -128,7 +128,7 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
 
         $this->shoppingListTotalManager->expects($this->once())
             ->method('getShoppingListTotalForCurrency')
-            ->with($sourceEntity, $currency)
+            ->with($sourceEntity, $currency, false)
             ->willReturn($shoppingListTotal);
 
         $discountLineItems = [

@@ -213,4 +213,36 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $shoppingList->getTotals());
         $this->assertEquals($expectedTotalUSD, $shoppingList->getTotals()->first());
     }
+
+    public function testGetShoppingListTotalForCurrencyWhenNotValidAndDoFlush(): void
+    {
+        $shoppingList = new ShoppingList();
+        $subtotal = (new Subtotal())->setCurrency(self::USD)->setAmount(100);
+        $totalUSD = new ShoppingListTotal($shoppingList, self::USD);
+        $expectedTotalUSD = new ShoppingListTotal($shoppingList, self::USD);
+        $expectedTotalUSD->setSubtotal($subtotal);
+        $expectedTotalUSD->setValid(true);
+        $shoppingList->addTotal($totalUSD);
+
+        $subtotal = (new Subtotal())->setCurrency(self::USD)->setAmount(100);
+        $totalUSD->setSubtotal($subtotal);
+
+        $this->subtotalProvider->expects($this->once())
+            ->method('getSubtotalByCurrency')
+            ->with($shoppingList, self::USD)
+            ->willReturn($subtotal);
+
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->once())->method('flush');
+        $this->registry->expects($this->once())->method('getManagerForClass')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($em);
+
+        $this->assertEquals(
+            $expectedTotalUSD,
+            $this->totalManager->getShoppingListTotalForCurrency($shoppingList, self::USD, true)
+        );
+        $this->assertCount(1, $shoppingList->getTotals());
+        $this->assertEquals($expectedTotalUSD, $shoppingList->getTotals()->first());
+    }
 }
