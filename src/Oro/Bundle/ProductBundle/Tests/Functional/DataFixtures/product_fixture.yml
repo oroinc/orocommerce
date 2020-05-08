@@ -205,6 +205,8 @@ product-8:
     shortDescriptions:
         - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
     featured: false
+    images:
+        - { reference: img, type: listing }
     manageInventory:
         reference: product-8.manageInventory
         fallback: "systemConfig"

@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Provider\ButtonSearchContextProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -51,6 +52,10 @@ class ShoppingListController extends AbstractController
 
         if ($shoppingList) {
             $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+            // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
+            // because of partial hydrations on product names.
+            $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
 
             $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
                 ->getRepository(ShoppingList::class)
@@ -140,6 +145,10 @@ class ShoppingListController extends AbstractController
     public function viewMyAction(ShoppingList $shoppingList): array
     {
         $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+        // It is required to ensure that enabled localizations are loaded before calling ::findForViewAction()
+        // because of partial hydrations on product names.
+        $this->get(UserLocalizationManager::class)->getEnabledLocalizations();
 
         $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class)
@@ -256,7 +265,8 @@ class ShoppingListController extends AbstractController
             ButtonSearchContextProvider::class,
             FrontendProductPricesDataProvider::class,
             ProductPriceFormatter::class,
-            ConfigManager::class
+            ConfigManager::class,
+            UserLocalizationManager::class
         ]);
     }
 }
