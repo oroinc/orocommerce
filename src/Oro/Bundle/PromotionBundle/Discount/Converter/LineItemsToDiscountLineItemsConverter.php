@@ -6,6 +6,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
+/**
+ * Converts shopping list LineItem entities collection to the collection of DiscountLineItem models.
+ */
 class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter
 {
     /**
@@ -36,11 +39,12 @@ class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountL
                 continue;
             }
 
+            $productId = $lineItem->getProduct()->getId();
             $unitCode = $lineItem->getProductUnitCode();
             $price = null;
-            if (isset($shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode])) {
+            if (isset($shoppingListPrices[$productId][$unitCode])) {
                 /** @var Price $price */
-                $price = $shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode];
+                $price = $shoppingListPrices[$productId][$unitCode];
                 $discountLineItem->setPrice($price);
                 $discountLineItem->setSubtotal($price->getValue() * $lineItem->getQuantity());
             } else {

@@ -126,6 +126,40 @@ class ShoppingListTotalManager
     }
 
     /**
+     * @param ShoppingList $shoppingList
+     * @param string $currency
+     *
+     * @return ShoppingListTotal
+     */
+    public function getShoppingListTotalForCurrency(ShoppingList $shoppingList, string $currency): ShoppingListTotal
+    {
+        $shoppingListTotal = null;
+        foreach ($shoppingList->getTotals() as $eachShoppingListTotal) {
+            if ($currency === $eachShoppingListTotal->getCurrency()) {
+                $shoppingListTotal = $eachShoppingListTotal;
+                break;
+            }
+        }
+
+        if (!$shoppingListTotal) {
+            $shoppingListTotal = new ShoppingListTotal($shoppingList, $currency);
+            $shoppingList->addTotal($shoppingListTotal);
+            $this->getEntityManager()->persist($shoppingListTotal);
+        }
+
+        if (!$shoppingListTotal->isValid()) {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider
+                ->getSubtotalByCurrency($shoppingList, $currency);
+
+            $shoppingListTotal
+                ->setSubtotal($subtotal)
+                ->setValid(true);
+        }
+
+        return $shoppingListTotal;
+    }
+
+    /**
      * @return \Doctrine\Common\Persistence\ObjectRepository
      */
     protected function getTotalRepository()

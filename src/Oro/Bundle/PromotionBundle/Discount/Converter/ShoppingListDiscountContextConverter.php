@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtota
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
 /**
  * Data converter that prepares discount context based on shopping list entity to calculate discounts.
@@ -28,6 +29,9 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
      */
     protected $lineItemNotPricedSubtotalProvider;
 
+    /** @var ShoppingListTotalManager|null */
+    private $shoppingListTotalManager;
+
     /**
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $currencyManager
@@ -44,6 +48,14 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
     }
 
     /**
+     * @param ShoppingListTotalManager|null $shoppingListTotalManager
+     */
+    public function setShoppingListTotalManager(?ShoppingListTotalManager $shoppingListTotalManager): void
+    {
+        $this->shoppingListTotalManager = $shoppingListTotalManager;
+    }
+
+    /**
      * @param ShoppingList $sourceEntity
      * {@inheritdoc}
      */
@@ -55,14 +67,8 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
             );
         }
 
-        $subtotal = $sourceEntity->getSubtotal();
-        if (!$subtotal || !$subtotal->getAmount()) {
-            $currency = $this->currencyManager->getUserCurrency();
-            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
-        }
-
         $discountContext = new DiscountContext();
-        $discountContext->setSubtotal($subtotal->getAmount());
+        $discountContext->setSubtotal($this->getSubtotalAmount($sourceEntity));
 
         $discountLineItems = $this->lineItemsConverter->convert($sourceEntity->getLineItems()->toArray());
         $discountContext->setLineItems($discountLineItems);
@@ -76,5 +82,24 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
     public function supports($sourceEntity): bool
     {
         return $sourceEntity instanceof ShoppingList;
+    }
+
+    /**
+     * @param ShoppingList $sourceEntity
+     *
+     * @return float
+     */
+    private function getSubtotalAmount(ShoppingList $sourceEntity): float
+    {
+        $currency = $this->currencyManager->getUserCurrency();
+        if ($this->shoppingListTotalManager) {
+            $subtotal = $this->shoppingListTotalManager
+                ->getShoppingListTotalForCurrency($sourceEntity, $currency)
+                ->getSubtotal();
+        } else {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
+        }
+
+        return $subtotal->getAmount();
     }
 }

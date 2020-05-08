@@ -9,6 +9,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
 /**
  * Data converter that prepares promotion context data based on shopping list entity to filter applicable promotions.
@@ -40,6 +41,9 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      */
     protected $lineItemNotPricedSubtotalProvider;
 
+    /** @var ShoppingListTotalManager|null */
+    private $shoppingListTotalManager;
+
     /**
      * @param CriteriaDataProvider $criteriaDataProvider
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
@@ -59,6 +63,14 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+    }
+
+    /**
+     * @param ShoppingListTotalManager|null $shoppingListTotalManager
+     */
+    public function setShoppingListTotalManager(?ShoppingListTotalManager $shoppingListTotalManager): void
+    {
+        $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
     /**
@@ -85,17 +97,12 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
 
         $currency = $this->userCurrencyManager->getUserCurrency();
 
-        $subtotal = $entity->getSubtotal();
-        if (!$subtotal || !$subtotal->getAmount()) {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
-        }
-
         return [
             self::CUSTOMER_USER => $customerUser,
             self::CUSTOMER => $customer,
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
-            self::SUBTOTAL => $subtotal->getAmount(),
+            self::SUBTOTAL => $this->getSubtotalAmount($entity, $currency),
             self::CURRENCY => $currency,
             self::CRITERIA => $this->scopeManager->getCriteria('promotion', $scopeContext),
         ];
@@ -116,5 +123,24 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     private function getLineItems(ShoppingList $entity)
     {
         return $this->lineItemsConverter->convert($entity->getLineItems()->toArray());
+    }
+
+    /**
+     * @param ShoppingList $sourceEntity
+     * @param string $currency
+     *
+     * @return float
+     */
+    private function getSubtotalAmount(ShoppingList $sourceEntity, string $currency): float
+    {
+        if ($this->shoppingListTotalManager) {
+            $subtotal = $this->shoppingListTotalManager
+                ->getShoppingListTotalForCurrency($sourceEntity, $currency)
+                ->getSubtotal();
+        } else {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
+        }
+
+        return $subtotal->getAmount();
     }
 }
