@@ -19,7 +19,6 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -154,8 +153,6 @@ class ShoppingListController extends AbstractController
         $shoppingList = $this->getDoctrine()->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class)
             ->findForViewAction($shoppingList->getId());
-
-        $this->get(ShoppingListTotalManager::class)->setSubtotals([$shoppingList], false);
 
         return [
             'data' => [
