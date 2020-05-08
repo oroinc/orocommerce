@@ -332,9 +332,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.global'
 
-    Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager:
-        alias: oro_shopping_list.manager.shopping_list_total
-
     oro_shopping_list.provider.shopping_list_entity_name:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
         public: false

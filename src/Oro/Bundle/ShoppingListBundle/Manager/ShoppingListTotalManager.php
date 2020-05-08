@@ -150,6 +150,9 @@ class ShoppingListTotalManager
             unset($currencies[$eachCurrency]);
         }
 
+        $entityManager = $this->getEntityManager();
+        $isShoppingListManaged = $entityManager->contains($shoppingList);
+
         foreach ($currencies as $eachCurrency => $i) {
             $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency);
 
@@ -159,11 +162,15 @@ class ShoppingListTotalManager
 
             $shoppingList->addTotal($shoppingListTotals[$eachCurrency]);
 
-            $this->getEntityManager()->persist($shoppingListTotals[$eachCurrency]);
+            // It is possible that shopping list which came to this method is not managed dy doctrine, we should not
+            // persist corresponding total in this case.
+            if ($isShoppingListManaged) {
+                $entityManager->persist($shoppingListTotals[$eachCurrency]);
+            }
         }
 
-        if ($doFlush) {
-            $this->getEntityManager()->flush();
+        if ($doFlush && $isShoppingListManaged) {
+            $entityManager->flush();
         }
 
         return $shoppingListTotals;
@@ -178,7 +185,7 @@ class ShoppingListTotalManager
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     protected function getEntityManager()
     {
