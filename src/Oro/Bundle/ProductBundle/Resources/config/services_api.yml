@@ -457,8 +457,8 @@ services:
             - { name: oro.api.processor, action: delete, group: load_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 5}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: -200}
 
-    oro_product.api.add_image_path_to_file:
-        class: Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile
+    oro_product.api.compute_image_file_path:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeImageFilePath
         arguments:
             - '@oro_attachment.manager'
             - '@oro_api.doctrine_helper'

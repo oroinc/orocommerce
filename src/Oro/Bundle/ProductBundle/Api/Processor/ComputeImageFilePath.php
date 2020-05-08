@@ -13,7 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 /**
  * Computes a value of "filePath" field for File entity if it is an image type.
  */
-class AddImagePathToFile implements ProcessorInterface
+class ComputeImageFilePath implements ProcessorInterface
 {
     /** @var AttachmentManager */
     private $attachmentManager;

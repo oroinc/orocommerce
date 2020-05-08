@@ -10,11 +10,11 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile;
+use Oro\Bundle\ProductBundle\Api\Processor\ComputeImageFilePath;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
-class AddImagePathToFileTest extends \PHPUnit\Framework\TestCase
+class ComputeImageFilePathTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attachmentManager;
@@ -31,7 +31,7 @@ class AddImagePathToFileTest extends \PHPUnit\Framework\TestCase
     /** @var CustomizeLoadedDataContext */
     protected $context;
 
-    /** @var AddImagePathToFile */
+    /** @var ComputeImageFilePath */
     protected $processor;
 
     protected function setUp()
@@ -46,7 +46,7 @@ class AddImagePathToFileTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->repo);
 
         $this->context = new CustomizeLoadedDataContext();
-        $this->processor = new AddImagePathToFile(
+        $this->processor = new ComputeImageFilePath(
             $this->attachmentManager,
             $this->doctrineHelper,
             $this->typeProvider
