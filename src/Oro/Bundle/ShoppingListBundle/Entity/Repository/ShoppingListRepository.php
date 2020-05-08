@@ -5,7 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -148,87 +150,130 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
      */
     public function findForViewAction(int $shoppingListId): ?ShoppingList
     {
-        $qb = $this->createQueryBuilder('shopping_list');
-
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $qb
-            ->select(
-                'shopping_list',
-                'line_item',
-                'product',
-                'category',
-                'product_minimum_quantity',
-                'product_maximum_quantity',
-                'product_highlight_low_inventory',
-                'product_is_upcoming',
-                'category_minimum_quantity',
-                'category_maximum_quantity',
-                'category_highlight_low_inventory',
-                'category_is_upcoming'
-            )
-            ->leftJoin('shopping_list.lineItems', 'line_item')
-            ->leftJoin('line_item.product', 'product')
-            ->leftJoin('product.category', 'category')
-            ->leftJoin('product.highlightLowInventory', 'product_highlight_low_inventory')
-            ->leftJoin('product.isUpcoming', 'product_is_upcoming')
-            ->leftJoin('product.minimumQuantityToOrder', 'product_minimum_quantity')
-            ->leftJoin('product.maximumQuantityToOrder', 'product_maximum_quantity')
-            ->leftJoin('category.highlightLowInventory', 'category_highlight_low_inventory')
-            ->leftJoin('category.isUpcoming', 'category_is_upcoming')
-            ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
-            ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
-            ->where($qb->expr()->eq('shopping_list.id', ':shoppingListId'))
-            ->setParameter('shoppingListId', $shoppingListId, Type::INTEGER)
-            ->getQuery()
-            ->getOneOrNullResult();
+        $shoppingList = $this->find($shoppingListId);
 
         if ($shoppingList && $shoppingList->getLineItems()->count()) {
-            $lineItems = $shoppingList->getLineItems();
             $productsIds = [];
-            foreach ($lineItems as $lineItem) {
+            $mainProductsIds = [];
+            foreach ($shoppingList->getLineItems() as $lineItem) {
                 $productId = $lineItem->getProduct()->getId();
                 $productsIds[$productId] = $productId;
+
+                $parentProduct = $lineItem->getParentProduct();
+                if ($parentProduct) {
+                    $productId = $parentProduct->getId();
+                    $productsIds[$productId] = $productId;
+                    $mainProductsIds[$productId] = $productId;
+                } else {
+                    $mainProductsIds[$productId] = $productId;
+                }
             }
 
-            $this->loadRelatedProductNames($productsIds);
-            $this->loadRelatedProductUnitPrecisions($productsIds);
-            $this->loadRelatedProductImages($productsIds);
+            $products = $this->loadRelatedProducts($productsIds);
+            $categoriesIds = [];
+            foreach ($products as $product) {
+                $category = $product->getCategory();
+                if ($category) {
+                    $categoriesIds[$category->getId()] = $category->getId();
+                }
+            }
+
+            $this->loadRelatedCategories($categoriesIds);
+            $this->loadRelatedEntityFallbackValuesForProducts($productsIds);
+            $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
+            $this->loadRelatedProductNames($mainProductsIds);
+            $this->loadRelatedProductImages($mainProductsIds);
         }
 
         return $shoppingList;
     }
 
     /**
-     * @param array $productIds
+     * @param array $productsIds
+     *
+     * @return array
      */
-    private function loadRelatedProductNames(array $productIds): void
+    private function loadRelatedProducts(array $productsIds): array
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select('partial product.{id}', 'product_name')
-            ->from(Product::class, 'product')
-            ->innerJoin('product.names', 'product_name')
-            ->where($qb->expr()->in('product', ':products'))
-            ->setParameter('products', $productIds)
-            ->getQuery()
-            ->execute();
+        return $this->getEntityManager()->getRepository(Product::class)->findBy(['id' => $productsIds]);
     }
 
     /**
-     * @param array $productIds
+     * @param array $productsIds
      */
-    private function loadRelatedProductUnitPrecisions(array $productIds): void
+    private function loadRelatedEntityFallbackValuesForProducts(array $productsIds): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
-            ->select('partial product.{id}', 'unit_precision', 'primary_unit_precision')
+            ->select(
+                'partial product.{id}',
+                'partial product_minimum_quantity.{id,fallback,scalarValue}',
+                'partial product_maximum_quantity.{id,fallback,scalarValue}',
+                'partial product_highlight_low_inventory.{id,fallback,scalarValue}',
+                'partial product_is_upcoming.{id,fallback,scalarValue}'
+            )
             ->from(Product::class, 'product')
-            ->leftJoin('product.unitPrecisions', 'unit_precision')
-            ->leftJoin('product.primaryUnitPrecision', 'primary_unit_precision')
+            ->leftJoin('product.highlightLowInventory', 'product_highlight_low_inventory')
+            ->leftJoin('product.isUpcoming', 'product_is_upcoming')
+            ->leftJoin('product.minimumQuantityToOrder', 'product_minimum_quantity')
+            ->leftJoin('product.maximumQuantityToOrder', 'product_maximum_quantity')
             ->where($qb->expr()->in('product', ':products'))
-            ->setParameter('products', $productIds)
             ->getQuery()
-            ->execute();
+            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
+            ->execute(['products' => $productsIds]);
+    }
+
+    /**
+     * @param array $categoriesIds
+     */
+    private function loadRelatedCategories(array $categoriesIds): void
+    {
+        $this->getEntityManager()->getRepository(Category::class)->findBy(['id' => $categoriesIds]);
+    }
+
+    /**
+     * @param array $categoriesIds
+     *
+     * @return array
+     */
+    private function loadRelatedEntityFallbackValuesForCategories(array $categoriesIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select(
+                'partial category.{id}',
+                'partial category_minimum_quantity.{id,fallback,scalarValue}',
+                'partial category_maximum_quantity.{id,fallback,scalarValue}',
+                'partial category_highlight_low_inventory.{id,fallback,scalarValue}',
+                'partial category_is_upcoming.{id,fallback,scalarValue}'
+            )
+            ->from(Category::class, 'category')
+            ->leftJoin('category.highlightLowInventory', 'category_highlight_low_inventory')
+            ->leftJoin('category.isUpcoming', 'category_is_upcoming')
+            ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
+            ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
+            ->where($qb->expr()->in('category', ':categories_ids'))
+            ->getQuery()
+            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
+            ->execute(['categories_ids' => $categoriesIds]);
+    }
+
+    /**
+     * @param array $productsIds
+     */
+    private function loadRelatedProductNames(array $productsIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('partial product.{id}', 'partial product_name.{id,fallback,string}', 'localization')
+            ->from(Product::class, 'product')
+            ->innerJoin('product.names', 'product_name')
+            ->leftJoin('product_name.localization', 'localization')
+            ->where($qb->expr()->in('product', ':products'))
+            ->getQuery()
+            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
+            ->execute(['products' => $productsIds]);
     }
 
     /**
@@ -238,15 +283,20 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
-            ->select('partial product.{id}', 'product_image', 'product_image_image', 'product_image_type')
+            ->select(
+                'partial product.{id}',
+                'partial product_image.{id}',
+                'product_image_image',
+                'partial product_image_type.{id,type}'
+            )
             ->from(Product::class, 'product')
             ->leftJoin('product.images', 'product_image')
             ->leftJoin('product_image.image', 'product_image_image')
             ->leftJoin('product_image.types', 'product_image_type')
             ->where($qb->expr()->in('product', ':products'))
-            ->setParameter('products', $productsIds)
             ->getQuery()
-            ->execute();
+            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
+            ->execute(['products' => $productsIds]);
     }
 
     /**

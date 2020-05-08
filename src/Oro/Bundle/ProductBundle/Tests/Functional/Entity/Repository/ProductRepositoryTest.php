@@ -259,7 +259,11 @@ class ProductRepositoryTest extends WebTestCase
     {
         $result = $this->repository->getListingImagesFilesByProductIds($this->referencesToEntities($products));
 
-        $this->assertEquals($this->referencesToEntities($expectedImages), array_values($result));
+        $this->assertCount(count($expectedImages), $result);
+
+        foreach ($this->referencesToEntities($expectedImages) as $image) {
+            $this->assertContains($image, $result);
+        }
     }
 
     /**
@@ -281,6 +285,7 @@ class ProductRepositoryTest extends WebTestCase
                 ],
                 'expectedImages' => [
                     'img.product-1',
+                    'img.product-8',
                 ],
             ],
             [
@@ -335,7 +340,10 @@ class ProductRepositoryTest extends WebTestCase
                     ],
                     [
                         ProductImageType::TYPE_MAIN => 'img.product-2',
-                    ]
+                    ],
+                    [
+                        ProductImageType::TYPE_LISTING => 'img.product-8',
+                    ],
                 ],
             ],
             [
@@ -501,8 +509,9 @@ class ProductRepositoryTest extends WebTestCase
     {
         $queryBuilder = $this->getRepository()->getFeaturedProductsQueryBuilder(2);
         $result = $queryBuilder->getQuery()->getResult();
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertInstanceOf(Product::class, $result[0]);
+        $this->assertInstanceOf(Product::class, $result[1]);
     }
 
     public function testSkuUppercaseField()
