@@ -19,6 +19,8 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
@@ -49,6 +51,11 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
     private $lineItemNotPricedSubtotalProvider;
 
     /**
+     * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $shoppingListTotalManager;
+
+    /**
      * @var ShoppingListContextDataConverter
      */
     private $converter;
@@ -60,6 +67,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->lineItemNotPricedSubtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
+        $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
         $this->converter = new ShoppingListContextDataConverter(
             $this->criteriaDataProvider,
             $this->lineItemsConverter,
@@ -67,6 +75,8 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
             $this->scopeManager,
             $this->lineItemNotPricedSubtotalProvider
         );
+
+        $this->converter->setShoppingListTotalManager($this->shoppingListTotalManager);
     }
 
     public function testSupportsForWrongEntity(): void
@@ -90,7 +100,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->converter->getContextData($entity);
     }
 
-    public function testGetContextData(): void
+    public function testGetContextDataWithoutShoppingListTotalManager(): void
     {
         $customerGroup = new CustomerGroup();
         $customer = new Customer();
@@ -130,6 +140,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ->with($entity, $currency)
             ->willReturn($subtotal);
 
+        $this->converter->setShoppingListTotalManager(null);
         $expectedData = [
             ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
             ContextDataConverterInterface::CUSTOMER => $customer,
@@ -142,7 +153,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $this->converter->getContextData($entity));
     }
 
-    public function testGetContextDataWithCalculatedSubtotal(): void
+    public function testGetContextData(): void
     {
         $customerGroup = new CustomerGroup();
         $customer = new Customer();
@@ -178,6 +189,22 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->lineItemNotPricedSubtotalProvider->expects($this->never())
             ->method('getSubtotalByCurrency');
+
+        $subtotal = $this->createMock(Subtotal::class);
+        $subtotal->expects($this->once())
+            ->method('getAmount')
+            ->willReturn($subtotalAmount);
+
+        $shoppingListTotal = $this->createMock(ShoppingListTotal::class);
+        $shoppingListTotal->expects($this->once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
+
+        $currency = $this->getCurrency();
+        $this->shoppingListTotalManager->expects($this->once())
+            ->method('getShoppingListTotalForCurrency')
+            ->with($entity, $currency)
+            ->willReturn($shoppingListTotal);
 
         $this->assertEquals(
             [
