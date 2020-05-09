@@ -3,7 +3,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@US_customer_1_1_price_list_fallback->id)>'
         attributes:
-            fallback: '@US_customer_1_1_price_list_fallback->fallback'
+            fallback: 0
         relationships:
             customer:
                 data:
@@ -13,7 +13,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@US_customer_1_3_price_list_fallback->id)>'
         attributes:
-            fallback: '@US_customer_1_3_price_list_fallback->fallback'
+            fallback: 0
         relationships:
             customer:
                 data:
@@ -23,7 +23,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@US_customer_1_2_price_list_fallback->id)>'
         attributes:
-            fallback: '@US_customer_1_2_price_list_fallback->fallback'
+            fallback: 1
         relationships:
             customer:
                 data:
@@ -33,7 +33,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@Canada_customer_1_1_price_list_fallback->id)>'
         attributes:
-            fallback: '@Canada_customer_1_1_price_list_fallback->fallback'
+            fallback: 1
         relationships:
             customer:
                 data:
@@ -43,7 +43,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@Canada_customer_1_3_price_list_fallback->id)>'
         attributes:
-            fallback: '@Canada_customer_1_3_price_list_fallback->fallback'
+            fallback: 0
         relationships:
             customer:
                 data:
@@ -53,7 +53,7 @@ data:
         type: 'pricelistcustomerfallbacks'
         id: '<toString(@Canada_customer_1_2_price_list_fallback->id)>'
         attributes:
-            fallback: '@Canada_customer_1_2_price_list_fallback->fallback'
+            fallback: 1
         relationships:
             customer:
                 data:

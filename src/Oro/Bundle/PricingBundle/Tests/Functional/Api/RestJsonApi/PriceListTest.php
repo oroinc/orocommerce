@@ -124,6 +124,7 @@ class PriceListTest extends RestJsonApiTestCase
             'price_list/create.yml'
         );
 
+        /** @var PriceList $priceList */
         $priceList = $this->getEntityManager()
             ->getRepository(PriceList::class)
             ->findOneBy(['name' => 'New']);
@@ -132,8 +133,8 @@ class PriceListTest extends RestJsonApiTestCase
         static::assertTrue($priceList->isActive());
         static::assertFalse($priceList->isActual());
         static::assertSame('product.category.id == 1', $priceList->getProductAssignmentRule());
-        static::assertArrayContains(['USD'], $priceList->getPriceListCurrencies());
-        static::assertArrayContains(['RUB'], $priceList->getPriceListCurrencies());
+        static::assertArrayContains(['USD'], $priceList->getCurrencies());
+        static::assertArrayContains(['RUB'], $priceList->getCurrencies());
         static::assertEquals($this->getReference('schedule.5'), $priceList->getSchedules()->first());
 
         $lexeme = $this->getEntityManager()
@@ -188,15 +189,16 @@ class PriceListTest extends RestJsonApiTestCase
             'price_list/update.yml'
         );
 
+        /** @var PriceList $updatedPriceList */
         $updatedPriceList = $this->getEntityManager()
             ->getRepository(PriceList::class)
             ->find($priceListId);
 
         static::assertSame('New Name', $updatedPriceList->getName());
         static::assertFalse($updatedPriceList->isActive());
-        static::assertArrayContains(['USD'], $updatedPriceList->getPriceListCurrencies());
-        static::assertArrayContains(['EUR'], $updatedPriceList->getPriceListCurrencies());
-        static::assertArrayContains(['RUB'], $updatedPriceList->getPriceListCurrencies());
+        static::assertArrayContains(['USD'], $updatedPriceList->getCurrencies());
+        static::assertArrayContains(['EUR'], $updatedPriceList->getCurrencies());
+        static::assertArrayContains(['RUB'], $updatedPriceList->getCurrencies());
 
         static::assertCount(1, $updatedPriceList->getSchedules());
         static::assertEquals(

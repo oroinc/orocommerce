@@ -2,13 +2,13 @@ data:
       type: orders
       id: '<toString(@simple_order->id)>'
       attributes:
-          identifier: '@simple_order->identifier'
-          poNumber: '@simple_order->poNumber'
+          identifier: 'simple_order'
+          poNumber: '1234567890'
           customerNotes: null
           shipUntil: '@simple_order->shipUntil->format("Y-m-d")'
-          currency: '@simple_order->currency'
-          subtotalValue: '<toString(@simple_order->subtotal)>'
-          totalValue: '<toString(@simple_order->total)>'
+          currency: 'USD'
+          subtotalValue: '789.0000'
+          totalValue: '1234.0000'
           shippingMethod: null
           shippingMethodType: null
           estimatedShippingCostAmount: null
@@ -37,11 +37,11 @@ data:
           owner:
               data:
                   type: users
-                  id: '<toString(@simple_order->owner->id)>'
+                  id: '<toString(@order.simple_user->id)>'
           organization:
               data:
                   type: organizations
-                  id: '<toString(@simple_order->organization->id)>'
+                  id: '<toString(@organization->id)>'
           customerUser:
               data:
                    type: customerusers

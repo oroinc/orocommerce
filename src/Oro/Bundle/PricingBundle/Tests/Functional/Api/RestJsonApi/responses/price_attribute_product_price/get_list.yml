@@ -4,7 +4,7 @@ data:
         type: 'priceattributeproductprices'
         attributes:
             value: '11.0000'
-            currency: '@price_attribute_product_price.1->price->currency'
+            currency: 'USD'
         relationships:
             priceList:
                 data:
@@ -23,7 +23,7 @@ data:
         type: 'priceattributeproductprices'
         attributes:
             value: '10.0000'
-            currency: '@price_attribute_product_price.2->price->currency'
+            currency: 'EUR'
         relationships:
             priceList:
                 data:
@@ -42,7 +42,7 @@ data:
         type: 'priceattributeproductprices'
         attributes:
             value: '12.2000'
-            currency: '@price_attribute_product_price.3->price->currency'
+            currency: 'USD'
         relationships:
             priceList:
                 data:
@@ -61,7 +61,7 @@ data:
         type: 'priceattributeproductprices'
         attributes:
             value: '20.0000'
-            currency: '@price_attribute_product_price.4->price->currency'
+            currency: 'EUR'
         relationships:
             priceList:
                 data:
@@ -80,7 +80,7 @@ data:
         type: 'priceattributeproductprices'
         attributes:
             value: '12.2000'
-            currency: '@price_attribute_product_price.9->price->currency'
+            currency: 'USD'
         relationships:
             priceList:
                 data:

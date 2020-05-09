@@ -3,14 +3,14 @@ data:
         type: 'pricerules'
         id: '<toString(@price_list_1_price_rule_1->id)>'
         attributes:
-            currency: '@price_list_1_price_rule_1->currency'
-            currencyExpression: '@price_list_1_price_rule_1->currencyExpression'
-            quantity: '@price_list_1_price_rule_1->quantity'
-            quantityExpression: '@price_list_1_price_rule_1->quantityExpression'
-            productUnitExpression: '@price_list_1_price_rule_1->productUnitExpression'
-            ruleCondition: '@price_list_1_price_rule_1->ruleCondition'
-            rule: '@price_list_1_price_rule_1->rule'
-            priority: '@price_list_1_price_rule_1->priority'
+            currency: 'USD'
+            currencyExpression: null
+            quantity: 2
+            quantityExpression: null
+            productUnitExpression: null
+            ruleCondition: 'product.category.id == 1 and product.status == "enabled"'
+            rule: 'pricelist[0].prices.value + 10'
+            priority: 1
         relationships:
             productUnit:
                 data:
@@ -24,14 +24,14 @@ data:
         type: 'pricerules'
         id: '<toString(@price_list_1_price_rule_2->id)>'
         attributes:
-            currency: '@price_list_1_price_rule_2->currency'
-            currencyExpression: '@price_list_1_price_rule_2->currencyExpression'
-            quantity: '@price_list_1_price_rule_2->quantity'
-            quantityExpression: '@price_list_1_price_rule_2->quantityExpression'
-            productUnitExpression: '@price_list_1_price_rule_2->productUnitExpression'
-            ruleCondition: '@price_list_1_price_rule_2->ruleCondition'
-            rule: '@price_list_1_price_rule_2->rule'
-            priority: '@price_list_1_price_rule_2->priority'
+            currency: 'USD'
+            currencyExpression: null
+            quantity: 2
+            quantityExpression: null
+            productUnitExpression: null
+            ruleCondition: 'product.category.id == 1'
+            rule: 'pricelist[0].prices.value + 10'
+            priority: 2
         relationships:
             productUnit:
                 data:

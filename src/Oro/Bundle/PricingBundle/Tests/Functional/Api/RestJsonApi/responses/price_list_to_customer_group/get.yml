@@ -2,8 +2,8 @@ data:
     id: '<toString(@price_list_6_US_customer_group1->id)>'
     type: 'pricelisttocustomergroups'
     attributes:
-        sortOrder: '@price_list_6_US_customer_group1->sortOrder'
-        mergeAllowed: '@price_list_6_US_customer_group1->mergeAllowed'
+        sortOrder: 500
+        mergeAllowed: false
     relationships:
         priceList:
             data:

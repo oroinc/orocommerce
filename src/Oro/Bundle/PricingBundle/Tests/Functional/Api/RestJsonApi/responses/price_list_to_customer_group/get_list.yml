@@ -3,8 +3,8 @@ data:
         id: '<toString(@price_list_6_US_customer_group1->id)>'
         type: 'pricelisttocustomergroups'
         attributes:
-            sortOrder: '@price_list_6_US_customer_group1->sortOrder'
-            mergeAllowed: '@price_list_6_US_customer_group1->mergeAllowed'
+            sortOrder: 500
+            mergeAllowed: false
         relationships:
             priceList:
                 data:
@@ -18,8 +18,8 @@ data:
         id: '<toString(@price_list_1_US_customer_group1->id)>'
         type: 'pricelisttocustomergroups'
         attributes:
-            sortOrder: '@price_list_1_US_customer_group1->sortOrder'
-            mergeAllowed: '@price_list_1_US_customer_group1->mergeAllowed'
+            sortOrder: 100
+            mergeAllowed: true
         relationships:
             priceList:
                 data:
@@ -33,8 +33,8 @@ data:
         id: '<toString(@price_list_5_US_customer_group1->id)>'
         type: 'pricelisttocustomergroups'
         attributes:
-            sortOrder: '@price_list_5_US_customer_group1->sortOrder'
-            mergeAllowed: '@price_list_5_US_customer_group1->mergeAllowed'
+            sortOrder: 50
+            mergeAllowed: false
         relationships:
             priceList:
                 data:
@@ -48,8 +48,8 @@ data:
         id: '<toString(@price_list_4_US_customer_group2->id)>'
         type: 'pricelisttocustomergroups'
         attributes:
-            sortOrder: '@price_list_4_US_customer_group2->sortOrder'
-            mergeAllowed: '@price_list_4_US_customer_group2->mergeAllowed'
+            sortOrder: 100
+            mergeAllowed: true
         relationships:
             priceList:
                 data:
@@ -63,8 +63,8 @@ data:
         id: '<toString(@price_list_5_Canada_customer_group3->id)>'
         type: 'pricelisttocustomergroups'
         attributes:
-            sortOrder: '@price_list_5_Canada_customer_group3->sortOrder'
-            mergeAllowed: '@price_list_5_Canada_customer_group3->mergeAllowed'
+            sortOrder: 100
+            mergeAllowed: true
         relationships:
             priceList:
                 data:

@@ -3,7 +3,7 @@ data:
     type: 'priceattributeproductprices'
     attributes:
         value: '11.0000'
-        currency: '@price_attribute_product_price.1->price->currency'
+        currency: 'USD'
     relationships:
         priceList:
             data:

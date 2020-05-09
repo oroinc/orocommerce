@@ -2,7 +2,7 @@ data:
     type: 'pricelistcustomerfallbacks'
     id: '<toString(@US_customer_1_1_price_list_fallback->id)>'
     attributes:
-        fallback: '@US_customer_1_1_price_list_fallback->fallback'
+        fallback: 0
     relationships:
         customer:
             data:

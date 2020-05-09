@@ -4,7 +4,7 @@ data:
     attributes:
         quantity: 5
         value: '12.2000'
-        currency: '@product_price_with_rule_1->price->currency'
+        currency: 'USD'
     relationships:
         priceList:
             data:

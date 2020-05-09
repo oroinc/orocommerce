@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -131,6 +132,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     public function getDependencies()
     {
         return [
+            LoadOrganization::class,
             LoadCustomerUserData::class,
             LoadOrderUsers::class,
             LoadPaymentTermData::class
@@ -160,10 +162,10 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         /** @var User $user */
         $user = $this->getReference($orderData['user']);
         if (!$user->getOrganization()) {
-            $user->setOrganization($manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]));
+            $user->setOrganization($this->getReference('organization'));
         }
         /** @var CustomerUser $customerUser */
-        $customerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+        $customerUser = $manager->getRepository(CustomerUser::class)
             ->findOneBy(['username' => $orderData['customerUser']]);
 
         /** @var PaymentTerm $paymentTerm */
