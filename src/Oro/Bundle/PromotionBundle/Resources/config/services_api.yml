@@ -1,9 +1,6 @@
 services:
     oro_promotion.api.compute_order_promotion_discounts:
         class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts
-        arguments:
-            - '@oro_promotion.provider.applied_discounts_provider'
-            - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\Order }
 

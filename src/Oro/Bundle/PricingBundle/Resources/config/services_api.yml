@@ -7,6 +7,11 @@ services:
         tags:
             - { name: oro.api.batch.flush_data_handler_factory, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
+    oro_pricing.api.compute_price_list_currencies:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\PriceList }
+
     oro_pricing.api.collect_price_list_initial_statuses:
         class: Oro\Bundle\PricingBundle\Api\Processor\CollectPriceListInitialStatuses
         arguments:

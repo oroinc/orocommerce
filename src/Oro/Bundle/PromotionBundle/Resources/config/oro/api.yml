@@ -8,10 +8,16 @@ api:
                     property_path: _
                     form_options:
                         mapped: false
-                    depends_on: [ disablePromotions ]
+                    depends_on:
+                        - disablePromotions
+                        - appliedPromotions.type
+                        - appliedPromotions.appliedDiscounts.amount
                 shippingDiscount:
                     data_type: float
                     property_path: _
                     form_options:
                         mapped: false
-                    depends_on: [ disablePromotions ]
+                    depends_on:
+                        - disablePromotions
+                        - appliedPromotions.type
+                        - appliedPromotions.appliedDiscounts.amount

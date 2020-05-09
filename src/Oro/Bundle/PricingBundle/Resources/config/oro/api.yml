@@ -7,6 +7,11 @@ api:
                     exclude: true
                 priceListCurrencies:
                     data_type: array
+                    property_path: currencies
+                    depends_on: [ currencies.currency ]
+                    # remove exclusion that is set automatically because
+                    # Oro\Bundle\PricingBundle\Entity\PriceListCurrency is not enabled for API
+                    exclude: false
                 containSchedule:
                     form_options:
                         mapped: false
@@ -20,6 +25,14 @@ api:
                         update_relationship: false
                         add_relationship: false
             actions:
+                create:
+                    fields:
+                        priceListCurrencies:
+                            property_path: priceListCurrencies
+                update:
+                    fields:
+                        priceListCurrencies:
+                            property_path: priceListCurrencies
                 update_list: true
 
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
