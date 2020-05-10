@@ -8,6 +8,9 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
 {
     protected function setUp()

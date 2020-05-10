@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductImageTest extends RestJsonApiTestCase
 {
     /**
@@ -92,7 +95,7 @@ class ProductImageTest extends RestJsonApiTestCase
 
     public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled()
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getContainer()->get('oro_config.global');
         $configManager->set('oro_product.original_file_names_enabled', true);
         $configManager->flush();
 

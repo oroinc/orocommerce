@@ -102,7 +102,9 @@ class ComputeShoppingListTotal implements ProcessorInterface
         EntityDefinitionFieldConfig $subTotalField
     ): array {
         $idFieldName = $config->findFieldNameByPropertyPath('id');
-        $shoppingList = $this->doctrineHelper->getEntityReference(ShoppingList::class, $data[$idFieldName]);
+        $em = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
+        $shoppingList = $em->getReference(ShoppingList::class, $data[$idFieldName]);
+        $em->refresh($shoppingList);
         $computedTotal = $this->totalProvider->getTotal($shoppingList);
 
         if (!$totalField->isExcluded()) {

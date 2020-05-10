@@ -39,6 +39,29 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
+    /**
+     * @param bool $enabled
+     */
+    private function setRelatedProductsEnabled($enabled)
+    {
+        $configManager = self::getContainer()->get('oro_config.global');
+        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED);
+        $configManager->set($name, $enabled);
+        $configManager->flush();
+    }
+
+    /**
+     * @param int $limit
+     */
+    private function setRelatedProductsLimit($limit)
+    {
+        $configManager = self::getContainer()->get('oro_config.global');
+        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
+        $configManager->set($name, $limit, 0);
+        $configManager->set($name, $limit, 1);
+        $configManager->flush();
+    }
+
     public function testGetList()
     {
         $response = $this->cget(['entity' => 'relatedproducts']);
@@ -423,28 +446,5 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
 
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    /**
-     * @param bool $enabled
-     */
-    private function setRelatedProductsEnabled($enabled)
-    {
-        $configManager = self::getContainer()->get('oro_config.global');
-        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED);
-        $configManager->set($name, $enabled);
-        $configManager->flush();
-    }
-
-    /**
-     * @param int $limit
-     */
-    private function setRelatedProductsLimit($limit)
-    {
-        $configManager = self::getContainer()->get('oro_config.manager');
-        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
-        $configManager->set($name, $limit, 0);
-        $configManager->set($name, $limit, 1);
-        $configManager->flush();
     }
 }

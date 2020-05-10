@@ -215,6 +215,22 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
+    public function testGetListWithIncludeAndFieldset()
+    {
+        $response = $this->cget(
+            ['entity' => 'shoppinglists'],
+            [
+                'include'                   => 'items',
+                'fields[shoppinglists]'     => 'name,currency,total,subTotal,items',
+                'fields[shoppinglistitems]' => 'currency,value,quantity'
+            ],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains('cget_shopping_list_include_fieldset.yml', $response);
+        self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
+    }
+
     public function testGetListWithDefaultShoppingList()
     {
         $this->getCurrentShoppingListStorage()->set(
