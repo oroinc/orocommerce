@@ -178,7 +178,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
     protected function prepareMessageCollector()
     {
-        $this->getMessageCollector()->clear();
+        $this->clearMessageCollector();
         $this->assertCount(0, $this->getSentMessages());
     }
 

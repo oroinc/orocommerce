@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -19,29 +18,21 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTriggerHandler;
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTriggerHandler;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
-    protected $handler;
+    /** @var PriceRuleLexemeTriggerHandler */
+    private $handler;
 
     protected function setUp()
     {
-        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->handler = new PriceRuleLexemeTriggerHandler($this->priceListTriggerHandler, $this->registry);
+        $this->handler = new PriceRuleLexemeTriggerHandler($this->priceListTriggerHandler, $this->doctrine);
     }
 
     /**
@@ -54,23 +45,16 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     public function testFindEntityLexemes($className, array $updatedFields = [], $relationId = null)
     {
         $lexemes = [new PriceRuleLexeme()];
-        $repo = $this->getMockBuilder(PriceRuleLexemeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(PriceRuleLexemeRepository::class);
         $repo->expects($this->once())
             ->method('findEntityLexemes')
             ->with($className, $updatedFields, $relationId)
             ->willReturn($lexemes);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(PriceRuleLexeme::class)
             ->willReturn($repo);
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceRuleLexeme::class)
-            ->willReturn($em);
 
         $this->assertEquals($lexemes, $this->handler->findEntityLexemes($className, $updatedFields, $relationId));
     }
@@ -106,7 +90,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
      *
      * @param Product|null $product
      */
-    public function testAddTriggersByLexemes(Product $product = null)
+    public function testProcessLexemes(Product $product = null)
     {
         /** @var PriceList $priceList1 */
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -115,22 +99,15 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $priceLists = [1 => $priceList1, 2 => $priceList2];
 
-        $repo = $this->getMockBuilder(PriceListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(PriceListRepository::class);
         $repo->expects($this->once())
             ->method('updatePriceListsActuality')
             ->with($priceLists, false);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(PriceList::class)
             ->willReturn($repo);
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
 
         $lexeme1 = new PriceRuleLexeme();
         $lexeme1->setPriceList($priceList1);
@@ -146,13 +123,13 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $lexemes = [$lexeme1, $lexeme2, $lexeme3];
 
         $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList1, $product ? [$product] : []],
                 [Topics::RESOLVE_PRICE_RULES, $priceList2, $product ? [$product] : []]
             );
 
-        $this->handler->addTriggersByLexemes($lexemes, $product ? [$product] : []);
+        $this->handler->processLexemes($lexemes, $product ? [$product] : []);
     }
 
     /**
@@ -166,14 +143,14 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testAddTriggersByLexemesWithoutLexemes()
+    public function testProcessLexemesWhenNoLexemes()
     {
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->doctrine->expects($this->never())
+            ->method('getRepository');
 
         $this->priceListTriggerHandler->expects($this->never())
-            ->method('addTriggerForPriceList');
+            ->method('handlePriceListTopic');
 
-        $this->handler->addTriggersByLexemes([], [new Product()]);
+        $this->handler->processLexemes([], [new Product()]);
     }
 }

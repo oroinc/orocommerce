@@ -18,43 +18,27 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $triggerHandler;
+    /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $triggerHandler;
 
-    /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
+    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
 
-    /**
-     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTriggerHandler;
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTriggerHandler;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceRuleLexemeTriggerHandler;
+    /** @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @var PriceListEntityListener
-     */
-    protected $listener;
+    /** @var PriceListEntityListener */
+    private $listener;
 
     protected function setUp()
     {
-        $this->triggerHandler = $this->getMockBuilder(PriceListRelationTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
         $this->cache = $this->createMock(Cache::class);
-        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceRuleLexemeTriggerHandler = $this->getMockBuilder(PriceRuleLexemeTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
+        $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
 
         $this->listener = new PriceListEntityListener(
             $this->triggerHandler,
@@ -72,13 +56,11 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('delete')
             ->with('ar_42');
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
             ->with('productAssignmentRule')
@@ -107,13 +89,11 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
                 ['pr_3']
             );
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
             ->with('productAssignmentRule')
@@ -139,7 +119,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
                 []
             );
         $this->priceRuleLexemeTriggerHandler->expects($this->once())
-            ->method('addTriggersByLexemes')
+            ->method('processLexemes')
             ->with($lexemes);
 
         $this->listener->preUpdate($priceList, $event);
@@ -153,12 +133,10 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects($this->never())
             ->method('delete');
         $this->priceListTriggerHandler->expects($this->never())
-            ->method('addTriggerForPriceList');
+            ->method('handlePriceListTopic');
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
             ->with('productAssignmentRule')
@@ -173,7 +151,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $priceList->setProductAssignmentRule('product.id == 1');
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList');
+            ->method('handlePriceListTopic');
 
         $this->listener->postPersist($priceList);
         $this->assertFalse($priceList->isActual());
@@ -184,7 +162,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $this->priceListTriggerHandler->expects($this->never())
-            ->method('addTriggerForPriceList');
+            ->method('handlePriceListTopic');
         $this->listener->postPersist($priceList);
         $this->assertTrue($priceList->isActual());
     }

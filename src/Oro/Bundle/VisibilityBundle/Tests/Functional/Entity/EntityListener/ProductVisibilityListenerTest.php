@@ -57,7 +57,7 @@ class ProductVisibilityListenerTest extends WebTestCase
      */
     private function getScopeManager(): ScopeManager
     {
-        return $this->getContainer()->get('oro_scope.scope_manager');
+        return self::getContainer()->get('oro_scope.scope_manager');
     }
 
     /**
@@ -94,7 +94,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->remove($visibility);
         $entityManager->flush();
 
-        self::getMessageCollector()->clear();
+        self::clearMessageCollector();
 
         // Create new product visibility entity
         $visibility = new ProductVisibility();
@@ -270,7 +270,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->remove($visibility);
         $entityManager->flush();
 
-        self::getMessageCollector()->clear();
+        self::clearMessageCollector();
 
         $visibility = new CustomerProductVisibility();
         $visibility->setScope($scope);

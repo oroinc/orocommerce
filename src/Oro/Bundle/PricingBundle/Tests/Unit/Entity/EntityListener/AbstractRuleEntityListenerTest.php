@@ -14,29 +14,19 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
-    /**
-     * @var AbstractRuleEntityListener
-     */
+    /** @var AbstractRuleEntityListener */
     protected $listener;
 
     protected function setUp()
@@ -131,7 +121,7 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
             ->willReturn([]);
 
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly($numberOfCalls))
-            ->method('addTriggersByLexemes')
+            ->method('processLexemes')
             ->with([], $products);
     }
 }

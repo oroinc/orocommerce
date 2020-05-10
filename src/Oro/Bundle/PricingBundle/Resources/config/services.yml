@@ -315,34 +315,36 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
 
-    oro_pricing.price_list_change_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory'
-        arguments:
-            - '@doctrine'
-
     oro_pricing.price_list_relation_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler'
         public: true
         arguments:
-            - '@doctrine'
-            - '@oro_pricing.price_list_change_trigger_factory'
             - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
             - '@oro_config.manager'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
-            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
-    oro_pricing.price_list_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
+    oro_pricing.async.message_filter.price_list:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListMessageFilter'
+        arguments:
+            -
+                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_PRICE_RULES
+                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS
+                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_COMBINED_PRICES
+                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_COMBINED_CURRENCIES
+        tags:
+            - { name: oro_message_queue.message_filter }
+
+    oro_pricing.async.message_filter.price_list_relation:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListRelationMessageFilter'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\PricingBundle\Async\Topics::REBUILD_COMBINED_PRICE_LISTS }
 
     oro_pricing.price_list_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler'
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
             - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
-            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_rule_lexeme_trigger_handler:
         class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler
@@ -1005,47 +1007,43 @@ services:
     oro_pricing.async.price_list_rule_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
-            - '@oro_pricing.builder.product_price_builder'
-            - '@logger'
             - '@doctrine'
+            - '@logger'
+            - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.notification_message.messenger'
             - '@translator'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_pricing.async.price_list_assigned_products_processor:
         class: Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
-            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@doctrine'
             - '@logger'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
             - '@oro_pricing.notification_message.messenger'
             - '@translator'
-            - '@doctrine'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_pricing.async.combined_price_list_processor:
         class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
         arguments:
-            - '@logger'
-            - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
+            - '@logger'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_pricing.async.combined_price_list_currency_processor:
         class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor'
         arguments:
-            - '@logger'
-            - '@oro_pricing.price_list_trigger_factory'
             - '@doctrine'
+            - '@logger'
             - '@oro_pricing.provider.combined_price_list'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_pricing.combined_price_list_activation_status_helper:
         class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelper
@@ -1056,14 +1054,13 @@ services:
     oro_bundle_pricing.async.price_list_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
             - '@doctrine'
-            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.combined_price_list_activation_status_helper'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: oro_message_queue.client.message_processor }
 
     oro_pricing.price_list_reference_checker:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker'
@@ -1246,6 +1243,7 @@ services:
         arguments:
             - '@oro_pricing.shard_manager'
             - '@event_dispatcher'
+            - '@oro_message_queue.client.message_buffer_manager'
         tags:
             - { name: doctrine.event_listener, event: postFlush }
 

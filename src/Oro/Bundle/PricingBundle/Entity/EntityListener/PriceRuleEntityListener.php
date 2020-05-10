@@ -8,17 +8,17 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
+/**
+ * Handles price rule changes, schedule dependent price rule recalculation.
+ */
 class PriceRuleEntityListener
 {
     const FIELD_QUANTITY = 'quantity';
-    /**
-     * @var Cache
-     */
+
+    /** @var Cache */
     protected $cache;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
     /**
@@ -41,7 +41,7 @@ class PriceRuleEntityListener
         $priceList = $priceRule->getPriceList();
         $priceList->setActual(false);
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
     }
 
     /**
@@ -60,10 +60,7 @@ class PriceRuleEntityListener
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(
-            Topics::RESOLVE_PRICE_RULES,
-            $priceList
-        );
+        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
     }
 
     /**
@@ -77,10 +74,7 @@ class PriceRuleEntityListener
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
         
-        $this->priceListTriggerHandler->addTriggerForPriceList(
-            Topics::RESOLVE_PRICE_RULES,
-            $priceList
-        );
+        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
     }
 
     /**

@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -20,7 +19,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritDoc}
@@ -36,8 +35,6 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 
     public function testCreate()
     {
-        $this->cleanScheduledRelationMessages();
-
         $this->post(
             ['entity' => $this->getApiEntityName()],
             'create.yml'
@@ -57,18 +54,14 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getWebsiteForCreateAction()->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group3')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getWebsiteForCreateAction()->getId(),
+                'customerGroup' => $this->getReference('customer_group.group3')->getId()
             ]
         );
     }
 
     public function testDeleteList()
     {
-        $this->cleanScheduledRelationMessages();
-
         $relationId1 = $this->getFirstRelation()->getId();
         $relationId2 = $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_GROUP_5)->getId();
 
@@ -94,18 +87,14 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group3')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                'customerGroup' => $this->getReference('customer_group.group3')->getId()
             ]
         );
     }
 
     public function testUpdate()
     {
-        $this->cleanScheduledRelationMessages();
-
         $relationId = $this->getFirstRelation()->getId();
 
         $this->patch(
@@ -192,10 +181,8 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                'customerGroup' => $this->getReference('customer_group.group1')->getId()
             ]
         );
     }

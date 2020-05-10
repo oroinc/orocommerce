@@ -14,7 +14,6 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -133,7 +132,10 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
 
     /**
      * @param PriceList $priceList
-     * @return BufferedQueryResultIteratorInterface
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              customerGroup - contains customer group ID
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
@@ -142,15 +144,18 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
 
     /**
      * @param PriceList[] $priceLists
-     * @return BufferedQueryResultIteratorInterface
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              customerGroup - contains customer group ID
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceLists($priceLists)
     {
         $qb = $this->createQueryBuilder('PriceListToCustomerGroup');
 
         $qb->select(
-            sprintf('IDENTITY(PriceListToCustomerGroup.customerGroup) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
-            sprintf('IDENTITY(PriceListToCustomerGroup.website) as %s', PriceListRelationTrigger::WEBSITE)
+            'IDENTITY(PriceListToCustomerGroup.customerGroup) as customerGroup',
+            'IDENTITY(PriceListToCustomerGroup.website) as website'
         )
             ->where($qb->expr()->in('PriceListToCustomerGroup.priceList', ':priceLists'))
             ->groupBy('PriceListToCustomerGroup.customerGroup', 'PriceListToCustomerGroup.website')

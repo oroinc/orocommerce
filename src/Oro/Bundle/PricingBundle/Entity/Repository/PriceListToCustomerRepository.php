@@ -16,7 +16,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -119,15 +118,18 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
 
     /**
      * @param CustomerGroup $customerGroup
-     * @return BufferedQueryResultIteratorInterface
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              customer - contains customer ID
+     *                                              website - contains website ID
      */
     public function getCustomerWebsitePairsByCustomerGroupIterator(CustomerGroup $customerGroup)
     {
         $qb = $this->createQueryBuilder('PriceListToCustomer');
 
         $qb->select(
-            sprintf('IDENTITY(PriceListToCustomer.customer) as %s', PriceListRelationTrigger::ACCOUNT),
-            sprintf('IDENTITY(PriceListToCustomer.website) as %s', PriceListRelationTrigger::WEBSITE)
+            'IDENTITY(PriceListToCustomer.customer) as customer',
+            'IDENTITY(PriceListToCustomer.website) as website'
         )
             ->innerJoin('PriceListToCustomer.customer', 'acc')
             ->innerJoin(
@@ -150,7 +152,11 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
 
     /**
      * @param PriceList $priceList
-     * @return BufferedQueryResultIteratorInterface
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              customer - contains customer ID
+     *                                              customerGroup - contains customer group ID
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
@@ -159,16 +165,20 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
 
     /**
      * @param PriceList[] $priceLists
-     * @return BufferedQueryResultIteratorInterface
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              customer - contains customer ID
+     *                                              customerGroup - contains customer group ID
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceLists($priceLists)
     {
         $qb = $this->createQueryBuilder('priceListToCustomer');
 
         $qb->select(
-            sprintf('IDENTITY(priceListToCustomer.customer) as %s', PriceListRelationTrigger::ACCOUNT),
-            sprintf('IDENTITY(acc.group) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
-            sprintf('IDENTITY(priceListToCustomer.website) as %s', PriceListRelationTrigger::WEBSITE)
+            'IDENTITY(priceListToCustomer.customer) as customer',
+            'IDENTITY(acc.group) as customerGroup',
+            'IDENTITY(priceListToCustomer.website) as website'
         )
             ->innerJoin('priceListToCustomer.customer', 'acc')
             ->where($qb->expr()->in('priceListToCustomer.priceList', ':priceLists'))

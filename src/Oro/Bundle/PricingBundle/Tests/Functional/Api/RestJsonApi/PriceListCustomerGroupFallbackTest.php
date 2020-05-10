@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -18,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTest
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritDoc}
@@ -33,8 +32,6 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
 
     public function testCreate()
     {
-        $this->cleanScheduledRelationMessages();
-
         $this->post(
             ['entity' => $this->getApiEntityName()],
             'create.yml'
@@ -53,18 +50,14 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getWebsiteForCreateAction()->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group3')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getWebsiteForCreateAction()->getId(),
+                'customerGroup' => $this->getReference('customer_group.group3')->getId()
             ]
         );
     }
 
     public function testDeleteList()
     {
-        $this->cleanScheduledRelationMessages();
-
         $relationId1 = $this->getFirstRelation()->getId();
         $relationId2 = $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_GROUP_FALLBACK_4)->getId();
 
@@ -89,18 +82,14 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group2')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                'customerGroup' => $this->getReference('customer_group.group2')->getId()
             ]
         );
     }
 
     public function testUpdate()
     {
-        $this->cleanScheduledRelationMessages();
-
         $relationId = $this->getFirstRelation()->getId();
 
         $this->patch(
@@ -175,10 +164,8 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                'customerGroup' => $this->getReference('customer_group.group1')->getId()
             ]
         );
     }

@@ -3,16 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 
 /**
  * @dbIsolationPerTest
@@ -22,15 +21,13 @@ use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueue
  */
 class PriceListTest extends RestJsonApiTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        // remove calling of disableKernelTerminateHandler() in BB-12967
-        $this->disableKernelTerminateHandler();
         parent::setUp();
 
         $this->loadFixtures([
@@ -47,7 +44,7 @@ class PriceListTest extends RestJsonApiTestCase
             'filter' => [
                 'id' => ['@price_list_2->id', '@price_list_6->id'],
             ],
-            'sort' => 'id',
+            'sort'   => 'id',
         ];
         $response = $this->cget(['entity' => 'pricelists'], $parameters);
 
@@ -180,12 +177,10 @@ class PriceListTest extends RestJsonApiTestCase
 
     public function testUpdate()
     {
-        $this->cleanScheduledRelationMessages();
-
         $priceListId = $this->getFirstPriceList()->getId();
 
         $this->patch(
-            ['entity' => 'pricelists', 'id' => (string) $priceListId],
+            ['entity' => 'pricelists', 'id' => (string)$priceListId],
             'price_list/update.yml'
         );
 
@@ -218,14 +213,11 @@ class PriceListTest extends RestJsonApiTestCase
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 [
-                    PriceListRelationTrigger::WEBSITE => $this->getReference('US')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT => null
+                    'website' => $this->getReference('US')->getId()
                 ],
                 [
-                    PriceListRelationTrigger::WEBSITE => $this->getReference('Canada')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1_1')->getId()
+                    'website'  => $this->getReference('Canada')->getId(),
+                    'customer' => $this->getReference('customer.level_1_1')->getId()
                 ]
             ]
         );
@@ -233,8 +225,6 @@ class PriceListTest extends RestJsonApiTestCase
 
     public function testUpdateAsIncludedData()
     {
-        $this->cleanScheduledRelationMessages();
-
         $priceList = $this->getFirstPriceList();
         $priceListId = $priceList->getId();
 
@@ -283,14 +273,11 @@ class PriceListTest extends RestJsonApiTestCase
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('US')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => null
+                    'website' => $this->getReference('US')->getId()
                 ],
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('Canada')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => $this->getReference('customer.level_1_1')->getId()
+                    'website'  => $this->getReference('Canada')->getId(),
+                    'customer' => $this->getReference('customer.level_1_1')->getId()
                 ]
             ]
         );
@@ -302,7 +289,7 @@ class PriceListTest extends RestJsonApiTestCase
 
         $this->delete([
             'entity' => 'pricelists',
-            'id' => $priceListId,
+            'id'     => $priceListId,
         ]);
 
         $this->assertNull(
@@ -340,8 +327,8 @@ class PriceListTest extends RestJsonApiTestCase
         $priceList = $this->getFirstPriceList();
 
         $response = $this->getRelationship([
-            'entity' => 'pricelists',
-            'id' => $priceList->getId(),
+            'entity'      => 'pricelists',
+            'id'          => $priceList->getId(),
             'association' => 'schedules'
         ]);
 
@@ -357,8 +344,8 @@ class PriceListTest extends RestJsonApiTestCase
         );
 
         $response = $this->getRelationship([
-            'entity' => 'pricelists',
-            'id' => $priceList->getId(),
+            'entity'      => 'pricelists',
+            'id'          => $priceList->getId(),
             'association' => 'priceRules'
         ]);
 
@@ -367,15 +354,15 @@ class PriceListTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'pricerules',
-                        'id' => (string)$this->getReference('price_list_1_price_rule_1')->getId()
+                        'id'   => (string)$this->getReference('price_list_1_price_rule_1')->getId()
                     ],
                     [
                         'type' => 'pricerules',
-                        'id' => (string)$this->getReference('price_list_1_price_rule_2')->getId()
+                        'id'   => (string)$this->getReference('price_list_1_price_rule_2')->getId()
                     ],
                     [
                         'type' => 'pricerules',
-                        'id' => (string)$this->getReference('price_list_1_price_rule_3')->getId()
+                        'id'   => (string)$this->getReference('price_list_1_price_rule_3')->getId()
                     ],
                 ]
             ],
@@ -402,8 +389,8 @@ class PriceListTest extends RestJsonApiTestCase
         array $expectedAssociationIds
     ) {
         $response = $this->getSubresource([
-            'entity' => 'pricelists',
-            'id' => $entityId,
+            'entity'      => 'pricelists',
+            'id'          => $entityId,
             'association' => $associationName
         ]);
 

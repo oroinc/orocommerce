@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\MessageQueueBundle\Client\MessageBufferManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
@@ -21,34 +21,34 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class PriceManager
 {
-    /**
-     * @var ShardManager
-     */
+    /** @var ShardManager */
     protected $shardManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @var array|ProductPrice[]
-     */
+    /** @var MessageBufferManager */
+    protected $messageBufferManager;
+
+    /** @var ProductPrice[] */
     protected $pricesToSave = [];
 
-    /**
-     * @var array|ProductPrice[]
-     */
+    /** @var ProductPrice[] */
     protected $pricesToRemove = [];
 
     /**
-     * @param ShardManager $shardManager
+     * @param ShardManager             $shardManager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param MessageBufferManager     $messageBufferManager
      */
-    public function __construct(ShardManager $shardManager, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        ShardManager $shardManager,
+        EventDispatcherInterface $eventDispatcher,
+        MessageBufferManager $messageBufferManager
+    ) {
         $this->shardManager = $shardManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->messageBufferManager = $messageBufferManager;
     }
 
     /**
@@ -101,8 +101,10 @@ class PriceManager
 
             $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
 
-            $args = new PreUpdateEventArgs($price, $em, $changeSet);
-            $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, new ProductPriceSaveAfterEvent($args));
+            $this->eventDispatcher->dispatch(
+                ProductPriceSaveAfterEvent::NAME,
+                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet))
+            );
         }
     }
 
@@ -121,7 +123,6 @@ class PriceManager
 
         $event = new ProductPriceRemove($price);
         $event->setEntityManager($em);
-
         $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
 
         $em->detach($price);
@@ -142,8 +143,11 @@ class PriceManager
         if ($pricesToRemove || $pricesToSave) {
             $event = new ProductPricesUpdated();
             $event->setEntityManager($this->shardManager->getEntityManager());
-
             $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME, $event);
+
+            // do flushing the message buffer here because the flush() does not use a database transaction
+            // and can be executed without an outer database transaction
+            $this->messageBufferManager->flushBuffer();
         }
     }
 

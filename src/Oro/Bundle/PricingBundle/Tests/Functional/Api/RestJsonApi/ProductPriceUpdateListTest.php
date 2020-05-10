@@ -7,7 +7,6 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
 
 /**
@@ -71,7 +70,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $priceList5Id => [
                         $this->getReference('product-5')->getId(),
                         $this->getReference('product-1')->getId()
@@ -82,7 +81,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $priceList5Id => [
                         $this->getReference('product-5')->getId(),
                         $this->getReference('product-1')->getId()
@@ -163,7 +162,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $priceList1Id => [
                         $this->getReference('product-5')->getId(),
                         $this->getReference('product-3')->getId()
@@ -174,7 +173,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $priceList1Id => [
                         $this->getReference('product-5')->getId(),
                         $this->getReference('product-3')->getId()

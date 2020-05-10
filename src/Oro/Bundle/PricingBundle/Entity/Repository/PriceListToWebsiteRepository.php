@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -108,7 +107,9 @@ class PriceListToWebsiteRepository extends EntityRepository
 
     /**
      * @param PriceList $priceList
-     * @return BufferedQueryResultIterator
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
@@ -117,15 +118,16 @@ class PriceListToWebsiteRepository extends EntityRepository
 
     /**
      * @param PriceList[] $priceLists
-     * @return BufferedQueryResultIterator
+     *
+     * @return BufferedQueryResultIteratorInterface Each item is an array with the following properties:
+     *                                              website - contains website ID
      */
     public function getIteratorByPriceLists($priceLists)
     {
         $qb = $this->createQueryBuilder('priceListToWebsite');
 
-        $qb->select(
-            sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListRelationTrigger::WEBSITE)
-        )
+        $qb
+            ->select('IDENTITY(priceListToWebsite.website) as website')
             ->where($qb->expr()->in('priceListToWebsite.priceList', ':priceLists'))
             ->groupBy('priceListToWebsite.website')
             ->setParameter('priceLists', $priceLists)

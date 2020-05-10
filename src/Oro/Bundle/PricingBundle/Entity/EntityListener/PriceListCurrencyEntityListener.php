@@ -20,19 +20,13 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /**
-     * @var PriceListRelationTriggerHandler
-     */
+    /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;
 
-    /**
-     * @var Cache
-     */
+    /** @var Cache */
     protected $cache;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
     /**
@@ -92,7 +86,7 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface
             foreach ($priceList->getPriceRules() as $priceRule) {
                 $this->clearPriceRuleCache($priceRule);
             }
-            $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
+            $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
         }
     }
 
@@ -102,6 +96,6 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface
     protected function scheduleCurrencyUpdate(PriceListCurrency $priceListCurrency)
     {
         $priceList = $priceListCurrency->getPriceList();
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
     }
 }

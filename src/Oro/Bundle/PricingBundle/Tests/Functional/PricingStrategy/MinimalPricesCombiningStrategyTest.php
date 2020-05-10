@@ -6,14 +6,9 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 
-/**
- * {@inheritdoc}
- */
 class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTest
 {
-    /**
-     * @var MinimalPricesCombiningStrategy
-     */
+    /** @var MinimalPricesCombiningStrategy */
     protected $resolver;
 
     /**

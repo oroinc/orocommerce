@@ -17,10 +17,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PriceRuleLexemeRepositoryTest extends WebTestCase
 {
-    /**
-     * @var PriceRuleLexemeRepository
-     */
-    protected $repository;
+    /** @var PriceRuleLexemeRepository */
+    private $repository;
 
     protected function setUp()
     {
@@ -35,6 +33,24 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     protected function tearDown()
     {
         $this->repository->invalidateCache();
+    }
+
+    /**
+     * @param PriceRuleLexeme[] $lexemes
+     *
+     * @return array
+     */
+    private function getLexemeIds($lexemes)
+    {
+        $lexemeIds = array_map(
+            function (PriceRuleLexeme $lexeme) {
+                return $lexeme->getId();
+            },
+            $lexemes
+        );
+
+        sort($lexemeIds);
+        return $lexemeIds;
     }
 
     public function testGetRelationIds()
@@ -89,8 +105,11 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     public function testFindEntityLexemesByClassNameAndRelationId()
     {
         $relationEntity = $this->getReference('price_list_1_lexeme_3');
-        $lexemes = $this->repository
-            ->findEntityLexemes(PriceAttributeProductPrice::class, [], $relationEntity->getRelationId());
+        $lexemes = $this->repository->findEntityLexemes(
+            PriceAttributeProductPrice::class,
+            [],
+            $relationEntity->getRelationId()
+        );
         $expected = [
             $this->getReference('price_list_1_lexeme_3')->getId()
         ];
@@ -100,8 +119,11 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     public function testFindEntityLexemesByClassNameAndFieldsAndRelationId()
     {
         $relationEntity = $this->getReference('price_list_1_lexeme_3');
-        $lexemes = $this->repository
-            ->findEntityLexemes(PriceAttributeProductPrice::class, ['value'], $relationEntity->getRelationId());
+        $lexemes = $this->repository->findEntityLexemes(
+            PriceAttributeProductPrice::class,
+            ['value'],
+            $relationEntity->getRelationId()
+        );
         $expected = [
             $this->getReference('price_list_1_lexeme_3')->getId()
         ];
@@ -145,22 +167,5 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
         $this->assertCount(4, $logger->queries);
 
         $config->setSQLLogger($oldLogger);
-    }
-
-    /**
-     * @param PriceRuleLexeme[] $lexemes
-     * @return array
-     */
-    protected function getLexemeIds($lexemes)
-    {
-        $lexemeIds = array_map(
-            function (PriceRuleLexeme $lexeme) {
-                return $lexeme->getId();
-            },
-            $lexemes
-        );
-
-        sort($lexemeIds);
-        return $lexemeIds;
     }
 }

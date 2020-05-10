@@ -22,7 +22,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -35,37 +34,34 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerCombinedPriceListsBuilder */
-    protected $customerCombinedPriceListBuilder;
+    private $customerCombinedPriceListBuilder;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerGroupCombinedPriceListsBuilder */
-    protected $customerGroupCombinedPriceListBuilder;
+    private $customerGroupCombinedPriceListBuilder;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|WebsiteCombinedPriceListsBuilder */
-    protected $websiteCombinedPriceListBuilder;
+    private $websiteCombinedPriceListBuilder;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListsBuilder */
-    protected $combinedPriceListBuilder;
+    private $combinedPriceListBuilder;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
-    protected $dispatcher;
+    private $dispatcher;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister */
-    protected $strategyRegister;
-
-    /** @var CombinedPriceListsBuilderFacade */
-    protected $facade;
+    private $strategyRegister;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToWebsiteRepository */
-    protected $priceListToWebsiteRepo;
+    private $priceListToWebsiteRepo;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerGroupRepository */
-    protected $priceListToCustomerGroupRepo;
+    private $priceListToCustomerGroupRepo;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerRepository */
-    protected $priceListToCustomerRepo;
+    private $priceListToCustomerRepo;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListGarbageCollector */
     private $garbageCollector;
@@ -73,7 +69,10 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     private $configManager;
 
-    public function setUp()
+    /** @var CombinedPriceListsBuilderFacade */
+    private $facade;
+
+    protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->customerCombinedPriceListBuilder = $this->createMock(CustomerCombinedPriceListsBuilder::class);
@@ -115,13 +114,11 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|PriceCombiningStrategyInterface $strategy */
         $strategy = $this->createMock(PriceCombiningStrategyInterface::class);
-        $this->strategyRegister
-            ->expects($this->once())
+        $this->strategyRegister->expects($this->once())
             ->method('getCurrentStrategy')
             ->willReturn($strategy);
 
-        $strategy
-            ->expects($this->exactly(3))
+        $strategy->expects($this->exactly(3))
             ->method('combinePrices')
             ->withConsecutive(
                 [$combinedPriceList1, $products, $startTimestamp],
@@ -323,7 +320,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->with($priceLists)
             ->willReturn([
                 [
-                    PriceListRelationTrigger::WEBSITE => $websiteId
+                    'website' => $websiteId
                 ]
             ]);
 
@@ -336,8 +333,8 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->with($priceLists)
             ->willReturn([
                 [
-                    PriceListRelationTrigger::WEBSITE => $websiteId,
-                    PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroupId,
+                    'website'       => $websiteId,
+                    'customerGroup' => $customerGroupId,
                 ]
             ]);
         $this->customerGroupCombinedPriceListBuilder->expects($this->once())
@@ -349,8 +346,8 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->with($priceLists)
             ->willReturn([
                 [
-                    PriceListRelationTrigger::WEBSITE => $websiteId,
-                    PriceListRelationTrigger::ACCOUNT => $customerId,
+                    'website'  => $websiteId,
+                    'customer' => $customerId
                 ]
             ]);
         $this->customerCombinedPriceListBuilder->expects($this->once())
@@ -385,9 +382,11 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->method('isBuilt')
             ->willReturn(true);
 
-        $this->dispatcher->expects($this->exactly(4))->method('dispatch');
+        $this->dispatcher->expects($this->exactly(4))
+            ->method('dispatch');
 
-        $this->customerGroupCombinedPriceListBuilder->expects($this->once())->method('resetCache');
+        $this->customerGroupCombinedPriceListBuilder->expects($this->once())
+            ->method('resetCache');
 
         $this->facade->dispatchEvents();
     }

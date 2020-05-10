@@ -76,7 +76,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->clearCombinedPrices();
         $this->assertCombinedPriceCount(0);
 
-        $this->getMessageCollector()->clear();
+        $this->clearMessageCollector();
         $this->assertCount(0, $this->getSentMessages());
 
         $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->resetCache();

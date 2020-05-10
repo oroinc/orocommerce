@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\PricingStrategy;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -14,24 +15,18 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Component\MessageQueue\Client\Message;
 
-/**
- * {@inheritDoc}
- */
 class MergePricesCombiningStrategyTest extends WebTestCase
 {
-    /**
-     * @var MergePricesCombiningStrategy
-     */
-    protected $resolver;
+    use MessageQueueExtension;
 
-    use MessageQueueTrait;
+    /** @var MergePricesCombiningStrategy */
+    protected $resolver;
 
     /**
      * {@inheritdoc}
@@ -41,12 +36,11 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadProductPricesForCombination::class,
-                LoadCombinedPriceLists::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPricesForCombination::class,
+            LoadCombinedPriceLists::class
+        ]);
+
         $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
             ->get(MergePricesCombiningStrategy::NAME);
     }

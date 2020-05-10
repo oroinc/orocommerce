@@ -43,7 +43,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($parentCategory);
         $this->categoryManager->flush();
 
-        self::getMessageCollector()->clear();
+        self::clearMessageCollector();
 
         $newCategory->setParentCategory($parentCategory);
         $this->categoryManager->flush();
@@ -60,7 +60,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($newCategory);
         $this->categoryManager->flush();
 
-        self::getMessageCollector()->clear();
+        self::clearMessageCollector();
 
         $id = $newCategory->getId();
         $this->categoryManager->remove($newCategory);

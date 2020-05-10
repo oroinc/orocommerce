@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
@@ -21,35 +21,23 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shardManager;
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shardManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var InsertFromSelectShardQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $insertFromSelectQueryExecutor;
+    /** @var InsertFromSelectShardQueryExecutor|\PHPUnit\Framework\MockObject\MockObject */
+    private $insertFromSelectQueryExecutor;
 
-    /**
-     * @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $ruleCompiler;
+    /** @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject */
+    private $ruleCompiler;
 
-    /**
-     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTriggerHandler;
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTriggerHandler;
 
-    /**
-     * @var ProductPriceBuilder
-     */
-    protected $productPriceBuilder;
+    /** @var ProductPriceBuilder */
+    private $productPriceBuilder;
 
     protected function setUp()
     {
@@ -84,7 +72,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId]);
 
         $this->productPriceBuilder->buildByPriceList($priceList, [$productId]);
@@ -103,7 +91,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, []);
 
         $this->productPriceBuilder->buildByPriceList($priceList);
@@ -140,7 +128,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$product]);
 
         $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
@@ -163,12 +151,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($this->shardManager, $priceList, []);
         $repo->expects($this->once())
             ->method('getProductsByPriceListAndVersion')
-            ->with(
-                $this->shardManager,
-                $priceList,
-                $this->isType('int'),
-                PriceListTriggerHandler::BATCH_SIZE
-            )
+            ->with($this->shardManager, $priceList, $this->isType('int'))
             ->willReturn([[1], [2]]);
 
         $qb = $this->assertInsertCall($fields, [$rule], []);
@@ -187,7 +170,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_COMBINED_PRICES, $priceList, [1]],
                 [Topics::RESOLVE_COMBINED_PRICES, $priceList, [2]]
@@ -220,23 +203,15 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->priceListTriggerHandler->expects($this->never())
-            ->method('addTriggerForPriceList');
+            ->method('handlePriceListTopic');
 
         $this->productPriceBuilder->buildByPriceListWithoutTriggers($priceList);
-    }
-
-    public function testFlush()
-    {
-        $this->priceListTriggerHandler->expects($this->once())
-            ->method('sendScheduledTriggers');
-
-        $this->productPriceBuilder->flush();
     }
 
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|ProductPriceRepository
      */
-    protected function getRepositoryMock()
+    private function getRepositoryMock()
     {
         $repo = $this->createMock(ProductPriceRepository::class);
         $em = $this->createMock(EntityManagerInterface::class);
@@ -259,13 +234,11 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
      * @param int[]|Product[]|null $products
      * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function assertInsertCall(array $fields, array $rules, array $products = [])
+    private function assertInsertCall(array $fields, array $rules, array $products = [])
     {
         $rulesCount = count($rules);
 
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
         $this->ruleCompiler->expects($this->exactly($rulesCount))
             ->method('getOrderedFields')

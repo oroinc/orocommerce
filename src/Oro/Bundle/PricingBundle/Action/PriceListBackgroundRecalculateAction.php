@@ -98,10 +98,9 @@ class PriceListBackgroundRecalculateAction extends AbstractAction
         $priceLists = $this->dependentPriceListProvider->appendDependent([$rootPriceList]);
         foreach ($priceLists as $priceList) {
             $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
-            $this->priceBuilder->buildByPriceListWithoutTriggerSend($priceList);
+            $this->priceBuilder->buildByPriceList($priceList);
             $priceList->setActual(true);
         }
         $this->doctrineHelper->getEntityManagerForClass(PriceList::class)->flush($priceLists);
-        $this->priceBuilder->flush();
     }
 }

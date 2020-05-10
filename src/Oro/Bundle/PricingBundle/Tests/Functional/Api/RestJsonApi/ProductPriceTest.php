@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductPriceTest extends RestJsonApiTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritDoc}
@@ -114,8 +113,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testCreate()
     {
-        $this->cleanScheduledMessages();
-
         $response = $this->post(
             ['entity' => 'productprices'],
             'product_price/create.yml'
@@ -283,8 +280,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testDeleteList()
     {
-        $this->cleanScheduledMessages();
-
         $priceList = $this->getReference('price_list_1');
         $priceListId = $priceList->getId();
         $product1Id = $this->getReference('product-1')->getId();
@@ -314,8 +309,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testDeleteListWhenPriceListFilterContainsIdOfNotExistingPriceList()
     {
-        $this->cleanScheduledMessages();
-
         $this->cdelete(
             ['entity' => 'productprices'],
             ['filter' => ['priceList' => '9999']]
@@ -467,8 +460,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testUpdate()
     {
-        $this->cleanScheduledMessages();
-
         $response = $this->patch(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
             'product_price/update.yml'
@@ -533,8 +524,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testUpdateResetPriceRule()
     {
-        $this->cleanScheduledMessages();
-
         $this->patch(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
             'product_price/update_reset_rule.yml'
@@ -553,8 +542,6 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testDelete()
     {
-        $this->cleanScheduledMessages();
-
         $this->delete(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()]
         );
@@ -572,7 +559,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference('price_list_1')->getId() => [$this->getReference('product-1')->getId()]
                 ]
             ]
@@ -673,16 +660,16 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [$productId],
+                'product' => [
+                    $priceListId => [$productId]
                 ]
             ]
         );
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [$productId],
+                'product' => [
+                    $priceListId => [$productId]
                 ]
             ]
         );

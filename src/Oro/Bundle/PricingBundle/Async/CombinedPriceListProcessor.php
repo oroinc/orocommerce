@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -18,54 +18,46 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * Updates combined price lists in case of changes in structure of original price lists
+ * Updates combined price lists in case of changes in structure of original price lists.
  */
 class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var CombinedPriceListsBuilderFacade
-     */
-    protected $combinedPriceListsBuilderFacade;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /**
-     * @var PriceListRelationTriggerFactory
-     */
-    protected $triggerFactory;
+    /** @var LoggerInterface */
+    private $logger;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var CombinedPriceListTriggerHandler
-     */
+    /** @var CombinedPriceListTriggerHandler */
     private $triggerHandler;
 
+    /** @var CombinedPriceListsBuilderFacade */
+    private $builderFacade;
+
     /**
-     * @param LoggerInterface $logger
-     * @param PriceListRelationTriggerFactory $triggerFactory
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry                 $doctrine
+     * @param LoggerInterface                 $logger
      * @param CombinedPriceListTriggerHandler $triggerHandler
      * @param CombinedPriceListsBuilderFacade $builderFacade
      */
     public function __construct(
+        ManagerRegistry $doctrine,
         LoggerInterface $logger,
-        PriceListRelationTriggerFactory $triggerFactory,
-        ManagerRegistry $registry,
         CombinedPriceListTriggerHandler $triggerHandler,
         CombinedPriceListsBuilderFacade $builderFacade
     ) {
+        $this->doctrine = $doctrine;
         $this->logger = $logger;
-        $this->triggerFactory = $triggerFactory;
-        $this->registry = $registry;
         $this->triggerHandler = $triggerHandler;
-        $this->combinedPriceListsBuilderFacade = $builderFacade;
+        $this->builderFacade = $builderFacade;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedTopics()
+    {
+        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
     }
 
     /**
@@ -73,14 +65,17 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        /** @var EntityManagerInterface $em */
-        $this->triggerHandler->startCollect();
+        $body = JSON::decode($message->getBody());
+        if (!\is_array($body)) {
+            $this->logger->critical('Got invalid message.');
 
+            return self::REJECT;
+        }
+
+        $this->triggerHandler->startCollect();
         try {
-            $messageData = JSON::decode($message->getBody());
-            $trigger = $this->triggerFactory->createFromArray($messageData);
-            $this->handlePriceListRelationTrigger($trigger);
-            $this->combinedPriceListsBuilderFacade->dispatchEvents();
+            $this->handlePriceListRelationTrigger($body);
+            $this->builderFacade->dispatchEvents();
             $this->triggerHandler->commit();
         } catch (InvalidArgumentException $e) {
             $this->triggerHandler->rollback();
@@ -90,7 +85,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         } catch (\Exception $e) {
             $this->triggerHandler->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Combined Price Lists build',
+                'Unexpected exception occurred during Combined Price Lists build.',
                 ['exception' => $e]
             );
 
@@ -105,41 +100,87 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     }
 
     /**
-     * @param PriceListRelationTrigger $trigger
+     * @param array $body
      */
-    protected function handlePriceListRelationTrigger(PriceListRelationTrigger $trigger)
+    private function handlePriceListRelationTrigger(array $body): void
     {
-        switch (true) {
-            case !is_null($trigger->getCustomer()):
-                $this->combinedPriceListsBuilderFacade->rebuildForCustomers(
-                    [$trigger->getCustomer()],
-                    $trigger->getWebsite(),
-                    $trigger->isForce()
-                );
-                break;
-            case !is_null($trigger->getCustomerGroup()):
-                $this->combinedPriceListsBuilderFacade->rebuildForCustomerGroups(
-                    [$trigger->getCustomerGroup()],
-                    $trigger->getWebsite(),
-                    $trigger->isForce()
-                );
-                break;
-            case !is_null($trigger->getWebsite()):
-                $this->combinedPriceListsBuilderFacade->rebuildForWebsites(
-                    [$trigger->getWebsite()],
-                    $trigger->isForce()
-                );
-                break;
-            default:
-                $this->combinedPriceListsBuilderFacade->rebuildAll($trigger->isForce());
+        $force = $body['force'] ?? false;
+        $customer = $this->findCustomer($body);
+        if (null !== $customer) {
+            $this->builderFacade->rebuildForCustomers([$customer], $this->findWebsite($body), $force);
+        } else {
+            $customerGroup = $this->findCustomerGroup($body);
+            $website = $this->findWebsite($body);
+            if (null !== $customerGroup) {
+                $this->builderFacade->rebuildForCustomerGroups([$customerGroup], $website, $force);
+            } elseif (null !== $website) {
+                $this->builderFacade->rebuildForWebsites([$website], $force);
+            } else {
+                $this->builderFacade->rebuildAll($force);
+            }
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $body
+     *
+     * @return Customer|null
      */
-    public static function getSubscribedTopics()
+    private function findCustomer(array $body): ?Customer
     {
-        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
+        if (!isset($body['customer'])) {
+            return null;
+        }
+
+        /** @var Customer|null $customer */
+        $customer = $this->doctrine->getManagerForClass(Customer::class)
+            ->find(Customer::class, $body['customer']);
+        if (null === $customer) {
+            throw new InvalidArgumentException('Customer was not found.');
+        }
+
+        return $customer;
+    }
+
+    /**
+     * @param array $body
+     *
+     * @return CustomerGroup|null
+     */
+    private function findCustomerGroup(array $body): ?CustomerGroup
+    {
+        if (!isset($body['customerGroup'])) {
+            return null;
+        }
+
+        /** @var CustomerGroup|null $customerGroup */
+        $customerGroup = $this->doctrine->getManagerForClass(CustomerGroup::class)
+            ->find(CustomerGroup::class, $body['customerGroup']);
+        if (null === $customerGroup) {
+            throw new InvalidArgumentException('Customer Group was not found.');
+        }
+
+        return $customerGroup;
+    }
+
+    /**
+     * @param array $body
+     *
+     * @return Website|null
+     */
+    private function findWebsite(array $body): ?Website
+    {
+        if (!isset($body['website'])) {
+            return null;
+        }
+
+        /** @var Website|null $website */
+        $website = $this->doctrine->getManagerForClass(Website::class)
+            ->find(Website::class, $body['website']);
+        if (null === $website) {
+            throw new InvalidArgumentException('Website was not found.');
+        }
+
+        return $website;
     }
 }

@@ -6,7 +6,6 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
@@ -19,8 +18,6 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
 {
     protected function setUp()
     {
-        // remove calling of disableKernelTerminateHandler() in BB-12967
-        $this->disableKernelTerminateHandler();
         parent::setUp();
         $this->loadFixtures([
             LoadProductPrices::class,
@@ -138,14 +135,11 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('US')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => null
+                    'website' => $this->getReference('US')->getId()
                 ],
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('Canada')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => $this->getReference('customer.level_1_1')->getId()
+                    'website'  => $this->getReference('Canada')->getId(),
+                    'customer' => $this->getReference('customer.level_1_1')->getId()
                 ]
             ]
         );
@@ -216,14 +210,10 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('US')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => null
+                    'website' => $this->getReference('US')->getId()
                 ],
                 [
-                    PriceListRelationTrigger::WEBSITE       => $this->getReference('Canada')->getId(),
-                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                    PriceListRelationTrigger::ACCOUNT       => null
+                    'website' => $this->getReference('Canada')->getId()
                 ]
             ]
         );

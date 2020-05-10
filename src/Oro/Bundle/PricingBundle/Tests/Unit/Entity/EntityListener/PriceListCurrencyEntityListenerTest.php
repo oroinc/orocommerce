@@ -15,20 +15,14 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
+    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
 
-    /**
-     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTriggerHandler;
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTriggerHandler;
 
-    /**
-     * @var PriceListCurrencyEntityListener
-     */
-    protected $listener;
+    /** @var PriceListCurrencyEntityListener */
+    private $listener;
 
     /**
      * {@inheritdoc}
@@ -65,7 +59,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency->setPriceList($priceList);
 
         $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
                 [Topics::RESOLVE_PRICE_RULES, $priceList]
@@ -89,7 +83,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency->setPriceList($priceList);
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->with(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
 
         $this->listener->postPersist($priceListCurrency);
@@ -117,7 +111,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceListCurrency->setPriceList($priceList);
 
         $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->withConsecutive(
                 [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
                 [Topics::RESOLVE_PRICE_RULES, $priceList]
