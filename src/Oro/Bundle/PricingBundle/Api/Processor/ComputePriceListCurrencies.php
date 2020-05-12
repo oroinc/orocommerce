@@ -33,6 +33,7 @@ class ComputePriceListCurrencies implements ProcessorInterface
         foreach ($rawCurrencies as $item) {
             $currencies[] = $item['currency'];
         }
+        sort($currencies);
         $data[$fieldName] = $currencies;
 
         $context->setData($data);
