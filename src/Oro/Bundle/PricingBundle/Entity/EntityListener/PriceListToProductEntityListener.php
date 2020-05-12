@@ -17,6 +17,9 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Handles adding, updating and removing PriceListToProduct entity.
+ */
 class PriceListToProductEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
@@ -24,19 +27,13 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
     const FIELD_PRICE_LIST = 'priceList';
     const FIELD_PRODUCT = 'product';
 
-    /**
-     * @var ShardManager
-     */
+    /** @var ShardManager */
     protected $shardManager;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
+    /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
     /**
@@ -112,7 +109,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
     public function onAssignmentRuleBuilderBuild(AssignmentBuilderBuildEvent $event)
     {
         $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProducts());
-        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
@@ -125,9 +121,12 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $lexemes = $this->priceRuleLexemeTriggerHandler
-            ->findEntityLexemes(PriceList::class, ['assignedProducts'], $priceList->getId());
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $products);
+        $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+            PriceList::class,
+            ['assignedProducts'],
+            $priceList->getId()
+        );
+        $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, $products);
     }
 
     /**
@@ -140,7 +139,7 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $products);
+        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList, $products);
         $this->scheduleDependentPriceListsUpdate($priceList, $products);
     }
 

@@ -14,20 +14,20 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var CombinedPriceListsBuilderFacade|MockObject CombinedPriceListsBuilderFacade */
-    protected $combinedPriceListsBuilderFacade;
+    /** @var CombinedPriceListsBuilderFacade|MockObject */
+    private $combinedPriceListsBuilderFacade;
 
     /** @var ProductPriceBuilder|MockObject */
-    protected $priceBuilder;
+    private $priceBuilder;
 
     /** @var PriceListProductAssignmentBuilder|MockObject */
-    protected $assignmentBuilder;
+    private $assignmentBuilder;
 
     /** @var ObjectManager|MockObject */
-    protected $objectManager;
+    private $objectManager;
 
     /** @var PriceListRepository|MockObject */
-    protected $priceListRepository;
+    private $priceListRepository;
 
     /**
      * {@inheritDoc}
@@ -119,8 +119,6 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
 
         $this->priceBuilder->expects($this->never())
             ->method('buildByPriceListWithoutTriggers');
-        $this->priceBuilder->expects($this->never())
-            ->method('flush');
 
         $this->listener->onPostLoad($this->event);
     }

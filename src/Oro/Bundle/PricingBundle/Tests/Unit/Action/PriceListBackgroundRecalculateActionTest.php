@@ -18,27 +18,27 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 class PriceListBackgroundRecalculateActionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $contextAccessor;
+    private $contextAccessor;
 
     /** @var PriceListProductAssignmentBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    protected $assignmentBuilder;
+    private $assignmentBuilder;
 
     /** @var ProductPriceBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productPriceBuilder;
+    private $productPriceBuilder;
 
     /** @var DependentPriceListProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dependentPriceListProvider;
+    private $dependentPriceListProvider;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var PriceListBackgroundRecalculateAction */
-    protected $action;
+    private $action;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
@@ -105,7 +105,7 @@ class PriceListBackgroundRecalculateActionTest extends \PHPUnit\Framework\TestCa
             ->method('buildByPriceListWithoutEventDispatch')
             ->withConsecutive([$priceList], [$dependentPriceList1], [$dependentPriceList2]);
         $this->productPriceBuilder->expects($this->exactly(3))
-            ->method('buildByPriceListWithoutTriggerSend')
+            ->method('buildByPriceList')
             ->withConsecutive([$priceList], [$dependentPriceList1], [$dependentPriceList2]);
 
         $em = $this->createMock(EntityManager::class);
@@ -114,9 +114,11 @@ class PriceListBackgroundRecalculateActionTest extends \PHPUnit\Framework\TestCa
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->once())->method('flush')->with([$priceList, $dependentPriceList1, $dependentPriceList2]);
-        $this->productPriceBuilder->expects($this->once())->method('flush');
-        $this->eventDispatcher->expects($this->atLeastOnce())->method('dispatch');
+        $em->expects($this->once())
+            ->method('flush')
+            ->with([$priceList, $dependentPriceList1, $dependentPriceList2]);
+        $this->eventDispatcher->expects($this->atLeastOnce())
+            ->method('dispatch');
 
         $this->action->execute($this->createMock(ActionData::class));
         $this->assertTrue($priceList->isActual());

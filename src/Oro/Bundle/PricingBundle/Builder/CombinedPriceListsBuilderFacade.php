@@ -20,7 +20,6 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -347,7 +346,7 @@ class CombinedPriceListsBuilderFacade
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToWebsite::class);
         foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
             /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+            $website = $this->getEntityById(Website::class, $ids['website']);
 
             $this->websiteCombinedPriceListBuilder->build($website, $forceTimestamp);
         }
@@ -363,9 +362,9 @@ class CombinedPriceListsBuilderFacade
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomerGroup::class);
         foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
             /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+            $website = $this->getEntityById(Website::class, $ids['website']);
             /** @var CustomerGroup $customerGroup */
-            $customerGroup = $this->getEntityById(CustomerGroup::class, $ids[PriceListRelationTrigger::ACCOUNT_GROUP]);
+            $customerGroup = $this->getEntityById(CustomerGroup::class, $ids['customerGroup']);
 
             $this->customerGroupCombinedPriceListBuilder->build($website, $customerGroup, $forceTimestamp);
         }
@@ -381,9 +380,9 @@ class CombinedPriceListsBuilderFacade
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(PriceListToCustomer::class);
         foreach ($repository->getIteratorByPriceLists($priceLists) as $ids) {
             /** @var Website $website */
-            $website = $this->getEntityById(Website::class, $ids[PriceListRelationTrigger::WEBSITE]);
+            $website = $this->getEntityById(Website::class, $ids['website']);
             /** @var Customer $customer */
-            $customer = $this->getEntityById(Customer::class, $ids[PriceListRelationTrigger::ACCOUNT]);
+            $customer = $this->getEntityById(Customer::class, $ids['customer']);
 
             $this->customerCombinedPriceListBuilder->build($website, $customer, $forceTimestamp);
         }

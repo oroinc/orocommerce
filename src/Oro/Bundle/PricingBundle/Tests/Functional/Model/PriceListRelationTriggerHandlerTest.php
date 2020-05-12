@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -9,7 +10,6 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelationsForTriggers;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
@@ -26,10 +26,8 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * @var PriceListRelationTriggerHandler
-     */
-    protected $handler;
+    /** @var PriceListRelationTriggerHandler */
+    private $handler;
 
     /**
      * {@inheritdoc}
@@ -37,14 +35,10 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->loadFixtures([LoadPriceListRelationsForTriggers::class]);
+        $this->enableMessageBuffering();
 
-        $this->loadFixtures(
-            [
-                LoadPriceListRelationsForTriggers::class,
-            ]
-        );
-
-        $this->handler = $this->getContainer()->get('oro_pricing.price_list_relation_trigger_handler');
+        $this->handler = self::getContainer()->get('oro_pricing.price_list_relation_trigger_handler');
     }
 
     public function testHandleWebsiteChange()
@@ -54,16 +48,14 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->handleWebsiteChange($website);
         // Check that same messages are merged
         $this->handler->handleWebsiteChange($website);
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
+                'website' => $website->getId()
             ]
         );
     }
@@ -74,22 +66,16 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $website->setName('TEST WS');
         $this->handler->handleWebsiteChange($website);
 
-        $registry = $this->getContainer()->get('doctrine');
-        $em = $registry->getManagerForClass(Website::class);
+        $em = $this->getEntityManager(Website::class);
         $em->persist($website);
         $em->flush();
-
-        $this->handler->sendScheduledTriggers();
 
         self::assertNotEmpty($website->getId());
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
+                'website' => $website->getId()
             ]
         );
     }
@@ -104,16 +90,16 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->handleCustomerChange($customer, $website);
         // Check that same messages are merged
         $this->handler->handleCustomerChange($customer, $website);
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => $customer->getGroup()->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customer'      => $customer->getId(),
+                'customerGroup' => $customer->getGroup()->getId()
             ]
         );
     }
@@ -132,22 +118,17 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->handler->handleCustomerChange($customer, $website);
 
-        $registry = $this->getContainer()->get('doctrine');
-        $em = $registry->getManagerForClass(Customer::class);
+        $em = $this->getEntityManager(Customer::class);
         $em->persist($customer);
         $em->flush();
-
-        $this->handler->sendScheduledTriggers();
 
         self::assertNotEmpty($customer->getId());
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
+                'website'  => $website->getId(),
+                'customer' => $customer->getId()
             ]
         );
     }
@@ -169,22 +150,18 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->handler->handleCustomerChange($customer, $website);
 
-        $registry = $this->getContainer()->get('doctrine');
-        $em = $registry->getManagerForClass(Customer::class);
+        $em = $this->getEntityManager(Customer::class);
         $em->persist($customer);
         $em->flush();
-
-        $this->handler->sendScheduledTriggers();
 
         self::assertNotEmpty($customer->getId());
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => $group->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customer'      => $customer->getId(),
+                'customerGroup' => $group->getId()
             ]
         );
     }
@@ -192,16 +169,12 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     public function testHandleConfigChange()
     {
         $this->handler->handleConfigChange();
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => null,
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
-            ]
+            []
         );
     }
 
@@ -214,16 +187,15 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->handleCustomerGroupChange($customerGroup, $website);
         // Check that same messages are merged
         $this->handler->handleCustomerGroupChange($customerGroup, $website);
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroup->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customerGroup' => $customerGroup->getId()
             ]
         );
     }
@@ -242,22 +214,17 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->handler->handleCustomerGroupChange($group, $website);
 
-        $registry = $this->getContainer()->get('doctrine');
-        $em = $registry->getManagerForClass(CustomerGroup::class);
+        $em = $this->getEntityManager(CustomerGroup::class);
         $em->persist($group);
         $em->flush();
-
-        $this->handler->sendScheduledTriggers();
 
         self::assertNotEmpty($group->getId());
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $group->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customerGroup' => $group->getId()
             ]
         );
     }
@@ -286,13 +253,10 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->handleCustomerGroupChange($group1, $website);
         $this->handler->handleCustomerGroupChange($group2, $website);
 
-        $registry = $this->getContainer()->get('doctrine');
-        $em = $registry->getManagerForClass(CustomerGroup::class);
+        $em = $this->getEntityManager(CustomerGroup::class);
         $em->persist($group1);
         $em->persist($group2);
         $em->flush();
-
-        $this->handler->sendScheduledTriggers();
 
         self::assertNotEmpty($group1->getId());
         self::assertNotEmpty($group2->getId());
@@ -300,28 +264,22 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $group1->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customerGroup' => $group1->getId()
             ]
         );
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $group2->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customerGroup' => $group2->getId()
             ]
         );
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroup->getId(),
-                PriceListRelationTrigger::FORCE => false,
+                'website'       => $website->getId(),
+                'customerGroup' => $customerGroup->getId()
             ]
         );
     }
@@ -334,16 +292,14 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->handleWebsiteChange($website);
 
         $this->handler->handleFullRebuild();
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => null,
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => true,
+                'force' => true
             ]
         );
     }
@@ -353,15 +309,16 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference(LoadGroups::GROUP1);
         $this->handler->handleCustomerGroupRemove($customerGroup);
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1.3')->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null
+                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                'customerGroup' => $this->getReference('customer_group.group1')->getId(),
+                'customer'      => $this->getReference('customer.level_1.3')->getId()
             ]
         );
     }
@@ -370,8 +327,8 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
      * @dataProvider duplicateMessagesDataProvider
      *
      * @param string $priceListReference
-     * @param array $fallbackSettings
-     * @param array $expectedMessages
+     * @param array  $fallbackSettings
+     * @param array  $expectedMessages
      */
     public function testDuplicateMessagesOnHandlePriceListStatusChange(
         $priceListReference,
@@ -382,7 +339,8 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->createFallbacks($fallbackSettings);
 
         $this->handler->handlePriceListStatusChange($priceList);
-        $this->handler->sendScheduledTriggers();
+
+        $this->flushMessagesBuffer();
 
         $this->resolveIds($expectedMessages);
         self::assertMessagesSent(Topics::REBUILD_COMBINED_PRICE_LISTS, $expectedMessages);
@@ -400,9 +358,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 [],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website' => LoadWebsiteData::WEBSITE1
                     ]
 
                 ]
@@ -412,19 +368,16 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 [
                     [
                         'website' => LoadWebsiteData::WEBSITE1,
-                        'group' => 'customer_group.group1'
+                        'group'   => 'customer_group.group1'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website' => LoadWebsiteData::WEBSITE1
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ]
                 ]
             ],
@@ -433,28 +386,25 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 [
                     [
                         'website' => LoadWebsiteData::WEBSITE1,
-                        'group' => 'customer_group.group1'
+                        'group'   => 'customer_group.group1'
                     ],
                     [
-                        'website' => LoadWebsiteData::WEBSITE1,
+                        'website'  => LoadWebsiteData::WEBSITE1,
                         'customer' => 'customer.level_1.3'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website' => LoadWebsiteData::WEBSITE1
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ]
                 ],
             ],
@@ -462,20 +412,18 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 LoadPriceLists::PRICE_LIST_6,
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1,
+                        'website'  => LoadWebsiteData::WEBSITE1,
                         'customer' => 'customer.level_1.3'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website' => LoadWebsiteData::WEBSITE1
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ]
                 ],
             ],
@@ -485,19 +433,18 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1_1'
+                        'website'  => LoadWebsiteData::WEBSITE1,
+                        'customer' => 'customer.level_1_1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.2'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2',
+                        'customer'      => 'customer.level_1.2'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ]
                 ],
             ],
@@ -505,25 +452,24 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 LoadPriceLists::PRICE_LIST_2,
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1,
+                        'website'  => LoadWebsiteData::WEBSITE1,
                         'customer' => 'customer.level_1.2'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1_1'
+                        'website'  => LoadWebsiteData::WEBSITE1,
+                        'customer' => 'customer.level_1_1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.2'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2',
+                        'customer'      => 'customer.level_1.2'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ]
                 ],
             ],
@@ -533,14 +479,12 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2'
                     ]
                 ]
             ],
@@ -549,19 +493,17 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 [
                     [
                         'website' => LoadWebsiteData::WEBSITE1,
-                        'group' => 'customer_group.group1'
+                        'group'   => 'customer_group.group1'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2'
                     ]
                 ]
             ],
@@ -569,25 +511,23 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 LoadPriceLists::PRICE_LIST_4,
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1,
+                        'website'  => LoadWebsiteData::WEBSITE1,
                         'customer' => 'customer.level_1.3'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2'
                     ]
                 ]
             ],
@@ -596,28 +536,26 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 [
                     [
                         'website' => LoadWebsiteData::WEBSITE1,
-                        'group' => 'customer_group.group1'
+                        'group'   => 'customer_group.group1'
                     ],
                     [
-                        'website' => LoadWebsiteData::WEBSITE1,
+                        'website'  => LoadWebsiteData::WEBSITE1,
                         'customer' => 'customer.level_1.3'
                     ]
                 ],
                 [
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group1',
-                        PriceListRelationTrigger::ACCOUNT => 'customer.level_1.3'
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group1',
+                        'customer'      => 'customer.level_1.3'
                     ],
                     [
-                        PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => 'customer_group.group2',
-                        PriceListRelationTrigger::ACCOUNT => null
+                        'website'       => LoadWebsiteData::WEBSITE1,
+                        'customerGroup' => 'customer_group.group2'
                     ]
                 ]
             ]
@@ -625,9 +563,19 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     }
 
     /**
+     * @param string $entityClass
+     *
+     * @return EntityManagerInterface
+     */
+    private function getEntityManager(string $entityClass): EntityManagerInterface
+    {
+        return self::getContainer()->get('doctrine')->getManagerForClass($entityClass);
+    }
+
+    /**
      * @param array $data
      */
-    protected function resolveReferences(array &$data)
+    private function resolveReferences(array &$data): void
     {
         foreach ($data as &$item) {
             foreach ($item as $key => $reference) {
@@ -641,7 +589,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     /**
      * @param array $expectedMessages
      */
-    protected function resolveIds(array &$expectedMessages)
+    private function resolveIds(array &$expectedMessages): void
     {
         $this->resolveReferences($expectedMessages);
         foreach ($expectedMessages as &$expectedMessage) {
@@ -656,7 +604,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     /**
      * @param array $fallbackSettings
      */
-    protected function createFallbacks(array $fallbackSettings)
+    private function createFallbacks(array $fallbackSettings): void
     {
         $this->resolveReferences($fallbackSettings);
         foreach ($fallbackSettings as $fallbackData) {
@@ -670,7 +618,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
             $fallback->setWebsite($fallbackData['website']);
             $fallback->setFallback(1);
 
-            $em = $this->getContainer()->get('doctrine')->getManagerForClass(get_class($fallback));
+            $em = $this->getEntityManager(get_class($fallback));
             $em->persist($fallback);
             $em->flush($fallback);
         }

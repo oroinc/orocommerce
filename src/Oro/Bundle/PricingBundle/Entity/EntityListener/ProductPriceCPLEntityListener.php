@@ -21,33 +21,26 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Handles product price changes.
+ */
 class ProductPriceCPLEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /**
-     * @var ExtraActionEntityStorageInterface
-     */
+    /** @var ExtraActionEntityStorageInterface */
     protected $extraActionsStorage;
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @var ShardManager
-     */
+    /** @var ShardManager */
     protected $shardManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**
@@ -101,7 +94,7 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(
+        $this->priceListTriggerHandler->handlePriceListTopic(
             Topics::RESOLVE_COMBINED_PRICES,
             $productPrice->getPriceList(),
             [$productPrice->getProduct()]

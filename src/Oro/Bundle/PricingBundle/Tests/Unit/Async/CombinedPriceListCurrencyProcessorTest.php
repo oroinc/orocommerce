@@ -2,194 +2,70 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceListTriggerFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $triggerFactory;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
-
-    /**
-     * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $combinedPriceListProvider;
 
-    /**
-     * @var CombinedPriceListCurrencyProcessor
-     */
+    /** @var CombinedPriceListCurrencyProcessor */
     private $processor;
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
 
         $this->processor = new CombinedPriceListCurrencyProcessor(
+            $this->doctrine,
             $this->logger,
-            $this->triggerFactory,
-            $this->registry,
             $this->combinedPriceListProvider
         );
     }
 
-    public function testProcess()
-    {
-        $relations = [new CombinedPriceListToPriceList()];
-        $cpl = new CombinedPriceList();
-
-        $cplRepo = $this->createMock(CombinedPriceListRepository::class);
-        $cplRepo->expects($this->once())
-            ->method('getCombinedPriceListsByPriceLists')
-            ->with([42])
-            ->willReturn([$cpl]);
-        $cplRepo->expects($this->once())
-            ->method('getPriceListRelations')
-            ->with($cpl)
-            ->willReturn($relations);
-
-        $currencyEm = $this->createMock(EntityManagerInterface::class);
-        $cplEm = $this->createMock(EntityManagerInterface::class);
-        $cplEm->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($cplRepo);
-
-        $currencyEm->expects($this->once())
-            ->method('beginTransaction');
-
-        $currencyEm->expects(($this->never()))
-            ->method('rollback');
-
-        $currencyEm->expects(($this->once()))
-            ->method('commit');
-
-        $this->registry->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->withConsecutive(
-                [CombinedPriceListCurrency::class],
-                [CombinedPriceList::class]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $currencyEm,
-                $cplEm
-            );
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->once())
-            ->method('getBody')
-            ->willReturn(json_encode(['product' => [42 => []]]));
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
-        $session = $this->createMock(SessionInterface::class);
-
-        $trigger = new PriceListTrigger(['42' => []]);
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->willReturn($trigger);
-
-        $this->logger->expects($this->never())
-            ->method($this->anything());
-
-        $this->combinedPriceListProvider->expects($this->once())
-            ->method('actualizeCurrencies')
-            ->with($cpl, $relations);
-
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
-    }
-
     /**
-     * @dataProvider getProcessWithExceptionDataProvider
+     * @param mixed $body
      *
-     * @param \Exception $exception
-     * @param string $result
+     * @return MessageInterface
      */
-    public function testProcessWithException($exception, $result)
+    private function getMessage($body): MessageInterface
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $em->expects(($this->never()))
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CombinedPriceListCurrency::class)
-            ->willReturn($em);
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn('');
+            ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error');
-
-        $this->assertEquals($result, $this->processor->process($message, $session));
+        return $message;
     }
 
     /**
-     * @return array
+     * @return SessionInterface
      */
-    public function getProcessWithExceptionDataProvider()
+    private function getSession(): SessionInterface
     {
-        return [
-            'process InvalidArgumentException' => [
-                'exception' => new InvalidArgumentException(),
-                'result' => MessageProcessorInterface::REJECT
-            ],
-            'process exception' => [
-                'exception' => new \Exception(),
-                'result' => MessageProcessorInterface::REJECT
-            ],
-            'process deadlock' => [
-                'exception' => new DeadlockException('deadlock', new PDOException(new \PDOException())),
-                'result' => MessageProcessorInterface::REQUEUE
-            ],
-        ];
+        return $this->createMock(SessionInterface::class);
     }
 
     public function testGetSubscribedTopics()
@@ -197,6 +73,158 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             [Topics::RESOLVE_COMBINED_CURRENCIES],
             CombinedPriceListCurrencyProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcessWithInvalidMessage()
+    {
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage('invalid'), $this->getSession())
+        );
+    }
+
+    public function testProcessWithEmptyMessage()
+    {
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with('Got invalid message.');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage([]), $this->getSession())
+        );
+    }
+
+    public function testProcess()
+    {
+        $priceListId = 1;
+        $body = ['product' => [$priceListId => []]];
+
+        $relations = [new CombinedPriceListToPriceList()];
+        $cpl = new CombinedPriceList();
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->never()))
+            ->method('rollback');
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceListCurrency::class)
+            ->willReturn($em);
+
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('getCombinedPriceListsByPriceLists')
+            ->with([$priceListId])
+            ->willReturn([$cpl]);
+        $repository->expects($this->once())
+            ->method('getPriceListRelations')
+            ->with($cpl)
+            ->willReturn($relations);
+
+        $this->combinedPriceListProvider->expects($this->once())
+            ->method('actualizeCurrencies')
+            ->with($cpl, $relations);
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessException()
+    {
+        $priceListId = 1;
+        $body = ['product' => [$priceListId => []]];
+
+        $exception = new \Exception('some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceListCurrency::class)
+            ->willReturn($em);
+
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('getCombinedPriceListsByPriceLists')
+            ->with([$priceListId])
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Combined Price Lists currencies merging.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessDeadlockException()
+    {
+        $priceListId = 1;
+        $body = ['product' => [$priceListId => []]];
+
+        $exception = $this->createMock(DeadlockException::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceListCurrency::class)
+            ->willReturn($em);
+
+        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects($this->once())
+            ->method('getCombinedPriceListsByPriceLists')
+            ->with([$priceListId])
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Combined Price Lists currencies merging.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REQUEUE,
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
 }

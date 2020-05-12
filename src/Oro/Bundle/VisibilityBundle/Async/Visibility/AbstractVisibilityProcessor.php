@@ -4,10 +4,10 @@ namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -16,50 +16,31 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * Resolves visibility by Entity
+ * The base processor to resolve visibility by an entity.
  */
 abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
-    /**
-     * @var VisibilityMessageFactory
-     */
-    protected $messageFactory;
-
-    /**
-     * @var CacheBuilderInterface
-     */
+    /** @var CacheBuilderInterface */
     protected $cacheBuilder;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     protected $logger;
 
     /**
-     * @var string
-     */
-    protected $resolvedVisibilityClassName = '';
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageFactoryInterface $messageFactory
-     * @param LoggerInterface $logger
+     * @param ManagerRegistry       $doctrine
+     * @param LoggerInterface       $logger
      * @param CacheBuilderInterface $cacheBuilder
      */
     public function __construct(
-        ManagerRegistry $registry,
-        MessageFactoryInterface $messageFactory,
+        ManagerRegistry $doctrine,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->logger = $logger;
-        $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
     }
 
@@ -68,24 +49,23 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
-
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->messageFactory->getEntityFromMessage($messageData);
-
-            $this->resolveVisibilityByEntity($visibilityEntity);
-            $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
+        $body = JSON::decode($message->getBody());
+        if (!\is_array($body) || !$this->isMessageValid($body)) {
+            $this->logger->critical('Got invalid message.');
 
             return self::REJECT;
+        }
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass($this->getResolvedVisibilityClassName());
+        $em->beginTransaction();
+        try {
+            $this->resolveVisibility($body);
+            $em->commit();
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Product Visibility resolve',
+                'Unexpected exception occurred during Product Visibility resolve.',
                 ['exception' => $e]
             );
 
@@ -100,24 +80,80 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param string $className
+     * @return string
      */
-    public function setResolvedVisibilityClassName($className)
+    abstract protected function getResolvedVisibilityClassName(): string;
+
+    /**
+     * @param array $body
+     *
+     * @return bool
+     */
+    protected function isMessageValid(array $body): bool
     {
-        $this->resolvedVisibilityClassName = $className;
+        $result =
+            isset($body['entity_class_name'], $body['id'])
+            || isset(
+                $body['entity_class_name'],
+                $body['target_class_name'],
+                $body['target_id'],
+                $body['scope_id']
+            );
+        if ($result && !class_exists($body['entity_class_name'])) {
+            $result = false;
+        }
+
+        return $result;
     }
 
     /**
-     * All resolved product visibility entities should be stored together, so entity manager should be the same too
-     * @return EntityManager
+     * @param array $body
+     *
+     * @throws EntityNotFoundException if a visibility entity does not exist
      */
-    protected function getEntityManager()
-    {
-        return $this->registry->getManagerForClass($this->resolvedVisibilityClassName);
-    }
+    abstract protected function resolveVisibility(array $body): void;
 
     /**
-     * @param object $entity
+     * @param array $body
+     *
+     * @return VisibilityInterface
+     *
+     * @throws EntityNotFoundException if a visibility entity does not exist
      */
-    abstract protected function resolveVisibilityByEntity($entity);
+    protected function getVisibility(array $body): VisibilityInterface
+    {
+        $entityClassName = $body['entity_class_name'];
+        if (isset($body['id'])) {
+            /** @var VisibilityInterface|null $visibility */
+            $visibility = $this->doctrine->getManagerForClass($entityClassName)
+                ->find($entityClassName, $body['id']);
+            if (null === $visibility) {
+                throw new EntityNotFoundException('Entity object was not found.');
+            }
+
+            return $visibility;
+        }
+
+        $targetClassName = $body['target_class_name'];
+        $target = $this->doctrine->getManagerForClass($targetClassName)
+            ->find($targetClassName, $body['target_id']);
+        if (null === $target) {
+            throw new EntityNotFoundException('Target object was not found.');
+        }
+
+        /** @var Scope|null $scope */
+        $scope = $this->doctrine->getManagerForClass(Scope::class)
+            ->find(Scope::class, $body['scope_id']);
+        if (null === $scope) {
+            throw new EntityNotFoundException('Scope object object was not found.');
+        }
+
+        /** @var VisibilityInterface $visibility */
+        $visibility = new $entityClassName();
+        $visibility->setScope($scope);
+        $visibility->setTargetEntity($target);
+        $visibility->setVisibility($visibility::getDefault($target));
+
+        return $visibility;
+    }
 }

@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,15 +19,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PriceRuleTest extends RestJsonApiTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        // remove calling of disableKernelTerminateHandler() in BB-12967
-        $this->disableKernelTerminateHandler();
         parent::setUp();
         $this->loadFixtures([
             LoadPriceRules::class,
@@ -84,8 +82,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testCreate()
     {
-        $this->cleanScheduledMessages();
-
         $this->post(
             ['entity' => 'pricerules'],
             'price_rule/create.yml'
@@ -124,8 +120,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testCreateWithExpressions()
     {
-        $this->cleanScheduledMessages();
-
         $this->post(
             ['entity' => 'pricerules'],
             'price_rule/create_with_expressions.yml'
@@ -160,8 +154,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testCreateAsIncludedData()
     {
-        $this->cleanScheduledMessages();
-
         $priceListId = $this->getReference('price_list_3')->getId();
 
         $this->patch(
@@ -212,8 +204,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testDeleteList()
     {
-        $this->cleanScheduledMessages();
-
         $priceRuleId1 = $this->getFirstPriceRule()->getId();
         $priceList1 = $this->getFirstPriceRule()->getPriceList();
 
@@ -263,8 +253,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testUpdate()
     {
-        $this->cleanScheduledMessages();
-
         $priceRuleId = $this->getFirstPriceRule()->getId();
 
         $this->patch(
@@ -299,8 +287,6 @@ class PriceRuleTest extends RestJsonApiTestCase
 
     public function testDelete()
     {
-        $this->cleanScheduledMessages();
-
         $priceRuleId = $this->getFirstPriceRule()->getId();
         $priceList = $this->getFirstPriceRule()->getPriceList();
 

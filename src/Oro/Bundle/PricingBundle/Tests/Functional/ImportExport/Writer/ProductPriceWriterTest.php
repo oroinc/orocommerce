@@ -8,6 +8,7 @@ use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
@@ -22,13 +23,12 @@ class ProductPriceWriterTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(
-            [
-                LoadProductUnits::class,
-                LoadPriceListToProductWithoutPrices::class,
-            ]
-        );
         $this->client->useHashNavigation(true);
+
+        $this->loadFixtures([
+            LoadProductUnits::class,
+            LoadPriceListToProductWithoutPrices::class,
+        ]);
     }
 
     public function testHashArrayClearsOnWrite()
@@ -60,12 +60,9 @@ class ProductPriceWriterTest extends WebTestCase
 
         $price = $this->createPrice();
 
-        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
-        $this->getMessageCollector()->clear();
-
         $writer->write([$price]);
-        $this->assertEmptyMessages('oro_pricing.price_lists.cpl.resolve_prices');
-        $this->assertEmptyMessages('oro_pricing.price_rule.build');
+        $this->assertEmptyMessages(Topics::RESOLVE_COMBINED_PRICES);
+        $this->assertEmptyMessages(Topics::RESOLVE_PRICE_RULES);
         $value = $context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH);
         $this->assertEmpty($value);
     }

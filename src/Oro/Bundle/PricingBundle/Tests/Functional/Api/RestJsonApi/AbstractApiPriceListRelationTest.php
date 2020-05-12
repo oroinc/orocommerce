@@ -3,24 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 {
-    use MessageQueueTrait;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        // remove calling of disableKernelTerminateHandler() in BB-12967
-        $this->disableKernelTerminateHandler();
-        parent::setUp();
-    }
+    use MessageQueueExtension;
 
     /**
      * @return string
@@ -171,8 +161,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 
     public function testDelete()
     {
-        $this->cleanScheduledRelationMessages();
-
         $relationId = $this->getFirstRelation()->getId();
 
         $this->delete([

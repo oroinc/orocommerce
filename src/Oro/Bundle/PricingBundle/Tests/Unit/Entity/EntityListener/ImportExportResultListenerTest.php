@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -19,29 +20,19 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    private $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $lexemeTriggerHandler;
 
-    /**
-     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListTriggerHandler;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shardManager;
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shardManager;
 
-    /**
-     * @var ImportExportResultListener
-     */
+    /** @var ImportExportResultListener */
     private $listener;
 
     /**
@@ -49,13 +40,13 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->lexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->listener = new ImportExportResultListener(
-            $this->registry,
+            $this->doctrine,
             $this->lexemeTriggerHandler,
             $this->priceListTriggerHandler,
             $this->shardManager
@@ -74,31 +65,24 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('find')
             ->with(PriceList::class, 2)
             ->willReturn($priceList);
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($manager);
 
         $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler
-            ->expects($this->once())
+        $this->lexemeTriggerHandler->expects($this->once())
             ->method('findEntityLexemes')
             ->with(PriceList::class, ['prices'], $priceList->getId())
             ->willReturn($lexemes);
 
-        $this->lexemeTriggerHandler
-            ->expects($this->once())
-            ->method('addTriggersByLexemes')
+        $this->lexemeTriggerHandler->expects($this->once())
+            ->method('processLexemes')
             ->with($lexemes);
 
-        $this->priceListTriggerHandler
-            ->expects($this->once())
-            ->method('addTriggerForPriceList')
-            ->with('oro_pricing.price_lists.cpl.resolve_prices', $priceList);
-
-        $this->priceListTriggerHandler
-            ->expects($this->once())
-            ->method('sendScheduledTriggers');
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('handlePriceListTopic')
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
 
         $this->listener->postPersist($importExportResult);
     }
@@ -110,26 +94,19 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())
             ->method('find');
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($manager);
 
-        $this->lexemeTriggerHandler
-            ->expects($this->never())
+        $this->lexemeTriggerHandler->expects($this->never())
             ->method('findEntityLexemes');
 
-        $this->lexemeTriggerHandler
-            ->expects($this->never())
-            ->method('addTriggersByLexemes');
+        $this->lexemeTriggerHandler->expects($this->never())
+            ->method('processLexemes');
 
-        $this->priceListTriggerHandler
-            ->expects($this->never())
-            ->method('addTriggerForPriceList');
-
-        $this->priceListTriggerHandler
-            ->expects($this->never())
-            ->method('sendScheduledTriggers');
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('handlePriceListTopic');
 
         $this->listener->postPersist($importExportResult);
     }
@@ -144,26 +121,19 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('find')
             ->with(PriceList::class, 2)
             ->willReturn(null);
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($manager);
 
-        $this->lexemeTriggerHandler
-            ->expects($this->never())
+        $this->lexemeTriggerHandler->expects($this->never())
             ->method('findEntityLexemes');
 
-        $this->lexemeTriggerHandler
-            ->expects($this->never())
-            ->method('addTriggersByLexemes');
+        $this->lexemeTriggerHandler->expects($this->never())
+            ->method('processLexemes');
 
-        $this->priceListTriggerHandler
-            ->expects($this->never())
-            ->method('addTriggerForPriceList');
-
-        $this->priceListTriggerHandler
-            ->expects($this->never())
-            ->method('sendScheduledTriggers');
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('handlePriceListTopic');
 
         $this->listener->postPersist($importExportResult);
     }
@@ -186,7 +156,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(ProductPriceRepository::class);
         $repo->expects($this->once())
             ->method('getProductsByPriceListAndVersion')
-            ->with($this->shardManager, $priceList, 1, PriceListTriggerHandler::BATCH_SIZE)
+            ->with($this->shardManager, $priceList, 1)
             ->willReturn([$products1, $products2]);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -194,31 +164,28 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('find')
             ->with(PriceList::class, 2)
             ->willReturn($priceList);
-        $em->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(ProductPrice::class)
             ->willReturn($repo);
 
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
 
         $this->lexemeTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggersByLexemes')
+            ->method('processLexemes')
             ->withConsecutive(
                 [$lexemes, $products1],
                 [$lexemes, $products2]
             );
 
         $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('addTriggerForPriceList')
+            ->method('handlePriceListTopic')
             ->withConsecutive(
-                ['oro_pricing.price_lists.cpl.resolve_prices', $priceList, $products1],
-                ['oro_pricing.price_lists.cpl.resolve_prices', $priceList, $products2]
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products1],
+                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products2]
             );
-
-        $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('sendScheduledTriggers');
 
         $this->listener->postPersist($importExportResult);
     }

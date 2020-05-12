@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCategoryPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,7 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryEntityListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritdoc}
@@ -29,7 +30,15 @@ class CategoryEntityListenerTest extends WebTestCase
             LoadProductData::class,
             LoadCategoryProductData::class
         ]);
-        $this->cleanScheduledMessages();
+        $this->enableMessageBuffering();
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get('doctrine')->getManager();
     }
 
     public function testOnUpdateCategoryParentChanged()
@@ -37,16 +46,13 @@ class CategoryEntityListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
         $category->setParentCategory($this->getReference(LoadCategoryData::FIRST_LEVEL));
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
                         $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
                         $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId() => [],
@@ -61,16 +67,13 @@ class CategoryEntityListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
         $category->setCreatedAt(new \DateTime());
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId() => []
                     ]
                 ],
@@ -86,16 +89,13 @@ class CategoryEntityListenerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_5);
         $category->addProduct($product);
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                             $product->getId()
                         ],
@@ -110,23 +110,18 @@ class CategoryEntityListenerTest extends WebTestCase
 
     public function testProductRemove()
     {
-        $this->cleanScheduledMessages();
-
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $product = $category->getProducts()->first();
         $category->removeProduct($product);
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                             $product->getId()
                         ],
@@ -141,17 +136,15 @@ class CategoryEntityListenerTest extends WebTestCase
 
     public function testOnDelete()
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->getEntityManager();
         $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
         $em->flush();
-
-        $this->sendScheduledMessages();
 
         self::assertMessagesSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
                         $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
                         $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId() => [],

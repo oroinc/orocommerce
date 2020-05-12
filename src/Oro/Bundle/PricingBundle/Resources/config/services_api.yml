@@ -258,14 +258,6 @@ services:
         tags:
             - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: 20 }
 
-    oro_pricing.api.batch.send_pricing_scheduled_messages:
-        class: Oro\Bundle\PricingBundle\Api\Processor\BatchSendPricingScheduledMessages
-        arguments:
-            - '@oro_pricing.price_list_relation_trigger_handler'
-            - '@oro_pricing.price_list_trigger_handler'
-        tags:
-            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: '!frontend', priority: -240 }
-
     oro_pricing.api.compute_product_prices:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductPrices
         arguments:

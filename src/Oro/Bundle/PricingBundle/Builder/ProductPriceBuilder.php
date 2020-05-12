@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -89,16 +89,6 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->buildByPriceListWithoutTriggerSend($priceList, $products);
-        $this->flush();
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array|Product[] $products
-     */
-    public function buildByPriceListWithoutTriggerSend(PriceList $priceList, array $products = [])
-    {
         if (!$products) {
             $this->version = time();
         }
@@ -110,13 +100,12 @@ class ProductPriceBuilder
             $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
                 $this->shardManager,
                 $priceList,
-                $this->version,
-                PriceListTriggerHandler::BATCH_SIZE
+                $this->version
             );
         }
 
         foreach ($productsBatches as $batch) {
-            $this->priceListTriggerHandler->addTriggerForPriceList(
+            $this->priceListTriggerHandler->handlePriceListTopic(
                 Topics::RESOLVE_COMBINED_PRICES,
                 $priceList,
                 $batch
@@ -124,11 +113,6 @@ class ProductPriceBuilder
         }
 
         $this->version = null;
-    }
-
-    public function flush()
-    {
-        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**

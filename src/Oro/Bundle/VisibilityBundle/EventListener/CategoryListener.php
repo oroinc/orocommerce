@@ -3,51 +3,52 @@
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
-use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class CategoryListener
+/**
+ * Sends MQ message to change product category when an existing product relations is changed.
+ */
+class CategoryListener implements OptionalListenerInterface
 {
-    /**
-     * @var CategoryMessageHandler
-     */
-    protected $categoryMessageHandler;
+    /** @var MessageProducerInterface */
+    private $messageProducer;
+
+    /** @var bool */
+    private $enabled = true;
 
     /**
-     * @var string
+     * @param MessageProducerInterface $messageProducer
      */
-    protected $topic = '';
-
-    /**
-     * @param ProductMessageHandler $productMessageHandler
-     */
-    public function __construct(ProductMessageHandler $productMessageHandler)
+    public function __construct(MessageProducerInterface $messageProducer)
     {
-        $this->productMessageHandler = $productMessageHandler;
+        $this->messageProducer = $messageProducer;
     }
 
     /**
-     * @param $topic
+     * {@inheritdoc}
      */
-    public function setTopic($topic)
+    public function setEnabled($enabled = true)
     {
-        $this->topic = (string)$topic;
+        $this->enabled = $enabled;
     }
 
     /**
      * @param ProductsChangeRelationEvent $event
      */
-    public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
+    public function onProductsChangeRelation(ProductsChangeRelationEvent $event): void
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $products = $event->getProducts();
         foreach ($products as $product) {
             // Message should be send only for already existing products
             // New products has own queue message for visibility calculation
             if ($product->getId()) {
-                $this->productMessageHandler->addProductMessageToSchedule(
-                    $this->topic,
-                    $product
-                );
+                $this->messageProducer->send(Topics::CHANGE_PRODUCT_CATEGORY, ['id' => $product->getId()]);
             }
         }
     }

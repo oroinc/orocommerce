@@ -2,67 +2,132 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var VisibilityMessageHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $visibilityChangeMessageHandler;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    /**
-     * @var ProductVisibilityListener
-     */
-    protected $visibilityListener;
+    /** @var ProductVisibilityListener */
+    private $visibilityListener;
 
     protected function setUp()
     {
-        $this->visibilityChangeMessageHandler = $this->getMockBuilder(VisibilityMessageHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
-        $this->visibilityListener = new ProductVisibilityListener($this->visibilityChangeMessageHandler);
-        $this->visibilityListener->setTopic('oro_visibility.visibility.resolve_product_visibility');
+        $this->visibilityListener = new ProductVisibilityListener($this->messageProducer);
     }
 
     public function testPostPersist()
     {
-        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
-        $visibility = $this->createMock(VisibilityInterface::class);
+        $entityId = 123;
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
 
-        $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addMessageToSchedule')
-            ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
-        $this->visibilityListener->postPersist($visibility);
+        $this->messageProducer->expects($this->once())
+            ->method('send')
+            ->with(
+                Topics::RESOLVE_PRODUCT_VISIBILITY,
+                ['entity_class_name' => ProductVisibility::class, 'id' => $entityId]
+            );
+
+        $this->visibilityListener->postPersist($entity);
     }
 
     public function testPreUpdate()
     {
-        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
-        $visibility = $this->createMock(VisibilityInterface::class);
+        $entityId = 123;
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
 
-        $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addMessageToSchedule')
-            ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
+        $this->messageProducer->expects($this->once())
+            ->method('send')
+            ->with(
+                Topics::RESOLVE_PRODUCT_VISIBILITY,
+                ['entity_class_name' => ProductVisibility::class, 'id' => $entityId]
+            );
 
-        $this->visibilityListener->preUpdate($visibility);
+        $this->visibilityListener->preUpdate($entity);
     }
 
     public function testPreRemove()
     {
-        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
-        $visibility = $this->createMock(VisibilityInterface::class);
+        $entityId = 123;
+        $targetEntityId = 234;
+        $scopeId = 345;
+        /** @var Product $targetEntity */
+        $targetEntity = $this->getEntity(Product::class, ['id' => $targetEntityId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => $entityId]);
+        $entity->setTargetEntity($targetEntity);
+        $entity->setScope($scope);
 
-        $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addMessageToSchedule')
-            ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
+        $this->messageProducer->expects($this->once())
+            ->method('send')
+            ->with(
+                Topics::RESOLVE_PRODUCT_VISIBILITY,
+                [
+                    'entity_class_name' => ProductVisibility::class,
+                    'target_class_name' => Product::class,
+                    'target_id'         => $targetEntityId,
+                    'scope_id'          => $scopeId
+                ]
+            );
 
-        $this->visibilityListener->preRemove($visibility);
+        $this->visibilityListener->preRemove($entity);
+    }
+
+    public function testPostPersistWhenDisabled()
+    {
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->visibilityListener->setEnabled(false);
+        $this->visibilityListener->postPersist($entity);
+    }
+
+    public function testPreUpdateWhenDisabled()
+    {
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->visibilityListener->setEnabled(false);
+        $this->visibilityListener->preUpdate($entity);
+    }
+
+    public function testPreRemoveWhenDisabled()
+    {
+        /** @var Product $targetEntity */
+        $targetEntity = $this->getEntity(Product::class, ['id' => 234]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => 345]);
+        /** @var VisibilityInterface $entity */
+        $entity = $this->getEntity(ProductVisibility::class, ['id' => 123]);
+        $entity->setTargetEntity($targetEntity);
+        $entity->setScope($scope);
+
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->visibilityListener->setEnabled(false);
+        $this->visibilityListener->preRemove($entity);
     }
 }

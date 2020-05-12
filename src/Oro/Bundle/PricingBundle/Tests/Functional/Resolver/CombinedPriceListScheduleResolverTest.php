@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -12,14 +12,11 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductAdditionalPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -28,27 +25,13 @@ use Oro\Component\MessageQueue\Client\Message;
 
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
-    /**
-     * @var CombinedPriceListScheduleResolver
-     */
-    protected $resolver;
+    /** @var CombinedPriceListScheduleResolver */
+    private $resolver;
 
-    /**
-     * @var CombinedProductPriceRepository
-     */
-    protected $priceRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $manager;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * {@inheritdoc}
@@ -58,19 +41,15 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadCombinedPriceLists::class,
-                LoadCombinedPriceListsActivationRules::class,
-                LoadCombinedProductPrices::class,
-                LoadCombinedProductAdditionalPrices::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedPriceLists::class,
+            LoadCombinedPriceListsActivationRules::class,
+            LoadCombinedProductPrices::class,
+            LoadCombinedProductAdditionalPrices::class
+        ]);
+
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->priceRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
     }
 
     /**
@@ -199,7 +178,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
      * @param string $modifyStr
      * @return \DateTime
      */
-    protected function createDateTime($modifyStr)
+    private function createDateTime($modifyStr)
     {
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->modify($modifyStr);
@@ -208,28 +187,16 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     }
 
     /**
-     * @return EntityManagerInterface
-     */
-    protected function getManager()
-    {
-        if (!$this->manager) {
-            $this->manager = $this->getContainer()->get('doctrine')
-                ->getManagerForClass(CombinedPriceListActivationRule::class);
-        }
-
-        return $this->manager;
-    }
-
-    /**
-     * @param $entityName
+     * @param string $entityName
      * @param CombinedPriceList $fullCPL
      * @param CombinedPriceList $currentCPL
      * @return BaseCombinedPriceListRelation[]
      */
-    protected function getInvalidRelations($entityName, CombinedPriceList $fullCPL, CombinedPriceList $currentCPL)
+    private function getInvalidRelations($entityName, CombinedPriceList $fullCPL, CombinedPriceList $currentCPL)
     {
-        /** @var QueryBuilder $qb */
-        $qb = $this->getManager()->createQueryBuilder();
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceListActivationRule::class);
+        $qb = $em->createQueryBuilder();
         $qb->select('r')
             ->from($entityName, 'r')
             ->where('r.fullChainPriceList = :fullCPl AND r.priceList != :currentCPL')
@@ -242,7 +209,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     /**
      * @param array $cplConfig
      */
-    protected function setConfigCPL(array $cplConfig)
+    private function setConfigCPL(array $cplConfig)
     {
         $actualCPLConfigKey = Configuration::getConfigKeyToPriceList();
         $fullCPLConfigKey = Configuration::getConfigKeyToFullPriceList();
@@ -263,7 +230,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     /**
      * @param array $cplConfig
      */
-    protected function checkConfigCPL(array $cplConfig)
+    private function checkConfigCPL(array $cplConfig)
     {
         $this->configManager->reload();
         $fullCPLConfigKey = Configuration::getConfigKeyToFullPriceList();

@@ -8,23 +8,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\FieldsProviderInterface;
 
 /**
- * Abstract class for listeners which watch product changes and execute price recalculation.
+ * The base class for listeners which watch product changes and execute price recalculation.
  */
 abstract class AbstractRuleEntityListener
 {
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
+    /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @var FieldsProviderInterface
-     */
+    /** @var FieldsProviderInterface */
     protected $fieldsProvider;
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $registry;
 
     /**
@@ -63,7 +57,7 @@ abstract class AbstractRuleEntityListener
                 $updatedFields,
                 $relationId
             );
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, [$product]);
+            $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, [$product]);
         }
     }
 
@@ -73,9 +67,12 @@ abstract class AbstractRuleEntityListener
      */
     protected function recalculateByEntity(Product $product = null, $relationId = null)
     {
-        $lexemes = $this->priceRuleLexemeTriggerHandler
-            ->findEntityLexemes($this->getEntityClassName(), [], $relationId);
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product ? [$product] : []);
+        $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+            $this->getEntityClassName(),
+            [],
+            $relationId
+        );
+        $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, $product ? [$product] : []);
     }
 
     /**

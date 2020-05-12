@@ -2,47 +2,36 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Psr\Log\LoggerInterface;
+use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 
 /**
- * Resolves visibility by Category.
+ * Resolves visibility by a category.
  */
-class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
+class CategoryVisibilityProcessor extends AbstractVisibilityProcessor implements TopicSubscriberInterface
 {
-
     /**
-     * @var ProductMessageHandler
+     * {@inheritDoc}
      */
-    protected $productMessageHandler;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageFactoryInterface $messageFactory
-     * @param LoggerInterface $logger
-     * @param CacheBuilderInterface $cacheBuilder
-     * @param ProductMessageHandler $productMessageHandler
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        MessageFactoryInterface $messageFactory,
-        LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder,
-        ProductMessageHandler $productMessageHandler
-    ) {
-        parent::__construct($registry, $messageFactory, $logger, $cacheBuilder);
-        $this->productMessageHandler = $productMessageHandler;
+    public static function getSubscribedTopics()
+    {
+        return [Topics::CHANGE_CATEGORY_VISIBILITY];
     }
 
     /**
-     * @param object|CategoryVisibility $entity
+     * {@inheritDoc}
      */
-    protected function resolveVisibilityByEntity($entity)
+    protected function getResolvedVisibilityClassName(): string
     {
-        $this->cacheBuilder->resolveVisibilitySettings($entity);
+        return CategoryVisibilityResolved::class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resolveVisibility(array $body): void
+    {
+        $this->cacheBuilder->resolveVisibilitySettings($this->getVisibility($body));
     }
 }

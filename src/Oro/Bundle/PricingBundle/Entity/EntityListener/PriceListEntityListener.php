@@ -18,24 +18,16 @@ class PriceListEntityListener
 {
     const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
 
-    /**
-     * @var PriceListRelationTriggerHandler
-     */
+    /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;
 
-    /**
-     * @var Cache
-     */
+    /** @var Cache */
     protected $cache;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
+    /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
     /**
@@ -67,8 +59,10 @@ class PriceListEntityListener
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULE)) {
             $this->clearAssignmentRuleCache($priceList);
             $priceList->setActual(false);
-            $this->priceListTriggerHandler
-                ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            $this->priceListTriggerHandler->handlePriceListTopic(
+                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                $priceList
+            );
 
             $this->scheduleDependentPriceListsUpdate($priceList);
         }
@@ -99,8 +93,10 @@ class PriceListEntityListener
     {
         if ($priceList->getProductAssignmentRule()) {
             $priceList->setActual(false);
-            $this->priceListTriggerHandler
-                ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            $this->priceListTriggerHandler->handlePriceListTopic(
+                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                $priceList
+            );
         }
     }
 
@@ -143,7 +139,7 @@ class PriceListEntityListener
                     $this->clearAssignmentRuleCache($dependentPriceList);
                 }
             }
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes);
+            $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes);
 
             foreach ($dependentPriceLists as $dependentPriceList) {
                 $this->scheduleDependentPriceListsUpdate($dependentPriceList);
