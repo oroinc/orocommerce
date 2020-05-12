@@ -7,11 +7,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\NotificationBundle\Entity\EmailNotification;
-use Oro\Bundle\NotificationBundle\Entity\Event;
 use Oro\Bundle\NotificationBundle\Entity\RecipientList;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
-use Oro\Bundle\WorkflowBundle\Migrations\Data\ORM\LoadWorkflowNotificationEvents;
+use Oro\Bundle\WorkflowBundle\Event\WorkflowEvents;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -60,7 +59,6 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $event = $this->getEvent($manager);
         $workflow = $this->getWorkflowDefinition($manager);
 
         foreach (self::$notifications as $emailTemplateName => $transitionName) {
@@ -73,7 +71,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
 
             $entity = new EmailNotification();
             $entity->setEntityName(Quote::class)
-                ->setEvent($event)
+                ->setEventName(WorkflowEvents::NOTIFICATION_TRANSIT_EVENT)
                 ->setTemplate($emailTemplate)
                 ->setRecipientList($recipientList)
                 ->setWorkflowDefinition($workflow)
@@ -99,25 +97,6 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         }
 
         return $workflow;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return object|Event
-     */
-    private function getEvent(ObjectManager $manager)
-    {
-        $event = $manager->getRepository(Event::class)
-            ->findOneBy(['name' => LoadWorkflowNotificationEvents::TRANSIT_EVENT]);
-
-        if (!$event) {
-            throw new \RuntimeException(
-                sprintf('Required notification event "%s" not found', LoadWorkflowNotificationEvents::TRANSIT_EVENT)
-            );
-        }
-
-        return $event;
     }
 
     /**
