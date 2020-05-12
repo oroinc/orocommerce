@@ -171,7 +171,8 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     {
         $key = $this->getCacheKey($routeName, $routeParameters);
         $this->usedKeys[$key] = true;
-        if (!$this->localCache->contains($key)) {
+        $storage = $this->localCache->fetch($key);
+        if ($storage === false) {
             $storage = $this->persistentCache->fetch($key);
 
             if (!$storage instanceof UrlDataStorage) {
@@ -181,6 +182,6 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
             $this->localCache->save($key, $storage);
         }
 
-        return $this->localCache->fetch($key);
+        return $storage;
     }
 }

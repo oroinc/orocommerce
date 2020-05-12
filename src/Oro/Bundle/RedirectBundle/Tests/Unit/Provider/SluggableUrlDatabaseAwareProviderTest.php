@@ -140,10 +140,6 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $params = ['id' => 10];
 
         $this->cache->expects($this->once())
-            ->method('has')
-            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY)
-            ->willReturn(true);
-        $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
             ->willReturn(json_encode([$name => true]));
@@ -214,12 +210,9 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         $this->cache->expects($this->once())
-            ->method('has')
-            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY)
-            ->willReturn(false);
-        $this->cache->expects($this->never())
             ->method('getUrl')
-            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, []);
+            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
+            ->willReturn(false);
 
         $this->cacheProvider->expects($this->exactly(2))
             ->method('getUrl')
@@ -279,10 +272,6 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
 
         $localizationId = 1;
 
-        $this->cache->expects($this->once())
-            ->method('has')
-            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY)
-            ->willReturn(true);
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])

@@ -42,16 +42,14 @@ class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
     {
         $url = false;
 
-        if ($this->cache->has($routeName, $routeParameters, $localizationId)) {
-            // For context aware URLs slug may be used as item part
-            if ($this->contextUrl && $slug = $this->cache->getSlug($routeName, $routeParameters, $localizationId)) {
-                $url = $slug;
-            }
+        // For context aware URLs slug may be used as item part
+        if ($this->contextUrl && $slug = $this->cache->getSlug($routeName, $routeParameters, $localizationId)) {
+            $url = $slug;
+        }
 
-            // For URLs without context only full URL is acceptable
-            if (!$url) {
-                $url = $this->cache->getUrl($routeName, $routeParameters, $localizationId);
-            }
+        // For URLs without context only full URL is acceptable
+        if (!$url) {
+            $url = $this->cache->getUrl($routeName, $routeParameters, $localizationId);
         }
 
         return $url;

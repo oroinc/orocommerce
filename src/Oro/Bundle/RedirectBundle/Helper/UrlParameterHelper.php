@@ -23,7 +23,7 @@ class UrlParameterHelper
     {
         array_walk_recursive(
             $data,
-            function (&$value) {
+            static function (&$value) {
                 if (is_numeric($value)) {
                     // if a string and numeric, will return int or float
                     $value += 0;
