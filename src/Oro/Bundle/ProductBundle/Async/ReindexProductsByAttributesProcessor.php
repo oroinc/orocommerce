@@ -18,10 +18,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Trigger update of search index for products with specified attribute
- *
- * @deprecated use {@see ReindexProductsByAttributesProcessor} instead
  */
-class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ReindexProductsByAttributesProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /** @var JobRunner */
     private $jobRunner;
@@ -60,15 +58,15 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
     {
         try {
             $body = JSON::decode($message->getBody());
-            if (!isset($body['attributeId'])) {
+            if (!isset($body['attributeIds'])) {
                 throw new InvalidArgumentException();
             }
-            $attributeId = $body['attributeId'];
+            $attributeIds = $body['attributeIds'];
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
-                Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE,
-                function () use ($attributeId) {
-                    return $this->triggerReindex($attributeId);
+                Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES,
+                function () use ($attributeIds) {
+                    return $this->triggerReindex($attributeIds);
                 }
             );
 
@@ -78,7 +76,7 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
                 ]
             );
 
@@ -91,22 +89,22 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE];
+        return [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES];
     }
 
     /**
-     * Trigger update search index only for product with attribute
+     * Trigger update search index only for products with off this attributes
      *
-     * @param string $attributeId
+     * @param array $attributeIds
      * @return bool
      */
-    private function triggerReindex($attributeId)
+    private function triggerReindex(array $attributeIds)
     {
         try {
             /** @var ProductRepository $repository */
             $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
 
-            $productIds = $repository->getProductIdsByAttributeId($attributeId);
+            $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
                 $this->dispatcher->dispatch(
                     ReindexationRequestEvent::EVENT_NAME,
@@ -120,7 +118,7 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
                 'Unexpected exception occurred during triggering update of search index ',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
                 ]
             );
 
