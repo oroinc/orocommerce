@@ -77,7 +77,7 @@ class UrlItemsProviderTest extends WebTestCase
             $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
-        $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
+        static::assertContainsEquals($expectedUrlItem, $urlItems);
     }
 
     public function testItYieldsDirectUrls()
@@ -100,6 +100,6 @@ class UrlItemsProviderTest extends WebTestCase
             $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
-        $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
+        static::assertContainsEquals($expectedUrlItem, $urlItems);
     }
 }

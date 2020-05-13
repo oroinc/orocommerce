@@ -53,12 +53,13 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $taxValue = new TaxValue();
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->once())->method('findOneBy')
+        $repository->expects(static::once())
+            ->method('findOneBy')
             ->with(
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->contains($class),
-                    $this->contains($id)
+                static::logicalAnd(
+                    static::isType('array'),
+                    static::containsEqual($class),
+                    static::containsEqual($id)
                 )
             )
             ->willReturn($taxValue);
@@ -76,12 +77,13 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $id = 1;
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->once())->method('findOneBy')
+        $repository->expects(static::once())
+            ->method('findOneBy')
             ->with(
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->contains($class),
-                    $this->contains($id)
+                static::logicalAnd(
+                    static::isType('array'),
+                    static::containsEqual($class),
+                    static::containsEqual($id)
                 )
             )
             ->willReturn(null);
@@ -214,13 +216,13 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 
         $repository = $this->createMock(ObjectRepository::class);
 
-        $repository->expects($this->exactly(2))
+        $repository->expects(static::exactly(2))
             ->method('findOneBy')
             ->with(
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->contains($class),
-                    $this->contains($id)
+                static::logicalAnd(
+                    static::isType('array'),
+                    static::containsEqual($class),
+                    static::containsEqual($id)
                 )
             )
             ->willReturnOnConsecutiveCalls($cachedTaxValue, $notCachedTaxValue);

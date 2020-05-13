@@ -69,7 +69,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         $this->configurePaymentMethodProvider();
         $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
         $options = $form->getConfig()->getOptions();
-        $this->assertContains('data_class', $options);
+        static::assertContainsEquals('data_class', $options);
     }
 
     /**
