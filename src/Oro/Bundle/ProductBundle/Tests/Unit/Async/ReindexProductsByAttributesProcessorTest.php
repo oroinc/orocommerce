@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributeProcessor;
+use Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -18,7 +18,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCase
+class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -40,7 +40,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
     /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
-    /** @var ReindexProductsByAttributeProcessor */
+    /** @var ReindexProductsByAttributesProcessor */
     private $processor;
 
     protected function setUp()
@@ -52,7 +52,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
         $this->session = $this->createMock(SessionInterface::class);
         $this->repository = $this->createMock(ProductRepository::class);
 
-        $this->processor = new ReindexProductsByAttributeProcessor(
+        $this->processor = new ReindexProductsByAttributesProcessor(
             $this->jobRunner,
             $this->registry,
             $this->dispatcher,
@@ -63,7 +63,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE],
+            [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES],
             $this->processor->getSubscribedTopics()
         );
     }
@@ -83,7 +83,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
 
     public function testProcessWhenUnexpectedExceptionOccurred()
     {
-        $messageBody = ['attributeId' => 1];
+        $messageBody = ['attributeIds' => [1, 2]];
         $message = $this->getMessage($messageBody);
 
         $this->jobRunner->expects($this->once())
@@ -106,15 +106,15 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
      */
     public function testProcess($productIds, $dispatchExpected)
     {
-        $attributeId = 1;
-        $messageBody = ['attributeId' => $attributeId];
+        $attributeIds = [1, 2];
+        $messageBody = ['attributeIds' => $attributeIds];
         $message = $this->getMessage($messageBody);
 
         $this->mockRunUniqueJob();
 
         $this->repository->expects($this->once())
-            ->method('getProductIdsByAttributeId')
-            ->with($attributeId)
+            ->method('getProductIdsByAttributesId')
+            ->with($attributeIds)
             ->willReturn($productIds);
 
         /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
@@ -141,15 +141,15 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
 
     public function testProcessWithExceptionDuringReindexEventDispatching()
     {
-        $attributeId = 1;
-        $messageBody = ['attributeId' => $attributeId];
+        $attributeIds = [1, 2];
+        $messageBody = ['attributeIds' => $attributeIds];
         $message = $this->getMessage($messageBody);
 
         $this->mockRunUniqueJob();
 
         $this->repository->expects($this->once())
-            ->method('getProductIdsByAttributeId')
-            ->with($attributeId)
+            ->method('getProductIdsByAttributesId')
+            ->with($attributeIds)
             ->willReturn([1]);
 
         /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
@@ -174,7 +174,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
                 'Unexpected exception occurred during triggering update of search index ',
                 [
                     'exception' => $exception,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
                 ]
             );
 
@@ -226,16 +226,16 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCas
             [
                 'id' => 2,
                 'rootJob' => $job,
-                'name' =>  Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                'name' =>  Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
             ]
         );
 
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
-            ->with('msg-1', Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE)
+            ->with('msg-1', Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES)
             ->willReturnCallback(function ($jobId, $name, $callback) use ($childJob) {
                 $this->assertEquals('msg-1', $jobId);
-                $this->assertEquals(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE, $name);
+                $this->assertEquals(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, $name);
 
                 return $callback($this->jobRunner, $childJob);
             });

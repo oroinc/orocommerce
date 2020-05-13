@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Layout\DataProvider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -73,6 +76,72 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush(new PostFlushConfigEvent([new FieldConfigModel()], $this->configManager));
     }
 
+    public function testPreFlushAfterImportAttribute()
+    {
+        $fieldConfig = $this->createMock(FieldConfigId::class);
+        $fieldConfig->expects($this->once())->method('getFieldName')->willReturn('fieldName');
+        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects($this->once())
+            ->method('get')
+            ->with('request_search_indexation')
+            ->willReturn(true);
+
+        $configs = ['attribute' => $config];
+
+        $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
+    }
+
+    public function testPreFlushAfterImportAttributeWrongClass()
+    {
+        $fieldConfig = $this->createMock(\stdClass::class);
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects($this->never())
+            ->method('get');
+
+        $configs = ['attribute' => $config];
+
+        $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
+    }
+
+    public function testPreFlushAfterImportAttributeNotProduct()
+    {
+        $fieldConfig = $this->createMock(FieldConfigId::class);
+        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(\stdClass::class);
+        $fieldConfig->expects($this->never())->method('getFieldName');
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects($this->never())
+            ->method('get');
+
+        $configs = ['attribute' => $config];
+
+        $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
+    }
+
+    public function testPreFlushAfterImportAttributeWithoutAttributeMarker()
+    {
+        $fieldConfig = $this->createMock(FieldConfigId::class);
+        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects($this->never())->method('getFieldName');
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects($this->once())
+            ->method('get')
+            ->with('request_search_indexation')
+            ->willReturn(false);
+
+        $configs = ['attribute' => $config];
+
+        $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
+    }
+
     /**
      * @dataProvider postFlushDataProvider
      *
@@ -108,7 +177,60 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->producer->expects($expected)
             ->method('send')
-            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE, ['attributeId' => 1]);
+            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => [1]]);
+
+        $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
+    }
+
+    /**
+     * @dataProvider postFlushDataProvider
+     *
+     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected
+     * @param array $extendConfigValues
+     * @param array $extendChangeSet
+     * @param array $attributeConfigValues
+     * @param array $attributeChangeSet
+     * @param array $frontendConfigValues
+     * @param array $frontendChangeSet
+     */
+    public function testPostFlushAfterImport(
+        \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expected,
+        array $extendConfigValues = [],
+        array $extendChangeSet = [],
+        array $attributeConfigValues = [],
+        array $attributeChangeSet = [],
+        array $frontendConfigValues = [],
+        array $frontendChangeSet = []
+    ): void {
+        $fieldConfig = $this->createMock(FieldConfigId::class);
+        $fieldConfig->expects($this->once())->method('getFieldName')->willReturn('test_field');
+        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects($this->once())
+            ->method('get')
+            ->with('request_search_indexation')
+            ->willReturn(true);
+
+        $configs = ['attribute' => $config];
+
+        $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
+
+        $this->setUpConfigManager(
+            $extendConfigValues,
+            $extendChangeSet,
+            $attributeConfigValues,
+            $attributeChangeSet,
+            $frontendConfigValues,
+            $frontendChangeSet
+        );
+
+        $model = $this->getFieldConfigModel(Product::class);
+
+        $this->producer->expects($expected)
+            ->method('send')
+            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => [1]]);
 
         $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
     }

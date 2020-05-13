@@ -1435,6 +1435,7 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
+            - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: preFlush }
 
     oro_product.event_listener.attribute_family_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeFamilyChangesListener'
@@ -1597,6 +1598,16 @@ services:
             - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attribute' }
+
+    oro_product.async.reindex_products_by_attributes_processor:
+        class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
+            - '@event_dispatcher'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attributes' }
 
     oro_product.config.event_listener.display_simple_variations_listener:
         class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener
