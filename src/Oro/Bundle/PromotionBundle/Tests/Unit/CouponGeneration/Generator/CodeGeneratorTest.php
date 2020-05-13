@@ -25,7 +25,7 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     public function testGenerateOne(CodeGenerationOptions $options, string $expectedPattern)
     {
-        $this->assertRegExp($expectedPattern, $this->generator->generateOne($options));
+        $this->assertMatchesRegularExpression($expectedPattern, $this->generator->generateOne($options));
     }
 
     public function testGenerateUnique()
@@ -37,7 +37,7 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
         $codes = $this->generator->generateUnique($options, 20);
         $this->assertCount(20, $codes);
         foreach ($codes as $index => $code) {
-            $this->assertRegExp('/^[a-zA-Z]{5}$/', $code);
+            $this->assertMatchesRegularExpression('/^[a-zA-Z]{5}$/', $code);
         }
 
         $options = (new CodeGenerationOptions())
@@ -48,7 +48,7 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(100, $codes);
 
         foreach ($codes as $index => $code) {
-            $this->assertRegExp('/^[0-9]{2}$/', $code);
+            $this->assertMatchesRegularExpression('/^[0-9]{2}$/', $code);
         }
     }
 

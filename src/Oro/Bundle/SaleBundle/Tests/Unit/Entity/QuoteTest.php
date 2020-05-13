@@ -306,7 +306,7 @@ class QuoteTest extends AbstractTest
      */
     private static function assertIsUUID(string $actual): void
     {
-        static::assertRegExp(
+        static::assertMatchesRegularExpression(
             '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $actual
         );
