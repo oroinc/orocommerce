@@ -9,6 +9,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 
 class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,48 +20,65 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
     const FILENAME = 'file.jpg';
     const ATTACHMENT_DIR = 'attachment';
 
-    /**
-     * @var WatermarkImageFilterProvider
-     */
+    /** @var WatermarkImageFilterProvider */
     protected $provider;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager|Stub */
     protected $configManager;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper|MockObject */
     protected $doctrineHelper;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->prophesize(ConfigManager::class);
-        $this->doctrineHelper = $this->prophesize(DoctrineHelper::class);
+        $this->configManager = $this->createStub(ConfigManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->provider = new WatermarkImageFilterProvider(
-            $this->configManager->reveal(),
-            $this->doctrineHelper->reveal(),
+            $this->configManager,
+            $this->doctrineHelper,
             self::ATTACHMENT_DIR
         );
     }
 
     public function testGetFilterConfig()
     {
-        list($fileConfigKey, $sizeConfigKey, $positionConfigKey) = $this->prepareKeys();
-
-        $this->configManager->get($fileConfigKey)->willReturn(self::IMAGE_ID);
-        $this->configManager->get($sizeConfigKey)->willReturn(self::SIZE);
-        $this->configManager->get($positionConfigKey)->willReturn(self::POSITION);
+        $this->configManager
+            ->method('get')
+            ->willReturnMap([
+                [
+                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_FILE,
+                    false,
+                    false,
+                    null,
+                    self::IMAGE_ID
+                ],
+                [
+                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_SIZE,
+                    false,
+                    false,
+                    null,
+                    self::SIZE
+                ],
+                [
+                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_POSITION,
+                    false,
+                    false,
+                    null,
+                    self::POSITION
+                ]
+            ]);
 
         $image = new File();
         $image->setFilename(self::FILENAME);
 
-        $repo = $this->prophesize(EntityRepository::class);
-        $repo->find(self::IMAGE_ID)->willReturn($image);
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->expects(static::once())->method('find')->with(self::IMAGE_ID)->willReturn($image);
 
-        $this->doctrineHelper->getEntityRepositoryForClass(File::class)->willReturn($repo->reveal());
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityRepositoryForClass')
+            ->with(File::class)
+            ->willReturn($repo);
 
         $expectedConfig = [
             'filters' => [
@@ -71,47 +90,34 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->assertEquals($expectedConfig, $this->provider->getFilterConfig());
+        static::assertEquals($expectedConfig, $this->provider->getFilterConfig());
     }
 
     public function testGetFilterConfigNoValue()
     {
-        list($fileConfigKey, $sizeConfigKey, $positionConfigKey) = $this->prepareKeys();
+        $this->configManager->method('get')->willReturn(null);
+        $this->doctrineHelper->expects(static::never())->method('getEntityRepositoryForClass');
 
-        $this->configManager->get($fileConfigKey)->willReturn(null);
-        $this->configManager->get($sizeConfigKey)->willReturn(null);
-        $this->configManager->get($positionConfigKey)->willReturn(null);
-        $this->doctrineHelper->getEntityRepositoryForClass(File::class)->shouldNotBeCalled();
-
-        $this->assertEquals([], $this->provider->getFilterConfig());
+        static::assertEquals([], $this->provider->getFilterConfig());
     }
 
     public function testIsApplicable()
     {
-        $dimension = $this->prophesize(ThemeImageTypeDimension::class);
-        $dimension
-            ->hasOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
+        $dimension = $this->createMock(ThemeImageTypeDimension::class);
+
+        $dimension->expects(static::exactly(2))
+            ->method('hasOption')
+            ->with(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
+            ->willReturnOnConsecutiveCalls(
+                true,
+                false
+            );
+        $dimension->expects(static::once())
+            ->method('getOption')
+            ->with(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
             ->willReturn(true);
-        $dimension
-            ->getOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
-            ->willReturn(true);
-        $this->assertTrue($this->provider->isApplicable($dimension->reveal()));
 
-        $dimension
-            ->hasOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
-            ->willReturn(false);
-        $this->assertFalse($this->provider->isApplicable($dimension->reveal()));
-    }
-
-    /**
-     * @return array
-     */
-    protected function prepareKeys()
-    {
-        $fileConfigKey = Configuration::ROOT_NODE.'.'.Configuration::PRODUCT_IMAGE_WATERMARK_FILE;
-        $sizeConfigKey = Configuration::ROOT_NODE.'.'.Configuration::PRODUCT_IMAGE_WATERMARK_SIZE;
-        $positionConfigKey = Configuration::ROOT_NODE.'.'.Configuration::PRODUCT_IMAGE_WATERMARK_POSITION;
-
-        return [$fileConfigKey, $sizeConfigKey, $positionConfigKey];
+        static::assertTrue($this->provider->isApplicable($dimension));
+        static::assertFalse($this->provider->isApplicable($dimension));
     }
 }

@@ -15,6 +15,7 @@ use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueu
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,24 +33,16 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
     const CONTENT_ORIGINAL = 'content_original';
     const CONTENT_LARGE = 'content_large';
 
-    /**
-     * @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityRepository|MockObject */
     protected $imageRepository;
 
-    /**
-     * @var ProductImagesDimensionsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductImagesDimensionsProvider|MockObject */
     protected $imageDimensionsProvider;
 
-    /**
-     * @var ImageResizeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ImageResizeManagerInterface|MockObject */
     protected $imageResizeManager;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $validData = [
         'productImageId' => self::PRODUCT_IMAGE_ID,
         'force' => self::FORCE_OPTION
@@ -87,14 +80,6 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return object|SessionInterface
-     */
-    protected function prepareSession()
-    {
-        return $this->prophesize(SessionInterface::class)->reveal();
-    }
-
-    /**
      * @param array|null $dimensions
      * @return DbalMessage
      */
@@ -112,7 +97,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(MessageQueueInvalidArgumentException::class);
         $this->processor->process(
             $this->prepareMessage('not valid json'),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         );
     }
 
@@ -121,7 +106,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(MessageQueueInvalidArgumentException::class);
         $this->processor->process(
             $this->prepareMessage(JSON::encode(['abc'])),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         );
     }
 
@@ -132,29 +117,33 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(self::PRODUCT_IMAGE_ID)
             ->willReturn(null);
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+        static::assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
             $this->prepareValidMessage(),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         ));
     }
 
     public function testProcessProductImageFileNotFound()
     {
-        $this->imageRepository->expects($this->once())
+        $image = $this->getMockBuilder(ProductImage::class)
+            ->addMethods(['getImage'])
+            ->getMock();
+
+        $this->imageRepository->expects(static::once())
             ->method('find')
             ->with(self::PRODUCT_IMAGE_ID)
-            ->willReturn($this->prophesize(ProductImage::class)->reveal());
+            ->willReturn($image);
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
+        static::assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
             $this->prepareValidMessage(),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         ));
     }
 
     public function testResizeValidDataWithoutPassedDimensions()
     {
         $image = $this->prepareImageMock();
-        $this->imageResizeManager->expects($this->exactly(3))
+        $this->imageResizeManager->expects(static::exactly(3))
             ->method('applyFilter')
             ->withConsecutive(
                 [$image, self::ORIGINAL, false],
@@ -162,16 +151,16 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
                 [$image, self::SMALL, false]
             );
 
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
+        static::assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
             $this->prepareValidMessage(),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         ));
     }
 
     public function testResizeValidDataWithPassedNullDimensions()
     {
         $image = $this->prepareImageMock();
-        $this->imageResizeManager->expects($this->exactly(3))
+        $this->imageResizeManager->expects(static::exactly(3))
             ->method('applyFilter')
             ->withConsecutive(
                 [$image, self::ORIGINAL, false],
@@ -183,28 +172,28 @@ class ImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $data['dimensions'] = null;
         $this->processor->process(
             $this->prepareMessage(JSON::encode($data)),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         );
     }
 
     public function testResizeValidDataWithPassedDimensions()
     {
         $image = $this->prepareImageMock();
-        $this->imageResizeManager->expects($this->exactly(2))
+        $this->imageResizeManager->expects(static::exactly(2))
             ->method('applyFilter')
             ->withConsecutive(
                 [$image, self::ORIGINAL, false],
                 [$image, self::SMALL, false]
             );
 
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
+        static::assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
             $this->prepareValidMessage([self::ORIGINAL, self::SMALL]),
-            $this->prepareSession()
+            $this->createMock(SessionInterface::class)
         ));
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function prepareImageMock()
     {
