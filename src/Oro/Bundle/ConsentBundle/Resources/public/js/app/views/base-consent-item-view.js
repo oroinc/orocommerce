@@ -101,10 +101,17 @@ define(function(require) {
                 }
             }));
 
-            this.subview('popup')
-                .once('frontend-dialog:accept', _.bind(this.changeCheckboxState, this, true))
-                .once('frontend-dialog:cancel frontend-dialog:close', _.bind(this.changeCheckboxState, this, false))
-                .once('renderComplete', _.bind(this.onRenderComplete, this));
+            const handleFirst = state => {
+                this.changeCheckboxState(state);
+                this.stopListening(this.subview('popup'));
+            };
+            this.listenToOnce(this.subview('popup'), {
+                'frontend-dialog:accept': handleFirst.bind(void 0, true),
+                'frontend-dialog:cancel': handleFirst.bind(void 0, false),
+                'frontend-dialog:close': handleFirst.bind(void 0, false),
+                'dispose': handleFirst.bind(void 0, false),
+                'renderComplete': this.onRenderComplete
+            });
         },
 
         /**
