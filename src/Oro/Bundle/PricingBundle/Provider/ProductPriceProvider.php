@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
@@ -100,15 +99,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
     ): array {
-        return $this->getMemoryCacheProvider()->get(
-            [
-                'product_price_criteria' => array_values($productPriceCriteria),
-                'product_price_scope_criteria' => $scopeCriteria,
-            ],
-            function () use ($productPriceCriteria, $scopeCriteria) {
-                return $this->getActualMatchedPrices($productPriceCriteria, $scopeCriteria);
-            }
-        );
+        return $this->getActualMatchedPrices($productPriceCriteria, $scopeCriteria);
     }
 
     /**
@@ -152,19 +143,18 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         }
 
         foreach ($productPriceCriteria as $productPriceCriterion) {
+            $quantity = $productPriceCriterion->getQuantity();
             $currency = $productPriceCriterion->getCurrency();
             $key = $this->getKey(
                 $productPriceCriterion->getProduct(),
                 $productPriceCriterion->getProductUnit(),
                 $currency
             );
-            $quantity = $productPriceCriterion->getQuantity();
+
             $price = $this->matchPriceByQuantity($productPriceData[$key] ?? [], $quantity);
-            if ($price !== null) {
-                $result[$productPriceCriterion->getIdentifier()] = Price::create($price, $currency);
-            } else {
-                $result[$productPriceCriterion->getIdentifier()] = null;
-            }
+
+            $identifier = $productPriceCriterion->getIdentifier();
+            $result[$identifier] = $price !== null ? Price::create($price, $currency) : null;
         }
 
         return $result;
@@ -189,19 +179,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
             return [];
         }
 
-        $allPrices = null;
-        if ($productUnitCodes) {
-            /** @var ProductPriceDTO[]|null $allPrices */
-            $allPrices = $this->getMemoryCacheProvider()->get(
-                [
-                    'product_price_scope_criteria' => $scopeCriteria,
-                    $productsIds,
-                    $currencies,
-                    null,
-                ]
-            );
-        }
-
         return (array) $this->getMemoryCacheProvider()->get(
             [
                 'product_price_scope_criteria' => $scopeCriteria,
@@ -209,24 +186,8 @@ class ProductPriceProvider implements ProductPriceProviderInterface
                 $currencies,
                 $productUnitCodes,
             ],
-            function () use ($allPrices, $scopeCriteria, $productsIds, $productUnitCodes, $currencies) {
-                if (!$allPrices) {
-                    return $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
-                }
-
-                if ($productUnitCodes) {
-                    // Fetch prices from the previously fetched $allPrices collection.
-                    $prices = [];
-                    foreach ($allPrices as $price) {
-                        if (\in_array($price->getUnit()->getCode(), $productUnitCodes, false)) {
-                            $prices[] = $price;
-                        }
-                    }
-
-                    return $prices;
-                }
-
-                return $allPrices;
+            function () use ($scopeCriteria, $productsIds, $productUnitCodes, $currencies) {
+                return $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
             }
         );
     }
@@ -256,6 +217,11 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
             if ($expectedQuantity >= $quantity) {
                 $price = $priceData->getPrice()->getValue();
+            }
+
+            if ($expectedQuantity <= $quantity) {
+                // Matching price has been already found, break from loop.
+                break;
             }
         }
 
