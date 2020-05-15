@@ -24,10 +24,9 @@ class PriceRoundingService extends AbstractRoundingService
     public function getRoundType()
     {
         if ($this->roundType === null) {
-            $this->roundType = (int) $this->configManager->get(
-                Configuration::getConfigKeyByName(Configuration::ROUNDING_TYPE),
-                self::ROUND_HALF_UP
-            );
+            $this->roundType = (int) ($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ROUNDING_TYPE)
+            ) ?? self::ROUND_HALF_UP);
         }
 
         return $this->roundType;
@@ -37,10 +36,9 @@ class PriceRoundingService extends AbstractRoundingService
     public function getPrecision()
     {
         if ($this->precision === null) {
-            $this->precision = (int) $this->configManager->get(
-                Configuration::getConfigKeyByName(Configuration::PRECISION),
-                self::FALLBACK_PRECISION
-            );
+            $this->precision = (int) ($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::PRECISION)
+            ) ?? self::FALLBACK_PRECISION);
         }
 
         return $this->precision;

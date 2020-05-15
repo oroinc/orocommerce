@@ -23,14 +23,14 @@ class PriceRoundingServiceTest extends AbstractRoundingServiceTest
                 [
                     [
                         'oro_pricing.rounding_type',
-                        PriceRoundingService::ROUND_HALF_UP,
+                        false,
                         false,
                         null,
                         $roundingType,
                     ],
                     [
                         'oro_pricing.precision',
-                        PriceRoundingService::FALLBACK_PRECISION,
+                        false,
                         false,
                         null,
                         $precision,
