@@ -40,12 +40,14 @@ class LocaleSettings extends FrontendLocaleSettings
      */
     public function getCurrency()
     {
-        if (!$this->frontendHelper->isFrontendRequest()) {
-            return $this->inner->getCurrency();
+        if (null === $this->currency) {
+            if (!$this->frontendHelper->isFrontendRequest()) {
+                $this->currency = $this->inner->getCurrency();
+            } else {
+                $this->currency = $this->currencyManager->getUserCurrency() ?: $this->inner->getCurrency();
+            }
         }
 
-        $currency = $this->currencyManager->getUserCurrency();
-
-        return $currency ?: $this->inner->getCurrency();
+        return $this->currency;
     }
 }

@@ -33,7 +33,7 @@ class ProductPriceCriteria
     /**
      * @var string|null
      */
-    protected $identifier;
+    private $identifier;
 
     /**
      * @param Product $product
@@ -58,7 +58,7 @@ class ProductPriceCriteria
         }
         $this->quantity = $quantity;
 
-        if ($currency === '') {
+        if (!$currency) {
             throw new \InvalidArgumentException('Currency must be non-empty string.');
         }
         $this->currency = $currency;

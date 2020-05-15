@@ -46,14 +46,9 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array
     {
-        return $this->getMemoryCacheProvider()->get(
-            ['product_price_scope_criteria' => $scopeCriteria],
-            function () use ($scopeCriteria) {
-                return array_intersect(
-                    $this->currencyManager->getAvailableCurrencies(),
-                    $this->priceStorage->getSupportedCurrencies($scopeCriteria)
-                );
-            }
+        return array_intersect(
+            $this->currencyManager->getAvailableCurrencies(),
+            $this->priceStorage->getSupportedCurrencies($scopeCriteria)
         );
     }
 

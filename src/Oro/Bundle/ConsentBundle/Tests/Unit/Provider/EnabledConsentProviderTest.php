@@ -91,7 +91,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_consent.enabled_consents', [], false, $website)
+            ->with('oro_consent.enabled_consents', false, false, $website)
             ->willReturn($consentConfigValue);
 
         $this->converter->expects($this->any())
@@ -135,7 +135,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_consent.enabled_consents', [], false, $website)
+            ->with('oro_consent.enabled_consents', false, false, $website)
             ->willReturn($consentConfigValue);
 
         $this->converter
