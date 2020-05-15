@@ -76,11 +76,11 @@
                     {% set productNoteClipClassName = '' %}
                     {% if firstLineItem.notes|length < clipLength %}
                         {% block product_notes %}
-                            <div class="grid-line-items__text {{ productNoteClipClassName }}">{{ firstLineItem.notes }}</div>
+                            <div class="grid-line-items__text {{ productNoteClipClassName }}" data-role="note">{{ firstLineItem.notes }}</div>
                         {% endblock %}
                     {% else %}
                         {% set productNoteClipClassName = 'grid-line-items__ellipsis' %}
-                        <div class="grid-line-items__clip-text-container">
+                        <div class="grid-line-items__clip-text-container" data-page-component-view="oroshoppinglist/js/app/views/preview-full-note-view">
                             <div class="grid-line-items__clip-placeholder">
                                 {{ block('product_notes') }}
                             </div>
