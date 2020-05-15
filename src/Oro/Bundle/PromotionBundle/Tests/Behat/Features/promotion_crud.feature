@@ -94,3 +94,21 @@ Feature: Promotion CRUD
     And I click "Add Note Button"
     Then I should see "Note saved" flash message
     And I should see "Decrease after New Year" note in activity list
+
+  Scenario: Check validation HTML string for creating Note
+    Given I go to Marketing / Promotions / Promotions
+    And I click view Promotion for first customer in grid
+    When I click "Add note"
+    Then I click "Add Note Button"
+    And I should see "This value should not be blank."
+    And I fill "Note Form" with:
+      | Message | Test note message |
+    And I fill "Note Form" with:
+      | Message |  |
+    When I click "Add Note Button"
+    Then I should see "This value should not be blank."
+    And I fill "Note Form" with:
+      | Message | Test note message |
+    When I click "Add Note Button"
+    Then I should see "Note saved" flash message
+    And I should see "Test note message" note in activity list
