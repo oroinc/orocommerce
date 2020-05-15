@@ -21,6 +21,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/line-items-view
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
+        - oroshoppinglist/js/app/views/preview-full-note-view
         - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-shopping-lists-view

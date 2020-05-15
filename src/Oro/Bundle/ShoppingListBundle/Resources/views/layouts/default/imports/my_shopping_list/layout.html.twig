@@ -81,8 +81,7 @@
         {% if is_granted('VIEW', shoppingList.customerUser) %}
             {{ UI.link({
                 'path': path('oro_customer_frontend_customer_user_view', {id: shoppingList.customerUser.id}),
-                'label': label,
-                'class': 'info-list__link'
+                'label': label
             }) }}
         {% else %}
             {{ label }}
