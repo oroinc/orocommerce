@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Respository;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
