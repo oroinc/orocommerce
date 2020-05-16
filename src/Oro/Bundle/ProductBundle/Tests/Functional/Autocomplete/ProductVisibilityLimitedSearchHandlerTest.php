@@ -303,21 +303,43 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
      */
     private function assertResultForProducts(array $productConstants, array $results): void
     {
-        self::assertCount(count($productConstants), $results);
+        static::assertCount(\count($productConstants), $results);
         foreach ($productConstants as $productConstant) {
-            $reference = \constant(sprintf('%s::%s', LoadProductData::class, $productConstant));
+            $reference = \constant(\sprintf('%s::%s', LoadProductData::class, $productConstant));
 
             /** @var Product $product */
             $product = $this->getReference($reference);
-
-            self::assertContains(
-                [
-                    'id' => $product->getId(),
-                    'sku' => $product->getSku(),
-                    'defaultName.string' => $product->getDefaultName()
-                ],
-                $results
-            );
+            $found = false;
+            foreach ($results as $result) {
+                // intentional non-strict comparison
+                if ($product->getId() == $result['id']
+                    && $product->getSku() == $result['sku']
+                    && $product->getDefaultName() == $result['defaultName.string']
+                ) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                static::fail(
+                    \sprintf(
+                        "Result does not contain product '%s' (id: %s, sku: %s, defaultName.string: %s):\n",
+                        $reference,
+                        $product->getId(),
+                        $product->getSku(),
+                        $product->getDefaultName()
+                    )
+                    . \array_reduce($results, function ($output, $item) {
+                        return $output . \sprintf(
+                            "id: %s, sku: %s, defaultName.string: %s\n",
+                            $item['id'],
+                            $item['sku'],
+                            $item['defaultName.string']
+                        );
+                    })
+                );
+                return;
+            }
         }
     }
 }

@@ -66,10 +66,22 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
         $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
-        $this->assertContains($notAssignedCPL->getId(), $priceListsForDelete);
-        $this->assertNotContains($assignedCPL->getId(), $priceListsForDelete);
+        static::assertContainsEquals(
+            $notAssignedCPL->getId(),
+            $priceListsForDelete,
+            \var_export($priceListsForDelete, true)
+        );
+        static::assertNotContainsEquals(
+            $assignedCPL->getId(),
+            $priceListsForDelete,
+            \var_export($priceListsForDelete, true)
+        );
         if ($fullChainCPL) {
-            $this->assertNotContains($fullChainCPL->getId(), $priceListsForDelete);
+            static::assertNotContainsEquals(
+                $fullChainCPL->getId(),
+                $priceListsForDelete,
+                \var_export($priceListsForDelete, true)
+            );
         }
     }
 
@@ -124,10 +136,22 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
         $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
-        $this->assertContains($notAssignedCPL->getId(), $priceListsForDelete);
-        $this->assertNotContains($assignedCPL->getId(), $priceListsForDelete);
+        static::assertContainsEquals(
+            $notAssignedCPL->getId(),
+            $priceListsForDelete,
+            \var_export($priceListsForDelete, true)
+        );
+        static::assertNotContainsEquals(
+            $assignedCPL->getId(),
+            $priceListsForDelete,
+            \var_export($priceListsForDelete, true)
+        );
         if ($fullChainCPL) {
-            $this->assertNotContains($fullChainCPL->getId(), $priceListsForDelete);
+            static::assertNotContainsEquals(
+                $fullChainCPL->getId(),
+                $priceListsForDelete,
+                \var_export($priceListsForDelete, true)
+            );
         }
     }
 

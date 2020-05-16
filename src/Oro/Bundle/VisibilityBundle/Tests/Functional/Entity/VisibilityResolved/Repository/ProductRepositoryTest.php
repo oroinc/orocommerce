@@ -212,7 +212,7 @@ class ProductRepositoryTest extends WebTestCase
                 'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
                 'category' => $category->getId()
             ];
-            $this->assertContains($expected, $actual);
+            static::assertContainsEquals($expected, $actual);
         }
     }
 
@@ -233,7 +233,7 @@ class ProductRepositoryTest extends WebTestCase
                     'source' => ProductVisibilityResolved::SOURCE_STATIC,
                     'category' => null
                 ];
-                $this->assertContains($expected, $actual);
+                static::assertContainsEquals($expected, $actual);
             }
         }
     }
