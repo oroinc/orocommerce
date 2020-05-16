@@ -196,7 +196,7 @@ Retrieve the ID of request product record a specific request product item record
 
 #### update_relationship
 
-Replace request product record a specific request product item record is assigned to.
+Replace the request product record a specific request product item record is assigned to.
 
 {@request:json_api}
 Example:

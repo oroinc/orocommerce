@@ -4,13 +4,23 @@
 
 ### get
 
+Retrieve a specific product variant link record.
+
 {@inheritdoc}
 
 ### get_list
 
+Retrieve a collection of product variant link records.
+
 {@inheritdoc}
 
 ### create
+
+Create a new product variant link record.
+
+The created record is returned in the response.
+
+{@inheritdoc}
 
 When creating a variant link it need to be between a configurable product and a simple product within
 the same attribute family which holds a custom attribute that is active on the configurable product.
@@ -46,7 +56,11 @@ Example:
 
 ### update
 
-Update an existing product variable link record.
+Edit a specific product variant link record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -83,9 +97,13 @@ Example:
 
 ### delete
 
+Delete a specific product variant link record.
+
 {@inheritdoc}
 
 ### delete_list
+
+Delete a collection of product variant link records.
 
 {@inheritdoc}
 
@@ -113,7 +131,7 @@ Retrieve the configurable product configured for a specific variant.
 
 #### get_relationship
 
-Retrieve an ID of the configurable product
+Retrieve the ID of the configurable product for a specific variant.
 
 #### update_relationship
 
@@ -140,11 +158,11 @@ Retrieve the product that is set as a variant.
 
 #### get_relationship
 
-Retrieve an ID of the variant product
+Retrieve the ID of the product that is set as a variant.
 
 #### update_relationship
 
-Update the product for a specific variant.
+Replace the product for a specific variant.
 
 {@request:json_api}
 Example:

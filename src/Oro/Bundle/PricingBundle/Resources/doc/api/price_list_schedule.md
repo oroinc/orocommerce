@@ -19,6 +19,8 @@ Retrieve a collection of price list schedule records.
 Create a new price list schedule. The period defined by the `activeAt` and `deactivateAt` values should not overlap with
 periods defined by other schedules for the same price list.
 
+The created record is returned in the response.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -47,13 +49,15 @@ Example:
 
 ### update
 
-Update a price list schedule record.
+Edit a specific price list schedule record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 **Notes:**
 * The period defined by the `activeAt` and `deactivateAt` values should not overlap with periods defined by other schedules for the same price list. 
 * The `priceList` value is not allowed to be updated. To modify the relationship with the price list, delete the incorrect price list schedule and create a new one including the correct price list.
-
-{@inheritdoc}
 
 {@request:json_api}
 Example:

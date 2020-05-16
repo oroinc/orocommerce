@@ -19,10 +19,12 @@ Retrieve a collection of price list records.
 Create a new price list. Use `priceListCurrencies` field to set price list currencies as an array of strings.
 Every string should match the existing currency code.
 
-**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API
-as their values are generated automatically.
+The created record is returned in the response.
 
 {@inheritdoc}
+
+**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API
+as their values are generated automatically.
 
 {@request:json_api}
 Example:
@@ -120,12 +122,14 @@ Example:
 
 Edit a specific price list record.
 
+The updated record is returned in the response.
+
+{@inheritdoc}
+
 **Notes:**
 * The values for the fields `updatedAt`, `containSchedule` cannot are set via the API as their values are generated automatically.
 * The fields `createdAt`, `priceRules`, `schedules` are not allowed to be updated.
 To modify the relationship with price rules and/or price list schedules, delete the incorrect price list and create a new one including the correct price rules and price schedule.
-
-{@inheritdoc}
 
 {@request:json_api}
 Example:

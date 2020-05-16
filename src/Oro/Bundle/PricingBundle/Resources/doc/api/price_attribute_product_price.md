@@ -18,6 +18,8 @@ Retrieve a collection of product price attribute value records.
 
 Create a new product price attribute value record.
 
+The created record is returned in the response.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -59,6 +61,8 @@ Example:
 ### update
 
 Edit a specific product price attribute value record.
+
+The updated record is returned in the response.
 
 {@inheritdoc}
 
