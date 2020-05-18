@@ -128,7 +128,7 @@ abstract class AbstractEngineTest extends WebTestCase
     {
         $query = new Query();
         $query->from('*');
-        $query->getCriteria()->andWhere(new Comparison('text.stringValue', 'STARTS WITH', 'item'));
+        $query->getCriteria()->andWhere(new Comparison('text.stringValue', '~', 'item'));
         $items = $this->getSearchItems($query);
 
         $this->assertCount(LoadSearchItemData::COUNT, $items);
@@ -210,7 +210,6 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertArrayHasKey($field, $aggregatedData);
         $this->assertSame($expected, $aggregatedData[$field]);
     }
-
 
     /**
      * @return array
