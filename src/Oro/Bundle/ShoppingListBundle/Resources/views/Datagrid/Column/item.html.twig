@@ -25,12 +25,7 @@
                             uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ productUniqId ~ '"]'
                         }|json_encode
                     }) }}>
-                        <picture class="product-item__preview-picture"
-                                 data-page-component-module="oroui/js/app/components/view-component"
-                                 data-page-component-options="{{ {
-                                     view: 'orofrontend/js/app/views/object-fit-polyfill-view'
-                                 }|json_encode }}"
-                        >
+                        <picture class="product-item__preview-picture" data-object-fit="">
                             {{ Image.image(productImageData, 'product_small', {
                                 class: 'product-item__preview-image',
                                 alt: mainProduct.names|localized_value|e
