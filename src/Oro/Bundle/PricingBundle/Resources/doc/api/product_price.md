@@ -6,15 +6,23 @@
 
 Retrieve a product price record.
 
+{@inheritdoc}
+
 ### get_list
 
 Retrieve a collection of product price records.
+
+{@inheritdoc}
 
 **Note:** It is required to provide priceList filter with request.
 
 ### create
 
-Create a new product price.
+Create a new product price record.
+
+The created record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -56,7 +64,11 @@ Example:
 
 ### update
 
-Update product price record.
+Edit a specific product price record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -94,9 +106,13 @@ Example:
 
 Delete a specific product price record.
 
+{@inheritdoc}
+
 ### delete_list
 
 Delete a collection of product price records.
+
+{@inheritdoc}
 
 **Note:** It is required to provide priceList filter with request.
 
