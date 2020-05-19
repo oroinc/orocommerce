@@ -8,12 +8,12 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\AbstractImportExportTest;
+use Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\AbstractImportExportTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class ImportExportTest extends AbstractImportExportTest
+class ImportExportTest extends AbstractImportExportTestCase
 {
     use CatalogTrait;
 

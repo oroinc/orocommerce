@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterface;
-use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTest;
+use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
@@ -18,7 +18,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 /**
  * @dbIsolationPerTest
  */
-class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
+class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 {
     protected function setUp(): void
     {

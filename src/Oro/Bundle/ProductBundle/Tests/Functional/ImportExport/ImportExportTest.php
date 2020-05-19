@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @covers \Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
-class ImportExportTest extends AbstractImportExportTest
+class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageProcessTrait;
 
