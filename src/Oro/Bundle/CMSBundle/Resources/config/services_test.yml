@@ -2,3 +2,7 @@ services:
     Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType:
         tags:
             - {name: 'oro_cms.content_widget.type'}
+
+    oro_cms.event_listener.wysiwyg_field_twig_listener.test:
+        alias: oro_cms.event_listener.wysiwyg_field_twig_listener
+        public: true

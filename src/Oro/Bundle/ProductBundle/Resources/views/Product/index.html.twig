@@ -7,7 +7,8 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
-        'alias': 'oro_product_index'
+        'alias': 'oro_product_index',
+        'options': { 'writer_skip_clear': true }
     } %}
 
     {% if is_granted('oro_product_create') %}
