@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\EventListener;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -17,6 +18,8 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
@@ -30,6 +33,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubscriberInterface
 {
     use OptionalListenerTrait;
+    use LoggerAwareTrait;
 
     /** @var ContainerInterface */
     private $container;
@@ -37,8 +41,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     /** @var string[][] */
     private $fieldLists = [];
 
-    /** @var bool */
-    private $transactional = false;
+    /** @var array */
+    private $scheduled = [];
 
     /**
      * @param ContainerInterface $container
@@ -46,6 +50,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -122,21 +127,90 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      */
     private function postProcess(LifecycleEventArgs $args, bool $isFlushNeeded): void
     {
-        if ($isFlushNeeded && !$this->transactional) {
-            $args->getEntityManager()->beginTransaction();
-            $this->transactional = true;
+        if (!$isFlushNeeded) {
+            return;
+        }
+
+        $entityManager = $args->getEntityManager();
+        $emHash = spl_object_hash($entityManager);
+        if (!isset($this->scheduled[$emHash])) {
+            $this->scheduled[$emHash] = [
+                'em' => $entityManager,
+                'entities' => [
+                    'scheduleForInsert' => [],
+                    'scheduleForUpdate' => [],
+                    'scheduleForDelete' => [],
+                ],
+            ];
         }
     }
 
     /**
+     * Saves entities which has been scheduled in unit of work during the latest flush for the later processing
+     * as it is not allowed to call flush() in this case.
+     *
+     * @see https://github.com/doctrine/orm/issues/6292
+     * @see https://github.com/doctrine/orm/issues/6024
+     *
      * @param PostFlushEventArgs $args
      */
     public function postFlush(PostFlushEventArgs $args): void
     {
-        if ($this->transactional) {
-            $this->transactional = false;
-            $args->getEntityManager()->flush();
-            $args->getEntityManager()->commit();
+        $entityManager = $args->getEntityManager();
+        $emHash = spl_object_hash($entityManager);
+        if (!isset($this->scheduled[$emHash])) {
+            return;
+        }
+
+        $unitOfWork = $entityManager->getUnitOfWork();
+        $entities = [
+            'scheduleForInsert' => $unitOfWork->getScheduledEntityInsertions(),
+            'scheduleForUpdate' => $unitOfWork->getScheduledEntityUpdates(),
+            'scheduleForDelete' => $unitOfWork->getScheduledEntityDeletions(),
+        ];
+
+        foreach ($this->scheduled[$emHash]['entities'] as $operation => $scheduledEntities) {
+            $this->scheduled[$emHash]['entities'][$operation] = array_merge($scheduledEntities, $entities[$operation]);
+        }
+    }
+
+    /**
+     * Workaround for the case when flush() cannot be called inside postFlush(): performs all scheduled operations
+     * at the end of execution.
+     */
+    public function onTerminate(): void
+    {
+        try {
+            foreach ($this->scheduled as $hash => $managerWithScheduledEntities) {
+                /** @var EntityManager $entityManager */
+                $entityManager = $managerWithScheduledEntities['em'];
+                $unitOfWork = $entityManager->getUnitOfWork();
+                $doFlush = false;
+                foreach ($managerWithScheduledEntities['entities'] as $operation => $scheduledEntities) {
+                    foreach ($scheduledEntities as $entity) {
+                        // Ensures entity is in identity map.
+                        $entityManager->merge($entity);
+
+                        $unitOfWork->$operation($entity);
+                        $doFlush = true;
+                    }
+                }
+
+                if ($doFlush) {
+                    $entityManager->flush();
+                }
+            }
+        } catch (\Throwable $throwable) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to execute pending %s of %s - entity manager might has been untimely cleared',
+                    strtolower(substr($operation, -6)),
+                    $entityManager->getClassMetadata(get_class($entity))->getName()
+                ),
+                ['exception' => $throwable]
+            );
+        } finally {
+            $this->scheduled = [];
         }
     }
 
