@@ -15,7 +15,7 @@ import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import {escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
@@ -31,9 +31,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'autoRender', 'allow_tags', 'builderOptions', 'builderPlugins', 'currentTheme', 'canvasConfig',
-        'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
-        'propertiesInputSelector'
+        'autoRender', 'allow_tags', 'builderPlugins', 'currentTheme', 'canvasConfig',
+        'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes'
     ]),
 
     /**
@@ -83,6 +82,7 @@ const GrapesjsEditorView = BaseView.extend({
         exportWrapper: 0,
         pasteStyles: false,
         requestParams: {},
+        noticeOnUnload: false,
 
         /**
          * Color picker options
@@ -158,27 +158,11 @@ const GrapesjsEditorView = BaseView.extend({
      */
     $stylesInputElement: null,
 
-    /**
-     * Properties input selector
-     * @property {String}
-     */
-    propertiesInputSelector: '[data-grapesjs-properties]',
-
-    /**
-     * Properties input element
-     * @property {Object}
-     */
-    $propertiesInputElement: null,
 
     /**
      * @property {String}
      */
     wrapperSelector: '.page-content-editor, .fallback-item-value, .content-variant-item',
-
-    /**
-     * @property {Array}
-     */
-    JSONcomponents: [],
 
     /**
      * @property {jQuery.Element}
@@ -247,12 +231,11 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritDoc
      * @param options
      */
-    initialize: function(options) {
-        this.builderOptions = {...this.builderOptions};
+    initialize: function(options = {}) {
+        this.builderOptions = {...this.builderOptions, ...options.builderOptions};
         this.setCurrentContentAlias();
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
-        this.$propertiesInputElement = this.$parent.find(this.propertiesInputSelector);
         this.setAlternativeFields();
         this.setActiveTheme(this.getCurrentTheme());
 
@@ -283,7 +266,6 @@ const GrapesjsEditorView = BaseView.extend({
             return;
         }
 
-        this.applyComponentsJSON();
         this.initContainer();
         this.initBuilder();
     },
@@ -349,40 +331,19 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     /**
-     * Get properties json
-     * @returns {Array}
-     */
-    applyComponentsJSON: function() {
-        const value = this.$propertiesInputElement.val();
-
-        this.JSONcomponents = value ? JSON.parse(value) : [];
-
-        return this.JSONcomponents;
-    },
-
-    /**
      * Initialize builder instance
      */
     initBuilder: function() {
-        let components;
-        let wrapperAttrs;
-
-        if (_.isEmpty(this.JSONcomponents)) {
-            components = escapeWrapper(this.$el.val());
-        } else if (_.isArray(this.JSONcomponents)) {
-            components = this.JSONcomponents;
-        } else {
-            ({components, wrapperAttrs} = this.JSONcomponents);
-        }
-
         this.builder = grapesJS.init({
             avoidInlineStyle: 1,
             container: this.$container.get(0),
-            components,
             ...this._prepareBuilderOptions()
         });
 
-        if (_.isObject(wrapperAttrs)) {
+        this.builder.setComponents(escapeWrapper(this.$el.val()));
+
+        const wrapperAttrs = getWrapperAttrs(this.$el.val());
+        if (!_.isEmpty(wrapperAttrs)) {
             wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
         }
 
@@ -502,14 +463,9 @@ const GrapesjsEditorView = BaseView.extend({
     setAlternativeFields: function() {
         const fieldPrefix = this.$el.attr('data-ftid');
         const styleFiledName = fieldPrefix + '_style';
-        const propertiesFiledName = fieldPrefix + '_properties';
 
         if (!this.$stylesInputElement.length) {
             this.$stylesInputElement = this.form.find('[data-ftid="' + styleFiledName + '"]');
-        }
-
-        if (!this.$propertiesInputElement.length) {
-            this.$propertiesInputElement = this.form.find('[data-ftid="' + propertiesFiledName + '"]');
         }
     },
 
@@ -550,17 +506,6 @@ const GrapesjsEditorView = BaseView.extend({
      */
     getEditorStyles: function() {
         return this.builder.getIsolatedCss();
-    },
-
-    /**
-     * Get editor components
-     * @returns {Object}
-     */
-    getEditorComponents() {
-        return JSON.stringify({
-            components: this.builder.getComponents(),
-            wrapperAttrs: this.builder.getWrapper().getAttributes()
-        });
     },
 
     componentSelected(model) {
@@ -715,7 +660,6 @@ const GrapesjsEditorView = BaseView.extend({
     _updateInitialField: function() {
         const htmlContent = this.getEditorContent();
         const cssContent = this.getEditorStyles();
-        const jsonContent = this.getEditorComponents();
 
         if (this.$el.val() !== htmlContent) {
             this.$el.val(htmlContent).trigger('change');
@@ -723,10 +667,6 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (this.$stylesInputElement.val() !== cssContent) {
             this.$stylesInputElement.val(cssContent).trigger('change');
-        }
-
-        if (this.$propertiesInputElement.val() !== jsonContent) {
-            this.$propertiesInputElement.val(jsonContent).trigger('change');
         }
     },
 
