@@ -9,6 +9,12 @@ const LinkBlockTypeBuilder = BaseTypeBuilder.extend({
         label: __('oro.cms.wysiwyg.component.link_block.label'),
         attributes: {
             'class': 'fa fa-link'
+        },
+        defaultStyle: {
+            'display': 'inline-block',
+            'padding': '5px',
+            'min-height': '50px',
+            'min-width': '50px'
         }
     },
 
@@ -18,12 +24,6 @@ const LinkBlockTypeBuilder = BaseTypeBuilder.extend({
             droppable: true,
             classes: ['link-block'],
             traits: ['href', 'title', 'target'],
-            style: {
-                'display': 'inline-block',
-                'padding': '5px',
-                'min-height': '50px',
-                'min-width': '50px'
-            },
             components: []
         }
     },

@@ -86,7 +86,10 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
     },
 
     button: {
-        label: __('oro.cms.wysiwyg.component.link.label')
+        label: __('oro.cms.wysiwyg.component.link.label'),
+        defaultStyle: {
+            color: linkColor
+        }
     },
 
     modelMixin: {
@@ -94,9 +97,6 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
             tagName: 'a',
             classes: ['link'],
             traits: ['href', 'text', 'title', 'target'],
-            style: {
-                color: linkColor
-            },
             components: [{
                 type: 'textnode',
                 content: __('oro.cms.wysiwyg.component.link.content')

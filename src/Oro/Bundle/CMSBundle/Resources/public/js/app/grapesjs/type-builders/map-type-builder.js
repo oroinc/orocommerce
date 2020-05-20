@@ -3,12 +3,16 @@ import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-buil
 const MapTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'map',
 
+    button: {
+        defaultStyle: {
+            height: '350px',
+            width: '100%'
+        }
+    },
+
     modelMixin: {
         defaults: {
-            style: {
-                height: '350px',
-                width: '100%'
-            }
+            tagName: 'iframe'
         }
     },
 

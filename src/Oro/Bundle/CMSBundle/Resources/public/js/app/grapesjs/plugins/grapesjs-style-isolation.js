@@ -67,9 +67,9 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, {editor
             return false;
         }
 
-        const _res = editor.Parser.parseCss(css).reduce((acc, rule, index, collection) => {
+        const _res = editor.Parser.getConfig().parserCss(css).reduce((acc, rule) => {
             const {state = '', atRuleType = '', mediaText = '', selectorsAdd = ''} = rule;
-            const key = rule.selectors.join('') + state + atRuleType + mediaText + selectorsAdd;
+            const key = rule.selectors + state + atRuleType + mediaText + selectorsAdd;
 
             acc[key] = $.extend(true, acc[key] || {}, rule);
             return acc;

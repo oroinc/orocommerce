@@ -110,6 +110,10 @@ const BaseTypeBuilder = BaseClass.extend({
         if (this.button) {
             const content = this.template ? this.template(this.getButtonTemplateData()) : {type: this.componentType};
 
+            if (typeof content === 'object' && this.button.defaultStyle) {
+                content.style = this.button.defaultStyle;
+            }
+
             const panelBtn = this.editor.BlockManager.get(this.componentType);
             const {options = {}} = this.button;
             panelBtn

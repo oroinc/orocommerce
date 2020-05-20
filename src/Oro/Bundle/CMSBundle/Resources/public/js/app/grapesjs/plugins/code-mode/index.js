@@ -2,6 +2,7 @@ import {pick} from 'underscore';
 import GrapesJS from 'grapesjs';
 import Modal from 'oroui/js/modal';
 import __ from 'orotranslation/js/translator';
+import styleManagerModule from 'orocms/js/app/grapesjs/modules/style-manager-module';
 
 const exposeStyles = html => {
     const domParser = new DOMParser();
@@ -84,10 +85,8 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
         return originSetComponents(components, rest);
     };
 
-    let styleManagerConfig;
     const onLoad = () => {
         const state = editor.getState();
-        styleManagerConfig = editor.StyleManager.getSectors().toJSON();
 
         if (state.get('codeMode')) {
             enableCodeMode();
@@ -95,7 +94,7 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
     };
 
     const enableCodeMode = () => {
-        editor.StyleManager.getSectors().reset();
+        editor.StyleManager.destroy();
 
         editor.getIsolatedCss = () => {
             return editor.getIsolatedCssFromString(editor.storeProtectedCss);
@@ -107,7 +106,10 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
     };
 
     const disableCodeMode = () => {
-        editor.StyleManager.getSectors().reset(styleManagerConfig);
+        const styleManager = editor.StyleManager.render();
+        editor.StyleManager.getSectors().reset(styleManagerModule);
+        editor.Panels.getPanel('views-container').view
+            .$el.find(':scope > div:nth-child(2) > div:first-child').append(styleManager);
         Object.assign(editor, originMethods);
     };
 

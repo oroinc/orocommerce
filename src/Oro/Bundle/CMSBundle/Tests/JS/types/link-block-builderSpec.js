@@ -50,6 +50,13 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
             const button = linkBlockBuilder.editor.BlockManager.get(linkBlockBuilder.componentType);
             expect(button).toBeDefined();
             expect(button.get('category').get('label')).toEqual('Basic');
+
+            expect(button.get('content').style).toEqual({
+                'display': 'inline-block',
+                'padding': '5px',
+                'min-height': '50px',
+                'min-width': '50px'
+            });
         });
 
         it('check component parent type', () => {
@@ -70,12 +77,6 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
             expect(linkBlockBuilder.Model.prototype.defaults.classes).toEqual(
                 ['link-block']
             );
-            expect(linkBlockBuilder.Model.prototype.defaults.style).toEqual({
-                'display': 'inline-block',
-                'padding': '5px',
-                'min-height': '50px',
-                'min-width': '50px'
-            });
             expect(linkBlockBuilder.Model.prototype.defaults.components).toEqual([]);
             expect(linkBlockBuilder.Model.prototype.defaults.editable).toBeFalsy();
             expect(linkBlockBuilder.Model.prototype.defaults.droppable).toBeTruthy();

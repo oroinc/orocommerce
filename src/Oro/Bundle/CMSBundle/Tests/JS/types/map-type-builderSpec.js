@@ -46,6 +46,14 @@ describe('orocms/js/app/grapesjs/type-builders/grid-type-builder', () => {
             }));
         });
 
+        it('check is component type button', () => {
+            const button = mapTypeBuilder.editor.BlockManager.get(mapTypeBuilder.componentType);
+            expect(button.get('content').style).toEqual({
+                height: '350px',
+                width: '100%'
+            });
+        });
+
         it('check component parent type', () => {
             expect(mapTypeBuilder.parentType).toEqual('map');
         });
@@ -60,10 +68,6 @@ describe('orocms/js/app/grapesjs/type-builders/grid-type-builder', () => {
                 src: 'http://maps.google.com/'
             });
             expect(mapTypeBuilder.Model.componentType).toEqual(mapTypeBuilder.componentType);
-            expect(mapTypeBuilder.Model.prototype.defaults.style).toEqual({
-                height: '350px',
-                width: '100%'
-            });
 
             expect(mapTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

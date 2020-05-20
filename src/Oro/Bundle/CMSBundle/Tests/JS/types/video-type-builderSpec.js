@@ -46,6 +46,14 @@ describe('orocms/js/app/grapesjs/type-builders/video-type-builder', () => {
             }));
         });
 
+        it('check is component type button', () => {
+            const button = videoTypeBuilder.editor.BlockManager.get(videoTypeBuilder.componentType);
+            expect(button.get('content').style).toEqual({
+                height: '400px',
+                width: '100%'
+            });
+        });
+
         it('check component parent type', () => {
             expect(videoTypeBuilder.parentType).toEqual('video');
         });
@@ -76,10 +84,6 @@ describe('orocms/js/app/grapesjs/type-builders/video-type-builder', () => {
             expect(videoTypeBuilder.Model.componentType).toEqual(videoTypeBuilder.componentType);
 
             expect(videoTypeBuilder.Model.prototype.defaults.tagName).toEqual('video');
-            expect(videoTypeBuilder.Model.prototype.defaults.style).toEqual({
-                height: '400px',
-                width: '100%'
-            });
 
             expect(videoTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

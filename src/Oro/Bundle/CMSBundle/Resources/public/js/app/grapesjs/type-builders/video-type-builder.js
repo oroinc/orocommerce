@@ -5,14 +5,14 @@ const undoAutoPlay = url => url.replace(/(autoplay=).*?(&)/, '$1' + 0 + '$2');
 const VideoTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'video',
 
-    modelMixin: {
-        defaults: {
-            style: {
-                height: '400px',
-                width: '100%'
-            }
-        },
+    button: {
+        defaultStyle: {
+            height: '400px',
+            width: '100%'
+        }
+    },
 
+    modelMixin: {
         getProviderTrait() {
             const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
             const options = providerTrait.options
