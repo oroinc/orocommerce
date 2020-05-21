@@ -251,7 +251,7 @@
         {% if errorMessage != '' %}
             <tr class="checkout-order-summary__grid-tr checkout-order-summary__grid-tr--message">
                 <td colspan="5" class="checkout-order-summary__grid-td">
-                    <div class="{{ errorClass }}"><span class="{{ errorClass }}__icon" aria-hidden="true"></span>{{ errorMessage }}</div>
+                    <div class="{{ errorClass }}" role="alert"><span class="{{ errorClass }}__icon" aria-hidden="true"></span>{{ errorMessage }}</div>
                 </td>
             </tr>
         {% endif %}
