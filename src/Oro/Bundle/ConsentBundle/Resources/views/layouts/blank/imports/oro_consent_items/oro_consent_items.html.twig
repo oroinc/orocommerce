@@ -48,7 +48,7 @@
         'for': 'consent-' ~ index
     }) %}
 
-    <label {{ block('block_attributes') }} {% if consent.required %} aria-required="true" {% endif %}>
+    <label {{ block('block_attributes') }}>
         {% spaceless %}
             {{ parent_block_widget(block) }}
             {% if consent.required %}
