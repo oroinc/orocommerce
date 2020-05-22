@@ -155,10 +155,19 @@ datagrids:
                 route: oro_checkout_frontend_checkout
                 params:
                     - id
+            view_aria_label:
+                type:   translatable
+                key:    oro.checkout.frontend.checkout.action.view.aria_label
+                params: [startedFromLabel]
+            delete_aria_label:
+                type:   translatable
+                key:    oro.checkout.frontend.checkout.action.delete.aria_label
+                params: [startedFromLabel]
         actions:
             view:
                 type: navigate
                 label: oro.checkout.grid.checkout_link.label
+                ariaLabel: view_aria_label
                 link: view_link
                 icon: shopping-cart
                 acl_resource: oro_checkout_frontend_checkout

@@ -248,7 +248,11 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onResultAfter($event);
 
         foreach ($records as $record) {
-            $foundSources[] = $record->getValue('startedFrom');
+            $startedFrom = $record->getValue('startedFrom');
+
+            $foundSources[] = $startedFrom;
+
+            $this->assertEquals($startedFrom['label'] ?? $startedFrom, $record->getValue('startedFromLabel'));
         }
         $this->assertCheckoutSource(
             $foundSources,
@@ -310,7 +314,7 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
         $checkout->setSource($source);
         $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::CURRENCY, 'USD');
 
-        $this->checkoutRepository->expects($this->once())->method('find')->willReturn($checkout);
+        $this->checkoutRepository->expects($this->any())->method('find')->willReturn($checkout);
         $this->checkoutRepository->expects($this->once())
             ->method('getCheckoutsByIds')
             ->willReturn($withSource ? [1 => $checkout] : []);

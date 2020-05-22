@@ -327,6 +327,14 @@ datagrids:
                 type:   url
                 route:  oro_rfp_frontend_request_update
                 params: [ id ]
+            view_aria_label:
+                type:   translatable
+                key:    oro.rfp.action.request.view.aria_label
+                params: [id]
+            update_aria_label:
+                type:   translatable
+                key:    oro.rfp.action.request.edit.aria_label
+                params: [id]
         sorters:
             columns:
                 customerStatusName:
@@ -362,6 +370,7 @@ datagrids:
             view:
                 type:           navigate
                 label:          oro.grid.action.view
+                ariaLabel:      view_aria_label
                 link:           view_link
                 icon:           eye
                 rowAction:      true
@@ -369,6 +378,7 @@ datagrids:
             update:
                 type:           navigate
                 label:          oro.grid.action.update
+                ariaLabel:      update_aria_label
                 link:           update_link
                 icon:           pencil-square-o
                 rowAction:      true

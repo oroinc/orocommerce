@@ -219,6 +219,8 @@ oro:
             request:
                 updated.message: 'Your Request For Quote has been successfully updated'
                 resubmitted.message: 'Your Request For Quote has been successfully resubmitted'
+                view.aria_label: "View #%id% request"
+                edit.aria_label: "Edit #%id% request"
 
         btn:
             delete: 'Delete'
