@@ -176,7 +176,7 @@ class BrandTest extends \PHPUnit\Framework\TestCase
     public function testGetStatuses()
     {
         $statuses = Brand::getStatuses();
-        $this->assertInternalType('array', $statuses);
+        $this->assertIsArray($statuses);
         $this->assertNotEmpty($statuses);
         $this->arrayHasKey('enabled');
         $this->arrayHasKey('dissabled');

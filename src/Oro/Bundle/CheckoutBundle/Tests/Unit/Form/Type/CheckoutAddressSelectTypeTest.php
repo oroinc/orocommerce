@@ -28,7 +28,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
@@ -81,7 +81,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     {
         $type = new CheckoutAddressSelectType($this->orderAddressManager);
 
-        $this->assertInternalType('string', $type->getParent());
+        $this->assertIsString($type->getParent());
         $this->assertEquals(OrderAddressSelectType::class, $type->getParent());
     }
 

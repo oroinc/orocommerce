@@ -31,7 +31,7 @@ class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
         $this->lineItemsSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);

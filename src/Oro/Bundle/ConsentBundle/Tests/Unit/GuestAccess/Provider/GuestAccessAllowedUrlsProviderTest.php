@@ -24,7 +24,7 @@ class GuestAccessAllowedUrlsProviderTest extends TestCase
     /** @var GuestAccessAllowedUrlsProvider */
     private $guestAccessAllowedUrlsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->consentProvider = $this->createMock(EnabledConsentProvider::class);
         $this->cmsPageDataBuilder = $this->createMock(CmsPageDataBuilder::class);

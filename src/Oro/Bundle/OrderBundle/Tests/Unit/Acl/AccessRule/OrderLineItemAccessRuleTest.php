@@ -12,7 +12,7 @@ class OrderLineItemAccessRuleTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemAccessRule */
     private $accessRule;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->accessRule = new OrderLineItemAccessRule();
     }

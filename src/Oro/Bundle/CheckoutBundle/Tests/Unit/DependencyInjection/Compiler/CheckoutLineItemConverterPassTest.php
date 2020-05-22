@@ -19,7 +19,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemConverterPass */
     private $compiler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->registry = $this->container->register('oro_checkout.line_item.converter_registry')
@@ -38,14 +38,13 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([], $iteratorArgument->getValues());
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The attribute "alias" is required for "oro.checkout.line_item.converter" tag. Service: "converter_1".
-     */
-    // @codingStandardsIgnoreEnd
     public function testProcessWithoutAliasAttribute()
     {
+        $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The attribute "alias" is required for "oro.checkout.line_item.converter" tag. Service: "converter_1".'
+        );
+
         $this->container->setDefinition('converter_1', new Definition())
             ->addTag('oro.checkout.line_item.converter');
 

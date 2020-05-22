@@ -31,7 +31,7 @@ abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
@@ -50,7 +50,7 @@ abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->request, $this->requestStack);
 

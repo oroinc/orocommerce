@@ -16,7 +16,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new DigitalItemResolver();
     }

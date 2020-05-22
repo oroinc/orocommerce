@@ -46,7 +46,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         );
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $this->productUnitsProvider->expects($this->any())

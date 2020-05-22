@@ -19,7 +19,7 @@ class TrackingAwareShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
      */
     private $trackingAwareShippingMethodsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->trackingAwareShippingMethodsProvider =

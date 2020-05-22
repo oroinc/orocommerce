@@ -25,7 +25,7 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListReferenceChecker;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -36,7 +36,7 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
         $this->voter = new PriceListVoter($this->doctrineHelper, $this->priceListReferenceChecker);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->voter, $this->doctrineHelper);
     }

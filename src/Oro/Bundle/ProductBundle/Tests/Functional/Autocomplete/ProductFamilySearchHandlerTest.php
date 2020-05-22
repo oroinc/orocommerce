@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductFamilySearchHandlerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductFamilyData::class]);
@@ -73,20 +73,17 @@ class ProductFamilySearchHandlerTest extends WebTestCase
      */
     private function assertResultContainsAttributeFamilies(array $attributeFamilies): void
     {
-        $this->assertEquals(
-            [
-                'results' => array_map(
-                    function (AttributeFamily $attributeFamily) {
-                        return [
-                            'id' => $attributeFamily->getId(),
-                            'defaultLabel' => $attributeFamily->getDefaultLabel()
-                        ];
-                    },
-                    $attributeFamilies
-                ),
-                'more' => false,
-            ],
-            \json_decode($this->client->getResponse()->getContent(), true)
+        $expected = \array_map(
+            function (AttributeFamily $attributeFamily) {
+                return [
+                    'id' => $attributeFamily->getId(),
+                    'defaultLabel' => $attributeFamily->getDefaultLabel()
+                ];
+            },
+            $attributeFamilies
         );
+        $response = \json_decode($this->client->getResponse()->getContent(), true);
+        static::assertFalse($response['more']);
+        static::assertEquals($expected, $response['results']);
     }
 }

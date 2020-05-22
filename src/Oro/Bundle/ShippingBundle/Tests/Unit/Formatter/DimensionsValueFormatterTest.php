@@ -16,7 +16,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var DimensionsValueFormatter */
     protected $formatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
@@ -24,7 +24,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
         $this->formatter->setTranslationPrefix(self::TRANSLATION_PREFIX);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formatter, $this->translator);
     }

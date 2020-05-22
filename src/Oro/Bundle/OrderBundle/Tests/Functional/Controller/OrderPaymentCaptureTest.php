@@ -13,7 +13,7 @@ class OrderPaymentCaptureTest extends WebTestCase
 {
     private const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
@@ -39,7 +39,7 @@ class OrderPaymentCaptureTest extends WebTestCase
             $this->getUrl('oro_order_view', ['id' => $order->getId()])
         );
 
-        static::assertContains(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
 
         $response = $this->client->requestGrid(
             [
@@ -71,7 +71,7 @@ class OrderPaymentCaptureTest extends WebTestCase
             $this->getUrl('oro_order_view', ['id' => $order->getId()])
         );
 
-        static::assertContains(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
+        static::assertStringContainsString(self::PAYMENT_HISTORY_SECTION_NAME, $crawler->html());
 
         $response = $this->client->requestGrid(
             [

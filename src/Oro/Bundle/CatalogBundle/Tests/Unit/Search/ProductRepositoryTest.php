@@ -25,7 +25,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
     /** @var ProductRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryFactory = $this->createMock(QueryFactoryInterface::class);
         $this->mappingProvider = $this->createMock(AbstractSearchMappingProvider::class);

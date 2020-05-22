@@ -50,7 +50,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

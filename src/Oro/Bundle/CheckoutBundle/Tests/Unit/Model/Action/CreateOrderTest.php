@@ -9,49 +9,50 @@ use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
 use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateOrderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContextAccessor
-     */
+    /** @var ContextAccessor */
     protected $contextAccessor;
 
-    /**
-     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MapperInterface|MockObject */
     protected $mapper;
 
-    /**
-     * @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityPaymentMethodsProvider|MockObject */
     protected $paymentMethodsProvider;
 
-    /**
-     * @var CreateOrder
-     */
+    /** @var CreateOrder */
     protected $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
         $this->mapper = $this->createMock(MapperInterface::class);
         $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
-        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
-        $eventDispatcher = $this
-            ->getMockBuilder(EventDispatcherInterface::class)
-            ->getMock();
+        /** @var EventDispatcherInterface|MockObject $eventDispatcher */
+        $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
-        $this->action = new CreateOrder($this->contextAccessor, $this->mapper, $this->paymentMethodsProvider);
+        $this->action = new class(
+            $this->contextAccessor,
+            $this->mapper,
+            $this->paymentMethodsProvider
+        ) extends CreateOrder {
+            public function xgetOptions(): array
+            {
+                return $this->options;
+            }
+        };
         $this->action->setDispatcher($eventDispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->action);
     }
@@ -64,12 +65,8 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             CreateOrder::OPTION_KEY_DATA => ['billingAddress' => new PropertyPath('billingAddress')],
         ];
 
-        $this->assertInstanceOf(
-            'Oro\Component\Action\Action\ActionInterface',
-            $this->action->initialize($options)
-        );
-
-        $this->assertAttributeEquals($options, 'options', $this->action);
+        static::assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
+        static::assertEquals($options, $this->action->xgetOptions());
     }
 
     /**

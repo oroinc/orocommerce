@@ -16,7 +16,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class EntityFieldFallbackValueMergeListenerTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([

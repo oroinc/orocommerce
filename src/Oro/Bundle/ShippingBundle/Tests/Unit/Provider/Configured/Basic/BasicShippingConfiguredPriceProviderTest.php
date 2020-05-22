@@ -21,7 +21,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit\Framework\TestCa
      */
     private $shippingPriceProviderMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingPriceProviderMock = $this->createMock(ShippingPriceProviderInterface::class);
 

@@ -40,7 +40,7 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(Registry::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);

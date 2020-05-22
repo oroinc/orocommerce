@@ -20,7 +20,7 @@ class MeasureUnitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MeasureUnitProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
@@ -37,7 +37,7 @@ class MeasureUnitProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->repository, $this->doctrineHelper, $this->provider);
     }

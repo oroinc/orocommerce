@@ -46,7 +46,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $formScopeCriteriaResolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

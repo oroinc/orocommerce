@@ -16,7 +16,7 @@ class UnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);
         $this->provider = new UnitVisibilityProvider($this->unitVisibility);

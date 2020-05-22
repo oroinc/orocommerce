@@ -14,14 +14,14 @@ class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var MeasureTransformer */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $this->transformer = new MeasureTransformer($this->repository);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->transformer, $this->repository);
     }

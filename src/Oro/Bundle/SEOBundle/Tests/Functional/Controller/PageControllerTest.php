@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class PageControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -47,11 +47,11 @@ class PageControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $html);
+        static::assertStringNotContainsString('The CSRF token is invalid. Please try to resubmit the form.', $html);
 
-        $this->assertContains(LoadPageMetaData::META_TITLES, $html);
-        $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);
-        $this->assertContains(LoadPageMetaData::META_KEYWORDS, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_TITLES, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_DESCRIPTIONS, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_KEYWORDS, $html);
     }
 
     /**
@@ -70,9 +70,9 @@ class PageControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
-        $this->assertContains('Meta description', $crawler->html());
-        $this->assertContains('Meta keywords', $crawler->html());
+        static::assertStringContainsString('SEO', $crawler->filter('.nav')->html());
+        static::assertStringContainsString('Meta title', $crawler->html());
+        static::assertStringContainsString('Meta description', $crawler->html());
+        static::assertStringContainsString('Meta keywords', $crawler->html());
     }
 }

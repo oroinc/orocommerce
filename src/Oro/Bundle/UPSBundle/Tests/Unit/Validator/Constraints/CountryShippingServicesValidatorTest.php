@@ -35,7 +35,7 @@ class CountryShippingServicesValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = $this->createMock(CountryShippingServicesConstraint::class);
 

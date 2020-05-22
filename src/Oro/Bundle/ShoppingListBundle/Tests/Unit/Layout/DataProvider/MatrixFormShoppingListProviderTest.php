@@ -30,7 +30,7 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->matrixGridOrderFormProvider = $this->createMock(MatrixGridOrderFormProvider::class);
         $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);

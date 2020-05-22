@@ -10,7 +10,7 @@ class TaxCodesTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAvailableTypes()
     {
-        $this->assertInternalType('array', (new TaxCodes())->getAvailableTypes());
+        $this->assertIsArray((new TaxCodes())->getAvailableTypes());
     }
 
     public function testGetHash()
@@ -18,8 +18,8 @@ class TaxCodesTest extends \PHPUnit\Framework\TestCase
         $taxCodes = new TaxCodes([TaxCode::create('test1', 'test2')]);
         $hash1 = $taxCodes->getHash();
         $hash2 = $taxCodes->getHash();
-        $this->assertInternalType('string', $hash1);
-        $this->assertInternalType('string', $hash2);
+        $this->assertIsString($hash1);
+        $this->assertIsString($hash2);
         $this->assertEquals($hash1, $hash2);
     }
 

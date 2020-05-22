@@ -71,7 +71,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -107,7 +107,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);
     }

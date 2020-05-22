@@ -22,7 +22,7 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MasterCatalogRootProvider */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $manager = $this->createMock(ObjectManager::class);

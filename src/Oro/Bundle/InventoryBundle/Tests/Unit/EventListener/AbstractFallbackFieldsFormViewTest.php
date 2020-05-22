@@ -67,7 +67,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
      */
     abstract protected function getExpectedScrollData();
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
@@ -96,7 +96,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->event,

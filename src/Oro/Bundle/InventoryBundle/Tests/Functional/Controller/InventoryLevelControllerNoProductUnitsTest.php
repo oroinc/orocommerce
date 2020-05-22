@@ -12,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -50,7 +50,7 @@ class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $msg = 'Please add at least one Unit of Quantity to the current product to enable inventory management.';
-        $this->assertContains($msg, $crawler->html());
+        static::assertStringContainsString($msg, $crawler->html());
     }
 
     /**

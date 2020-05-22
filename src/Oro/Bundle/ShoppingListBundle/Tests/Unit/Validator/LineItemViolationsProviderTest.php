@@ -20,7 +20,7 @@ class LineItemViolationsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $lineItemErrorsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->lineItemErrorsProvider = new LineItemViolationsProvider($this->validator);

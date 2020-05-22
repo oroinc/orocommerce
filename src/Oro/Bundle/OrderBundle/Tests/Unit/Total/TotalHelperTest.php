@@ -28,7 +28,7 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalProvider = $this->getMockBuilder(
             'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'

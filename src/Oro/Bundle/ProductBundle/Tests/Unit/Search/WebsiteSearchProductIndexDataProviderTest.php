@@ -56,7 +56,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     /** @var WebsiteSearchProductIndexDataProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);

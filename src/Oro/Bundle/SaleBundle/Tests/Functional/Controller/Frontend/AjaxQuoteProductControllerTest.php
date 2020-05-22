@@ -16,7 +16,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -78,7 +78,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals($expected, $result);
     }
 

@@ -46,7 +46,7 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(ObjectRepository::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);

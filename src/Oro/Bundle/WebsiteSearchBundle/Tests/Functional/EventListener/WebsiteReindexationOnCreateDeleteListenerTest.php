@@ -15,7 +15,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
      */
     private $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 

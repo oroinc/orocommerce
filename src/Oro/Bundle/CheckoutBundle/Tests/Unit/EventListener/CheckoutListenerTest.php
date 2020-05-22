@@ -27,7 +27,7 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

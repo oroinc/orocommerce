@@ -15,7 +15,7 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var BooleanTypeHandler */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->getMockBuilder(FormFactory::class)
             ->disableOriginalConstructor()
@@ -41,18 +41,16 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($fieldName, ChoiceType::class, null, $this->callback(function (array $options) {
 
                 // will check choice_attr separately
-                $this->assertArraySubset([
-                    'choices' => [
-                        'No' => false,
-                        'Yes' => true,
-                    ],
-                    'auto_initialize' => false,
-                ], $options);
+                $this->assertSame([
+                    'No' => false,
+                    'Yes' => true,
+                ], $options['choices']);
+                $this->assertSame(false, $options['auto_initialize']);
 
                 $this->assertArrayHasKey('choice_attr', $options);
 
                 $callback = $options['choice_attr'];
-                $this->assertInternalType('callable', $callback);
+                $this->assertIsCallable($callback);
 
                 $this->assertEquals(['disabled' => 'disabled'], $callback(false, 'No', 0));
                 $this->assertEquals([], $callback(true, 'Yes', 1));

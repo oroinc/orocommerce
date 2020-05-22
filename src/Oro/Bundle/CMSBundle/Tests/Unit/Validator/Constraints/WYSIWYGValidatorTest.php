@@ -29,7 +29,7 @@ class WYSIWYGValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);

@@ -56,12 +56,12 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         ]
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->listener = new DatagridListener();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
     }

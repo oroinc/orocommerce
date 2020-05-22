@@ -23,18 +23,17 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->condition = new ValidateCheckoutAddresses($this->validator);
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "checkout" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "checkout" option');
+
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
@@ -62,11 +61,11 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
 
         $key = '@'.ValidateCheckoutAddresses::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($stdClass, $resultSection['parameters']);
     }

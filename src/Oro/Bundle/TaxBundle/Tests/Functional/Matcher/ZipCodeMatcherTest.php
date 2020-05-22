@@ -19,7 +19,7 @@ class ZipCodeMatcherTest extends WebTestCase
     const ZIP_US_NY_RANGE_INSIDE = '00200';
     const ZIP_UNUSED_CODE = '00001';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

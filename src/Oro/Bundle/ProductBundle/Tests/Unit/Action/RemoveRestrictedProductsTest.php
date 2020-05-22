@@ -37,7 +37,7 @@ class RemoveRestrictedProductsTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository = $this->createMock(ProductRepository::class);

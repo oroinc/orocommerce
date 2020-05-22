@@ -33,7 +33,7 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
      */
     private $shippingLineItemBuilderFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingLineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
         $this->collectionFactory = new DoctrineShippingLineItemCollectionFactory();

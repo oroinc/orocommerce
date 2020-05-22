@@ -27,7 +27,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     protected $messageProvider;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentTransaction = new PaymentTransaction();
@@ -36,7 +36,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new RedirectListener($this->session, $this->messageProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->paymentTransaction, $this->session, $this->paymentMethodProvider);
     }

@@ -32,7 +32,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->formType = new CouponAddType($this->doctrineHelper);

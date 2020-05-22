@@ -24,7 +24,7 @@ class WebCatalogProductLimiterTest extends WebTestCase
      */
     private $webCatalogProductLimiter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->webCatalogProductLimiter = $this->getContainer()->get('oro_seo.limiter.web_catalog_product_limiter');

@@ -63,7 +63,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->guestShoppingListMigrationManager         = $this->createMock(GuestShoppingListMigrationManager::class);
         $this->visitorManager                            = $this->createMock(CustomerVisitorManager::class);

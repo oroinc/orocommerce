@@ -16,7 +16,7 @@ class UnitVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var UnitVisibilityExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);
 

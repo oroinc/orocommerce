@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadAppliedPromotio
 
 class OrderPromotionDiscountsTest extends RestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

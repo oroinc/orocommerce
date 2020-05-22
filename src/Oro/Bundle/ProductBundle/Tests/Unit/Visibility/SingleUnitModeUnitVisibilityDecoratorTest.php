@@ -23,7 +23,7 @@ class SingleUnitModeUnitVisibilityDecoratorTest extends \PHPUnit\Framework\TestC
      */
     private $visibility;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->decoratedVisibility = $this->createMock(UnitVisibilityInterface::class);
 

@@ -27,7 +27,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $testable;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
             ->disableOriginalConstructor()->getMock();

@@ -43,7 +43,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $testedProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configFactory = $this->createMock(MoneyOrderConfigFactoryInterface::class);
         $this->settingsRepository = $this->createMock(MoneyOrderSettingsRepository::class);

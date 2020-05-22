@@ -40,7 +40,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
@@ -69,7 +69,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelper);
     }

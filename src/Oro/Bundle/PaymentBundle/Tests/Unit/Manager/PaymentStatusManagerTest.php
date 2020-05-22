@@ -31,7 +31,7 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransaction */
     protected $transaction;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->statusProviderMock = $this->getMockBuilder(PaymentStatusProvider::class)
             ->disableOriginalConstructor()->getMock();

@@ -31,7 +31,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite('default');

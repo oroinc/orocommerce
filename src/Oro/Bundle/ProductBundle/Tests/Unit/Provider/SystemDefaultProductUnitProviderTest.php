@@ -25,7 +25,7 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $defaultProductUnitProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

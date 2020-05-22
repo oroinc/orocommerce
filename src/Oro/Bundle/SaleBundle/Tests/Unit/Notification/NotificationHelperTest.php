@@ -35,7 +35,7 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
     /** @var NotificationHelper */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->emailModelBuilder = $this->createMock(EmailModelBuilder::class);

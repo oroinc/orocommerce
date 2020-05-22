@@ -31,7 +31,7 @@ class RequestProductTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType     = new RequestProductType();
         $this->formType->setDataClass(RequestProduct::class);

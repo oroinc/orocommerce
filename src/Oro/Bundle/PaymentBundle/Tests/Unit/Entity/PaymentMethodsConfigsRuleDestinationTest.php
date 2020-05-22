@@ -31,7 +31,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
      */
     protected $paymentMethodsConfigsRuleDestination;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();

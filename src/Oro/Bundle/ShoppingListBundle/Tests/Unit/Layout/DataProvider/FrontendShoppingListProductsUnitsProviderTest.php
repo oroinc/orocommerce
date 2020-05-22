@@ -37,7 +37,7 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit\Framework\T
      */
     protected $userCurrencyManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(Registry::class);
         $this->provider = new FrontendShoppingListProductsUnitsProvider($this->registry);

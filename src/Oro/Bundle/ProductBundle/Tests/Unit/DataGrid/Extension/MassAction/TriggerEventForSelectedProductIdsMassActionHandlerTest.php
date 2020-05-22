@@ -28,7 +28,7 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit\Fr
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

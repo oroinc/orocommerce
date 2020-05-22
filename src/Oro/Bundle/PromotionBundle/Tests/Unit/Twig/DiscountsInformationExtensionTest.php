@@ -21,7 +21,7 @@ class DiscountsInformationExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DiscountsInformationExtension */
     protected $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dataProvider = $this->createMock(DiscountsInformationDataProvider::class);
 

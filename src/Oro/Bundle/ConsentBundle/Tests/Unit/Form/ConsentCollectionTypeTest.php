@@ -49,7 +49,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $doctrine = $this->createMock(ManagerRegistry::class);
 

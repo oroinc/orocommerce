@@ -14,7 +14,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /** @var  Registry */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -26,7 +26,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();
         parent::tearDown();

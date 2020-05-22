@@ -25,7 +25,7 @@ class ConfigurableProductControllerTest extends WebTestCase
     const EXTENDED_FIELD_SIZE = 'size';
 
     /** {@inheritdoc} */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -33,7 +33,7 @@ class ConfigurableProductControllerTest extends WebTestCase
     }
 
     /** {@inheritdoc} */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -46,7 +46,7 @@ class ConfigurableProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('products-grid', $crawler->html());
+        static::assertStringContainsString('products-grid', $crawler->html());
     }
 
     public function testCreateConfigurableProduct()
@@ -84,9 +84,9 @@ class ConfigurableProductControllerTest extends WebTestCase
             0,
             $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
         );
-        $this->assertContains('Category: '.self::CATEGORY_NAME, $crawler->html());
+        static::assertStringContainsString('Category: '.self::CATEGORY_NAME, $crawler->html());
 
-        $this->assertContains(
+        static::assertStringContainsString(
             OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME,
             $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
         );
@@ -97,7 +97,7 @@ class ConfigurableProductControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_8);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
-        $this->assertContains(
+        static::assertStringContainsString(
             OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME,
             $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
         );

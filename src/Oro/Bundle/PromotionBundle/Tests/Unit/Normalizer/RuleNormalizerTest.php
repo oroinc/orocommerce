@@ -13,7 +13,7 @@ class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->normalizer = new RuleNormalizer();
     }

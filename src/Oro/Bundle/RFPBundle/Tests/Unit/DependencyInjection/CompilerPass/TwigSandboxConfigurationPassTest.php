@@ -19,7 +19,7 @@ class TwigSandboxConfigurationPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this->createMock(ContainerBuilder::class);
         $this->compilerPass = new TwigSandboxConfigurationPass();

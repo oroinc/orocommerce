@@ -11,7 +11,7 @@ class CheckoutWorkflowStateRepositoryTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures(['Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutWorkflowState']);

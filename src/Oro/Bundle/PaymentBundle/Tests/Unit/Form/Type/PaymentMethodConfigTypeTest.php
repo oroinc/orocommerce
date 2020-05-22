@@ -26,7 +26,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
      */
     protected $paymentMethodViewProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);

@@ -24,7 +24,7 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(UpcomingProductProvider::class);
         $this->productUpcomingExtension = new ProductUpcomingExtension($this->provider);

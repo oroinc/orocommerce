@@ -44,7 +44,7 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->messageFactory = $this->createMock(MessageFactory::class);

@@ -36,7 +36,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->cache = $this->createMock(UrlCacheInterface::class);

@@ -40,7 +40,7 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $appliedDiscountsExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

@@ -33,7 +33,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $fileManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filesystem = $this->createMock(Filesystem::class);

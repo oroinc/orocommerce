@@ -32,7 +32,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
      */
     protected $insertFromSelectQueryExecutor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures(

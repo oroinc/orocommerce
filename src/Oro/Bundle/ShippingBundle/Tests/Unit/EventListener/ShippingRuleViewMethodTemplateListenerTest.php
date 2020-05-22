@@ -23,7 +23,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
      */
     private $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
 

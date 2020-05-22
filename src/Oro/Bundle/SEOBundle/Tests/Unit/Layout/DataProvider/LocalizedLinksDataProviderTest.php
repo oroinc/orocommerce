@@ -51,7 +51,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $dataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->urlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
             ->disableOriginalConstructor()

@@ -24,7 +24,7 @@ class FrontendQuoteDemandAccessRuleTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendQuoteDemandAccessRule */
     private $accessRule;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 

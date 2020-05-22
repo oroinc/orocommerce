@@ -20,7 +20,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit\Framework\TestCase
      */
     protected $manager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->manager = $this
             ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
@@ -38,10 +38,10 @@ class OrderLineItemsHasCountTest extends \PHPUnit\Framework\TestCase
      * @dataProvider initializeDataProvider
      * @param array $options
      * @param $message
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
      */
     public function testInitializeExceptions(array $options, $message)
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage($message);
         $this->condition->initialize($options);
     }
@@ -67,12 +67,11 @@ class OrderLineItemsHasCountTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface
-     */
     public function testEvaluateException()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface');
+
         $context = [];
         $this->condition->initialize(['entity' => []]);
         $this->condition->evaluate($context);

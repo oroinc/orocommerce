@@ -55,7 +55,7 @@ class UpdateIntegrationValidatorTest extends TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
         $this->shippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);

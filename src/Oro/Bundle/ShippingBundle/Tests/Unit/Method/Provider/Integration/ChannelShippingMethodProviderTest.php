@@ -45,7 +45,7 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $disabledMethod;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $repository = $this->createMock(ChannelRepository::class);

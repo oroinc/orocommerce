@@ -34,7 +34,7 @@ class SitemapLoginUrlsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $sitemapLoginUrlsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(Router::class);
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);

@@ -16,13 +16,13 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutErrorHandler */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->flashBag = new FlashBag();
         $this->handler = new CheckoutErrorHandler($this->flashBag);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->handler, $this->flashBag);
     }

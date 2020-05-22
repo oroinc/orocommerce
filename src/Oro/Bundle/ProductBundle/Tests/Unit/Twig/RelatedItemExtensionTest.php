@@ -16,7 +16,7 @@ class RelatedItemExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedItemExtension */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = $this->createMock(RelatedItemConfigHelper::class);
 

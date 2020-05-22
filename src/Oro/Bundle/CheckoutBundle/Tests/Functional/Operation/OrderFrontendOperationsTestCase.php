@@ -25,7 +25,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -72,7 +72,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         $checkoutsInGridAfterReorder = $this->getOpenOrdersGridData();
         $this->assertCount($checkoutsInGridCnt + 2, $checkoutsInGridAfterReorder);
         $lastCheckoutData = array_pop($checkoutsInGridAfterReorder);
-        $this->assertContains(
+        static::assertStringContainsString(
             sprintf('Order #%s', $order->getIdentifier()),
             trim($lastCheckoutData['startedFrom'])
         );

@@ -32,7 +32,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

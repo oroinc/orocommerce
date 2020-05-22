@@ -30,7 +30,7 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit\Framewor
      */
     protected $decorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProviderInterface::class);
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

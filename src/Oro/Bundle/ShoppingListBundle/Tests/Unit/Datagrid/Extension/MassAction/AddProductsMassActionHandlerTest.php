@@ -43,7 +43,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListItemHandler = $this->createMock(ShoppingListLineItemHandler::class);
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

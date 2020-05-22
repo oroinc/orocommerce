@@ -117,7 +117,7 @@ class DiscountContextTest extends \PHPUnit\Framework\TestCase
         $lineItem2 = $this->createMock(DiscountLineItem::class);
         $lineItem2->expects($this->once())
             ->method('getDiscountTotal')
-            ->willReturn(20);
+            ->willReturn(20.0);
 
         $context = new DiscountContext();
         $context->addLineItem($lineItem1);

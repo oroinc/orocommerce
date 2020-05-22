@@ -28,7 +28,7 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var FinderDatabaseStrategy|\PHPUnit\Framework\MockObject\MockObject */
     protected $finderDatabaseStrategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->autocompleteFieldsProvider = $this->getMockBuilder(AutocompleteFieldsProvider::class)
             ->disableOriginalConstructor()

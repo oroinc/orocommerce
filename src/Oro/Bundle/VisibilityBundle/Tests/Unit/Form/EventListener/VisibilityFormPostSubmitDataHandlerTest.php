@@ -37,7 +37,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
      */
     protected $fieldDataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->em = $this->createMock(EntityManagerInterface::class);

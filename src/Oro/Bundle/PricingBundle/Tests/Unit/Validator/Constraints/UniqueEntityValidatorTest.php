@@ -47,7 +47,7 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new UniqueEntity();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -67,7 +67,7 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }
@@ -83,12 +83,13 @@ class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->constraint->getDefaultOption());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
-     */
     public function testNotExpectedValueException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

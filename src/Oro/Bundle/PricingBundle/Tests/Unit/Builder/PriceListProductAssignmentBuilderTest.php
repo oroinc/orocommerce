@@ -49,7 +49,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListProductAssignmentBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)

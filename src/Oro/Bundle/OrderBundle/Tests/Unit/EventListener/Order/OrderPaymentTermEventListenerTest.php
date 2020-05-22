@@ -23,7 +23,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
@@ -32,17 +32,16 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new OrderPaymentTermEventListener($this->paymentTermProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->paymentTermProvider);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser must belong to Customer
-     */
     public function testThrowExceptionWhenCustomerUserHasWrongCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser must belong to Customer');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
@@ -75,12 +74,11 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onOrderEvent($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser without Customer is not allowed
-     */
     public function testCustomerUserWithoutOrderCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser without Customer is not allowed');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
@@ -97,12 +95,11 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onOrderEvent($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage CustomerUser without Customer is not allowed
-     */
     public function testCustomerUserWithoutCustomer()
     {
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectExceptionMessage('CustomerUser without Customer is not allowed');
+
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 

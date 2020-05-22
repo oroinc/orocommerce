@@ -34,7 +34,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->messageFactory = $this->createMock(SegmentMessageFactory::class);

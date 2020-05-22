@@ -82,7 +82,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
      */
     protected $doctrineHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
@@ -311,12 +311,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A root entity is missing for grid "Datagrid name"
-     */
     public function testOnBuildBeforeHideUnsuitableWithoutFrom()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A root entity is missing for grid "Datagrid name"');
+
         $product = new Product();
         $product->setVariantFields([
             self::FIELD_COLOR,
@@ -331,12 +330,13 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A left join with "productVariantLinkClass" is missing for grid "Datagrid name"
-     */
     public function testOnBuildBeforeHideUnsuitableWithoutCorrectVariantLinkJoin()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'A left join with "productVariantLinkClass" is missing for grid "Datagrid name"'
+        );
+
         $product = new Product();
         $product->setVariantFields([
             self::FIELD_COLOR,
@@ -381,12 +381,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Can not find parent product with id "1"
-     */
     public function testOnBuildBeforeHideUnsuitableNotExistingParentProduct()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Can not find parent product with id "1"');
+
         $this->prepareRepositoryProduct(null);
 
         $this->setParameterBag();

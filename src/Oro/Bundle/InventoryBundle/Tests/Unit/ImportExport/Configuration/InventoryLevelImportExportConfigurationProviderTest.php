@@ -20,7 +20,7 @@ class InventoryLevelImportExportConfigurationProviderTest extends TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 

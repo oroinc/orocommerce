@@ -31,7 +31,7 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->cacheBuilder = $this->createMock(ProductCaseCacheBuilderInterface::class);

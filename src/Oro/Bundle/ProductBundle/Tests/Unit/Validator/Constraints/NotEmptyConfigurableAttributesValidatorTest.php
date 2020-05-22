@@ -24,7 +24,7 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(VariantFieldProvider::class);
 
@@ -37,17 +37,18 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->validator, $this->context, $this->provider);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), new NotEmptyConfigurableAttributes());
     }
 

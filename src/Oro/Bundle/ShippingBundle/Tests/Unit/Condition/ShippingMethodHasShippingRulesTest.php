@@ -27,7 +27,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
      */
     protected $shippingMethodHasShippingRulesCondition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
             ->disableOriginalConstructor()
@@ -52,12 +52,11 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Missing "method_identifier" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "method_identifier" option');
+
         $this->assertInstanceOf(
             ShippingMethodHasShippingRules::class,
             $this->shippingMethodHasShippingRulesCondition->initialize([])
@@ -122,7 +121,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->shippingMethodHasShippingRulesCondition->compile('$factoryAccessor');
 
-        $this->assertContains('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
+        static::assertStringContainsString('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
     }
 
     public function testSetContextAccessor()

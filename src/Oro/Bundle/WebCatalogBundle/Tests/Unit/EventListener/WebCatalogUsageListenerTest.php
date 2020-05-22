@@ -19,7 +19,7 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogUsageListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cacheableProvider = $this->createMock(CacheableWebCatalogUsageProvider::class);
 

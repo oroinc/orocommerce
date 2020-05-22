@@ -33,7 +33,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configureQuoteProductOfferFormatter();
         $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);

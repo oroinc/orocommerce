@@ -49,7 +49,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->baseGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->contextUrlProvider = $this->createMock(ContextUrlProviderRegistry::class);

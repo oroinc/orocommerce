@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType;
@@ -45,17 +46,18 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(OrderDiscountCollectionTableType::class, null, ['order' => new Order()]);
 
-        static::assertArraySubset([
-            'template_name' => 'OroOrderBundle:Discount:order_discount_collection.html.twig',
-            'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => [
-                'view' => 'oroorder/js/app/views/discount-collection-view',
-                'discountType' => DiscountSubtotalProvider::TYPE,
-                'totalType' => LineItemSubtotalProvider::TYPE,
-            ],
-            'attr' => ['class' => 'oro-discount-collection'],
-            'entry_type' => OrderDiscountCollectionRowType::class
-        ], $form->getConfig()->getOptions());
+        $options = $form->getConfig()->getOptions();
+
+        $this->assertSame('OroOrderBundle:Discount:order_discount_collection.html.twig', $options['template_name']);
+        $this->assertSame('oroui/js/app/components/view-component', $options['page_component']);
+        $this->assertSame([
+            'view' => 'oroorder/js/app/views/discount-collection-view',
+            'discountType' => DiscountSubtotalProvider::TYPE,
+            'totalType' => LineItemSubtotalProvider::TYPE,
+            'percentType' => OrderDiscount::TYPE_PERCENT
+        ], $options['page_component_options']);
+        $this->assertSame(['class' => 'oro-discount-collection'], $options['attr']);
+        $this->assertSame(OrderDiscountCollectionRowType::class, $options['entry_type']);
     }
 
     /**
@@ -103,8 +105,6 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
         ]);
         $formView = $form->createView();
 
-        static::assertArraySubset([
-            'order' => $order,
-        ], $formView->vars);
+        $this->assertSame($order, $formView->vars['order']);
     }
 }

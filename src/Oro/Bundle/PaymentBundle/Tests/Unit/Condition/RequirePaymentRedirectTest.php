@@ -23,7 +23,7 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -43,11 +43,9 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInitializeWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertNotInstanceOf(AbstractCondition::class, $this->condition->initialize([]));
     }
 
@@ -83,10 +81,10 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->toArray();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('@' . RequirePaymentRedirect::NAME, $result);
         $resultSection = $result['@' . RequirePaymentRedirect::NAME];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains('payment_method', $resultSection['parameters']);
     }
@@ -95,7 +93,7 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->compile('');
-        $this->assertContains(RequirePaymentRedirect::NAME, $result);
-        $this->assertContains('payment_method', $result);
+        static::assertStringContainsString(RequirePaymentRedirect::NAME, $result);
+        static::assertStringContainsString('payment_method', $result);
     }
 }

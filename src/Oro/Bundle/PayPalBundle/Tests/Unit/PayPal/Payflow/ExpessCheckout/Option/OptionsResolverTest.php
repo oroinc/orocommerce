@@ -13,12 +13,12 @@ class OptionsResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new OptionsResolver();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->resolver);
     }
@@ -83,12 +83,11 @@ class OptionsResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve();
     }
 
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\AccessException
-     * @expectedExceptionMessage addOption is locked during resolve process
-     */
     public function testAddOptionInResolveAction()
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\AccessException::class);
+        $this->expectExceptionMessage('addOption is locked during resolve process');
+
         /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface');
         $option

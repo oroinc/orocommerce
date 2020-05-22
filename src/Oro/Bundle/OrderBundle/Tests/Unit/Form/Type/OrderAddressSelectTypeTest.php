@@ -35,7 +35,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
@@ -123,7 +123,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
             $this->serializer
         );
 
-        $this->assertInternalType('string', $type->getParent());
+        $this->assertIsString($type->getParent());
         $this->assertEquals(Select2ChoiceType::class, $type->getParent());
     }
 

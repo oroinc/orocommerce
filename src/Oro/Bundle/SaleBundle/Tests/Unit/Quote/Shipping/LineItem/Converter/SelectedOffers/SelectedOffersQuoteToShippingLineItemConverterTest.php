@@ -19,30 +19,30 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
      * @var QuoteProductDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private $demandProduct;
-    
+
     /**
      * @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteDemand;
-    
+
     /**
      * @var Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteMock;
-    
+
     /**
      * @var SelectedOffersQuoteToShippingLineItemConverter
      */
     private $selectedOffersQuoteToShippingLineItemConverter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->selectedOffersQuoteToShippingLineItemConverter = new SelectedOffersQuoteToShippingLineItemConverter(
             $this->shippingLineItemCollectionFactory,
             $this->shippingLineItemBuilderFactory
         );
-        
+
         $this->quoteMock = $this->getQuoteMock();
 
         $this->quoteDemand = $this

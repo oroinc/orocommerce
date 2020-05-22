@@ -21,7 +21,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -30,7 +30,7 @@ class QuoteControllerTest extends WebTestCase
         ]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_sale.enable_guest_quote', false);
@@ -51,7 +51,7 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_frontend_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('frontend-quotes-grid', $crawler->html());
+        static::assertStringContainsString('frontend-quotes-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid([
             'gridName' => 'frontend-quotes-grid',
@@ -284,8 +284,8 @@ class QuoteControllerTest extends WebTestCase
             }
 
             $property = (string)$property;
-            $this->assertContains($label, $control->textContent);
-            $this->assertContains($property, $control->textContent);
+            static::assertStringContainsString($label, $control->textContent);
+            static::assertStringContainsString($property, $control->textContent);
         }
 
         $createOrderButton = (bool)$crawler

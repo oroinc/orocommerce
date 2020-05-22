@@ -42,7 +42,10 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
      */
     public function iShouldSeeThatOrderInternalStatusIs($status)
     {
-        self::assertContains($status, $this->getPage()->findLabel('Internal Status')->getParent()->getText(), '', true);
+        static::assertStringContainsStringIgnoringCase(
+            $status,
+            $this->getPage()->findLabel('Internal Status')->getParent()->getText()
+        );
     }
 
     /**

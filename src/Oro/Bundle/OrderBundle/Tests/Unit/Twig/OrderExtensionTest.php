@@ -23,7 +23,7 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $orderExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
         $this->orderExtension = new OrderExtension($this->container);

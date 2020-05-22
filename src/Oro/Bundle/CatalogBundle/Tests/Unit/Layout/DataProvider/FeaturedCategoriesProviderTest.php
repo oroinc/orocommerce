@@ -41,7 +41,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $featuredCategoriesProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryTreeProvider = $this->getMockBuilder(CategoryTreeProvider::class)
             ->disableOriginalConstructor()

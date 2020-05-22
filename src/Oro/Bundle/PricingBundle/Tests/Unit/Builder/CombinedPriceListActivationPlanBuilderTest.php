@@ -49,7 +49,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
      */
     protected $builder;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->schedulerResolver = $this->createMock(PriceListScheduleResolver::class);

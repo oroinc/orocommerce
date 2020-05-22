@@ -32,12 +32,12 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
      */
     protected $resultArray;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new PriceRequest();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->model);
     }

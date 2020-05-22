@@ -131,7 +131,7 @@ class FeatureContext extends OroFeatureContext implements
         foreach ($elements as $element) {
             $html = $element->getHtml();
             foreach ($table->getColumn(0) as $item) {
-                self::assertContains($item, $html);
+                static::assertStringContainsString($item, $html);
             }
         }
     }

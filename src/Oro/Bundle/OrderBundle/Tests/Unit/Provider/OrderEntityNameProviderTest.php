@@ -11,7 +11,7 @@ class OrderEntityNameProviderTest extends \PHPUnit\Framework\TestCase
     /** @var OrderEntityNameProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new OrderEntityNameProvider();
     }

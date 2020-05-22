@@ -11,7 +11,7 @@ class ProductDecrementQuantityFormExtensionTest extends ProductInventoryTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productFormExtension = new ProductDecrementQuantityFormExtension();
     }

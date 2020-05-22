@@ -54,7 +54,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
@@ -87,7 +87,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->entity = new \stdClass();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->storage, $this->registry, $this->productClass, $this->extension, $this->dataClass);
     }

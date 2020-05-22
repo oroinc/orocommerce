@@ -20,7 +20,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
 {
     use RolePermissionExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->enableVisitor();

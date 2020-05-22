@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-    
+
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
@@ -49,7 +49,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $productPriceClass;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPriceClass = 'stdClass';
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -64,7 +64,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->productPriceClass,

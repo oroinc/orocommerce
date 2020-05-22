@@ -17,7 +17,7 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
      */
     private $em;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
@@ -30,7 +30,7 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
     public function testShouldNotClearExpiredVisitorsWithExistShoppingLists()
     {
         $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
-        $this->assertContains('Clear expired customer visitors completed', $result);
+        static::assertStringContainsString('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);
         $customerVisitorActive = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR);
@@ -43,10 +43,10 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
     public function testShouldClearExpiredVisitorsWithoutShoppingLists()
     {
         $result = $this->runCommand(ClearExpiredShoppingListsCommand::getDefaultName());
-        $this->assertContains('Clear expired guest shopping lists completed', $result);
+        static::assertStringContainsString('Clear expired guest shopping lists completed', $result);
 
         $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
-        $this->assertContains('Clear expired customer visitors completed', $result);
+        static::assertStringContainsString('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);
         $customerVisitorActive = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR);

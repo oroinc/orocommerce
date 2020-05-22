@@ -34,7 +34,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
     private $requestDataStorage;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);
         $this->requestDataStorage = new RequestToQuoteDataStorage($this->storage);

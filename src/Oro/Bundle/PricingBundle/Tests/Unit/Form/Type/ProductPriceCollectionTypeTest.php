@@ -50,7 +50,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 
@@ -63,7 +63,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }
@@ -129,7 +129,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertInternalType('string', $this->formType->getParent());
+        $this->assertIsString($this->formType->getParent());
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
@@ -137,13 +137,11 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ProductPriceCollectionType::class);
 
-        $expectedOptions = [
-            'entry_type' => ProductPriceType::class,
-            'show_form_when_empty' => false,
-            'entry_options' => ['data_class' => ProductPrice::class]
-        ];
+        $options = $form->getConfig()->getOptions();
 
-        $this->assertArraySubset($expectedOptions, $form->getConfig()->getOptions());
+        $this->assertSame(ProductPriceType::class, $options['entry_type']);
+        $this->assertSame(false, $options['show_form_when_empty']);
+        $this->assertSame(ProductPrice::class, $options['entry_options']['data_class']);
     }
 
     public function testFinishView()

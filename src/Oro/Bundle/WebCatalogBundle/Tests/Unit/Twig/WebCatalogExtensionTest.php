@@ -23,7 +23,7 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
             ->disableOriginalConstructor()

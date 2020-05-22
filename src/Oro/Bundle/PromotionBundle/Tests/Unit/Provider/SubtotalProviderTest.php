@@ -54,7 +54,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
@@ -95,13 +95,13 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $discountContext = $this->createMock(DiscountContext::class);
         $discountContext->expects($this->once())
             ->method('getTotalLineItemsDiscount')
-            ->willReturn(10);
+            ->willReturn(10.0);
         $discountContext->expects($this->once())
             ->method('getSubtotalDiscountTotal')
-            ->willReturn(5);
+            ->willReturn(5.0);
         $discountContext->expects($this->once())
             ->method('getShippingDiscountTotal')
-            ->willReturn(8);
+            ->willReturn(8.0);
         $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($entity)
@@ -131,22 +131,18 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithWrongEntity()
     {
+        $this->expectException(\RuntimeException::class);
         $this->appliedDiscountsProvider->expects($this->never())
             ->method('getDiscountsAmountByOrder');
 
         $this->provider->getCachedSubtotal(new \stdClass());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithoutId()
     {
+        $this->expectException(\RuntimeException::class);
         $order = new Order();
 
         $this->appliedDiscountsProvider->expects($this->never())

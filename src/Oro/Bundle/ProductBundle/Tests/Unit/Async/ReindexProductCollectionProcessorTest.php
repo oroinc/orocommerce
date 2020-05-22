@@ -61,7 +61,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);

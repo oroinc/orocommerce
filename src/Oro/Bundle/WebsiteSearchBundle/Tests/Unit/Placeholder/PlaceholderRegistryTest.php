@@ -10,12 +10,12 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderRegistry */
     private $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = new PlaceholderRegistry();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->registry);
     }
@@ -50,12 +50,11 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($placeholder, $retrievedPlaceholder);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder "UNKNOWN_PLACEHOLDER" does not exist.
-     */
     public function testGetPlaceholderUnknownName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Placeholder "UNKNOWN_PLACEHOLDER" does not exist.');
+
         $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
         $this->registry->addPlaceholder($placeholder);
 
@@ -70,7 +69,7 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->registry->addPlaceholder($placeholder);
         $this->registry->addPlaceholder($placeholder2);
 
-        $this->assertInternalType('array', $this->registry->getPlaceholders());
+        $this->assertIsArray($this->registry->getPlaceholders());
         $this->assertEquals(
             [
                 'TEST_PLACEHOLDER' => $placeholder,

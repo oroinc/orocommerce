@@ -38,7 +38,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->childName = 'testChild';
         $this->productFormUnitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);

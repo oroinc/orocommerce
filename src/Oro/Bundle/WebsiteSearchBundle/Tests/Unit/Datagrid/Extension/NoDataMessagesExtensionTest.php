@@ -34,7 +34,7 @@ class NoDataMessagesExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->noDataMessagesExtension = $this->createMock(AbstractExtension::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

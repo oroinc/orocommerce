@@ -22,7 +22,7 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
             ->disableOriginalConstructor()

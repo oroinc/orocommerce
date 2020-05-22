@@ -67,7 +67,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $jobRunner;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);
         $this->indexer
@@ -252,7 +252,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $message->method('getMessageId')
-            ->willReturn(1);
+            ->willReturn('1');
 
         $this->jobRunner->expects($this->never())
             ->method('runDelayed');

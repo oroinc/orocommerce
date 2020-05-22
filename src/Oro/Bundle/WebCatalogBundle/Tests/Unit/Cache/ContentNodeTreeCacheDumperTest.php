@@ -33,7 +33,7 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
     /** @var ContentNodeTreeCacheDumper */
     private $dumper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
         $this->contentNodeTreeCache = $this->createMock(ContentNodeTreeCache::class);

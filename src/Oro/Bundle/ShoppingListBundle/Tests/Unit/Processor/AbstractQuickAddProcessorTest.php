@@ -41,7 +41,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->handler = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
@@ -76,14 +76,14 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->processor->getName());
+        $this->assertIsString($this->processor->getName());
         $this->assertEquals($this->getProcessorName(), $this->processor->getName());
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->handler, $this->processor, $this->registry, $this->messageGenerator);
     }
@@ -109,7 +109,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testIsValidationRequired()
     {
-        $this->assertInternalType('bool', $this->processor->isValidationRequired());
+        $this->assertIsBool($this->processor->isValidationRequired());
         $this->assertTrue($this->processor->isValidationRequired());
     }
 
@@ -118,7 +118,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
         $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
 
         $result = $this->processor->isAllowed();
-        $this->assertInternalType('bool', $result);
+        $this->assertIsBool($result);
         $this->assertTrue($result);
     }
 }

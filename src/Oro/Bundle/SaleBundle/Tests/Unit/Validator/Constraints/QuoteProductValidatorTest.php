@@ -29,7 +29,7 @@ class QuoteProductValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context      = $this->createMock(ExecutionContextInterface::class);
         $this->constraint   = new Constraints\QuoteProduct();
@@ -47,11 +47,9 @@ class QuoteProductValidatorTest extends \PHPUnit\Framework\TestCase
         static::assertEquals([Constraint::CLASS_CONSTRAINT], $this->constraint->getTargets());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testNotQuoteProduct()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

@@ -17,7 +17,7 @@ class ProductUnitFieldsSettingsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitFieldsSettingsExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productUnitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
 

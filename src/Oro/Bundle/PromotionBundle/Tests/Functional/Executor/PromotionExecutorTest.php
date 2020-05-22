@@ -33,7 +33,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
      */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

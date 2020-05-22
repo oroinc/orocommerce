@@ -14,7 +14,7 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteAcceptable */
     protected $condition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->condition = new QuoteAcceptable();
         $this->condition->setContextAccessor(new ContextAccessor());
@@ -25,12 +25,11 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(QuoteAcceptable::NAME, $this->condition->getName());
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage First option should be valid property definition.
-     */
     public function testInitializeException()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('First option should be valid property definition.');
+
         $this->condition->initialize([]);
     }
 

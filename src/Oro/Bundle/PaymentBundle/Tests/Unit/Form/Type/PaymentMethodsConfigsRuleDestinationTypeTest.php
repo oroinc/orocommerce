@@ -24,7 +24,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
         $this->formType = new PaymentMethodsConfigsRuleDestinationType($this->subscriber);
@@ -57,9 +57,9 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
     {
         $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
-        $this->assertContains('data_class', $options);
-        $this->assertContains('region_route', $options);
-        $this->assertContains('oro_api_country_get_regions', $options['region_route']);
+        static::assertContainsEquals('data_class', $options);
+        static::assertContainsEquals('region_route', $options);
+        static::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**
@@ -143,7 +143,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
         return $destination;
     }
-    
+
     /**
      * {@inheritdoc}
      */

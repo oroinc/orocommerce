@@ -33,7 +33,7 @@ abstract class AbstractActionTest extends \PHPUnit\Framework\TestCase
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
     protected $logger;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock('Oro\Component\ConfigExpression\ContextAccessor');
 

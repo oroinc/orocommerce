@@ -15,7 +15,7 @@ class CustomerGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     protected $customerGroup;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->customerGroup = $this->getReference('customer_group.group3');

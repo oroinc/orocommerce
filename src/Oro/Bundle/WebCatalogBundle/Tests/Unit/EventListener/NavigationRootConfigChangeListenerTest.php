@@ -22,7 +22,7 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

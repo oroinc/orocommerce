@@ -28,7 +28,7 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->entityRepository = $this->createMock(EntityRepository::class);
@@ -39,7 +39,7 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->doctrineHelper,

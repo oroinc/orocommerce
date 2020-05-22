@@ -20,7 +20,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new PageVariantTypeExtension();
         parent::setUp();

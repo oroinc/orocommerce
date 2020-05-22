@@ -40,7 +40,7 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
      */
     protected $triggerHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->registry = $this->createMock(Registry::class);

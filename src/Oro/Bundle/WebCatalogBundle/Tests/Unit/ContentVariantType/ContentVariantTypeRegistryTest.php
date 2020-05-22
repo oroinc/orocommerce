@@ -71,7 +71,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
 
         $registry = new ContentVariantTypeRegistry([$pageType1, $pageType2]);
 
-        $this->assertInternalType('array', $registry->getContentVariantTypes());
+        $this->assertIsArray($registry->getContentVariantTypes());
 
         $this->assertEquals(
             [
@@ -109,7 +109,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
 
         $registry = new ContentVariantTypeRegistry([$pageType1, $pageType2]);
 
-        $this->assertInternalType('array', $registry->getAllowedContentVariantTypes());
+        $this->assertIsArray($registry->getAllowedContentVariantTypes());
 
         $this->assertEquals(
             [

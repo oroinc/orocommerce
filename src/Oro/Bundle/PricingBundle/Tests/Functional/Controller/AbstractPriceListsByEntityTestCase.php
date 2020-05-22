@@ -53,7 +53,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      */
     abstract public function getMainFormName();
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -188,13 +188,13 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         foreach ($expectedData as $websiteReference => $priceListsWithFallback) {
             $priceListSection = $crawler->filter('div #priceLists');
             $fallbackText = $priceListSection->filter('p strong')->text();
-            $this->assertNotContains('only', $fallbackText);
+            static::assertStringNotContainsString('only', $fallbackText);
 
             foreach ($priceListsWithFallback['priceLists'] as $priceListRelation) {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($priceListRelation['priceList']);
                 $row = $priceListSection->filter(sprintf('.price_list%s', $priceList->getId()));
-                $this->assertContains($priceList->getName(), $row->filter('.price_list_link')->text());
+                static::assertStringContainsString($priceList->getName(), $row->filter('.price_list_link')->text());
             }
         }
     }
@@ -229,7 +229,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     protected function checkPriceListRelationExist(array $priceListsRelations, $priceListReference)
     {
         $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
-        
+
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
             if ($priceListRelation->getWebsite()->getId() == $website->getId()
@@ -284,7 +284,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($message, $crawler->html());
+        static::assertStringContainsString($message, $crawler->html());
     }
 
     /**

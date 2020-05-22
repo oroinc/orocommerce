@@ -24,7 +24,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()->getMock();

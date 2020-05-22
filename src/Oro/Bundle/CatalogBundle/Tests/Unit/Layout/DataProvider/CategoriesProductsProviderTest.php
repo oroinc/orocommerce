@@ -27,7 +27,7 @@ class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->searchRepository = $this->createMock(ProductRepository::class);

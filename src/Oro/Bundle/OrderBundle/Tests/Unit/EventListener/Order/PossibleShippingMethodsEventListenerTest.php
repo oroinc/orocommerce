@@ -35,7 +35,7 @@ class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->getMockBuilder(OrderShippingContextFactory::class)
             ->disableOriginalConstructor()

@@ -50,7 +50,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     /** @var CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryFormExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryFormExtension();
 

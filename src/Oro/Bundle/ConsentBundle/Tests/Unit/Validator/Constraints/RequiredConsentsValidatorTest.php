@@ -36,7 +36,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
         $this->localizedHelper->expects($this->any())
@@ -47,7 +47,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
 
                 return $fallbackValue->getString();
             });
-            
+
         $this->enabledConsentProvider = $this->createMock(EnabledConsentProvider::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
 
@@ -59,7 +59,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->localizedHelper,
@@ -69,12 +69,11 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Incorrect type of the value!
-     */
     public function testIncorrectTypeValidateValue()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Incorrect type of the value!');
+
         $this->validator->validate('', $this->constraint);
     }
 
@@ -97,7 +96,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getUnacceptedRequiredConsents')
             ->willReturn($requiredConsents);
-        
+
         if (!$isValid) {
             $this->context
                 ->expects($this->once())

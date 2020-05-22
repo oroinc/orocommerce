@@ -50,11 +50,11 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit\Framework\
     }
 
     /**
-     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expectedToBeCalled
+     * @param \PHPUnit\Framework\MockObject\Rule\InvokedCount $expectedToBeCalled
      *
      * @return QueryModifierInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function getQueryModifier(\PHPUnit\Framework\MockObject\Matcher\InvokedCount $expectedToBeCalled)
+    private function getQueryModifier(\PHPUnit\Framework\MockObject\Rule\InvokedCount $expectedToBeCalled)
     {
         /** @var QueryModifierInterface|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->getMockBuilder(QueryModifierInterface::class)->getMock();

@@ -37,7 +37,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

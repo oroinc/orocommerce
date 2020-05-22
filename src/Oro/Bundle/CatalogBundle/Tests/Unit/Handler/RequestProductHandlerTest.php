@@ -16,7 +16,7 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var  RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestProductHandler;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 

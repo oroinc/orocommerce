@@ -24,7 +24,7 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->customerOptionProvider = $this->createMock(OptionsProviderInterface::class);
         $this->formType = new ContactInfoSourceOptionsType($this->customerOptionProvider);

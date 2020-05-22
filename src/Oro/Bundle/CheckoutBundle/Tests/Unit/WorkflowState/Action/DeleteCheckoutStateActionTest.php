@@ -21,7 +21,7 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
@@ -31,7 +31,7 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
     }
@@ -90,12 +90,11 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "entity" is required
-     */
     public function testInitializeWithoutRequiredField()
     {
+        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "entity" is required');
+
         $options = [];
 
         $this->action->initialize($options);

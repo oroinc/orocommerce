@@ -21,7 +21,7 @@ class ContentBlockControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -33,8 +33,11 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_content_block_index'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('cms-content-block-grid', $crawler->html());
-        $this->assertContains('Create Content Block', $crawler->filter('div.title-buttons-container')->html());
+        static::assertStringContainsString('cms-content-block-grid', $crawler->html());
+        static::assertStringContainsString(
+            'Create Content Block',
+            $crawler->filter('div.title-buttons-container')->html()
+        );
     }
 
     public function testCreate()
@@ -48,7 +51,7 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content block has been saved', $crawler->html());
+        static::assertStringContainsString('Content block has been saved', $crawler->html());
     }
 
     /**
@@ -66,7 +69,7 @@ class ContentBlockControllerTest extends WebTestCase
         );
         $result       = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($contentBlock->getAlias(), $crawler->html());
+        static::assertStringContainsString($contentBlock->getAlias(), $crawler->html());
     }
 
     /**
@@ -94,6 +97,6 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content block has been saved', $crawler->html());
+        static::assertStringContainsString('Content block has been saved', $crawler->html());
     }
 }

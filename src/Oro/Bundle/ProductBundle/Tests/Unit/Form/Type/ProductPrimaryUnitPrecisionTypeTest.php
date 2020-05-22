@@ -37,7 +37,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ProductPrimaryUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);

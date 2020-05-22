@@ -18,7 +18,7 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
     }
@@ -32,7 +32,7 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
             ->getTopicSentMessages(ProductImageResizeListener::IMAGE_RESIZE_TOPIC);
 
         $this->assertCount(4, $messagesQueued);
-        $this->assertContains('4 product image(s) queued for resize', $output);
+        static::assertStringContainsString('4 product image(s) queued for resize', $output);
     }
 
     public function testRunNoImagesAvailable()
@@ -43,6 +43,6 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
             ->getTopicSentMessages(ProductImageResizeListener::IMAGE_RESIZE_TOPIC);
 
         $this->assertCount(0, $messagesQueued);
-        $this->assertContains('0 product image(s) queued for resize', $output);
+        static::assertStringContainsString('0 product image(s) queued for resize', $output);
     }
 }

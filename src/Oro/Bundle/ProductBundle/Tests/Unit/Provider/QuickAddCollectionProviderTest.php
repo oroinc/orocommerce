@@ -29,7 +29,7 @@ class QuickAddCollectionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $request;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->quickAddHandler = $this->getMockBuilder(QuickAddHandler::class)->disableOriginalConstructor()->getMock();
         $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();

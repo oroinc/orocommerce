@@ -17,7 +17,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
     /** @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this
             ->getMockBuilder(ApplicablePaymentMethodsProvider::class)
@@ -32,12 +32,11 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('has_applicable_payment_methods', $this->condition->getName());
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "context" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "context" option');
+
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
@@ -91,11 +90,11 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
 
         $key = '@'.HasApplicablePaymentMethods::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($stdClass, $resultSection['parameters']);
     }

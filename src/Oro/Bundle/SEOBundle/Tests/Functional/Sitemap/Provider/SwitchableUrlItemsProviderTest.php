@@ -34,7 +34,7 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         // also 2 pages created by main migrations
@@ -109,6 +109,6 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
             $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
-        $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
+        static::assertContainsEquals($expectedUrlItem, $urlItems);
     }
 }

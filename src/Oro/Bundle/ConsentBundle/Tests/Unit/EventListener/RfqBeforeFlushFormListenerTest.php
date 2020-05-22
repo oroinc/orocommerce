@@ -21,7 +21,7 @@ class RfqBeforeFlushFormListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RfqBeforeFlushFormListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->listener = new RfqBeforeFlushFormListener();

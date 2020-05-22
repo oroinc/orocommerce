@@ -18,7 +18,7 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit\
      */
     private $generateSitemapListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->scheduleSitemapGenerationProvider = $this->createMock(SitemapGenerationScheduler::class);
         $this->generateSitemapListener = new ScheduleSitemapGenerationOnGuestAccessChangeListener(

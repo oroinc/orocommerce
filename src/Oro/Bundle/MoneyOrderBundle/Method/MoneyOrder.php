@@ -5,14 +5,12 @@ namespace Oro\Bundle\MoneyOrderBundle\Method;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
-use Oro\Bundle\PaymentBundle\Method\Action\PurchaseActionInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 
 /**
  * Implements Money Order payment method
  */
-class MoneyOrder implements PaymentMethodInterface, CaptureActionInterface, PurchaseActionInterface
+class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
 {
     /**
      * @var MoneyOrderConfigInterface

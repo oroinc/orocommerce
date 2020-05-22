@@ -15,7 +15,7 @@ class CompletedCheckoutDataTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('USD', $data->getCurrency());
         $this->assertEquals(42, $data->getItemsCount());
-        $this->assertInternalType('array', $data->getOrderData());
+        $this->assertIsArray($data->getOrderData());
         $this->assertEquals(['entityAlias' => 'test', 'entityId' => 105], $data->getOrderData());
         $this->assertEquals('test string', $data->getStartedFrom());
         $this->assertEquals(100.2, $data->getSubtotal());
@@ -44,12 +44,13 @@ class CompletedCheckoutDataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data, $newData);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage You cannot deserialize CompletedCheckoutData from anything, except array or null
-     */
     public function testJsonDeserializeException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'You cannot deserialize CompletedCheckoutData from anything, except array or null'
+        );
+
         CompletedCheckoutData::jsonDeserialize(new \stdClass());
     }
 

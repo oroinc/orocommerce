@@ -32,7 +32,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $manager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->aclHelper = $this->getMockBuilder(AclHelper::class)->disableOriginalConstructor()->getMock();
         $configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
@@ -110,12 +110,11 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($user, $shoppingList->getCustomerUser());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage User with id=1 not exists
-     */
     public function testSetOwnerUserNotExists()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('User with id=1 not exists');
+
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->expects($this->once())
             ->method('getRepository')

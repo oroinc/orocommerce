@@ -17,7 +17,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
      */
     protected $configScope;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -18,7 +18,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
     const VIEW_INVENTORY_THRESHOLD_XPATH =
     "//label[text() = 'Inventory Threshold']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadCategoryProductData::class]);

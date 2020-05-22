@@ -30,7 +30,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ProductShippingOptionsType();
         $this->formType->setDataClass('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions');

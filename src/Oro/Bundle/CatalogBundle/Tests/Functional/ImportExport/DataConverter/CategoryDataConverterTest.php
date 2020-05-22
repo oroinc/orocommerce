@@ -48,7 +48,7 @@ class CategoryDataConverterTest extends WebTestCase
     private $converter;
 
     /** {@inheritdoc} */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

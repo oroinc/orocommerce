@@ -25,7 +25,7 @@ class OrderAddressTest extends RestJsonApiTestCase
     private const IS_REGION_REQUIRED         = true;
     private const COUNTRY_REGION_ADDRESS_REF = LoadOrderAddressData::ORDER_ADDRESS_1;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

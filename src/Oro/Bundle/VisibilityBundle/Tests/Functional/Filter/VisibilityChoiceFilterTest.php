@@ -8,7 +8,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFilterProductV
 
 class VisibilityChoiceFilterTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
@@ -56,7 +56,7 @@ class VisibilityChoiceFilterTest extends WebTestCase
             },
             $result['data']
         );
-        $this->assertEquals($customers, $resultCustomers, '', 0, 10, true);
+        static::assertEqualsCanonicalizing($customers, $resultCustomers);
         $this->assertSame($total, $result['options']['totalRecords']);
     }
 

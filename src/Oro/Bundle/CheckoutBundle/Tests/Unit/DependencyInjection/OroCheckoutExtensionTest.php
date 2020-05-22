@@ -28,12 +28,12 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
         return $mockBuilder;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new OroCheckoutExtension();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extension);
     }

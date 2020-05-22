@@ -12,7 +12,7 @@ class BasicRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
      */
     private $service;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->service = new BasicRuleFiltrationService();
     }

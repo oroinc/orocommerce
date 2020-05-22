@@ -38,7 +38,7 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

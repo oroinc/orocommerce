@@ -27,7 +27,7 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $choicesProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

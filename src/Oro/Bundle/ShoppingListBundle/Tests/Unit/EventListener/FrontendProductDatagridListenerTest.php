@@ -36,7 +36,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productShoppingListsDataProvider = $this->getMockBuilder(ProductShoppingListsDataProvider::class)
             ->disableOriginalConstructor()

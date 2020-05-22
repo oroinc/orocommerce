@@ -26,7 +26,7 @@ class DiscountsValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $discountsValidator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContext::class);
 

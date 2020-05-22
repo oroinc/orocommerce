@@ -52,7 +52,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $crypter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject $shippingOriginProvider */
         $this->shippingOriginProvider = $this->getMockBuilder(ShippingOriginProvider::class)

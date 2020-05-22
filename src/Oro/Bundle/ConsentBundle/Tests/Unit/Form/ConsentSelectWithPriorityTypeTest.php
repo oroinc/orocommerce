@@ -42,7 +42,7 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

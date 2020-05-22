@@ -41,7 +41,7 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
      */
     protected $frontendHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()->getMock();

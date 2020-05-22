@@ -8,7 +8,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData
 
 class WebCatalogTreeTest extends RestJsonApiTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

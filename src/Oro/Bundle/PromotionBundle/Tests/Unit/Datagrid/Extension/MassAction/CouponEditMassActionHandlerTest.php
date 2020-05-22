@@ -23,7 +23,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
      */
     private $formFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(Translator::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

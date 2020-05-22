@@ -504,7 +504,11 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         // static visibilities should not be inserted
         $this->assertSameSize($parentCategoryFallbackCategoryIds, $resolvedVisibilities);
         foreach ($resolvedVisibilities as $resolvedVisibility) {
-            $this->assertContains($resolvedVisibility['category'], $parentCategoryFallbackCategoryIds);
+            static::assertContainsEquals(
+                $resolvedVisibility['category'],
+                $parentCategoryFallbackCategoryIds,
+                \var_export($parentCategoryFallbackCategoryIds, true)
+            );
             $this->assertEquals(CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $resolvedVisibility['source']);
             $this->assertEquals($visibility, $resolvedVisibility['visibility']);
         }

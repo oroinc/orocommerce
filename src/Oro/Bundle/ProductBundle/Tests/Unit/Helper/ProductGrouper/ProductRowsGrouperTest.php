@@ -12,7 +12,7 @@ class ProductRowsGrouperTest extends \PHPUnit\Framework\TestCase
      */
     private $grouper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->grouper = new ProductRowsGrouper();
     }

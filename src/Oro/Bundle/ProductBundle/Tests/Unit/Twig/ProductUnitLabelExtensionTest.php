@@ -19,7 +19,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 

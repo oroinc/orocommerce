@@ -25,7 +25,7 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localeSettings = $this->createMock(LocaleSettings::class);
@@ -59,7 +59,7 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider, $this->configManager, $this->localeSettings, $this->dateTimeFormatter);
     }

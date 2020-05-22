@@ -17,7 +17,7 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(PlaceholderRegistry::class);
 
@@ -27,16 +27,14 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->registry, $this->placeholder);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testGetPlaceholderNotIntendedToRun()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->placeholder->getPlaceholder();
     }
 

@@ -18,7 +18,7 @@ class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalProvider = $this
             ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\TotalProvider')
@@ -28,7 +28,7 @@ class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new OrderTotalEventListener($this->totalProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->totalProvider);
     }

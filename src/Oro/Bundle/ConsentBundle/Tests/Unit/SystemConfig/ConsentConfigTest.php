@@ -13,7 +13,7 @@ class ConsentConfigTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->consentConfig = new ConsentConfig();
     }

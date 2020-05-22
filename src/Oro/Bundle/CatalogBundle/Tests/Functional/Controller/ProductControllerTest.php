@@ -23,7 +23,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -74,7 +74,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['sku'], LoadProductData::PRODUCT_9);
+            static::assertStringContainsString($data['sku'], LoadProductData::PRODUCT_9);
         }
     }
 
@@ -140,7 +140,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
-    
+
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *
@@ -162,7 +162,7 @@ class ProductControllerTest extends WebTestCase
             'unit' => $systemDefaultUnit,
             'precision' => $systemDefaultPrecision
         ];
-        
+
         /** @var CategoryUnitPrecision $unitPrecision */
         $unitPrecision = $this->getReference(LoadCategoryData::SECOND_LEVEL1)
             ->getDefaultProductOptions()
@@ -171,7 +171,7 @@ class ProductControllerTest extends WebTestCase
             'unit' => $unitPrecision->getUnit()->getCode(),
             'precision' => $unitPrecision->getPrecision()
         ];
-        
+
         $expectedUnitPrecisions = [
             'systemPrecision' => $systemPrecision,
             'categoryPrecision' => $categoryPrecision,

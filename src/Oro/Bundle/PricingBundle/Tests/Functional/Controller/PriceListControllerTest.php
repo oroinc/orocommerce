@@ -36,7 +36,7 @@ class PriceListControllerTest extends WebTestCase
     const CURRENCY = 'USD';
     const ADD_NOTE_BUTTON_NAME = 'Add note';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -58,13 +58,13 @@ class PriceListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('pricing-price-list-grid', $crawler->html());
+        static::assertStringContainsString('pricing-price-list-grid', $crawler->html());
 
-        $this->assertContains($this->getPriceList('price_list_1')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_2')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_3')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_4')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_5')->getName(), $crawler->html());
+        static::assertStringContainsString($this->getPriceList('price_list_1')->getName(), $crawler->html());
+        static::assertStringContainsString($this->getPriceList('price_list_2')->getName(), $crawler->html());
+        static::assertStringContainsString($this->getPriceList('price_list_3')->getName(), $crawler->html());
+        static::assertStringContainsString($this->getPriceList('price_list_4')->getName(), $crawler->html());
+        static::assertStringContainsString($this->getPriceList('price_list_5')->getName(), $crawler->html());
     }
 
     /**
@@ -147,7 +147,7 @@ class PriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Price List has been saved', $html);
+        static::assertStringContainsString('Price List has been saved', $html);
 
         /** @var PriceList $priceList */
         $priceList = $this->getContainer()->get('doctrine')
@@ -175,8 +175,8 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::PRICE_LIST_NAME, $crawler->html());
-        $this->assertContains(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
+        static::assertStringContainsString(self::PRICE_LIST_NAME, $crawler->html());
+        static::assertStringContainsString(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
 
         return $id;
     }
@@ -211,8 +211,8 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains($priceListName, $crawler->html());
-        $this->assertContains($expectedErrorMessage, $crawler->html());
+        static::assertStringContainsString($priceListName, $crawler->html());
+        static::assertStringContainsString($expectedErrorMessage, $crawler->html());
     }
 
     public function testPriceGeneration()
@@ -329,7 +329,7 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
+        static::assertStringContainsString(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->checkCurrenciesOnPage($crawler);
 
         return $id;
@@ -368,7 +368,7 @@ class PriceListControllerTest extends WebTestCase
                 'validators'
             );
 
-        $this->assertContains($message, $crawler->html());
+        static::assertStringContainsString($message, $crawler->html());
     }
 
     /**
@@ -386,7 +386,7 @@ class PriceListControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
+        static::assertStringContainsString(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->checkCurrenciesOnPage($crawler);
     }
 

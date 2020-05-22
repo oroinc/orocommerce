@@ -25,7 +25,7 @@ class CreditCardFormProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $router;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');

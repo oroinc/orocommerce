@@ -22,7 +22,7 @@ class MatchingPriceEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FormInterface */
     protected $form;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
 
@@ -33,7 +33,7 @@ class MatchingPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new MatchingPriceEventListener($this->priceMatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->priceMatcher, $this->form);
     }

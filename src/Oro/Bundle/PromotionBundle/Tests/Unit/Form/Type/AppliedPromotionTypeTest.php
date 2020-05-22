@@ -63,9 +63,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(AppliedPromotionType::class);
 
-        $this->assertArraySubset([
-            'data_class' => AppliedPromotion::class,
-        ], $form->getConfig()->getOptions());
+        $this->assertSame(AppliedPromotion::class, $form->getConfig()->getOptions()['data_class']);
     }
 
     public function testGetName()

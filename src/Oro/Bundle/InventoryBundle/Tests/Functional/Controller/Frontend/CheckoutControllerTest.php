@@ -45,7 +45,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected $configManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->emFallback = $this->registry->getManagerForClass(
@@ -55,7 +55,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->updateSystemQuantityLimits(null, null);
     }
@@ -161,9 +161,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $stepLabel = $crawler->filterXPath(self::CHECKOUT_STEP_LABEL)->text();
         if ($shouldBeFirstStep) {
-            $this->assertContains('Billing Information', $stepLabel);
+            static::assertStringContainsString('Billing Information', $stepLabel);
         } else {
-            $this->assertNotContains('Billing Information', $stepLabel);
+            static::assertStringNotContainsString('Billing Information', $stepLabel);
         }
     }
 
@@ -223,9 +223,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $buttonClasses = $continueButton->attr('class');
 
         if ($minError || $maxError) {
-            $this->assertContains('btn--disabled', $buttonClasses);
+            static::assertStringContainsString('btn--disabled', $buttonClasses);
         } else {
-            $this->assertNotContains('btn--disabled', $buttonClasses);
+            static::assertStringNotContainsString('btn--disabled', $buttonClasses);
         }
 
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);
@@ -233,16 +233,16 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $content = $this->client->getResponse()->getContent();
         $minMessage = $this->getErrorMessage($product, $quantityLimit, true);
         if ($minError) {
-            $this->assertContains($minMessage, $content);
+            static::assertStringContainsString($minMessage, $content);
         } else {
-            $this->assertNotContains($minMessage, $content);
+            static::assertStringNotContainsString($minMessage, $content);
         }
 
         $maxMessage = $this->getErrorMessage($product, $quantityLimit, false);
         if ($maxError) {
-            $this->assertContains($maxMessage, $content);
+            static::assertStringContainsString($maxMessage, $content);
         } else {
-            $this->assertNotContains($maxMessage, $content);
+            static::assertStringNotContainsString($maxMessage, $content);
         }
     }
 

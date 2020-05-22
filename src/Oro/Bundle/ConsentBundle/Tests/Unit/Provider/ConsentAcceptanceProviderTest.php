@@ -28,7 +28,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->consentAcceptanceRepository = $this->createMock(ConsentAcceptanceRepository::class);
@@ -248,7 +248,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         $consent1 = $this->getEntity(Consent::class, ['id' => 1]);
         $consent2 = $this->getEntity(Consent::class, ['id' => 2]);
         $consent3 = $this->getEntity(Consent::class, ['id' => 3]);
-        
+
         $consentAcceptance1 = $this->getEntity(
             ConsentAcceptance::class,
             [

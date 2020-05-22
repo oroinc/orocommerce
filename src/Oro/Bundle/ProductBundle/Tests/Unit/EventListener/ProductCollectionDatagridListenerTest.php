@@ -52,7 +52,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->segmentManager = $this->createMock(SegmentManager::class);

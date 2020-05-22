@@ -22,7 +22,7 @@ class CustomerCategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Scope */
     protected $scope;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->category = new Category();
         $this->scope = new Scope();
@@ -32,7 +32,7 @@ class CustomerCategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->customerCategoryVisibilityResolved, $this->category, $this->scope);
     }

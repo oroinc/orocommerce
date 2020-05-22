@@ -23,7 +23,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     /** @var LocalizedFallbackValueAwareStrategy */
     protected $strategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

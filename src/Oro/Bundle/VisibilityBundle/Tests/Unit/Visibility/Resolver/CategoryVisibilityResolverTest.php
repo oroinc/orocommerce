@@ -43,7 +43,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryVisibilityResolver */
     private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);

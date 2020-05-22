@@ -24,7 +24,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     /** @var AddressCountryAndRegionSubscriber */
     protected $subscriber;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
         $this->formType = new ShippingMethodsConfigsRuleDestinationType($this->subscriber);
@@ -56,8 +56,8 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     {
         $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
-        $this->assertContains('region_route', $options);
-        $this->assertContains('oro_api_country_get_regions', $options['region_route']);
+        static::assertContainsEquals('region_route', $options);
+        static::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**

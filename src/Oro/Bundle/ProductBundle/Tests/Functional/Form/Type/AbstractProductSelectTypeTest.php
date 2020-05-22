@@ -27,7 +27,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /** @var array */
     protected $dataParameters = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -97,12 +97,11 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     abstract public function restrictionGridDataProvider();
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Search handler is not fully configured
-     */
     public function testAllDependenciesInjectedException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Search handler is not fully configured');
+
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
             Product::class,
             new RequestStack(),

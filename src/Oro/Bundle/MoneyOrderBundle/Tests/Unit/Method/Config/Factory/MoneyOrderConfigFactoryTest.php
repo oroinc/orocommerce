@@ -28,7 +28,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $integrationIdentifierGeneratorMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->localizationHelperMock = $this->createMock(LocalizationHelper::class);
         $this->integrationIdentifierGeneratorMock = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

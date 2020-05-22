@@ -32,7 +32,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
         'street2' => 'Street2',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingOriginModelFactory = $this->createMock(ShippingOriginModelFactory::class);
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -40,7 +40,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new ShippingOriginEventListener($this->shippingOriginModelFactory);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->shippingOriginModelFactory, $this->configManager, $this->listener);
     }

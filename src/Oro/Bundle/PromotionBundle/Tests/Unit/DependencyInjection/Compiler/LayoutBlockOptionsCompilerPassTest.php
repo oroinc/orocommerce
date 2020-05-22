@@ -13,7 +13,7 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit\Framework\TestCase
      */
     private $compilerPass;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->compilerPass = new LayoutBlockOptionsCompilerPass();
     }

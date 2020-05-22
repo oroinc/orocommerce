@@ -28,7 +28,7 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -115,12 +115,11 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array", "string" given
-     */
     public function testReverseTransformException()
     {
+        $this->expectException(\Symfony\Component\Form\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage('Expected argument of type "array", "string" given');
+
         $this->transformer->reverseTransform('test');
     }
 }

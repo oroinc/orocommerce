@@ -31,7 +31,7 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
      */
     protected $shippingRuleDestination;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();

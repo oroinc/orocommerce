@@ -33,7 +33,7 @@ class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
      */
     private $adapter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filesystem = $this->getMockBuilder(Filesystem::class)
             ->disableOriginalConstructor()

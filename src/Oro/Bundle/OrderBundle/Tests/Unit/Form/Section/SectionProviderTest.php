@@ -17,14 +17,14 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FormRegistryInterface */
     protected $formRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formRegistry = $this->createMock(FormRegistryInterface::class);
 
         $this->sectionProvider = new SectionProvider($this->formRegistry);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->sectionProvider);
     }

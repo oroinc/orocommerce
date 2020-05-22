@@ -27,7 +27,7 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
      */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');

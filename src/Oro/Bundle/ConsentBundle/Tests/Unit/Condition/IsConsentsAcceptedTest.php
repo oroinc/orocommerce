@@ -37,7 +37,7 @@ class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->enabledConsentsProvider = $this->createMock(EnabledConsentProvider::class);

@@ -26,7 +26,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $categories;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode($this->categoryPrecision['code']);

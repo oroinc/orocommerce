@@ -35,7 +35,7 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     protected $ruleCache;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createMock(Cache::class);
         $this->registry = $this->createMock(ManagerRegistry::class);

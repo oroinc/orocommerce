@@ -379,17 +379,26 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function matchProductLine(Element $productLine, array $row, $elementName)
     {
         try {
-            self::assertContains($row[0], $productLine->getElement($elementName . 'ProductLineName')->getText());
-            self::assertContains($row[1], $productLine->getElement($elementName . 'ProductLineQuantity')->getText());
-            self::assertContains($row[2], $productLine->getElement($elementName . 'ProductLineUnit')->getText());
+            static::assertStringContainsString(
+                $row[0],
+                $productLine->getElement($elementName . 'ProductLineName')->getText()
+            );
+            static::assertStringContainsString(
+                $row[1],
+                $productLine->getElement($elementName . 'ProductLineQuantity')->getText()
+            );
+            static::assertStringContainsString(
+                $row[2],
+                $productLine->getElement($elementName . 'ProductLineUnit')->getText()
+            );
             if (isset($row[3])) {
-                self::assertContains(
+                static::assertStringContainsString(
                     $row[3],
                     $productLine->getElement($elementName . 'ProductLinePrice')->getText()
                 );
             }
             if (isset($row[4])) {
-                self::assertContains(
+                static::assertStringContainsString(
                     $row[4],
                     $productLine->getElement($elementName . 'ProductLineSubtotal')->getText()
                 );

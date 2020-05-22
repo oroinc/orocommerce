@@ -73,22 +73,20 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $event->getEntitiesData());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Scalars and \DateTime are supported only, "stdClass" given
-     */
     public function testAddFieldObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Scalars and \DateTime are supported only, "stdClass" given');
+
         $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addField(1, 'sku', new \stdClass());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage supported only, "Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue" given
-     */
     public function testAddPlaceholderFieldNotSupported()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('supported only, "Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue" given');
+
         $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addPlaceholderField(1, 'sku', new LocalizedFallbackValue(), []);
     }

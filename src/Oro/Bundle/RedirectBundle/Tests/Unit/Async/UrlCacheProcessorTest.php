@@ -27,7 +27,7 @@ class UrlCacheProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dumper = $this->getMockBuilder(SluggableUrlDumper::class)
             ->disableOriginalConstructor()

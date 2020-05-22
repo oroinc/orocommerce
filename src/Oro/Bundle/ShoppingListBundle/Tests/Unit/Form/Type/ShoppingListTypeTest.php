@@ -17,7 +17,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new ShoppingListType();
         $this->type->setDataClass(self::DATA_CLASS);

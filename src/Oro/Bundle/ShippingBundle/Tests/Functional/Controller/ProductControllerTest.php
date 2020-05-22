@@ -14,7 +14,7 @@ use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -59,7 +59,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         $repository = static::getContainer()
             ->get('doctrine')
@@ -136,12 +136,12 @@ class ProductControllerTest extends WebTestCase
         /** @var UnitLabelFormatterInterface $freightFormatter */
         $freightFormatter = static::getContainer()->get('oro_shipping.formatter.freight_class_label');
 
-        $this->assertContains($unitFormatter->format($option->getProductUnit()), $html);
-        $this->assertContains(
+        static::assertStringContainsString($unitFormatter->format($option->getProductUnit()), $html);
+        static::assertStringContainsString(
             $weightFormatter->formatShort($option->getWeight()->getValue(), $option->getWeight()->getUnit()),
             $html
         );
-        $this->assertContains(
+        static::assertStringContainsString(
             sprintf(
                 '%s x %s x %s %s',
                 $option->getDimensions()->getValue()->getLength(),
@@ -152,6 +152,6 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $this->assertContains($freightFormatter->format($option->getFreightClass()), $html);
+        static::assertStringContainsString($freightFormatter->format($option->getFreightClass()), $html);
     }
 }

@@ -39,7 +39,7 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productUpcomingProvider = $this->createMock(UpcomingProductProvider::class);
 

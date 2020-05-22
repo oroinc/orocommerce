@@ -13,12 +13,12 @@ class WeightTest extends \PHPUnit\Framework\TestCase
     /** @var Weight */
     protected $model;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new Weight();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->model);
     }

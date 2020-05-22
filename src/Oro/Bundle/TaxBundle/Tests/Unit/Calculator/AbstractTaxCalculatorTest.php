@@ -9,7 +9,7 @@ abstract class AbstractTaxCalculatorTest extends \PHPUnit\Framework\TestCase
     /** @var TaxCalculatorInterface */
     protected $calculator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calculator = $this->getCalculator();
     }
@@ -36,6 +36,6 @@ abstract class AbstractTaxCalculatorTest extends \PHPUnit\Framework\TestCase
 
     public function testAmountKey()
     {
-        $this->assertInternalType('string', $this->getCalculator()->getAmountKey());
+        $this->assertIsString($this->getCalculator()->getAmountKey());
     }
 }

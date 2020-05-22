@@ -17,7 +17,7 @@ class ContentWidgetTypeSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeSelectType */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentWidgetTypeProvider = $this->createMock(ContentWidgetTypeProvider::class);
 

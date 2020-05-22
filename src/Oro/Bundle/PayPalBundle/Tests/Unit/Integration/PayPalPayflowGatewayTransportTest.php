@@ -5,22 +5,28 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Integration;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayTransport;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PayPalPayflowGatewayTransportTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PayPalPayflowGatewayTransport */
     private $transport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->transport = new PayPalPayflowGatewayTransport();
+        $this->transport = new class() extends PayPalPayflowGatewayTransport {
+            public function xgetSettings(): ParameterBag
+            {
+                return $this->settings;
+            }
+        };
     }
 
     public function testInitCompiles()
     {
         $settings = new PayPalSettings();
         $this->transport->init($settings);
-        $this->assertAttributeSame($settings->getSettingsBag(), 'settings', $this->transport);
+        static::assertSame($settings->getSettingsBag(), $this->transport->xgetSettings());
     }
 
     public function testGetSettingsFormType()

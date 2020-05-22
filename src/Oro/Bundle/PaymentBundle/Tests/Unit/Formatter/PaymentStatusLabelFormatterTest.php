@@ -18,7 +18,7 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 

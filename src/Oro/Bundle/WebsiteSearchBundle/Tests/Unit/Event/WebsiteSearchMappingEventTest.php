@@ -9,7 +9,7 @@ class WebsiteSearchMappingEventTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteSearchMappingEvent */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new WebsiteSearchMappingEvent();
     }

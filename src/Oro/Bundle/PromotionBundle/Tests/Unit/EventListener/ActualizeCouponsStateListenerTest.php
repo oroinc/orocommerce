@@ -33,7 +33,7 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);

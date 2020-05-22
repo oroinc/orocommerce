@@ -24,7 +24,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
      */
     protected $quoteProductOfferMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->firstOffersQuoteToShippingLineItemConverter = new FirstOffersQuoteToShippingLineItemConverter(

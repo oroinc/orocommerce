@@ -28,7 +28,7 @@ class OrderHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxCodeProvider = $this
             ->getMockBuilder(TaxCodeProvider::class)

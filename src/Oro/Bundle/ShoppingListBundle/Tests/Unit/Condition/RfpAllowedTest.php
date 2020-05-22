@@ -32,7 +32,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
      */
     protected $propertyPath;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestDataStorageExtension = $this->getMockBuilder(RequestDataStorageExtension::class)
             ->disableOriginalConstructor()
@@ -74,7 +74,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->rfpAllowed->compile('$factoryAccessor');
 
-        $this->assertContains('$factoryAccessor->create(\'rfp_allowed\'', $result);
+        static::assertStringContainsString('$factoryAccessor->create(\'rfp_allowed\'', $result);
     }
 
     public function testSetContextAccessor()

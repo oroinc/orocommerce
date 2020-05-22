@@ -7,19 +7,20 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
 use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
     /** @var FreightClassSelectType */
     protected $formType;
-    
+
     /** @var FreightClassesProvider */
     protected $provider;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider')
+        $this->provider = $this->getMockBuilder(FreightClassesProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -31,9 +32,9 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(FreightClassSelectType::NAME, $this->formType->getBlockPrefix());
+        static::assertEquals(FreightClassSelectType::NAME, $this->formType->getBlockPrefix());
     }
-    
+
     /**
      * @param array $inputData
      * @param array $expectedData
@@ -44,39 +45,39 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     {
         $formView = new FormView();
         $formView->vars['choices'] = [];
-        
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(static::once())
             ->method('getParent')
             ->willReturnCallback(function () use ($inputData) {
                 if (null === $inputData['parentData']) {
                     return null;
                 }
 
-                $parent = $this->createMock('Symfony\Component\Form\FormInterface');
-                $parent->expects($this->once())
+                $parent = $this->createMock(FormInterface::class);
+                $parent->expects(static::once())
                     ->method('getData')
                     ->willReturn($inputData['parentData']);
-                
+
                 return $parent;
             });
-        
-        $this->provider->expects($inputData['freightClasses'] ? $this->once() : $this->never())
+
+        $this->provider->expects($inputData['freightClasses'] ? static::once() : static::never())
             ->method('getFreightClasses')
             ->with($inputData['parentData'], $inputData['options']['compact'])
             ->willReturn($inputData['freightClasses']);
-        
-        $this->formatter->expects($this->any())
+
+        $this->formatter->expects(static::any())
             ->method('format')
             ->willReturnCallback(function ($item) {
                 return $item . '.formatted';
             });
-        
+
         $this->formType->finishView($formView, $form, $inputData['options']);
-        
-        $this->assertEquals($expectedData, $formView->vars);
+
+        static::assertEquals($expectedData, $formView->vars);
     }
-    
+
     /**
      * @return array
      */

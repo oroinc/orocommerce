@@ -53,7 +53,7 @@ class CategoryControllerTest extends WebTestCase
      */
     protected $masterCatalog;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -132,7 +132,7 @@ class CategoryControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
-        $this->assertContains(
+        static::assertStringContainsString(
             'Please select a category on the left or create new one.',
             $crawler->filter('[data-role="content"] .tree-empty-content .no-data')->html()
         );
@@ -363,10 +363,10 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Category has been saved', $html);
-        $this->assertContains($title, $html);
-        $this->assertContains(self::SMALL_SVG_IMAGE_NAME, $html);
-        $this->assertContains(self::LARGE_SVG_IMAGE_NAME, $html);
+        static::assertStringContainsString('Category has been saved', $html);
+        static::assertStringContainsString($title, $html);
+        static::assertStringContainsString(self::SMALL_SVG_IMAGE_NAME, $html);
+        static::assertStringContainsString(self::LARGE_SVG_IMAGE_NAME, $html);
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
@@ -481,12 +481,12 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains('Category has been saved', $html);
-        $this->assertContains($title, $html);
-        $this->assertContains($shortDescription, $html);
-        $this->assertContains($longDescription, $html);
-        $this->assertContains($smallImage->getFilename(), $html);
-        $this->assertContains($largeImage->getFilename(), $html);
+        static::assertStringContainsString('Category has been saved', $html);
+        static::assertStringContainsString($title, $html);
+        static::assertStringContainsString($shortDescription, $html);
+        static::assertStringContainsString($longDescription, $html);
+        static::assertStringContainsString($smallImage->getFilename(), $html);
+        static::assertStringContainsString($largeImage->getFilename(), $html);
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
@@ -523,9 +523,9 @@ class CategoryControllerTest extends WebTestCase
         $formValues = $form->getValues();
         $html = $crawler->html();
         //Verified that actual values correspond with the ones that were set during Category creation
-        $this->assertContains('Add note', $html);
-        $this->assertContains(self::SMALL_IMAGE_NAME, $html);
-        $this->assertContains(self::LARGE_IMAGE_NAME, $html);
+        static::assertStringContainsString('Add note', $html);
+        static::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
+        static::assertStringContainsString(self::LARGE_IMAGE_NAME, $html);
         $this->assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription);
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
@@ -577,7 +577,7 @@ class CategoryControllerTest extends WebTestCase
         $html = $crawler->html();
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Category has been saved', $html);
+        static::assertStringContainsString('Category has been saved', $html);
 
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
@@ -585,8 +585,8 @@ class CategoryControllerTest extends WebTestCase
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertLocalizedValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertNull($this->getProductCategoryByProduct($testProductOne));
-        $this->assertNotContains(self::LARGE_IMAGE_NAME, $html);
-        $this->assertContains(self::SMALL_IMAGE_NAME, $html);
+        static::assertStringNotContainsString(self::LARGE_IMAGE_NAME, $html);
+        static::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
         $this->assertEquals($newUnitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($newUnitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 

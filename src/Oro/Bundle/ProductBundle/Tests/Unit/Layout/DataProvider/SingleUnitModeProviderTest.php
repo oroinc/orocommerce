@@ -22,7 +22,7 @@ class SingleUnitModeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|SingleUnitModeService */
     private $singleUnitService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->singleUnitService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Service\SingleUnitModeService')
             ->disableOriginalConstructor()

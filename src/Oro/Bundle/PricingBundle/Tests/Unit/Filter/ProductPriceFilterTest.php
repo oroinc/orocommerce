@@ -43,7 +43,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
      */
     protected $requestHandler;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -74,7 +74,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->formFactory,
@@ -145,7 +145,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         $metadata = $this->productPriceFilter->getMetadata();
 
         $this->assertArrayHasKey('unitChoices', $metadata);
-        $this->assertInternalType('array', $metadata['unitChoices']);
+        $this->assertIsArray($metadata['unitChoices']);
         $this->assertEquals(
             [
                 [

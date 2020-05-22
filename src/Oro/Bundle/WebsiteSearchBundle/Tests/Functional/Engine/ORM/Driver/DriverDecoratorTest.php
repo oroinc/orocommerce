@@ -21,7 +21,7 @@ class DriverDecoratorTest extends WebTestCase
     use TrimMicrosecondsTrait;
     use SearchExtensionTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -32,7 +32,7 @@ class DriverDecoratorTest extends WebTestCase
         $this->loadFixtures([LoadItemData::class]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);
     }

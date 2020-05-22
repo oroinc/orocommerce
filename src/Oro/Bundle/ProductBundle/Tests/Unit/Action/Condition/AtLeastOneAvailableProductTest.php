@@ -36,7 +36,7 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryBuilder = $this->createMock(QueryBuilder::class);
 

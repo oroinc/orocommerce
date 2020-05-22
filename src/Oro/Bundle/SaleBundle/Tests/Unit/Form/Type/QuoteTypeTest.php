@@ -66,7 +66,7 @@ class QuoteTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
 

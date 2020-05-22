@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OrderControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -43,7 +43,7 @@ class OrderControllerTest extends WebTestCase
 
         $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($request->getRequestProducts() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
 
             foreach ($lineItem->getRequestProductItems() as $requestProductItem) {
                 $nodes = $crawler->filter(

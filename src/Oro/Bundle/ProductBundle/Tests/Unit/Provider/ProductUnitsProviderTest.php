@@ -55,7 +55,7 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductUnitRepository::class);
 

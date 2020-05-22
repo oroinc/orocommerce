@@ -30,7 +30,7 @@ class OrderTotalsHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var RateConverterInterface  */
     protected $rateConverter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalsProvider = $this
             ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')

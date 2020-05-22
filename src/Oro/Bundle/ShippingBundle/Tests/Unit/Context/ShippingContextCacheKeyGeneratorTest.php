@@ -28,7 +28,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $generator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->generator = new ShippingContextCacheKeyGenerator();
     }

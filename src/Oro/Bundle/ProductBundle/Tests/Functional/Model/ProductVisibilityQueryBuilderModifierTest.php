@@ -20,7 +20,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     protected $queryBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

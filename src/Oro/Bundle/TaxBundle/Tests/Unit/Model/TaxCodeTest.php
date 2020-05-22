@@ -22,21 +22,19 @@ class TaxCodeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($taxCode, $taxCodeConstructor);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Strings required
-     */
     public function testInvalidArgument()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Strings required');
+
         TaxCode::create(new \stdClass(), 'string');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Strings required
-     */
     public function testInvalidSecondArgument()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Strings required');
+
         TaxCode::create('string', new \stdClass());
     }
 }

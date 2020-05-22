@@ -60,7 +60,7 @@ abstract class AbstractPriceListCollectionAwareListenerTest extends \PHPUnit\Fra
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->collectionHandler = $this->createMock(PriceListWithPriorityCollectionHandler::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

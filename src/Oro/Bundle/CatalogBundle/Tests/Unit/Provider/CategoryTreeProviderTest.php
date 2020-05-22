@@ -26,7 +26,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MasterCatalogRootProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $masterCatalogRootProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->categoryRepository = $this->getMockBuilder(
             'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'

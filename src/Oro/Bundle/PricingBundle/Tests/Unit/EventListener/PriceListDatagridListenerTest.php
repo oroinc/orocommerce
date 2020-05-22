@@ -14,7 +14,7 @@ class PriceListDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->listener = new PriceListDatagridListener();
     }

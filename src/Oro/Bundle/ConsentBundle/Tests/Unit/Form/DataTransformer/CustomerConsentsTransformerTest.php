@@ -27,7 +27,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->consentAcceptanceProvider = $this->createMock(
@@ -43,7 +43,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelper);
         unset($this->consentAcceptanceProvider);
@@ -104,13 +104,13 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider reverseTransformInvalidDataProvider
      *
-     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
      *
      * @param string $invalidData
      * @param string $exceptionMessage
      */
     public function testReverseTransformInvalidData($invalidData, $exceptionMessage)
     {
+        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
         $this->dataTransformer->reverseTransform($invalidData);

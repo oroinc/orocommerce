@@ -18,7 +18,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productCache = $this->createMock(CacheProvider::class);
 

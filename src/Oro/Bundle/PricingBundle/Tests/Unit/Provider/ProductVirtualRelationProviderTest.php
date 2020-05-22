@@ -20,7 +20,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $repository = $this->getMockBuilder(PriceAttributePriceListRepository::class)
             ->disableOriginalConstructor()

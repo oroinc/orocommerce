@@ -22,7 +22,7 @@ class RequestCurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCas
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = new RequestStack();
         $this->localizationManager = $this->createMock(LocalizationManager::class);

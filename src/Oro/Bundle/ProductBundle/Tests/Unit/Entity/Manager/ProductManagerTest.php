@@ -18,7 +18,7 @@ class ProductManagerTest extends \PHPUnit\Framework\TestCase
     /** @var  ProductManager */
     protected $productManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->productManager = new ProductManager($this->eventDispatcher);

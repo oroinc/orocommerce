@@ -16,7 +16,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -45,12 +45,12 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $reference,
             $crawler->filter('title')->html()
         );
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $reference,
             $crawler->filter('h1.category-title')->html()
         );
@@ -88,11 +88,11 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             $breadcrumbUrls[] = $item->getAttribute('href');
         }
 
-        self::assertCount(4, $breadcrumbUrls);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[0]);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[1]);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[2]);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[3]);
+        static::assertCount(4, $breadcrumbUrls);
+        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[0]);
+        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[1]);
+        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[2]);
+        static::assertStringContainsString('/custom/base/url/app.php/', $breadcrumbUrls[3]);
     }
 
     /**

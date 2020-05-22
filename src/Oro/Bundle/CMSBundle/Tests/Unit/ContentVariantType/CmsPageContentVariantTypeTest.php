@@ -24,7 +24,7 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
@@ -57,7 +57,7 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var ContentVariantStub **/
         $contentVariant = new ContentVariantStub();
-        
+
         /** @var Page $page */
         $page = $this->getEntity(Page::class, ['id' => 42]);
         $contentVariant->setCmsPage($page);

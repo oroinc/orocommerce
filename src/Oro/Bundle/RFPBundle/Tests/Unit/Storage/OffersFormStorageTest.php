@@ -9,7 +9,7 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
     /** @var OffersFormStorage */
     protected $storage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = new OffersFormStorage();
     }

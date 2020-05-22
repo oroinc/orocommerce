@@ -35,7 +35,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
     /** @var  \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
     protected $currencyProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->processorProvider =
@@ -58,7 +58,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider);
     }
@@ -107,7 +107,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
-        $this->assertInternalType('array', $totals);
+        $this->assertIsArray($totals);
         $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         $this->assertEquals(
             $totals[TotalProcessorProvider::TYPE],

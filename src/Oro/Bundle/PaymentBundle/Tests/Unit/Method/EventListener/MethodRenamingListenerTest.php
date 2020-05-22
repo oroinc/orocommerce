@@ -26,7 +26,7 @@ class MethodRenamingListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodConfigRepository = $this->createMock(PaymentMethodConfigRepository::class);
         $this->paymentTransactionRepository = $this->createMock(PaymentTransactionRepository::class);

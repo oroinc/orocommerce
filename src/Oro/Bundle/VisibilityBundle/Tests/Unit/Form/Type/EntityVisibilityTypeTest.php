@@ -36,7 +36,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected $visibilityChoicesProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->visibilityPostSetDataListener = $this->getMockBuilder(
             VisibilityPostSetDataListener::class

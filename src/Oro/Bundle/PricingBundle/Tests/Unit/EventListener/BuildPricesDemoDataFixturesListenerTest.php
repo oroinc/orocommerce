@@ -32,7 +32,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);

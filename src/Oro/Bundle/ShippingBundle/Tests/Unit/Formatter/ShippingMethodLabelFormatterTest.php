@@ -24,7 +24,7 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected $formatter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->shippingMethod = $this

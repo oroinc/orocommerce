@@ -30,7 +30,7 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->constraint = $this->createMock(SkuRegex::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);

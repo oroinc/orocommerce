@@ -12,7 +12,7 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
      */
     private $containerBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)
             ->disableOriginalConstructor()

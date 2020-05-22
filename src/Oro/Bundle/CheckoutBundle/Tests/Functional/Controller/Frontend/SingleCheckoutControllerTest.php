@@ -12,7 +12,7 @@ class SingleCheckoutControllerTest extends CheckoutControllerTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

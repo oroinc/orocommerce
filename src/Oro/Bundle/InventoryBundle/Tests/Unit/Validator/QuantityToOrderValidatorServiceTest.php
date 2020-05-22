@@ -29,7 +29,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()

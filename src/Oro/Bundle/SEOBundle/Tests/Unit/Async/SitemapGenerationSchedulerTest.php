@@ -18,7 +18,7 @@ class SitemapGenerationSchedulerTest extends \PHPUnit\Framework\TestCase
      */
     protected $sitemapGenerationScheduler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->sitemapGenerationScheduler = new SitemapGenerationScheduler($this->messageProducer);

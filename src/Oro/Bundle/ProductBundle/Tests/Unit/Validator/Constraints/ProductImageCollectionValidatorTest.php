@@ -28,7 +28,7 @@ class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
      */
     protected $productImageHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

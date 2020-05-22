@@ -14,7 +14,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
 
     const PRODUCT_ID = 1;
     const WEBSITE_ID = 777;
-    
+
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
@@ -24,7 +24,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->reindexManager = new ProductReindexManager($this->eventDispatcher);
@@ -33,7 +33,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->reindexManager);
         unset($this->eventDispatcher);

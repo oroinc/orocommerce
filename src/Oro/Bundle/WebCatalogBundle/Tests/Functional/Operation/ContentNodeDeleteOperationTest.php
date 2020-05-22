@@ -9,7 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesDa
 
 class ContentNodeDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

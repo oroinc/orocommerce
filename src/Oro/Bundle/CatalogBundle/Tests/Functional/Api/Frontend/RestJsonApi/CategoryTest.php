@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CategoryTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([

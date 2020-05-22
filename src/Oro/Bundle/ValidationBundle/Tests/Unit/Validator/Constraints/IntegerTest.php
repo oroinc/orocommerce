@@ -21,7 +21,7 @@ class IntegerTest extends \PHPUnit\Framework\TestCase
     /** @var string */
     protected $locale;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Integer();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -32,7 +32,7 @@ class IntegerTest extends \PHPUnit\Framework\TestCase
         \Locale::setDefault('en');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         \Locale::setDefault($this->locale);
 
@@ -106,11 +106,9 @@ class IntegerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testNotScalar()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 }

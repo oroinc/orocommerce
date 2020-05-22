@@ -33,7 +33,7 @@ class BlankOneOfValidatorTest extends TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);

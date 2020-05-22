@@ -26,7 +26,7 @@ class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|FieldHelper */
     protected $fieldHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()

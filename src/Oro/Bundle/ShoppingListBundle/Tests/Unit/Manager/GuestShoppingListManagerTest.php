@@ -51,7 +51,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
@@ -202,7 +202,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($em);
 
         $result = $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertInstanceOf(ShoppingList::class, $result[0]);
     }
 

@@ -54,7 +54,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $shippingPriceProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingRulesProvider = $this->getMockBuilder(MethodsConfigsRulesByContextProviderInterface::class)
             ->disableOriginalConstructor()->getMock();

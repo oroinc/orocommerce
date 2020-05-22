@@ -14,7 +14,7 @@ class CouponSearchHandlerTest extends WebTestCase
      */
     private $searchHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadCouponData::class]);

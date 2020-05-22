@@ -19,12 +19,11 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         );
     }
 
-    /**
-     * @expectedException \Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
-     * @expectedExceptionMessage Workflow "rfq_backoffice_default" not found
-     */
     public function testTransitBackofficeTransition()
     {
+        $this->expectException(\Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException::class);
+        $this->expectExceptionMessage('Workflow "rfq_backoffice_default" not found');
+
         $backoffice = $this->systemManager->getWorkflow('rfq_backoffice_default');
         $item = $backoffice->getWorkflowItemByEntityId($this->request->getId());
 
@@ -148,7 +147,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $this->assertEquals('open', $this->request->getInternalStatus()->getId());
 
         $crawler = $this->openEntityViewPage($this->request);
-        $this->assertContains('customer notes', $crawler->html());
+        static::assertStringContainsString('customer notes', $crawler->html());
     }
 
     /**

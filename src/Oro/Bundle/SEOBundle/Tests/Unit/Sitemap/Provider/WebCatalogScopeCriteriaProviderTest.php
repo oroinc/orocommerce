@@ -34,7 +34,7 @@ class WebCatalogScopeCriteriaProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);

@@ -54,7 +54,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -82,12 +82,11 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
         $builder->setFallbackClassName($this->fallbackClass);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage test exception
-     */
     public function testBuildWithException()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('test exception');
+
         $website = new Website();
         $customerGroup = new CustomerGroup();
         $this->priceListToEntityRepository

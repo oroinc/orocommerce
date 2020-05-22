@@ -21,7 +21,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
      */
     private $productRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadCombinedProductPrices::class]);

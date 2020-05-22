@@ -43,7 +43,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -295,12 +295,11 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \Doctrine\DBAL\ConnectionException
-     * @expectedExceptionMessage Error connection
-     */
     public function testProcessExceptionWithNotActiveTransaction()
     {
+        $this->expectException(ConnectionException::class);
+        $this->expectExceptionMessage('Error connection');
+
         $body = ['product' => [1 => [2]]];
 
         $exception = new \Exception('Some error');

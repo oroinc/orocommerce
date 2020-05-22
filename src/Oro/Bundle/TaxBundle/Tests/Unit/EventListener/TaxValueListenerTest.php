@@ -16,7 +16,7 @@ class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxValueListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
@@ -25,7 +25,7 @@ class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new TaxValueListener($this->taxValueManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->taxValueManager);
     }

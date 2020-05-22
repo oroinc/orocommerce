@@ -32,7 +32,7 @@ class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListToProductDuplicator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->manager = $this->getMockBuilder(ObjectManager::class)
             ->disableOriginalConstructor()

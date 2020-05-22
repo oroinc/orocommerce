@@ -22,7 +22,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productCache = $this->createMock(CacheProvider::class);
         $this->categoryCache = $this->createMock(CacheProvider::class);

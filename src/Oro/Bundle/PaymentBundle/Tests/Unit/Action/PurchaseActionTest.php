@@ -188,12 +188,11 @@ class PurchaseActionTest extends AbstractActionTest
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Validation payment transaction not found
-     */
     public function testSourcePaymentTransactionNotFound()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Validation payment transaction not found');
+
         $options = [
             'object' => new \stdClass(),
             'amount' => 100.0,

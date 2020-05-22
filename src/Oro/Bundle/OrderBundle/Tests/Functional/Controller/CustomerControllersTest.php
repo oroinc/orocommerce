@@ -15,7 +15,7 @@ class CustomerControllersTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -41,7 +41,7 @@ class CustomerControllersTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        $this->assertContains('customer-orders-grid', $content);
+        static::assertStringContainsString('customer-orders-grid', $content);
 
         $response = $this->client->requestGrid(
             [
@@ -61,7 +61,7 @@ class CustomerControllersTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        $this->assertContains('customer-user-orders-grid', $content);
+        static::assertStringContainsString('customer-user-orders-grid', $content);
 
         $response = $this->client->requestGrid(
             [
@@ -78,6 +78,6 @@ class CustomerControllersTest extends WebTestCase
     protected function checkDatagridResponse(Response $response)
     {
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertContains(sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
+        static::assertStringContainsString(\sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
     }
 }

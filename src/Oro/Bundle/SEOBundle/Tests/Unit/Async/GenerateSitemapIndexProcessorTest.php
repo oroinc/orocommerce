@@ -38,7 +38,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageFactory = $this->getMockBuilder(SitemapIndexMessageFactory::class)
             ->disableOriginalConstructor()
@@ -102,7 +102,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getWebsiteFromMessage')
             ->with($data)
             ->willReturn($website);
-        
+
         $version = time();
         $this->messageFactory->expects($this->once())
             ->method('getVersionFromMessage')

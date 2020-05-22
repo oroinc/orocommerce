@@ -30,7 +30,7 @@ class ProductImageImportTest extends WebTestCase
     const IMPORT_PROCESSOR_ALIAS = 'oro_product_image.add_or_replace';
     const EXPORT_TEMPLATE_PROCESSOR_ALIAS = 'oro_product_image_export_template';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -131,7 +131,7 @@ class ProductImageImportTest extends WebTestCase
         $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
         preg_match('/^.*"?(export_template_[a-z0-9_]+.csv)"?$/', $contentDisposition, $matches);
 
-        static::assertContains(
+        static::assertStringContainsString(
             $this->getFileContent($expectedCsvFilePath),
             $this->client->getResponse()->getContent()
         );

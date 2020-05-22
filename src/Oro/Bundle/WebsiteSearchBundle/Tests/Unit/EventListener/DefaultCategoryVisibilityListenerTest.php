@@ -25,7 +25,7 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->getMock();

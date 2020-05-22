@@ -25,7 +25,7 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryCountsCache */
     protected $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);

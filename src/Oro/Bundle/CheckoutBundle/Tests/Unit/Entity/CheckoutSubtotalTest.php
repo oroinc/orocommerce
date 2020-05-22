@@ -35,12 +35,11 @@ class CheckoutSubtotalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('test price list', $entity->getSubtotal()->getCombinedPriceList()->getName());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage  Invalid currency for Checkout Subtotal
-     */
     public function testExceptionWhenDifferentSubtotalValue()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid currency for Checkout Subtotal');
+
         $checkout = new Checkout();
         $entity = new CheckoutSubtotal($checkout, 'USD');
         $subtotal = (new Subtotal())->setCurrency('EUR')->setAmount(123);

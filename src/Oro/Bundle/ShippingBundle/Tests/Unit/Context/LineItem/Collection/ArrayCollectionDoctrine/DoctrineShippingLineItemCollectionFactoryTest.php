@@ -23,12 +23,11 @@ class DoctrineShippingLineItemCollectionFactoryTest extends \PHPUnit\Framework\T
         $this->assertEquals($shippingLineItems, $collection->toArray());
     }
 
-    /**
-     * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage Expected: Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface
-     */
     public function testFactoryWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface');
+
         $shippingLineItems = [
             new LineItem(),
             new LineItem(),

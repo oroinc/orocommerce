@@ -18,7 +18,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
     /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentConfig =
             $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface');
@@ -26,7 +26,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
         $this->methodView = $this->createMethodView();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->paymentConfig, $this->methodView);
     }

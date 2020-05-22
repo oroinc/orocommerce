@@ -24,7 +24,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $translator = $this->createMockTranslator();
 

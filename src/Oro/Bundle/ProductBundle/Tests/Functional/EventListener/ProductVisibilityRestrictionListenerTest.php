@@ -34,7 +34,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
      */
     private $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
@@ -53,7 +53,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }

@@ -39,7 +39,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
      */
     protected $tokenAccessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
@@ -72,7 +72,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }
@@ -104,7 +104,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($subtotalMock);
         $subtotalMock->expects($this->once())
             ->method('getAmount')
-            ->willReturn(1000);
+            ->willReturn(1000.0);
 
         $order = new Order();
         $discount1 = new OrderDiscount();
@@ -132,7 +132,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
         $this->assertEquals('Discount', $secondDiscountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());
-        $this->assertInternalType('float', $firstDiscountSubtotal->getAmount());
+        $this->assertIsFloat($firstDiscountSubtotal->getAmount());
         $this->assertEquals(150, $firstDiscountSubtotal->getAmount());
         $this->assertEquals(100, $secondDiscountSubtotal->getAmount());
         $this->assertEquals(100, $threadDiscountSubtotal->getAmount());
@@ -167,7 +167,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($description, $discountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
         $this->assertEquals(50, $discountSubtotal->getSortOrder());
-        $this->assertInternalType('float', $discountSubtotal->getAmount());
+        $this->assertIsFloat($discountSubtotal->getAmount());
         $this->assertEquals(150, $discountSubtotal->getAmount());
     }
 

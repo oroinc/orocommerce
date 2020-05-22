@@ -25,7 +25,7 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +34,7 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
         $this->listener = new ProductNormalizerEventListener($this->registry, $this->aclHelper, self::CATEGORY_CLASS);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
         parent::tearDown();

@@ -21,7 +21,7 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
      */
     private $externalValidator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->externalValidator = $this->createMock(ValidatorInterface::class);
 

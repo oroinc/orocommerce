@@ -14,7 +14,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
             ->disableOriginalConstructor()
@@ -23,14 +23,14 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->placeholder, $this->localizationProvider);
     }
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('LOCALIZATION_ID', $this->placeholder->getPlaceholder());
     }
 
@@ -48,16 +48,15 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
         $value = $this->placeholder->replaceDefault('string_LOCALIZATION_ID');
 
-        $this->assertInternalType('string', $value);
+        $this->assertIsString($value);
         $this->assertEquals('string_1', $value);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current localization
-     */
     public function testGetValueWithUnknownLocalization()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current localization");
+
         $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn(null);

@@ -12,14 +12,14 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var PageFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new PageFormViewListener($this->translator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 

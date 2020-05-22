@@ -36,7 +36,7 @@ class CustomerProductVisibilityTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(CustomerProductVisibility::CUSTOMER_GROUP, $entity->getDefault($product));
 
-        $this->assertInternalType('array', $entity->getVisibilityList($product));
+        $this->assertIsArray($entity->getVisibilityList($product));
         $this->assertNotEmpty($entity->getVisibilityList($product));
     }
 

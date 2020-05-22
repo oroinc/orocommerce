@@ -39,7 +39,7 @@ class ExpressionValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->preprocessor = $this->createMock(ExpressionPreprocessorInterface::class);
@@ -67,7 +67,7 @@ class ExpressionValidatorTest extends \PHPUnit\Framework\TestCase
         /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())->method('addViolation');
-        
+
         $this->doTestValidation($value, $context);
     }
 

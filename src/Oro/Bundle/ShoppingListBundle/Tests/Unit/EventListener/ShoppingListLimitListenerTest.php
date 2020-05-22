@@ -37,7 +37,7 @@ class ShoppingListLimitListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $event;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
             self::markTestSkipped('Should be tested only with CheckoutSource');
@@ -47,7 +47,7 @@ class ShoppingListLimitListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

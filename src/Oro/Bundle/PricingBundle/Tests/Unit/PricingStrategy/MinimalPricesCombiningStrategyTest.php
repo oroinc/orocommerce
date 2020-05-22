@@ -40,7 +40,7 @@ class MinimalPricesCombiningStrategyTest extends \PHPUnit\Framework\TestCase
      */
     private $strategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(Registry::class);
         $this->insertFromSelectQueryExecutor = $this->createMock(ShardQueryExecutorInterface::class);

@@ -31,7 +31,7 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
      */
     protected $builderMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingLineItemCollectionFactory = $this
             ->getMockBuilder(ShippingLineItemCollectionFactoryInterface::class)

@@ -16,7 +16,7 @@ class ProductCollectionContentVariantProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductCollectionContentVariants::class]);
@@ -66,10 +66,10 @@ class ProductCollectionContentVariantProviderTest extends WebTestCase
         ];
 
         foreach ($expectedResult as $expectedRowTitle => $expectedRow) {
-            $this->assertContains(
+            static::assertContainsEquals(
                 $expectedRow,
                 $result,
-                "Expected row title - '{$expectedRowTitle}'."
+                "Expected row title - '{$expectedRowTitle}', got: " . \var_export($result)
             );
         }
     }

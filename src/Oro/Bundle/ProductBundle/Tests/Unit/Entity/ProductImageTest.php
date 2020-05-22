@@ -15,7 +15,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
      */
     protected $productImage;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productImage = new ProductImage();
     }

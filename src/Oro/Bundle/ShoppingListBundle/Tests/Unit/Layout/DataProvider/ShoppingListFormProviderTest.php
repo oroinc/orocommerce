@@ -24,7 +24,7 @@ class ShoppingListFormProviderTest extends \PHPUnit\Framework\TestCase
     /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->router = $this->createMock(UrlGeneratorInterface::class);

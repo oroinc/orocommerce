@@ -30,7 +30,7 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $matchingProductsCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->matchingProductsCache = $this->createMock(CacheProvider::class);

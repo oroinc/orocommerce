@@ -16,7 +16,7 @@ class TaxProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderInterface */
     protected $taxProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);

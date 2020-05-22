@@ -46,7 +46,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new PriceListProductPriceType();
         $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
@@ -57,7 +57,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }

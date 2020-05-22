@@ -21,7 +21,7 @@ class ProductUnitCodeVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitCodeVisibilityProvider $unitModeProvider */
     protected $unitModeProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productUnitFieldsSettings = $this->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
             ->disableOriginalConstructor()

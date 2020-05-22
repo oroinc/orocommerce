@@ -18,7 +18,7 @@ class NavigationRootOptionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->transformer = new NavigationRootOptionTransformer($this->doctrineHelper);

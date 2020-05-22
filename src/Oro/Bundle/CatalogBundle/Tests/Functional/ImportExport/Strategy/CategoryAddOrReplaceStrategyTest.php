@@ -25,7 +25,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     /** @var CategoryAddOrReplaceStrategy */
     private $strategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -69,7 +69,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('oro_importexport.strategy.new_entities_helper')->onClear();
         $this->getContainer()->get('oro_importexport.field.database_helper')->onClear();
@@ -168,7 +168,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $category = $this->strategy->process($rootCategory);
 
         $this->assertNull($category);
-        $this->assertContains(
+        static::assertContains(
             'Error in row #0. Skipping category "All Products". Root category cannot have a parent',
             $this->context->getErrors()
         );

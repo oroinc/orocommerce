@@ -22,7 +22,7 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
@@ -35,7 +35,7 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
     }
@@ -82,23 +82,21 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "entity" is required
-     */
     public function testInitializeWithoutRequiredFieldEntity()
     {
+        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "entity" is required');
+
         $options = [];
 
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "attribute" is required
-     */
     public function testInitializeWithoutRequiredFieldAttribute()
     {
+        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "attribute" is required');
+
         $options = [
             'entity' => new \stdClass(),
         ];

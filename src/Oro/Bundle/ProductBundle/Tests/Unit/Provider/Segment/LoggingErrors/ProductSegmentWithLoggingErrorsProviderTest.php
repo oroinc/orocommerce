@@ -41,7 +41,7 @@ class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit\Framework\Tes
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->organization = (new Organization())->setId(1);
 

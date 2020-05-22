@@ -27,7 +27,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 

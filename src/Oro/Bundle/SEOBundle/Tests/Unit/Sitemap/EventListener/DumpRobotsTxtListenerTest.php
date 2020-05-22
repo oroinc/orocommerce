@@ -41,7 +41,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->robotsTxtSitemapManager = $this->getMockBuilder(RobotsTxtSitemapManager::class)
             ->disableOriginalConstructor()

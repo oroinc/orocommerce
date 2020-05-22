@@ -31,26 +31,26 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         return parent::createContext();
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision", "Symfony\Component\Validator\Constraints\NotNull" given
-     */
-    // @codingStandardsIgnoreEnd
     public function testValidateWithWrongConstraint()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Expected argument of type "%s", "%s" given',
+            \Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision::class,
+            \Symfony\Component\Validator\Constraints\NotNull::class
+        ));
+
         $constraint = new NotNull();
         $this->validator->validate(new Product(), $constraint);
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
-    // @codingStandardsIgnoreEnd
     public function testValidateWithNotTheProductUnitPrecisionEntity()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

@@ -16,7 +16,7 @@ class AppliedPromotionRepositoryTest extends WebTestCase
      */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadAppliedPromotionData::class]);

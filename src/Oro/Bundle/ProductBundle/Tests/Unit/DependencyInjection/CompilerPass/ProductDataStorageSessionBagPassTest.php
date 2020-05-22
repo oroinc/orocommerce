@@ -18,7 +18,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit\Framework\TestCase
      */
     protected $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
@@ -81,7 +81,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit\Framework\TestCase
                 'registerBag',
                 $this->callback(
                     function ($value) {
-                        $this->assertInternalType('array', $value);
+                        $this->assertIsArray($value);
                         $this->assertArrayHasKey(0, $value);
                         /** @var Reference $reference */
                         $reference = $value[0];

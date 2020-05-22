@@ -4,8 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class PaymentTransactionCaptureActionTest extends AbstractActionTest
@@ -131,12 +131,12 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
     /**
      * @param array $options
      *
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
      *
      * @dataProvider executeWrongOptionsDataProvider
      */
     public function testExecuteWrongOptions($options)
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException::class);
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('testPaymentMethodType');
 
@@ -218,7 +218,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ],
         ];
 
-        $paymentMethod = $this->createMock([PaymentMethodInterface::class, CaptureActionInterface::class]);
+        $paymentMethod = $this->createMock(PaymentMethodWithPostponedCaptureInterface::class);
         $paymentMethod->expects($this->once())->method('useSourcePaymentTransaction')->willReturn(true);
         $paymentMethod->expects(static::once())
             ->method('execute')

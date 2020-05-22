@@ -15,12 +15,11 @@ class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return DateSearchableAttributeType::class;
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterStorageFieldTypes()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getFilterStorageFieldTypes();
     }
 
@@ -32,12 +31,11 @@ class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterTypeException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getFilterType();
     }
 
@@ -46,12 +44,11 @@ class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterableFieldNameException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute);
     }
 

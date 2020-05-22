@@ -41,7 +41,7 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestFactory = $this->createMock(UpsConnectionValidatorRequestFactoryInterface::class);
         $this->clientFactory = $this->createMock(UpsClientFactoryInterface::class);

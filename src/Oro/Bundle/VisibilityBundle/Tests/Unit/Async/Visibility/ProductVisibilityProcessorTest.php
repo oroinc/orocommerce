@@ -36,7 +36,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVisibilityProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->cacheBuilder = $this->createMock(CacheBuilderInterface::class);

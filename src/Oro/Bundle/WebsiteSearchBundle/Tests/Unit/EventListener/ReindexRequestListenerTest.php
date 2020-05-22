@@ -34,7 +34,7 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $granularizer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->regularIndexerMock = $this->getMockBuilder(IndexerInterface::class)->getMock();
         $this->asyncIndexerMock   = $this->getMockBuilder(IndexerInterface::class)->getMock();

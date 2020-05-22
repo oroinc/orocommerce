@@ -52,21 +52,19 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Oro\Bundle\ImportExportBundle\Exception\LogicException
-     * @expectedExceptionMessage Delimiter ":" is not allowed in keys
-     */
     public function testConvertToExportFormatIncorrectKey(): void
     {
+        $this->expectException(\Oro\Bundle\ImportExportBundle\Exception\LogicException::class);
+        $this->expectExceptionMessage('Delimiter ":" is not allowed in keys');
+
         $this->dataConverter->convertToExportFormat(['owner:firstName' => 'John']);
     }
 
-    /**
-     * @expectedException \Oro\Bundle\ImportExportBundle\Exception\LogicException
-     * @expectedExceptionMessage Can't set nested value under key "owner"
-     */
     public function testConvertToImportIncorrectKey(): void
     {
+        $this->expectException(\Oro\Bundle\ImportExportBundle\Exception\LogicException::class);
+        $this->expectExceptionMessage('Can\'t set nested value under key "owner"');
+
         $this->dataConverter->convertToImportFormat(['owner' => 'John Doe', 'owner:firstName' => 'John']);
     }
 }

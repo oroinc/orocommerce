@@ -50,13 +50,13 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework
      */
     protected $findByDefaultTitleCalls = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->mockCategoryRepository();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->registry, $this->categoryRepository);
     }

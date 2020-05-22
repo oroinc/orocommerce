@@ -23,7 +23,7 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDataStorage */
     protected $productDataStorage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
@@ -32,7 +32,7 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $this->productDataStorage = new ProductDataStorage($this->storage);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->storage, $this->productDataStorage);
     }

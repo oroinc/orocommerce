@@ -43,7 +43,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
         ['id' => 15, 'parent' => 11],
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryVisibilityProvider = $this->createMock(CategoryVisibilityProvider::class);
 

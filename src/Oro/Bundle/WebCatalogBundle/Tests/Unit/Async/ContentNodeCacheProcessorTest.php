@@ -40,7 +40,7 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);

@@ -15,7 +15,7 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit\Framework\Tes
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->listener = new ProductStickersFrontendDatagridListener();
     }

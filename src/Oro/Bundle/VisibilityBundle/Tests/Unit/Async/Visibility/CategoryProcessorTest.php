@@ -45,7 +45,7 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->createMock(InsertFromSelectQueryExecutor::class);

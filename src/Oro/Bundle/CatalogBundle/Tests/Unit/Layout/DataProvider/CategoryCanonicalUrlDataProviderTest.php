@@ -22,7 +22,7 @@ class CategoryCanonicalUrlDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryCanonicalUrlDataProvider */
     private $canonicalUrlDataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->websiteSystemUrlResolver = $this->createMock(WebsiteUrlResolver::class);

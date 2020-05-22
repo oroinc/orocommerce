@@ -30,7 +30,7 @@ class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
      */
     protected $decider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()

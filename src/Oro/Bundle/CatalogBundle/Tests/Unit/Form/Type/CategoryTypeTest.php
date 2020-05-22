@@ -51,7 +51,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->type = new CategoryType($this->urlGenerator);

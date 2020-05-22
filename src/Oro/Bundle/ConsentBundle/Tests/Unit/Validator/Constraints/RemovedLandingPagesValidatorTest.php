@@ -32,7 +32,7 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pageRepository = $this->createMock(PageRepository::class);
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
@@ -53,7 +53,7 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->pageRepository);
         unset($this->validator);
@@ -61,12 +61,11 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
         unset($this->constraint);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Incorrect type of the value!
-     */
     public function testValidateWithIncorrectType()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Incorrect type of the value!');
+
         $this->validator->validate('not array', $this->constraint);
     }
 

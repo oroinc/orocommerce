@@ -34,7 +34,7 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
     private $taxValueMetadata;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(BuiltInTaxProvider::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
@@ -64,7 +64,7 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new BuiltinEntityTaxListener($taxProviderRegistry);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->taxManager, $this->entityManager, $this->orderMetadata, $this->taxValueMetadata);
     }

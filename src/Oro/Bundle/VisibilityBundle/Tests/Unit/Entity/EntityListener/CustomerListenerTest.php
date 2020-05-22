@@ -25,7 +25,7 @@ class CustomerListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->driver = $this->createMock(CustomerPartialUpdateDriverInterface::class);

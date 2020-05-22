@@ -68,7 +68,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$qid          = 'TestQuoteID - ' . time() . '-' . rand();
         self::$qidUpdated   = self::$qid . ' - updated';
@@ -77,7 +77,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -109,7 +109,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Quote has been saved', $crawler->html());
+        static::assertStringContainsString('Quote has been saved', $crawler->html());
     }
 
     /**
@@ -124,7 +124,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('quotes-grid', $crawler->html());
+        static::assertStringContainsString('quotes-grid', $crawler->html());
 
         $response = $this->client->requestGrid(
             'quotes-grid',
@@ -184,7 +184,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Quote has been saved', $crawler->html());
+        static::assertStringContainsString('Quote has been saved', $crawler->html());
 
         /** @var Quote $quote */
         $quote = $this->getContainer()->get('doctrine')
@@ -265,9 +265,18 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::USER1)->getFullName(),
+            $result->getContent()
+        );
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(),
+            $result->getContent()
+        );
+        static::assertStringContainsString(
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(),
+            $result->getContent()
+        );
 
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -343,7 +352,7 @@ class QuoteControllerTest extends WebTestCase
         $filtered = $crawler->filter($expectedData['filter']);
 
         $this->assertEquals(1, $filtered->count());
-        $this->assertContains($expectedData['contains'], $filtered->html());
+        static::assertStringContainsString($expectedData['contains'], $filtered->html());
     }
 
     /**

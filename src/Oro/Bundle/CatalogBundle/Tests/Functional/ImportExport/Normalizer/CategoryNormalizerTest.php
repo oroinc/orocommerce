@@ -21,7 +21,7 @@ class CategoryNormalizerTest extends WebTestCase
     /** @var CategoryNormalizer */
     private $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -44,7 +44,7 @@ class CategoryNormalizerTest extends WebTestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('oro_importexport.field.database_helper')->onClear();
 

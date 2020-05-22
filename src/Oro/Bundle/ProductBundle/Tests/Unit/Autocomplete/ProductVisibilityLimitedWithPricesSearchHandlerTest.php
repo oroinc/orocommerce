@@ -24,7 +24,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
      */
     private $searchHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productWithPricesSearchHandler = $this->createMock(SearchHandlerInterface::class);
         $this->productVisibilityLimitedSearchHandler = $this->createMock(SearchHandlerInterface::class);

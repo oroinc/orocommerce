@@ -76,7 +76,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             $this->assertArrayHasKey($unit, $actualDataByUnits);
             $this->assertCount(count($prices), $actualDataByUnits[$unit]);
             foreach ($prices as $price) {
-                $this->assertContains($price, $actualDataByUnits[$unit]);
+                static::assertContainsEquals($price, $actualDataByUnits[$unit]);
             }
         }
     }

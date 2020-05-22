@@ -32,7 +32,7 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit\Framework\TestCa
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validatorService = $this->getMockBuilder(QuantityToOrderValidatorService::class)
             ->disableOriginalConstructor()

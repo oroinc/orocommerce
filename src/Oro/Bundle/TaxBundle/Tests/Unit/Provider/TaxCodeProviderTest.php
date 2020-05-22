@@ -36,7 +36,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productRepository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()
@@ -57,12 +57,11 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type: unsupportedType
-     */
     public function testGetTaxCodeWhenTypeIsNotSupported()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type: unsupportedType');
+
         $this->provider->getTaxCode('unsupportedType', new \stdClass());
     }
 

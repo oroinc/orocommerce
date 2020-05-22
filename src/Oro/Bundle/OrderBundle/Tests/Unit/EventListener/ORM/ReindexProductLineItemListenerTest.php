@@ -46,7 +46,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reindexManager = $this->createMock(ProductReindexManager::class);
         $statusProvider = new PreviouslyPurchasedOrderStatusesProvider();
@@ -78,7 +78,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->order);
         unset($this->website);

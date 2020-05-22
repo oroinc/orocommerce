@@ -28,7 +28,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();

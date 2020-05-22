@@ -39,7 +39,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxValueManager */
     protected $taxValueManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
@@ -60,7 +60,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertResult($result);
 
-        $this->assertInternalType('array', $result->getTaxes());
+        $this->assertIsArray($result->getTaxes());
         $this->assertCount(1, $result->getTaxes());
     }
 
@@ -76,7 +76,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertResult($taxValue->getResult());
 
-        $this->assertInternalType('array', $taxValue->getResult()->getTaxes());
+        $this->assertIsArray($taxValue->getResult()->getTaxes());
         $this->assertCount(1, $taxValue->getResult()->getTaxes());
     }
 

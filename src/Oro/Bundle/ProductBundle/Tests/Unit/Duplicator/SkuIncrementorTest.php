@@ -32,7 +32,7 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);

@@ -38,7 +38,7 @@ class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $onFlushEvent;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em = $this
             ->getMockBuilder(EntityManagerInterface::class)

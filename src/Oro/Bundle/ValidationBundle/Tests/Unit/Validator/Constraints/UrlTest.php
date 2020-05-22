@@ -19,7 +19,7 @@ class UrlTest extends \PHPUnit\Framework\TestCase
     /** @var UrlValidator */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Url();
         $this->context = $this->createMock(ExecutionContextInterface::class);

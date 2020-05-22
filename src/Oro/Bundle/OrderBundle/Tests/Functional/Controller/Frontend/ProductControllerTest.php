@@ -22,7 +22,7 @@ class ProductControllerTest extends FrontendWebTestCase
     const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
 
     /** {@inheritdoc} */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

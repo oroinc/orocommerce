@@ -25,7 +25,7 @@ class DraftableFilterTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -37,7 +37,7 @@ class DraftableFilterTest extends WebTestCase
         $this->queryTracker->start();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->queryTracker->stop();
         parent::tearDown();
@@ -145,7 +145,7 @@ class DraftableFilterTest extends WebTestCase
     private function assertQueryModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
-        $this->assertContains($needle, $query);
+        static::assertStringContainsString($needle, $query);
     }
 
     /**
@@ -154,7 +154,7 @@ class DraftableFilterTest extends WebTestCase
     private function assertQueryNotModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
-        $this->assertNotContains($needle, $query);
+        static::assertStringNotContainsString($needle, $query);
     }
 
     /**

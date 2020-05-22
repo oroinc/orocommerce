@@ -36,7 +36,7 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factoryMock = $this->createMock(FormFactoryInterface::class);
         $this->filterUtility = new FilterUtility();

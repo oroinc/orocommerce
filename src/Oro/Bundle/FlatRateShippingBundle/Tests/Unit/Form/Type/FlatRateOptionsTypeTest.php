@@ -13,7 +13,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
     /** @var FlatRateOptionsType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())

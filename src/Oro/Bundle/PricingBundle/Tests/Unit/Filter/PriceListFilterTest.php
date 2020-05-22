@@ -33,7 +33,7 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

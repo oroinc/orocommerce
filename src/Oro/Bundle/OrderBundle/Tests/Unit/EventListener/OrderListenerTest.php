@@ -24,7 +24,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->generator = $this->createMock('Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface');
 
@@ -34,7 +34,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->generator, $this->listener);
     }

@@ -36,7 +36,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
      */
     protected $firewall;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->baseFirewall = $this->getMockBuilder(FrameworkFirewall::class)
             ->disableOriginalConstructor()

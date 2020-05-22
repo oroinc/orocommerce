@@ -35,7 +35,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     /** @var UpsellProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $upsellProductRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configProvider = $this->getMockBuilder(AbstractRelatedItemConfigProvider::class)
             ->disableOriginalConstructor()

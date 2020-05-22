@@ -28,7 +28,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));

@@ -29,7 +29,7 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $productCollectionExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->productCollectionExtension = new ProductCollectionExtension($this->translator, $this->extendedType);

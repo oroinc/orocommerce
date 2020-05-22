@@ -62,7 +62,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
      */
     private $matcher;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->repository = $this->createMock(SlugRepository::class);

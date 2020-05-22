@@ -26,7 +26,7 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->associationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()->getMock();

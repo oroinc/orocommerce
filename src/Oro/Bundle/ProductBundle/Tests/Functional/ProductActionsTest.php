@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductActionsTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -32,7 +32,7 @@ class ProductActionsTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
         $content = $result->getContent();
-        $this->assertContains('redirectUrl', $content);
+        static::assertStringContainsString('redirectUrl', $content);
 
         $resultData = json_decode($content, true);
         $this->assertArrayHasKey('redirectUrl', $resultData);

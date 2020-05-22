@@ -12,7 +12,7 @@ class PriceResponseTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->priceResponse = new PriceResponse();
     }
@@ -79,21 +79,19 @@ class PriceResponseTest extends \PHPUnit\Framework\TestCase
         static::assertEquals($pricesExpected['12'], $this->priceResponse->getPriceByService('12'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage No price data in provided string
-     */
     public function testParseEmptyResponse()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('No price data in provided string');
+
         $this->priceResponse->parse([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Response data not loaded
-     */
     public function testGetPriceByServicesException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Response data not loaded');
+
         $this->priceResponse->getPricesByServices();
     }
 

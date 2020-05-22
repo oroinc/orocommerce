@@ -30,7 +30,7 @@ class RedirectGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $redirectGenerator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

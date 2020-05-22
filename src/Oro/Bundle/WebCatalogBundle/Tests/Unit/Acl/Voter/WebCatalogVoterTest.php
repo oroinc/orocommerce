@@ -28,7 +28,7 @@ class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
      */
     protected $usageProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -39,7 +39,7 @@ class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
         $this->voter = new WebCatalogVoter($this->doctrineHelper, $this->usageProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->voter, $this->doctrineHelper);
     }

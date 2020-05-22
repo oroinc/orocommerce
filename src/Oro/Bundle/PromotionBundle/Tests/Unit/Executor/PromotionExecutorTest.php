@@ -44,7 +44,7 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
      */
     private $executor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discountContextConverter = $this->createMock(DiscountContextConverterInterface::class);
         $this->discountStrategyProvider = $this->createMock(StrategyProvider::class);

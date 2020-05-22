@@ -20,7 +20,7 @@ class PaymentStatusExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentStatusProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentStatusProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentStatusLabelFormatter = $this->createMock(PaymentStatusLabelFormatter::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProvider::class);

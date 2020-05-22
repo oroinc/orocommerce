@@ -14,7 +14,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     /** @var TaxBaseExclusionType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxBaseExclusionType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass('\ArrayObject');
@@ -22,7 +22,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 

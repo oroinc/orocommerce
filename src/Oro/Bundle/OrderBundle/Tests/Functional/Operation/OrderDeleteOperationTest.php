@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

@@ -57,7 +57,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit\Framework\TestC
      */
     protected $translatedLabel = ' key was translated.';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
 

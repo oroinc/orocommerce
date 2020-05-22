@@ -18,7 +18,7 @@ class AddressModelFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -27,7 +27,7 @@ class AddressModelFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory = new AddressModelFactory($this->doctrineHelper);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->factory, $this->doctrineHelper);
     }

@@ -21,7 +21,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->logger = $this->createMock('Psr\Log\LoggerInterface');
@@ -30,7 +30,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setLogger($this->logger);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->logger);
     }
@@ -130,7 +130,9 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('action', $transaction->getAction());
         $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertArraySubset($data, $transaction->getResponse());
+        $response = $transaction->getResponse();
+        $this->assertSame($data['PayerID'], $response['PayerID']);
+        $this->assertSame($data['token'], $response['token']);
     }
 
     /**

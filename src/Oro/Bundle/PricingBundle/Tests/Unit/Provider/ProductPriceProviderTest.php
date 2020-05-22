@@ -43,7 +43,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceStorage = $this->createMock(ProductPriceStorageInterface::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

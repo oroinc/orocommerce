@@ -36,7 +36,7 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entityRepository = $this->createMock(EntityRepository::class);
         $this->entityManager = $this->createMock(EntityManager::class);

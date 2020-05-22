@@ -26,7 +26,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $entityRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -42,7 +42,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
             );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelper);
     }

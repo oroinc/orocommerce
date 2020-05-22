@@ -59,7 +59,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceRepository = $this->createMock(ProductPriceRepository::class);
 

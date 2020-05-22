@@ -30,7 +30,7 @@ class PageControllerTest extends WebTestCase
      */
     protected $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -109,7 +109,7 @@ class PageControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals("Landing Pages", $crawler->filter('h1.oro-subtitle')->html());
-        $this->assertContains(
+        static::assertStringContainsString(
             "Please select a page on the left or create new one.",
             $crawler->filter('.content .text-center')->html()
         );
@@ -275,7 +275,7 @@ class PageControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Page has been saved", $crawler->html());
+        static::assertStringContainsString("Page has been saved", $crawler->html());
 
         return $this->getPageIdByUri($this->client->getRequest()->getRequestUri());
     }
@@ -301,7 +301,7 @@ class PageControllerTest extends WebTestCase
             $formValues['oro_cms_page[content]']
         );
 
-        $this->assertContains(
+        static::assertStringContainsString(
             "Redirect visitors from " . $url,
             $crawler->filter('.sub-item')->html()
         );
@@ -331,7 +331,7 @@ class PageControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Page has been saved", $crawler->html());
+        static::assertStringContainsString("Page has been saved", $crawler->html());
 
         $formValues = $form->getValues();
         $this->assertEquals($newTitle, $formValues['oro_cms_page[title]']);
@@ -340,7 +340,7 @@ class PageControllerTest extends WebTestCase
             $formValues['oro_cms_page[content]']
         );
 
-        $this->assertContains(
+        static::assertStringContainsString(
             "Redirect visitors from " . $newUrl,
             $crawler->filter('.sub-item')->html()
         );

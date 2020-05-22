@@ -57,7 +57,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);

@@ -15,7 +15,7 @@ class PaymentResultMessageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentResultMessageProvider */
     protected $messageProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodsProvider = $this->createMock(PaymentMethodProvider::class);
         $this->messageProvider = new PaymentResultMessageProvider($this->paymentMethodsProvider);

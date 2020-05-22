@@ -14,7 +14,7 @@ class ProductContentVariantProviderTest extends WebTestCase
     /** @var ProductContentVariantProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductContentVariants::class]);

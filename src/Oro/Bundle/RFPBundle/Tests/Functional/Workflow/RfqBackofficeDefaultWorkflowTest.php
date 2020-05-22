@@ -41,7 +41,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->request);
 
@@ -78,12 +78,11 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         );
     }
 
-    /**
-     * @expectedException \Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
-     * @expectedExceptionMessage Workflow "b2b_rfq_frontoffice_default" not found
-     */
     public function testTransitFrontofficeTransition()
     {
+        $this->expectException(\Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException::class);
+        $this->expectExceptionMessage('Workflow "b2b_rfq_frontoffice_default" not found');
+
         $frontoffice = $this->systemManager->getWorkflow('b2b_rfq_frontoffice_default');
         $item = $frontoffice->getWorkflowItemByEntityId($this->request->getId());
 
@@ -213,11 +212,11 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $form = $button->form(['oro_workflow_transition[notes]' => 'test notes']);
         $this->client->followRedirects(true);
         $this->client->submit($form);
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
 
         // check that notes added and status changed
         $this->assertBackofficeTransition(null, 'more_info_requested', 'submitted', ['Delete']);
-        $this->assertContains('test notes', $this->openRequestPage($this->request)->html());
+        static::assertStringContainsString('test notes', $this->openRequestPage($this->request)->html());
     }
 
     /**
@@ -311,7 +310,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     {
         $crawler = $this->openRequestWorkflowWidget($request);
 
-        $this->assertContains('RFQ Management Flow', $crawler->html());
+        static::assertStringContainsString('RFQ Management Flow', $crawler->html());
         $link = $crawler->selectLink($linkTitle);
         $this->assertNotEmpty($link, 'Transit button not found');
 
@@ -352,7 +351,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $this->assertNotEmpty($crawler->html());
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('RFQ Management Flow', $crawler->html());
+        static::assertStringContainsString('RFQ Management Flow', $crawler->html());
 
         return $crawler;
     }

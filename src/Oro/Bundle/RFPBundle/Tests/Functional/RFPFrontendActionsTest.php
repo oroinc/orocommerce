@@ -15,7 +15,7 @@ class RFPFrontendActionsTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -92,7 +92,7 @@ class RFPFrontendActionsTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
     }
 
     /**

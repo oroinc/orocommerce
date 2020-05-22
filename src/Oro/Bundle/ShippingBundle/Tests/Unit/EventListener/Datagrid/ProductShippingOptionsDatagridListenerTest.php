@@ -28,7 +28,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
     /** @var ProductShippingOptionsDatagridListener */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->config = DatagridConfiguration::create([]);
 
@@ -39,7 +39,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
         $this->listener = new ProductShippingOptionsDatagridListener($this->doctrineHelper);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->doctrineHelper, $this->listener, $this->config);
     }

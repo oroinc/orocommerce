@@ -12,12 +12,12 @@ class FreightClassTest extends \PHPUnit\Framework\TestCase
     /** @var FreightClass $entity */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entity = new FreightClass();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

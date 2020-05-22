@@ -23,7 +23,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(self::DATA_CLASS);

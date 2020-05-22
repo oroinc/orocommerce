@@ -42,7 +42,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
@@ -56,7 +56,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }
@@ -108,7 +108,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
     }
 
@@ -211,7 +211,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entityMock->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals(123456.0, $subtotal->getAmount());
     }
 

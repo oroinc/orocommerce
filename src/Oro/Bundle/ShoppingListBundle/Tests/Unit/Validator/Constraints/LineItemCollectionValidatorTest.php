@@ -26,7 +26,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->lineItemCollectionValidator = new LineItemCollectionValidator($this->eventDispatcher);

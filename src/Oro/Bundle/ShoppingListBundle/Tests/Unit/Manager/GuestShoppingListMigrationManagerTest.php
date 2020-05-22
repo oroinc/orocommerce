@@ -47,7 +47,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);

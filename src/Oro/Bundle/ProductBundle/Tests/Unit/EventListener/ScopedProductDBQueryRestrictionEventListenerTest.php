@@ -64,12 +64,11 @@ class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRes
         $this->listener->onDBQuery($this->event);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Scope not configured for ProductDBQueryRestrictionEventListener
-     */
     public function testScopeEmpty()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Scope not configured for ProductDBQueryRestrictionEventListener');
+
         $this->listener->setBackendSystemConfigurationPath('path');
         $this->listener->setScope(null);
 

@@ -26,7 +26,7 @@ class ProductCollectionAwareContentVariantEntityListenerTest extends \PHPUnit\Fr
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reindexEventListener = $this->createMock(ProductCollectionVariantReindexMessageSendListener::class);
         $this->productCollectionDefinitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);

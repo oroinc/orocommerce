@@ -18,7 +18,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new QuickAddImportFromFileType();
 
@@ -106,7 +106,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }

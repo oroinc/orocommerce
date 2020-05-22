@@ -41,7 +41,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
      */
     protected $productPriceFormatter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);

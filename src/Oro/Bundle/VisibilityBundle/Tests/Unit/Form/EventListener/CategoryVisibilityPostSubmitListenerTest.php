@@ -27,7 +27,7 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $dataHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

@@ -26,7 +26,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListLineItemDeleteHandler */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->totalManager = $this->createMock(ShoppingListTotalManager::class);

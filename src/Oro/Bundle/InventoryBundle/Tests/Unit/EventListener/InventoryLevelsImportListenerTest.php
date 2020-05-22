@@ -22,7 +22,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $inventoryLevelsImportListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->inventoryLevelStrategy = $this->getMockBuilder(InventoryLevelStrategy::class)
             ->disableOriginalConstructor()

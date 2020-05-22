@@ -52,7 +52,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->jobRunner = $this->getMockBuilder(JobRunner::class)
@@ -87,7 +87,9 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        $this->assertAttributeSame($expected, 'batchSize', $this->processor);
+        $property = new \ReflectionProperty(SluggableEntitiesProcessor::class, 'batchSize');
+        $property->setAccessible(true);
+        static::assertSame($expected, $property->getValue($this->processor));
     }
 
     /**

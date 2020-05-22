@@ -19,7 +19,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->handler = new RequestContentVariantHandler($this->requestStack);

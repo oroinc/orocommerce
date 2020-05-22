@@ -6,41 +6,66 @@ use Oro\Bundle\CatalogBundle\DependencyInjection\CompilerPass\AttributeBlockType
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\OroCatalogBundle;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
 class OroCatalogBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {
-        $container = new ContainerBuilder();
+        /** @var ContainerBuilder|MockObject $containerBuilder */
+        $containerBuilder = $this->getMockBuilder(ContainerBuilder::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['addCompilerPass'])
+            ->getMock();
 
-        $kernel = $this->createMock('Symfony\Component\HttpKernel\KernelInterface');
+        $containerBuilder->expects(static::exactly(2))
+            ->method('addCompilerPass')
+            ->withConsecutive(
+                [
+                    static::logicalAnd(
+                        static::isInstanceOf(DefaultFallbackExtensionPass::class),
+                        static::callback(function (CompilerPassInterface $compilerPass) {
+                            $generatorExtensionDef = $this->getMockBuilder(Definition::class)
+                                ->disableOriginalConstructor()
+                                ->getMock();
+                            $generatorExtensionDef->expects(static::once())
+                                ->method('getArgument')
+                                ->willReturn([]);
+                            /** @var ContainerBuilder|MockObject $container */
+                            $container = $this->getMockBuilder(ContainerBuilder::class)
+                                ->disableOriginalConstructor()
+                                ->getMock();
+                            $container->expects(static::once())
+                                ->method('getDefinition')
+                                ->with('oro_locale.entity_generator.extension')
+                                ->willReturn($generatorExtensionDef);
 
-        $passesBeforeBuild = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
-        $bundle = new OroCatalogBundle($kernel);
-        $bundle->build($container);
+                            $generatorExtensionDef->expects(static::once())
+                                ->method('setArgument')
+                                ->with(0, [
+                                    Category::class => [
+                                        'title' => 'titles',
+                                        'shortDescription' => 'shortDescriptions',
+                                        'longDescription' => 'longDescriptions',
+                                        'slugPrototype' => 'slugPrototypes'
+                                    ]
+                                ]);
 
-        $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
-        // Remove default passes from array
-        $passes = array_values(array_filter($passes, function ($pass) use ($passesBeforeBuild) {
-            return !in_array($pass, $passesBeforeBuild, true);
-        }));
+                            $compilerPass->process($container);
 
-        $this->assertInternalType('array', $passes);
-        $this->assertCount(2, $passes);
-        $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
-        $this->assertAttributeEquals(
-            [
-                Category::class => [
-                    'title' => 'titles',
-                    'shortDescription' => 'shortDescriptions',
-                    'longDescription' => 'longDescriptions',
-                    'slugPrototype' => 'slugPrototypes'
+                            return true;
+                        })
+                    )
+                ],
+                [
+                    static::isInstanceOf(AttributeBlockTypeMapperPass::class)
                 ]
-            ],
-            'classes',
-            $passes[0]
-        );
-        $this->assertInstanceOf(AttributeBlockTypeMapperPass::class, $passes[1]);
+            )
+        ->willReturnSelf();
+
+        (new OroCatalogBundle())->build($containerBuilder);
     }
 }

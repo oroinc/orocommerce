@@ -29,7 +29,7 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $shippingMethodsListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
         $this->shippingMethodsListener = new ShippingMethodsListener($this->promotionExecutor);

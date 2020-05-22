@@ -59,7 +59,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->storage = $this->createMock('Oro\Bundle\ProductBundle\Storage\ProductDataStorage');
@@ -85,7 +85,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor->setComponentProcessorFilter($this->componentProcessorFilter);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->router,

@@ -63,12 +63,11 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A root entity is missing for grid "std-grid"
-     */
     public function testOnBuildBeforeWithoutFromPart()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A root entity is missing for grid "std-grid"');
+
         $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
         /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');

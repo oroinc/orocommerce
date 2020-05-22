@@ -30,7 +30,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
      */
     private $prevFullCpl;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -59,7 +59,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         $cm->flush();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $cm = $this->getContainer()->get('oro_config.manager');
         $cm->set('oro_pricing.combined_price_list', $this->prevCpl);

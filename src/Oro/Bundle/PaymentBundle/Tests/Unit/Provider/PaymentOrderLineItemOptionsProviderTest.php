@@ -33,7 +33,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
 
@@ -100,7 +100,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $models);
 
         /** @var LineItemOptionModel $model1 */
@@ -108,8 +108,8 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $this->assertEquals('PRSKU DE Product Name', $model1->getName());
         $this->assertEquals('Strip DE Product Description', $model1->getDescription());
-        $this->assertEquals(123.456, $model1->getCost(), '', 1e-6);
-        $this->assertEquals(2, $model1->getQty(), '', 1e-6);
+        $this->assertEqualsWithDelta(123.456, $model1->getCost(), 1e-6);
+        $this->assertEqualsWithDelta(2, $model1->getQty(), 1e-6);
         $this->assertEquals('USD', $model1->getCurrency());
         $this->assertEquals('item', $model1->getUnit());
 
@@ -118,8 +118,8 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $this->assertEquals('DE Product Without SKU', $model2->getName());
         $this->assertEquals('Strip DE Product Description', $model2->getDescription());
-        $this->assertEquals(321.654, $model2->getCost(), '', 1e-6);
-        $this->assertEquals(0.1, $model2->getQty(), '', 1e-6);
+        $this->assertEqualsWithDelta(321.654, $model2->getCost(), 1e-6);
+        $this->assertEqualsWithDelta(0.1, $model2->getQty(), 1e-6);
         $this->assertEquals('EUR', $model2->getCurrency());
         $this->assertEquals('kg', $model2->getUnit());
 
@@ -140,7 +140,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertEmpty($models);
     }
 
@@ -151,7 +151,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $models = $this->provider->getLineItemOptions($entity);
 
-        $this->assertInternalType('array', $models);
+        $this->assertIsArray($models);
         $this->assertEmpty($models);
     }
 

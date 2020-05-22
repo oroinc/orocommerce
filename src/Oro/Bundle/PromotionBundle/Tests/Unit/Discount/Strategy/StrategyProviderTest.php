@@ -24,7 +24,7 @@ class StrategyProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->strategyRegistry = $this->createMock(StrategyRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -166,11 +166,12 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $method
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Argument data should be instance of ContentWidget entity
      */
     public function testProcessException(string $method): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument data should be instance of ContentWidget entity');
+
         $this->request->setMethod($method);
 
         $this->handler->process(new \stdClass(), $this->form, $this->request);

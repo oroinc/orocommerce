@@ -57,7 +57,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
     private $aclHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -104,11 +104,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         return [[1], [null]];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutPermission()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(true);
@@ -120,11 +118,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->createForShoppingList(new ShoppingList());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutUser()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(false);

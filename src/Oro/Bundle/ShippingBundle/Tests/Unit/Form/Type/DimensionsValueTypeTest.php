@@ -14,7 +14,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
     /** @var DimensionsValueType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new DimensionsValueType();
         $this->formType->setDataClass(self::DATA_CLASS);

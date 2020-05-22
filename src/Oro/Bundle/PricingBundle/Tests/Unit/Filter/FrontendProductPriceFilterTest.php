@@ -60,7 +60,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -82,12 +82,11 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Invalid filter datasource adapter provided
-     */
     public function testThrowsExceptionForWrongFilterDatasourceAdapter()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid filter datasource adapter provided');
+
         $ds = $this->createMock(FilterDatasourceAdapterInterface::class);
         $this->filter->apply(
             $ds,

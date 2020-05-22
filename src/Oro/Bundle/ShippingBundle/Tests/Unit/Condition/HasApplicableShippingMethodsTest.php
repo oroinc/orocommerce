@@ -24,7 +24,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     protected $shippingPriceProvider;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
@@ -39,7 +39,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->condition, $this->shippingMethodProvider);
     }
@@ -49,12 +49,11 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(HasApplicableShippingMethods::NAME, $this->condition->getName());
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "shippingContext" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "shippingContext" option');
+
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
@@ -116,11 +115,11 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 
         $key = '@' . HasApplicableShippingMethods::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($stdClass, $resultSection['parameters']);
     }

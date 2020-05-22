@@ -38,7 +38,7 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
      */
     private $cacheProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converterMock = $this->createMock(VirtualFieldsSelectQueryConverter::class);
         $this->doctrineMock = $this->createMock(ManagerRegistry::class);

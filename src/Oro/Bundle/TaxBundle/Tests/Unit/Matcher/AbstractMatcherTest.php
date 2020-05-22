@@ -29,7 +29,7 @@ abstract class AbstractMatcherTest extends \PHPUnit\Framework\TestCase
      */
     protected $taxRuleRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxRuleRepository = $this
             ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository')
@@ -48,7 +48,7 @@ abstract class AbstractMatcherTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->taxRuleRepository);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->matcher, $this->doctrineHelper, $this->taxRuleRepository);
     }

@@ -27,7 +27,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
             ->disableOriginalConstructor()

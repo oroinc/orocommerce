@@ -25,7 +25,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      */
     protected $checkoutContextProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -44,7 +44,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->checkoutContextProvider, $this->configsRuleProvider);
 

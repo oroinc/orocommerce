@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductRepositoryTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->getContainer()->get('request_stack')->push(Request::create(''));

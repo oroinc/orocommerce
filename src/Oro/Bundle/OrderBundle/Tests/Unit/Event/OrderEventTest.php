@@ -12,7 +12,7 @@ class OrderEventTest extends \PHPUnit\Framework\TestCase
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $order = new Order();
         $event = new OrderEvent($form, $order, ['data']);
-        $this->assertInternalType('array', $event->getSubmittedData());
+        $this->assertIsArray($event->getSubmittedData());
         $this->assertEquals(['data'], $event->getSubmittedData());
         $this->assertSame($order, $event->getOrder());
         $this->assertSame($form, $event->getForm());

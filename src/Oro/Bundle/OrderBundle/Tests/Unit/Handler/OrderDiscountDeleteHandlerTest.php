@@ -26,7 +26,7 @@ class OrderDiscountDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderDiscountDeleteHandler */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->totalHelper = $this->createMock(TotalHelper::class);

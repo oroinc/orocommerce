@@ -257,7 +257,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $pattern = '/^' . $codePrefix . $pattern . $codeSuffix . '$/';
 
         $element = $this->elementFactory->createElement('couponCodePreview');
-        static::assertRegExp($pattern, $element->getText());
+        static::assertMatchesRegularExpression($pattern, $element->getText());
     }
 
     /**

@@ -28,7 +28,7 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\Test
     private $listener;
 
     /** {@inheritdoc} */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->listener = new ProductUnitPrecisionPostRemoveListener($this->shardManager);

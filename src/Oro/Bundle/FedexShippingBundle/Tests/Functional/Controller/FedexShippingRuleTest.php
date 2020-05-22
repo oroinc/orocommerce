@@ -17,7 +17,7 @@ class FedexShippingRuleTest extends WebTestCase
 {
     use FedexIntegrationTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
 
@@ -43,10 +43,10 @@ class FedexShippingRuleTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertContains('fedex-logo.png', $response->getContent());
-        static::assertContains('FedEx Europe First International Priority', $response->getContent());
-        static::assertContains('FedEx 2 Day', $response->getContent());
-        static::assertContains('FedEx 2 Day Freight', $response->getContent());
+        static::assertStringContainsString('fedex-logo.png', $response->getContent());
+        static::assertStringContainsString('FedEx Europe First International Priority', $response->getContent());
+        static::assertStringContainsString('FedEx 2 Day', $response->getContent());
+        static::assertStringContainsString('FedEx 2 Day Freight', $response->getContent());
 
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -101,7 +101,7 @@ class FedexShippingRuleTest extends WebTestCase
             $this->createFormValues($form, $configData)
         );
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('Shipping rule has been saved', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('Shipping rule has been saved', $this->client->getResponse()->getContent());
 
         $config = $this->getMethodConfig($methodIdentifier);
 
@@ -115,8 +115,8 @@ class FedexShippingRuleTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('shipping-methods-configs-rule-grid', $crawler->html());
-        static::assertContains('fedex', $crawler->html());
+        static::assertStringContainsString('shipping-methods-configs-rule-grid', $crawler->html());
+        static::assertStringContainsString('fedex', $crawler->html());
     }
 
     /**

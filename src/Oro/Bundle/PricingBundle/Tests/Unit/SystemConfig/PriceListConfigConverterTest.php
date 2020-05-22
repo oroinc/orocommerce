@@ -41,12 +41,11 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Price list record with id 5 not found, while reading
-     */
     public function testConvertFromSavedInvalidData()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Price list record with id 5 not found, while reading');
+
         $registry = $this->getRegistryMockWithRepository();
         $converter = new PriceListConfigConverter($registry, '\PriceList');
 

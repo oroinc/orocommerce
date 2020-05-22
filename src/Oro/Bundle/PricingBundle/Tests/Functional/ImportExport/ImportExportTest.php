@@ -6,7 +6,7 @@ use Oro\Bundle\ImportExportBundle\Async\Export\ExportMessageProcessor;
 use Oro\Bundle\ImportExportBundle\Async\Topics as ImportExportTopics;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTest;
+use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -17,7 +17,7 @@ use Symfony\Component\DomCrawler\Form;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ImportExportTest extends AbstractImportExportTest
+class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageQueueExtension;
 
@@ -31,7 +31,7 @@ class ImportExportTest extends AbstractImportExportTest
      */
     protected $priceList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures(
@@ -265,7 +265,7 @@ class ImportExportTest extends AbstractImportExportTest
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
         $this->assertEquals(1, $crawler->filter('.import-errors')->count());
-        $this->assertContains($errorMessage, $crawler->filter('.import-errors')->html());
+        static::assertStringContainsString($errorMessage, $crawler->filter('.import-errors')->html());
     }
 
     /**
@@ -289,7 +289,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($strategy, $result->getContent());
+        static::assertStringContainsString($strategy, $result->getContent());
 
         $this->assertFileExists($this->file);
 

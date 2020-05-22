@@ -19,7 +19,7 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pass = new ExtendFieldValidationLoaderPass();
         $this->container = $this->createMock(ContainerBuilder::class);

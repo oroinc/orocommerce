@@ -19,7 +19,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $webCatalogConfigChangeListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->webCatalogConfigChangeListener = new WebCatalogConfigChangeListener($this->dispatcher);

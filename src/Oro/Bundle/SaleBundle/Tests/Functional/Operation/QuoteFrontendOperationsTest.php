@@ -18,7 +18,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -81,7 +81,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $crawler = $this->client->request('GET', $data['redirectUrl']);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertContains('Order #' . LoadOrders::ORDER_1, $crawler->html());
+        static::assertStringContainsString('Order #' . LoadOrders::ORDER_1, $crawler->html());
     }
 
     /**

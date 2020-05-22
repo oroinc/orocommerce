@@ -11,23 +11,10 @@ class DimensionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var Dimensions */
-    protected $model;
-
-    protected function setUp()
-    {
-        $this->model = new Dimensions();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->model);
-    }
-
     public function testAccessors()
     {
         static::assertPropertyAccessors(
-            $this->model,
+            new Dimensions(),
             [
                 ['value', new DimensionsValue()],
                 ['unit', new LengthUnit()]
@@ -41,8 +28,8 @@ class DimensionsTest extends \PHPUnit\Framework\TestCase
 
         $model = Dimensions::create(12, 34, 56, $unit);
 
-        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Dimensions', $model);
-        $this->assertAttributeEquals(DimensionsValue::create(12, 34, 56), 'value', $model);
-        $this->assertAttributeSame($unit, 'unit', $model);
+        static::assertInstanceOf(Dimensions::class, $model);
+        static::assertEquals(DimensionsValue::create(12, 34, 56), $model->getValue());
+        static::assertSame($unit, $model->getUnit());
     }
 }

@@ -28,7 +28,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $testable;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
 
@@ -46,21 +46,17 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testIncoherentEntityInput()
     {
+        $this->expectException(\LogicException::class);
         $context = [];
         $context = $this->setContextEntityIds($context, [1,2,3]);
         $this->testable->validateRequestParameters(['class1','class2'], $context);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testEmptyEntitiesInput()
     {
+        $this->expectException(\LogicException::class);
         $this->testable->validateRequestParameters([], []);
     }
 

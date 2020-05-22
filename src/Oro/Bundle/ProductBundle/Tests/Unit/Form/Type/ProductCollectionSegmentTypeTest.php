@@ -65,7 +65,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entityProvider = $this->createMock(EntityProvider::class);
         $this->queryDesignerManager = $this->createMock(Manager::class);
@@ -140,13 +140,9 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(ProductCollectionSegmentType::class, $segment, ['add_name_field' => true]);
 
         $this->assertTrue($form->has('name'));
-        $this->assertArraySubset(
-            [
-                'required' => true,
-                'constraints' => [new NotBlank()]
-            ],
-            $form->get('name')->getConfig()->getOptions()
-        );
+        $options = $form->get('name')->getConfig()->getOptions();
+        $this->assertSame(true, $options['required']);
+        $this->assertEquals([new NotBlank()], $options['constraints']);
     }
 
     public function testGetBlockPrefix()
@@ -158,13 +154,11 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ProductCollectionSegmentType::class, null);
 
-        $expectedDefaultOptions = [
-            'results_grid' => 'product-collection-grid',
-            'excluded_products_grid' => 'product-collection-excluded-products-grid',
-            'included_products_grid' => 'product-collection-included-products-grid'
-        ];
+        $options = $form->getConfig()->getOptions();
 
-        $this->assertArraySubset($expectedDefaultOptions, $form->getConfig()->getOptions());
+        $this->assertSame('product-collection-grid', $options['results_grid']);
+        $this->assertSame('product-collection-excluded-products-grid', $options['excluded_products_grid']);
+        $this->assertSame('product-collection-included-products-grid', $options['included_products_grid']);
     }
 
     public function testIncludedAndExcludedFieldsSet()
@@ -321,18 +315,13 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
         $this->type->finishView($view, $form, $options);
 
-        $this->assertArraySubset(
-            [
-                'results_grid' => 'test',
-                'includedProductsGrid' => 'included_grid',
-                'excludedProductsGrid' => 'excluded_grid',
-                'segmentDefinition' => $segmentDefinition,
-                'segmentDefinitionFieldName' => $segmentDefinitionFieldName,
-                'hasFilters' => $hasFilters,
-                'addNameField' => true,
-                'scopeValue' => 'productCollectionSegment'
-            ],
-            $view->vars
-        );
+        $this->assertSame('test', $view->vars['results_grid']);
+        $this->assertSame('included_grid', $view->vars['includedProductsGrid']);
+        $this->assertSame('excluded_grid', $view->vars['excludedProductsGrid']);
+        $this->assertSame($segmentDefinition, $view->vars['segmentDefinition']);
+        $this->assertSame($segmentDefinitionFieldName, $view->vars['segmentDefinitionFieldName']);
+        $this->assertSame($hasFilters, $view->vars['hasFilters']);
+        $this->assertSame(true, $view->vars['addNameField']);
+        $this->assertSame('productCollectionSegment', $view->vars['scopeValue']);
     }
 }

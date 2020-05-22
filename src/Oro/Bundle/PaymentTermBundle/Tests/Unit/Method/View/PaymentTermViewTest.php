@@ -34,7 +34,7 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
      */
     protected $paymentConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
@@ -54,7 +54,7 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->paymentConfig);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->methodView, $this->configManager, $this->translator, $this->paymentTermProvider);
     }

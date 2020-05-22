@@ -80,7 +80,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected $triggerHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->registry = $this->createMock(Registry::class);
@@ -220,12 +220,11 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Exception while update price list
-     */
     public function testBuildWithExceptionWhileUpdatePriceLists()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Exception while update price list');
+
         $priceListsCollection = [
             $this->createMock(PriceListSequenceMember::class)
         ];
@@ -266,12 +265,11 @@ class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
         $this->builder->build();
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Exception while build website combined pl
-     */
     public function testBuildWithExceptionWhileDoNestedBuild()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Exception while build website combined pl');
+
         $configCPLId = 1;
         $actualCPLId = 1;
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => $configCPLId]);

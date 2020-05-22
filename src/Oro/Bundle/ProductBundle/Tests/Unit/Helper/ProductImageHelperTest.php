@@ -15,7 +15,7 @@ class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
      */
     protected $productImageHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productImageHelper = new ProductImageHelper();
     }

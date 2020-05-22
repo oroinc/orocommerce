@@ -39,7 +39,7 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $cacheProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->mapper = $this->createMock(MapperInterface::class);

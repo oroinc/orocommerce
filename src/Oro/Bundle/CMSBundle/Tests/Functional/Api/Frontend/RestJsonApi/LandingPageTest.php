@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 class LandingPageTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

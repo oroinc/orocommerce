@@ -14,7 +14,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
     const PRODUCT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
     const PRODUCT_TAX_CODE_SAVE_MESSAGE = 'Product Tax Code has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -25,7 +25,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_product_tax_code_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('tax-product-tax-codes-grid', $crawler->html());
+        static::assertStringContainsString('tax-product-tax-codes-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -84,7 +84,10 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::PRODUCT_TAX_CODE_UPDATED . ' - View - Product Tax Codes - Taxes', $html);
+        static::assertStringContainsString(
+            self::PRODUCT_TAX_CODE_UPDATED . ' - View - Product Tax Codes - Taxes',
+            $html
+        );
 
         $this->assertViewPage(
             $html,
@@ -114,7 +117,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::PRODUCT_TAX_CODE_SAVE_MESSAGE, $html);
+        static::assertStringContainsString(self::PRODUCT_TAX_CODE_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description);
     }
 
@@ -125,7 +128,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
      */
     protected function assertViewPage($html, $code, $description)
     {
-        $this->assertContains($code, $html);
-        $this->assertContains($description, $html);
+        static::assertStringContainsString($code, $html);
+        static::assertStringContainsString($description, $html);
     }
 }

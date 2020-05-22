@@ -32,7 +32,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new QuoteProductRequestType();
         $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');

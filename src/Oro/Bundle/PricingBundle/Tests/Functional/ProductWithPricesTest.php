@@ -40,7 +40,7 @@ class ProductWithPricesTest extends WebTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -129,7 +129,7 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         $this->assertEquals(
             $priceList->getId(),
@@ -190,7 +190,7 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
@@ -238,12 +238,12 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Product has been saved', $crawler->html());
+        static::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
-        $this->assertContains('oro_product[additionalUnitPrecisions][0]', $crawler->html());
-        $this->assertNotContains('oro_product[prices][0]', $crawler->html());
+        static::assertStringContainsString('oro_product[additionalUnitPrecisions][0]', $crawler->html());
+        static::assertStringNotContainsString('oro_product[prices][0]', $crawler->html());
     }
 
     /**

@@ -13,12 +13,12 @@ class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new PriceListPermissionProvider();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider);
     }

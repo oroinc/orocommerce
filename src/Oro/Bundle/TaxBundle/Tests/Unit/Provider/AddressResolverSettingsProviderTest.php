@@ -13,7 +13,7 @@ class AddressResolverSettingsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()
             ->getMock();

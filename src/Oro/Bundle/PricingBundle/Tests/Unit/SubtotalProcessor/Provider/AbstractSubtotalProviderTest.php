@@ -20,7 +20,7 @@ abstract class AbstractSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);

@@ -46,7 +46,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->ruleNormalizer = $this->createMock(RuleNormalizer::class);
         $this->scopeNormalizer = $this->createMock(ScopeNormalizer::class);

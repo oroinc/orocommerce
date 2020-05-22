@@ -47,7 +47,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /** @var ProductPriceScopeCriteriaFactory */
     protected $priceScopeCriteriaFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -92,7 +92,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals(0, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
     }
@@ -173,7 +173,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
         $this->assertSame(1, $subtotal->getCombinedPriceList()->getId());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
     }
@@ -242,7 +242,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
         $this->assertNull($subtotal->getCombinedPriceList());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
     }
@@ -315,7 +315,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($expectedSubtotalCurrency, $subtotal->getCurrency());
         $this->assertNull($subtotal->getCombinedPriceList());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
     }

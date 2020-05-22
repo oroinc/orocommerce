@@ -26,7 +26,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $decorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discountContext = $this->createMock(DiscountContext::class);
         $this->decorator = new DisabledDiscountContextDecorator($this->discountContext);
@@ -34,7 +34,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSubtotal()
     {
-        $subtotal = 111;
+        $subtotal = 111.0;
         $this->discountContext
             ->expects($this->once())
             ->method('getSubtotal')

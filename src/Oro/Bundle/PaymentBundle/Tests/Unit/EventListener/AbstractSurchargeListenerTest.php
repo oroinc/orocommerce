@@ -25,7 +25,7 @@ abstract class AbstractSurchargeListenerTest extends \PHPUnit\Framework\TestCase
      */
     abstract protected function getListener();
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(SubtotalProviderInterface::class);
     }

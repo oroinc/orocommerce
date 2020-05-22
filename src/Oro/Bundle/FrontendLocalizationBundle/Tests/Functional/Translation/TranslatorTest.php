@@ -30,7 +30,7 @@ class TranslatorTest extends FrontendWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadStrategyLanguages::class]);

@@ -20,7 +20,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutShippingMethodsProviderMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutShippingMethodsProviderMock = $this
             ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
@@ -36,12 +36,11 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals(CheckoutHasApplicableShippingMethods::NAME, $this->condition->getName());
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "checkout" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "checkout" option');
+
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
@@ -103,11 +102,11 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
 
         $key = '@'.CheckoutHasApplicableShippingMethods::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($stdClass, $resultSection['parameters']);
     }

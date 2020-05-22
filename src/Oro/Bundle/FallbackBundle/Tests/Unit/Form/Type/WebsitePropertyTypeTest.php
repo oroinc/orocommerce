@@ -27,7 +27,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
      */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 

@@ -16,7 +16,7 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
     /** @var OrdersViewList */
     protected $viewList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())

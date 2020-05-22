@@ -29,7 +29,7 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
@@ -45,7 +45,7 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->checkoutWorkflowStateRepository, $this->doctrineHelper);
     }

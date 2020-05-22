@@ -27,7 +27,7 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCas
      */
     protected $dataHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

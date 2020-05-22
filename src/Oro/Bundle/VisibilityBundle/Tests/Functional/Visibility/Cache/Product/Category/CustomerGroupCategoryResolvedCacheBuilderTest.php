@@ -46,7 +46,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
      */
     protected $scope;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);

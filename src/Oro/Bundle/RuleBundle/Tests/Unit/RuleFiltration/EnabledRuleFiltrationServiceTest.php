@@ -20,7 +20,7 @@ class EnabledRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
      */
     private $serviceDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->service = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
             ->setMethods(['getFilteredRuleOwners'])->getMockForAbstractClass();

@@ -16,7 +16,7 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
@@ -69,12 +69,12 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider notAllowedTypesDataProvider
-     * @expectedException \Oro\Component\Layout\Exception\LogicException
      *
      * @param $webCatalogId
      */
     public function testConfigureContextTypeNotAllowed($webCatalogId)
     {
+        $this->expectException(\Oro\Component\Layout\Exception\LogicException::class);
         $this->configManager
             ->expects($this->once())
             ->method('get')

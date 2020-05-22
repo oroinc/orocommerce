@@ -46,7 +46,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
     /** @var ArrayCollection */
     protected $salesReps;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = $this->getMockBuilder('Oro\Bundle\RFPBundle\Mailer\Processor')
             ->disableOriginalConstructor()

@@ -50,7 +50,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingOriginProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
             ->disableOriginalConstructor()
@@ -80,7 +80,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->factory,

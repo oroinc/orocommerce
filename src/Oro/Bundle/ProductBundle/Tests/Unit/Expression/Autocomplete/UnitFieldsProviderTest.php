@@ -12,7 +12,7 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

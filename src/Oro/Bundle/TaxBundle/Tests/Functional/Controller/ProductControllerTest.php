@@ -20,7 +20,7 @@ class ProductControllerTest extends WebTestCase
 
     const CATEGORY_ID = 1;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -70,11 +70,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains('Product has been saved', $html);
-        $this->assertContains(self::TEST_SKU, $html);
-        $this->assertContains(self::INVENTORY_STATUS, $html);
-        $this->assertContains(self::STATUS, $html);
-        $this->assertContains($productTaxCode->getCode(), $html);
+        static::assertStringContainsString('Product has been saved', $html);
+        static::assertStringContainsString(self::TEST_SKU, $html);
+        static::assertStringContainsString(self::INVENTORY_STATUS, $html);
+        static::assertStringContainsString(self::STATUS, $html);
+        static::assertStringContainsString($productTaxCode->getCode(), $html);
     }
 
     /**
@@ -93,13 +93,13 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains($productTaxCode->getCode(), $html);
+        static::assertStringContainsString($productTaxCode->getCode(), $html);
 
         $productTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_product_tax_code_view', [
             'id' => $productTaxCode->getId(),
         ]);
 
-        $this->assertContains($productTaxCodeLink, $html);
+        static::assertStringContainsString($productTaxCodeLink, $html);
     }
 
     /**
@@ -119,7 +119,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
-        $this->assertContains(self::TEST_SKU, $grid);
+        static::assertStringContainsString(self::TEST_SKU, $grid);
     }
 
     /**

@@ -22,7 +22,7 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderTypeExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderTypeExtension = new OrderTypeExtension();
     }

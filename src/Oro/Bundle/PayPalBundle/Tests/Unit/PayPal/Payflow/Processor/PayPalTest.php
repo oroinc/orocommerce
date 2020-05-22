@@ -11,7 +11,7 @@ class PayPalTest extends \PHPUnit\Framework\TestCase
      */
     protected $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = new PayPal();
     }

@@ -18,7 +18,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
     /** @var EntityDependenciesResolver */
     private $entityDependenciesResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
             ->disableOriginalConstructor()
@@ -34,7 +34,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->mappingProvider, $this->eventDispatcher, $this->entityDependenciesResolver);
     }

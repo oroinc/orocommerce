@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSel
 
 class ProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->setDataParameters(['scope' => 'order']);
         $this->setConfigPath('oro_order.backend_product_visibility');

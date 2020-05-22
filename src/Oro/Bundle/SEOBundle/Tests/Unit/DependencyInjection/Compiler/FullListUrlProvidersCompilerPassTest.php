@@ -23,7 +23,7 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this
             ->getMockBuilder(ContainerBuilder::class)
@@ -111,12 +111,11 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
         $this->compilerPass->process($this->containerBuilder);
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Could not retrieve "alias" attribute for "service.name.1"
-     */
     public function testProcessWithTaggedServicesWithoutAlias()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Could not retrieve "alias" attribute for "service.name.1"');
+
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')

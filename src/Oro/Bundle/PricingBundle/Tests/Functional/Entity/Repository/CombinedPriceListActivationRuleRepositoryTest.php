@@ -24,7 +24,7 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->manager = $this->getContainer()->get('doctrine')

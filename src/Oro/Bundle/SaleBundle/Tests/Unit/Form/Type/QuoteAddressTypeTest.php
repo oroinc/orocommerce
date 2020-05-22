@@ -40,7 +40,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
     protected $addressCollection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
@@ -78,7 +78,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }

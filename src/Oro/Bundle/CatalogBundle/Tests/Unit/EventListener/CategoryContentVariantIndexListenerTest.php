@@ -44,7 +44,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
     /** @var EntityManagerMockBuilder */
     private $entityManagerMockBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entityManagerMockBuilder = new EntityManagerMockBuilder();
         $this->indexScheduler = $this->getMockBuilder(ProductIndexScheduler::class)

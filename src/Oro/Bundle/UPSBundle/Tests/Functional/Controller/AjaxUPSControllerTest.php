@@ -8,7 +8,7 @@ use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices;
 
 class AjaxUPSControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadShippingServices::class]);

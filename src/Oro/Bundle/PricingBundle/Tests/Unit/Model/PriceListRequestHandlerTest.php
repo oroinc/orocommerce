@@ -77,7 +77,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -93,7 +93,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager = $this->createMock(WebsiteManager::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->session,
@@ -161,12 +161,11 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($priceList, $handler->getPriceList());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Default PriceList not found
-     */
     public function testDefaultPriceListNotFound()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Default PriceList not found');
+
         $this->initEm();
         $this->repository->expects($this->once())->method('getDefault')->willReturn(null);
         $this->repository->expects($this->never())->method('find');

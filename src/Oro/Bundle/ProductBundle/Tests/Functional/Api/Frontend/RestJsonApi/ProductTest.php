@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

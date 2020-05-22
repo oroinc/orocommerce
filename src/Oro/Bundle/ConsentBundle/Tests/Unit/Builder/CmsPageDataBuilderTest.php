@@ -41,7 +41,7 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

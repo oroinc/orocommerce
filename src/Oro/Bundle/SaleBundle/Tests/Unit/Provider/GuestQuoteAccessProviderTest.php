@@ -23,7 +23,7 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
     /** @var GuestQuoteAccessProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);

@@ -10,7 +10,7 @@ class SkuRegexTest extends \PHPUnit\Framework\TestCase
     /** @var SkuRegex */
     private $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new SkuRegex();
     }

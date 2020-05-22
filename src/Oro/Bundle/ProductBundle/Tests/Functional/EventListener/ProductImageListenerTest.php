@@ -40,7 +40,7 @@ class ProductImageListenerTest extends WebTestCase
      */
     protected $productReindexTopic;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

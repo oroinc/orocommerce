@@ -29,7 +29,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
      */
     private $router;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
         $this->urlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);

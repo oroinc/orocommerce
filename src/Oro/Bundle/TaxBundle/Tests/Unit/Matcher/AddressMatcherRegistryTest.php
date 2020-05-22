@@ -20,7 +20,7 @@ class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var AddressMatcherRegistry */
     private $matcherRegistry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->regionMatcher = $this->createMock(MatcherInterface::class);
         $this->countryMatcher = $this->createMock(MatcherInterface::class);
@@ -59,23 +59,21 @@ class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->countryMatcher, $this->matcherRegistry->getMatcherByType(self::COUNTRY));
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Address Matcher for type "not_existing" is missing. Registered address matchers are "region, country".
-     */
-    // @codingStandardsIgnoreEnd
     public function testGetMatcherByTypeForNotExistingType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Address Matcher for type "not_existing" is missing. Registered address matchers are "region, country".'
+        );
+
         $this->matcherRegistry->getMatcherByType('not_existing');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Address Matcher for type "not_existing" is missing.
-     */
     public function testGetMatcherByTypeForNotExistingTypeAndNoRefisteredMatchers()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Address Matcher for type "not_existing" is missing.');
+
         $matcherRegistry = new AddressMatcherRegistry(
             [],
             TestContainerBuilder::create()->getContainer($this)

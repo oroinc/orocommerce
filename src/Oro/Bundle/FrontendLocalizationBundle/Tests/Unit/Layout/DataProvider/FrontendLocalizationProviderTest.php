@@ -19,7 +19,7 @@ class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $dataProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->userLocalizationManager = $this->getMockBuilder(UserLocalizationManager::class)
             ->disableOriginalConstructor()

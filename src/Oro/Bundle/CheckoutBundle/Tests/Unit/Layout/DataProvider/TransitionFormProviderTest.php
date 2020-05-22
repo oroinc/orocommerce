@@ -30,7 +30,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transitionProvider = $this->createMock(TransitionProvider::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

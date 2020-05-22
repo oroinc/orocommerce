@@ -35,7 +35,7 @@ class ContentWidgetControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content widget has been saved', $crawler->html());
+        static::assertStringContainsString('Content widget has been saved', $crawler->html());
 
         $contentWidget = $this->getContainer()
             ->get('doctrine')
@@ -69,7 +69,7 @@ class ContentWidgetControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content widget has been saved', $crawler->html());
+        static::assertStringContainsString('Content widget has been saved', $crawler->html());
 
         $contentWidget = $this->getContainer()
             ->get('doctrine')
@@ -96,8 +96,8 @@ class ContentWidgetControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($contentWidget->getName(), $crawler->html());
-        $this->assertContains($contentWidget->getWidgetType(), $crawler->html());
+        static::assertStringContainsString($contentWidget->getName(), $crawler->html());
+        static::assertStringContainsString($contentWidget->getWidgetType(), $crawler->html());
 
         return $contentWidget;
     }
@@ -107,8 +107,11 @@ class ContentWidgetControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_content_widget_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('cms-content-widget-grid', $crawler->html());
-        $this->assertContains('Create Content Widget', $crawler->filter('div.title-buttons-container')->html());
+        static::assertStringContainsString('cms-content-widget-grid', $crawler->html());
+        static::assertStringContainsString(
+            'Create Content Widget',
+            $crawler->filter('div.title-buttons-container')->html()
+        );
     }
 
     /**

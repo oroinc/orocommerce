@@ -21,7 +21,7 @@ class TaxProviderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var TaxProviderRegistry */
     private $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 
@@ -67,21 +67,19 @@ class TaxProviderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->provider1, $this->registry->getProvider('provider1'));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Tax provider with name "provider2" does not exist
-     */
     public function testGetProviderForNotApplicableProvider()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Tax provider with name "provider2" does not exist');
+
         $this->registry->getProvider('provider2');
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Tax provider with name "not_existing" does not exist
-     */
     public function testGetProviderForNotExistingProvider()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Tax provider with name "not_existing" does not exist');
+
         $this->registry->getProvider('not_existing');
     }
 

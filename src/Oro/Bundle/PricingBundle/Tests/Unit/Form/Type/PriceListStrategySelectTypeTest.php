@@ -25,7 +25,7 @@ class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->strategyRegister = $this->getMockBuilder(StrategyRegister::class)
             ->disableOriginalConstructor()
@@ -34,7 +34,7 @@ class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
         $this->type = new PriceListStrategySelectType($this->strategyRegister, $this->translator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->type, $this->strategyRegister, $this->translator);
     }

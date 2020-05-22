@@ -49,7 +49,7 @@ class PageTypeTest extends FormIntegrationTestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /**
          * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator

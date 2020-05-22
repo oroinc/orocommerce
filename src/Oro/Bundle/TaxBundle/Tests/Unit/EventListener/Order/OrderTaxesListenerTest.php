@@ -34,7 +34,7 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxationSettingsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
@@ -62,7 +62,7 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->taxManager, $this->event, $this->numberFormatter);
     }

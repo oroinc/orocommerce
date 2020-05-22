@@ -61,7 +61,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jobRunner = new TestJobRunner();
 
@@ -200,7 +200,9 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
     public function testBatchSize($batchSize, $expected)
     {
         $this->processor->setBatchSize($batchSize);
-        $this->assertAttributeSame($expected, 'batchSize', $this->processor);
+        $property = new \ReflectionProperty(UrlCacheMassJobProcessor::class, 'batchSize');
+        $property->setAccessible(true);
+        static::assertSame($expected, $property->getValue($this->processor));
     }
 
     /**

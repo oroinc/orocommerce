@@ -14,7 +14,7 @@ class ProductStatusVoterTest extends FrontendWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],

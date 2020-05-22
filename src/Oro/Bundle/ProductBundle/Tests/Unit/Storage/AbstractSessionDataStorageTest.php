@@ -24,7 +24,7 @@ class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
      */
     protected $sessionBag;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
         $this->sessionBag = $this
@@ -39,7 +39,7 @@ class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
         $this->storage = new StubAbstractSessionDataStorage($this->session);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->storage, $this->session);
     }

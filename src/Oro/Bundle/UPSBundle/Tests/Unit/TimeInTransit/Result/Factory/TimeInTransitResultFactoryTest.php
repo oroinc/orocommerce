@@ -114,7 +114,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->estimatedArrivalFactory = $this->createMock(EstimatedArrivalFactoryInterface::class);
         $this->timeInTransitResultFactory = new TimeInTransitResultFactory($this->estimatedArrivalFactory);
@@ -246,8 +246,9 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     public function testParseResponseWithMalformedDate()
     {
         static::expectException(\LogicException::class);
-        $exceptionMessage = '/^Could not parse estimated arrivals: Could not parse arrival date time: .+?/i';
-        static::expectExceptionMessageRegExp($exceptionMessage);
+        $this->expectExceptionMessageMatches(
+            '/^Could not parse estimated arrivals: Could not parse arrival date time: .+?/i'
+        );
 
         $this
             ->timeInTransitResultFactory
@@ -262,8 +263,8 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        static::expectException(\LogicException::class);
-        static::expectExceptionMessageRegExp('/^Could not parse estimated arrivals: .+?/i');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessageMatches('/^Could not parse estimated arrivals: .+?/i');
 
         $this
             ->timeInTransitResultFactory

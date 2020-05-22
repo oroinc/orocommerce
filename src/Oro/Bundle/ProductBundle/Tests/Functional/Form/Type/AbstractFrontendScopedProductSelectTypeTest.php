@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->setDatagridIndexPath('oro_frontend_datagrid_index');
         $this->setSearchAutocompletePath('oro_frontend_autocomplete_search');

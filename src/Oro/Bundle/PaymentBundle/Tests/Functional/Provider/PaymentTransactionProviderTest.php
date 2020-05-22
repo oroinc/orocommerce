@@ -174,11 +174,10 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->assertEquals(LoadCustomerUserData::EMAIL, $paymentTransaction->getFrontendOwner()->getEmail());
     }
 
-    /**
-     * @expectedException \Doctrine\DBAL\Exception\NotNullConstraintViolationException
-     */
     public function testTransactionSaveDatabaseException()
     {
+        $this->expectException(\Doctrine\DBAL\Exception\NotNullConstraintViolationException::class);
+
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
@@ -190,12 +189,11 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransactionProvider->savePaymentTransaction(new PaymentTransaction());
     }
 
-    /**
-     * @expectedException \Oro\Bundle\EntityBundle\Exception\NotManageableEntityException
-     * @expectedExceptionMessage Entity class "stdClass" is not manageable.
-     */
     public function testCreatePaymentTransactionNonManageable()
     {
+        $this->expectException(\Oro\Bundle\EntityBundle\Exception\NotManageableEntityException::class);
+        $this->expectExceptionMessage('Entity class "stdClass" is not manageable.');
+
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');

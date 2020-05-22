@@ -13,8 +13,8 @@ class ResultTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $result->getTotal());
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $result->getShipping());
-        $this->assertInternalType('array', $result->getTaxes());
-        $this->assertInternalType('array', $result->getItems());
+        $this->assertIsArray($result->getTaxes());
+        $this->assertIsArray($result->getItems());
 
         $this->assertEquals($this->createTotal(), $result->getTotal());
         $this->assertEquals($this->createShipping(), $result->getShipping());

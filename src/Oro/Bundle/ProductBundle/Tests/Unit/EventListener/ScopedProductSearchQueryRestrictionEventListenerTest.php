@@ -83,12 +83,11 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends
         $this->listener->onSearchQuery($this->getEvent());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Scope not configured for ProductSearchQueryRestrictionEventListener
-     */
     public function testScopeEmpty()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Scope not configured for ProductSearchQueryRestrictionEventListener');
+
         $this->listener->setFrontendSystemConfigurationPath('path');
         $this->listener->setScope(null);
 

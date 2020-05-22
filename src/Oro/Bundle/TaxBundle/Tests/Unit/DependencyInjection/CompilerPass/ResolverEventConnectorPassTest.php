@@ -21,7 +21,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit\Framework\TestCase
      */
     protected $containerBuilder;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->containerBuilder = $this
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')

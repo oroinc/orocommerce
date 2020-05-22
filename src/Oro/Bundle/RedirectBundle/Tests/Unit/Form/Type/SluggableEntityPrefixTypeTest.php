@@ -33,7 +33,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = $this->createMock(RedirectStorage::class);
         $this->configManager = $this->getMockBuilder(ConfigManager::class)

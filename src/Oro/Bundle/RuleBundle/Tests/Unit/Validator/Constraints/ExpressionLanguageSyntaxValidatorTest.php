@@ -24,7 +24,7 @@ class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $context;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->basicExpressionLanguageValidator = $this->createMock(BasicExpressionLanguageValidator::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);

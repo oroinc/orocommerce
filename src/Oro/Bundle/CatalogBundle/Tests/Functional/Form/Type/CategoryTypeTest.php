@@ -32,7 +32,7 @@ class CategoryTypeTest extends WebTestCase
      */
     protected $tokenManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

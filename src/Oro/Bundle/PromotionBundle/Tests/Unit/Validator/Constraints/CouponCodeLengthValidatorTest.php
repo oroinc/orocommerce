@@ -24,7 +24,7 @@ class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new CouponCodeLength();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -111,11 +111,9 @@ class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testValidateWrongEntity()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

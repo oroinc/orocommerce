@@ -13,7 +13,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
      */
     protected $modifier;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->modifier = new ProductVisibilitySearchQueryModifier();
     }

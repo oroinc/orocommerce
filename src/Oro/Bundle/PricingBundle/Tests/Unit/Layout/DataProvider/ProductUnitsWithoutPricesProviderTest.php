@@ -23,7 +23,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $frontendProductPricesProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->frontendProductPricesProvider = $this->getMockBuilder(
             'Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'

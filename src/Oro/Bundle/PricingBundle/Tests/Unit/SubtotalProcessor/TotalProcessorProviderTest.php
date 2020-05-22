@@ -43,7 +43,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     protected $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subtotalProviderRegistry =
@@ -70,7 +70,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }
@@ -92,15 +92,13 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testGetSubtotalsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->provider->getSubtotals(null);
     }
 
@@ -118,7 +116,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertInternalType('float', $total->getAmount());
+        $this->assertIsFloat($total->getAmount());
         $this->assertEquals(182.0, $total->getAmount());
     }
 
@@ -186,12 +184,11 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage SubtotalAwareInterface" expected, but "stdClass" given
-     */
     public function testProviderIsSubtotalCacheAwareButEntityIsNotShouldFail()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('SubtotalAwareInterface" expected, but "stdClass" given');
+
         /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject $subtotalProvider */
         $subtotalProvider = $this
             ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
@@ -347,7 +344,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal1->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal1->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal1->getCurrency());
-        $this->assertInternalType('float', $subtotal1->getAmount());
+        $this->assertIsFloat($subtotal1->getAmount());
         $this->assertEquals(142.0, $subtotal1->getAmount());
         $this->assertEquals(40.0, $subtotal2->getAmount());
     }
@@ -376,7 +373,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals('USD', $total->getCurrency());
-        $this->assertInternalType('float', $total->getAmount());
+        $this->assertIsFloat($total->getAmount());
         $this->assertEquals(182.0, $total->getAmount());
     }
 
@@ -394,7 +391,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertInternalType('float', $total->getAmount());
+        $this->assertIsFloat($total->getAmount());
         $this->assertEquals(102.0, $total->getAmount());
     }
 
@@ -412,7 +409,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertInternalType('float', $total->getAmount());
+        $this->assertIsFloat($total->getAmount());
         $this->assertEquals(0.0, $total->getAmount());
     }
 
@@ -525,7 +522,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $entity = $this->prepareSubtotals(new EntityStub());
 
         $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
-        $this->assertInternalType('array', $totals);
+        $this->assertIsArray($totals);
         $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         $this->assertEquals(
             [
@@ -595,7 +592,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertInternalType('float', $total->getAmount());
+        $this->assertIsFloat($total->getAmount());
         $this->assertEquals(142.0, $total->getAmount());
     }
 }

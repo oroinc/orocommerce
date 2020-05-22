@@ -33,7 +33,7 @@ class DefaultVariantScopesResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $defaultVariantScopesResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);

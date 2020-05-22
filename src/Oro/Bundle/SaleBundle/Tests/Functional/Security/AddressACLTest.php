@@ -27,7 +27,7 @@ class AddressACLTest extends AbstractAddressACLTest
     /** @var string */
     protected $formName = 'oro_sale_quote';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -62,10 +62,10 @@ class AddressACLTest extends AbstractAddressACLTest
 
         if (!empty($expected)) {
             // Check shipping addresses
-            $this->assertContains('Shipping Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
             $this->checkAddresses($crawler, $this->formName, self::SHIPPING_ADDRESS, $expected);
         } else {
-            $this->assertNotContains('Shipping Address', $crawler->filter('.navbar-static')->html());
+            static::assertStringNotContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
         }
     }
 

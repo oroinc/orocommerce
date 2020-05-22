@@ -66,7 +66,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
      */
     private $appliedPromotionMapper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->normalizer = $this->createMock(NormalizerInterface::class);

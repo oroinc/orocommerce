@@ -17,7 +17,7 @@ class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DimensionsUnitValueExtension */
     private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 

@@ -46,7 +46,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $messageFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder(ContentNodeMaterializedPathModifier::class)
             ->disableOriginalConstructor()

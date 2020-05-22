@@ -21,7 +21,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
         $this->configManager = $this->createMock(ConfigManager::class);

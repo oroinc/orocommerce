@@ -21,7 +21,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->roundingService->expects($this->any())
@@ -41,11 +41,9 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         return new QuantityUnitPrecisionValidator($this->roundingService);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidConstraint()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 
@@ -404,10 +402,6 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
                 'precision' => 2,
                 'quantity'  => 5.55
             ],
-            'string quantity' => [
-                'precision' => 2,
-                'quantity'  => '5.55'
-            ]
         ];
     }
 }

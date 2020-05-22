@@ -15,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CouponGeneratorTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
@@ -69,7 +69,7 @@ class CouponGeneratorTest extends WebTestCase
 
         /** @var Coupon $coupon */
         $coupon = reset($generatedCoupons);
-        $this->assertRegExp('/^[0-9]{1,3}$/', $coupon->getCode());
+        $this->assertMatchesRegularExpression('/^[0-9]{1,3}$/', $coupon->getCode());
         $this->assertEquals(strtoupper($coupon->getCode()), $coupon->getCodeUppercase());
         $this->assertEquals($options->getOwner(), $coupon->getOwner());
         $this->assertEquals($options->isEnabled(), $coupon->isEnabled());

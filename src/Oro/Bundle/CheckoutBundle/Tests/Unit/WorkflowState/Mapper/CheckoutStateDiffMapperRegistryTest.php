@@ -25,12 +25,11 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['test_name' => $mapper], $registry->getMappers());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Mapper "wrong_name" is missing. Registered mappers: test1, test2.
-     */
     public function testRegistryException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Mapper "wrong_name" is missing. Registered mappers: test1, test2.');
+
         $mapper1 = $this->createMock(CheckoutStateDiffMapperInterface::class);
         $mapper1->expects($this->once())
             ->method('getName')

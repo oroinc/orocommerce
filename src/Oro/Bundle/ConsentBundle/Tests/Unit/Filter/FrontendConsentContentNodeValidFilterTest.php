@@ -58,7 +58,7 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->contentNodeValidator = $this->createMock(ConsentContentNodeValidator::class);
@@ -79,7 +79,7 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->frontendHelper,

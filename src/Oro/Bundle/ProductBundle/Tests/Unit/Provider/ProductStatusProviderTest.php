@@ -10,7 +10,7 @@ class ProductStatusProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductStatusProvider $productStatusProvider */
     protected $productStatusProvider;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->productStatusProvider = new ProductStatusProvider();
     }

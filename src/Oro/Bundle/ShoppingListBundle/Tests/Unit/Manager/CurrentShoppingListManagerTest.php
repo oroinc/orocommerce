@@ -49,7 +49,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
@@ -272,22 +272,20 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($shoppingList->isCurrent());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage The customer user ID must not be empty.
-     */
     public function testSetCurrentWhenNewCustomerUserIsPassed()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The customer user ID must not be empty.');
+
         $this->currentShoppingListManager
             ->setCurrent($this->getCustomerUser(), $this->getShoppingList(123));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage The shopping list ID must not be empty.
-     */
     public function testSetCurrentWhenNewShoppingListIsPassed()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The shopping list ID must not be empty.');
+
         $this->currentShoppingListManager
             ->setCurrent($this->getCustomerUser(234), $this->getShoppingList());
     }

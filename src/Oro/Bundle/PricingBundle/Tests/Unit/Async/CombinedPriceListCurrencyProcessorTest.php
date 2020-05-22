@@ -32,7 +32,7 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedPriceListCurrencyProcessor */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);

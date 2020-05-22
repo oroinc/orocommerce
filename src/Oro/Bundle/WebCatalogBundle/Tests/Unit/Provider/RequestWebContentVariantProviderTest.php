@@ -21,7 +21,7 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RequestWebContentVariantProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->contentVariantRepository = $this->createMock(ContentVariantRepository::class);

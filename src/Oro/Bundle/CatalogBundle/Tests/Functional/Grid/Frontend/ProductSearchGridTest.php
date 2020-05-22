@@ -21,7 +21,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -161,13 +161,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
             'sku' => [
                 'filter' => 'sku',
                 'field' => 'sku',
-                'searchString' => substr(LoadProductData::PRODUCT_1, 2, 5),
+                'searchString' => substr(LoadProductData::PRODUCT_1, 0, 5),
                 'expectedFieldValue' => LoadProductData::PRODUCT_1
             ],
             'names filter' => [
                 'filter' => 'names',
                 'field' => 'name',
-                'searchString' => substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 7, 12),
+                'searchString' => substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 0, 12),
                 'expectedFieldValue' => LoadProductData::PRODUCT_1_DEFAULT_NAME
             ]
         ];
@@ -209,7 +209,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
         return [
             'sku not like' => [
                 'sku',
-                substr(LoadProductData::PRODUCT_8, 5),
+                LoadProductData::PRODUCT_8,
                 [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -220,13 +220,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
                 ],
             ],
             'sku not like inside' => [
-                'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [
+                'sku', substr(LoadProductData::PRODUCT_8, 0, 4), [
                     LoadProductData::PRODUCT_7,
                     LoadProductData::PRODUCT_9,
                 ],
             ],
             'names not like inside' => [
-                'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [
+                'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 0, 12), [
                     LoadProductData::PRODUCT_2_DEFAULT_NAME,
                     LoadProductData::PRODUCT_3_DEFAULT_NAME,
                     LoadProductData::PRODUCT_6_DEFAULT_NAME,

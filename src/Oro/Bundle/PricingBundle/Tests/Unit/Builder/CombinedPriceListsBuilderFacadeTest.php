@@ -72,7 +72,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedPriceListsBuilderFacade */
     private $facade;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->customerCombinedPriceListBuilder = $this->createMock(CustomerCombinedPriceListsBuilder::class);

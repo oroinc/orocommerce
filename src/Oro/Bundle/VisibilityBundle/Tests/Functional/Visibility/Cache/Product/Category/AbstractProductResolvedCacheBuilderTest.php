@@ -21,7 +21,7 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
     /** @var Scope */
     protected $scope;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -33,7 +33,7 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
         $this->registry = $this->client->getContainer()->get('doctrine');
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();
         parent::tearDown();

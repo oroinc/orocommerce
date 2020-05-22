@@ -67,7 +67,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = $this->getEntity(
             UPSTransport::class,

@@ -25,7 +25,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
      */
     protected $scopeManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');

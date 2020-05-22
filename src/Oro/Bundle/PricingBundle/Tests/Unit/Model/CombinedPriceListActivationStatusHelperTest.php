@@ -27,7 +27,7 @@ class CombinedPriceListActivationStatusHelperTest extends \PHPUnit\Framework\Tes
      */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);

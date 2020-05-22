@@ -34,10 +34,10 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new FrontendLineItemType();
-        
+
         parent::setUp();
     }
 

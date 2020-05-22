@@ -16,7 +16,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
     /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $propertyAccessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
         $this->propertyAccessor = new PropertyAccessor();

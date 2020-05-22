@@ -17,7 +17,7 @@ class AttributeBlockTypeMapperPassTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pass = new AttributeBlockTypeMapperPass();
         $this->container = $this->createMock(ContainerBuilder::class);

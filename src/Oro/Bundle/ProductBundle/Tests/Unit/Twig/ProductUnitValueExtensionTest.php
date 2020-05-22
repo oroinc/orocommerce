@@ -17,7 +17,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitValueExtension */
     private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 

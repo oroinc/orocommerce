@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\AbstractEngineTest;
  */
 class OrmEngineTest extends AbstractEngineTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

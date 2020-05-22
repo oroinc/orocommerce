@@ -16,7 +16,6 @@ class AbstractModelTest extends \PHPUnit\Framework\TestCase
             ->setConstructorArgs([$entity])
             ->getMockForAbstractClass();
 
-        $this->assertAttributeEquals($entity, 'entity', $abstractModel);
         $this->assertEquals([$entity], $abstractModel->getEntities());
     }
 }

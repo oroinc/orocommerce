@@ -18,7 +18,7 @@ class PaymentTermControllerTest extends WebTestCase
     const CREATE_UPDATE_SUCCESS_MESSAGE = 'Payment term has been saved';
     const BLANK_MESSAGE = 'This value should not be blank.';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -33,10 +33,10 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains('payment-terms-grid', $html);
-        $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_10, $html);
-        $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_20, $html);
-        $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_30, $html);
+        static::assertStringContainsString('payment-terms-grid', $html);
+        static::assertStringContainsString(LoadPaymentTermData::TERM_LABEL_NET_10, $html);
+        static::assertStringContainsString(LoadPaymentTermData::TERM_LABEL_NET_20, $html);
+        static::assertStringContainsString(LoadPaymentTermData::TERM_LABEL_NET_30, $html);
     }
 
     public function testCreate()
@@ -54,8 +54,8 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
-        $this->assertContains(self::TERM_LABEL_NEW, $html);
+        static::assertStringContainsString(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        static::assertStringContainsString(self::TERM_LABEL_NEW, $html);
 
         $paymentTerm = $this->getPaymentTermDataByLabel(self::TERM_LABEL_NEW);
         $this->assertNotEmpty($paymentTerm);
@@ -78,8 +78,8 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
-        $this->assertContains(self::TERM_LABEL_TAG_REMOVED, $html);
+        static::assertStringContainsString(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        static::assertStringContainsString(self::TERM_LABEL_TAG_REMOVED, $html);
     }
 
     public function testCreateWithTagAndValid()
@@ -97,9 +97,9 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
-        $this->assertContains(self::TERM_LABEL_TAG_REMOVED, $html);
-        $this->assertContains(self::TERM_LABEL_NEW, $html);
+        static::assertStringContainsString(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        static::assertStringContainsString(self::TERM_LABEL_TAG_REMOVED, $html);
+        static::assertStringContainsString(self::TERM_LABEL_NEW, $html);
     }
 
     /**
@@ -125,8 +125,8 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
-        $this->assertContains(self::TERM_LABEL_UPDATED, $html);
+        static::assertStringContainsString(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        static::assertStringContainsString(self::TERM_LABEL_UPDATED, $html);
 
         return $id;
     }
@@ -145,7 +145,7 @@ class PaymentTermControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::TERM_LABEL_UPDATED, $crawler->html());
+        static::assertStringContainsString(self::TERM_LABEL_UPDATED, $crawler->html());
 
         return $paymentTermId;
     }

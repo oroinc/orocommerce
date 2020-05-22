@@ -13,7 +13,7 @@ class PriceListProviderTest extends WebTestCase
      */
     protected $priceListProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->priceListProvider = $this->getContainer()->get('oro_pricing.provider.price_list_provider');

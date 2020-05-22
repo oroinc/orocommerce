@@ -9,11 +9,9 @@ use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 
 class RelatedItemSecurityCheckTest extends GetProcessorTestCase
 {
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testAccessIsDeniedWhenUserDoesNotHaveCapabilityToEditRelatedProducts()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $processor = $this->getProcessor([], ['oro_related_products_edit' => false]);
 
         $processor->process($this->context);
@@ -30,10 +28,10 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
 
     /**
      * @dataProvider withoutProperPermissionsDataProvider
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function testAccessIsDeniedWhenUserDoesNotHaveProperPermissions(array $permissions, array $isGrantedMapping)
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $isGrantedMapping['oro_related_products_edit'] = true;
         $processor = $this->getProcessor($permissions, $isGrantedMapping);
 

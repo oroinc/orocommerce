@@ -30,7 +30,7 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->condition = new PaymentMethodSupports($this->paymentMethodProvider);
@@ -49,11 +49,9 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInitializeWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->condition->initialize([]);
     }
 
@@ -128,10 +126,10 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->toArray();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('@' . PaymentMethodSupports::NAME, $result);
         $resultSection = $result['@' . PaymentMethodSupports::NAME];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $resultSection['parameters']);
         $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $resultSection['parameters']);
@@ -141,8 +139,8 @@ class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->compile('');
-        $this->assertContains(PaymentMethodSupports::NAME, $result);
-        $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $result);
-        $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $result);
+        static::assertStringContainsString(PaymentMethodSupports::NAME, $result);
+        static::assertStringContainsString($this->paymentMethod[self::PAYMENT_METHOD_KEY], $result);
+        static::assertStringContainsString($this->paymentMethod[self::ACTION_NAME_KEY], $result);
     }
 }

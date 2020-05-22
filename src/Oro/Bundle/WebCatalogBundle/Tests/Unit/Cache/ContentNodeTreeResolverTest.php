@@ -24,7 +24,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
     /** @var ContentNodeTreeResolver */
     private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->innerResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
         $this->cache = $this->createMock(ContentNodeTreeCache::class);

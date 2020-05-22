@@ -25,7 +25,7 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationVoter */
     protected $voter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(ConfigValueRepository::class)
             ->disableOriginalConstructor()

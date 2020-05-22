@@ -36,7 +36,7 @@ class QuoteRepositoryTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -60,7 +60,7 @@ class QuoteRepositoryTest extends WebTestCase
         $this->configuration->setSQLLogger($this->queryAnalyzer);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -120,10 +120,16 @@ class QuoteRepositoryTest extends WebTestCase
         $query = reset($queries);
 
         $quoteProductMetadata = $this->em->getClassMetadata(QuoteProduct::class);
-        $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()), $query);
+        static::assertStringContainsString(
+            \sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()),
+            $query
+        );
 
         $quoteProductOfferMetadata = $this->em->getClassMetadata(QuoteProductOffer::class);
-        $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()), $query);
+        static::assertStringContainsString(
+            \sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()),
+            $query
+        );
     }
 
     public function testGetRelatedEntitiesCount()

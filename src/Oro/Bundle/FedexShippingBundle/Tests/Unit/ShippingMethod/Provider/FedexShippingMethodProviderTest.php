@@ -19,7 +19,7 @@ class FedexShippingMethodProviderTest extends TestCase
      */
     private $methodFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->methodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);

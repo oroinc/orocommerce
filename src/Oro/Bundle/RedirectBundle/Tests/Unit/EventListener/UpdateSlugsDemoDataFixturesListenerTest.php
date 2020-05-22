@@ -48,7 +48,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->generator = $this->createMock(SlugEntityGenerator::class);

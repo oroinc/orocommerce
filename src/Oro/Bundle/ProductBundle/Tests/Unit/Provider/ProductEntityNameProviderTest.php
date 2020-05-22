@@ -14,7 +14,7 @@ class ProductEntityNameProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductEntityNameProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new ProductEntityNameProvider();
     }

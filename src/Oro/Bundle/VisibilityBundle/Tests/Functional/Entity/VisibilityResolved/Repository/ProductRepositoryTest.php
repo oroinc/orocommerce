@@ -49,7 +49,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected $insertExecutor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -212,7 +212,7 @@ class ProductRepositoryTest extends WebTestCase
                 'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
                 'category' => $category->getId()
             ];
-            $this->assertContains($expected, $actual);
+            static::assertContainsEquals($expected, $actual);
         }
     }
 
@@ -233,7 +233,7 @@ class ProductRepositoryTest extends WebTestCase
                     'source' => ProductVisibilityResolved::SOURCE_STATIC,
                     'category' => null
                 ];
-                $this->assertContains($expected, $actual);
+                static::assertContainsEquals($expected, $actual);
             }
         }
     }

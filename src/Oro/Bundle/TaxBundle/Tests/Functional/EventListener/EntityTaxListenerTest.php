@@ -17,7 +17,7 @@ class EntityTaxListenerTest extends WebTestCase
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

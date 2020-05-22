@@ -7,12 +7,12 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCa
     /** @var object */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->listener = $this->createListener();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->doctrineHelper);
     }

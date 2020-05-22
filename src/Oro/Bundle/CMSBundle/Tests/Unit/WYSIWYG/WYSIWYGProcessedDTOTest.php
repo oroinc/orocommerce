@@ -122,12 +122,11 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('TestClassName', $processedDTO->requireOwnerEntityClass());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Owner entity must have class name
-     */
     public function testRequireOwnerEntityClassException(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Owner entity must have class name');
+
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects($this->once())
             ->method('getName')
@@ -155,12 +154,11 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(42, $processedDTO->requireOwnerEntityId());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Owner entity must have identifier
-     */
     public function testRequireOwnerEntityIdException(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Owner entity must have identifier');
+
         /** @var WYSIWYGProcessedEntityDTO|\PHPUnit\Framework\MockObject\MockObject $entityDTO */
         $entityDTO = $this->createMock(WYSIWYGProcessedEntityDTO::class);
         $entityDTO->expects($this->once())
@@ -183,12 +181,11 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('field_name', $processedDTO->requireOwnerEntityFieldName());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Owner entity must have field name
-     */
     public function testRequireOwnerEntityFieldNameException(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Owner entity must have field name');
+
         /** @var WYSIWYGProcessedEntityDTO|\PHPUnit\Framework\MockObject\MockObject $entityDTO */
         $entityDTO = $this->createMock(WYSIWYGProcessedEntityDTO::class);
         $entityDTO->expects($this->once())

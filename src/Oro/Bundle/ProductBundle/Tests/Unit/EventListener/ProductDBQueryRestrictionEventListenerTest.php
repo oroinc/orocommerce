@@ -46,7 +46,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();
@@ -171,12 +171,13 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
         ];
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener
-     */
     public function testSystemConfigurationPathEmpty()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener'
+        );
+
         $this->listener->setFrontendSystemConfigurationPath(null);
         $this->listener->setBackendSystemConfigurationPath(null);
 

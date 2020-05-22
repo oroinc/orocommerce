@@ -35,7 +35,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->defaultProductOptionsVisibility = $this
             ->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);

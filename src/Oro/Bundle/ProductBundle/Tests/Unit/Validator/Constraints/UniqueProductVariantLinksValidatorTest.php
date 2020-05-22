@@ -44,7 +44,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -56,7 +56,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->service, $this->context);
     }

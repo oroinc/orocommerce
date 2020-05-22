@@ -47,7 +47,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
             ->disableOriginalConstructor()
@@ -111,7 +111,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->validator,
@@ -124,13 +124,15 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework
     }
 
     //@codingStandardsIgnoreStart
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily", "stdClass" given
-     */
     //@codingStandardsIgnoreEnd
     public function testValidateUnsupportedClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Entity must be instance of "%s", "stdClass" given',
+            AttributeFamily::class
+        ));
+
         $this->validator->validate(new \stdClass(), new AttributeFamilyUsageInVariantField());
     }
 

@@ -14,7 +14,7 @@ class DestinationPostalCodeTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[] */
     private $postalCodes;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new DestinationPostalCodeTransformer();
 

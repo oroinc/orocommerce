@@ -30,7 +30,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected $totalHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalHelper = $this->createMock(TotalHelper::class);
         $this->formType = new OrderDiscountItemType($this->totalHelper);

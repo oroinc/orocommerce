@@ -12,7 +12,6 @@ use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
@@ -75,7 +74,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $variantFieldValueHandlerRegistry = new ProductVariantFieldValueHandlerRegistry();
 
@@ -152,7 +151,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->availabilityProvider,
@@ -249,12 +248,11 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Variant values provided don't match exactly one simple product
-     */
     public function testGetSimpleProductByVariantFieldsSeveralProducts()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Variant values provided don't match exactly one simple product");
+
         $configurableProduct = $this->getConfigurableProduct();
 
         $products = [
@@ -267,12 +265,11 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Variant values provided don't match exactly one simple product
-     */
     public function testGetSimpleProductByVariantFieldsNoProducts()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Variant values provided don't match exactly one simple product");
+
         $configurableProduct = $this->getConfigurableProduct();
 
         $products = [];
@@ -282,12 +279,11 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Product with type "configurable" expected, "simple" given
-     */
     public function testGetSimpleProductByVariantFieldsWrongProductType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Product with type "configurable" expected, "simple" given');
+
         $configurableProduct = $this->getSimpleProduct();
 
         $this->productRepository

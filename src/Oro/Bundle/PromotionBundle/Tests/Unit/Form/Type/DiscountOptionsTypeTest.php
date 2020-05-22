@@ -210,12 +210,11 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(DiscountOptionsType::class);
         $view = $form->createView();
         $this->assertArrayHasKey('attr', $view->vars);
-        $this->assertArraySubset(
-            [
-                'data-page-component-module' => $form->getConfig()->getOption('page_component'),
-                'data-page-component-options' => json_encode($form->getConfig()->getOption('page_component_options'))
-            ],
-            $view->vars['attr']
+        $attr = $view->vars['attr'];
+        $this->assertSame($form->getConfig()->getOption('page_component'), $attr['data-page-component-module']);
+        $this->assertSame(
+            json_encode($form->getConfig()->getOption('page_component_options')),
+            $attr['data-page-component-options']
         );
     }
 
@@ -267,9 +266,6 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     private function assertFieldIsHidden(FormInterface $form, $field)
     {
-        $percentDiscountValueField = $form->get($field);
-        $expectedPercentDiscountValuedFieldAttr = ['class' => 'hide'];
-        $actualPercentDiscountValuedFieldAttr = $percentDiscountValueField->getConfig()->getOption('attr');
-        $this->assertArraySubset($expectedPercentDiscountValuedFieldAttr, $actualPercentDiscountValuedFieldAttr);
+        $this->assertSame('hide', $form->get($field)->getConfig()->getOption('attr')['class']);
     }
 }

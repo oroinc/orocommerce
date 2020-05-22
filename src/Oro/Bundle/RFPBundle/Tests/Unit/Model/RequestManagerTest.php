@@ -42,7 +42,7 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $websiteManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -82,8 +82,8 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected->getWebsite(), $actual->getWebsite());
         $this->assertEquals($expected->getCustomer(), $actual->getCustomer());
         $this->assertEquals($expected->getCustomerUser(), $actual->getCustomerUser());
-        $this->assertEquals($expected->getCreatedAt(), $actual->getCreatedAt(), '', 5);
-        $this->assertEquals($expected->getUpdatedAt(), $actual->getUpdatedAt(), '', 5);
+        $this->assertEqualsWithDelta($expected->getCreatedAt(), $actual->getCreatedAt(), 5);
+        $this->assertEqualsWithDelta($expected->getUpdatedAt(), $actual->getUpdatedAt(), 5);
     }
 
     public function testAddProductItemToRequest()
@@ -98,7 +98,7 @@ class RequestManagerTest extends \PHPUnit\Framework\TestCase
             ]],
         ];
         $request = new Request();
-        
+
         $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
         $unit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
 

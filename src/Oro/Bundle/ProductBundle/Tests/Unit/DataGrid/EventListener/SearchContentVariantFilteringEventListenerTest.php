@@ -35,7 +35,7 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(RequestContentVariantHandler::class);
         $this->configManager = $this->createMock(ConfigManager::class);

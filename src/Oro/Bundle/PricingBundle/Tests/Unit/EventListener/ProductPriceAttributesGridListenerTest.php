@@ -50,7 +50,7 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $productPriceAttributesGridListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
@@ -67,21 +67,17 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testOnBuildBeforeWithNoPriceListId()
     {
+        $this->expectException(\LogicException::class);
         $datagridConfiguration = $this->createMock(DatagridConfiguration::class);
         $buildBeforeEvent = new BuildBefore($this->datagrid, $datagridConfiguration);
         $this->productPriceAttributesGridListener->onBuildBefore($buildBeforeEvent);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testOnBuildBeforeWithNoPriceList()
     {
+        $this->expectException(\LogicException::class);
         $this->parameterBag->set('price_list_id', 1);
         $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn(null);
 
@@ -122,11 +118,9 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->productPriceAttributesGridListener->onBuildBefore($buildBeforeEvent);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testOnBuildAfterWithWrongDatasource()
     {
+        $this->expectException(\LogicException::class);
         $this->datagrid->expects($this->never())->method('getParameters')->willReturn($this->parameterBag);
         $this->datagrid->expects($this->once())->method('getDatasource')
             ->willReturn($this->createMock(OrmDatasource::class));
@@ -139,10 +133,10 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider onBuildAfterWithEmptyRequiredParamsProvider
      * @param null|int $productId
      * @param null|int $priceListId
-     * @expectedException \LogicException
      */
     public function testOnBuildAfterWithEmptyRequiredParams($productId, $priceListId)
     {
+        $this->expectException(\LogicException::class);
         $this->parameterBag->set('product_id', $productId);
         $this->parameterBag->set('price_list_id', $priceListId);
 
@@ -157,10 +151,10 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider onBuildAfterWithEmptyRequiredEntitiesProvider
      * @param null|Product $product
      * @param null|PriceAttributePriceList $priceList
-     * @expectedException \LogicException
      */
     public function testOnBuildAfterWithEmptyRequiredEntities($product, $priceList)
     {
+        $this->expectException(\LogicException::class);
         $this->parameterBag->set('product_id', 1);
         $this->parameterBag->set('price_list_id', 2);
 

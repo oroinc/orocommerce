@@ -53,12 +53,8 @@ abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
         $this->assertTrue($form->has('customerAddress'));
         $this->assertTrue($form->get('customerAddress')->getConfig()->hasOption('attr'));
         $this->assertArrayHasKey('data-addresses', $form->get('customerAddress')->getConfig()->getOption('attr'));
-        $this->assertInternalType(
-            'string',
-            $form->get('customerAddress')->getConfig()->getOption('attr')['data-addresses']
-        );
-        $this->assertInternalType(
-            'array',
+        $this->assertIsString($form->get('customerAddress')->getConfig()->getOption('attr')['data-addresses']);
+        $this->assertIsArray(
             json_decode($form->get('customerAddress')->getConfig()->getOption('attr')['data-addresses'], true)
         );
         $this->assertArrayHasKey('data-default', $form->get('customerAddress')->getConfig()->getOption('attr'));

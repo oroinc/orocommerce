@@ -20,7 +20,7 @@ class ShoppingListCreateVoterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->getMockBuilder(ShoppingListLimitManager::class)
             ->disableOriginalConstructor()

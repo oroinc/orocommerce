@@ -23,7 +23,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->twigEngine = $this->createMock('Symfony\Component\Templating\EngineInterface');
         $this->formFactory = $this->createMock('\Symfony\Component\Form\FormFactoryInterface');
@@ -31,7 +31,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new OrderAddressEventListener($this->twigEngine, $this->formFactory);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->twigEngine, $this->formFactory);
     }

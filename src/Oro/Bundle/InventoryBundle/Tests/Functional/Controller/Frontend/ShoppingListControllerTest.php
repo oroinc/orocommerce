@@ -31,7 +31,7 @@ class ShoppingListControllerTest extends WebTestCase
      */
     protected $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -75,7 +75,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
-        $this->assertContains($createOrderLabel, $crawler->html());
+        static::assertStringContainsString($createOrderLabel, $crawler->html());
         $this->client->followRedirects(true);
         $crawler->selectLink($createOrderLabel)->link();
     }
@@ -123,13 +123,13 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
-        $this->assertNotContains($createOrderLabel, $crawler->html());
+        static::assertStringNotContainsString($createOrderLabel, $crawler->html());
 
         $errorMessage = $this->translator->trans(
             $errorMessage,
             ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
-        $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
+        static::assertStringContainsString($errorMessage, $this->client->getResponse()->getContent());
     }
 
     /**

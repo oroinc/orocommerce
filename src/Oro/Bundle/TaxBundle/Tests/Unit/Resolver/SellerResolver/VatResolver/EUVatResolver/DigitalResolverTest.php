@@ -22,7 +22,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $itemResolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $itemResolverClass =
             'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver';

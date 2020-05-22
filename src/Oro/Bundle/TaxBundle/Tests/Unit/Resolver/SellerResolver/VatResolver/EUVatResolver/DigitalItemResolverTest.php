@@ -36,7 +36,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
     /** @var  DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $resolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
             ->disableOriginalConstructor()

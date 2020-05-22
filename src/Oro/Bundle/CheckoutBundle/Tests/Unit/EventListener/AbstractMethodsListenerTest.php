@@ -47,7 +47,7 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->getMockBuilder(OrderAddressSecurityProvider::class)
             ->disableOriginalConstructor()
@@ -62,7 +62,7 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
             ->getMock();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->addressProvider,

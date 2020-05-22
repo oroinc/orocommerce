@@ -17,7 +17,7 @@ class TaxControllerTest extends WebTestCase
 
     const TAX_SAVE_MESSAGE = 'Tax has been saved';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -28,7 +28,7 @@ class TaxControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('tax-taxes-grid', $crawler->html());
+        static::assertStringContainsString('tax-taxes-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -83,7 +83,7 @@ class TaxControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::TAX_CODE_UPDATED . ' - View - Taxes - Taxes', $html);
+        static::assertStringContainsString(self::TAX_CODE_UPDATED . ' - View - Taxes - Taxes', $html);
 
         $this->assertViewPage($html, self::TAX_CODE_UPDATED, self::TAX_DESCRIPTION_UPDATED, self::TAX_RATE_UPDATED);
     }
@@ -111,7 +111,7 @@ class TaxControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::TAX_SAVE_MESSAGE, $html);
+        static::assertStringContainsString(self::TAX_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description, $rate);
     }
 
@@ -123,8 +123,8 @@ class TaxControllerTest extends WebTestCase
      */
     protected function assertViewPage($html, $code, $description, $rate)
     {
-        $this->assertContains($code, $html);
-        $this->assertContains($description, $html);
-        $this->assertContains($rate . '%', $html);
+        static::assertStringContainsString($code, $html);
+        static::assertStringContainsString($description, $html);
+        static::assertStringContainsString($rate . '%', $html);
     }
 }

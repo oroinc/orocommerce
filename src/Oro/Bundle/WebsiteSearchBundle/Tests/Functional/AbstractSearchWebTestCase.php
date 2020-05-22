@@ -106,7 +106,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -133,7 +133,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->preTearDown();
 
@@ -228,8 +228,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexForContextEntityIds()
@@ -252,7 +252,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexForSpecificWebsiteWithDependentEntities()
@@ -286,14 +286,14 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
 
         $items = $this->getResultItems(['alias' => 'oro_employee_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexForSpecificWebsiteWithCustomBatchSize()
@@ -314,8 +314,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
     public function testReindexWithRestriction()
@@ -349,7 +349,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexWithAllRestricted()
@@ -407,32 +407,30 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $otherWebsite->getId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
 
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-        $this->assertContains('Reindexed product', $items[1]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[0]->getTitle());
+        static::assertStringContainsString('Reindexed product', $items[1]->getTitle());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no such entity in mapping config.
-     */
     public function testWrongMappingException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('There is no such entity in mapping config.');
+
         $this->setClassSupportedExpectation('stdClass', false);
         $this->indexer->reindex(\stdClass::class, []);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no such entity in mapping config.
-     */
     public function testSaveForNotSupportedEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('There is no such entity in mapping config.');
+
         $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -531,12 +529,11 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->assertItemsCount(4);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Entity ids passed into context. Please provide single class of entity
-     */
     public function testReindexException()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Entity ids passed into context. Please provide single class of entity');
+
         $this->indexer->reindex(
             ['class1', 'class2'],
             [

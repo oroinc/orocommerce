@@ -26,7 +26,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
      */
     protected $roundingService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
@@ -49,7 +49,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->translator, $this->provider);
     }
@@ -73,7 +73,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(ucfirst(ShippingCostSubtotalProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals(200, $subtotal->getSortOrder());
-        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals($costAmount, $subtotal->getAmount());
     }
 }

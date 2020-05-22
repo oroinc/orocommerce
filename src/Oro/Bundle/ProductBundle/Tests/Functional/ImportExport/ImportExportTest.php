@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @covers \Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
-class ImportExportTest extends AbstractImportExportTest
+class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageProcessTrait;
 
@@ -25,7 +25,7 @@ class ImportExportTest extends AbstractImportExportTest
      */
     protected $file;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

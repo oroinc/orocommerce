@@ -23,7 +23,7 @@ class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->twigEngine = $this->createMock(EngineInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

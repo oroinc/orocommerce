@@ -17,7 +17,7 @@ class ContactInfoCustomerOptionsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->provider = new ContactInfoSourceOptionsProvider($this->configManager);

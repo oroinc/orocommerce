@@ -19,7 +19,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -146,7 +146,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->with('OroCatalogBundle:Category')
             ->will($this->returnValue($categoryRepository));
     }
-    
+
     protected function assertCategoryUnitPrecisionUpdate()
     {
         $defaultProductOptions = $this->createMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');

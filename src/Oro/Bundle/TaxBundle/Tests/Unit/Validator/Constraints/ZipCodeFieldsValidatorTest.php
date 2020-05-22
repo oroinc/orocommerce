@@ -25,7 +25,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new ZipCodeFields();
         $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
@@ -34,7 +34,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->initialize($this->context);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }
@@ -161,12 +161,13 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate(new ZipCode(), $this->constraint);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
-     */
     public function testValidateWrongEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given'
+        );
+
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 }

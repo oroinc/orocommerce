@@ -22,7 +22,7 @@ class UnitResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $calculator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
             ->disableOriginalConstructor()
@@ -31,7 +31,7 @@ class UnitResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new UnitResolver($this->calculator);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->calculator, $this->resolver);
     }

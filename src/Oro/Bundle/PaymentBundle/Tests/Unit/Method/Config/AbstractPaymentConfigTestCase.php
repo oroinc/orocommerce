@@ -16,7 +16,7 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->getPaymentConfig();
     }

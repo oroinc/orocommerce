@@ -27,7 +27,7 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit\Framewo
      */
     protected $enabledChoicesProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);

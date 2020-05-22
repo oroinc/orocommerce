@@ -22,7 +22,7 @@ class BaseMetaFormExtensionTest extends FormIntegrationTestCase
      */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

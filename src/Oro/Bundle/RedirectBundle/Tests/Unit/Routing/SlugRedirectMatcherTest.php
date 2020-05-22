@@ -22,7 +22,7 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var SlugRedirectMatcher */
     private $redirectMatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(RedirectRepository::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);

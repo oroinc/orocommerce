@@ -34,7 +34,7 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 

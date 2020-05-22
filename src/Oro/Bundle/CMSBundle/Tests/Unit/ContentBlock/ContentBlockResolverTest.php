@@ -13,7 +13,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
     /** @var ContentBlockResolver */
     protected $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $propertyAccessor = new PropertyAccessor;
         $this->resolver = new ContentBlockResolver($propertyAccessor);
@@ -102,12 +102,11 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('variant_1_content', $view->getContent());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Default content variant should be defined.
-     */
     public function testGetContentBlockViewWithoutDefaultVariant()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Default content variant should be defined.');
+
         $block = new ContentBlock();
         $block->setAlias('block_alias');
         $block->setEnabled(true);

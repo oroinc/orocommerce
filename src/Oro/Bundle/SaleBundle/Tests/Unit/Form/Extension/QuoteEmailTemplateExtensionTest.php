@@ -55,7 +55,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
     /** @var QuoteEmailTemplateExtension */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);

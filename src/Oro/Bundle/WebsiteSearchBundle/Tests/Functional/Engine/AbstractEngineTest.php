@@ -34,7 +34,7 @@ abstract class AbstractEngineTest extends WebTestCase
      */
     protected $engine;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
@@ -50,7 +50,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->engine = $this->getSearchEngine();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('event_dispatcher')->removeListener(IndexEntityEvent::NAME, $this->listener);
 
@@ -128,7 +128,7 @@ abstract class AbstractEngineTest extends WebTestCase
     {
         $query = new Query();
         $query->from('*');
-        $query->getCriteria()->andWhere(new Comparison('text.stringValue', 'STARTS WITH', 'item'));
+        $query->getCriteria()->andWhere(new Comparison('text.stringValue', '~', 'item'));
         $items = $this->getSearchItems($query);
 
         $this->assertCount(LoadSearchItemData::COUNT, $items);
@@ -210,7 +210,6 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertArrayHasKey($field, $aggregatedData);
         $this->assertSame($expected, $aggregatedData[$field]);
     }
-
 
     /**
      * @return array

@@ -22,7 +22,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ZipCodeType();
         $this->formType->setDataClass(self::DATA_CLASS);
@@ -32,7 +32,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
 
@@ -41,7 +41,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
+        $this->assertIsString($this->formType->getName());
         $this->assertEquals('oro_tax_zip_code_type', $this->formType->getName());
     }
 

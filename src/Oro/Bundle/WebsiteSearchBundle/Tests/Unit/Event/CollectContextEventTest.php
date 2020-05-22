@@ -43,24 +43,26 @@ class CollectContextEventTest extends \PHPUnit\Framework\TestCase
     /**
      * @param mixed $name
      * @dataProvider notStringValueDataProvider
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Context value name must be a string
      * @throws \InvalidArgumentException
      */
     public function testAddContextValueWhenNameIsNotString($name)
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Context value name must be a string');
+
         $websiteId = 1;
         $event = new CollectContextEvent([], $websiteId);
         $event->addContextValue($name, 'some value');
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Context value name cannot be empty
      * @throws \InvalidArgumentException
      */
     public function testAddContextValueWhenNameIsEmptyString()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Context value name cannot be empty');
+
         $websiteId = 1;
         $event = new CollectContextEvent([], $websiteId);
         $event->addContextValue('', 'some_value');

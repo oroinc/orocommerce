@@ -39,7 +39,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceBuilder */
     private $productPriceBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->createMock(InsertFromSelectShardQueryExecutor::class);

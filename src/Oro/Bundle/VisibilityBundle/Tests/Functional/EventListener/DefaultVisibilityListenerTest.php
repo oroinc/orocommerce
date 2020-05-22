@@ -42,7 +42,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
      */
     protected $customerGroup;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

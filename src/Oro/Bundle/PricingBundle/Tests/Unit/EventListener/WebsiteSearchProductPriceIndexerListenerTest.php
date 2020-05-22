@@ -45,7 +45,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
      */
     protected $featureChecker;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
             ->disableOriginalConstructor()

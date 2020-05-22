@@ -35,7 +35,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
      */
     protected $scope;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

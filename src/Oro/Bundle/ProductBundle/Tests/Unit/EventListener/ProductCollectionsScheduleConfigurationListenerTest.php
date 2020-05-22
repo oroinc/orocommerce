@@ -20,7 +20,7 @@ class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Frame
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->deferredScheduler = $this->getMockBuilder(DeferredScheduler::class)
             ->disableOriginalConstructor()

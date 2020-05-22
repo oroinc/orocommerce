@@ -37,12 +37,11 @@ class CommunicationErrorsStatusMapTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Not supported response status code
-     */
     public function testInvalidStatus()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not supported response status code');
+
         CommunicationErrorsStatusMap::getMessage('1555445');
     }
 }

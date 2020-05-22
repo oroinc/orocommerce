@@ -13,7 +13,7 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
     /** @var EntityFieldFallbackValueRepository */
     private $repo;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
@@ -50,11 +50,10 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
         ]));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testGetIdsByEntityFieldsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->repo->findByEntityFields($this->getReference(LoadProductData::PRODUCT_1), [
             'inventoryThreshold',
             'some_absent_field',

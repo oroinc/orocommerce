@@ -32,7 +32,7 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->consentRepository = $this->createMock(ConsentRepository::class);
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
@@ -53,7 +53,7 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->consentRepository);
         unset($this->validator);
@@ -61,12 +61,11 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         unset($this->constraint);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Incorrect type of the value!
-     */
     public function testValidateWithIncorrectType()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Incorrect type of the value!');
+
         $this->validator->validate('not array', $this->constraint);
     }
 

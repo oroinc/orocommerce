@@ -37,7 +37,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
      */
     private $quoteShippingConfigurationFactoryMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->checkoutShippingContextProvider = $this->getMockBuilder(CheckoutShippingContextProvider::class)
             ->disableOriginalConstructor()

@@ -56,7 +56,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
      */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()

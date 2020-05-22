@@ -29,7 +29,7 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = new Request();
         $this->requestStack = $this->createMock(RequestStack::class);

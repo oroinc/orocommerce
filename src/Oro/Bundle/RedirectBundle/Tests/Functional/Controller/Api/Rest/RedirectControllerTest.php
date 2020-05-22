@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RedirectControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);

@@ -12,7 +12,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadRequestAdditionalNoteData::class]);

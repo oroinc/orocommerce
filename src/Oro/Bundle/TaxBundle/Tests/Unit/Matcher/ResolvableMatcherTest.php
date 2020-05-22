@@ -21,7 +21,7 @@ class ResolvableMatcherTest extends AbstractMatcherTest
     /** @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject */
     private $countryMatcher;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

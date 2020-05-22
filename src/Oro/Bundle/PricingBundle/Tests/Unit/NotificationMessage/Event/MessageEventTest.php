@@ -17,7 +17,7 @@ class MessageEventTest extends \PHPUnit\Framework\TestCase
      */
     protected $messageEvent;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->message = $this->getMockBuilder(Message::class)
             ->disableOriginalConstructor()

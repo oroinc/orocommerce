@@ -21,7 +21,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryVisibilityListener */
     private $visibilityListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 

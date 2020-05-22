@@ -20,20 +20,16 @@ class RemoveCheckoutSourceEntity extends RemoveEntity
 {
     public const NAME = 'remove_checkout_source_entity';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function executeAction($context)
     {
-        /**
-         * @var $value CheckoutInterface
-         */
+        /** @var $value CheckoutInterface */
         $value = $this->contextAccessor->getValue($context, $this->target);
         if (!is_object($value)) {
             throw new InvalidParameterException(
                 sprintf(
-                    'Action "%s" expects reference to entity as parameter, %s is given.',
+                    'Action "%s" expects entity instanceof "%s", "%s" is given.',
                     static::NAME,
+                    CheckoutInterface::class,
                     gettype($value)
                 )
             );

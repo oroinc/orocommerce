@@ -29,7 +29,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider')
             ->disableOriginalConstructor()
@@ -44,7 +44,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->manager, $this->provider, $this->registry);
     }

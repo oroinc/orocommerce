@@ -45,7 +45,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
      */
     protected $precisionBottleQuantity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->doctrineHelper = static::getContainer()->get('oro_entity.doctrine_helper');
@@ -77,7 +77,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         static::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
         static::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
@@ -94,7 +94,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->prepareShoppingList($this->precisionBottleQuantity + 1);
 
         $crawler = $this->navigateThroughCheckout();
-        static::assertContains(self::PRODUCT_ERROR_TEXT, $crawler->html());
+        static::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
     }
 
     public function testProductDecrementWithBackorder()
@@ -115,7 +115,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         static::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
         static::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
@@ -129,7 +129,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->initProductInventoryThreshold($shoppingList->getLineItems()[0]->getProduct());
 
         $crawler = $this->navigateThroughCheckout();
-        static::assertContains(self::PRODUCT_ERROR_TEXT, $crawler->html());
+        static::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
     }
 
     public function testCreateOrderWithInventoryThreshold()
@@ -152,7 +152,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         static::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
         static::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
@@ -167,7 +167,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     protected function assertCurrentStep(Crawler $crawler, $textToCheck)
     {
         $stepLabel = $crawler->filterXPath(self::CHECKOUT_STEP_LABEL)->text();
-        static::assertContains($textToCheck, $stepLabel);
+        static::assertStringContainsString($textToCheck, $stepLabel);
     }
 
     /**

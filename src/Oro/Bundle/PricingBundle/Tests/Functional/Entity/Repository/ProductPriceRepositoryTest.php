@@ -41,7 +41,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -79,8 +79,8 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
         $this->assertCount(1, $productIdBatches);
         $productIds = reset($productIdBatches);
-        $this->assertContains($product1->getId(), $productIds);
-        $this->assertContains($product3->getId(), $productIds);
+        static::assertContainsEquals($product1->getId(), $productIds, \var_export($productIds, true));
+        static::assertContainsEquals($product3->getId(), $productIds, \var_export($productIds, true));
     }
 
     /**

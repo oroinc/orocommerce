@@ -18,7 +18,7 @@ class BasicMethodTypeRemovalEventDispatcherTest extends \PHPUnit\Framework\TestC
      */
     private $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 

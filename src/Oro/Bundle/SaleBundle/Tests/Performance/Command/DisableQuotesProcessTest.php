@@ -24,7 +24,7 @@ class DisableQuotesProcessTest extends WebTestCase
     /** @var  DoctrineHelper */
     protected $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);

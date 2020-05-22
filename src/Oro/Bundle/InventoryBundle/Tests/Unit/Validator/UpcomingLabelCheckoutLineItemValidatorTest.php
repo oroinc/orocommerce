@@ -23,7 +23,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
     /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dateFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->provider = $this->createMock(UpcomingProductProvider::class);

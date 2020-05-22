@@ -43,7 +43,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()
@@ -76,7 +76,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
     }
@@ -219,23 +219,22 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\MissingOptionsException
-     * @expectedExceptionMessage The required option "parentProduct" is missing.
-     */
     public function testBuildFormWithoutProductInOptions()
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\MissingOptionsException::class);
+        $this->expectExceptionMessage('The required option "parentProduct" is missing.');
+
         $this->factory->create(FrontendVariantFiledType::class);
     }
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
-     * @expectedExceptionMessage The option "parentProduct" with value stdClass is expected to be of type "Oro\Bundle\ProductBundle\Entity\Product", but is of type "stdClass".
-     */
-    // @codingStandardsIgnoreEnd
     public function testBuildWhenRequiredFieldProductHasOtherObject()
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectExceptionMessage(
+            'The option "parentProduct" with value stdClass is expected to be of type'
+            . ' "Oro\Bundle\ProductBundle\Entity\Product", but is of type "stdClass".'
+        );
+
         $options['parentProduct'] = new \stdClass();
         $this->factory->create(FrontendVariantFiledType::class, [], $options);
     }

@@ -11,7 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -47,7 +47,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
     }
 

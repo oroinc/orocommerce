@@ -25,7 +25,7 @@ class PaymentTermPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCas
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

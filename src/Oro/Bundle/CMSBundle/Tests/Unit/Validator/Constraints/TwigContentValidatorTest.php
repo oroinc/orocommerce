@@ -22,7 +22,7 @@ class TwigContentValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
 

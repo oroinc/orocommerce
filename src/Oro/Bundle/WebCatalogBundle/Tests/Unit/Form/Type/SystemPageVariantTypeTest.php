@@ -24,7 +24,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new SystemPageVariantType();
         parent::setUp();
@@ -33,7 +33,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->type);
     }

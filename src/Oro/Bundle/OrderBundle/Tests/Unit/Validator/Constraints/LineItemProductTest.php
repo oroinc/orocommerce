@@ -16,7 +16,7 @@ class LineItemProductTest extends \PHPUnit\Framework\TestCase
      */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new LineItemProduct();
     }
@@ -26,12 +26,11 @@ class LineItemProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(LineItemProduct::CLASS_CONSTRAINT, $this->constraint->getTargets());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderLineItem"
-     */
     public function testValidateException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderLineItem"');
+
         /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();

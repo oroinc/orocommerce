@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Respository;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -26,7 +26,7 @@ class OrderRepositoryTest extends WebTestCase
     /** @var OrderRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
@@ -89,19 +89,42 @@ class OrderRepositoryTest extends WebTestCase
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         self::assertCount(2, $result);
-        self::assertArraySubset(
-            [
-                [
-                    'product_id' => self::getReference(LoadProductData::PRODUCT_1)->getId(),
-                    'customer_user_id' => $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getId()
-                ],
-                [
-                    'product_id' => self::getReference(LoadProductData::PRODUCT_5)->getId(),
-                    'customer_user_id' => $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getId()
-                ]
-            ],
-            $result
+        $this->assertContainsRecordWithProductAndCustomerUser(
+            $result,
+            LoadProductData::PRODUCT_1,
+            LoadOrders::ACCOUNT_USER
         );
+        $this->assertContainsRecordWithProductAndCustomerUser(
+            $result,
+            LoadProductData::PRODUCT_5,
+            LoadOrders::ACCOUNT_USER
+        );
+    }
+
+    private function assertContainsRecordWithProductAndCustomerUser(
+        array $records,
+        string $productReference,
+        string $customerUserEmail
+    ) {
+        $productId = self::getReference($productReference)->getId();
+        $customerUserId = $this->getCustomerUserByEmail($customerUserEmail)->getId();
+        foreach ($records as $record) {
+            // intentional non-strict comparison
+            if ($productId == $record['product_id'] && $customerUserId == $record['customer_user_id']) {
+                // just increase the asserts counter, as this should be counted as successfully performed assertion
+                static::assertTrue(true);
+                return;
+            }
+        }
+        static::fail(\sprintf(
+            "Failed asserting that there is a record with product %s (product_id=%s)"
+             . " and customer user %s (customer_user_id=%s):\n%s",
+            $productReference,
+            $productId,
+            $customerUserEmail,
+            $customerUserId,
+            \var_export($records, true)
+        ));
     }
 
     public function testGetLatestOrderedProductsInfoWhenConfigurableProductsGiven(): void
@@ -134,18 +157,15 @@ class OrderRepositoryTest extends WebTestCase
 
         $result = $queryBuilder->getQuery()->getArrayResult();
 
-        self::assertArraySubset(
-            [
-                [
-                    'product_id' => self::getReference(LoadProductData::PRODUCT_2)->getId(),
-                    'customer_user_id' => $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getId()
-                ],
-                [
-                    'product_id' => self::getReference(LoadProductData::PRODUCT_7)->getId(),
-                    'customer_user_id' => $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getId()
-                ]
-            ],
-            $result
+        $this->assertContainsRecordWithProductAndCustomerUser(
+            $result,
+            LoadProductData::PRODUCT_2,
+            LoadOrders::ACCOUNT_USER
+        );
+        $this->assertContainsRecordWithProductAndCustomerUser(
+            $result,
+            LoadProductData::PRODUCT_7,
+            LoadOrders::ACCOUNT_USER
         );
     }
 

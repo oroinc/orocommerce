@@ -25,7 +25,7 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder */
     protected $queryBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()

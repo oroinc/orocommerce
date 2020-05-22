@@ -21,7 +21,7 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryImageExtension */
     private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);

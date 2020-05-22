@@ -21,7 +21,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
     /** @var ConfigManager $globalConfigManager */
     protected $globalConfigManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -75,7 +75,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->getContainer()->get('translator')->trans($expectedMessage),
             $this->client->getResponse()->getContent()
         );

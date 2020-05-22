@@ -27,7 +27,7 @@ class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit\Framework\TestC
     /** @var RecalculateCheckoutSubtotalsProcessor */
     protected $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutSubtotalUpdater = $this->createMock(CheckoutSubtotalUpdater::class);
         $this->logger = $this->createMock(LoggerInterface::class);

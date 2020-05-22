@@ -23,7 +23,7 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RedirectExceptionListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->redirectMatcher = $this->createMock(SlugRedirectMatcher::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);

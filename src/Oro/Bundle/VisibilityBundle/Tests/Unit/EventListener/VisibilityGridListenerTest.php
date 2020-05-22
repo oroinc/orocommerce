@@ -54,7 +54,7 @@ class VisibilityGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

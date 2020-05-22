@@ -29,7 +29,7 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
      */
     protected $keyGenerator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->cacheProvider = $this->getMockBuilder(CacheProvider::class)
             ->setMethods(['fetch', 'contains', 'save', 'deleteAll'])->getMockForAbstractClass();

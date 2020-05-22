@@ -36,7 +36,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestC
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -44,21 +44,19 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestC
         $this->aclHelper = $this->createMock(AclHelper::class);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: shipping
-     */
     public function testGetCustomerAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: shipping');
+
         $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: shipping
-     */
     public function testGetCustomerUserAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: shipping');
+
         $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 

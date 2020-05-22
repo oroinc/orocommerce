@@ -18,7 +18,7 @@ class RequiredConsentFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filter = new RequiredConsentFilter();
     }
@@ -26,7 +26,7 @@ class RequiredConsentFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->filter);
     }

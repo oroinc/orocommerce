@@ -17,7 +17,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $dataProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dataProvider = $this->createMock(PaymentTermProvider::class);
 

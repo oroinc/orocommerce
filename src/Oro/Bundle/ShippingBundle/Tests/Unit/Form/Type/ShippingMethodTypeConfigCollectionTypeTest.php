@@ -15,7 +15,7 @@ class ShippingMethodTypeConfigCollectionTypeTest extends FormIntegrationTestCase
     /** @var MethodTypeConfigCollectionSubscriber */
     protected $subscriber;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subscriber = $this->getMockBuilder(MethodTypeConfigCollectionSubscriber::class)

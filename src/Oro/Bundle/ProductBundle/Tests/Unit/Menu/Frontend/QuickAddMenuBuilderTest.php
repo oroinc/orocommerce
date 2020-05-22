@@ -17,7 +17,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected $componentRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->componentRegistry = $this
             ->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
@@ -25,7 +25,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
         $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->builder, $this->componentRegistry);
     }

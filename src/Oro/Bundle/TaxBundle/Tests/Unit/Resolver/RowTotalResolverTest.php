@@ -30,7 +30,7 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
      */
     private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->roundingResolver = $this->createMock(RoundingResolver::class);

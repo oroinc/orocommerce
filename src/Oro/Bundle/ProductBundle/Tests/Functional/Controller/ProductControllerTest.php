@@ -26,7 +26,7 @@ class ProductControllerTest extends ProductHelperTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -37,7 +37,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('products-grid', $crawler->html());
+        static::assertStringContainsString('products-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -136,13 +136,13 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains(
+        static::assertStringContainsString(
             ProductTestHelper::UPDATED_SKU . ' - ' . ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::UPDATED_STATUS, $html);
-        $this->assertContains(ProductTestHelper::TYPE, $html);
+        static::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::UPDATED_STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::TYPE, $html);
         $this->assertProductPrecision(
             $id,
             ProductTestHelper::SECOND_UNIT_CODE,
@@ -197,16 +197,16 @@ class ProductControllerTest extends ProductHelperTestCase
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
         $html = $crawler->html();
-        $this->assertContains('Product has been duplicated', $html);
-        $this->assertContains(
+        static::assertStringContainsString('Product has been duplicated', $html);
+        static::assertStringContainsString(
             ProductTestHelper::FIRST_DUPLICATED_SKU . ' - ' .
             ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::STATUS, $html);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->createPrimaryUnitPrecisionString(
                 ProductTestHelper::FIRST_UNIT_FULL_NAME,
                 ProductTestHelper::FIRST_UNIT_PRECISION
@@ -682,16 +682,16 @@ class ProductControllerTest extends ProductHelperTestCase
     {
         $html = $crawler->html();
 
-        $this->assertContains('Product has been saved and duplicated', $html);
-        $this->assertContains(
+        static::assertStringContainsString('Product has been saved and duplicated', $html);
+        static::assertStringContainsString(
             ProductTestHelper::SECOND_DUPLICATED_SKU . ' - ' .
             ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::STATUS, $html);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->createPrimaryUnitPrecisionString(
                 ProductTestHelper::FIRST_UNIT_FULL_NAME,
                 ProductTestHelper::FIRST_UNIT_PRECISION

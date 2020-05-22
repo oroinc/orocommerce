@@ -17,7 +17,7 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DeleteMessageTextExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->deleteMessageTextGenerator = $this->getMockBuilder(DeleteMessageTextGenerator::class)
             ->disableOriginalConstructor()
@@ -30,7 +30,7 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new DeleteMessageTextExtension($container);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->deleteMessageTextGenerator);
     }

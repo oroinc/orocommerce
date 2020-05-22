@@ -20,14 +20,14 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->preUpdateEventArgs = $this->createMock(PreUpdateEventArgs::class);
 
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

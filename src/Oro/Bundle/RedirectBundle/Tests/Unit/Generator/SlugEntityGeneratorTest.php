@@ -54,7 +54,7 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $generator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
         $this->slugResolver = $this->createMock(UniqueSlugResolver::class);

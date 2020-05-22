@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -42,7 +42,7 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $priceTable = $crawler->filter('.product-prices__table');
-        $this->assertContains($contains, $priceTable->text());
+        static::assertStringContainsString($contains, $priceTable->text());
     }
 
     /**

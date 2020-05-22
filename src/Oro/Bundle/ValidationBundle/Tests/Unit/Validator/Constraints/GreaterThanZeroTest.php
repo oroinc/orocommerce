@@ -19,7 +19,7 @@ class GreaterThanZeroTest extends \PHPUnit\Framework\TestCase
     /** @var GreaterThanZero */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new GreaterThanZero();
         $this->context = $this->createMock(ExecutionContextInterface::class);

@@ -56,7 +56,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);

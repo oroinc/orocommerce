@@ -6,28 +6,24 @@ use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 
 class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $typeLabels = [
         ProductImageType::TYPE_MAIN => 'Main',
         ProductImageType::TYPE_LISTING => 'Listing',
         ProductImageType::TYPE_ADDITIONAL => 'Additional',
     ];
 
-    /**
-     * @var ProductImageTypesSubscriber
-     */
+    /** @var ProductImageTypesSubscriber */
     protected $productImageTypesSubscriber;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productImageTypesSubscriber = new ProductImageTypesSubscriber([
             new ThemeImageType(
@@ -56,13 +52,43 @@ class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
         $productImage = new ProductImage();
         $productImage->addType(ProductImageType::TYPE_MAIN);
 
-        $form = $this->prophesize('Symfony\Component\Form\FormInterface');
-        $form->getData()->willReturn($productImage);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_MAIN, RadioType::class, true);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_ADDITIONAL, CheckboxType::class, false);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_LISTING, CheckboxType::class, false);
+        $form = $this->createMock(FormInterface::class);
+        $form->method('getData')->willReturn($productImage);
+        $form->expects(static::exactly(3))
+            ->method('add')
+            ->withConsecutive(
+                [
+                    ProductImageType::TYPE_MAIN,
+                    RadioType::class,
+                    [
+                        'label' => $this->typeLabels[ProductImageType::TYPE_MAIN],
+                        'value' => 1,
+                        'mapped' => false,
+                        'data' => true
+                    ]
+                ],
+                [
+                    ProductImageType::TYPE_ADDITIONAL,
+                    CheckboxType::class,
+                    [
+                        'label' => $this->typeLabels[ProductImageType::TYPE_ADDITIONAL],
+                        'value' => 1,
+                        'mapped' => false,
+                        'data' => false
+                    ]
+                ],
+                [ProductImageType::TYPE_LISTING,
+                    CheckboxType::class,
+                    [
+                        'label' => $this->typeLabels[ProductImageType::TYPE_LISTING],
+                        'value' => 1,
+                        'mapped' => false,
+                        'data' => false
+                    ]
+                ]
+            );
 
-        $event = new FormEvent($form->reveal(), null);
+        $event = new FormEvent($form, null);
 
         $this->productImageTypesSubscriber->postSetData($event);
     }
@@ -75,30 +101,13 @@ class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
             ProductImageType::TYPE_ADDITIONAL => 1
         ];
 
-        $form = $this->prophesize('Symfony\Component\Form\FormInterface');
-        $event = new FormEvent($form->reveal(), $data);
+        $event = new FormEvent($this->createMock(FormInterface::class), $data);
 
         $this->productImageTypesSubscriber->preSubmit($event);
 
-        $this->assertEquals(
-            array_merge($data, ['types' => [ProductImageType::TYPE_MAIN, ProductImageType::TYPE_ADDITIONAL]]),
+        static::assertEquals(
+            \array_merge($data, ['types' => [ProductImageType::TYPE_MAIN, ProductImageType::TYPE_ADDITIONAL]]),
             $event->getData()
         );
-    }
-
-    /**
-     * @param ObjectProphecy $form
-     * @param string $name
-     * @param string $type
-     * @param bool $data
-     */
-    private function addFormAddExpectation(ObjectProphecy $form, $name, $type, $data)
-    {
-        $form->add($name, $type, [
-            'label' => $this->typeLabels[$name],
-            'value' => 1,
-            'mapped' => false,
-            'data' => $data
-        ])->shouldBeCalled();
     }
 }

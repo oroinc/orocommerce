@@ -46,7 +46,7 @@ class FedexShippingMethodTypeFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(FedexMethodTypeIdentifierGeneratorInterface::class);
         $this->rateServiceRequestSettingsFactory = $this->createMock(

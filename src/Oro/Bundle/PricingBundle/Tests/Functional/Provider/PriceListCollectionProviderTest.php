@@ -22,7 +22,7 @@ class PriceListCollectionProviderTest extends WebTestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);

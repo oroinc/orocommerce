@@ -11,7 +11,7 @@ class ProductPriceTest extends WebTestCase
 {
     use ProductPriceReference;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -38,7 +38,7 @@ class ProductPriceTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(
+        static::assertStringContainsString(
             'Product has duplication of product prices. ' .
             'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.',
             $crawler->html()

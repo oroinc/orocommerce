@@ -41,7 +41,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
      */
     protected $weightUnit;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

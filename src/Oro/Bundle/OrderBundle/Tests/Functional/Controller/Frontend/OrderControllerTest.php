@@ -34,7 +34,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected $numberFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -58,7 +58,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('frontend-orders-grid', $crawler->html());
+        static::assertStringContainsString('frontend-orders-grid', $crawler->html());
     }
 
     public function testOrdersGrid()
@@ -235,7 +235,7 @@ class OrderControllerTest extends WebTestCase
     {
         $html = $crawler->html();
         foreach ($expectedViewData as $data) {
-            $this->assertContains($data, $html);
+            static::assertStringContainsString($data, $html);
         }
     }
 }

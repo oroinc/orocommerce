@@ -38,7 +38,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
      */
     private $driver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));

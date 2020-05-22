@@ -50,7 +50,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $inventoryManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
         $this->manager = $this->createMock(ObjectManager::class);
@@ -111,7 +111,9 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         $this->mockManager($existingLevels, $formData, $persistedEntities, $removedEntities);
 
         $this->roundingService->method('round')
-            ->willReturnCallback('round');
+            ->willReturnCallback(function ($value, $precision = null, $roundType = null) {
+                return \round($value, $precision ?? 0, $roundType ?? 0);
+            });
 
         $this->handler->process();
 
@@ -221,7 +223,9 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->roundingService
             ->method('round')
-            ->willReturnCallback('round');
+            ->willReturnCallback(function ($value, $precision = null, $roundType = null) {
+                return \round($value, $precision ?? 0, $roundType ?? 0);
+            });
 
         $this->handler->process();
 

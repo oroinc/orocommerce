@@ -21,7 +21,7 @@ class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
      */
     protected $currencyFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 

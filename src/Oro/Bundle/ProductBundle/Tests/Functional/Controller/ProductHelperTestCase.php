@@ -55,7 +55,7 @@ class ProductHelperTestCase extends WebTestCase
             0,
             $crawler->filterXPath("//nav/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
-        $this->assertContains("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
+        static::assertStringContainsString("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
         $this->assertDefaultProductUnit($form);
@@ -97,11 +97,11 @@ class ProductHelperTestCase extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains('Product has been saved', $html);
-        $this->assertContains(ProductTestHelper::TEST_SKU, $html);
-        $this->assertContains(ProductTestHelper::INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
-        $this->assertContains(ProductTestHelper::FIRST_UNIT_CODE, $html);
+        static::assertStringContainsString('Product has been saved', $html);
+        static::assertStringContainsString(ProductTestHelper::TEST_SKU, $html);
+        static::assertStringContainsString(ProductTestHelper::INVENTORY_STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::STATUS, $html);
+        static::assertStringContainsString(ProductTestHelper::FIRST_UNIT_CODE, $html);
 
         return $crawler;
     }
@@ -257,8 +257,8 @@ class ProductHelperTestCase extends WebTestCase
      */
     protected function assertContainsAdditionalUnitPrecision($code, $precision, $html)
     {
-        $this->assertContains(sprintf("<td>%s</td>", $code), $html);
-        $this->assertContains(sprintf("<td>%d</td>", $precision), $html);
+        static::assertStringContainsString(sprintf("<td>%s</td>", $code), $html);
+        static::assertStringContainsString(sprintf("<td>%d</td>", $precision), $html);
     }
 
     /**

@@ -28,7 +28,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     /** @var Category $category */
     protected $category;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->category = new Category();
     }

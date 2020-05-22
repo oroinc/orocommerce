@@ -12,12 +12,12 @@ class OroShippingExtensionTest extends ExtensionTestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new OroShippingExtension();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extension);
     }

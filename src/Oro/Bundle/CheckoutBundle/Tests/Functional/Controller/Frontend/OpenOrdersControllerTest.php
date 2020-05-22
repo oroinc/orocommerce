@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OpenOrdersControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -32,8 +32,8 @@ class OpenOrdersControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Open Orders', $crawler->filter('h1.page-title')->html());
-        $this->assertContains('grid-frontend-checkouts-grid', $crawler->html());
+        static::assertStringContainsString('Open Orders', $crawler->filter('h1.page-title')->html());
+        static::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
     }
 
     public function testOpenOrdersIfSeparatePageSettingIsTrue()
@@ -50,11 +50,11 @@ class OpenOrdersControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertNotContains('grid-frontend-checkouts-grid', $crawler->html());
+        static::assertStringNotContainsString('grid-frontend-checkouts-grid', $crawler->html());
 
         $navigationList = $crawler->filter('ul.primary-menu');
 
-        $this->assertContains('Open Orders', $navigationList->html());
+        static::assertStringContainsString('Open Orders', $navigationList->html());
     }
 
     public function testOpenOrdersIfSeparatePageSettingIsFalse()
@@ -71,10 +71,10 @@ class OpenOrdersControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains('grid-frontend-checkouts-grid', $crawler->html());
+        static::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
 
         $navigationList = $crawler->filter('ul.primary-menu');
 
-        $this->assertNotContains('Open Orders', $navigationList->html());
+        static::assertStringNotContainsString('Open Orders', $navigationList->html());
     }
 }

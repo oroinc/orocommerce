@@ -9,7 +9,7 @@ class ChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ChannelType */
     protected $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channel = new ChannelType();
     }

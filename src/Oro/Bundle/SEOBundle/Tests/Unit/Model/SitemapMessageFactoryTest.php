@@ -28,7 +28,7 @@ class SitemapMessageFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->providerRegistry = $this->getMockBuilder(UrlItemsProviderRegistryInterface::class)
             ->disableOriginalConstructor()
@@ -49,7 +49,7 @@ class SitemapMessageFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('checkWebsiteExists')
             ->with($websiteId)
             ->willReturn(false);
-        
+
         $jobId = 888;
         /** @var Job $job */
         $job = $this->getEntity(Job::class, ['id' => $jobId]);

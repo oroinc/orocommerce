@@ -65,30 +65,27 @@ class ModelFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Class "UndefinedClass" is not defined
-     */
     public function testConstructUndefinedModelClass()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Class "UndefinedClass" is not defined');
+
         new ModelFactory('UndefinedClass', self::ENTITY_CLASS);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Class "\DateTime" must implement ModelInterface
-     */
     public function testConstructInvalidModelClass()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Class "\DateTime" must implement ModelInterface');
+
         new ModelFactory('\DateTime', self::ENTITY_CLASS);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Class "UndefinedClass" is not defined
-     */
     public function testConstructUndefinedEntityClass()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Class "UndefinedClass" is not defined');
+
         new ModelFactory(self::MODEL_CLASS, 'UndefinedClass');
     }
 }

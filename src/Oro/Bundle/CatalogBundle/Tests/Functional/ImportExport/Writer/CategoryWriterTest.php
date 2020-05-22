@@ -20,7 +20,7 @@ class CategoryWriterTest extends EntityWriterTest
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepo;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -81,12 +81,11 @@ class CategoryWriterTest extends EntityWriterTest
         parent::testWriteDatabaseExceptionDeadlock();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage entityName not resolved
-     */
     public function testMissingClassName(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('entityName not resolved');
+
         $this->treeListener
             ->expects($this->exactly(2))
             ->method('setEnabled')

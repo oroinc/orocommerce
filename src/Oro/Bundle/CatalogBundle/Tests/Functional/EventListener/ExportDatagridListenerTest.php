@@ -14,7 +14,7 @@ class ExportDatagridListenerTest extends WebTestCase
     /** @var FilteredEntityReader */
     private $filteredEntityReader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

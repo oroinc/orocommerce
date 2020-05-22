@@ -34,7 +34,7 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
      */
     private $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
         $this->dispatcher = $this->createMock(EventDispatcher::class);
@@ -43,12 +43,12 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
      * @dataProvider invalidOptionsDataProvider
      * @param array $options
      */
     public function testInitializeException(array $options)
     {
+        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
         $this->action->initialize($options);
     }
 

@@ -19,7 +19,7 @@ class PaymentTransactionOwnerListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransactionOwnerListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);
         $this->listener = new PaymentTransactionOwnerListener($this->tokenAccessor);

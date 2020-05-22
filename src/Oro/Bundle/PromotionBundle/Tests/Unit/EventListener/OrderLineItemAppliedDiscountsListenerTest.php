@@ -42,7 +42,7 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
      */
     protected $discountsListener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);

@@ -45,7 +45,7 @@ class UPSShippingMethodTypeFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->typeIdentifierGenerator = $this->createMock(UPSMethodTypeIdentifierGeneratorInterface::class);
         $this->methodIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

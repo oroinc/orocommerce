@@ -49,7 +49,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $calculableQuoteFactoryMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingContextBuilderFactoryMock = $this
             ->getMockBuilder(ShippingContextBuilderFactoryInterface::class)
@@ -80,7 +80,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $quoteId = 5;
         $currency = 'USD';
-        $amount = 20;
+        $amount = 20.0;
         $subTotal = Price::create($amount, $currency);
 
         $totalMock = $this->getTotalMock($amount, $currency);
@@ -166,11 +166,9 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($shippingContextMock, $actualContext);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnsupportedEntity()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->basicQuoteShippingContextFactory->create(new \stdClass());
     }
 

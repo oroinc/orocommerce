@@ -24,7 +24,7 @@ class EnumTypeHandlerTest extends WebTestCase
     /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $qb;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 

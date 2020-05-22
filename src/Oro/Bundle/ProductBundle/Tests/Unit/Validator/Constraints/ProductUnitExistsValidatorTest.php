@@ -25,11 +25,9 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         return new ProductUnitExistsValidator();
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidConstraint()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 

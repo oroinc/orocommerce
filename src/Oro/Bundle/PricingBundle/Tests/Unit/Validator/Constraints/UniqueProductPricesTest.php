@@ -33,7 +33,7 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new UniqueProductPrices();
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -45,7 +45,7 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->constraint, $this->context, $this->validator);
     }
@@ -92,22 +92,24 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
         $this->validator->validate($data, $this->constraint);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array or Traversable and ArrayAccess", "string" given
-     */
     public function testUnexpectedValue()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "array or Traversable and ArrayAccess", "string" given'
+        );
+
         $data = 'string';
         $this->validator->validate($data, $this->constraint);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
-     */
     public function testUnexpectedItem()
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+        );
+
         $data = new ArrayCollection([ new \stdClass()]);
         $this->validator->validate($data, $this->constraint);
     }

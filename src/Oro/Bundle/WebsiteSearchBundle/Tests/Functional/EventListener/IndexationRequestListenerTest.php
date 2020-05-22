@@ -17,7 +17,7 @@ class IndexationRequestListenerTest extends WebTestCase
 {
     use UserUtilityTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
     }

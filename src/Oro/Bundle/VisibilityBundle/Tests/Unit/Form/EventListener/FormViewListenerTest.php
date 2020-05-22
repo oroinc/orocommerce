@@ -43,7 +43,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->env = $this->createMock(Environment::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -45,7 +45,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     /** @var EntityManagerMockBuilder */
     private $entityManagerMockBuilder;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entityManagerMockBuilder = new EntityManagerMockBuilder();
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)

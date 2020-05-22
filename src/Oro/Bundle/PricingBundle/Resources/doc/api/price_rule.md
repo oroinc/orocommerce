@@ -18,6 +18,8 @@ Retrieve a collection of price rule records.
 
 Create a new price rule.
 
+The created record is returned in the response.
+
 {@inheritdoc}
 
 Information about the currency, quantity, and product unit is required for price rule creation. 
@@ -60,6 +62,8 @@ Example:
 ### update
 
 Edit a specific price rule record.
+
+The updated record is returned in the response.
 
 {@inheritdoc}
 

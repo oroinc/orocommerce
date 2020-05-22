@@ -35,7 +35,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
@@ -52,7 +52,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
         parent::tearDown();
@@ -137,11 +137,9 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @expectedException \Oro\Component\Exception\UnexpectedTypeException
-     */
     public function testOnProductViewInvalidEntity()
     {
+        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
         $scrollData = new ScrollData();
 
         $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());

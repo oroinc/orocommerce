@@ -18,7 +18,7 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutShippingContextProvider */
     private $provider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->checkoutShippingContextFactory = $this->createMock(CheckoutShippingContextFactory::class);
 

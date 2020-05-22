@@ -21,7 +21,7 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->converter = new PriceAttributeProductPriceDataConverter(
             $this->createMock(FieldHelper::class),

@@ -9,14 +9,14 @@ class CategoryPathPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryPathPlaceholder */
     protected $placeholder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = new CategoryPathPlaceholder();
     }
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals(CategoryPathPlaceholder::NAME, $this->placeholder->getPlaceholder());
     }
 

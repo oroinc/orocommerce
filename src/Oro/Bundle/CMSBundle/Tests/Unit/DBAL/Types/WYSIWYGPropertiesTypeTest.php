@@ -11,12 +11,12 @@ class WYSIWYGPropertiesTypeTest extends \PHPUnit\Framework\TestCase
     /** @var Type */
     private $type;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Type::addType('wysiwyg_properties', WYSIWYGPropertiesType::class);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = Type::getType('wysiwyg_properties');
     }

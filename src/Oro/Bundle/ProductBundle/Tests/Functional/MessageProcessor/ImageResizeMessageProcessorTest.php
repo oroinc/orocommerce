@@ -29,7 +29,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     /** @var ImageResizeMessageProcessor */
     protected $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductData::class]);

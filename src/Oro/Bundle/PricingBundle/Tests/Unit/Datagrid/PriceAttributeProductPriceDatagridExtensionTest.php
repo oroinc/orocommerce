@@ -24,7 +24,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
     /** @var PriceAttributeProductPriceDatagridExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

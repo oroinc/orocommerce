@@ -36,7 +36,7 @@ class RestrictedProductRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     private $restrictedProductRepository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->productManager = $this->createMock(ProductManager::class);

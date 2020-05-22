@@ -43,7 +43,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $taxationSettingsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->excTaxCalculator = $this->getMockBuilder(TaxCalculatorInterface::class)->getMock();
         $this->incTaxCalculator = $this->getMockBuilder(TaxCalculatorInterface::class)->getMock();

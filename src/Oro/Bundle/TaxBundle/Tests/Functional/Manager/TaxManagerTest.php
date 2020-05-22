@@ -30,7 +30,7 @@ class TaxManagerTest extends WebTestCase
     /** @var LoaderInterface */
     protected $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

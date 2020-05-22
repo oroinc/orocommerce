@@ -19,12 +19,60 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
     /** @var ProductShippingOptions $entity */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->entity = new ProductShippingOptions();
+        $this->entity = new class() extends ProductShippingOptions {
+            public function xgetDimensionsLength(): ?float
+            {
+                return $this->dimensionsLength;
+            }
+
+            public function xgetDimensionsWidth(): ?float
+            {
+                return $this->dimensionsWidth;
+            }
+
+            public function xgetDimensionsHeight(): ?float
+            {
+                return $this->dimensionsHeight;
+            }
+
+            public function xgetDimensionsUnit(): ?LengthUnit
+            {
+                return $this->dimensionsUnit;
+            }
+
+            public function xsetDimensionsLengthWidthHeightUnit(
+                float $dimensionsLength,
+                float $dimensionsWidth,
+                float $dimensionsHeight,
+                LengthUnit $dimensionsUnit
+            ): void {
+                $this->dimensionsLength = $dimensionsLength;
+                $this->dimensionsWidth = $dimensionsWidth;
+                $this->dimensionsHeight = $dimensionsHeight;
+                $this->dimensionsUnit = $dimensionsUnit;
+            }
+
+            public function xgetWeightValue(): ?float
+            {
+                return $this->weightValue;
+            }
+
+            public function xgetWeightUnit(): ?WeightUnit
+            {
+                return $this->weightUnit;
+            }
+
+            public function xsetWeightValueUnit(float $weightValue, WeightUnit $weightUnit): void
+            {
+                $this->weightValue = $weightValue;
+                $this->weightUnit = $weightUnit;
+            }
+        };
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }
@@ -40,126 +88,106 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
             ['freightClass', new FreightClass()],
         ];
 
-        $this->assertPropertyAccessors($this->entity, $properties);
+        static::assertPropertyAccessors($this->entity, $properties);
     }
 
     public function testGetEntityIdentifier()
     {
-        $this->assertNull($this->entity->getEntityIdentifier());
-
-        $this->setProperty($this->entity, 'id', 123);
-
-        $this->assertSame(123, $this->entity->getEntityIdentifier());
+        static::assertSame($this->entity->getId(), $this->entity->getEntityIdentifier());
     }
 
     public function testGetProductHolder()
     {
-        $this->assertSame($this->entity, $this->entity->getProductHolder());
+        static::assertSame($this->entity, $this->entity->getProductHolder());
     }
 
     public function testGetProductUnitCode()
     {
-        $this->entity->setProductUnit((new ProductUnit)->setCode('code'));
+        $this->entity->setProductUnit((new ProductUnit())->setCode('code'));
 
-        $this->assertSame('code', $this->entity->getProductUnitCode());
+        static::assertSame('code', $this->entity->getProductUnitCode());
     }
 
     public function testGetProductSku()
     {
-        $this->entity->setProduct((new Product)->setSku('sku'));
+        $this->entity->setProduct((new Product())->setSku('sku'));
 
-        $this->assertSame('sku', $this->entity->getProductSku());
+        static::assertSame('sku', $this->entity->getProductSku());
     }
 
     public function testSetGetWeight()
     {
-        $this->assertNull($this->entity->getWeight());
+        static::assertNull($this->entity->getWeight());
 
         $this->entity->updateWeight();
-        $this->assertAttributeEquals(null, 'weightValue', $this->entity);
-        $this->assertAttributeEquals(null, 'weightUnit', $this->entity);
+        $this->entity->loadWeight();
+        static::assertNull($this->entity->getWeight()->getValue());
+        static::assertNull($this->entity->getWeight()->getUnit());
 
         $value = 11.1;
         $unit = new WeightUnit();
 
-        $this->setProperty($this->entity, 'weightValue', $value);
-        $this->setProperty($this->entity, 'weightUnit', $unit);
+        $this->entity->xsetWeightValueUnit($value, $unit);
         $this->entity->loadWeight();
 
         $weight = $this->entity->getWeight();
-        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Weight', $weight);
-        $this->assertEquals($value, $weight->getValue());
-        $this->assertSame($unit, $weight->getUnit());
+        static::assertInstanceOf(Weight::class, $weight);
+        static::assertEquals($value, $weight->getValue());
+        static::assertSame($unit, $weight->getUnit());
 
-        $weight = Weight::create(42.2, new WeightUnit('lbs'));
+        $weight = Weight::create(42.2, (new WeightUnit())->setCode('lbs'));
         $this->entity->setWeight($weight);
-        $this->assertSame($weight, $this->entity->getWeight());
+        static::assertSame($weight, $this->entity->getWeight());
 
         $this->entity->updateWeight();
-        $this->assertAttributeEquals($weight->getValue(), 'weightValue', $this->entity);
-        $this->assertAttributeEquals($weight->getUnit(), 'weightUnit', $this->entity);
+        static::assertEquals($weight->getValue(), $this->entity->xgetWeightValue());
+        static::assertEquals($weight->getUnit(), $this->entity->xgetWeightUnit());
 
-        $this->setProperty($this->entity, 'weight', null);
+        $this->entity->setWeight(null);
         $this->entity->updateWeight();
-        $this->assertAttributeEquals(null, 'weightValue', $this->entity);
-        $this->assertAttributeEquals(null, 'weightUnit', $this->entity);
+        static::assertNull($this->entity->xgetWeightValue());
+        static::assertNull($this->entity->xgetWeightUnit());
     }
 
     public function testSetGetDimensions()
     {
-        $this->assertNull($this->entity->getDimensions());
+        static::assertNull($this->entity->getDimensions());
 
         $this->entity->updateDimensions();
-        $this->assertAttributeEquals(null, 'dimensionsLength', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsWidth', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsHeight', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsUnit', $this->entity);
+        static::assertNull($this->entity->xgetDimensionsLength());
+        static::assertNull($this->entity->xgetDimensionsWidth());
+        static::assertNull($this->entity->xgetDimensionsHeight());
+        static::assertNull($this->entity->xgetDimensionsUnit());
 
         $length = 12.3;
         $width = 45.6;
         $height = 78.9;
         $unit = new LengthUnit();
 
-        $this->setProperty($this->entity, 'dimensionsLength', $length);
-        $this->setProperty($this->entity, 'dimensionsWidth', $width);
-        $this->setProperty($this->entity, 'dimensionsHeight', $height);
-        $this->setProperty($this->entity, 'dimensionsUnit', $unit);
+        $this->entity->xsetDimensionsLengthWidthHeightUnit($length, $width, $height, $unit);
         $this->entity->loadDimensions();
 
         $dimensions = $this->entity->getDimensions();
-        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Dimensions', $dimensions);
-        $this->assertEquals($length, $dimensions->getValue()->getLength());
-        $this->assertEquals($width, $dimensions->getValue()->getWidth());
-        $this->assertEquals($height, $dimensions->getValue()->getHeight());
-        $this->assertSame($unit, $dimensions->getUnit());
+        static::assertInstanceOf(Dimensions::class, $dimensions);
+        static::assertEquals($length, $dimensions->getValue()->getLength());
+        static::assertEquals($width, $dimensions->getValue()->getWidth());
+        static::assertEquals($height, $dimensions->getValue()->getHeight());
+        static::assertSame($unit, $dimensions->getUnit());
 
-        $dimensions = Dimensions::create(32.1, 65.4, 98.7, new LengthUnit('inch'));
+        $dimensions = Dimensions::create(32.1, 65.4, 98.7, (new LengthUnit())->setCode('inch'));
         $this->entity->setDimensions($dimensions);
-        $this->assertSame($dimensions, $this->entity->getDimensions());
+        static::assertSame($dimensions, $this->entity->getDimensions());
 
         $this->entity->updateDimensions();
-        $this->assertAttributeEquals($dimensions->getValue()->getLength(), 'dimensionsLength', $this->entity);
-        $this->assertAttributeEquals($dimensions->getValue()->getWidth(), 'dimensionsWidth', $this->entity);
-        $this->assertAttributeEquals($dimensions->getValue()->getHeight(), 'dimensionsHeight', $this->entity);
-        $this->assertAttributeEquals($dimensions->getUnit(), 'dimensionsUnit', $this->entity);
+        static::assertEquals($dimensions->getValue()->getLength(), $this->entity->xgetDimensionsLength());
+        static::assertEquals($dimensions->getValue()->getWidth(), $this->entity->xgetDimensionsWidth());
+        static::assertEquals($dimensions->getValue()->getHeight(), $this->entity->xgetDimensionsHeight());
+        static::assertEquals($dimensions->getUnit(), $this->entity->xgetDimensionsUnit());
 
-        $this->setProperty($this->entity, 'dimensions', null);
-        $this->entity->updateDimensions();
-        $this->assertAttributeEquals(null, 'dimensionsLength', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsWidth', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsHeight', $this->entity);
-        $this->assertAttributeEquals(null, 'dimensionsUnit', $this->entity);
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
+        $this->entity->setDimensions(null);
+        static::assertNull($this->entity->xgetDimensionsLength());
+        static::assertNull($this->entity->xgetDimensionsWidth());
+        static::assertNull($this->entity->xgetDimensionsHeight());
+        static::assertNull($this->entity->xgetDimensionsUnit());
     }
 }

@@ -14,7 +14,7 @@ class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService */
         $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);

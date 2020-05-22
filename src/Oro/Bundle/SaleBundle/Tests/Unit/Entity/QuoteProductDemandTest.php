@@ -31,11 +31,9 @@ class QuoteProductDemandTest extends AbstractTest
         $this->assertSame($productDemand, $productDemand->getProductHolder());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testSetPrice()
     {
+        $this->expectException(\LogicException::class);
         $productDemand = new QuoteProductDemand(new QuoteDemand(), new QuoteProductOffer(), 1);
         $productDemand->setPrice(Price::create(1, ' USD'));
     }

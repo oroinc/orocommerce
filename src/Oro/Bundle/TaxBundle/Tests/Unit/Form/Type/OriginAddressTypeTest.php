@@ -16,7 +16,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     /** @var OriginAddressType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new OriginAddressType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass('Oro\Bundle\TaxBundle\Model\Address');

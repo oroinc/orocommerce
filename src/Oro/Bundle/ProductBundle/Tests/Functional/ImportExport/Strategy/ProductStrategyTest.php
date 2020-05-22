@@ -26,7 +26,7 @@ class ProductStrategyTest extends WebTestCase
      * */
     protected $strategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductData::class]);

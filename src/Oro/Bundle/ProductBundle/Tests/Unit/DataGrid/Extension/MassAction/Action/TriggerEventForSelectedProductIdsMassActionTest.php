@@ -12,7 +12,7 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework
      */
     private $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->action = new TriggerEventForSelectedProductIdsMassAction();
     }

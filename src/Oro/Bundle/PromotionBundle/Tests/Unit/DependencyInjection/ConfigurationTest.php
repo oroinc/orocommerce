@@ -12,7 +12,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      */
     protected $configuration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $configuration = new Configuration();
 
