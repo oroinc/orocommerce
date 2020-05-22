@@ -305,6 +305,10 @@ datagrids:
                 type:  url
                 route: oro_sale_quote_frontend_view
                 params: [ id ]
+            view_aria_label:
+                type:   translatable
+                key:    oro.frontend.sale.quote.action.view.aria_label
+                params: [qid]
         sorters:
             columns:
                 qid:
@@ -351,6 +355,7 @@ datagrids:
             view:
                 type:          navigate
                 label:         oro.grid.action.view
+                ariaLabel:     view_aria_label
                 link:          view_link
                 icon:          eye
                 rowAction:     true

@@ -838,6 +838,10 @@ datagrids:
                 params: [ id ]
             newArrival: ~
             unit: ~
+            view_aria_label:
+                type:   translatable
+                key:    oro.product.frontend.grid.action.product.view.aria_label
+                params: [name]
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
@@ -845,6 +849,7 @@ datagrids:
             view:
                 type:          navigate
                 label:         oro.grid.action.view
+                ariaLabel:     view_aria_label
                 link:          view_link
                 icon:          eye
                 rowAction:     true

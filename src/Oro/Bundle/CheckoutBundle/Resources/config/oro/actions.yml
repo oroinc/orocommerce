@@ -19,6 +19,8 @@ operations:
                 - '@equal': [$.data.completed, false]
         datagrids:
             - frontend-checkouts-grid
+        datagrid_options:
+            aria_label: delete_aria_label
         replace:
             - applications
             - preconditions
@@ -33,6 +35,8 @@ operations:
         applications: [commerce]
         datagrids:
             - frontend-checkouts-grid
+        datagrid_options:
+            aria_label: view_aria_label
         order: 20
         button_options:
             icon: fa-eye
@@ -75,6 +79,8 @@ operations:
             - oro_order_frontend_view
         datagrids:
             - frontend-orders-grid
+        datagrid_options:
+            aria_label: start_from_order_aria_label
         acl_resource: [CHECKOUT_CREATE, $.data]
         button_options:
             icon: fa-shopping-cart

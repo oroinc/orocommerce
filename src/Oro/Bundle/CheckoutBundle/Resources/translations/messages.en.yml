@@ -295,6 +295,9 @@ oro:
                 cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
                 cannot_create_reorder_no_line_items: 'The re-order cannot be processed as all the products are currently unavailable.'
                 some_changes_in_line_items: 'Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: %skus%.'
+                action:
+                    view.aria_label: "Continue checkout started from %startedFromLabel%"
+                    delete.aria_label: "Delete checkout started from %startedFromLabel%"
             start_from_order: 'Re-Order'
 
         errors:
