@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Tests\Functional\Api\RestJsonApi\DataFixtures;
+namespace Oro\Bundle\PromotionBundle\Tests\Functional\Api\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;

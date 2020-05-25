@@ -1,0 +1,31 @@
+data:
+    -
+        type: productvisibilities
+        id: '<toString(@product-1->id)>'
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+    -
+        type: productvisibilities
+        id: '<toString(@product-2->id)>'
+        attributes:
+            visibility: hidden
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+    -
+        type: productvisibilities
+        id: '<toString(@product-3->id)>'
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'

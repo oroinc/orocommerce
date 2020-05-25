@@ -1,0 +1,23 @@
+Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility:
+    constraints:
+        - Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType: ~

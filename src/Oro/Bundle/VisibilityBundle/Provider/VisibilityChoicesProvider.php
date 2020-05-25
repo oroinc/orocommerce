@@ -2,31 +2,22 @@
 
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides details about available visibility types.
+ */
 class VisibilityChoicesProvider
 {
-    /**
-     * @var TranslatorInterface
-     */
-    public $translator;
-
-    /**
-     * @var Registry
-     */
-    public $registry;
+    /** @var TranslatorInterface */
+    private $translator;
 
     /**
      * @param TranslatorInterface $translator
-     * @param Registry $registry
      */
-    public function __construct(TranslatorInterface $translator, Registry $registry)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-        $this->registry = $registry;
     }
 
     /**
@@ -52,25 +43,7 @@ class VisibilityChoicesProvider
      */
     public function getChoices($sourceClass, $target)
     {
-        $choices = call_user_func([$sourceClass, 'getVisibilityList'], $target);
-
-        if ($target instanceof Product && !$this->getProductCategory($target)) {
-            unset($choices[array_search(constant($sourceClass.'::CATEGORY'), $choices)]);
-            $choices = array_values($choices);
-        }
-
-        return $choices;
-    }
-
-    /**
-     * @param Product $product
-     * @return null|Category
-     */
-    protected function getProductCategory(Product $product)
-    {
-        return $this->registry->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->findOneByProduct($product);
+        return call_user_func([$sourceClass, 'getVisibilityList'], $target);
     }
 
     /**

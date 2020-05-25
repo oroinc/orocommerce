@@ -1,0 +1,5 @@
+oro_api:
+    filters:
+        visibilityId:
+            factory: ['@oro_visibility.api.filter_factory.visibility_id', 'createFilter']
+            supported_operators: ['=', '!=']

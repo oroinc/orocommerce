@@ -6,61 +6,67 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class VisibilityChangeSetValidatorTest extends \PHPUnit\Framework\TestCase
+class VisibilityChangeSetValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var  VisibilityChangeSet */
-    protected $constraint;
-
-    /** @var ArrayCollection */
-    protected $value;
-
-    /** @var VisibilityChangeSetValidator */
-    protected $visibilityChangeSetValidator;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-    protected $context;
+    /**
+     * @return VisibilityChangeSetValidator
+     */
+    protected function createValidator()
+    {
+        return new VisibilityChangeSetValidator();
+    }
 
     /**
-     * {@inheritdoc}
+     * @return VisibilityChangeSet
      */
-    protected function setUp(): void
+    private function getConstraint()
     {
-        $this->constraint = new VisibilityChangeSet(['entityClass' => Customer::class]);
-        $this->value = new ArrayCollection();
-        $this->visibilityChangeSetValidator = new VisibilityChangeSetValidator();
-        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-        $this->visibilityChangeSetValidator->initialize($this->context);
+        return new VisibilityChangeSet(['entityClass' => Customer::class]);
+    }
+
+    public function testValidateNullValue()
+    {
+        $this->validator->validate(null, $this->getConstraint());
+
+        $this->assertNoViolation();
     }
 
     public function testValidateEmptyArrayCollection()
     {
-        $this->context->expects($this->never())->method('addViolation');
-        $this->visibilityChangeSetValidator->validate($this->value, $this->constraint);
+        $this->validator->validate(new ArrayCollection(), $this->getConstraint());
+
+        $this->assertNoViolation();
     }
 
     public function testValidateAnotherEntity()
     {
-        $data['data']['visibility'] = 'visible';
-        $data['entity'] = new ArrayCollection();
-        $this->value->offsetSet('1', $data);
-        $this->context->expects($this->once())->method('addViolation')->with($this->constraint->invalidDataMessage);
-        $this->visibilityChangeSetValidator->validate($this->value, $this->constraint);
+        $value = new ArrayCollection();
+        $value->add(['data' => ['visibility' => 'visible'], 'entity' => new \stdClass()]);
+
+        $constraint = $this->getConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 
     public function testValidData()
     {
-        $data['data']['visibility'] = 'visible';
-        $data['entity'] = new Customer();
-        $this->value->offsetSet('1', $data);
-        $this->context->expects($this->never())->method('addViolation');
-        $this->visibilityChangeSetValidator->validate($data, $this->constraint);
+        $value = new ArrayCollection();
+        $value->add(['data' => ['visibility' => 'visible'], 'entity' => new Customer()]);
+
+        $this->validator->validate($value, $this->getConstraint());
+
+        $this->assertNoViolation();
     }
 
     public function testValidateNotCollection()
     {
-        $this->context->expects($this->never())->method('addViolation');
-        $this->visibilityChangeSetValidator->validate(new \stdClass(), $this->constraint);
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate(new \stdClass(), $this->getConstraint());
     }
 }

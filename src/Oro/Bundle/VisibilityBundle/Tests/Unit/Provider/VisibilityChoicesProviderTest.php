@@ -2,25 +2,17 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const VISIBILITY_CLASS = 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility';
-
-    /**
-     * @var VisibilityChoicesProvider
-     */
-    protected $formatter;
-
-    /**
-     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var VisibilityChoicesProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -33,110 +25,67 @@ class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->formatter = new VisibilityChoicesProvider($translator, $this->registry);
+        $this->provider = new VisibilityChoicesProvider($translator);
+    }
+
+    /**
+     * @return Category
+     */
+    private function createCategory()
+    {
+        $category = new Category();
+        $category->setParentCategory(new Category());
+
+        return $category;
     }
 
     public function testGetFormattedChoices()
     {
-        $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS, $this->createCategory());
+        $actual = $this->provider->getFormattedChoices(CategoryVisibility::class, $this->createCategory());
         $expected = [
             '[trans]oro.visibility.categoryvisibility.choice.parent_category[/trans]' => 'parent_category',
-            '[trans]oro.visibility.categoryvisibility.choice.config[/trans]' => 'config',
-            '[trans]oro.visibility.categoryvisibility.choice.hidden[/trans]' => 'hidden',
-            '[trans]oro.visibility.categoryvisibility.choice.visible[/trans]' => 'visible',
+            '[trans]oro.visibility.categoryvisibility.choice.config[/trans]'          => 'config',
+            '[trans]oro.visibility.categoryvisibility.choice.hidden[/trans]'          => 'hidden',
+            '[trans]oro.visibility.categoryvisibility.choice.visible[/trans]'         => 'visible',
         ];
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @dataProvider getChoicesForCategoryDataProvider
-     * @param array $expected
-     */
-    public function testGetChoicesForCategory(array $expected)
+    public function testGetChoicesForCategory()
     {
-        $actual = $this->formatter->getChoices(self::VISIBILITY_CLASS, $this->createCategory());
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return array
-     */
-    public function getChoicesForCategoryDataProvider()
-    {
-        return [
-           'target category' => [
-                'expected' => [
-                    'parent_category',
-                    'config',
-                    'hidden',
-                    'visible',
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider getChoicesForProductDataProvider
-     * @param Category|null $productCategory
-     * @param array $expected
-     */
-    public function testGetChoicesForProduct($productCategory, array $expected)
-    {
-        $repository = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('findOneByProduct')
-            ->willReturn($productCategory);
-
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $actual = $this->formatter->getChoices(
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
-            new Product()
+        $actual = $this->provider->getChoices(CategoryVisibility::class, $this->createCategory());
+        $this->assertEquals(
+            ['parent_category', 'config', 'hidden', 'visible'],
+            $actual
         );
-        $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getChoicesForProductDataProvider()
+    public function testGetChoicesForProductWithCategory()
     {
-        return [
-            'target product with category' => [
-                'productCategory' => new Category(),
-                'expected' => [
-                    'category',
-                    'config',
-                    'hidden',
-                    'visible',
-                ]
-            ],
-            'target product without category' => [
-                'productCategory' => null,
-                'expected' => [
-                    'config',
-                    'hidden',
-                    'visible',
-                ]
-            ]
-        ];
+        $product = new Product();
+        $product->setCategory(new Category());
+
+        $actual = $this->provider->getChoices(ProductVisibility::class, $product);
+        $this->assertEquals(
+            ['category', 'config', 'hidden', 'visible'],
+            $actual
+        );
+    }
+
+    public function testGetChoicesForProductWithoutCategory()
+    {
+        $product = new Product();
+
+        $actual = $this->provider->getChoices(ProductVisibility::class, $product);
+        $this->assertEquals(
+            ['config', 'hidden', 'visible'],
+            $actual
+        );
     }
 
     public function testFormatChoices()
     {
-        $actual = $this->formatter->formatChoices('test.%s', ['test_1', 'test_2']);
+        $actual = $this->provider->formatChoices('test.%s', ['test_1', 'test_2']);
         $expected = [
             '[trans]test.test_1[/trans]' => 'test_1',
             '[trans]test.test_2[/trans]' => 'test_2',
@@ -146,15 +95,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testFormat()
     {
-        $actual = $this->formatter->format('test.%s', 'test_1');
+        $actual = $this->provider->format('test.%s', 'test_1');
         $this->assertEquals('[trans]test.test_1[/trans]', $actual);
-    }
-
-    /**
-     * @return $this
-     */
-    protected function createCategory()
-    {
-        return (new Category())->setParentCategory(new Category());
     }
 }

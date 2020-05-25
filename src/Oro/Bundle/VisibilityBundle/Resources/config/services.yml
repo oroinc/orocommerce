@@ -82,17 +82,11 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    oro.visibility.catalog.visibility.change_set.validatior:
-        class: 'Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro.visibility.catalog.visibility.change_set.validatior }
-
     oro_visibility.provider.visibility_choices:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider'
         public: false
         arguments:
             - "@translator"
-            - "@doctrine"
 
     oro_visibility.visibility.provider.category_visibility_provider:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider'

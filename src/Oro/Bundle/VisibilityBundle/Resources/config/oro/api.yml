@@ -1,0 +1,133 @@
+api:
+    entities:
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:
+            documentation_resource: '@OroVisibilityBundle/Resources/doc/api/product_visibility.md'
+            inner_join_associations: [ product ]
+            fields:
+                id:
+                    data_type: string
+                    depends_on: [ product.id ]
+            filters:
+                fields:
+                    id:
+                        data_type: string
+                        type: visibilityId
+                        allow_array: true
+            sorters:
+                fields:
+                    id:
+                        exclude: true
+            actions:
+                create:
+                    fields:
+                        product:
+                            form_options:
+                                constraints:
+                                    - NotNull: ~
+                update:
+                    fields:
+                        product:
+                            form_options:
+                                mapped: false
+                update_list: true
+            subresources:
+                product:
+                    exclude: true
+
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:
+            documentation_resource: '@OroVisibilityBundle/Resources/doc/api/customer_product_visibility.md'
+            inner_join_associations: [ product, scope.customer ]
+            fields:
+                id:
+                    data_type: string
+                    depends_on: [ product.id, scope.customer.id ]
+                customer:
+                    property_path: scope.customer
+            filters:
+                fields:
+                    id:
+                        data_type: string
+                        type: visibilityId
+                        allow_array: true
+                    customer:
+                        property_path: scope.customer
+            sorters:
+                fields:
+                    id:
+                        exclude: true
+                    customer:
+                        property_path: scope.customer
+            actions:
+                create:
+                    fields:
+                        product:
+                            form_options:
+                                constraints:
+                                    - NotNull: ~
+                        customer:
+                            form_options:
+                                constraints:
+                                    - NotNull: ~
+                update:
+                    fields:
+                        product:
+                            form_options:
+                                mapped: false
+                        customer:
+                            form_options:
+                                mapped: false
+                update_list: true
+            subresources:
+                product:
+                    exclude: true
+                customer:
+                    exclude: true
+
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:
+            documentation_resource: '@OroVisibilityBundle/Resources/doc/api/customer_group_product_visibility.md'
+            inner_join_associations: [ product, scope.customerGroup ]
+            fields:
+                id:
+                    data_type: string
+                    depends_on: [ product.id, scope.customerGroup.id ]
+                customerGroup:
+                    property_path: scope.customerGroup
+            filters:
+                fields:
+                    id:
+                        data_type: string
+                        type: visibilityId
+                        allow_array: true
+                    customerGroup:
+                        property_path: scope.customerGroup
+            sorters:
+                fields:
+                    id:
+                        exclude: true
+                    customerGroup:
+                        property_path: scope.customerGroup
+            actions:
+                create:
+                    fields:
+                        product:
+                            form_options:
+                                constraints:
+                                    - NotNull: ~
+                        customerGroup:
+                            form_options:
+                                constraints:
+                                    - NotNull: ~
+                update:
+                    fields:
+                        product:
+                            form_options:
+                                mapped: false
+                        customerGroup:
+                            form_options:
+                                mapped: false
+                update_list: true
+            subresources:
+                product:
+                    exclude: true
+                customerGroup:
+                    exclude: true

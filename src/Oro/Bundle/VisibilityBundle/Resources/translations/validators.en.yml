@@ -1,6 +1,8 @@
 oro:
     visibility:
-          category:
-              visibility:
-                  message:
-                      invalid_data: "Data is not valid"
+        category:
+            visibility:
+                message:
+                    invalid_data: "Data is not valid"
+        wrong_type.message: 'The value should be one of {{ available_types }}.'
+        conflict.message: 'The visibility entity already exists.'

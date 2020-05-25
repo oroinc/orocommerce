@@ -1,0 +1,19 @@
+data:
+    -
+        type: productvisibilities
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+    -
+        type: productvisibilities
+        attributes:
+            visibility: hidden
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-5->id)>'

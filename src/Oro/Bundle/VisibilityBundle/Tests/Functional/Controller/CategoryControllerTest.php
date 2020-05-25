@@ -108,7 +108,7 @@ class CategoryControllerTest extends WebTestCase
         );
 
         static::assertStringContainsString('This value is not valid', $crawler->html());
-        static::assertStringContainsString('invalidDataMessage', $crawler->html());
+        static::assertStringContainsString('VisibilityChangeSet', $crawler->html());
     }
 
     /**

@@ -1,0 +1,27 @@
+data:
+    -
+        type: customergroupproductvisibilities
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            customerGroup:
+                data:
+                    type: customergroups
+                    id: '<toString(@customer_group.group2->id)>'
+    -
+        type: customergroupproductvisibilities
+        attributes:
+            visibility: hidden
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            customerGroup:
+                data:
+                    type: customergroups
+                    id: '<toString(@customer_group.group3->id)>'

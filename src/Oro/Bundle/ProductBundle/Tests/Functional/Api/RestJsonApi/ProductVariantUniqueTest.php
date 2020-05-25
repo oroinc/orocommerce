@@ -19,7 +19,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/Api/RestJsonApi/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
         ]);
     }
 

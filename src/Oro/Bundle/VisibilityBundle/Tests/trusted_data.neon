@@ -49,6 +49,9 @@ trusted_data:
         Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository:
             getCategoryIdsByVisibility:
                 terms: true
+        Oro\Bundle\VisibilityBundle\Api\Processor\AbstractSetVisibilityScope:
+            isVisibilityExists:
+                name: true
     properties:
         Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener:
             duplicateVisibility:
@@ -78,3 +81,5 @@ trusted_data:
             getCustomerVisibilityFieldName: true
         Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier:
             createProductVisibilityExpression: true
+        Oro\Bundle\VisibilityBundle\Api\Processor\AbstractLoadVisibility:
+            getVisibilityAssociationName: true

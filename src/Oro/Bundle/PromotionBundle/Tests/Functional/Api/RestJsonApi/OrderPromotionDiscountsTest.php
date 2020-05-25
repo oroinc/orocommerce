@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Api\RestJsonApi;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\PromotionBundle\Tests\Functional\Api\RestJsonApi\DataFixtures\LoadDisablePromotionsOrders;
+use Oro\Bundle\PromotionBundle\Tests\Functional\Api\DataFixtures\LoadDisablePromotionsOrders;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadAppliedPromotionData;
 
 class OrderPromotionDiscountsTest extends RestJsonApiTestCase
