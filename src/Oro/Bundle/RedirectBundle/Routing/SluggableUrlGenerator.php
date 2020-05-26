@@ -173,9 +173,10 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * @return null|int
      */
-    private function getLocalizationId()
+    private function getLocalizationId(): ?int
     {
         $localization = $this->userLocalizationManager->getCurrentLocalization();
+
         return $localization ? $localization->getId() : null;
     }
 

@@ -96,33 +96,84 @@ class ShoppingListTotalManager
      */
     public function recalculateTotals(ShoppingList $shoppingList, $doFlush)
     {
-        $totals = $shoppingList->getTotals();
         $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
+        $this->getTotalsForCurrencies($shoppingList, $enabledCurrencies, true, $doFlush);
+    }
 
-        foreach ($totals as $total) {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotalByCurrency($shoppingList, $total->getCurrency());
-            if (($key = array_search($total->getCurrency(), $enabledCurrencies, true)) !== false) {
-                unset($enabledCurrencies[$key]);
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $currency
+     * @param bool $doFlush
+     *
+     * @return ShoppingListTotal
+     */
+    public function getShoppingListTotalForCurrency(
+        ShoppingList $shoppingList,
+        string $currency,
+        bool $doFlush = false
+    ): ShoppingListTotal {
+        return $this->getTotalsForCurrencies($shoppingList, [$currency], false, $doFlush)[$currency];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $currencies
+     * @param bool $recalculate
+     * @param bool $doFlush
+     *
+     * @return array
+     */
+    private function getTotalsForCurrencies(
+        ShoppingList $shoppingList,
+        array $currencies,
+        bool $recalculate,
+        bool $doFlush
+    ): array {
+        $shoppingListTotals = [];
+        $currencies = array_flip($currencies);
+        foreach ($shoppingList->getTotals() as $eachShoppingListTotal) {
+            $eachCurrency = $eachShoppingListTotal->getCurrency();
+            if (!isset($currencies[$eachCurrency])) {
+                continue;
             }
-            $total->setSubtotal($subtotal)
+
+            if ($recalculate || !$eachShoppingListTotal->isValid()) {
+                $subtotal = $this->lineItemNotPricedSubtotalProvider
+                    ->getSubtotalByCurrency($shoppingList, $eachCurrency);
+
+                $eachShoppingListTotal
+                    ->setSubtotal($subtotal)
+                    ->setValid(true);
+            }
+
+            $shoppingListTotals[$eachCurrency] = $eachShoppingListTotal;
+            unset($currencies[$eachCurrency]);
+        }
+
+        $entityManager = $this->getEntityManager();
+        $isShoppingListManaged = $entityManager->contains($shoppingList);
+
+        foreach ($currencies as $eachCurrency => $i) {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency);
+
+            $shoppingListTotals[$eachCurrency] = (new ShoppingListTotal($shoppingList, $eachCurrency))
+                ->setSubtotal($subtotal)
                 ->setValid(true);
+
+            $shoppingList->addTotal($shoppingListTotals[$eachCurrency]);
+
+            // It is possible that shopping list which came to this method is not managed dy doctrine, we should not
+            // persist corresponding total in this case.
+            if ($isShoppingListManaged) {
+                $entityManager->persist($shoppingListTotals[$eachCurrency]);
+            }
         }
 
-        foreach ($enabledCurrencies as $currency) {
-            $total = new ShoppingListTotal($shoppingList, $currency);
-            $shoppingList->addTotal($total);
-            $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotalByCurrency($shoppingList, $total->getCurrency());
-
-            $total->setSubtotal($subtotal)
-                ->setValid(true);
-            $this->getEntityManager()->persist($total);
+        if ($doFlush && $isShoppingListManaged) {
+            $entityManager->flush();
         }
 
-        if ($doFlush) {
-            $this->getEntityManager()->flush();
-        }
+        return $shoppingListTotals;
     }
 
     /**
@@ -134,7 +185,7 @@ class ShoppingListTotalManager
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     protected function getEntityManager()
     {

@@ -156,11 +156,12 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
      */
     protected function getSluggableRoutes()
     {
-        if (!$this->cache->has(self::SLUG_ROUTES_KEY, [])) {
+        $encodedSluggableRoutes = $this->cache->getUrl(self::SLUG_ROUTES_KEY, []);
+        if ($encodedSluggableRoutes === false) {
             return [];
         }
 
-        return (array)json_decode($this->cache->getUrl(self::SLUG_ROUTES_KEY, []), true);
+        return (array)json_decode($encodedSluggableRoutes, true);
     }
 
     /**

@@ -307,6 +307,26 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testDeleteNotAllowedLineItemsFromShoppingList(): void
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $allowedStatuses = ['in_stock'];
+
+        $repo = $this->getLineItemRepository();
+        $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+        $actual = array_map(function (LineItem $item) {
+            return $item->getId();
+        }, $repo->findBy(['shoppingList' => $shoppingList]));
+        sort($actual);
+
+        $expected = [
+            $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
+        ];
+        sort($expected);
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @return LineItemRepository
      */

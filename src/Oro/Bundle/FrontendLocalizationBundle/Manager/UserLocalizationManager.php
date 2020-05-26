@@ -39,6 +39,9 @@ class UserLocalizationManager
     /** @var LocalizationManager */
     protected $localizationManager;
 
+    /** @var array */
+    private $currentLocalizations = [];
+
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
@@ -99,26 +102,30 @@ class UserLocalizationManager
             return null;
         }
 
-        $localization = null;
-
         $user = $this->getLoggedUser();
-        if ($user instanceof CustomerUser) {
+
+        $websiteId = $website->getId();
+        $userId = $user instanceof CustomerUser ? $user->getId() : 0;
+        if (isset($this->currentLocalizations[$websiteId][$userId])) {
+            return $this->currentLocalizations[$websiteId][$userId];
+        }
+
+        $localization = null;
+        $enabledLocalizations = $this->getEnabledLocalizations();
+        if ($userId !== 0) {
             $userSettings = $user->getWebsiteSettings($website);
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
         } elseif ($this->session->isStarted()) {
-            $sessionStoredLocalizations = $this->getSessionLocalizations();
-            if (array_key_exists($website->getId(), $sessionStoredLocalizations)) {
-                $localization = $this->localizationManager->getLocalization(
-                    $sessionStoredLocalizations[$website->getId()]
-                );
-            }
+            $localization = $enabledLocalizations[$this->getSessionLocalizationIdByWebsiteId($websiteId)] ?? null;
         }
 
-        if (!$localization || !array_key_exists($localization->getId(), $this->getEnabledLocalizations())) {
+        if (!$localization || !isset($enabledLocalizations[$localization->getId()])) {
             $localization = $this->getDefaultLocalization();
         }
+
+        $this->currentLocalizations[$websiteId][$userId] = $localization;
 
         return $localization;
     }
@@ -208,6 +215,16 @@ class UserLocalizationManager
     protected function getSessionLocalizations()
     {
         return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
+    }
+
+    /**
+     * @param int $websiteId
+     *
+     * @return int
+     */
+    private function getSessionLocalizationIdByWebsiteId(int $websiteId): int
+    {
+        return $this->getSessionLocalizations()[$websiteId] ?? 0;
     }
 
     /**

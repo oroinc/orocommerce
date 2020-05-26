@@ -166,15 +166,16 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
     protected function getFromCacheByType($type, $routeName, $routeParameters, $localizationId = null)
     {
         $cacheKey = $this->getCacheKey($type, $routeName, $routeParameters, $localizationId);
-        if (!$this->localCache->contains($cacheKey)) {
+        $url = $this->localCache->fetch($cacheKey);
+        if ($url === false) {
             $url = $this->persistentCache->fetch($cacheKey);
 
-            if ($url) {
+            if ($url !== false) {
                 $this->localCache->save($cacheKey, $url);
             }
         }
 
-        return $this->localCache->fetch($cacheKey);
+        return $url;
     }
 
     /**

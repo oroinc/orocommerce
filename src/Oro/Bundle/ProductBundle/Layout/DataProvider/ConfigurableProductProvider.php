@@ -35,6 +35,11 @@ class ConfigurableProductProvider
     private $propertyAccessor;
 
     /**
+     * @var array
+     */
+    private $customFields;
+
+    /**
      * @param CustomFieldProvider $customFieldProvider
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param PropertyAccessor $propertyAccessor
@@ -64,6 +69,7 @@ class ConfigurableProductProvider
 
         $variantFieldNames = [];
         foreach ($lineItems as $key => $value) {
+            // Faster than array_replace(...$var) approximately by 8%.
             $variantFieldNames += $this->getLineItemProduct($value);
         }
 
@@ -76,9 +82,12 @@ class ConfigurableProductProvider
      */
     public function getLineItemProduct($lineItem)
     {
-        $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
+        if (null === $this->customFields) {
+            $this->customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
+        }
+
         $variantFieldNames = [];
-        if (method_exists($lineItem, 'getParentProduct') && is_callable([$lineItem, 'getParentProduct'])) {
+        if (is_callable([$lineItem, 'getParentProduct'])) {
             /** @var Product $parentProduct */
             $parentProduct = $lineItem->getParentProduct();
             if (!$parentProduct) {
@@ -89,7 +98,7 @@ class ConfigurableProductProvider
             $variantFieldNames[$simpleProduct->getId()] = $this->getVariantFields(
                 $simpleProduct,
                 $variantFields,
-                $customFields
+                $this->customFields
             );
         }
 

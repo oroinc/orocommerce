@@ -144,8 +144,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $routeParameters = ['id' => 1];
         $key = 'test_2';
 
-        $storage = new UrlDataStorage();
-        $this->assertLocalCacheNotContainsValue($key, $storage);
+        $this->assertLocalCacheNotContainsValue($key);
 
         $this->persistentCache->expects($this->once())
             ->method('fetch')
@@ -334,20 +333,15 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $key
-     * @param UrlDataStorage $storage
      */
-    private function assertLocalCacheNotContainsValue($key, UrlDataStorage $storage)
+    private function assertLocalCacheNotContainsValue($key)
     {
-        $this->localCache->expects($this->any())
-            ->method('contains')
-            ->with($key)
-            ->willReturn(false);
         $this->localCache->expects($this->once())
             ->method('save')
             ->with($key, $this->isInstanceOf(UrlDataStorage::class));
         $this->localCache->expects($this->once())
             ->method('fetch')
             ->with($key)
-            ->willReturn($storage);
+            ->willReturn(false);
     }
 }

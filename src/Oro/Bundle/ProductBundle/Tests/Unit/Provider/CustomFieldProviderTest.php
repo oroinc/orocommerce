@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -38,6 +39,37 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
         $this->entityConfigProvider = $this->getMockForClass(ConfigProvider::class);
 
         $this->provider = new CustomFieldProvider($this->extendConfigProvider, $this->entityConfigProvider);
+    }
+
+    public function testGetEntityCustomFieldsWithCache(): void
+    {
+        $data = [
+            'size' => [
+                'name' => 'size',
+                'label' => 'Size Label',
+                'type' => 'string',
+                'is_serialized' => true
+            ],
+            'color' => [
+                'name' => 'color',
+                'label' => 'Color Label',
+                'type' => 'string',
+                'is_serialized' => false,
+            ],
+        ];
+
+        $cache = $this->createMock(CacheProvider::class);
+        $cache->expects($this->once())
+            ->method('fetch')
+            ->with($this->className)
+            ->willReturn($data);
+
+        $this->provider->setCache($cache);
+
+        $this->extendConfigProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertEquals($data, $this->provider->getEntityCustomFields($this->className));
     }
 
     /**
@@ -125,6 +157,9 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
+        $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields($this->className));
+
+        //check array cache
         $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields($this->className));
     }
 

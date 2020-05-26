@@ -135,11 +135,12 @@ services:
 
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
-        public: false
         arguments:
            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
            - '@oro_pricing.user_currency_manager'
            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        calls:
+            - [setShoppingListTotalManager, ['@oro_shopping_list.manager.shopping_list_total']]
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
@@ -179,13 +180,14 @@ services:
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
-        public: false
         arguments:
             - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        calls:
+            - [setShoppingListTotalManager, ['@oro_shopping_list.manager.shopping_list_total']]
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
