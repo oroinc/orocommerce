@@ -3,6 +3,8 @@ aliases:
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
+app-modules:
+    - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
     orodatagrid:
         - oro/datagrid/action/add-products-mass-action
@@ -35,3 +37,4 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html

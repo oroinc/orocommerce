@@ -333,6 +333,7 @@ datagrids:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
                 frontend_type: html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+                image_placeholder: /media/cache/product_small/bundles/oroproduct/images/no_image.png # @todo remove hardcode
             inventoryStatus:
                 label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
                 frontend_type: html-template
@@ -341,6 +342,10 @@ datagrids:
                 label:         oro.frontend.shoppinglist.lineitem.quantity.label
                 frontend_type: html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
+            unit:
+                label:         oro.frontend.shoppinglist.lineitem.unit.label
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
             price:
                 label:         oro.frontend.shoppinglist.lineitem.price.label
                 frontend_type: html-template
