@@ -13,7 +13,12 @@ layout:
         - '@setOption':
             id: __datagrid
             optionName: split_to_cells
-            optionValue: true
+            optionValue: false
+
+        - '@setOption':
+              id: __datagrid
+              optionName: grid_render_parameters.responsiveGrids.enable
+              optionValue: false
 
         - '@appendOption':
             id: __datagrid

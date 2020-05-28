@@ -282,6 +282,9 @@ datagrids:
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
             frontend: true
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
+                - oroshoppinglist/js/datagrid/builder/flat-data-builder
             toolbarOptions:
                 pageSize:
                     items:
@@ -327,29 +330,24 @@ datagrids:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/item.html.twig
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
             inventoryStatus:
                 label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/inventory_status.html.twig
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
             quantity:
                 label:         oro.frontend.shoppinglist.lineitem.quantity.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/quantity.html.twig
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
             price:
                 label:         oro.frontend.shoppinglist.lineitem.price.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/price.html.twig
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
             subtotal:
                 label:         oro.frontend.shoppinglist.lineitem.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/subtotal.html.twig
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
         sorters:
             columns:
                 productSku:
@@ -390,6 +388,26 @@ datagrids:
                         field_options:
                             multiple: true
                         field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+        properties:
+            sku: ~
+            productId: ~
+            image: ~
+            imagePlaceholder: ~
+            name: ~
+            link: ~
+            inventoryStatus_name: ~
+            inventoryStatus_label: ~
+            quantity: ~
+            unit: ~
+            price: ~
+            prices:
+                frontend_type: row_array
+            subtotal: ~
+            note: ~
+            isConfigurable:
+                frontend_type: boolean
+            subData:
+                frontend_type: row_array
 
     my-shopping-list-all-line-items-grid:
         extends: my-shopping-list-line-items-grid
