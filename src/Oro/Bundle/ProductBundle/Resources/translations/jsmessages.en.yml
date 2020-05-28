@@ -169,3 +169,6 @@ oro:
         widgets:
             select_related_items:
                 limit_has_been_reached: Limit of related items has been reached
+        images:
+            zoom:
+                label: 'Enlarge Product Image'

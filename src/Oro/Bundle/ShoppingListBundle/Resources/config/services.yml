@@ -628,5 +628,10 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_product.layout.data_provider.configurable_products'
+            - '@oro_attachment.manager'
+            - '@oro_product.provider.product_image_placeholder'
+            - '@router'
+            - '@oro_locale.formatter.number'
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.my-shopping-list-line-items-grid, method: onResultAfter }

@@ -1,0 +1,5 @@
+<% if (subtotal !== null) { %>
+<div class="bold" data-name="price-value"><%- subtotal %></div>
+<% } else { %>
+<div class="bold" data-name="price-not-found"><%- _.__('oro.pricing.product_prices.price_not_found') %></div>
+<% } %>

@@ -1,9 +1,0 @@
-{% set lineItems = record.getValue('lineItems') %}
-
-{% if (lineItems|first).parentProduct is not empty %}
-    <div>&nbsp;</div>
-{% endif %}
-
-{% for lineItem in lineItems %}
-    <div class="{{ lineItem.product.InventoryStatus.getId() }}">{{ lineItem.product.InventoryStatus }}</div>
-{% endfor %}

@@ -26,5 +26,11 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shoppinglist-widget-view
+        - oroshoppinglist/js/datagrid/builder/flat-data-builder
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
