@@ -271,6 +271,7 @@ oro:
                 item.label: 'Item'
                 inventory_status.label: ''
                 quantity.label: 'Qty'
+                unit.label: ''
                 price.label: 'Price'
                 subtotal.label: 'Subtotal'
 
