@@ -4,43 +4,36 @@
     width: $product-price-width;
 
     &__main-box {
-        width: $product-price-main-box-width;
-
-        clear: $product-price-main-box-clear;
-        float: $product-price-main-box-float;
-
         font-size: $product-price-main-box-font-size;
-    }
-
-    &__hint {
-        width: $product-price-hint-width;
     }
 
     &__value {
         color: $product-price-value-color;
     }
 
+    &__your,
     &__listed {
-        clear: $product-price-listed-box-clear;
-    }
-
-    &__listed-box {
-        width: $product-price-listed-box-width;
-        float: $product-price-listed-box-float;
-        clear: $product-price-listed-box-clear;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     &__label,
     &__listed-label {
-        width: $product-price-label-width;
+        padding-right: $offset-y-m;
     }
 
-    //Modifier for simple view(only main price)
-    &--simple & {
-        &__main-box {
-            float: $product-price-simple-main-box-float;
-        }
+    &__value,
+    &__listed-value {
+        font-weight: $product-price-value-font-weight;
+    }
 
+    &__listed {
+        padding-top: $offset-y-s;
+    }
+
+    // Modifier for simple view(only main price)
+    &--simple & {
         &__value {
             font-size: $product-price-simple-value-font-size;
         }
@@ -53,8 +46,6 @@
 
 .product-view {
     .product-price {
-        display: block;
-
         max-width: $product-price-max-width;
         margin: $product-price-margin;
     }
@@ -63,8 +54,6 @@
 @include breakpoint('tablet') {
     .product-price {
         &--simple {
-            margin-top: $product-price-simple-margin-top-tablet;
-
             text-align: $product-price-simple-text-align-tablet;
         }
     }

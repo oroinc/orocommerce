@@ -2,27 +2,16 @@
 
 $product-price-width: 100%;
 
-$product-price-value-color: get-color('ui', 'normal') !default;
+$product-price-value-color: null !default;
 
-$product-price-hint-width: 100%;
-
-$product-price-main-box-font-size: $base-font-size--large;
-$product-price-main-box-width: 57%;
-$product-price-main-box-clear: both;
-$product-price-main-box-float: right;
-
-$product-price-label-width: 43%;
+$product-price-main-box-font-size: null;
 
 $product-price-max-width: 250px !default;
 $product-price-margin: 0 auto !default;
 $product-price-listed-text-align: left !default;
-$product-price-listed-box-width: 57%;
-$product-price-listed-box-float: right;
-$product-price-listed-box-clear: both;
+$product-price-value-font-weight: bold !default;
 
-$product-price-simple-main-box-float: none !default;
 $product-price-simple-value-font-size: $base-font-size--l + 1 !default;
 $product-price-simple-listed-value-color: get-color('ui', 'normal') !default;
 
-$product-price-simple-margin-top-tablet: -5px !default;
 $product-price-simple-text-align-tablet: center !default;

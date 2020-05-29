@@ -180,7 +180,8 @@ oro.pricing:
     add_product_price: Add Product Price
     add_price_list: Add Price List
     no_price_lists: No price lists
-    view_all_prices: Additional Product Prices
+    view_all_prices: View All Prices
+    view_all_prices_extended: View All Prices for %product_attrs%
 
     productprice:
         entity_label: Product Price

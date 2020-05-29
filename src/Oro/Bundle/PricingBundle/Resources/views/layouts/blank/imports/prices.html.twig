@@ -54,17 +54,31 @@
 
 {% block product_price_hint %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-price__hint',
+        '~class': ' product-price-hint',
         'data-name': 'prices-hint'
     }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
+{% block product_price_hint_trigger %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn btn--link btn--size-xs',
+        'type': 'button',
+        'title': 'oro.pricing.view_all_prices'|trans,
+        'aria-label': 'oro.pricing.view_all_prices'|trans,
+        'data-name': 'prices-hint-trigger'
+    }) %}
+    <button {{ block('block_attributes') }}>
+        <span class="fa-info-circle fa--no-offset" aria-hidden="true"></span>
+    </button>
+{% endblock %}
+
 {% block product_prices %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-price__prices',
+        '~class': ' product-price-hint__prices',
         'data-name': 'prices',
     }) %}
     <div {{ block('block_attributes') }}>
@@ -75,6 +89,10 @@
 {% endblock %}
 
 {% block product_price_value %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price__your'
+    }) %}
+
     {# Clone js logic in package/commerce/src/Oro/Bundle/PricingBundle/Resources/public/templates/product/list-item-product-prices.html #}
     <div {{ block('block_attributes') }} data-name="price">
         <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>

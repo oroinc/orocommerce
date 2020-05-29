@@ -1,3 +1,5 @@
+{% use 'OroPricingBundle:layouts/blank/imports:prices.html.twig' %}
+
 {% block _shopping_list_view_container_widget %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -455,15 +457,29 @@
 
 {% block _shopping_list_line_items_list_price_info_widget %}
     {% set productMatchedPrice = parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
-    <div data-name="prices-hint">
-        {% if productMatchedPrice is not null %}
-            <span data-name="price-value">
+    <div data-name="prices-hint" class="product-price-hint">
+        <div class="product-price-hint__prices">
+            {% if productMatchedPrice is not null %}
+                <span data-name="price-value">
                 {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
             </span>
-        {% else %}
-            <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
-        {% endif %}
+            {% else %}
+                <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
+            {% endif %}
+        </div>
+        {{ block('container_widget') }}
     </div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_price_hint_trigger_widget %}
+    {% if mainProduct is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'aria-label': 'oro.pricing.view_all_prices_extended'|trans({
+                '%product_attrs%': mainProduct.sku|e
+            })
+        }) %}
+    {% endif %}
+    {{ block('product_price_hint_trigger') }}
 {% endblock %}
 
 {% block _shopping_list_line_items_list_actions_widget %}

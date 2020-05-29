@@ -148,7 +148,11 @@ define(function(require) {
         /**
          * Handle change
          */
-        onProductChanged: function() {
+        onProductChanged: function(data) {
+            if (data !== void 0 && data.event) {
+                this.model.set('sku', data.event.added.sku);
+            }
+
             this.checkAddButton();
             if (this.model.get('productId') && !this.$itemsContainer.children().length) {
                 this.$addItemButton.click();

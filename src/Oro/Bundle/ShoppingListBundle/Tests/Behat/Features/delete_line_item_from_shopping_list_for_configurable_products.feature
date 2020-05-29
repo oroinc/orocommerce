@@ -66,7 +66,7 @@ Feature: Delete line item from shopping list for configurable products
     And I should see "ConfigurableProductA"
     And I should see "Item #: CNFA"
     And I delete line item 1 in "Shopping List Line Items Table"
-    And I click "Yes, Delete"
+    And I click "Yes, Delete" in modal window
     Then I should see "The Shopping List is empty. Please add at least one product."
 
   Scenario: Reconfigure matrix line item form representation for configurable products
@@ -89,7 +89,7 @@ Feature: Delete line item from shopping list for configurable products
     And I should see "BooleanAttribute: Yes"
     And I should see "BooleanAttribute: No"
     When I delete line item 1 in "Shopping List Line Items Table"
-    And I click "Yes, Delete"
+    And I click "Yes, Delete" in modal window
     Then I should see "Shopping list item has been deleted" flash message
     And I should see following line items in "Shopping List Line Items Table":
       | SKU  | Quantity | Unit |
