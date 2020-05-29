@@ -19,6 +19,7 @@
 
     &.input {
       opacity: 1;
+      padding-right: $quick-order-add-input-offset;
     }
   }
 
@@ -29,12 +30,5 @@
     left: auto;
     bottom: 0;
     right: 7px;
-
-    .popover-trigger {
-      padding: 16px 8px;
-
-      border: none;
-      background: none;
-    }
   }
 }

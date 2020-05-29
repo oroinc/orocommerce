@@ -27,6 +27,8 @@ layout:
                     blockType: block
                 __product_price_listed:
                     blockType: block
+                __product_price_hint_trigger:
+                    blockType: block
             tree:
                 __root:
                     __product_price_container:
@@ -35,3 +37,4 @@ layout:
                                 __product_prices:
                                     __product_price_value: ~
                                     __product_price_listed: ~
+                                __product_price_hint_trigger: ~

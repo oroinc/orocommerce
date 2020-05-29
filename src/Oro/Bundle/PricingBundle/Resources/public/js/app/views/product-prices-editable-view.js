@@ -34,7 +34,8 @@ define(function(require) {
         options: {
             matchedPriceEnabled: true,
             precision: 4,
-            editable: true
+            editable: true,
+            ariaControlsId: null
         },
 
         templates: {
@@ -163,7 +164,18 @@ define(function(require) {
             }
 
             const $pricesHint = this.createElementByTemplate('pricesHint');
+            const sku = this.model.get('sku');
+            const updateAriaLabel = value => {
+                $pricesHint.attr('aria-label', _.__('oro.pricing.view_all_prices_extended', {
+                    product_attrs: value
+                }));
+            };
 
+            if (sku) {
+                updateAriaLabel(sku);
+            }
+
+            this.model.on('change:sku', (model, newValue) => updateAriaLabel(newValue));
             this.getElement('priceValue').after($pricesHint);
         },
 
@@ -173,11 +185,12 @@ define(function(require) {
             }
 
             return this.templates.pricesHintContent({
-                model: this.model.attributes,
+                model: this.model.toJSON(),
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
                 clickable: this.options.editable,
-                formatter: NumberFormatter
+                formatter: NumberFormatter,
+                ariaControlsId: this.options.ariaControlsId
             });
         },
 

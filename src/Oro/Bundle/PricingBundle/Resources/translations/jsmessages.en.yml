@@ -21,6 +21,7 @@ oro:
             not_available: 'N/A'
         pricelist.delete.message_default: 'Are you sure you would like to delete the "{{ priceListName }}" price list that is used in system configuration as default?'
         pricelist.delete.message: 'Are you sure you would like to delete the "{{ priceListName }}" price list?'
-        view_all_prices: 'Additional Product Prices'
+        view_all_prices: 'View All Prices'
+        view_all_prices_extended: 'View All Prices for {{ product_attrs }}'
     totals:
         no_data: No data

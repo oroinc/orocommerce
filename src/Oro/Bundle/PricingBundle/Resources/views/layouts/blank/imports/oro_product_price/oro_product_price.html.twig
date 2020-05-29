@@ -11,6 +11,16 @@
     {{ block('product_price_component') }}
 {% endblock %}
 
+{% block __oro_product_price__product_price_hint_trigger_widget %}
+    {% if product is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'aria-label': 'oro.pricing.view_all_prices_extended'|trans({
+                '%product_attrs%': product.sku|e
+            })
+        }) %}
+    {% endif %}
+    {{ block('product_price_hint_trigger') }}
+{% endblock %}
 {% block __oro_product_price__product_prices_widget %}
     {{ block('product_prices') }}
 {% endblock %}
