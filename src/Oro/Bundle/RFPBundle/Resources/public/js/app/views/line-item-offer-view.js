@@ -3,6 +3,8 @@ define(function(require) {
 
     const BaseProductView = require('oroproduct/js/app/views/base-product-view');
 
+    const _ = require('underscore');
+
     const LineItemOfferView = BaseProductView.extend({
         /**
          * @inheritDoc
@@ -23,6 +25,11 @@ define(function(require) {
             this.lineItemModel = options.lineItemModel;
             this.lineItemModel.on('change', this.updateModel, this);
             this.updateModel();
+
+            options.modelAttr = _.defaults(options.modelAttr || {}, {
+                sku: this.lineItemModel.get('sku')
+            });
+
             LineItemOfferView.__super__.initialize.call(this, options);
         },
 
@@ -30,7 +37,8 @@ define(function(require) {
             if (this.model) {
                 this.model.set({
                     id: this.lineItemModel.get('productId'),
-                    product_units: this.lineItemModel.get('product_units')
+                    product_units: this.lineItemModel.get('product_units'),
+                    sku: this.lineItemModel.get('sku')
                 });
             } else {
                 this.modelAttr.id = this.lineItemModel.get('productId');

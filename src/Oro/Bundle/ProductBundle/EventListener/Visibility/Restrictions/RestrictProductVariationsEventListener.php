@@ -48,7 +48,7 @@ class RestrictProductVariationsEventListener
      */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicable() &&
+        if ($this->isRestrictionApplicableForSearchEvent($event) &&
             !$this->isVariantCriteriaExist($event->getQuery()->getCriteria()->getWhereExpression())
         ) {
             $event->getQuery()->getCriteria()->andWhere(
@@ -62,9 +62,36 @@ class RestrictProductVariationsEventListener
      */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicable()) {
+        if ($this->isRestrictionApplicableForDbEvent($event)) {
             $this->dbQueryBuilderModifier->modify($event->getQueryBuilder());
         }
+    }
+
+    /**
+     * @param ProductSearchQueryRestrictionEvent $event
+     * @return bool
+     */
+    protected function isRestrictionApplicableForSearchEvent(ProductSearchQueryRestrictionEvent $event): bool
+    {
+        if ($this->isRestrictionApplicable()) {
+            return true;
+        }
+
+        $aliases = $event->getQuery()->getSelectAliases();
+        if (!\in_array('autocomplete_record_id', $aliases, true) && $this->isCatalogRestrictionApplicable()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param ProductDBQueryRestrictionEvent $event
+     * @return bool
+     */
+    protected function isRestrictionApplicableForDbEvent(ProductDBQueryRestrictionEvent $event): bool
+    {
+        return $this->isRestrictionApplicable();
     }
 
     /**
@@ -75,6 +102,17 @@ class RestrictProductVariationsEventListener
         $displaySimpleVariations = $this->getDisplayVariationsConfigurationValue();
 
         return $displaySimpleVariations === Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY &&
+            $this->frontendHelper->isFrontendRequest();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCatalogRestrictionApplicable(): bool
+    {
+        $displaySimpleVariations = $this->getDisplayVariationsConfigurationValue();
+
+        return $displaySimpleVariations === Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG &&
             $this->frontendHelper->isFrontendRequest();
     }
 

@@ -1,7 +1,7 @@
 api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-            documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit_precision.md'
 
         Oro\Bundle\ProductBundle\Entity\ProductUnit:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
@@ -92,7 +92,7 @@ api:
                     exclude: true
 
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
-            documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_variant_links.md'
 
         Oro\Bundle\AttachmentBundle\Entity\File:
             documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'

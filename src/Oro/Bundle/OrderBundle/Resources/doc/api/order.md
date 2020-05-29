@@ -221,7 +221,7 @@ Retrieve ID of address record assigned to a specific order record.
 
 #### update_relationship
 
-Replace address assigned to a specific order record.
+Replace the address record assigned to a specific order record.
 
 {@request:json_api}
 Example:
@@ -490,7 +490,7 @@ Retrieve ID of address record assigned to a specific order record.
 
 #### update_relationship
 
-Replace address assigned to a specific order record.
+Replace the address record assigned to a specific order record.
 
 {@request:json_api}
 Example:

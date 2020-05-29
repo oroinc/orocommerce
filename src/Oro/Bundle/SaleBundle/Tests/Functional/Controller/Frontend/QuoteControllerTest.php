@@ -99,6 +99,7 @@ class QuoteControllerTest extends WebTestCase
             'validUntil',
             'poNumber',
             'shipUntil',
+            'view_aria_label',
             'view_link',
         ];
 

@@ -4,8 +4,10 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -27,6 +29,9 @@ class AttributeChangesListener
     /** @var MessageProducerInterface */
     protected $producer;
 
+    /** @var array */
+    protected $fieldNamesForIndexation = [];
+
     /**
      * @param RequestStack $requestStack
      * @param MessageProducerInterface $producer
@@ -40,15 +45,34 @@ class AttributeChangesListener
     }
 
     /**
+     * @param PreFlushConfigEvent $event
+     */
+    public function preFlush(PreFlushConfigEvent $event): void
+    {
+        if (!$this->isPreFlushApplicable($event)) {
+            return;
+        }
+
+        $attributeConfig = $event->getConfig('attribute');
+        $fieldConfigId = $attributeConfig->getId();
+        if ($fieldConfigId instanceof FieldConfigId) {
+            $this->fieldNamesForIndexation[] = $fieldConfigId->getFieldName();
+            $attributeConfig->remove('request_search_indexation');
+            $event->getConfigManager()->persist($attributeConfig);
+        }
+    }
+
+    /**
      * @param PostFlushConfigEvent $event
      */
-    public function postFlush(PostFlushConfigEvent $event)
+    public function postFlush(PostFlushConfigEvent $event): void
     {
-        if (!$this->requestStack->getMasterRequest()) {
+        if (!$this->isPostFlushApplicable()) {
             return;
         }
 
         $configManager = $event->getConfigManager();
+        $modelsForIndexation = [];
 
         foreach ($event->getModels() as $model) {
             if (!$model instanceof FieldConfigModel) {
@@ -62,11 +86,22 @@ class AttributeChangesListener
 
             $fieldName = $model->getFieldName();
 
+            if (!empty($this->fieldNamesForIndexation) &&
+                !\in_array($fieldName, $this->fieldNamesForIndexation, true)
+            ) {
+                continue;
+            }
+
             if ($this->isReindexRequired($configManager, $className, $fieldName)) {
-                $this->triggerReindex($model);
-                break;
+                $modelsForIndexation[] = $model;
             }
         }
+
+        if (!empty($modelsForIndexation)) {
+            $this->triggerProductsReindex($modelsForIndexation);
+        }
+
+        $this->fieldNamesForIndexation = [];
     }
 
     /**
@@ -76,7 +111,7 @@ class AttributeChangesListener
      *
      * @return bool
      */
-    protected function isReindexRequired(ConfigManager $configManager, $className, $fieldName)
+    protected function isReindexRequired(ConfigManager $configManager, $className, $fieldName): bool
     {
         $extendConfig = $configManager->getProvider('extend')->getConfig($className, $fieldName);
         $extendChangeSet = $configManager->getConfigChangeSet($extendConfig);
@@ -115,7 +150,7 @@ class AttributeChangesListener
      *
      * @return bool
      */
-    private function isStateChanged(array $extendChangeSet)
+    private function isStateChanged(array $extendChangeSet): bool
     {
         $changeSet = $extendChangeSet['state'] ?? [];
 
@@ -167,9 +202,58 @@ class AttributeChangesListener
      * Trigger update search index only for product with attribute
      *
      * @param FieldConfigModel $attribute
+     *
+     * @deprecated use {@see triggerProductsReindex} instead
      */
     protected function triggerReindex(FieldConfigModel $attribute)
     {
         $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE, ['attributeId' => $attribute->getId()]);
+    }
+
+    /**
+     * @param FieldConfigModel[] $modelsForIndexation
+     */
+    protected function triggerProductsReindex(array $modelsForIndexation): void
+    {
+        $attributeIds = array_map(static function (FieldConfigModel $fieldConfigModel) {
+            return $fieldConfigModel->getId();
+        }, $modelsForIndexation);
+
+        $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => $attributeIds]);
+    }
+
+    /**
+     * @param PreFlushConfigEvent $event
+     *
+     * @return bool
+     */
+    private function isPreFlushApplicable(PreFlushConfigEvent $event): bool
+    {
+        if (!$event->isFieldConfig()) {
+            return false;
+        }
+
+        if (!is_a($event->getClassName(), Product::class, true)) {
+            return false;
+        }
+
+        $attributeConfig = $event->getConfig('attribute');
+        if (!$attributeConfig) {
+            return false;
+        }
+
+        return (bool) $attributeConfig->get('request_search_indexation');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPostFlushApplicable(): bool
+    {
+        if (!empty($this->fieldNamesForIndexation) || $this->requestStack->getMasterRequest()) {
+            return true;
+        }
+
+        return false;
     }
 }

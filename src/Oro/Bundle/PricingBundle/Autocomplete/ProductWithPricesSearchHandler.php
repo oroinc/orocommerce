@@ -224,17 +224,17 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $request = $this->requestStack->getCurrentRequest();
         $skuList = $request->request->get('sku');
         if ($skuList) {
-            $foundItems = $this->productSearchRepository->searchFilteredBySkus($skuList);
+            $query = $this->productSearchRepository->getFilterSkuQuery($skuList);
         } else {
-            $foundItems = $this->productSearchRepository
-                ->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults)
-                ->getResult()
-                ->getElements();
+            $query = $this->productSearchRepository->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults);
         }
+        // Add marker `autocomplete_record_id` to be able to determine query context in listeners
+        $query->addSelect('integer.product_id as autocomplete_record_id');
+        $foundItems = $query->getResult()->getElements();
 
         return array_combine(
             array_map(function (Item $foundItem) {
-                return $foundItem->getSelectedData()['product_id'];
+                return $foundItem->getSelectedData()['autocomplete_record_id'];
             }, $foundItems),
             array_map(function (Item $foundItem) {
                 return $foundItem->getSelectedData();

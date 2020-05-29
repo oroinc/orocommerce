@@ -1,15 +1,9 @@
 .product-tier-prices {
     position: relative;
-    left: -1px;
+    padding-top: 0;
+    padding-bottom: 0;
 
-    display: inline-block;
-    width: 27px;
-
-    vertical-align: middle;
-
-    border: 1px solid get-color('additional', 'light');
-    border-radius: 0 3px 3px 0;
-    background-color: get-color('additional', 'ultra');
+    border-radius: 0 $btn-border-radius $btn-border-radius 0;
 
     &.disabled {
         .popover-trigger {

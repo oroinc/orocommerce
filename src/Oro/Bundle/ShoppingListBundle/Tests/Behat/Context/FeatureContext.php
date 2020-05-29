@@ -99,7 +99,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
         /** @var TableRow $row */
         $row = $rows[$itemPosition - 1];
-        $button = $row->find('css', 'button');
+        $button = $row->find('css', 'button.item-remove');
 
         $button->click();
     }

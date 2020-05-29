@@ -1,13 +1,13 @@
 <div class="prices-tier">
     <% if (clickable) { %>
-    <h3 class="prices-tier-title"><%= _.__('oro.pricing.click_to_select') %></h3>
+    <h3 class="prices-tier-title"><%- _.__('oro.pricing.click_to_select') %></h3>
     <% } %>
     <table class="table">
         <% if (clickable) { %>
         <thead>
             <tr>
-                <th class="text-uppercase"><%= _.__('oro.pricing.qty') %></th>
-                <th><%= _.__('oro.pricing.unit_price') %></th>
+                <th class="text-uppercase"><%- _.__('oro.pricing.qty') %></th>
+                <th><%- _.__('oro.pricing.unit_price') %></th>
             </tr>
         </thead>
         <% } %>
@@ -15,20 +15,24 @@
         <% _.each(prices, function(unitPrices, unit) { %>
         <tr>
             <td colspan="2">
-                <b><%= _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
+                <b><%- _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
             </td>
         </tr>
         <% _.each(unitPrices, function(price) { %>
         <tr class="<% if (!_.isEmpty(matchedPrice) && unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
-            <td><%= price.quantity %></td>
+            <td><%- price.quantity %></td>
             <td>
                 <% if (clickable) { %>
-                <a href="#"
-                   data-price="<%= parseFloat(price.price) %>"
-                   data-unit="<%= unit %>"
-                ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                <a href="#" data-price="<%- parseFloat(price.price) %>"
+                   data-unit="<%- unit %>"
+                   role="button"
+                   data-emulate-btn-press=""
+                <% if (ariaControlsId) { %>
+                aria-controls="<%- ariaControlsId %>"
+                <% } %>
+                > <%- formatter.formatCurrency(price.price, price.currency) %></a>
                 <% } else { %>
-                <%= formatter.formatCurrency(price.price, price.currency) %>
+                    <%- formatter.formatCurrency(price.price, price.currency) %>
                 <% } %>
             </td>
         </tr>

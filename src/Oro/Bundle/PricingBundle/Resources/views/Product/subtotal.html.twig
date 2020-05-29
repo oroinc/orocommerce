@@ -10,15 +10,15 @@
              }
          }|json_encode }}"
     >
-        <label class="quick-order-add__label">{{ 'oro.pricing.price.label'|trans }}</label>
+        <span class="quick-order-add__label">{{ 'oro.pricing.price.label'|trans }}</span>
         <script type="text/template" data-name="prices-hint-content">
             {{ block('product_price_hint_content_js_widget') }}
         </script>
         <script type="text/template" data-name="prices-hint">
-            {{ block('product_price_hint_js_widget') }}
+            {{ block('product_price_hint_trigger_info_js_widget') }}
         </script>
 
         <input type="text" class="input input--full quick-order-add__subtotal-input"
-               data-name="field__product-subtotal" disabled>
+               data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
     </div>
 {% endblock %}

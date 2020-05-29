@@ -22,7 +22,7 @@
             {{ form_widget(form) }}
             <div class="request-form-lineitem-unit--remove">
                 <button type="button" class="removeRow item-remove btn--plain">
-                    <i class="fa-trash fa--large fa--no-offset"></i>
+                    <span class="fa-trash fa--large fa--no-offset" aria-hidden="true"></span>
                 </button>
             </div>
         </div>
@@ -112,12 +112,12 @@
                 <ul class="actions-row">
                     <li class="actions-row__item actions-row__item--separate-light">
                         <button class="actions-row__button" title="{{ 'oro.frontend.rfp.requestproduct.action.edit'|trans }}" data-role="edit">
-                            <i class="actions-row__icon fa-pencil"></i>
+                            <span class="actions-row__icon fa-pencil" aria-hidden="true"></span>
                         </button>
                     </li>
                     <li class="actions-row__item actions-row__item--separate-light">
                         <button class="actions-row__button removeRow" title="{{ 'oro.frontend.rfp.requestproduct.action.delete'|trans }}" data-role="remove">
-                            <i class="actions-row__icon fa-trash"></i>
+                            <span class="actions-row__icon fa-trash" aria-hidden="true"></span>
                         </button>
                     </li>
                 </ul>
@@ -401,9 +401,10 @@
 {% endmacro %}
 
 {% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
+    {% set ariaControlsId = 'rfq-quantity-'|uniqid %}
     {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <div class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
-        {{ form_widget(form.quantity) }}
+        {{ form_widget(form.quantity, {id: ariaControlsId}) }}
         {{ form_errors(form.quantity) }}
     </div>
     {% set attr_unit = layout_attr_defaults(form.productUnit.vars.attr, {
@@ -421,6 +422,7 @@
                 pricesHint: '[data-name="prices-hint"]',
                 pricesHintContent: '[data-name="prices-hint-content"]'
             },
+            ariaControlsId: ariaControlsId,
             matchedPriceEnabled: false
         }|json_encode }}">
         {% set label = 'List prices' %}
@@ -428,7 +430,7 @@
             {{ block('product_price_hint_content_js_widget') }}
         </script>
         <script type="text/template" data-name="prices-hint">
-            {{ block('product_price_hint_js_widget') }}
+            {{ block('product_price_hint_trigger_js_widget') }}
         </script>
         {% set input_price = layout_attr_defaults(form.price.value.vars.attr, {
             '~class': 'request-form-lineitem-unit__input',

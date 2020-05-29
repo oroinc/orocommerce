@@ -9,11 +9,20 @@
     }
 
     &__input {
+        position: relative;
+        right: -1px;
+
         max-width: 83px;
 
         text-align: right;
 
-        border-radius: 3px 0 0 3px;
+        border-radius: $btn-border-radius 0 0 $btn-border-radius;
+
+        &:hover,
+        &:focus,
+        &.focus-visible {
+            z-index: z('base');
+        }
     }
 
     &__label {

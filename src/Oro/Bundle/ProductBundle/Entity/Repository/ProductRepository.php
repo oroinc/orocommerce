@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -422,6 +423,8 @@ class ProductRepository extends EntityRepository
     /**
      * Returns array of product ids that have required attribute in their attribute family
      *
+     * @deprecated use {@see getProductIdsByAttributesId} instead
+     *
      * @param int $attributeId
      * @return array
      */
@@ -438,6 +441,33 @@ class ProductRepository extends EntityRepository
             ->where('r.entityConfigFieldId = :id')
             ->setParameter('id', $attributeId)
             ->orderBy('p.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'id');
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param array $attributesId
+     * @return array
+     */
+    public function getProductIdsByAttributesId(array $attributesId)
+    {
+        $qb = $this->createQueryBuilder('p');
+        $expr = $qb->expr();
+
+        $result = $qb
+            ->resetDQLPart('select')
+            ->select('p.id')
+            ->innerJoin('p.attributeFamily', 'f')
+            ->innerJoin('f.attributeGroups', 'g')
+            ->innerJoin('g.attributeRelations', 'r')
+            ->where($expr->in('r.entityConfigFieldId', ':ids'))
+            ->setParameter('ids', $attributesId, Connection::PARAM_INT_ARRAY)
+            ->orderBy('p.id')
+            ->groupBy('p.id')
             ->getQuery()
             ->getArrayResult();
 

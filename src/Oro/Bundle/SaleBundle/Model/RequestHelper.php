@@ -3,9 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
 
+/**
+ * Retrieves the RFPs that do not have any quotes based on them.
+ */
 class RequestHelper
 {
     /** @var ManagerRegistry */
@@ -53,7 +57,7 @@ class RequestHelper
                 ),
                 'r.createdAt < :date'
             )
-            ->setParameter('date', $date)
+            ->setParameter('date', $date, Type::DATETIME)
             ->getQuery()
             ->getResult();
     }

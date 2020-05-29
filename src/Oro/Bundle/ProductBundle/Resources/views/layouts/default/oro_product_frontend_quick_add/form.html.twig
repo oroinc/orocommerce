@@ -16,9 +16,10 @@
              }|json_encode }}"
              class="quick-order-add__row-content">
             <div class="quick-order-add__col quick-order-add__product">
-                <label class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</label>
+                <span class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</span>
                 {{ form_widget(form.productDisplayName, {attr: {
                     placeholder: "oro.product.sku.placeholder",
+                    'aria-label': "oro.product.sku.aria_label",
                     'data-value': form.productDisplayName.vars.value,
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
@@ -30,26 +31,34 @@
                 {{ form_widget(form.productSku) }}
             </div>
             <div class="quick-order-add__col quick-order-add__quantity">
-                <label class="quick-order-add__label">{{ 'oro.product.quantity.label'|trans }}</label>
+                <span class="quick-order-add__label">{{ 'oro.product.quantity.label'|trans }}</span>
                 {{ form_widget(form.productQuantity, {attr: {
                     class: ' quick-order-add__quantity-input',
-                    placeholder: "oro.product.quantity.placeholder"
+                    placeholder: "oro.product.quantity.placeholder",
+                    'aria-label': "oro.product.quantity.aria_label"
                 }}) }}
             </div>
             <div class="quick-order-add__col quick-order-add__unit">
-                <label class="quick-order-add__label">{{ 'oro.product.productunitprecision.unit.label'|trans }}</label>
-                {{ form_widget(form.productUnit, {'disabled': 'disabled'}) }}
+                <span class="quick-order-add__label">{{ 'oro.product.productunitprecision.unit.label'|trans }}</span>
+                {{ form_widget(form.productUnit, {attr: {
+                        disabled: 'disabled',
+                        'aria-label': "oro.product.productunitprecision.unit.label"
+                    }})
+                }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields %}
             {% if allow_delete %}
-                <span class="quick-order-add__remove-row removeRow" data-role="row-remove"><i class="fa-close"></i></span>
+                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove"
+                      aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
+                    <span class="fa-close" aria-hidden="true"></span>
+                </button>
             {% endif %}
         </div>
         <div class="quick-order-add__error fields-row-error">{# Dinamic content #}</div>
         <div class="quick-order-add__error-autocomplete">
             {{ form_errors(form.productQuantity) }}
             <div class="product-autocomplete-error" style="display: none;" data-role="autocomplete-error">
-                <span class="validation-failed">
+                <span class="validation-failed" role="alert">
                     <span class="validation-failed__icon" aria-hidden="true"></span>
                     <span>{{ 'oro.product.sku.not_found'|trans }}</span>
                 </span>
@@ -90,12 +99,12 @@
         </div>
 
         {% if allow_add %}
-            <a href="#" class="btn btn--primary btn--block add-list-item"
+            <button class="btn btn--primary btn--block add-list-item"
                data-container=".js-item-collection"
             >
-                <i class="fa-plus-circle"></i>
+                <span class="fa-plus-circle" aria-hidden="true"></span>
                 <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
-            </a>
+            </button>
         {% endif %}
     {% endspaceless %}
 {% endblock %}
@@ -103,9 +112,11 @@
 {% block oro_product_quick_add_import_from_file_widget %}
     {% spaceless %}
         <div class="quick-order-import__content">
-            <label class="btn btn--large" for="{{ form.file.vars.id }}">
-                {{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}
-            </label>
+            <label role="button" tabindex="0" class="btn btn--large" for="{{ form.file.vars.id }}"
+                   aria-label="{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.aria_label'|trans }}"
+                   aria-haspopup="true"
+                   data-emulate-btn-press
+                >{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}</label>
             {{ form_widget(form.file, {attr: {class:'hidden'}}) }}
         </div>
     {% endspaceless %}
@@ -113,7 +124,7 @@
 
 {% block oro_product_quick_add_copy_paste_widget %}
     {% spaceless %}
-        {{ form_widget(form.copyPaste, {attr: {
+        {{ form_widget(form.copyPaste, {'id': 'oro_product_quick_add_copy_paste_copyPaste','attr': {
             class: ' quick-order-copy-paste__textarea',
             placeholder: "oro.product.frontend.quick_add.copy_paste.placeholder"
         }}) }}

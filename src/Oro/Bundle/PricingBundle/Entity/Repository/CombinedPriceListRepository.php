@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -394,7 +395,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 )
             )
             ->andWhere($qb->expr()->eq('combinedPriceListActivationRule.active', ':active'))
-            ->setParameter('activateData', $activateDate)
+            ->setParameter('activateData', $activateDate, Type::DATETIME)
             ->setParameter('active', false);
 
         return $qb;

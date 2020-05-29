@@ -230,6 +230,26 @@ class ProductPriceTest extends RestJsonApiTestCase
         );
     }
 
+    public function testCreateTogetherWithPriceList()
+    {
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create_with_priceList.yml'
+        );
+
+        $content = self::jsonToArray($response->getContent());
+        $priceListId = (int)$content['data']['relationships']['priceList']['data']['id'];
+        $productPrice = $this->getProductPrice($priceListId);
+        self::assertNotNull($productPrice);
+
+        self::assertEquals(
+            $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
+            $this->getResourceId($response)
+        );
+
+        $this->assertMessagesSentForCreateRequest($priceListId);
+    }
+
     public function testDeleteList()
     {
         $this->cleanScheduledMessages();
@@ -462,16 +482,19 @@ class ProductPriceTest extends RestJsonApiTestCase
     }
 
     /**
-     * @param string $priceListReference
+     * @param @param int|string $priceListIdOrReference
      *
      * @return ProductPrice
      */
-    private function getProductPrice($priceListReference)
+    private function getProductPrice($priceListIdOrReference)
     {
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository(ProductPrice::class)
-            ->createQueryBuilder('price');
+        $em = $this->getEntityManager(ProductPrice::class);
+        /** @var PriceList $priceList */
+        $priceList = is_string($priceListIdOrReference)
+            ? $this->getReference($priceListIdOrReference)
+            : $em->find(PriceList::class, $priceListIdOrReference);
 
+        $queryBuilder = $em->getRepository(ProductPrice::class)->createQueryBuilder('price');
         $queryBuilder
             ->andWhere('price.quantity = :quantity')
             ->andWhere('price.value = :value')
@@ -482,12 +505,12 @@ class ProductPriceTest extends RestJsonApiTestCase
             ->setParameter('quantity', 250)
             ->setParameter('value', 150)
             ->setParameter('currency', 'CAD')
-            ->setParameter('priceList', $this->getReference($priceListReference))
+            ->setParameter('priceList', $priceList)
             ->setParameter('product', $this->getReference('product-5'))
             ->setParameter('unit', $this->getReference('product_unit.milliliter'));
 
         $query = $queryBuilder->getQuery();
-        $query->setHint('priceList', $this->getReference($priceListReference)->getId());
+        $query->setHint('priceList', $priceList->getId());
         $query->setHint(
             PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')
@@ -540,12 +563,14 @@ class ProductPriceTest extends RestJsonApiTestCase
     }
 
     /**
-     * @param string $priceListReference
+     * @param int|string $priceListIdOrReference
      */
-    private function assertMessagesSentForCreateRequest($priceListReference)
+    private function assertMessagesSentForCreateRequest($priceListIdOrReference)
     {
         $productId = $this->getReference('product-5')->getId();
-        $priceListId = $this->getReference($priceListReference)->getId();
+        $priceListId = is_string($priceListIdOrReference)
+            ? $this->getReference($priceListIdOrReference)->getId()
+            : $priceListIdOrReference;
 
         self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,

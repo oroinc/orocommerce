@@ -165,6 +165,10 @@ oro_behat_extension:
             selector: 'div[data-page-component-name="cms-page-drafts-grid"]'
             class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+        Digital Asset Image:
+            selector:
+                type: xpath
+                locator: '//img[@id="wysiwyg_img"][contains (@src,"/media/cache/attachment")]'
     suites:
         OroCMSBundle:
             contexts:

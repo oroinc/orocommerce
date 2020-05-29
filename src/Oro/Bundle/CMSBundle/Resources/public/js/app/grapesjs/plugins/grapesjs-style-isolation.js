@@ -1,5 +1,5 @@
 import GrapesJS from 'grapesjs';
-import {uniqueId} from 'underscore';
+import {uniqueId, each} from 'underscore';
 import $ from 'jquery';
 
 const componentHtmlIdRegexp = /(<div id="isolation-scope-([\w]*))/g;
@@ -18,6 +18,16 @@ export const escapeWrapper = html => {
     }
 
     return html;
+};
+
+export const getWrapperAttrs = html => {
+    const attrs = {};
+    if (componentHtmlIdRegexp.test(html)) {
+        const $wrapper = $(html);
+        each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
+    }
+    delete attrs.id;
+    return attrs;
 };
 
 export const stripRestrictedAttrs = html => {

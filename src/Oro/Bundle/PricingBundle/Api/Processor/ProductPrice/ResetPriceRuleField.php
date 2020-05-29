@@ -18,17 +18,19 @@ class ResetPriceRuleField implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         $productPrice = $context->getResult();
-        if (!$productPrice instanceof ProductPrice) {
+        if (null === $productPrice) {
             return;
         }
 
         $oldProductPrice = $context->get(RememberProductPrice::PRODUCT_PRICE_ATTRIBUTE);
-        if (null !== $oldProductPrice) {
-            if ($this->needToResetPriceRule($productPrice, $oldProductPrice)) {
-                $productPrice->setPriceRule(null);
-            }
-            $context->remove(RememberProductPrice::PRODUCT_PRICE_ATTRIBUTE);
+        if (null === $oldProductPrice) {
+            return;
         }
+
+        if ($this->needToResetPriceRule($productPrice, $oldProductPrice)) {
+            $productPrice->setPriceRule(null);
+        }
+        $context->remove(RememberProductPrice::PRODUCT_PRICE_ATTRIBUTE);
     }
 
     /**

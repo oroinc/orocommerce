@@ -276,6 +276,7 @@ define(function(require) {
          */
         onImportCode: function() {
             if (!this.disabled) {
+                this.editor.CssComposer.clear();
                 this.editor.setComponents(this.viewerEditor.getValue().trim());
                 this.dialog.remove();
             }

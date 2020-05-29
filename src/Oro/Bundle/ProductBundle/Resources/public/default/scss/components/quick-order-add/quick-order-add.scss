@@ -15,7 +15,7 @@
     &:not(:first-child) {
       .quick-order-add__label {
         display: none;
-      }  
+      }
     }
   }
 
@@ -196,14 +196,18 @@
 
         .pull-left {
           width: 100%;
+
+          &:nth-child(2) {
+            margin: $quick-order-add-mobile-widget-content-margin;
+          }
         }
 
         .btn-group { //override platform styles
           margin-left: 0;
           width: 100%;
 
-          &.widget-content {
-            margin: $quick-order-add-mobile-widget-content-margin;
+          .mass-action-controls {
+            width: 100%;
           }
 
           a:not(.dropdown-toggle) {

@@ -1,5 +1,5 @@
 @regression
-@random-failed
+@skip
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Visibility of product prices in different cases
   In order to have ability to filter products by product prices on the store frontend

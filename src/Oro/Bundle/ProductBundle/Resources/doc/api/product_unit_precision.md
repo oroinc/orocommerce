@@ -161,7 +161,7 @@ Retrieve the ID of the product record which a specific product unit precision re
 
 #### update_relationship
 
-Replace product record a specific product unit precision record is assigned to.
+Replace the product record a specific product unit precision record is assigned to.
 
 {@request:json_api}
 Example:

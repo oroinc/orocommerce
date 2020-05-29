@@ -53,25 +53,26 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     }
 
     /**
-     * @dataProvider dataProvider
+     * @dataProvider dataProviderSearch
      *
-     * @param $configValue
-     * @param $isFrontendRequest
-     * @param $isRestrictionApplicable
+     * @param string $configValue
+     * @param bool $isFrontendRequest
+     * @param bool $isRestrictionApplicable
+     * @param Query $query
      */
-    public function testOnSearchQuery($configValue, $isFrontendRequest, $isRestrictionApplicable)
+    public function testOnSearchQuery($configValue, $isFrontendRequest, $isRestrictionApplicable, Query $query)
     {
         $this->configManager
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('get')
-            ->with('oro_product.display_simple_variations')
-            ->willReturn($configValue);
+            ->willReturnMap([
+                ['oro_product.display_simple_variations', false, false, null, $configValue]
+            ]);
 
         $this->frontendHelper
             ->method('isFrontendRequest')
             ->willReturn($isFrontendRequest);
-
-        $event = new ProductSearchQueryRestrictionEvent(new Query());
+        $event = new ProductSearchQueryRestrictionEvent($query);
         $this->listener->onSearchQuery($event);
 
         $whereExpression = $event->getQuery()->getCriteria()->getWhereExpression();
@@ -91,8 +92,15 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('oro_product.display_simple_variations')
-            ->willReturn(Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY);
+            ->willReturnMap([
+                [
+                    'oro_product.display_simple_variations',
+                    false,
+                    false,
+                    null,
+                    Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY
+                ]
+            ]);
 
         $this->frontendHelper
             ->method('isFrontendRequest')
@@ -103,6 +111,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         $criteria->andWhere($expression);
 
         $query = new Query();
+        $query->addSelect('integer.product_id');
         $query->setCriteria($criteria);
 
         $event = new ProductSearchQueryRestrictionEvent($query);
@@ -115,7 +124,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     }
 
     /**
-     * @dataProvider dataProvider
+     * @dataProvider dataProviderDb
      *
      * @param $configValue
      * @param $isFrontendRequest
@@ -153,26 +162,83 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * @return array
      */
-    public function dataProvider()
+    public function dataProviderSearch()
     {
         return [
-            "Restriction applicable" => [
-                'configValue'       => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
+            'Restriction applicable not autocomplete' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
+                'isFrontendRequest' => true,
+                'isRestrictionApplicable' => true,
+                'query' => (new Query())->addSelect('integer.product_id')
+            ],
+            'Restriction applicable autocomplete' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
+                'isFrontendRequest' => true,
+                'isRestrictionApplicable' => true,
+                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+            ],
+            'Restriction applicable not autocomplete hide catalog' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
+                'isFrontendRequest' => true,
+                'isRestrictionApplicable' => true,
+                'query' => (new Query())->addSelect('integer.product_id')
+            ],
+            'Restriction applicable autocomplete hide catalog' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
+                'isFrontendRequest' => true,
+                'isRestrictionApplicable' => false,
+                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+            ],
+            'Restriction applicable autocomplete hide catalog not frontend' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
+                'isFrontendRequest' => false,
+                'isRestrictionApplicable' => false,
+                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+            ],
+            'Is not frontend request' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
+                'isFrontendRequest' => false,
+                'isRestrictionApplicable' => false,
+                'query' => (new Query())->addSelect('integer.product_id')
+            ],
+            'Config value is display everywhere' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
+                'isFrontendRequest' => true,
+                'isRestrictionApplicable' => false,
+                'query' => (new Query())->addSelect('integer.product_id')
+            ],
+            'Config value is display everywhere and is not frontend' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
+                'isFrontendRequest' => false,
+                'isRestrictionApplicable' => false,
+                'query' => (new Query())->addSelect('integer.product_id')
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderDb()
+    {
+        return [
+            'Restriction applicable' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true
             ],
-            "Is not frontend request" => [
-                'configValue'       => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
+            'Is not frontend request' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false
             ],
-            "Config value is display everywhere" => [
-                'configValue'       => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
+            'Config value is display everywhere' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => false
             ],
-            "Config value is display everywhere and is not frontend" => [
-                'configValue'       => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
+            'Config value is display everywhere and is not frontend' => [
+                'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false
             ],
