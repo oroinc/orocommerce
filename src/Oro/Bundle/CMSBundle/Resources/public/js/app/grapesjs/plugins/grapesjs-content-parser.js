@@ -103,7 +103,7 @@ function parseClass(str) {
  * @param parent
  * @returns {Array}
  */
-function parseNodes(el, config, ct = '', parent = false) {
+function parseNodes(el, config, ct = '', parent = {}) {
     const result = [];
     const nodes = el.childNodes;
 
@@ -278,7 +278,7 @@ function parseNodes(el, config, ct = '', parent = false) {
         }
 
         if (wrappedTags.includes(model.tagName)) {
-            if (parent && parent.type !== 'text' && parent.type !== 'default') {
+            if (parent.type !== 'text' && parent.type !== 'default') {
                 model = {
                     tagName: 'div',
                     type: 'text',

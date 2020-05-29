@@ -53,9 +53,8 @@ const ComponentManager = BaseClass.extend({
      * Add Rich Text Editor actions
      */
     addActionRte() {
-        const RichTextEditor = this.editor.RichTextEditor;
         const editor = this.editor;
-
+        const RichTextEditor = editor.RichTextEditor;
         this.editorFormats.forEach(format => RichTextEditor.remove(format));
 
         RichTextEditor.add('formatBlock', {
@@ -81,8 +80,8 @@ const ComponentManager = BaseClass.extend({
 
             priority: 0,
 
-            result: function result(rte, action) {
-                const value = action.btn.querySelector('[name="tag"]').value;
+            result(rte) {
+                const value = rte.actionbar.querySelector(`[name="tag`).value;
 
                 if (value === 'normal') {
                     const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
@@ -91,12 +90,13 @@ const ComponentManager = BaseClass.extend({
 
                     return rte.insertHTML(text);
                 }
+
                 return rte.exec('formatBlock', value);
             },
 
-            update: function(rte, action) {
+            update(rte, action) {
                 const value = rte.doc.queryCommandValue(action.name);
-                const select = action.btn.querySelector('[name="tag"]');
+                const select = rte.actionbar.querySelector(`[name="tag"]`);
 
                 if (value !== 'false') {
                     if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
