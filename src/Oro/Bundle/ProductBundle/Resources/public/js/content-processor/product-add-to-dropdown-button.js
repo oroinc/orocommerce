@@ -34,6 +34,7 @@ define([
                         modules.push(module);
                     }
                 });
+                $(this.element).attr('data-product-dropdown-root', '');
                 this._super(...args);
             },
 

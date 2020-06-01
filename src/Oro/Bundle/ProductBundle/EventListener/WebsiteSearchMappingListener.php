@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FulltextAwareTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 
@@ -67,7 +68,11 @@ class WebsiteSearchMappingListener
                 $types = $attributeType->getFilterStorageFieldTypes();
 
                 foreach ($names as $key => $scalarName) {
-                    $fields[$scalarName] = ['name' => $scalarName, 'type' => $types[$key]];
+                    $field = ['name' => $scalarName, 'type' => $types[$key]];
+                    if ($attributeType instanceof FulltextAwareTypeInterface) {
+                        $field['fulltext'] = $attributeType->isFulltextSearchSupported();
+                    }
+                    $fields[$scalarName] = $field;
                 }
             }
 
@@ -78,7 +83,11 @@ class WebsiteSearchMappingListener
                     continue;
                 }
 
-                $fields[$name] = ['name' => $name, 'type' => $attributeType->getSorterStorageFieldType()];
+                $fields[$name] = [
+                    'name' => $name,
+                    'type' => $attributeType->getSorterStorageFieldType(),
+                    'fulltext' => false,
+                ];
             }
         }
 

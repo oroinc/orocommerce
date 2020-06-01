@@ -146,7 +146,7 @@ class FooPlaceholder extends AbstractPlaceholder
 ```yaml
 services:
     app.website_search.foo_placeholder:
-        class: 'AppBundle\WebsiteSearch\FooPlaceholder'
+        class: AppBundle\WebsiteSearch\FooPlaceholder
         tags:
             - { name: website_search.placeholder }
 ```
@@ -275,7 +275,7 @@ Service declaration for such listener might look like the following example:
 ```yaml
 services:
     oro_product.event_listener.website_search_index:
-        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener
         arguments:
             - '@oro_website.provider.website_localization'
             - '@oro_website_search.manager.website_context_manager'

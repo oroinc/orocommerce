@@ -103,7 +103,7 @@ class CheckoutGridListener
     protected function buildColumns(array $records)
     {
         $ids = array_map(
-            function (ResultRecord $record) {
+            static function (ResultRecord $record) {
                 return $record->getValue('id');
             },
             $records
@@ -115,10 +115,6 @@ class CheckoutGridListener
         foreach ($records as $record) {
             $id = $record->getValue('id');
 
-            /** @var Checkout $ch */
-            $ch = $this->checkoutRepository->find($id);
-            $data = $ch->getCompletedData();
-
             if (isset($checkouts[$id])) {
                 $sourceEntity = $checkouts[$id]->getSource()->getEntity();
 
@@ -128,11 +124,7 @@ class CheckoutGridListener
             }
 
             if ($record->getValue('completed')) {
-                if (!$record->getValue('startedFrom')) {
-                    $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
-                }
-
-                $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'currency']);
+                $this->fillCompletedCheckoutData($record);
                 continue;
             }
 
@@ -143,7 +135,29 @@ class CheckoutGridListener
             if (isset($checkouts[$id]) && !$record->getValue('isSubtotalValid')) {
                 $this->updateTotal($checkouts[$id], $record);
             }
+
+            $startedFrom = $record->getValue('startedFrom');
+            if (isset($startedFrom['label'])) {
+                $record->addData(['startedFromLabel' => $startedFrom['label']]);
+            }
         }
+    }
+
+    /**
+     * @param ResultRecord $record
+     */
+    private function fillCompletedCheckoutData(ResultRecord $record): void
+    {
+        /** @var Checkout $checkout */
+        $checkout = $this->checkoutRepository->find($record->getValue('id'));
+        $data = $checkout->getCompletedData();
+
+        if (!$record->getValue('startedFrom')) {
+            $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
+            $record->addData(['startedFromLabel' => $record->getValue('startedFrom')]);
+        }
+
+        $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'currency']);
     }
 
     /**

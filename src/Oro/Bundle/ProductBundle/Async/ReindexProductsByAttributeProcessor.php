@@ -18,6 +18,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Trigger update of search index for products with specified attribute
+ *
+ * @deprecated use {@see ReindexProductsByAttributesProcessor} instead
  */
 class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {

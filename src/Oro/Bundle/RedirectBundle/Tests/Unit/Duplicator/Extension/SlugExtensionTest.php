@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Duplicator\Extension;
 
-use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
+use DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\DraftBundle\Duplicator\DraftContext;
 use Oro\Bundle\DraftBundle\Duplicator\Matcher\PropertiesNameMatcher;
-use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\DraftBundle\Tests\Unit\Stub\DraftableEntityStub;
 use Oro\Bundle\RedirectBundle\Duplicator\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -55,7 +55,7 @@ class SlugExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFilter(): void
     {
-        $this->assertEquals(new DoctrineCollectionFilter(), $this->extension->getFilter());
+        $this->assertEquals(new DoctrineEmptyCollectionFilter(), $this->extension->getFilter());
     }
 
     public function testGetMatcher(): void
@@ -68,8 +68,7 @@ class SlugExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testIsSupport(): void
     {
-        /** @var DraftableInterface $source */
-        $source = $this->getEntity(DraftableEntityStub::class);
+        $source = new Page();
         $this->assertTrue($this->extension->isSupport($source));
     }
 }

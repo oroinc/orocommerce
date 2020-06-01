@@ -120,14 +120,17 @@ define(function(require) {
             }
 
             const content = this.getHintContent();
-            $pricesHint.toggleClass('disabled', content.length === 0);
+            $pricesHint
+                .toggleClass('disabled', content.length === 0)
+                .attr('disabled', content.length === 0);
             if (!content.length) {
                 return;
             }
 
             if (!$pricesHint.data(Popover.DATA_KEY)) {
                 layout.initPopoverForElements($pricesHint, {
-                    container: 'body'
+                    container: 'body',
+                    forceToShowTitle: true
                 }, true);
             }
 

@@ -23,7 +23,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I login as administrator
     And I go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
 
   Scenario: Enable Guest Checkout and Guest Shopping List in system configuration

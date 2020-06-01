@@ -112,7 +112,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException()
+    public function testProcessWhenThrowsInvalidArgumentException(): void
     {
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
@@ -121,9 +121,13 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
-        $providerNames = $this->getWebsiteProvidersByNames($website);
         $job = $this->getJobAndRunUnique($messageId);
-        $this->expectCreateDelayed([$website], $providerNames);
+        $this->jobRunner
+            ->expects($this->never())
+            ->method('createDelayed');
+        $this->canonicalUrlGenerator
+            ->expects($this->never())
+            ->method('clearCache');
 
         $dependentJobContext = new DependentJobContext($job);
         $this->dependentJobService->expects($this->once())
@@ -151,7 +155,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
     }
 
-    public function testProcessWhenThrowsException()
+    public function testProcessWhenThrowsException(): void
     {
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
@@ -161,9 +165,13 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
-        $providerNames = $this->getWebsiteProvidersByNames($website);
         $job = $this->getJobAndRunUnique($messageId);
-        $this->expectCreateDelayed([$website], $providerNames);
+        $this->jobRunner
+            ->expects($this->never())
+            ->method('createDelayed');
+        $this->canonicalUrlGenerator
+            ->expects($this->never())
+            ->method('clearCache');
 
         $dependentJobContext = new DependentJobContext($job);
         $this->dependentJobService->expects($this->once())
@@ -194,7 +202,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
@@ -229,7 +237,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
         $this->assertEquals(
             [Topics::GENERATE_SITEMAP],
@@ -240,7 +248,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function getWebsite()
+    private function getWebsite(): \PHPUnit\Framework\MockObject\MockObject
     {
         $website = $this->createWebsiteMock(777);
 
@@ -254,7 +262,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return WebsiteInterface[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
-    private function getWebsites()
+    private function getWebsites(): array
     {
         $websites = [
             $this->createWebsiteMock(777),
@@ -271,7 +279,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      * @param int $websiteId
      * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createWebsiteMock($websiteId)
+    private function createWebsiteMock($websiteId): \PHPUnit\Framework\MockObject\MockObject
     {
         $website = $this->createMock(WebsiteInterface::class);
         $website->expects($this->any())
@@ -285,7 +293,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      * @param int $messageId
      * @return Job
      */
-    private function getJobAndRunUnique($messageId)
+    private function getJobAndRunUnique($messageId): Job
     {
         $jobRunner = $this->jobRunner;
 
@@ -310,13 +318,13 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    private function getWebsiteProvidersByNames(WebsiteInterface $website)
+    private function getWebsiteProvidersByNames(WebsiteInterface $website): array
     {
         $providerNames = [
             'first' => '',
             'second' => ''
         ];
-        $this->websiteUrlProvidersService->expects(static::any())
+        $this->websiteUrlProvidersService->expects($this->any())
             ->method('getWebsiteProvidersIndexedByNames')
             ->with($website)
             ->willReturn($providerNames);
@@ -328,7 +336,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      * @param array|WebsiteInterface[] $websites
      * @param array $providerNames
      */
-    private function expectCreateDelayed(array $websites, array $providerNames)
+    private function expectCreateDelayed(array $websites, array $providerNames): void
     {
         $this->jobRunner->expects($this->exactly(count($providerNames)*count($websites)))
             ->method('createDelayed');
@@ -362,7 +370,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
      * @param array $data
      * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function getMessage($messageId, array $data = [])
+    private function getMessage($messageId, array $data = []): \PHPUnit\Framework\MockObject\MockObject
     {
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())

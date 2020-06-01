@@ -11,4 +11,4 @@ Feature: Product view page breadcrumbs mastercatalog
     When I click "View Details" for "PSKU1" product
     Then I should see "All Products / Headlamps / 220 Lumen Rechargeable Headlamp"
     When I click on "All Products"
-    Then Page title equals to "Catalog"
+    Then Page title equals to "All Products"

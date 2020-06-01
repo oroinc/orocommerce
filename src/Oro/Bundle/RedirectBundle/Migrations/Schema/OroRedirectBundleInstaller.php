@@ -6,6 +6,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * Installer for the RedirectBundle.
+ */
 class OroRedirectBundleInstaller implements Installation
 {
     /**
@@ -13,7 +16,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_6_1';
     }
 
     /**
@@ -51,6 +54,7 @@ class OroRedirectBundleInstaller implements Installation
         $table->addColumn('slug_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('parameters_hash', 'string', ['length' => 32]);
+        $table->addColumn('scopes_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
         $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
@@ -61,6 +65,10 @@ class OroRedirectBundleInstaller implements Installation
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addUniqueIndex(
+            ['url_hash', 'scopes_hash', 'route_name', 'parameters_hash'],
+            'oro_redirect_slug_scopes_idx'
         );
     }
 

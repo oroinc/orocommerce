@@ -70,6 +70,7 @@ class CouponGeneratorTest extends WebTestCase
         /** @var Coupon $coupon */
         $coupon = reset($generatedCoupons);
         $this->assertRegExp('/^[0-9]{1,3}$/', $coupon->getCode());
+        $this->assertEquals(strtoupper($coupon->getCode()), $coupon->getCodeUppercase());
         $this->assertEquals($options->getOwner(), $coupon->getOwner());
         $this->assertEquals($options->isEnabled(), $coupon->isEnabled());
         $this->assertEquals($options->getPromotion(), $coupon->getPromotion());

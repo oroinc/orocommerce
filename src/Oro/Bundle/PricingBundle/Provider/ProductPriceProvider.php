@@ -125,6 +125,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
         $prices = $this->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+        $this->sortPrices($prices);
 
         $productPriceData = [];
         foreach ($prices as $priceData) {
@@ -153,6 +154,20 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $prices
+     */
+    private function sortPrices(array &$prices)
+    {
+        usort($prices, static function (ProductPriceDTO $a, ProductPriceDTO $b) {
+            if ($a->getUnit()->getCode() === $b->getUnit()->getCode()) {
+                return $a->getQuantity() <=> $b->getQuantity();
+            }
+
+            return $a->getUnit()->getCode() <=> $b->getUnit()->getCode();
+        });
     }
 
     /**

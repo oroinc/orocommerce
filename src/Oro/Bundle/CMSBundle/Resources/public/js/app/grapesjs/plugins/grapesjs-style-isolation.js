@@ -1,10 +1,13 @@
 import GrapesJS from 'grapesjs';
-import {uniqueId} from 'underscore';
+import {uniqueId, each} from 'underscore';
 import $ from 'jquery';
 
-const componentCssIdRegexp = /(\[id="isolation-scope-([\w]*)"\])/g;
 const componentHtmlIdRegexp = /(<div id="isolation-scope-([\w]*))/g;
+// @deprecated
+const componentCssIdRegexp = /(\[id="isolation-scope-([\w]*)"\])/g;
 const cssSelectorRegexp = /(?:[\.\#])[\#\.\w\:\-\s\(\)\[\]\=\"]+\s?(?=\{)/g;
+const cssWrapperScopeRegexp = /^#isolation-scope-[\w]+\{/;
+const cssChildrenScopeRegexp = /#isolation-scope-[\w]*\s+/g;
 
 const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 
@@ -15,6 +18,16 @@ export const escapeWrapper = html => {
     }
 
     return html;
+};
+
+export const getWrapperAttrs = html => {
+    const attrs = {};
+    if (componentHtmlIdRegexp.test(html)) {
+        const $wrapper = $(html);
+        each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
+    }
+    delete attrs.id;
+    return attrs;
 };
 
 export const stripRestrictedAttrs = html => {
@@ -32,29 +45,71 @@ function randomId(length = 20) {
 }
 
 export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options) => {
-    const uniqId = 'id="isolation-scope-' + randomId() + '"';
-
-    function removeCSSContainerId(cssText) {
-        return cssText.replace(componentCssIdRegexp, '');
-    }
+    const scopeId = 'isolation-scope-' + randomId();
 
     editor.getIsolatedHtml = content => {
+        const wrapper = editor.getWrapper();
+        const wrapperClasses = wrapper.getClasses().join(' ');
         let html = stripRestrictedAttrs(escapeWrapper(editor.getHtml()), editor.getAllowedConfig());
-        content ? html = content : html;
-        html = !html ? html : '<div ' + uniqId + '>' + html + '</div>';
+
+        if (content) {
+            html = content;
+        }
+
+        if (wrapperClasses.length || wrapper.styleToString().length || html.length) {
+            const root = document.createElement('div');
+
+            root.id = scopeId;
+            root.innerHTML = html;
+
+            if (wrapperClasses.length) {
+                root.className = wrapperClasses;
+            }
+
+            html = root.outerHTML;
+        }
+
         return html;
     };
 
     editor.getIsolatedCss = () => {
-        let css = removeCSSContainerId(editor.getCss());
+        const wrapperCss = editor.getWrapper().styleToString();
+        const cssc = editor.CssComposer;
+        const components = editor.DomComponents.getComponent().get('components');
+        let css = '';
 
-        css = css.replace(cssSelectorRegexp, '[' + uniqId + '] $&');
+        if (wrapperCss.length) {
+            css += `#${scopeId}{${wrapperCss}}`;
+        }
+
+        if (components.length) {
+            let childrenCss = '';
+
+            components.each(component => {
+                const componentCss = editor.CodeManager.getCode(component, 'css', {cssc});
+
+                if (componentCss.length) {
+                    // Do not remove space in replace phrase
+                    childrenCss += componentCss.replace(cssSelectorRegexp, ` #${scopeId} $&`);
+                }
+            });
+
+            css += childrenCss;
+        }
+
         return css;
     };
 
     editor.setIsolatedHtml = html => escapeWrapper(html);
 
-    editor.setIsolatedStyle = (css = '') => {
-        editor.setStyle(removeCSSContainerId(css));
+    editor.getPureStyle = (css = '') => {
+        if (!css.length) {
+            return '';
+        }
+
+        return css
+            .replace(cssWrapperScopeRegexp, '#wrapper{')
+            .replace(componentCssIdRegexp, '')
+            .replace(cssChildrenScopeRegexp, '');
     };
 });

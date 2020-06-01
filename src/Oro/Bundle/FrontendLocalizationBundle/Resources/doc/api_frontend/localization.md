@@ -4,11 +4,15 @@
 
 ### get
 
-Retrieve a collection of available localizations records for current website.
+Retrieve a localization record.
+
+{@inheritdoc}
 
 ### get_list
 
 Retrieve a collection of localization records.
+
+{@inheritdoc}
 
 ## FIELDS
 

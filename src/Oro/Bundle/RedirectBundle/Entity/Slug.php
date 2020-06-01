@@ -16,12 +16,21 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 /**
  * Slug entity class.
  *
- * @ORM\Table(name="oro_redirect_slug", indexes={
- *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
- *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
- *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
- *     @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
- * })
+ * @ORM\Table(
+ *     name="oro_redirect_slug",
+ *     indexes={
+ *         @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
+ *         @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
+ *         @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
+ *         @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
+ *     },
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(
+ *             name="oro_redirect_slug_scopes_idx",
+ *             columns={"url_hash", "scopes_hash", "route_name", "parameters_hash"}
+ *         )
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
@@ -45,7 +54,7 @@ class Slug implements OrganizationAwareInterface
 {
     use OrganizationAwareTrait;
 
-    const DELIMITER = '/';
+    public const DELIMITER = '/';
 
     /**
      * @var integer
@@ -108,6 +117,13 @@ class Slug implements OrganizationAwareInterface
     protected $scopes;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="scopes_hash", type="string", length=32)
+     */
+    protected $scopesHash;
+
+    /**
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
      *     mappedBy="slug"
@@ -144,6 +160,7 @@ class Slug implements OrganizationAwareInterface
     {
         $this->redirects = new ArrayCollection();
         $this->scopes = new ArrayCollection();
+        $this->fillScopesHash();
     }
 
     /**
@@ -231,6 +248,7 @@ class Slug implements OrganizationAwareInterface
     {
         if (!$this->scopes->contains($scope)) {
             $this->scopes->add($scope);
+            $this->fillScopesHash();
         }
 
         return $this;
@@ -245,6 +263,7 @@ class Slug implements OrganizationAwareInterface
     {
         if ($this->scopes->contains($scope)) {
             $this->scopes->removeElement($scope);
+            $this->fillScopesHash();
         }
 
         return $this;
@@ -256,6 +275,7 @@ class Slug implements OrganizationAwareInterface
     public function resetScopes()
     {
         $this->scopes->clear();
+        $this->fillScopesHash();
 
         return $this;
     }
@@ -320,6 +340,7 @@ class Slug implements OrganizationAwareInterface
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
+        $this->fillScopesHash();
 
         return $this;
     }
@@ -349,5 +370,28 @@ class Slug implements OrganizationAwareInterface
     public function getParametersHash()
     {
         return $this->parametersHash;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScopesHash()
+    {
+        return $this->scopesHash;
+    }
+
+    public function fillScopesHash(): void
+    {
+        $scopeIds = [];
+        foreach ($this->scopes as $scope) {
+            $scopeIds[] = $scope->getId();
+        }
+
+        sort($scopeIds);
+        $this->scopesHash = md5(sprintf(
+            '%s:%s',
+            implode(',', $scopeIds),
+            $this->localization ? $this->localization->getId() : ''
+        ));
     }
 }

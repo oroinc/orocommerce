@@ -18,12 +18,12 @@ Retrieve a collection of shopping list item records.
 
 Create a new shopping list item record.
 
-**Note**: When an item is added to the default shopping list by using the string `default` as the shopping list ID
-and there ia no a shopping list, it will be created automatically.
-
 The created record is returned in the response.
 
 {@inheritdoc}
+
+**Note**: When an item is added to the default shopping list by using the string `default` as the shopping list ID
+and there ia no a shopping list, it will be created automatically.
 
 {@request:json_api}
 Example:

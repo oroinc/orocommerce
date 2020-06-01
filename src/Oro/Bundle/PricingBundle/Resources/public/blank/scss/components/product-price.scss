@@ -5,14 +5,8 @@
     overflow: $product-price-overflow;
 
     &__main {
-        margin-top: $product-price-main-margin-top;
-    }
-
-    &__hint {
-        display: $product-price-hint-display;
-
-        margin-bottom: $product-price-hint-margin-bottom;
-        padding-bottom: $product-price-hint-padding-bottom;
+        padding-top: $product-price-main-offset-top;
+        padding-bottom: $product-price-main-offset-bottom;
     }
 
     &__unit-short {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\FormContext;
+use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -29,7 +29,7 @@ class CollectPriceListInitialStatuses implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var FormContext $context */
+        /** @var Context $context */
 
         $priceListStatuses = $context->get(HandlePriceListStatusChange::PRICE_LIST_INITIAL_STATUSES) ?? [];
         $entities = $context->getAllEntities();

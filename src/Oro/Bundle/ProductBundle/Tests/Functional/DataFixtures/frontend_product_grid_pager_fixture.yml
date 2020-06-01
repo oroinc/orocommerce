@@ -1,0 +1,22 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProductName{10..40}:
+        string: 'Product <current()>'
+    localProductDescription{10..40}:
+        string: 'Product current() Description'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{10..40}:
+        type: 'simple'
+        sku: 'product-<current()>'
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        organization: '@organization'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']

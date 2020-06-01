@@ -339,6 +339,8 @@ oro:
                 toolbar-actions:
                     btn:
                         print: 'Print Quote'
+                action:
+                    view.aria_label: 'View #%qid% quote'
 
             quoteproduct:
                 product_sku.label: 'SKU #:'

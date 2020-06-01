@@ -63,6 +63,7 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS = 'display_simple_variations';
     const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
+    const DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG = 'hide_catalog';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
     const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
     const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';

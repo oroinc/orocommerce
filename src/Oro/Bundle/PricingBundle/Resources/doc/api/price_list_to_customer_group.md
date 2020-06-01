@@ -18,6 +18,8 @@ Retrieve a collection of price list to customer group relation records.
 
 Create a new price list to customer group relation.
 
+The created record is returned in the response.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -53,6 +55,8 @@ Example:
 ### update
 
 Edit a specific price list to customer group relation record.
+
+The updated record is returned in the response.
 
 {@inheritdoc}
 

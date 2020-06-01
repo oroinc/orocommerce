@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Migrations\Schema\v1_0;
+namespace Oro\Bundle\MoneyOrderBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;

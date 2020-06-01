@@ -145,6 +145,7 @@ datagrids:
             skip_acl_apply: true
             query:
                 select:
+                    - integer.product_id as autocomplete_record_id
                     - text.sku as sku
                     - text.names_LOCALIZATION_ID as productName
                     - text.status as status
@@ -304,6 +305,7 @@ datagrids:
 
     products-grid:
         extends: products-select-grid-base
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             query:
                 join:
@@ -836,6 +838,10 @@ datagrids:
                 params: [ id ]
             newArrival: ~
             unit: ~
+            view_aria_label:
+                type:   translatable
+                key:    oro.product.frontend.grid.action.product.view.aria_label
+                params: [name]
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
@@ -843,6 +849,7 @@ datagrids:
             view:
                 type:          navigate
                 label:         oro.grid.action.view
+                ariaLabel:     view_aria_label
                 link:          view_link
                 icon:          eye
                 rowAction:     true

@@ -8,6 +8,8 @@ use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -44,6 +46,17 @@ class CheckoutAddressType extends AbstractType
         $builder->get('postalCode')->setRequired(true);
         $builder->get('street')->setRequired(true);
         $builder->get('customerAddress')->setRequired(true);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) {
+            $orderAddress = $event->getData();
+            // The check for ENTER_MANUALLY on customerAddress field is not made here because it does not work for
+            // single page checkout. Instead, we check for customer / customer user address relation.
+            if ($orderAddress && ($orderAddress->getCustomerAddress() || $orderAddress->getCustomerUserAddress())) {
+                // Clears the address fields because if user chooses to enter address manually, these fields should be
+                // shown empty.
+                $event->setData(null);
+            }
+        }, 100);
     }
 
     /**

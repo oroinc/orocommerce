@@ -18,11 +18,13 @@ Retrieve a collection of price list customer fallback records.
 
 Create a new price list customer fallback.
 
+The created record is returned in the response.
+
+{@inheritdoc}
+
 `fallback` value should be one of: `0` or `1`.
 
 Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
-
-{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -51,11 +53,13 @@ Example:
 
 Edit a specific price list customer fallback record.
 
+The updated record is returned in the response.
+
+{@inheritdoc}
+
 `fallback` value should be one of: `0` or `1`.
 
 Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
-
-{@inheritdoc}
 
 {@request:json_api}
 Example:

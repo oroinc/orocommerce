@@ -154,7 +154,7 @@ class ContentNodeController extends AbstractController
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 
         $form = $this->createForm(ContentNodeType::class, $node);
-        $form->handleRequest($request);
+        $form->submit($request->request->get($form->getName()), false);
 
         $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
 

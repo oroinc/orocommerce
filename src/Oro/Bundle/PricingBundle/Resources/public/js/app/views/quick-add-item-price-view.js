@@ -91,8 +91,14 @@ define(function(require) {
                     quantity_changed_manually: this.model.get('quantity'),
                     units: data.item.units,
                     product_units: data.item.units,
-                    prices: _.isEmpty(prices) ? this.model.get('prices') : prices
+                    prices: _.isEmpty(prices) && !_.has(data.item, 'prices') ? this.model.get('prices') : prices
                 });
+            }
+
+            if (data.item.sku) {
+                this.$elements.pricesHint.attr('aria-label', _.__('oro.pricing.view_all_prices_extended', {
+                    product_attrs: data.item.sku
+                }));
             }
         },
 

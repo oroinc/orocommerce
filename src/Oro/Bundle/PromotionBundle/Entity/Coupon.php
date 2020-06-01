@@ -11,14 +11,18 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 
 /**
+ * Coupon ORM entity
+ *
  * @ORM\Table(
  *      name="oro_promotion_coupon",
  *      indexes={
  *          @ORM\Index(name="idx_oro_promotion_coupon_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_promotion_coupon_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_promotion_coupon_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(name="idx_oro_promotion_coupon_code_upper", columns={"code_uppercase"}),
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="oro_promotion_coupon_index",
  *      routeView="oro_promotion_coupon_view",
@@ -86,6 +90,19 @@ class Coupon implements
      *  )
      */
     protected $code;
+
+    /**
+     * @var string
+     * @ORM\Column(name="code_uppercase", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     *  )
+     */
+    protected $codeUppercase;
 
     /**
      * @var bool
@@ -270,6 +287,14 @@ class Coupon implements
     }
 
     /**
+     * @return string
+     */
+    public function getCodeUppercase()
+    {
+        return $this->codeUppercase;
+    }
+
+    /**
      * @return bool
      */
     public function isEnabled(): bool
@@ -381,5 +406,30 @@ class Coupon implements
         $this->validUntil = $validUntil;
 
         return $this;
+    }
+
+    /**
+     * Pre persist event handler.
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updateCodeUppercase();
+    }
+
+    /**
+     * Pre update event handler.
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updateCodeUppercase();
+    }
+
+    private function updateCodeUppercase()
+    {
+        $this->codeUppercase = strtoupper($this->code);
     }
 }

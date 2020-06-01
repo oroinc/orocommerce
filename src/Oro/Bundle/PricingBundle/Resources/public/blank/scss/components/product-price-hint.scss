@@ -1,0 +1,11 @@
+/* @theme: blank; */
+
+.product-price-hint {
+    display: $product-price-hint-display;
+    align-items: flex-start;
+
+    &__prices {
+        padding-top: $offset-y-s;
+        padding-right: $offset-y-s;
+    }
+}

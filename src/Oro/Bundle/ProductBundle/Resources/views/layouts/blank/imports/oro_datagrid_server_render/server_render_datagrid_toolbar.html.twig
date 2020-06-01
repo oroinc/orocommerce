@@ -61,8 +61,8 @@
                    data-grid-pagination-trigger-input/>
 
             <span class="oro-pagination__total">
-                {% set totalPages = '<span data-grid-pagination-pages>' ~ totalPages ~ '</span>' %}
-                {{ "oro.datagrid.pagination.totalPages"|trans({'%totalPages%': totalPages})|raw }}
+                {% set totalPagesWithAMarkup = '<span data-grid-pagination-pages>' ~ totalPages ~ '</span>' %}
+                {{ "oro.datagrid.pagination.totalPages"|trans({'%totalPages%': totalPagesWithAMarkup})|raw }}
             </span>
 
             <a href="{% if currentPage >= totalPages %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage + 1) }}{% endif %}"

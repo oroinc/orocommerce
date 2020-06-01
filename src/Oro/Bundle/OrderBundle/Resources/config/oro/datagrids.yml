@@ -173,8 +173,17 @@ datagrids:
             id: ~
             view_link:
                 route: oro_order_frontend_view
+            view_aria_label:
+                type:   translatable
+                key:    oro.frontend.order.action.view.aria_label
+                params: [identifier]
+            start_from_order_aria_label:
+                type:   translatable
+                key:    oro.frontend.order.action.start_from_order.aria_label
+                params: [identifier]
         actions:
             view:
+                ariaLabel:     view_aria_label
                 acl_resource:  oro_order_frontend_view
 
     orders-grid:

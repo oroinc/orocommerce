@@ -33,8 +33,6 @@ navigation:
                 label:           'oro.product.frontend.titles.catalog'
                 route:           'oro_product_frontend_product_index'
                 position:        100
-                extras:
-                    routes:      ['/^oro_product_frontend_product/']
 
             product_attributes_index:
                 label: 'oro.product.menu.product_attributes'
@@ -80,7 +78,7 @@ navigation:
         oro_product_view:   '%sku% - %name%'
         oro_product_update: '%sku% - %name% - Edit'
         oro_product_create: 'Create Product'
-        oro_product_frontend_product_index: ~
+        oro_product_frontend_product_index: '%title%'
         oro_product_frontend_product_view: '%name%'
         oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'
         oro_product_brand_index: ~

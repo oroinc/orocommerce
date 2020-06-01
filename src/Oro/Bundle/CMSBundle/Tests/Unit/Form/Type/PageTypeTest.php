@@ -297,6 +297,30 @@ class PageTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    public function testSubmitUpdateWithDraft()
+    {
+        $existingPage = new Page();
+        $existingPage->setDraftUuid('some_uuid');
+
+        $expectedPage = clone $existingPage;
+        $expectedPage->addTitle((new LocalizedFallbackValue())->setString('Third test page'));
+        $expectedPage->setContent('Page content');
+
+        $form = $this->factory->create(PageType::class, $existingPage, []);
+        $form->submit([
+            'titles' => [['string' => 'Third test page']],
+            'content' => 'Page content',
+            'slugPrototypesWithRedirect' => [
+                'slugPrototypes' => [['string' => 'slug']],
+                'createRedirect' => true,
+            ]
+        ]);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals($expectedPage, $form->getData());
+    }
+
     public function testGenerateChangedSlugsUrlOnPresetData()
     {
         $generatedUrl = '/some/url';

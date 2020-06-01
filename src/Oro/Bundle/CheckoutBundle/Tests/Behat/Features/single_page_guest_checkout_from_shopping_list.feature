@@ -54,7 +54,7 @@ Feature: Single Page Guest Checkout From Shopping List
   Scenario: Enable Single Page Checkout Workflow
     Given go to System/ Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
 
   Scenario: Create order from shopping list

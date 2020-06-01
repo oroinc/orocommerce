@@ -1,19 +1,21 @@
 <?php
 
-namespace Oro\Bundle\CheckountBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\MigrationBundle\Fixture\RenamedFixtureInterface;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 
 /**
  * Updates permissions for Checkout entity for ROLE_FRONTEND_ADMINISTRATOR storefront role.
  */
 class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdatePermissions implements
-    DependentFixtureInterface
+    DependentFixtureInterface,
+    RenamedFixtureInterface
 {
     /**
      * {@inheritdoc}
@@ -21,6 +23,16 @@ class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdatePe
     public function getDependencies()
     {
         return [LoadCustomerUserRoles::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPreviousClassNames(): array
+    {
+        return [
+            'Oro\\Bundle\\CheckountBundle\\Migrations\\Data\\ORM\\UpdateFrontendAdministratorPermissionsForCheckout',
+        ];
     }
 
     /**

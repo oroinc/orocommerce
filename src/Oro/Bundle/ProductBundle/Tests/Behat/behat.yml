@@ -665,7 +665,7 @@ oro_behat_extension:
       selector: 'div.datagrid-massaction button'
 
     ProductFrontendMassActionButton:
-      selector: '.datagrid-massaction button.dropdown-toggle'
+      selector: '.datagrid-massaction button.dropdown-toggle:contains("Choose Action")'
 
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
@@ -796,6 +796,9 @@ oro_behat_extension:
 
     Default Page Prices:
       selector: '.product-prices__table'
+
+    Product General Information:
+      selector: '.product-view__main'
 
     Short Page Prices:
       selector: '.product-view__content .product-price'
@@ -956,6 +959,20 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+
+    Content Node Titles Localization Form Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+
+    Content Node Titles Localization Form:
+      selector: 'form[name="oro_web_catalog_content_node"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Default Value: 'oro_web_catalog_content_node[titles][values][default]'
+          Use Default: 'oro_web_catalog_content_node[titles][values][localizations][1][use_fallback]'
+          English (United States): 'oro_web_catalog_content_node[titles][values][localizations][1][value]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
@@ -1122,6 +1139,13 @@ oro_behat_extension:
     Product Segment Content Widget Slider Next:
       selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
 
+    Import Choose File Link:
+      selector: ".import-widget-content .tab-pane.active .input-widget-file"
+
+    Import Choose File:
+      selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1139,6 +1163,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext
+        - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext

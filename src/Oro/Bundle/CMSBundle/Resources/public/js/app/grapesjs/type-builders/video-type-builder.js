@@ -2,12 +2,14 @@ import _ from 'underscore';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const VideoTypeBuilder = BaseTypeBuilder.extend({
+    componentType: 'video',
+
     constructor: function VideoTypeBuilder(options) {
         VideoTypeBuilder.__super__.constructor.call(this, options);
     },
 
     initialize(options) {
-        Object.assign(this, _.pick(options, 'editor', 'componentType'));
+        Object.assign(this, _.pick(options, 'editor'));
     },
 
     execute() {

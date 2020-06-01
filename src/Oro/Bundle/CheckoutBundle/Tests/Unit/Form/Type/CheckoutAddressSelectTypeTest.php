@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -21,12 +22,16 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressManager */
     private $orderAddressManager;
 
+    /** @var OrderAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderAddressSecurityProvider;
+
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
+        $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
 
         parent::setUp();
     }
@@ -116,11 +121,165 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @dataProvider submitWhenEnterManuallyDataProvider
+     *
+     * @param Checkout $checkout
+     * @param OrderAddress $orderAddress
+     * @param string $addressType
+     */
+    public function testSubmitWhenEnterManually(
+        Checkout $checkout,
+        OrderAddress $orderAddress,
+        string $addressType
+    ): void {
+        $this->orderAddressSecurityProvider
+            ->expects($this->any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
+        $this->orderAddressManager->expects($this->once())
+            ->method('getGroupedAddresses')
+            ->willReturn(new TypedOrderAddressCollection(null, 'billing', [
+                'Customer Addresses' => ['ca_1' => new CustomerAddress()]
+            ]));
+
+        $this->orderAddressManager
+            ->expects($this->never())
+            ->method('updateFromAbstract');
+
+        $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
+            'object' => $checkout,
+            'address_type' => $addressType,
+        ]);
+
+        $form->submit(0);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals($orderAddress, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitWhenEnterManuallyDataProvider(): array
+    {
+        $orderAddress = new OrderAddress();
+        return [
+            [
+                'checkout' => (new Checkout())->setBillingAddress($orderAddress),
+                'orderAddress' => $orderAddress,
+                'addressType' => 'billing',
+            ],
+            [
+                'checkout' => (new Checkout())->setShippingAddress($orderAddress),
+                'orderAddress' => $orderAddress,
+                'addressType' => 'shipping',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider submitWhenEnterManuallyButAlreadySetInCheckoutDataProvider
+     *
+     * @param Checkout $checkout
+     * @param string $addressType
+     */
+    public function testSubmitWhenEnterManuallyButAlreadySetInCheckout(Checkout $checkout, string $addressType): void
+    {
+        $this->orderAddressSecurityProvider
+            ->expects($this->any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
+        $this->orderAddressManager->expects($this->once())
+            ->method('getGroupedAddresses')
+            ->willReturn(new TypedOrderAddressCollection(null, 'billing', [
+                'Customer Addresses' => ['ca_1' => new CustomerAddress()]
+            ]));
+
+        $this->orderAddressManager
+            ->expects($this->never())
+            ->method('updateFromAbstract');
+
+        $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
+            'object' => $checkout,
+            'address_type' => $addressType,
+        ]);
+
+        $form->submit(0);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals(0, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitWhenEnterManuallyButAlreadySetInCheckoutDataProvider(): array
+    {
+        $orderAddress = new OrderAddress();
+        $customerAddress = new CustomerAddress();
+        $customerUserAddress = new CustomerUserAddress();
+
+        return [
+            [
+                'checkout' => (new Checkout())->setBillingAddress(
+                    (clone $orderAddress)
+                        ->setCustomerAddress($customerAddress)
+                        ->setCustomerUserAddress($customerUserAddress)
+                ),
+                'addressType' => 'billing',
+            ],
+            [
+                'checkout' => (new Checkout())->setBillingAddress(
+                    (clone $orderAddress)
+                        ->setCustomerAddress($customerAddress)
+                        ->setCustomerUserAddress($customerUserAddress)
+                ),
+                'addressType' => 'shipping',
+            ],
+            [
+                'checkout' => (new Checkout())->setBillingAddress(
+                    (clone $orderAddress)->setCustomerAddress($customerAddress)
+                ),
+                'addressType' => 'billing',
+            ],
+            [
+                'checkout' => (new Checkout())->setBillingAddress(
+                    (clone $orderAddress)->setCustomerUserAddress($customerUserAddress)
+                ),
+                'addressType' => 'billing',
+            ],
+            [
+                'checkout' => (new Checkout())->setShippingAddress(
+                    (clone $orderAddress)->setCustomerAddress($customerAddress)
+                ),
+                'addressType' => 'shipping',
+            ],
+            [
+                'checkout' => (new Checkout())->setShippingAddress(
+                    (clone $orderAddress)->setCustomerUserAddress($customerUserAddress)
+                ),
+                'addressType' => 'shipping',
+            ],
+            [
+                'checkout' => (new Checkout()),
+                'addressType' => 'shipping',
+            ],
+            [
+                'checkout' => (new Checkout()),
+                'addressType' => 'billing',
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
     {
-        $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
         $addressFormatter = $this->createMock(AddressFormatter::class);
         $serializer = $this->createMock(Serializer::class);
 
@@ -130,7 +289,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
                 OrderAddressSelectType::class => new OrderAddressSelectType(
                     $this->orderAddressManager,
                     $addressFormatter,
-                    $orderAddressSecurityProvider,
+                    $this->orderAddressSecurityProvider,
                     $serializer
                 ),
             ], [

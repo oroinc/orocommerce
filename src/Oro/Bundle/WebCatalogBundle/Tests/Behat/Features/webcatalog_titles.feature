@@ -101,9 +101,9 @@ Feature: Webcatalog titles
     Then Page title equals to "<Original title>"
 
     Examples:
-      | Variant title         | Original title                            |
-      | SYSTEM PAGE TITLE     | Welcome - Home page                       |
-      | PRODUCT PAGE TITLE    | 220 Lumen Rechargeable Headlamp - Catalog |
-      | LANDING PAGE TITLE    | Test CMS Page                             |
-      | CATEGORY PAGE TITLE   | Catalog                                   |
-      | COLLECTION PAGE TITLE | Catalog                                   |
+      | Variant title         | Original title                  |
+      | SYSTEM PAGE TITLE     | Welcome - Home page             |
+      | PRODUCT PAGE TITLE    | 220 Lumen Rechargeable Headlamp |
+      | LANDING PAGE TITLE    | Test CMS Page                   |
+      | CATEGORY PAGE TITLE   | Headlamps                       |
+      | COLLECTION PAGE TITLE | All Products                    |

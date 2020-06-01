@@ -500,3 +500,6 @@ oro:
             toolbar-actions:
                 btn:
                     print: 'Print Order'
+            action:
+                view.aria_label: "View %identifier% order"
+                start_from_order.aria_label: "Re-Order %identifier% order"

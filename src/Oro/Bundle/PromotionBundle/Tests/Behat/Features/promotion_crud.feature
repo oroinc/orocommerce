@@ -30,7 +30,7 @@ Feature: Promotion CRUD
 #      | Descriptions                 | Promotion description |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     Then I should see "Promotion has been saved" flash message
 
@@ -62,7 +62,7 @@ Feature: Promotion CRUD
       | Customer Group | All Customers       |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     Then I should see "Should be chosen only one field. Customer Group or Customer."
 
@@ -75,7 +75,7 @@ Feature: Promotion CRUD
       | Discount Value | 10.0                |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save and close form
     Then I should see "N/A" in the "Restrictions" element
     When I click "Edit"
@@ -94,3 +94,21 @@ Feature: Promotion CRUD
     And I click "Add Note Button"
     Then I should see "Note saved" flash message
     And I should see "Decrease after New Year" note in activity list
+
+  Scenario: Check validation HTML string for creating Note
+    Given I go to Marketing / Promotions / Promotions
+    And I click view Promotion for first customer in grid
+    When I click "Add note"
+    Then I click "Add Note Button"
+    And I should see "This value should not be blank."
+    And I fill "Note Form" with:
+      | Message | Test note message |
+    And I fill "Note Form" with:
+      | Message |  |
+    When I click "Add Note Button"
+    Then I should see "This value should not be blank."
+    And I fill "Note Form" with:
+      | Message | Test note message |
+    When I click "Add Note Button"
+    Then I should see "Note saved" flash message
+    And I should see "Test note message" note in activity list

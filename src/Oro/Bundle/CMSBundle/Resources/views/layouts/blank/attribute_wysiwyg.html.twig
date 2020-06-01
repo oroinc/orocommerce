@@ -1,8 +1,14 @@
 {% block attribute_wysiwyg_widget %}
-    {% if styles|length -%}
-        {%- spaceless -%}
-            <style type="text/css">{{ styles|render_content }}</style>
-        {%- endspaceless -%}
-    {%- endif %}
-    {{ value|render_content }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' cms-typography'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {% if styles|length -%}
+            {%- spaceless -%}
+                <style type="text/css">{{ styles|render_content }}</style>
+            {%- endspaceless -%}
+        {%- endif %}
+        {{ value|render_content }}
+    </div>
 {% endblock %}

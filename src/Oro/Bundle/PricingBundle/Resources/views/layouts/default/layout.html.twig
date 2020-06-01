@@ -79,9 +79,9 @@
         <% var prices = _.filter(modelPrices, function(price){return price.unit === unit}); %>
         <% if (prices.length) { %>
         <tr>
-            <td colspan="2" class="text-capitalize">
+            <td colspan="2">
                 <% if (addNewLine) { %><br/><% } %>
-                <b><%- _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
+                <%- _.__('oro.product.product_unit.' + unit + '.label.full') %>
             </td>
         </tr>
         <% addNewLine = true %>
@@ -107,12 +107,25 @@
     </table>
 {% endblock %}
 
-{% block product_price_hint_js_widget %}
-    <span class="product-tier-prices"
+{% block product_price_hint_trigger_js_widget %}
+    {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices') %}
+    {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
+    {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
+
+    <button class="{{ productTierClass }}"
           data-toggle="popover"
           data-placement="bottom"
           data-close="false"
-          data-class="prices-hint-content">
-        <i class="popover-trigger"></i>
-    </span>
+          data-class="prices-hint-content"
+          title="{{ 'oro.pricing.view_all_prices'|trans }}"
+          aria-label="{{ productAriaLabel }}"
+          type="button"
+    ><span class="popover-trigger {{ productTierIcon }}" aria-hidden="true"></span></button>
 {% endblock %}
+
+{% block product_price_hint_trigger_info_js_widget %}
+    {% set productTierIcon = 'link link--none-decoration fa-info-circle fa--no-offset' %}
+
+    {{ block('product_price_hint_trigger_js_widget') }}
+{% endblock %}
+

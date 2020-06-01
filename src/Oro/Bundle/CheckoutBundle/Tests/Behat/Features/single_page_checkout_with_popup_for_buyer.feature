@@ -24,7 +24,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I login as administrator
     And I go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
 
   Scenario: Configure shipping rules
@@ -119,20 +119,14 @@ Feature: Single Page Checkout With Popup for Buyer
       | okButton     | Continue        |
     And Email is not required field
     And "New Address Popup Form" must contains values:
-      | Label        | Primary address |
-      | Organization | ORO             |
-      | Street       | Fifth avenue    |
-      | City         | Berlin          |
-      | Country      | Germany         |
-      | State        | Berlin          |
-      | Postal Code  | 10115           |
-    When I fill "New Address Popup Form" with:
-      | Label        | |
-      | Organization | |
-      | Street       | |
-      | City         | |
-      | Postal Code  | |
-    And I click "Continue"
+      | Label        |         |
+      | Organization |         |
+      | Street       |         |
+      | City         |         |
+      | Country      | Country |
+      | State        | State   |
+      | Postal Code  |         |
+    When I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
       | First Name   | First Name and Last Name or Organization should not be blank. |
       | Last Name    | Last Name and First Name or Organization should not be blank. |
@@ -151,20 +145,14 @@ Feature: Single Page Checkout With Popup for Buyer
       | Title        | Shipping Address |
       | okButton     | Continue         |
     And "New Address Popup Form" must contains values:
-      | Label        | Primary address |
-      | Organization | ORO             |
-      | Street       | Fifth avenue    |
-      | City         | Berlin          |
-      | Country      | Germany         |
-      | State        | Berlin          |
-      | Postal Code  | 10115           |
-    When I fill "New Address Popup Form" with:
-      | Label        | |
-      | Organization | |
-      | Street       | |
-      | City         | |
-      | Postal Code  | |
-    And I click "Continue"
+      | Label        |         |
+      | Organization |         |
+      | Street       |         |
+      | City         |         |
+      | Country      | Country |
+      | State        | State   |
+      | Postal Code  |         |
+    When I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
       | First Name   | First Name and Last Name or Organization should not be blank. |
       | Last Name    | Last Name and First Name or Organization should not be blank. |

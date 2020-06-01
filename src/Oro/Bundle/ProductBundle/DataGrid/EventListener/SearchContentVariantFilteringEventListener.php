@@ -125,6 +125,6 @@ class SearchContentVariantFilteringEventListener
             )
         );
 
-        return $configValue === Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY;
+        return $configValue !== Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE;
     }
 }
