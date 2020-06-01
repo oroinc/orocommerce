@@ -22,6 +22,8 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     const CHECKOUT_3 = 'checkout.3';
     const CHECKOUT_4 = 'checkout.4';
     const CHECKOUT_7 = 'checkout.7';
+    const CHECKOUT_8 = 'checkout.8';
+    const CHECKOUT_9 = 'checkout.9';
 
     const PAYMENT_METHOD = 'payment_term';
 
@@ -51,6 +53,10 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
             ->setQuantity(50)
             ->setProduct($product)
             ->setProductUnit($productUnit);
+        $lineItem6 = (new CheckoutLineItem())
+            ->setQuantity(50)
+            ->setProduct($product)
+            ->setProductUnit($productUnit);
 
         return [
             self::CHECKOUT_1 => [
@@ -77,6 +83,18 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
                 'checkout' => ['payment_method' => self::PAYMENT_METHOD],
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'lineItems' => new ArrayCollection([$lineItem4]),
+            ],
+            self::CHECKOUT_8 => [
+                'source' => LoadShoppingLists::SHOPPING_LIST_5,
+                'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
+                'checkout' => ['payment_method' => $paymentTermIdentifier],
+                'completed' => true,
+                'lineItems' => new ArrayCollection([$lineItem6]),
+            ],
+            self::CHECKOUT_9 => [
+                'source' => LoadShoppingLists::SHOPPING_LIST_6,
+                'checkout' => ['payment_method' => $paymentTermIdentifier],
+                'completed' => true,
             ],
         ];
     }
