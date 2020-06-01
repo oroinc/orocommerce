@@ -19,6 +19,8 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
     const CHECKOUT_SUBTOTAL_5 = 'checkout.subtotal.5';
     const CHECKOUT_SUBTOTAL_6 = 'checkout.subtotal.6';
     const CHECKOUT_SUBTOTAL_7 = 'checkout.subtotal.7';
+    const CHECKOUT_SUBTOTAL_8 = 'checkout.subtotal.8';
+    const CHECKOUT_SUBTOTAL_9 = 'checkout.subtotal.9';
 
     /** @var array */
     protected static $data = [
@@ -50,6 +52,19 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
         self::CHECKOUT_SUBTOTAL_7 => [
             'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
             'currency' => 'USD',
+            'amount' => 200,
+            'valid' => true,
+        ],
+        self::CHECKOUT_SUBTOTAL_8 => [
+            'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_8,
+            'currency' => 'USD',
+            'amount' => 200,
+            'valid' => true,
+        ],
+        self::CHECKOUT_SUBTOTAL_9 => [
+            'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_9,
+            'currency' => 'USD',
+            'combinedPriceList' => '1f',
             'amount' => 200,
             'valid' => true,
         ],

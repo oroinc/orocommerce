@@ -22,18 +22,33 @@ class CheckoutSubtotalRepository extends EntityRepository
             return;
         }
 
-        $updateQb = $this->getEntityManager()->createQueryBuilder();
-        $updateQb->update($this->getEntityName(), 'cs')
-            ->set('cs.valid', ':newIsValid')
-            ->where(
-                $updateQb->expr()->in('cs.combinedPriceList', ':priceLists'),
-                $updateQb->expr()->eq('cs.valid', ':isValid')
-            )
-            ->setParameter('newIsValid', false)
-            ->setParameter('isValid', true)
-            ->setParameter('priceLists', $combinedPriceListIds);
+        $expr = $this->getEntityManager()->getExpressionBuilder();
 
-        $updateQb->getQuery()->execute();
+        $rsm = ResultSetMappingUtil::createResultSetMapping(
+            $this->getEntityManager()->getConnection()->getDatabasePlatform()
+        );
+
+        $updateQB = new SqlQueryBuilder($this->getEntityManager(), $rsm);
+
+        $updateQB->update('oro_checkout_subtotal', 'cs')
+            ->innerJoin('cs', 'oro_checkout', 'c', $expr->eq('cs.checkout_id', 'c.id'))
+            ->set('is_valid', ':newIsValid')
+            ->where(
+                $expr->andX(
+                    $expr->in('cs.combined_price_list_id', ':combinedPriceListIds'),
+                    $expr->eq('cs.is_valid', ':isValid'),
+                    $expr->eq('c.deleted', ':isDeleted'),
+                    $expr->eq('c.completed', ':isCompleted')
+                )
+            );
+
+        $updateQB->getQuery()->execute([
+            'newIsValid'           => false,
+            'isValid'              => true,
+            'combinedPriceListIds' => $combinedPriceListIds,
+            'isDeleted'            => false,
+            'isCompleted'          => false
+        ]);
     }
 
     /**
@@ -66,6 +81,8 @@ class CheckoutSubtotalRepository extends EntityRepository
                     $expr->eq('cs.is_valid', ':isValid'),
                     $expr->eq('c.website_id', ':websiteId'),
                     $expr->in('c.customer_id', ':customerIds'),
+                    $expr->eq('c.deleted', ':isDeleted'),
+                    $expr->eq('c.completed', ':isCompleted'),
                     $expr->exists($lineItemSubQB->getSQL())
                 )
             );
@@ -75,7 +92,9 @@ class CheckoutSubtotalRepository extends EntityRepository
             'isValid' => true,
             'websiteId' => $websiteId,
             'customerIds' => $customerIds,
-            'isFixed' => false
+            'isFixed' => false,
+            'isDeleted' => false,
+            'isCompleted' => false,
         ]);
     }
 }

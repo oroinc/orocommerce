@@ -188,7 +188,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
     {
         $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
 
-        self::assertSame(1, $this->repository->getRelatedEntitiesCount($customerUser));
+        self::assertSame(2, $this->repository->getRelatedEntitiesCount($customerUser));
     }
 
     public function testGetRelatedEntitiesCountZero()
@@ -220,7 +220,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->getRepository()->resetCustomerUser($customerUser);
 
         $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(3, $checkouts);
+        $this->assertCount(4, $checkouts);
     }
 
     public function testFindForCheckoutAction(): void

@@ -42,7 +42,18 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
         $this->assertFalse($checkoutSubtotal->isValid());
     }
 
-    public function testInvalidateByCustomerUsers()
+    public function testInvalidateByCombinedPriceListOnCompletedCheckouts()
+    {
+        /** @var CheckoutSubtotal $checkoutSubtotal */
+        $checkoutSubtotal = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_9);
+
+        $cpl = $this->getReference('1f');
+        $this->getRepository()->invalidateByCombinedPriceList([$cpl->getId()]);
+
+        $this->assertTrue($checkoutSubtotal->isValid());
+    }
+
+    public function testInvalidateByCustomers()
     {
         /** @var CheckoutSubtotal $checkoutSubtotal */
         $checkoutSubtotal = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_7);
@@ -53,6 +64,19 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
         $this->getManager()->refresh($checkoutSubtotal);
 
         $this->assertFalse($checkoutSubtotal->isValid());
+    }
+
+    public function testInvalidateByCustomersOnCompletedCheckouts()
+    {
+        /** @var CheckoutSubtotal $checkoutSubtotal */
+        $checkoutSubtotal = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_8);
+        $this->getRepository()->invalidateByCustomers(
+            [$checkoutSubtotal->getCheckout()->getCustomer()->getId()],
+            $checkoutSubtotal->getCheckout()->getWebsite()->getId()
+        );
+        $this->getManager()->refresh($checkoutSubtotal);
+
+        $this->assertTrue($checkoutSubtotal->isValid());
     }
 
     /**
