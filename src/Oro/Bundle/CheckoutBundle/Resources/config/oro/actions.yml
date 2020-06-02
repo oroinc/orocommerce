@@ -358,6 +358,10 @@ action_groups:
                 conditions:
                     '@not_blank': $.checkout.sourceEntity
                 actions:
+                    - '@assign_value':
+                        conditions:
+                            '@not_empty': $.data.shippingAddress
+                        parameters: [$.settings.shipping_address, $.data.shippingAddress]
                     - '@run_action_group':
                         action_group: prepare_checkout_settings
                         parameters_mapping:
