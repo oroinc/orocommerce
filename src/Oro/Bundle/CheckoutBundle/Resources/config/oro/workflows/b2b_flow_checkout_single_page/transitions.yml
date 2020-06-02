@@ -55,6 +55,7 @@ workflows:
                                 object: $checkout
                                 address_type: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
@@ -157,6 +158,7 @@ workflows:
                                 object: $checkout
                                 address_type: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
