@@ -266,6 +266,16 @@
     }
 }
 
+.#{$app-prefix}select option,
+.#{$app-prefix}field-select option,
+.#{$clm-prefix}select option,
+.#{$sm-prefix}select option,
+.#{$app-prefix}fields option,
+.#{$sm-prefix}unit option {
+    background-color: $primaryColor;
+    color: $fontColor;
+}
+
 .#{$app-prefix}dashed {
     *[data-highlightable] {
         padding: 10px;
