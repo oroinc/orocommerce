@@ -6,7 +6,7 @@ macros('oroshoppinglist', {
      *
      * @param {Object} data
      * @param {string?} data.src
-     * @param {string?} data.srcPlaceholder
+     * @param {string?} data.placeholder
      * @param {string} data.productId
      * @param {string} data.title
      * @param {string} data.alt
@@ -21,5 +21,22 @@ macros('oroshoppinglist', {
      * @param {string} data.name
      * @param {string} data.link
      */
-    renderProductItemName: require('tpl-loader!oroshoppinglist/templates/macros/product-item__name.html')
+    renderProductItemName: require('tpl-loader!oroshoppinglist/templates/macros/product-item__name.html'),
+
+    /**
+     * Renders inventory status block for product item
+     *
+     * @param {string} name
+     * @param {string} label
+     */
+    renderInventoryStatus: require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html'),
+
+    /**
+     * Renders note for product item
+     *
+     * @param {string} note
+     * @param {number?} [clipLength = 30]
+     */
+    renderNote: require('tpl-loader!oroshoppinglist/templates/macros/product-item__note.html')
+
 });

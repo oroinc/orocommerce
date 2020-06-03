@@ -1,0 +1,194 @@
+/* @theme: blank; */
+
+.responsive-shopping-list-grid {
+    .show-in-tablet,
+    .show-in-mobile {
+        display: none;
+    }
+
+    .grid-cell {
+        vertical-align: top;
+    }
+
+    .group-row {
+        .grid-cell {
+            padding-bottom: 0;
+
+            border-bottom: transparent;
+        }
+    }
+
+    .sub-row:not(.sub-row-last) {
+        .grid-body-cell-productSku {
+            border-bottom-color: transparent;
+        }
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity,
+    .grid-body-cell-price,
+    .grid-header-cell-price,
+    .grid-header-cell-subtotal,
+    .grid-body-cell-subtotal {
+        text-align: right;
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        padding-right: 2px;
+    }
+
+    .grid-header-cell-unit,
+    .grid-body-cell-unit {
+        padding-left: 2px;
+    }
+
+    .grid-body-cell-item {
+        width: 400px;
+    }
+
+    .group-row-title {
+        width: 100%;
+
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-shopping-list-grid {
+        .show-in-tablet {
+            display: block;
+        }
+
+        .highlighted-in-tablet {
+            color: $product-item-sku-value-color;
+        }
+
+        .sub-row {
+            .grid-body-cell-item {
+                position: relative;
+
+                padding-left: $responsive-shopping-list-sub-item-offset-tablet;
+            }
+        }
+
+        .grid-header-cell-inventoryStatus,
+        .grid-header-cell-productSku,
+        .grid-body-cell-productSku,
+        .grid-body-cell-inventoryStatus {
+            display: none;
+        }
+
+        .grid-body-cell-item {
+            width: 400px;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .responsive-shopping-list-grid {
+        .grid-body-cell-item {
+            width: 360px;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid {
+        .show-in-mobile {
+            display: inline-flex;
+        }
+
+        .grid,
+        .grid-body-cell,
+        .grid-header-cell {
+            border-width: 0;
+        }
+
+        .grid,
+        .grid-header,
+        .grid-header-row,
+        .grid-header-cell,
+        .grid-body,
+        .grid-row {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .sub-row {
+            position: relative;
+
+            border-bottom: $responsive-shopping-sub-row-border-mobile;
+
+            .grid-body-cell {
+                padding-left: $responsive-shopping-list-sub-item-offset-mobile;
+                padding-right: $responsive-shopping-list-sub-item-offset-mobile;
+            }
+        }
+
+        .sub-row:not(.sub-row-last) {
+            padding-top: 12px;
+            padding-bottom: 8px;
+            border-bottom: $responsive-shopping-sub-row-border-mobile;
+        }
+
+        .grid-row {
+            padding-top: 18px;
+            padding-bottom: 18px;
+            border-bottom: $responsive-shopping-grid-row-border-mobile;
+
+            &:first-child {
+                padding-top: 8px;
+            }
+        }
+
+        .group-row {
+            padding-bottom: 0;
+            border-bottom-width: 0;
+
+            .grid-body-cell-price {
+                display: none;
+            }
+        }
+
+        .grid-header-row {
+            border-top: $responsive-shopping-header-row-border-mobile;
+            border-bottom: $responsive-shopping-header-row-border-mobile;
+        }
+
+        .grid-body-cell {
+            display: block;
+            padding: 3px 4px;
+            width: 100%;
+
+            &:last-child {
+                padding-bottom: 0;
+            }
+        }
+
+        .grid-body-cell-quantity {
+            padding-top: 8px;
+        }
+
+        .grid-header-cell-productSku,
+        .grid-header-cell-inventoryStatus,
+        .grid-header-cell-quantity,
+        .grid-header-cell-unit,
+        .grid-header-cell-price,
+        .grid-header-cell-subtotal,
+        .grid-body-cell-productSku,
+        .grid-body-cell-inventoryStatus,
+        .grid-body-cell-unit {
+            display: none;
+        }
+
+        .mobile-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+    }
+}

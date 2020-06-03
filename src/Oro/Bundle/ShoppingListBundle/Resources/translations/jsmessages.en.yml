@@ -34,10 +34,12 @@ oro:
             cancel_button_title: 'Cancel'
     frontend:
         shoppinglist:
+            product_variants: 'Product Variants'
             messages:
                 delete_title: Delete Confirmation
             matrix_grid_order:
                 item_number: 'Item #'
+            label: 'Item #:'
             btn:
                 show_all:
                     aria_label: 'Show all added products on one page'

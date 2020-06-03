@@ -3,7 +3,7 @@
 <div class="line-item-price">
     <div data-name="prices-hint">
         <% if (item.price) { %>
-            <div data-name="price-value"><%- item.price %></div>
+            <div class="mobile-row" data-name="price-value"><span class="bold show-in-mobile"><%- _metadata.label %>:</span><%- item.price %></div>
         <% } else { %>
             <div data-name="price-not-found"><%- _.__('oro.pricing.product_prices.price_not_found') %></div>
         <% } %>

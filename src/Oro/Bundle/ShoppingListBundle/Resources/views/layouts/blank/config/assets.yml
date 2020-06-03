@@ -6,6 +6,7 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-dropdown-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-line-items-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/grid-line-items-config.scss'
+        - 'bundles/oroshoppinglist/blank/scss/variables/responsive-shopping-list-grid-config.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/components/cart.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/cart-list-empty.scss'
@@ -19,7 +20,8 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-view.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-view-options.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/shopping-list-widget.scss'
-        - 'bundles/oroshoppinglist/blank/scss/components/my-shopping-list-datagrid.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/grid-line-items.scss'
+        - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid.scss'
+        - 'bundles/oroshoppinglist/blank/scss/components/responsive-shopping-list-grid-rows-separators.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/styles.scss'

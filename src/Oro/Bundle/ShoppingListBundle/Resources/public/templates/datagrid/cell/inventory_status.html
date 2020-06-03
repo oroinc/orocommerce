@@ -1,4 +1,5 @@
 <% let item = !obj.isConfigurable ? obj : (obj.subData ? obj.subData[0] : null) %>
 <% if (item) { %>
-    <div class="<%- item.inventoryStatus_name %>"><%- item.inventoryStatus_label %></div>
+    <% let renderInventoryStatus = _.macros('oroshoppinglist::renderInventoryStatus') %>
+    <%= renderInventoryStatus({status: item.inventoryStatus_name, label: item.inventoryStatus_label}) %>
 <% } %>
