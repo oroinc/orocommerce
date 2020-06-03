@@ -10,7 +10,6 @@
 
         &:first-child {
             margin-right: $grid-line-items-row-offset-x;
-
             align-self: flex-start;
         }
 
@@ -35,17 +34,21 @@
         left: 0;
     }
 
+    &__clip-title-container {
+        width: 100%;
+    }
+
     &__clip-title-container,
     &__clip-text-container {
         position: relative;
     }
 
     &__clip-title-container {
-        height: $grid-line-items-title-font-size * $grid-line-items-line-height;
+        min-height: $grid-line-items-title-font-size * $grid-line-items-line-height;
     }
 
     &__clip-text-container {
-        height: $grid-line-items-text-font-size * $grid-line-items-line-height;
+        min-height: $grid-line-items-text-font-size * $grid-line-items-line-height;
     }
 
     &__title {
@@ -64,5 +67,89 @@
         display: block;
 
         @include ellipsis();
+    }
+
+    &__configuration {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    &__field-val {
+        &:first-child {
+            padding-right: $grid-line-items-field-val-offset;
+        }
+
+        &:nth-child(2),
+        &:last-child {
+            padding-left: $grid-line-items-field-val-offset;
+        }
+
+        &.has-separator:after {
+            display: inline-block;
+            vertical-align: middle;
+            width: 1px;
+            height: $grid-line-separator-height;
+            margin: $grid-line-separator-offset;
+
+            background: $grid-line-separator-background;
+
+            content: '';
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .grid-line-items {
+        &__row {
+            &:first-child {
+                margin-right: $grid-line-items-row-offset-x-mobile;
+            }
+        }
+
+        &__row-item {
+            &--simple {
+                margin-left: -($product-item-image-holder-tiny-width + $grid-line-items-row-offset-x-mobile);
+            }
+
+            &-title-container {
+                display: flex;
+                align-items: center;
+                min-height: $product-item-image-holder-tiny-height;
+                margin-bottom: $grid-line-items-title-container-offset-x-mobile;
+            }
+        }
+
+        &__title {
+            position: relative;
+
+            &-content {
+                white-space: normal;
+            }
+        }
+
+        &__field {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+
+            &-val {
+                width: 50%;
+
+                &:first-child {
+                    padding-right: $grid-line-items-field-val-offset-mobile;
+                }
+
+                &:nth-child(2),
+                &:last-child {
+                    padding-left: $grid-line-items-field-val-offset-mobile;
+                }
+
+                &.has-separator:after {
+                    content: none;
+                }
+            }
+        }
     }
 }

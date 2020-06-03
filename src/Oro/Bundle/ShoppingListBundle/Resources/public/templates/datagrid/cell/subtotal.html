@@ -1,5 +1,9 @@
 <% if (subtotal !== null) { %>
-<div class="bold" data-name="price-value"><%- subtotal %></div>
+<div class="bold mobile-row" data-name="price-value"><span class="show-in-mobile"><%- _metadata.label %>:</span><%- subtotal %></div>
 <% } else { %>
 <div class="bold" data-name="price-not-found"><%- _.__('oro.pricing.product_prices.price_not_found') %></div>
+<% } %>
+
+<% if (obj.row_class_name === 'group-row') { %>
+<h5 class="group-row-title show-in-mobile"><%- _.__('oro.frontend.shoppinglist.product_variants') %></h5>
 <% } %>

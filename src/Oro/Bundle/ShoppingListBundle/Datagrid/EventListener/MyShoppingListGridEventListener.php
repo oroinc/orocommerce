@@ -199,9 +199,6 @@ class MyShoppingListGridEventListener
             $record->setValue('sku', $product->getSku());
             $record->setValue('productId', $product->getId());
             $record->setValue('name', $record->getValue('productName'));
-            if ($isConfigurable && count($lineItemsData) === 1) {
-                $record->setValue('productSku', $lineItemsData[0]['sku']);
-            }
 
             /** @var ProductImage $image */
             $image = $product->getImagesByType('listing')->first();

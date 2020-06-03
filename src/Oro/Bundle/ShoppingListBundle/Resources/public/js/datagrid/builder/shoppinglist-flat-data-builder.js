@@ -3,16 +3,20 @@ const flattenData = data => {
         const {subData, ...rest} = item;
         if (!subData) {
             flatData.push(rest);
-        } else if (subData.length === 1) {
-            item.row_class_name = 'grid-row__configurable-product--single';
-            flatData.push(item); // do not split single item into separate grid row
         } else {
-            rest.row_class_name = 'grid-row__configurable-product--set';
+            rest.row_class_name = 'group-row';
             flatData.push(rest);
-            subData.forEach(subItem =>
+            subData.forEach((subItem, index) => {
+                let className = 'sub-row';
+
+                if (subData.length -1 === index) {
+                    className = className + ' sub-row-last';
+                }
+
                 Object.assign(subItem, {
-                    row_class_name: 'grid-row__configurable-product--item'
-                }));
+                    row_class_name: className
+                });
+            });
             flatData.push(...subData);
         }
         return flatData;
