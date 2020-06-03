@@ -66,6 +66,7 @@ oro:
             add_to_current_shopping_list: Add to current Shopping List
             remove_from_shopping_list: Remove From {{ shoppingList }}
             add_to_new_shopping_list: Create New Shopping List
+            add_to_new_shopping_list.aria_label: Create New Shopping List. Opens a popup
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
@@ -225,6 +226,7 @@ oro:
                 view_details.label: 'View Details'
                 view_list.label: 'View List'
                 create_new_shopping_list.label: 'Create New List'
+                create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 line_item_deleted: 'Shopping list item has been deleted'

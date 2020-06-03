@@ -45,6 +45,7 @@
     {% set options = {
         shoppingList: null,
         defaultLabel: '',
+        ariaLabel: null,
         aCss: 'btn--info'
     }|merge(options) %}
 
@@ -67,6 +68,11 @@
             '{{ shoppingList }}': shoppingListLabel
         })
     } %}
+    {% if options.ariaLabel %}
+        {% set buttonOptions = buttonOptions|merge({
+            'ariaLabel': options.ariaLabel
+        }) %}
+    {% endif %}
     {% if options.dataUrl %}
         {% set buttonOptions = buttonOptions|merge({
             'dataUrl': options.dataUrl,
