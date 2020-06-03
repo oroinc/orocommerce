@@ -19,8 +19,12 @@
             actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans
         }) %}
 
+        {% set newOptions = buttonOptions|merge({
+            ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
+        }) %}
+
         {% set options = layout_attr_defaults(attr, {
-            '~new': buttonOptions,
+            '~new': newOptions,
             '~current': buttonOptions,
             '~existing': buttonOptions,
             shoppingLists: shoppingLists,
