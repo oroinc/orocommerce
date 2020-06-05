@@ -19,7 +19,7 @@ const flattenData = data => {
     }, []);
 };
 
-const flatDataBuilder = {
+const shoppinglistFlatDataBuilder = {
     processDatagridOptions: function(deferred, options) {
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
@@ -45,4 +45,4 @@ const flatDataBuilder = {
     }
 };
 
-export default flatDataBuilder;
+export default shoppinglistFlatDataBuilder;
