@@ -67,26 +67,7 @@ To add custom logic to providers, each provider dispatches events on start and e
     }
 ```
 
-For example, for limitations which are included in the web catalog (there are products from Product Content Variants, products included in categories and subcategories from Category Content Variants, products from Product Collection Variants) there are two listeners for these events:
-```yaml
-    oro_seo.event_listener.url_items_provider_start:
-        class: Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener
-        arguments:
-            - '@oro_seo.limiter.web_catalog_product_limiter'
-        tags:
-            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_start.product, method: onStart }
-
-    oro_seo.event_listener.url_items_provider_end:
-        class: Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener
-        arguments:
-            - '@oro_seo.limiter.web_catalog_product_limiter'
-        tags:
-            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_end.product, method: onEnd }
-```
-
-For Limitation, `WebCatalogProductLimiter` is used. This class collects all appropriate products to `WebCatalogProductLimitation`.
-Listener `RestrictSitemapProductByWebCatalogListener` restricts Sitemap products, taking into account only those that are in the `WebCatalogProductLimitation` table .
-You can override `WebCatalogProductLimiter` or create your own `oro_seo.event.url_items_provider_start.*`, `oro_seo.event.url_items_provider_end.*` listeners to add products to Sitemap from your own sources.
+You can create your own `oro_seo.event.url_items_provider_start.*`, `oro_seo.event.url_items_provider_end.*` listeners to add products to Sitemap from your own sources.
 
 
 ### HOW to add new provider
