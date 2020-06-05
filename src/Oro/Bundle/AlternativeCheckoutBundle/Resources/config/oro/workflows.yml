@@ -207,6 +207,7 @@ workflows:
                           hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
+                    - oro_shopping_list_frontend_my_view
                 init_entities:
                     - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]

@@ -284,7 +284,8 @@ datagrids:
             frontend: true
             jsmodules:
                 - orodatagrid/js/datagrid/builder/html-templates-preloader
-                - oroshoppinglist/js/datagrid/builder/flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
             toolbarOptions:
                 pageSize:
                     items:

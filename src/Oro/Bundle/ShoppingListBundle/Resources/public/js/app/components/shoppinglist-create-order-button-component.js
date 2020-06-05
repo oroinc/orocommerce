@@ -4,6 +4,7 @@ define(function(require) {
     const ButtonComponent = require('oroworkflow/js/app/components/button-component');
     const StandardConfirmation = require('oroui/js/standart-confirmation');
     const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
 
     const ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
         hasEmptyMatrix: null,
@@ -71,10 +72,7 @@ define(function(require) {
         },
 
         showConfirmation: function(callback) {
-            if (
-                (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
-                (!this.hasEmptyMatrix) // not empty matrix or it doesn't exist in SL
-            ) {
+            if (this.isConfirmationNeeded()) {
                 callback();
                 return;
             }
@@ -84,6 +82,20 @@ define(function(require) {
                 .off('ok')
                 .on('ok')
                 .open(callback);
+        },
+
+        isConfirmationNeeded: function() {
+            let skipConfirm;
+
+            try {
+                skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
+            } catch (e) {
+                // handler isn't defined in mediator, check empty matrix in old way
+                skipConfirm = (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
+                    (!this.hasEmptyMatrix); // not empty matrix or it doesn't exist in SL
+            }
+
+            return skipConfirm;
         }
     });
 
