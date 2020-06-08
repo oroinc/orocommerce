@@ -1,5 +1,13 @@
 {% macro oro_web_catalog_content_variant_prototype_body(form, disabled, expanded) %}
     <div class="content-variant-item-content__body">
+        {% if not form.vars.valid and form.vars.errors|length %}
+            <div class="alert alert-error" role="alert">
+                <div class="message">
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+        {% endif %}
+
         {{ form_widget(form, {disabled: disabled}) }}
         {{ form_widget(form.expanded) }}
 
@@ -16,8 +24,14 @@
         >
             <div class="scope-elements">
                 <h5>{{ form.scopes.vars.label|trans }}</h5>
+                {% if not form.scopes.vars.valid and form.scopes.vars.errors|length %}
+                    <div class="alert alert-error" role="alert">
+                        <div class="message">
+                            {{ form_errors(form.scopes) }}
+                        </div>
+                    </div>
+                {% endif %}
                 {{ form_widget(form.scopes) }}
-                {{ form_errors(form.scopes) }}
             </div>
         </div>
 

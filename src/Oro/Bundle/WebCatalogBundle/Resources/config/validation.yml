@@ -24,6 +24,8 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - Valid: ~
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    constraints:
+        - Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganization: ~
     properties:
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~

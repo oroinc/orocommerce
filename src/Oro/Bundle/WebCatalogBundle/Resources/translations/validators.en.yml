@@ -8,3 +8,5 @@ oro:
                 empty.message: 'Content node must have at least one restriction'
             content_variants:
                 blank: 'Please add one or more content variants.'
+        contentvariant:
+            same_organization.message: 'The content variant and web-catalog must belong to the same organization.'

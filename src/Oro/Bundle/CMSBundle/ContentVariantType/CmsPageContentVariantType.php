@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\ContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Component\Routing\RouteData;
+use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * The content variant type for a CMS page.
  */
-class CmsPageContentVariantType implements ContentVariantTypeInterface
+class CmsPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
     const TYPE = 'cms_page';
 
@@ -25,7 +26,7 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
 
     /**
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param PropertyAccessor              $propertyAccessor
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -73,7 +74,7 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Page $cmsPage */
-        $cmsPage = $this->propertyAccessor->getValue($contentVariant, 'cmsPage');
+        $cmsPage = $this->getAttachedEntity($contentVariant);
 
         return new RouteData('oro_cms_frontend_page_view', ['id' => $cmsPage->getId()]);
     }
@@ -92,5 +93,13 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.cms_page)', $alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachedEntity(ContentVariantInterface $contentVariant)
+    {
+        return $this->propertyAccessor->getValue($contentVariant, 'cmsPage');
     }
 }

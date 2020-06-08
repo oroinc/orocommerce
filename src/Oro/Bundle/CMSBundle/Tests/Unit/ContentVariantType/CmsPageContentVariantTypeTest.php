@@ -68,6 +68,21 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetAttachedEntity()
+    {
+        /** @var ContentVariantStub **/
+        $contentVariant = new ContentVariantStub();
+
+        /** @var Page $page */
+        $page = $this->getEntity(Page::class, ['id' => 42]);
+        $contentVariant->setCmsPage($page);
+
+        $this->assertEquals(
+            $page,
+            $this->type->getAttachedEntity($contentVariant)
+        );
+    }
+
     public function testGetApiResourceClassName()
     {
         $this->assertEquals(Page::class, $this->type->getApiResourceClassName());

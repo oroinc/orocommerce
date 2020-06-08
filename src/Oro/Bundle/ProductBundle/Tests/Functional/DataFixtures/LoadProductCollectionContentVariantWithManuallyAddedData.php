@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -41,7 +42,12 @@ class LoadProductCollectionContentVariantWithManuallyAddedData extends AbstractF
      */
     public function load(ObjectManager $manager)
     {
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $owner = $organization->getBusinessUnits()->first();
+
         $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+        $webCatalog->setOwner($owner);
         $webCatalog->setName(self::WEB_CATALOG);
         $this->setReference(self::WEB_CATALOG, $webCatalog);
         $manager->persist($webCatalog);
@@ -53,18 +59,19 @@ class LoadProductCollectionContentVariantWithManuallyAddedData extends AbstractF
         $manager->persist($rootNode);
 
         foreach (self::PRODUCT_COLLECTION_VARIANT_RELATIONS as $variantName => $segmentName) {
+            $contentNode = new ContentNode();
+            $contentNode->setParentNode($rootNode);
+            $contentNode->setWebCatalog($webCatalog);
+            $manager->persist($contentNode);
+
             $contentVariant = new ContentVariant();
             $contentVariant->setType(ProductCollectionContentVariantType::TYPE);
             $contentVariant->setDefault(true);
             $contentVariant->setProductCollectionSegment($this->getReference($segmentName));
-            $this->setReference($variantName, $contentVariant);
+            $contentNode->addContentVariant($contentVariant);
             $manager->persist($contentVariant);
 
-            $contentNode = new ContentNode();
-            $contentNode->setParentNode($rootNode);
-            $contentNode->setWebCatalog($webCatalog);
-            $contentNode->addContentVariant($contentVariant);
-            $manager->persist($contentNode);
+            $this->setReference($variantName, $contentVariant);
         }
         $manager->flush();
     }
