@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Component\Routing\RouteData;
+use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * The content variant type for a master catalog category.
  */
-class CategoryPageContentVariantType implements ContentVariantTypeInterface
+class CategoryPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
     const TYPE = 'category_page';
 
@@ -74,7 +75,7 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Category $category */
-        $category = $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');
+        $category = $this->getAttachedEntity($contentVariant);
 
         return new RouteData(
             'oro_product_frontend_product_index',
@@ -101,5 +102,13 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.category_page_category)', $alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachedEntity(ContentVariantInterface $contentVariant)
+    {
+        return $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');
     }
 }

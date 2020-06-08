@@ -91,6 +91,7 @@ class SlugGenerator
      */
     protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls, $generateRedirects = false)
     {
+        $organization = $contentNode->getWebCatalog()->getOrganization();
         foreach ($contentNode->getContentVariants() as $contentVariant) {
             $contentVariantType = $this->contentVariantTypeRegistry->getContentVariantType($contentVariant->getType());
             $routeData = $contentVariantType->getRouteData($contentVariant);
@@ -131,6 +132,7 @@ class SlugGenerator
                 if (!$this->getExistingSlug($slugUrl, $contentVariant)) {
                     $slug = new Slug();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+                    $slug->setOrganization($organization);
                     $contentVariant->addSlug($slug);
                 }
             }

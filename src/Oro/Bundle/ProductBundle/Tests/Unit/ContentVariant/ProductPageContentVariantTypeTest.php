@@ -67,6 +67,20 @@ class ProductPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetAttachedEntity()
+    {
+        /** @var ContentVariantStub **/
+        $contentVariant = new ContentVariantStub();
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $contentVariant->setProductPageProduct($product);
+
+        $this->assertEquals(
+            $product,
+            $this->type->getAttachedEntity($contentVariant)
+        );
+    }
+
     public function testGetApiResourceClassName()
     {
         $this->assertEquals(Product::class, $this->type->getApiResourceClassName());
