@@ -4,7 +4,14 @@
 
 ### filePath
 
-An array of relative URLs (e.g. /media/cache/attachment/resize/<file_id>/product_gallery_popup/<image_name>.jpeg) of the resized versions of the image (product_original, product_gallery_popup, product_gallery_main, product_large, product_extra_large, and product_medium).
+Relative URLs of the resized versions of the image.
+The object property name is a resized image type.
+The object property value is a relative URL.
+
+Possible image types: **product_original**, **product_gallery_popup**, **product_gallery_main**,
+**product_large**, **product_extra_large**, **product_medium**, **product_small**.
+
+Example of data: **{"product_original": "/media/cache/attachment/resize/product_original/11c00c6d0bd6b875afe655d3c9d4f942/32/5edcad2383a42535224399.jpeg", "product_large": "/media/cache/attachment/resize/product_large/f8ad5f04db8a20c593bca34d27fd6799/32/5edcad2383a42535224399.jpeg"}**
 
 #### create, update
 

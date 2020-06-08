@@ -121,7 +121,7 @@ api:
             documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'
             fields:
                 filePath:
-                    data_type: array
+                    data_type: object
                     depends_on: [filename,mimeType,originalFilename,extension,parentEntityClass]
                     form_options:
                         mapped: false

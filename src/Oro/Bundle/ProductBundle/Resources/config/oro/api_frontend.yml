@@ -21,7 +21,7 @@ api:
                     data_type: string
                     property_path: image.mimeType
                 types:
-                    data_type: array
+                    data_type: strings
                     property_path: _
                     depends_on: [ types.type ]
                 # declare excluded field for "types" entity property

@@ -6,7 +6,7 @@ api:
                 prices:
                     exclude: true
                 priceListCurrencies:
-                    data_type: array
+                    data_type: currency[]
                     property_path: currencies
                     depends_on: [ currencies.currency ]
                     # remove exclusion that is set automatically because
