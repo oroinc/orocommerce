@@ -22,6 +22,10 @@ layout:
             optionName: label
             optionValue: oro.product.featured_products.label
         - '@setOption':
+           id: featured_product_line_item_form
+           optionName: instance_name
+           optionValue: featured_products
+        - '@setOption':
             id: featured_product_line_item_form_fields
             optionName: instance_name
             optionValue: featured_products

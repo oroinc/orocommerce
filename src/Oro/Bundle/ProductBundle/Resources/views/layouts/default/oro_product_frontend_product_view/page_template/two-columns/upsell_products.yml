@@ -20,6 +20,10 @@ layout:
             optionName: label
             optionValue: oro.product.upsell_products.label
         - '@setOption':
+            id: two_column_upsell_product_line_item_form
+            optionName: instance_name
+            optionValue: two_column_upsell_products
+        - '@setOption':
             id: two_column_upsell_product_line_item_form_fields
             optionName: instance_name
             optionValue: two_column_upsell_products

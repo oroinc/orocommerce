@@ -18,6 +18,10 @@ layout:
             optionName: label
             optionValue: oro.order.top_selling_items.label
         - '@setOption':
+            id: top_selling_product_line_item_form
+            optionName: instance_name
+            optionValue: top_selling_products
+        - '@setOption':
             id: top_selling_product_line_item_form_fields
             optionName: instance_name
             optionValue: top_selling_products
