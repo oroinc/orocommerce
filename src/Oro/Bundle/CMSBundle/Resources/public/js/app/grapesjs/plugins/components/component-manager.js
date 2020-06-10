@@ -1,22 +1,9 @@
 import _ from 'underscore';
-import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
 import BaseClass from 'oroui/js/base-class';
-import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
+import rteActions from './rte';
 
 const ComponentManager = BaseClass.extend({
-    editorFormats: [
-        'bold',
-        'italic',
-        'underline',
-        'strikethrough',
-        'link',
-        'formatBlock',
-        'insertOrderedList',
-        'insertUnorderedList',
-        'subscript',
-        'superscript'
-    ],
-
     typeBuildersOptions: null,
 
     typeBuilders: [],
@@ -36,7 +23,7 @@ const ComponentManager = BaseClass.extend({
         Object.assign(this, _.pick(options, 'editor', 'typeBuildersOptions'));
 
         this.applyTypeBuilders();
-        this.addActionRte();
+        this.renderRteActions();
     },
 
     dispose() {
@@ -52,178 +39,37 @@ const ComponentManager = BaseClass.extend({
     /**
      * Add Rich Text Editor actions
      */
-    addActionRte() {
-        const editor = this.editor;
-        const RichTextEditor = editor.RichTextEditor;
-        this.editorFormats.forEach(format => RichTextEditor.remove(format));
+    renderRteActions() {
+        const {RichTextEditor} = this.editor;
+        const $actionBar = $(RichTextEditor.actionbar);
 
-        RichTextEditor.add('formatBlock', {
-            icon: selectTemplate({
-                options: {
-                    normal: __('oro.cms.wysiwyg.format_block.normal'),
-                    p: __('oro.cms.wysiwyg.format_block.p'),
-                    h1: __('oro.cms.wysiwyg.format_block.h1'),
-                    h2: __('oro.cms.wysiwyg.format_block.h2'),
-                    h3: __('oro.cms.wysiwyg.format_block.h3'),
-                    h4: __('oro.cms.wysiwyg.format_block.h4'),
-                    h5: __('oro.cms.wysiwyg.format_block.h5'),
-                    h6: __('oro.cms.wysiwyg.format_block.h6')
-                },
-                name: 'tag'
-            }),
-            event: 'change',
-
-            attributes: {
-                'title': __('oro.cms.wysiwyg.format_block.title'),
-                'class': 'gjs-rte-action text-format-action'
-            },
-
-            priority: 0,
-
-            result(rte) {
-                const value = rte.actionbar.querySelector(`[name="tag`).value;
-
-                if (value === 'normal') {
-                    const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
-                    const text = parentNode.innerText;
-                    parentNode.remove();
-
-                    return rte.insertHTML(text);
+        [...RichTextEditor.getAll(), ...rteActions]
+            .sort((a, b) => a.order - b.order)
+            .forEach(item => {
+                const {group, name, command, result} = item;
+                if (RichTextEditor.get(name)) {
+                    RichTextEditor.remove(name);
                 }
 
-                return rte.exec('formatBlock', value);
-            },
+                if (command && !result) {
+                    item.result = rte => rte.exec(command);
+                }
 
-            update(rte, action) {
-                const value = rte.doc.queryCommandValue(action.name);
-                const select = rte.actionbar.querySelector(`[name="tag"]`);
+                item.editor = this.editor;
 
-                if (value !== 'false') {
-                    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].indexOf(value) !== -1) {
-                        select.value = value;
-                    } else {
-                        select.value = 'normal';
+                RichTextEditor.add(name, item);
+
+                if (group) {
+                    if (!$actionBar.find(`[data-group-by="${group}"]`).length) {
+                        $actionBar.append($('<div />', {
+                            'data-group-by': group,
+                            'class': 'actionbar-group'
+                        }));
                     }
-                }
-            }
-        });
 
-        RichTextEditor.add('link', {
-            icon: '<span class="fa fa-link" aria-hidden="true"></span>',
-            name: 'link',
-            attributes: {
-                title: __('oro.cms.wysiwyg.component.link.label')
-            },
-
-            result: (rte, action) => {
-                const selection = rte.selection();
-
-                if (action.isSelectionALink(selection)) {
-                    const selectedComponent = editor.getSelected();
-
-                    if (selectedComponent.get('type') === 'link') {
-                        const el = selectedComponent.view.el;
-
-                        if (el.parentNode) {
-                            const textNode = document.createTextNode(selection.toString());
-
-                            el.parentNode.insertBefore(textNode, el);
-                        }
-
-                        selectedComponent.destroy();
-                    } else {
-                        const linkElement = action.getLinkElement(selection);
-
-                        linkElement.classList.remove('link');
-                        linkElement.setAttribute('href', '#');
-                        rte.exec('unlink');
-                    }
-                } else if (selection.toString() !== '') {
-                    rte.exec('createLink', '#');
-
-                    const linkElement = action.getLinkElement(rte.selection());
-
-                    linkElement.setAttribute('href', '');
-                    linkElement.classList.add('link');
-                }
-            },
-
-            update: (rte, action) => {
-                const selection = rte.selection();
-
-                if (action.isSelectionALink(selection)) {
-                    action.btn.classList.add(rte.classes.active);
-                }
-            },
-
-            isSelectionALink: selection => {
-                if (!selection.anchorNode) {
-                    return false;
-                }
-
-                const parentNode = selection.anchorNode.parentNode;
-
-                return parentNode && parentNode.nodeName === 'A' && parentNode.innerHTML === selection.toString();
-            },
-
-            getLinkElement: selection => {
-                let linkElement = selection.anchorNode;
-
-                if (linkElement.parentElement.tagName === 'A') {
-                    linkElement = linkElement.parentElement;
-                } else {
-                    linkElement = linkElement.nextSibling;
-                }
-
-                return linkElement;
-            }
-        });
-
-        const simpleActions = [{
-            command: 'bold',
-            icon: '<b aria-hidden="true">B</b>',
-            title: __('oro.cms.wysiwyg.simple_actions.bold.title')
-        }, {
-            command: 'italic',
-            icon: '<i aria-hidden="true">I</i>',
-            title: __('oro.cms.wysiwyg.simple_actions.italic.title')
-        }, {
-            command: 'underline',
-            icon: '<u aria-hidden="true">U</u>',
-            title: __('oro.cms.wysiwyg.simple_actions.underline.title')
-        }, {
-            command: 'strikethrough',
-            icon: '<strike aria-hidden="true">S</strike>',
-            title: __('oro.cms.wysiwyg.simple_actions.strikethrough.title')
-        }, {
-            command: 'insertOrderedList',
-            icon: '<span class="fa fa-list-ol" aria-hidden="true"></span>',
-            title: __('oro.cms.wysiwyg.simple_actions.insert_ordered_list.title')
-        }, {
-            command: 'insertUnorderedList',
-            icon: '<span class="fa fa-list-ul" aria-hidden="true"></span>',
-            title: __('oro.cms.wysiwyg.simple_actions.insert_unordered_list.title')
-        }, {
-            command: 'subscript',
-            icon: '<span class="fa fa-subscript" aria-hidden="true"></span>',
-            title: __('oro.cms.wysiwyg.simple_actions.subscript.title')
-        }, {
-            command: 'superscript',
-            icon: '<span class="fa fa-superscript" aria-hidden="true"></span>',
-            title: __('oro.cms.wysiwyg.simple_actions.superscript.title')
-        }];
-
-        simpleActions.forEach(item => {
-            RichTextEditor.add(item.command, {
-                icon: item.icon,
-                attributes: {
-                    title: item.title
-                },
-                result: function result(rte, action) {
-                    return rte.exec(item.command);
+                    $(item.btn).appendTo($actionBar.find(`[data-group-by="${group}"]`));
                 }
             });
-        });
     },
 
     /**
