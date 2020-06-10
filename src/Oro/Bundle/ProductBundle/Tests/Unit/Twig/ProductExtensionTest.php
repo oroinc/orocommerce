@@ -10,7 +10,6 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Symfony\Component\Form\FormView;
 
 class ProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,30 +50,30 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductExtension($container);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals(ProductExtension::NAME, $this->extension->getName());
     }
 
-    public function testIsConfigurableSimple()
+    public function testIsConfigurableSimple(): void
     {
         $this->assertFalse(
-            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
+            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
         );
     }
 
-    public function testIsConfigurable()
+    public function testIsConfigurable(): void
     {
         $this->assertTrue(
-            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
+            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
         );
     }
 
     /**
-     * @param array $ids
      * @dataProvider dataProviderRelatedProductIds
+     * @param array $ids
      */
-    public function testGetRelatedProductsIds(array $ids)
+    public function testGetRelatedProductsIds(array $ids): void
     {
         $this->finderDatabaseStrategy->expects($this->once())
             ->method('findIds')
@@ -86,42 +85,11 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function dataProviderRelatedProductIds()
+    public function dataProviderRelatedProductIds(): array
     {
         return [
             [[2, 3, 4]],
             [[]]
-        ];
-    }
-
-    /**
-     * @dataProvider dataSetUniqueLineItemFormId
-     * @param FormView $formView
-     * @param Product $product
-     * @param string $expectedId
-     */
-    public function testSetUniqueLineItemFormId($formView, $product, $expectedId)
-    {
-        self::callTwigFunction($this->extension, 'set_unique_line_item_form_id', [$formView, $product]);
-        $this->assertEquals($expectedId, $formView->vars['id']);
-        $this->assertEquals($expectedId, $formView->vars['attr']['id']);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataSetUniqueLineItemFormId()
-    {
-        $formView = new FormView();
-        $formView->vars['id'] = 'product_form';
-        return [
-            [$formView, $this->getEntity(Product::class, ['id' => 1]), 'product_form-product-id-1'],
-            [$formView, $this->getEntity(Product::class, ['id' => null]), 'product_form'],
-            [$formView, $this->getEntity(Product::class), 'product_form'],
-            [$formView, ['id' => 1], 'product_form-product-id-1'],
-            [$formView, ['id' => null], 'product_form'],
-            [$formView, [], 'product_form'],
-            [$formView, null, 'product_form'],
         ];
     }
 }

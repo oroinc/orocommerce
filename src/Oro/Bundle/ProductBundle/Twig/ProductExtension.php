@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy a
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy as UpsellProductFinderDatabaseStrategy;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use Symfony\Component\Form\FormView;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -20,7 +19,6 @@ use Twig\TwigFunction;
  *   - is_configurable_product_type
  *   - get_upsell_products_ids
  *   - get_related_products_ids
- *   - set_unique_line_item_form_id
  */
 class ProductExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
@@ -67,34 +65,7 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
                 'get_related_products_ids',
                 [$this, 'getRelatedProductsIds']
             ),
-            new TwigFunction(
-                'set_unique_line_item_form_id',
-                [$this, 'setUniqueLineItemFormId']
-            ),
         ];
-    }
-
-    /**
-     * @param FormView $form
-     * @param Product|array $product
-     */
-    public function setUniqueLineItemFormId($form, $product = [])
-    {
-        if (!isset($form->vars['_notUniqueId'])) {
-            $form->vars['_notUniqueId'] = $form->vars['id'];
-        }
-
-        $productId = null;
-        if ($product) {
-            $productId  = is_array($product) ? $product['id'] : $product->getId();
-        }
-        if ($productId) {
-            $form->vars['id'] = sprintf('%s-product-id-%s', $form->vars['_notUniqueId'], $productId);
-        } else {
-            $form->vars['id'] = $form->vars['_notUniqueId'];
-        }
-
-        $form->vars['attr']['id'] = $form->vars['id'];
     }
 
     /**
