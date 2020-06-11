@@ -25,6 +25,9 @@
                 view: 'oropricing/js/app/views/list-item-product-prices-view',
                 showValuePrice: showValuePrice,
                 showListedPrice: showListedPrice,
+                elements: {
+                    pricesHint: '[data-name="prices-hint-trigger"]'
+                },
                 modelAttr: {
                     prices: productPrices,
                 }
@@ -69,7 +72,8 @@
         'type': 'button',
         'title': 'oro.pricing.view_all_prices'|trans,
         'aria-label': 'oro.pricing.view_all_prices'|trans,
-        'data-name': 'prices-hint-trigger'
+        'data-name': 'prices-hint-trigger',
+        'data-trigger': 'manual'
     }) %}
     <button {{ block('block_attributes') }}>
         <span class="fa-info-circle fa--no-offset" aria-hidden="true"></span>
@@ -175,6 +179,9 @@
                 showValuePrice: false,
                 showListedPrice: false,
                 showHint: false,
+                elements: {
+                    pricesHint: '[data-name="prices-hint-trigger"]'
+                },
                 modelAttr: {
                     prices: productPrices,
                 }
