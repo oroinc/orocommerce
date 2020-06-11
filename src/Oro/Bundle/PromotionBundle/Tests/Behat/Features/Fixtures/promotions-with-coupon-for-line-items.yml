@@ -1,0 +1,53 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    lineItemDiscountPromotion10percentSKU2Label:
+        string: 'Line Item Discount Promotion'
+    lineItemDiscountPromotion10percentSKU2Desc:
+        string: 'Line Item Discount Promotion Description'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    lineItemCoupon:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'line-item-coupon'
+        promotion: '@lineItemDiscountPromotion10percentSKU2'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    firstLineItemDiscountPromotionSegmentSKU2:
+        name: 'Promotion Matching Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration10percent:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.1
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule1:
+        enabled: true
+        sortOrder: 1
+        name: 'lineItemDiscountPromotionRule1'
+        stopProcessing: false
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion10percentSKU2:
+        __calls:
+          - addLabel: ['@lineItemDiscountPromotion10percentSKU2Label']
+          - addDescription: ['@lineItemDiscountPromotion10percentSKU2Desc']
+          - addScope: ['@default_scope']
+        productsSegment: '@firstLineItemDiscountPromotionSegmentSKU2'
+        rule: '@lineItemDiscountPromotionRule1'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration10percent'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true

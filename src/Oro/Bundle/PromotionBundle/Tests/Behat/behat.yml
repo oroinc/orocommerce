@@ -25,6 +25,8 @@ oro_behat_extension:
           - '@oro_importexport.processor.registry'
         - OroSecurityBundle::ACLContext
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - OroPayPalBundle::FeatureContext
+        - OroPaymentBundle::FeatureContext
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 

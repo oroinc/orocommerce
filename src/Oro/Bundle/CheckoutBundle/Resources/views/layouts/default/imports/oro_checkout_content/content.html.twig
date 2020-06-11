@@ -50,7 +50,6 @@
 
 {% block __oro_checkout_content__checkout_form_widget -%}
     {% if form %}
-        {{ form_errors(form) }}
         {{ form_start(form, {
             'method': 'post',
             'action': path('oro_checkout_frontend_checkout', {'id': checkout.id}),
@@ -70,6 +69,14 @@
         <form method="post" class="checkout-form" action="">
             {{ block_widget(block) }}
         </form>
+    {% endif %}
+{%- endblock %}
+
+{% block __oro_checkout_content__checkout_form_errors_widget -%}
+    {% if not form.vars.valid %}
+        <div class="checkout-form-errors" id="checkout-form-errors">
+            {{ form_errors(form) }}
+        </div>
     {% endif %}
 {%- endblock %}
 

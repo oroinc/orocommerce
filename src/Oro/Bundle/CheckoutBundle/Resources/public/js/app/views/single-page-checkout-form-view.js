@@ -26,6 +26,7 @@ define(function(require) {
             formPaymentMethodSelector: '[name$="[payment_method]"]',
             originPaymentFormSelector: '[data-content="payment_method_form"]',
             stateTokenSelector: '[name$="[state_token]"]',
+            couponCodeSelector: '[data-role="coupon-code"]',
             entityId: null
         },
 
@@ -89,6 +90,8 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
+            mediator.on('frontend:coupons:changed', this._afterApplyCoupon, this);
+
             SinglePageCheckoutFormView.__super__.initialize.call(this, options);
         },
 
@@ -116,6 +119,11 @@ define(function(require) {
 
             // Do not execute logic when hidden element (form) is refreshed
             if (!$(event.target).is(':visible')) {
+                return;
+            }
+
+            // Do not execute logic if updated coupon code data. Coupons are handled by its own logic.
+            if ($(event.target).is(this.options.couponCodeSelector)) {
                 return;
             }
 
@@ -205,6 +213,19 @@ define(function(require) {
             return $form.find(this.options.transitionFormFieldSelector).serialize();
         },
 
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('frontend:coupons:changed', this._afterApplyCoupon, this);
+
+            SinglePageCheckoutFormView.__super__.dispose.call(this);
+        },
+
         _disableShippingAddress: function() {
             const $element = this.$el.find(this.options.shipToSelector);
             const disable = $element.is(':visible') && $element.is(':checked');
@@ -248,6 +269,11 @@ define(function(require) {
             }
 
             this.$el.find(this.options.formPaymentMethodSelector).val($selectedMethodVal);
+        },
+
+        _afterApplyCoupon: function() {
+            // Update dependent subviews.
+            this.$el.find(this.options.couponCodeSelector).trigger('forceChange');
         }
     });
 
