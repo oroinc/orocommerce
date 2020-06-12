@@ -32,8 +32,8 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requests",    
-    "attributes": {   
+    "type": "rfqs",    
+    "attributes": { 
       "firstName": "Ronald",
       "lastName": "Rivera",
       "email": "rrivera0@live.com",
@@ -48,7 +48,7 @@ Example:
       "requestProducts": {
         "data": [
           {
-            "type": "requestproducts",
+            "type": "rfqproducts",
             "id": "1"
           }
         ]
@@ -89,9 +89,9 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requests",
+    "type": "rfqs",
     "id": "1",
-    "attributes": {   
+    "attributes": { 
       "firstName": "Ronald",
       "lastName": "Rivera",
       "email": "rrivera0@live.com",
@@ -106,7 +106,7 @@ Example:
       "requestProducts": {
         "data": [
           {
-            "type": "requestproducts",
+            "type": "rfqproducts",
             "id": "1"
           }
         ]
@@ -412,11 +412,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
@@ -436,11 +436,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
@@ -460,11 +460,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
@@ -494,11 +494,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
@@ -518,11 +518,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
@@ -542,11 +542,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
@@ -629,7 +629,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "rfpcustomerstatuses",
+    "type": "rfqcustomerstatuses",
     "id": "cancelled"
   }
 }
@@ -656,7 +656,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "rfpinternalstatuses",
+    "type": "rfqinternalstatuses",
     "id": "cancelled_by_customer"
   }
 }

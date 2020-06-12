@@ -29,7 +29,7 @@ Example:
 {
   "data": {
     "type": "customergroupproductvisibilities",    
-    "attributes": {   
+    "attributes": { 
       "visibility": "visible"
     },
     "relationships": {
@@ -67,7 +67,7 @@ Example:
   "data": {
     "type": "customergroupproductvisibilities", 
     "id": "1-1",   
-    "attributes": {   
+    "attributes": { 
       "visibility": "visible"
     }
   }

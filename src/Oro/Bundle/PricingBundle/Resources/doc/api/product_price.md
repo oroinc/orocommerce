@@ -38,7 +38,7 @@ Example:
         },
         "relationships": {
             "priceList": {
-                "data":{
+                "data": {
                     "type": "pricelists",
                     "id": "1"
                 }

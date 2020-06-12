@@ -78,7 +78,7 @@ Example:
   "data": {
     "type": "orderlineitems",
     "id": "1",
-    "attributes": {    
+    "attributes": {
       "quantity": 19,     
       "value": 23.55,      
       "priceType": 10,

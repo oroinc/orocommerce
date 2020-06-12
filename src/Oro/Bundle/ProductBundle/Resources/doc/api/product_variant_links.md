@@ -70,7 +70,7 @@ Example:
   "data": {
     "type": "productvariantlinks",
     "id": "1",
-    "meta":{
+    "meta": {
       "update": true
     },
     "attributes": {

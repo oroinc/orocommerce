@@ -28,7 +28,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproductitems",
+    "type": "rfqproductitems",
     "attributes": {
       "quantity": 99,
       "value": "1.0000",
@@ -37,7 +37,7 @@ Example:
     "relationships": {
       "requestProduct": {
         "data": {
-          "type": "requestproducts",
+          "type": "rfqproducts",
           "id": "1"
         }
       },
@@ -67,7 +67,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproductitems",
+    "type": "rfqproductitems",
     "id": "1",
     "attributes": {
       "quantity": 99,
@@ -77,7 +77,7 @@ Example:
     "relationships": {
       "requestProduct": {
         "data": {
-          "type": "requestproducts",
+          "type": "rfqproducts",
           "id": "1"
         }
       },
@@ -139,7 +139,7 @@ Delete a collection of request product item records.
 
 *This field is **required** and must remain defined.*
 
-### requestproducts
+### requestProduct
 
 #### create
 
@@ -147,7 +147,7 @@ Delete a collection of request product item records.
 
 **The required field.**
 
-### productunits
+### productUnit
 
 #### create
 
@@ -204,7 +204,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproducts",
+    "type": "rfqproducts",
     "id": "1"
   }
 }

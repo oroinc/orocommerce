@@ -4,19 +4,19 @@
 
 ### get
 
-Retrieve a specific ProductDescription record.
+Retrieve a specific product description record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of ProductDescription records.
+Retrieve a collection of product description records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new ProductDescription record.
+Create a new product description record.
 
 The created record is returned in the response.
 
@@ -40,14 +40,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "product": {
         "data": {
-          "type":"products",
-          "id":"1"
+          "type": "products",
+          "id": "1"
         }
       }
     }
@@ -58,7 +58,7 @@ Example:
 
 ### update
 
-Edit a specific ProductDescription record.
+Edit a specific product description record.
 
 The updated record is returned in the response.
 
@@ -83,14 +83,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "product": {
         "data": {
-          "type":"products",
-          "id":"1"
+          "type": "products",
+          "id": "1"
         }
       }
     }
@@ -107,15 +107,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of localization assigned to a specific ProductDescription record.
+Retrieve a record of localization assigned to a specific product description record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific ProductDescription record.
+Retrieve ID of localization record assigned to a specific product description record.
 
 #### update_relationship
 
-Replace localization assigned to a specific ProductDescription record.
+Replace localization assigned to a specific product description record.
 
 {@request:json_api}
 Example:
@@ -134,15 +134,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of product assigned to a specific ProductDescription record.
+Retrieve a record of product assigned to a specific product description record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific ProductDescription record.
+Retrieve ID of product record assigned to a specific product description record.
 
 #### update_relationship
 
-Replace product assigned to a specific ProductDescription record.
+Replace product assigned to a specific product description record.
 
 {@request:json_api}
 Example:

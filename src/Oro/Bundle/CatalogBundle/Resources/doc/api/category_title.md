@@ -4,19 +4,19 @@
 
 ### get
 
-Retrieve a specific CategoryTitle record.
+Retrieve a specific category title record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of CategoryTitle records.
+Retrieve a collection of category title records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new CategoryTitle record.
+Create a new category title record.
 
 The created record is returned in the response.
 
@@ -36,14 +36,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "category": {
         "data": {
-          "type":"categories",
-          "id":"1"
+          "type": "categories",
+          "id": "1"
         }
       }
     }
@@ -54,7 +54,7 @@ Example:
 
 ### update
 
-Edit a specific CategoryTitle record.
+Edit a specific category title record.
 
 The updated record is returned in the response.
 
@@ -75,14 +75,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "category": {
         "data": {
-          "type":"categories",
-          "id":"1"
+          "type": "categories",
+          "id": "1"
         }
       }
     }
@@ -99,15 +99,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of localization assigned to a specific CategoryTitle record.
+Retrieve a record of localization assigned to a specific category title record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific CategoryTitle record.
+Retrieve ID of localization record assigned to a specific category title record.
 
 #### update_relationship
 
-Replace localization assigned to a specific CategoryTitle record.
+Replace localization assigned to a specific category title record.
 
 {@request:json_api}
 Example:
@@ -126,15 +126,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of category assigned to a specific CategoryTitle record.
+Retrieve a record of category assigned to a specific category title record.
 
 #### get_relationship
 
-Retrieve ID of category record assigned to a specific CategoryTitle record.
+Retrieve ID of category record assigned to a specific category title record.
 
 #### update_relationship
 
-Replace category assigned to a specific CategoryTitle record.
+Replace category assigned to a specific category title record.
 
 {@request:json_api}
 Example:

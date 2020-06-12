@@ -23,7 +23,7 @@ class RequestTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requests'],
+            ['entity' => 'rfqs'],
             ['page' => ['size' => 100]]
         );
 
@@ -37,7 +37,7 @@ class RequestTest extends RestJsonApiTestCase
             ->findOneBy([]);
 
         $response = $this->get(
-            ['entity' => 'requests', 'id' => $entity->getId()]
+            ['entity' => 'rfqs', 'id' => $entity->getId()]
         );
 
         $this->assertResponseNotEmpty($response);
@@ -51,7 +51,7 @@ class RequestTest extends RestJsonApiTestCase
 
         $data = [
             'data' => [
-                'type' => 'requests',
+                'type' => 'rfqs',
                 'id' => (string)$requestEntity->getId(),
                 'attributes' => [
                     'firstName' => 'Ronald',
@@ -64,17 +64,17 @@ class RequestTest extends RestJsonApiTestCase
                 ],
                 'relationships' => [
                     'customer_status' => [
-                        'data' => ['type' => 'rfpcustomerstatuses', 'id' => 'requires_attention']
+                        'data' => ['type' => 'rfqcustomerstatuses', 'id' => 'requires_attention']
                     ],
                     'internal_status' => [
-                        'data' => ['type' => 'rfpinternalstatuses', 'id' => 'cancelled_by_customer']
+                        'data' => ['type' => 'rfqinternalstatuses', 'id' => 'cancelled_by_customer']
                     ]
                 ]
             ]
         ];
 
         $response = $this->patch(
-            ['entity' => 'requests', 'id' => $requestEntity->getId()],
+            ['entity' => 'rfqs', 'id' => $requestEntity->getId()],
             $data
         );
 
@@ -125,7 +125,7 @@ class RequestTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'id' => '8da4d8e6',
-                'type' => 'requests',
+                'type' => 'rfqs',
                 'attributes' => [
                     'company' => 'Oro',
                     'firstName' => 'Ronald',
@@ -136,7 +136,7 @@ class RequestTest extends RestJsonApiTestCase
                     'requestProducts' => [
                         'data' => [
                             [
-                                'type' => 'requestproducts',
+                                'type' => 'rfqproducts',
                                 'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
                             ]
                         ]
@@ -146,13 +146,13 @@ class RequestTest extends RestJsonApiTestCase
             'included' => [
                 [
                     'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f',
-                    'type' => 'requestproducts',
+                    'type' => 'rfqproducts',
                     'attributes' => [
                         'comment' => 'Test'
                     ],
                     'relationships' => [
                         'request' => [
-                            'data' => ['type' => 'requests', 'id' => '8da4d8e6']
+                            'data' => ['type' => 'rfqs', 'id' => '8da4d8e6']
                         ],
                         'product' => [
                             'data' => ['type' => 'products', 'id' => $product]
@@ -160,7 +160,7 @@ class RequestTest extends RestJsonApiTestCase
                         'requestProductItems' => [
                             'data' => [
                                 [
-                                    'type' => 'requestproductitems',
+                                    'type' => 'rfqproductitems',
                                     'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7'
                                 ]
                             ]
@@ -169,7 +169,7 @@ class RequestTest extends RestJsonApiTestCase
                 ],
                 [
                     'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7',
-                    'type' => 'requestproductitems',
+                    'type' => 'rfqproductitems',
                     'attributes' => [
                         'quantity' => 10,
                         'value' => 100,
@@ -181,7 +181,7 @@ class RequestTest extends RestJsonApiTestCase
                         ],
                         'requestProduct' => [
                             'data' => [
-                                'type' => 'requestproducts',
+                                'type' => 'rfqproducts',
                                 'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
                             ]
                         ]
@@ -191,7 +191,7 @@ class RequestTest extends RestJsonApiTestCase
         ];
 
         $response = $this->post(
-            ['entity' => 'requests'],
+            ['entity' => 'rfqs'],
             $data
         );
 
@@ -211,7 +211,7 @@ class RequestTest extends RestJsonApiTestCase
     public function testDeleteEntity($entityId)
     {
         $this->delete(
-            ['entity' => 'requests', 'id' => $entityId]
+            ['entity' => 'rfqs', 'id' => $entityId]
         );
 
         $this->assertNull(

@@ -1,4 +1,24 @@
 api:
+    entity_aliases:
+        Oro\Bundle\RFPBundle\Entity\Request:
+            alias: rfq
+            plural_alias: rfqs
+        Oro\Bundle\RFPBundle\Entity\RequestProduct:
+            alias: rfqproduct
+            plural_alias: rfqproducts
+        Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+            alias: rfqproductitem
+            plural_alias: rfqproductitems
+        Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote:
+            alias: rfqadditionalnote
+            plural_alias: rfqadditionalnotes
+        Extend\Entity\EV_Rfp_Customer_Status:
+            alias: rfqcustomerstatus
+            plural_alias: rfqcustomerstatuses
+        Extend\Entity\EV_Rfp_Internal_Status:
+            alias: rfqinternalstatus
+            plural_alias: rfqinternalstatuses
+
     entities:
         Oro\Bundle\RFPBundle\Entity\Request:
             documentation_resource: '@OroRFPBundle/Resources/doc/api/request.md'

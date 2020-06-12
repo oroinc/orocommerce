@@ -28,7 +28,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproducts",
+    "type": "rfqproducts",
     "id": "1",
     "attributes": {
       "comment": "Notes 0"
@@ -36,7 +36,7 @@ Example:
     "relationships": {
       "request": {
         "data": {
-          "type": "requests",
+          "type": "rfqs",
           "id": "1"
         }
       },
@@ -49,7 +49,7 @@ Example:
       "requestProductItems": {
         "data": [
           {
-            "type": "requestproductitems",
+            "type": "rfqproductitems",
             "id": "1"
           }
         ]
@@ -74,7 +74,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproducts",
+    "type": "rfqproducts",
     "id": "94",
     "attributes": {
       "comment": "Notes 0"
@@ -82,7 +82,7 @@ Example:
     "relationships": {
       "request": {
         "data": {
-          "type": "requests",
+          "type": "rfqs",
           "id": "1"
         }
       },
@@ -95,7 +95,7 @@ Example:
       "requestProductItems": {
         "data": [
           {
-            "type": "requestproductitems",
+            "type": "rfqproductitems",
             "id": "1"
           }
         ]
@@ -193,7 +193,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requests",
+    "type": "rfqs",
     "id": "1"
   }
 }
@@ -221,11 +221,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "2"
     },
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "3"
     }
   ]
@@ -244,11 +244,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "2"
     },
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "3"
     }
   ]
@@ -267,11 +267,11 @@ Example:
 {
   "data": [
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "2"
     },
     {
-      "type": "requestproductitems",
+      "type": "rfqproductitems",
       "id": "3"
     }
   ]

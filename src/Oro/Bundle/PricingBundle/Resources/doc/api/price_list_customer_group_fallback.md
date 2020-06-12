@@ -39,7 +39,7 @@ Example:
         "relationships": {
             "customerGroup": {
                 "data": {
-                    "type":"customergroups",
+                    "type": "customergroups",
                     "id": "1"
                 }
             }

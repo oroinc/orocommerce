@@ -21,7 +21,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requestadditionalnotes'],
+            ['entity' => 'rfqadditionalnotes'],
             ['page' => ['size' => 1000]]
         );
 
@@ -38,7 +38,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
             ->findOneBy([]);
 
         $response = $this->get(
-            ['entity' => 'requestadditionalnotes', 'id' => $entity->getId()]
+            ['entity' => 'rfqadditionalnotes', 'id' => $entity->getId()]
         );
 
         $this->assertResponseNotEmpty($response);
@@ -48,7 +48,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     {
         $response = $this->options(
             $this->getListRouteName(),
-            ['entity' => 'requestadditionalnotes']
+            ['entity' => 'rfqadditionalnotes']
         );
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
@@ -57,7 +57,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     {
         $response = $this->options(
             $this->getItemRouteName(),
-            ['entity' => 'requestadditionalnotes', 'id' => 1]
+            ['entity' => 'rfqadditionalnotes', 'id' => 1]
         );
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
@@ -73,7 +73,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     {
         $response = $this->request(
             $method,
-            $this->getUrl($routeName, array_merge(['entity' => 'requestadditionalnotes'], $param))
+            $this->getUrl($routeName, array_merge(['entity' => 'rfqadditionalnotes'], $param))
         );
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }

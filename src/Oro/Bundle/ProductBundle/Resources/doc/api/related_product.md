@@ -35,20 +35,20 @@ During the POST request, the following validation constraints are checked:
 Example:
 
 ```JSON
-{  
-   "data":{  
-      "type":"relatedproducts",
-      "relationships":{  
-         "product":{  
-            "data":{  
-               "type":"products",
-               "id":"1"
+{
+   "data": {
+      "type": "relatedproducts",
+      "relationships": {
+         "product": {
+            "data": {
+               "type": "products",
+               "id": "1"
             }
          },
-         "relatedItem":{  
-            "data":{  
-               "type":"products",
-               "id":"2"
+         "relatedItem": {
+            "data": {
+               "type": "products",
+               "id": "2"
             }
          }
       }

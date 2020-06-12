@@ -36,13 +36,13 @@ Example:
         "relationships": {
             "priceList": {
                 "data": {
-                    "type":"pricelists",
+                    "type": "pricelists",
                     "id": "1"
                 }
             },
             "customerGroup": {
                 "data": {
-                    "type":"customergroups",
+                    "type": "customergroups",
                     "id": "1"
                 }
             }
@@ -75,7 +75,7 @@ Example:
         "relationships": {
             "priceList": {
                 "data": {
-                    "type":"pricelists",
+                    "type": "pricelists",
                     "id": "1"
                 }
             }

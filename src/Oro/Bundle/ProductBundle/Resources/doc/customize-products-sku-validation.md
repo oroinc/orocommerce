@@ -31,7 +31,7 @@ There are 2 ways to override the `oro_product.sku.regex_pattern` parameter in yo
     class OverrideProductSKUCompilerPass implements CompilerPassInterface
     {
         public function process(ContainerBuilder $container)
-        {  
+        {
             $container->setParameter('oro_product.sku.regex_pattern', '/^[a-z]*$/');
         }
     }

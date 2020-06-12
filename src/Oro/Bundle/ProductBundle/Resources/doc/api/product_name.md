@@ -4,19 +4,19 @@
 
 ### get
 
-Retrieve a specific ProductName record.
+Retrieve a specific product name record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of ProductName records.
+Retrieve a collection of product name records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new ProductName record.
+Create a new product name record.
 
 The created record is returned in the response.
 
@@ -36,14 +36,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "product": {
         "data": {
-          "type":"products",
-          "id":"1"
+          "type": "products",
+          "id": "1"
         }
       }
     }
@@ -54,7 +54,7 @@ Example:
 
 ### update
 
-Edit a specific ProductName record.
+Edit a specific product name record.
 
 The updated record is returned in the response.
 
@@ -75,14 +75,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "product": {
         "data": {
-          "type":"products",
-          "id":"1"
+          "type": "products",
+          "id": "1"
         }
       }
     }
@@ -99,15 +99,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of localization assigned to a specific ProductName record.
+Retrieve a record of localization assigned to a specific product name record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific ProductName record.
+Retrieve ID of localization record assigned to a specific product name record.
 
 #### update_relationship
 
-Replace localization assigned to a specific ProductName record.
+Replace localization assigned to a specific product name record.
 
 {@request:json_api}
 Example:
@@ -126,15 +126,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of product assigned to a specific ProductName record.
+Retrieve a record of product assigned to a specific product name record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific ProductName record.
+Retrieve ID of product record assigned to a specific product name record.
 
 #### update_relationship
 
-Replace product assigned to a specific ProductName record.
+Replace product assigned to a specific product name record.
 
 {@request:json_api}
 Example:

@@ -33,7 +33,7 @@ Example:
 {
     "data": {
         "id": "price_list",
-        "type":"pricelists",
+        "type": "pricelists",
         "attributes": {
             "name": "some name",
             "priceListCurrencies": ["EUR", "USD"],
@@ -41,10 +41,10 @@ Example:
             "default": false,
             "productAssignmentRule": "product.category.id > 0"
         },
-        "relationships": {  
-            "priceRules": {  
+        "relationships": {
+            "priceRules": {
                 "data": [  
-                    {  
+                    {
                         "type": "pricerules",
                         "id": "price_rule"
                     }
@@ -72,9 +72,9 @@ Example:
                 "rule": "product.msrp.value + 10",
                 "priority": "1"
             },
-            "relationships": {  
-                "priceList": {  
-                   "data": {  
+            "relationships": {
+                "priceList": {
+                   "data": {
                       "type": "pricelists",
                       "id": "price_list"
                    }
@@ -138,7 +138,7 @@ Example:
 {
     "data": {
         "id": "1",
-        "type":"pricelists",
+        "type": "pricelists",
         "attributes": {
             "name": "another name",
             "priceListCurrencies": ["EUR", "USD", "RUB"],

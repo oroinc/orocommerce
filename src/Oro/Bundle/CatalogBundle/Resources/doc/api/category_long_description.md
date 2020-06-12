@@ -4,19 +4,19 @@
 
 ### get
 
-Retrieve a specific CategoryLongDescription record.
+Retrieve a specific category long description record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of CategoryLongDescription records.
+Retrieve a collection of category long description records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new CategoryLongDescription record.
+Create a new category long description record.
 
 The created record is returned in the response.
 
@@ -36,14 +36,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "category": {
         "data": {
-          "type":"categories",
-          "id":"1"
+          "type": "categories",
+          "id": "1"
         }
       }
     }
@@ -54,7 +54,7 @@ Example:
 
 ### update
 
-Edit a specific CategoryLongDescription record.
+Edit a specific category long description record.
 
 The updated record is returned in the response.
 
@@ -75,14 +75,14 @@ Example:
     "relationships": {
       "localization": {
         "data": {
-          "type":"localizations",
-          "id":"1"
+          "type": "localizations",
+          "id": "1"
         }
       },
       "category": {
         "data": {
-          "type":"categories",
-          "id":"1"
+          "type": "categories",
+          "id": "1"
         }
       }
     }
@@ -99,15 +99,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of localization assigned to a specific CategoryLongDescription record.
+Retrieve a record of localization assigned to a specific category long description record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific CategoryLongDescription record.
+Retrieve ID of localization record assigned to a specific category long description record.
 
 #### update_relationship
 
-Replace localization assigned to a specific CategoryLongDescription record.
+Replace localization assigned to a specific category long description record.
 
 {@request:json_api}
 Example:
@@ -126,15 +126,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of category assigned to a specific CategoryLongDescription record.
+Retrieve a record of category assigned to a specific category long description record.
 
 #### get_relationship
 
-Retrieve ID of category record assigned to a specific CategoryLongDescription record.
+Retrieve ID of category record assigned to a specific category long description record.
 
 #### update_relationship
 
-Replace category assigned to a specific CategoryLongDescription record.
+Replace category assigned to a specific category long description record.
 
 {@request:json_api}
 Example:

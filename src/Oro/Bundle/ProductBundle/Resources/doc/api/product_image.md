@@ -122,7 +122,7 @@ Example:
 ```JSON
 {
   "data": {
-      "meta":{
+      "meta": {
         "update": true
       },
       "type": "files",
@@ -180,7 +180,7 @@ Complete request example:
   },
   "included": [
     {
-      "meta":{
+      "meta": {
         "update": true
       },
       "type": "files",

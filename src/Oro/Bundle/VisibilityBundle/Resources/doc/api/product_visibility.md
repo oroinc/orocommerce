@@ -29,7 +29,7 @@ Example:
 {
   "data": {
     "type": "productvisibilities",    
-    "attributes": {   
+    "attributes": { 
       "visibility": "visible"
     },
     "relationships": {
@@ -61,7 +61,7 @@ Example:
   "data": {
     "type": "productvisibilities", 
     "id": "1",   
-    "attributes": {   
+    "attributes": { 
       "visibility": "visible"
     }
   }

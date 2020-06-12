@@ -32,7 +32,7 @@ Example:
     "attributes": {
       "status": "enabled"
     },
-    "relationships": {     
+    "relationships": { 
       "names": {
         "data": [
           {
@@ -78,11 +78,11 @@ Example:
 {
   "data": {
     "type": "brands",
-    "id":"3",    
+    "id": "3",    
     "attributes": {
       "status": "enabled"
     },
-    "relationships": {     
+    "relationships": { 
       "names": {
         "data": [
           {
