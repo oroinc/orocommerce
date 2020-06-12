@@ -6,6 +6,7 @@ use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -39,6 +40,11 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     protected $processedProducts = [];
 
     /**
+     * @var array|ProductVariantLink[]
+     */
+    protected $processedVariantLinks = [];
+
+    /**
      * {@inheritdoc}
      */
     public function close()
@@ -68,6 +74,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      */
     protected function beforeProcessEntity($entity)
     {
+        $this->processedVariantLinks = [];
         // Postpone configurable products processing after simple ones
         // incremented_read option is set during postponed rows processing
         if (!$this->context->hasOption('incremented_read') && $entity->getType() === Product::TYPE_CONFIGURABLE) {
@@ -313,5 +320,38 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         return parent::validateAndUpdateContext($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function processValidationErrors($entity, array $validationErrors)
+    {
+        parent::processValidationErrors($entity, $validationErrors);
+
+        // Remove variant link from parentVariantLinks collection.
+        // Variant Links are added to configurable product is also added to parentVariantLinks collection of it`s simple
+        // During flush such variant links are added to scheduled insertions and fails flush of validation failed.
+        foreach ($this->processedVariantLinks as $variantLink) {
+            if (!$variantLink->getProduct()) {
+                continue;
+            }
+            $variantLink->getProduct()
+                ->getParentVariantLinks()
+                ->removeElement($variantLink);
+        }
+        $this->processedVariantLinks = [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function cacheInverseFieldRelation($entityName, $fieldName, $relationEntity)
+    {
+        parent::cacheInverseFieldRelation($entityName, $fieldName, $relationEntity);
+
+        if ($relationEntity instanceof ProductVariantLink) {
+            $this->processedVariantLinks[] = $relationEntity;
+        }
     }
 }
