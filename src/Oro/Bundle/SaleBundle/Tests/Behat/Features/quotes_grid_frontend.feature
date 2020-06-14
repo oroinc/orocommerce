@@ -51,9 +51,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Ship Until filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Do Not Ship Later Than as between "today -2 day" and "today -1 day"
+    When I filter Do Not Ship Later Than as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Do Not Ship Later Than as between "today" and "today +1 day"
+    When I filter Do Not Ship Later Than as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
@@ -62,9 +62,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Valid Until filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Valid Until as between "today -2 day" and "today -1 day"
+    When I filter Valid Until as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Valid Until as between "today" and "today +1 day"
+    When I filter Valid Until as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote12 |
@@ -73,9 +73,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Created At filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Created At as between "today -2 day" and "today -1 day"
+    When I filter Created At as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Created At as between "today" and "+1 day"
+    When I filter Created At as between "today" and "today+1"
     Then number of records in "AllQuotes" should be 13
     And I reset "AllQuotes" grid
 
