@@ -190,6 +190,8 @@ services:
     oro_fedex_shipping.cache:
         public: false
         parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_fedex_shipping' ] ]
 
     oro_fedex_shipping.cache.response:
         class: 'Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache'
