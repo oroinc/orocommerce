@@ -13,12 +13,12 @@ services:
 
     oro_product.provider.product_image_placeholder.default:
         parent: oro_layout.provider.image_placeholder.default.abstract
-        public: false
         arguments:
             - '/bundles/oroproduct/images/no_image.png'
 
     oro_product.provider.product_image_placeholder:
         parent: oro_layout.provider.image_placeholder.chain.abstract
+        public: true
         calls:
             - [addProvider, ['@oro_product.provider.product_image_placeholder.config']]
             - [addProvider, ['@oro_product.provider.product_image_placeholder.theme']]

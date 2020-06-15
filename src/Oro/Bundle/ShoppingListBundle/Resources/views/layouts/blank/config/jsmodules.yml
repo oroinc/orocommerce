@@ -36,5 +36,5 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
-        - tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html

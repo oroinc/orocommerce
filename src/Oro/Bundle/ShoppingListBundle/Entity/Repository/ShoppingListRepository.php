@@ -183,7 +183,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             $this->loadRelatedEntityFallbackValuesForProducts($productsIds);
             $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
             $this->loadRelatedProductNames($mainProductsIds);
-            $this->loadRelatedProductImages($mainProductsIds);
+            $this->loadRelatedProductImages($productsIds);
         }
 
         return $shoppingList;

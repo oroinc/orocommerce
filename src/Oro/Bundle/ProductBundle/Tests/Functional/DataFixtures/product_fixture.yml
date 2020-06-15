@@ -78,6 +78,8 @@ product-3:
         - { reference: product-3.descriptions.default, text: product-3.descriptions.default }
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
+    images:
+        - { reference: img, type: main }
     featured: true
     related_products: [product-1, product-2]
     manageInventory:

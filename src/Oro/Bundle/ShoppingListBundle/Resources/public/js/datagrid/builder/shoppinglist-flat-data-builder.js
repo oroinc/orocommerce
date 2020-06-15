@@ -27,15 +27,11 @@ const shoppinglistFlatDataBuilder = {
     processDatagridOptions: function(deferred, options) {
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
-                if (resp.metadata) {
-                    resp.metadata.rowActions = []; // @todo remove `if` block
-                }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             }
         });
 
         options.data.data = flattenData(options.data.data);
-        options.metadata.rowActions = []; // @todo remove line
 
         deferred.resolve();
         return deferred;

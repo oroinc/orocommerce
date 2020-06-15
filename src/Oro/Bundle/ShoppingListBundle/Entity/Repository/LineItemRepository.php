@@ -67,6 +67,43 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
+     * @param int $shoppingListId
+     * @return bool
+     */
+    public function hasEmptyMatrix(int $shoppingListId): bool
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li.quantity, p.type, p.id, IDENTITY(li.parentProduct) as parent')
+            ->join('li.product', 'p')
+            ->where($qb->expr()->eq('li.shoppingList', ':shoppingListId'))
+            ->setParameter('shoppingListId', $shoppingListId);
+
+        $configurable = [];
+        $simple = [];
+
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            if ($row['type'] === Product::TYPE_CONFIGURABLE) {
+                $configurable[] = $row['id'];
+                continue;
+            }
+
+            if (!$row['parent'] || $row['quantity'] <= 0) {
+                continue;
+            }
+
+            $simple[$row['parent']][] = $row['id'];
+        }
+
+        foreach ($configurable as $id) {
+            if (!isset($simple[$id]) || !count($simple[$id])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @return array|LineItem[]
      */

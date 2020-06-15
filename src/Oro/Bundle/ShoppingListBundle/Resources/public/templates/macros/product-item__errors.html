@@ -1,0 +1,7 @@
+<% if (errors) { %>
+<div class="shopping-list-line-items__error">
+    <% for (var i = 0; i < errors.length; i++) { %>
+    <span class="validation-error" role="alert"><span class="validation-error__icon" aria-hidden="true"></span><%= errors[i] %></span>
+    <% } %>
+</div>
+<% } %>

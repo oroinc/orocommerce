@@ -188,38 +188,19 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('item', $data[0]);
-        $this->assertContains('product-1.names.default', $data[0]['item']);
-    }
-
-    public function testViewMyAll(): void
-    {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
-        );
-
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_shopping_list_frontend_my_view_all', ['id' => $shoppingList->getId()])
-        );
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('my-shopping-list-all-line-items-grid', $crawler->html());
-
-        $response = $this->client->requestFrontendGrid(
-            'my-shopping-list-all-line-items-grid',
-            ['my-shopping-list-all-line-items-grid[shopping_list_id]' => $shoppingList->getId()],
-            true
-        );
-
-        $data = $this->getJsonResponseContent($response, 200)['data'];
-
-        $this->assertCount(1, $data);
-        $this->assertArrayHasKey('item', $data[0]);
-        $this->assertContains('product-1.names.default', $data[0]['item']);
+        $this->assertEquals('product-1', $data[0]['sku']);
+        $this->assertEquals(['name' => 'in_stock', 'label' => 'In Stock'], $data[0]['inventoryStatus']);
+        $this->assertEquals(8, $data[0]['quantity']);
+        $this->assertEquals('bottle', $data[0]['unit']);
+        $this->assertEquals('$13.10', $data[0]['price']);
+        $this->assertEquals('$104.80', $data[0]['subtotal']);
+        $this->assertEquals('product-1.names.default', $data[0]['name']);
+        $this->assertEquals('Test Notes', $data[0]['note']);
+        $this->assertFalse($data[0]['isConfigurable']);
+        $this->assertFalse($data[0]['isUpcoming']);
+        $this->assertNull($data[0]['availabilityDate']);
+        $this->assertNull($data[0]['subData']);
+        $this->assertEquals([], $data[0]['errors']);
     }
 
     public function testView(): void

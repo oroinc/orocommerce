@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface as Record;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
+use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -22,64 +26,67 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class MyShoppingListGridEventListener
 {
-    /** @var ManagerRegistry */
-    private $registry;
-
-    /** @var FrontendProductPricesDataProvider */
-    private $productPricesDataProvider;
-
-    /** @var ProductPriceFormatter */
-    private $productPriceFormatter;
-
-    /** @var ConfigurableProductProvider */
-    private $configurableProductProvider;
-
-    /** @var AttachmentManager */
-    private $attachmentManager;
-
-    /** @var ImagePlaceholderProviderInterface */
-    private $imagePlaceholderProvider;
-
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
-
-    /** @var NumberFormatter */
-    private $numberFormatter;
 
     /** @var TranslatorInterface */
     private $translator;
 
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /** @var NumberFormatter */
+    private $numberFormatter;
+
+    /** @var AttachmentManager */
+    private $attachmentManager;
+
+    /** @var FrontendProductPricesDataProvider */
+    private $productPricesDataProvider;
+
+    /** @var ConfigurableProductProvider */
+    private $configurableProductProvider;
+
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
+    /** @var LineItemViolationsProvider */
+    private $violationsProvider;
+
+    /** @var array */
+    private $configurableProductLabels = [];
+
     /**
-     * @param ManagerRegistry $registry
-     * @param FrontendProductPricesDataProvider $productPricesDataProvider
-     * @param ProductPriceFormatter $productPriceFormatter
-     * @param ConfigurableProductProvider $configurableProductProvider
-     * @param AttachmentManager $attachmentManager
-     * @param ImagePlaceholderProviderInterface $imagePlaceholderProvider
      * @param UrlGeneratorInterface $urlGenerator
-     * @param NumberFormatter $numberFormatter
      * @param TranslatorInterface $translator
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param NumberFormatter $numberFormatter
+     * @param AttachmentManager $attachmentManager
+     * @param FrontendProductPricesDataProvider $productPricesDataProvider
+     * @param ConfigurableProductProvider $configurableProductProvider
+     * @param LocalizationHelper $localizationHelper
+     * @param LineItemViolationsProvider $violationsProvider
      */
     public function __construct(
-        ManagerRegistry $registry,
-        FrontendProductPricesDataProvider $productPricesDataProvider,
-        ProductPriceFormatter $productPriceFormatter,
-        ConfigurableProductProvider $configurableProductProvider,
-        AttachmentManager $attachmentManager,
-        ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         UrlGeneratorInterface $urlGenerator,
+        TranslatorInterface $translator,
+        EventDispatcherInterface $eventDispatcher,
         NumberFormatter $numberFormatter,
-        TranslatorInterface $translator
+        AttachmentManager $attachmentManager,
+        FrontendProductPricesDataProvider $productPricesDataProvider,
+        ConfigurableProductProvider $configurableProductProvider,
+        LocalizationHelper $localizationHelper,
+        LineItemViolationsProvider $violationsProvider
     ) {
-        $this->registry = $registry;
-        $this->productPricesDataProvider = $productPricesDataProvider;
-        $this->productPriceFormatter = $productPriceFormatter;
-        $this->configurableProductProvider = $configurableProductProvider;
-        $this->attachmentManager = $attachmentManager;
-        $this->imagePlaceholderProvider = $imagePlaceholderProvider;
         $this->urlGenerator = $urlGenerator;
-        $this->numberFormatter = $numberFormatter;
         $this->translator = $translator;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->numberFormatter = $numberFormatter;
+        $this->attachmentManager = $attachmentManager;
+        $this->productPricesDataProvider = $productPricesDataProvider;
+        $this->configurableProductProvider = $configurableProductProvider;
+        $this->localizationHelper = $localizationHelper;
+        $this->violationsProvider = $violationsProvider;
     }
 
     /**
@@ -87,158 +94,269 @@ class MyShoppingListGridEventListener
      */
     public function onResultAfter(OrmResultAfter $event): void
     {
+        $lineItems = $this->getLineItems($event);
+        if (!$lineItems) {
+            return;
+        }
+
+        $matchedPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems->toArray());
+        $errors = $this->violationsProvider->getLineItemErrors($lineItems);
+        $identifiedLineItems = $this->getIdentifiedLineItems($lineItems);
+
+        foreach ($event->getRecords() as $record) {
+            /** @var LineItem[] $recordLineItems */
+            $recordLineItems = array_intersect_key(
+                $identifiedLineItems,
+                array_flip(explode(',', $record->getValue('lineItemIds')))
+            );
+
+            if ($record->getValue('isConfigurable')) {
+                $this->processConfigurableProduct($record, $recordLineItems, $matchedPrices, $errors);
+            } else {
+                $this->processSimpleProduct($record, reset($recordLineItems), $matchedPrices, $errors);
+            }
+        }
+    }
+
+    /**
+     * @param Record $record
+     * @param LineItem $item
+     * @param array $prices
+     * @param array $errors
+     */
+    private function processSimpleProduct(Record $record, LineItem $item, array $prices, array $errors): void
+    {
+        $product = $item->getProduct();
+
+        $productId = $product->getId();
+        $record->setValue('productId', $productId);
+
+        $qty = $item->getQuantity();
+        $record->setValue('quantity', $qty);
+
+        $unit = $item->getProductUnitCode();
+        $record->setValue('unit', $unit);
+
+        $status = $product->getInventoryStatus();
+        $record->setValue('inventoryStatus', ['name' => $status->getId(), 'label' => $status->getName()]);
+
+        $record->setValue('name', $this->localizationHelper->getLocalizedValue($product->getNames()));
+        $record->setValue('note', $item->getNotes());
+        $record->setValue(
+            'link',
+            $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $productId])
+        );
+
+        /** @var Price $productPrice */
+        $productPrice = $prices[$productId][$unit] ?? null;
+        if ($productPrice) {
+            $price = $productPrice->getValue();
+            $currency = $productPrice->getCurrency();
+
+            $record->setValue('price', $this->numberFormatter->formatCurrency($price, $currency));
+            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($price * $qty, $currency));
+        }
+
+        /** @var ProductImage $image */
+        $image = $product->getImagesByType('listing')->first();
+        if ($image) {
+            $record->setValue(
+                'image',
+                $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
+            );
+        }
+
+        $event = new LineItemDataEvent([$item]);
+        $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
+
+        foreach ($event->getDataForLineItem($item->getId()) as $name => $value) {
+            $record->setValue($name, $value);
+        }
+
+        $record->setValue('errors', $this->getErrors($errors, $product->getSku(), $unit));
+    }
+
+    /**
+     * @param Record $record
+     * @param LineItem[] $items
+     * @param array $prices
+     * @param array $errors
+     */
+    private function processConfigurableProduct(Record $record, array $items, array $prices, array $errors): void
+    {
+        $rowQuantity = 0.0;
+        $rowSubtotal = 0.0;
+        $rowCurrency = null;
+        $data = [];
+
+        $event = new LineItemDataEvent($items);
+        $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
+
+        foreach ($items as $item) {
+            $product = $item->getProduct();
+            $quantity = $item->getQuantity();
+            $unit = $item->getProductUnitCode();
+
+            $productId = $product->getId();
+            $productStatus = $product->getInventoryStatus();
+
+            $itemData = [
+                'productId' => $productId,
+                'sku' => $product->getSku(),
+                'quantity' => $quantity,
+                'unit' => $unit,
+                'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
+                'note' => $item->getNotes(),
+                'price' => null,
+                'subtotal' => null,
+                'productConfiguration' => $this->getConfigurableProducts($item),
+                'errors' => $this->getErrors($errors, $product->getSku(), $unit),
+            ];
+
+            /** @var Price $productPrice */
+            $productPrice = $prices[$productId][$unit] ?? null;
+            if ($productPrice) {
+                $price = $productPrice->getValue();
+                $currency = $productPrice->getCurrency();
+
+                $subtotal = $price * $quantity;
+
+                $itemData['price'] = $this->numberFormatter->formatCurrency($price, $currency);
+                $itemData['subtotal'] = $this->numberFormatter->formatCurrency($subtotal, $currency);
+
+                if ($rowSubtotal !== null) {
+                    $rowSubtotal += $subtotal;
+                    $rowCurrency = $currency;
+                }
+            } else {
+                $rowSubtotal = null;
+            }
+
+            $rowQuantity += $quantity;
+
+            /** @var ProductImage $image */
+            $image = $product->getImagesByType('listing')->first();
+            if ($image) {
+                $itemData['image'] = $this->attachmentManager->getFilteredImageUrl(
+                    $image->getImage(),
+                    'product_small'
+                );
+            }
+
+            foreach ($event->getDataForLineItem($item->getId()) as $name => $value) {
+                $itemData[$name] = $value;
+            }
+
+            $data[] = $itemData;
+        }
+
+        $record->setValue('subData', $data);
+        $record->setValue('quantity', $rowQuantity);
+        if ($rowSubtotal) {
+            $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $rowCurrency));
+        }
+
+        $lineItem = reset($items);
+        $product = $lineItem->getParentProduct();
+
+        $record->setValue('productId', $product->getId());
+        $record->setValue('name', $this->localizationHelper->getLocalizedValue($product->getNames()));
+        $record->setValue('unit', $lineItem->getProductUnitCode());
+        $record->setValue(
+            'link',
+            $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $product->getId()])
+        );
+
+        /** @var ProductImage $image */
+        $image = $product->getImagesByType('listing')->first();
+        if ($image) {
+            $record->setValue(
+                'image',
+                $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
+            );
+        }
+    }
+
+    /**
+     * @param LineItem $item
+     * @return array
+     */
+    private function getConfigurableProducts(LineItem $item): array
+    {
+        $configurableProducts = $this->configurableProductProvider->getLineItemProduct($item);
+        $configurableProducts = $configurableProducts[$item->getProduct()->getId()] ?? null;
+        if (!$configurableProducts) {
+            return [];
+        }
+
+        foreach ($configurableProducts as &$configurableProduct) {
+            $label = $configurableProduct['label'];
+            if (!isset($this->configurableProductLabels[$label])) {
+                $this->configurableProductLabels[$label] = $this->translator->trans($label);
+            }
+
+            $configurableProduct['label'] = $this->configurableProductLabels[$label];
+        }
+        unset($configurableProduct);
+
+        return $configurableProducts;
+    }
+
+    /**
+     * @param array $errors
+     * @param string $sku
+     * @param string $unit
+     * @return array
+     */
+    private function getErrors(array $errors, string $sku, string $unit): array
+    {
+        return array_map(
+            static function (ConstraintViolationInterface $error) {
+                return $error->getMessage();
+            },
+            $errors[sprintf('product.%s.%s', $sku, $unit)] ?? []
+        );
+    }
+
+    /**
+     * @param OrmResultAfter $event
+     *
+     * @return Collection|null
+     */
+    private function getLineItems(OrmResultAfter $event): ?Collection
+    {
         $shoppingListId = $event->getDatagrid()
             ->getParameters()
             ->get('shopping_list_id');
 
-        $shoppingList = $this->registry->getManagerForClass(ShoppingList::class)
+        if (!$shoppingListId) {
+            return null;
+        }
+
+        $shoppingList = $event->getQuery()
+            ->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
 
         if (!$shoppingList) {
-            return;
+            return null;
         }
-        $translator = $this->translator;
 
-        $lineItems = $shoppingList->getLineItems()->toArray();
+        return $shoppingList->getLineItems();
+    }
 
-        $productPrices = $this->productPricesDataProvider->getProductsAllPrices($lineItems);
-        $matchedPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
-        $allPrices = $this->productPriceFormatter->formatProducts($productPrices);
-        $configurableProducts = $this->configurableProductProvider->getProducts($lineItems);
-
+    /**
+     * @param Collection $lineItems
+     *
+     * @return array
+     */
+    private function getIdentifiedLineItems(Collection $lineItems): array
+    {
         $identifiedLineItems = [];
         foreach ($lineItems as $lineItem) {
             $identifiedLineItems[$lineItem->getId()] = $lineItem;
         }
 
-        foreach ($event->getRecords() as $record) {
-            /** @var LineItem[] $recordLineItems */
-            $recordLineItems = array_filter(
-                array_map(
-                    static function (int $id) use ($identifiedLineItems) {
-                        return $identifiedLineItems[$id] ?? null;
-                    },
-                    explode(',', $record->getValue('lineItemIds'))
-                )
-            );
-
-            $isConfigurable = false;
-            $product = null;
-            $notes = null;
-            $quantity = 0.0;
-            $unit = null;
-            $price = null;
-            $allProductPrices = null;
-            $subtotal = 0.0;
-            $lineItemsData = [];
-            $inventoryStatus = null;
-            $imagePlaceholder = $this->imagePlaceholderProvider->getPath('product_small');
-
-            foreach ($recordLineItems as $lineItem) {
-                $productId = $lineItem->getProduct()->getId();
-                $productAllPrices = $allPrices[$productId] ?? null;
-                $quantity += $lineItem->getQuantity();
-                $unit = $lineItem->getUnit();
-
-                $isConfigurable = (bool) $lineItem->getParentProduct();
-                if (!$isConfigurable) {
-                    $allProductPrices = $productAllPrices;
-                    $product = $lineItem->getProduct();
-                    break;
-                }
-
-                $product = $lineItem->getParentProduct();
-
-                /** @var Price $productMatchedPrice */
-                $productMatchedPrice = $matchedPrices[$productId][$lineItem->getProductUnitCode()] ?? null;
-                $lineItemSubtotal = $productMatchedPrice
-                    ? $productMatchedPrice->getValue() * $lineItem->getQuantity()
-                    : null;
-
-                $itemData = [
-                    'sku' => $lineItem->getProduct()->getSku(),
-                    'productId' => $lineItem->getProduct()->getId(),
-                    'productConfiguration' => array_map(
-                        static function ($field) use ($translator) {
-                            $field['label'] = $translator->trans($field['label']);
-                            return $field;
-                        },
-                        $configurableProducts[$productId] ?? []
-                    ),
-                    'name' => $lineItem->getProduct()->getName(),
-                    'note' => $lineItem->getNotes(),
-                    'inventoryStatus_name' => $lineItem->getProduct()->getInventoryStatus()->getId(),
-                    'inventoryStatus_label' => $lineItem->getProduct()->getInventoryStatus()->getName(),
-                    'quantity' => $lineItem->getQuantity(),
-                    'unit' => $lineItem->getProductUnit()->getCode(),
-                    'price' => $productMatchedPrice ? $this->numberFormatter->formatCurrency($productMatchedPrice->getValue(), $productMatchedPrice->getCurrency()) : null,
-                    'prices' => $productAllPrices,
-                    'subtotal' => $productMatchedPrice ? $this->numberFormatter->formatCurrency($lineItemSubtotal, $productMatchedPrice->getCurrency()) : null,
-                ];
-
-                /** @var ProductImage $image */
-                $image = $lineItem->getProduct()->getImagesByType('listing')->first();
-                if ($image) {
-                    $itemData['image'] = $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small');
-                } else {
-                    $itemData['imagePlaceholder'] = $imagePlaceholder;
-                }
-                $lineItemsData[] = $itemData;
-
-                if ($subtotal !== null && $lineItemSubtotal !== null) {
-                    $subtotal += $lineItemSubtotal;
-                } else {
-                    $subtotal = null;
-                }
-            }
-
-            $record->setValue('subData', $isConfigurable ? $lineItemsData : null);
-            $record->setValue('isConfigurable', $isConfigurable);
-            $record->setValue('quantity', $quantity);
-            $record->setValue('sku', $product->getSku());
-            $record->setValue('productId', $product->getId());
-            $record->setValue('name', $record->getValue('productName'));
-
-            /** @var ProductImage $image */
-            $image = $product->getImagesByType('listing')->first();
-            if ($image) {
-                $record->setValue(
-                    'image',
-                    $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small')
-                );
-            } else {
-                $record->setValue('imagePlaceholder', $imagePlaceholder);
-            }
-
-            $record->setValue(
-                'link',
-                $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $product->getId()])
-            );
-
-            $record->setValue('inventoryStatus_name', $product->getInventoryStatus()->getId());
-            $record->setValue('inventoryStatus_label', $product->getInventoryStatus()->getName());
-            $record->setValue('note', !$isConfigurable ? $lineItem->getNotes() : null);
-
-            /** @var Price $price */
-            $price = $matchedPrices[$product->getId()][$unit->getCode()] ?? null;
-            if ($price) {
-                $record->setValue(
-                    'price',
-                    $this->numberFormatter->formatCurrency($price->getValue(), $price->getCurrency())
-                );
-                $record->setValue(
-                    'subtotal',
-                    $this->numberFormatter->formatCurrency($price->getValue() * $quantity, $price->getCurrency())
-                );
-            } else {
-                $record->setValue('price', null);
-                $record->setValue('subtotal', $isConfigurable && $subtotal && $productMatchedPrice?
-                    $this->numberFormatter->formatCurrency($subtotal, $productMatchedPrice->getCurrency()) : null);
-            }
-
-            $record->setValue('prices', $allProductPrices);
-            $record->setValue('unit', $unit->getCode());
-        }
+        return $identifiedLineItems;
     }
 }

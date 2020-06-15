@@ -505,7 +505,6 @@ services:
 
     oro_shopping_list.datagrid.extension.frontend_product_grid:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.current_shopping_list'
@@ -514,6 +513,13 @@ services:
             - '@oro_pricing.layout.data_provider.frontend_product_prices'
             - '@oro_shopping_list.layout.data_provider.matrix_grid_order'
             - '@oro_product.datagrid_theme_helper'
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_shopping_list.datagrid.extension.frontend_my_shopping_list_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MyShoppingListDatagridExtension'
+        arguments:
+            - '@doctrine'
         tags:
             - { name: oro_datagrid.extension }
 
@@ -624,14 +630,14 @@ services:
     oro_shopping_list.datagrid.event_listener.my_shopping_list:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEventListener
         arguments:
-            - '@doctrine'
-            - '@oro_pricing.provider.frontend_product_prices'
-            - '@oro_pricing.formatter.product_price_formatter'
-            - '@oro_product.layout.data_provider.configurable_products'
-            - '@oro_attachment.manager'
-            - '@oro_product.provider.product_image_placeholder'
             - '@router'
-            - '@oro_locale.formatter.number'
             - '@translator'
+            - '@event_dispatcher'
+            - '@oro_locale.formatter.number'
+            - '@oro_attachment.manager'
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_product.layout.data_provider.configurable_products'
+            - '@oro_locale.helper.localization'
+            - '@oro_shopping_list.validator_service.line_item'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.my-shopping-list-line-items-grid, method: onResultAfter }

@@ -302,11 +302,10 @@ datagrids:
             query:
                 select:
                     - GROUP_CONCAT(lineItem.id)
+                    - (CASE WHEN parentProduct.id IS NULL THEN false ELSE true END) as isConfigurable
                     - COALESCE(parentProduct.id, product.id) as mainProductId
-                    - COALESCE(parentProduct.sku, product.sku) as productSku
-                    - COALESCE(parentProduct.skuUppercase, product.skuUppercase) as productSkuUppercase
-                    - COALESCE(parentProduct.denormalizedDefaultName, product.denormalizedDefaultName) as productName
-                    - COALESCE(parentProduct.denormalizedDefaultNameUppercase, product.denormalizedDefaultNameUppercase) as productNameUppercase
+                    - COALESCE(parentProduct.sku, product.sku) as sku
+                    - COALESCE(parentProduct.skuUppercase, product.skuUppercase) as skuUppercase
                     - (SELECT GROUP_CONCAT(innerLineItem.id)
                         FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
                         WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
@@ -319,7 +318,6 @@ datagrids:
                     left:
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.unit, alias: unit}
-                        - { join: product.inventory_status, alias: productInventoryStatus}
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
@@ -327,13 +325,15 @@ datagrids:
             bind_parameters:
                 - shopping_list_id
         columns:
-            productSku:
+            sku:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
+                frontend_type: html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
                 frontend_type: html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
-                image_placeholder: /media/cache/product_small/bundles/oroproduct/images/no_image.png # @todo remove hardcode
+                image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
             inventoryStatus:
                 label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
                 frontend_type: html-template
@@ -344,8 +344,6 @@ datagrids:
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
             unit:
                 label:         oro.frontend.shoppinglist.lineitem.unit.label
-                frontend_type: html-template
-                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
             price:
                 label:         oro.frontend.shoppinglist.lineitem.price.label
                 frontend_type: html-template
@@ -356,22 +354,15 @@ datagrids:
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/subtotal.html
         sorters:
             columns:
-                productSku:
-                    data_name: productSku
-                item:
-                    data_name: productName
+                sku:
+                    data_name: skuUppercase
             default:
-                productSku: ASC
+                sku: ASC
         filters:
             columns:
-                productSku:
+                sku:
                     type:             string
-                    data_name:        productSkuUppercase
-                    case_insensitive: false
-                    value_conversion: mb_strtoupper
-                item:
-                    type:             string
-                    data_name:        productNameUppercase
+                    data_name:        skuUppercase
                     case_insensitive: false
                     value_conversion: mb_strtoupper
                 inventoryStatus:
@@ -395,35 +386,23 @@ datagrids:
                             multiple: true
                         field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
-            sku: ~
             productId: ~
-            image: ~
-            imagePlaceholder: ~
             name: ~
-            link: ~
-            inventoryStatus_name: ~
-            inventoryStatus_label: ~
-            quantity: ~
-            unit: ~
-            price: ~
-            prices:
-                frontend_type: row_array
-            subtotal: ~
+            image: ~
             note: ~
+            link: ~
             isConfigurable:
                 frontend_type: boolean
+            isUpcoming:
+                frontend_type: boolean
+            availabilityDate:
+                frontend_type: datetime
+            inventoryStatus:
+                frontend_type: row_array
             subData:
                 frontend_type: row_array
-
-    my-shopping-list-all-line-items-grid:
-        extends: my-shopping-list-line-items-grid
-        options:
-            toolbarOptions:
-                pagination:
-                    onePage: true
-                pageSize:
-                    items: [10000]
-                    default_per_page: 10000
+            errors:
+                frontend_type: row_array
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
