@@ -104,7 +104,7 @@ class AjaxProductControllerTest extends WebTestCase
     public function testProductImagesByIdWhenProductHasNoImages()
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
         $this->client->request(
             'GET',
             $this->getUrl(

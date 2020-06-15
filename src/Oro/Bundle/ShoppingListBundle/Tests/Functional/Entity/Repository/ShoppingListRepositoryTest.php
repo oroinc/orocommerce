@@ -250,6 +250,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertProductLoaded($parentProduct);
         $this->assertProductNamesLoaded($parentProduct);
         $this->assertProductImagesLoaded($parentProduct);
+        $this->assertProductImagesLoaded($product);
         $this->assertCategoryLoaded($parentProduct->getCategory());
     }
 

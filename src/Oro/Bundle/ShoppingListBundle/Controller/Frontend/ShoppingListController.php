@@ -167,19 +167,6 @@ class ShoppingListController extends AbstractController
     }
 
     /**
-     * @Route("/my/{id}/all", name="oro_shopping_list_frontend_my_view_all", requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_view")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    public function viewMyAllAction(ShoppingList $shoppingList): array
-    {
-        return $this->viewMyAction($shoppingList);
-    }
-
-    /**
      * Create shopping list form
      *
      * @Route("/create", name="oro_shopping_list_frontend_create")

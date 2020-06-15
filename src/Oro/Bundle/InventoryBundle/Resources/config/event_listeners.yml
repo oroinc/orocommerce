@@ -146,6 +146,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
+    oro_inventory.event_listener.line_item_data:
+        class: Oro\Bundle\InventoryBundle\EventListener\LineItemDataListener
+        arguments:
+            - '@oro_inventory.provider.upcoming_product_provider'
+            - '@oro_locale.formatter.date_time'
+            - '@oro_locale.settings'
+        tags:
+            - { name: kernel.event_listener, event: shopping_list.line_item.data, method: onLineItemData }
+
     oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
         arguments:

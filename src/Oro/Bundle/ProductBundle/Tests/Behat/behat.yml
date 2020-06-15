@@ -953,7 +953,7 @@ oro_behat_extension:
       selector: '.product-item .product-item__preview'
 
     Product Item Gallery Trigger:
-      selector: '.product-item [data-trigger-gallery-open],div.product-item__image-holder[data-trigger-gallery-open]'
+      selector: '.product-item [data-trigger-gallery-open],div.product-item__image-holder--tiny [data-role^="data-trigger-gallery-open-product"]'
 
     Product Form Slug Fallbacks:
       selector:

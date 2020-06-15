@@ -37,6 +37,20 @@ macros('oroshoppinglist', {
      * @param {string} note
      * @param {number?} [clipLength = 30]
      */
-    renderNote: require('tpl-loader!oroshoppinglist/templates/macros/product-item__note.html')
+    renderNote: require('tpl-loader!oroshoppinglist/templates/macros/product-item__note.html'),
 
+    /**
+     * Renders upcoming warning for product item
+     *
+     * @param {boolean} isUpcoming
+     * @param {string?} availabilityDate
+     */
+    renderUpcoming: require('tpl-loader!oroshoppinglist/templates/macros/product-item__upcoming.html'),
+
+    /**
+     * Renders errors for product item
+     *
+     * @param {array} errors
+     */
+    renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html')
 });

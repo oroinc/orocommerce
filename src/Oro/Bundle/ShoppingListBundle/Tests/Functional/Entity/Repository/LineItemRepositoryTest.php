@@ -13,12 +13,15 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolationPerTest
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class LineItemRepositoryTest extends WebTestCase
 {
@@ -30,6 +33,7 @@ class LineItemRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadShoppingListLineItems::class,
+                LoadShoppingListConfigurableLineItems::class,
             ]
         );
     }
@@ -263,6 +267,27 @@ class LineItemRepositoryTest extends WebTestCase
             ],
             $result
         );
+    }
+
+    public function testHasEmptyMatrixWhenOnlySimpleProducts(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
+    }
+
+    public function testHasEmptyMatrixWithOnlyOneConfigurableProduct(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)->getId();
+
+        $this->assertTrue($this->getLineItemRepository()->hasEmptyMatrix($id));
+    }
+
+    public function testHasEmptyMatrixWithConfigurableProductAndVariant(): void
+    {
+        $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
+
+        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
     }
 
     public function testDeleteItemsByShoppingListAndInventoryStatuses()

@@ -3,3 +3,6 @@ oro:
         inventory_level_save:
             flash:
                 success: Inventory has been updated
+        is_upcoming:
+            notification: 'This product will be available later'
+            notification_with_date: 'This product will be available on {{ date }}'

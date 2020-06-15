@@ -342,6 +342,9 @@ class ProductRepositoryTest extends WebTestCase
                         ProductImageType::TYPE_MAIN => 'img.product-2',
                     ],
                     [
+                        ProductImageType::TYPE_MAIN => 'img.product-3',
+                    ],
+                    [
                         ProductImageType::TYPE_LISTING => 'img.product-8',
                     ],
                 ],

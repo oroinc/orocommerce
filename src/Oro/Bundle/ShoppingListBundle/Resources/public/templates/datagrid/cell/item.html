@@ -47,7 +47,7 @@
                         <%- _.__('oro.frontend.shoppinglist.label') %>&nbsp;<span class="product-item__sku-value"><%- sku %></span>
                     </span>
                     <% if (item) { %>
-                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus_name, label: item.inventoryStatus_label}) %>
+                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus.name, label: item.inventoryStatus.label}) %>
                     <% } %>
                 </div>
                 <% if (obj.subData) { %>
@@ -67,7 +67,7 @@
                     <div class="grid-line-items__row-item highlighted-in-tablet"><%- sku %></div>
                     <% if (item) { %>
                     <div class="grid-line-items__row-item show-in-tablet">
-                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus_name, label: item.inventoryStatus_label}) %>
+                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus.name, label: item.inventoryStatus.label}) %>
                     </div>
                     <% } %>
                 </div>
@@ -79,6 +79,10 @@
                     <%= oroshoppinglist.renderNote({note: note}) %>
                 </div>
                 <% } %>
+            <% } %>
+            <% if (item) { %>
+                <%= oroshoppinglist.renderUpcoming({isUpcoming: item.isUpcoming, availabilityDate: item.availabilityDate}) %>
+                <%= oroshoppinglist.renderErrors({errors: item.errors}) %>
             <% } %>
         </div>
     </div>

@@ -220,6 +220,7 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
+            - my-shopping-list-line-items-grid
 
     DELETE:
         exclude_entities:
@@ -228,6 +229,7 @@ operations:
             - shopping-list-grid
             - customer-shopping-lists-grid
             - customer-user-shopping-lists-grid
+            - my-shopping-list-line-items-grid
 
     oro_shoppinglist_delete:
         extends: DELETE

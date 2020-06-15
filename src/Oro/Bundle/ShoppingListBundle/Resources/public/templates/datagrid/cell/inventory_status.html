@@ -1,5 +1,5 @@
 <% let item = !obj.isConfigurable ? obj : (obj.subData ? obj.subData[0] : null) %>
 <% if (item) { %>
     <% let renderInventoryStatus = _.macros('oroshoppinglist::renderInventoryStatus') %>
-    <%= renderInventoryStatus({status: item.inventoryStatus_name, label: item.inventoryStatus_label}) %>
+    <%= renderInventoryStatus({status: item.inventoryStatus.name, label: item.inventoryStatus.label}) %>
 <% } %>
