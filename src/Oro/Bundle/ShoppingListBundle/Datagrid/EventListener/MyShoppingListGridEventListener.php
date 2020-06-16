@@ -11,6 +11,8 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -19,7 +21,6 @@ use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Populates line item records by required data.
@@ -29,14 +30,14 @@ class MyShoppingListGridEventListener
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
 
-    /** @var TranslatorInterface */
-    private $translator;
-
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
     /** @var NumberFormatter */
     private $numberFormatter;
+
+    /** @var UnitValueFormatterInterface */
+    private $unitFormatter;
 
     /** @var AttachmentManager */
     private $attachmentManager;
@@ -53,14 +54,11 @@ class MyShoppingListGridEventListener
     /** @var LineItemViolationsProvider */
     private $violationsProvider;
 
-    /** @var array */
-    private $configurableProductLabels = [];
-
     /**
      * @param UrlGeneratorInterface $urlGenerator
-     * @param TranslatorInterface $translator
      * @param EventDispatcherInterface $eventDispatcher
      * @param NumberFormatter $numberFormatter
+     * @param UnitValueFormatterInterface $unitFormatter
      * @param AttachmentManager $attachmentManager
      * @param FrontendProductPricesDataProvider $productPricesDataProvider
      * @param ConfigurableProductProvider $configurableProductProvider
@@ -69,9 +67,9 @@ class MyShoppingListGridEventListener
      */
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher,
         NumberFormatter $numberFormatter,
+        UnitValueFormatterInterface $unitFormatter,
         AttachmentManager $attachmentManager,
         FrontendProductPricesDataProvider $productPricesDataProvider,
         ConfigurableProductProvider $configurableProductProvider,
@@ -79,9 +77,9 @@ class MyShoppingListGridEventListener
         LineItemViolationsProvider $violationsProvider
     ) {
         $this->urlGenerator = $urlGenerator;
-        $this->translator = $translator;
         $this->eventDispatcher = $eventDispatcher;
         $this->numberFormatter = $numberFormatter;
+        $this->unitFormatter = $unitFormatter;
         $this->attachmentManager = $attachmentManager;
         $this->productPricesDataProvider = $productPricesDataProvider;
         $this->configurableProductProvider = $configurableProductProvider;
@@ -132,10 +130,10 @@ class MyShoppingListGridEventListener
         $record->setValue('productId', $productId);
 
         $qty = $item->getQuantity();
-        $record->setValue('quantity', $qty);
+        $record->setValue('quantity', $this->numberFormatter->formatDecimal($qty));
 
-        $unit = $item->getProductUnitCode();
-        $record->setValue('unit', $unit);
+        $unit = $item->getUnit();
+        $record->setValue('unit', $this->formatUnitLabel($unit, $qty));
 
         $status = $product->getInventoryStatus();
         $record->setValue('inventoryStatus', ['name' => $status->getId(), 'label' => $status->getName()]);
@@ -147,8 +145,9 @@ class MyShoppingListGridEventListener
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $productId])
         );
 
+        $unitCode = $unit->getCode();
         /** @var Price $productPrice */
-        $productPrice = $prices[$productId][$unit] ?? null;
+        $productPrice = $prices[$productId][$unitCode] ?? null;
         if ($productPrice) {
             $price = $productPrice->getValue();
             $currency = $productPrice->getCurrency();
@@ -173,7 +172,7 @@ class MyShoppingListGridEventListener
             $record->setValue($name, $value);
         }
 
-        $record->setValue('errors', $this->getErrors($errors, $product->getSku(), $unit));
+        $record->setValue('errors', $this->getErrors($errors, $product->getSku(), $unitCode));
     }
 
     /**
@@ -188,6 +187,7 @@ class MyShoppingListGridEventListener
         $rowSubtotal = 0.0;
         $rowCurrency = null;
         $data = [];
+        $displayed = explode(',', $record->getValue('displayedLineItemIds'));
 
         $event = new LineItemDataEvent($items);
         $this->eventDispatcher->dispatch($event, LineItemDataEvent::NAME);
@@ -195,7 +195,8 @@ class MyShoppingListGridEventListener
         foreach ($items as $item) {
             $product = $item->getProduct();
             $quantity = $item->getQuantity();
-            $unit = $item->getProductUnitCode();
+            $unit = $item->getProductUnit();
+            $unitCode = $unit->getCode();
 
             $productId = $product->getId();
             $productStatus = $product->getInventoryStatus();
@@ -203,18 +204,19 @@ class MyShoppingListGridEventListener
             $itemData = [
                 'productId' => $productId,
                 'sku' => $product->getSku(),
-                'quantity' => $quantity,
-                'unit' => $unit,
+                'quantity' => $this->numberFormatter->formatDecimal($quantity),
+                'unit' => $this->formatUnitLabel($unit, $quantity),
                 'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],
                 'note' => $item->getNotes(),
                 'price' => null,
                 'subtotal' => null,
                 'productConfiguration' => $this->getConfigurableProducts($item),
-                'errors' => $this->getErrors($errors, $product->getSku(), $unit),
+                'errors' => $this->getErrors($errors, $product->getSku(), $unitCode),
+                'filteredOut' => !in_array($item->getId(), $displayed, false),
             ];
 
             /** @var Price $productPrice */
-            $productPrice = $prices[$productId][$unit] ?? null;
+            $productPrice = $prices[$productId][$unitCode] ?? null;
             if ($productPrice) {
                 $price = $productPrice->getValue();
                 $currency = $productPrice->getCurrency();
@@ -251,7 +253,7 @@ class MyShoppingListGridEventListener
         }
 
         $record->setValue('subData', $data);
-        $record->setValue('quantity', $rowQuantity);
+        $record->setValue('quantity', $this->numberFormatter->formatDecimal($rowQuantity));
         if ($rowSubtotal) {
             $record->setValue('subtotal', $this->numberFormatter->formatCurrency($rowSubtotal, $rowCurrency));
         }
@@ -261,7 +263,7 @@ class MyShoppingListGridEventListener
 
         $record->setValue('productId', $product->getId());
         $record->setValue('name', $this->localizationHelper->getLocalizedValue($product->getNames()));
-        $record->setValue('unit', $lineItem->getProductUnitCode());
+        $record->setValue('unit', $this->formatUnitLabel($lineItem->getUnit(), $rowQuantity));
         $record->setValue(
             'link',
             $this->urlGenerator->generate('oro_product_frontend_product_view', ['id' => $product->getId()])
@@ -283,23 +285,10 @@ class MyShoppingListGridEventListener
      */
     private function getConfigurableProducts(LineItem $item): array
     {
-        $configurableProducts = $this->configurableProductProvider->getLineItemProduct($item);
-        $configurableProducts = $configurableProducts[$item->getProduct()->getId()] ?? null;
-        if (!$configurableProducts) {
-            return [];
-        }
+        $configurableProductsVariantFields = $this->configurableProductProvider
+            ->getVariantFieldsValuesForLineItem($item, true);
 
-        foreach ($configurableProducts as &$configurableProduct) {
-            $label = $configurableProduct['label'];
-            if (!isset($this->configurableProductLabels[$label])) {
-                $this->configurableProductLabels[$label] = $this->translator->trans($label);
-            }
-
-            $configurableProduct['label'] = $this->configurableProductLabels[$label];
-        }
-        unset($configurableProduct);
-
-        return $configurableProducts;
+        return $configurableProductsVariantFields[$item->getProduct()->getId()] ?? [];
     }
 
     /**
@@ -358,5 +347,17 @@ class MyShoppingListGridEventListener
         }
 
         return $identifiedLineItems;
+    }
+
+    /**
+     * @param ProductUnit $unit
+     * @param int|float $quantity
+     * @return string
+     */
+    private function formatUnitLabel(ProductUnit $unit, $quantity): string
+    {
+        $formattedQuantity = $this->numberFormatter->formatDecimal($quantity);
+
+        return trim(str_replace($formattedQuantity, '', $this->unitFormatter->format($quantity, $unit)));
     }
 }

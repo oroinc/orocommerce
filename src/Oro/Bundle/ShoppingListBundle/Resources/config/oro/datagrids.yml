@@ -301,7 +301,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - GROUP_CONCAT(lineItem.id)
+                    - GROUP_CONCAT(lineItem.id) as displayedLineItemIds
                     - (CASE WHEN parentProduct.id IS NULL THEN false ELSE true END) as isConfigurable
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
