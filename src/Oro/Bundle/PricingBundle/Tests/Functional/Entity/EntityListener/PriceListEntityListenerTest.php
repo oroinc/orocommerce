@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceListEntityListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
@@ -51,6 +54,29 @@ class PriceListEntityListenerTest extends WebTestCase
 
         $em = $this->getEntityManager();
         $em->persist($priceList);
+        $em->flush();
+
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                'product' => [$priceList->getId() => []]
+            ]
+        );
+    }
+
+    public function testPreUpdateActive()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_2');
+        $priceList->setActive(false);
+
+        $em = $this->getEntityManager();
+        $em->persist($priceList);
+        $em->flush();
+
+        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
+
+        $priceList->setActive(true);
         $em->flush();
 
         self::assertMessageSent(

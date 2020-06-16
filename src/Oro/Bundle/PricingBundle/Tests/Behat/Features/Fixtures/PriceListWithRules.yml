@@ -1,0 +1,56 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceList1:
+        name: 'Price List with Rule'
+        productAssignmentRule: 'product.sku == "PSKU1"'
+        __calls:
+            - addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\PriceRule:
+    price_rule_1:
+        currency: 'USD'
+        quantity: 1
+        productUnit: '@item'
+        rule: '100'
+        priceList: '@priceList1'
+        priority: 1
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@priceList1'
+        priceRule: '@price_rule_1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 100
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@priceList1'
+        manual: false

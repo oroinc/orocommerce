@@ -17,6 +17,7 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 class PriceListEntityListener
 {
     const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
+    const ACTIVE = 'active';
 
     /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;
@@ -49,7 +50,7 @@ class PriceListEntityListener
     }
 
     /**
-     * Recalculate product assignments and price rules on product assignment rule change.
+     * Recalculate product assignments and price rules on product assignment rule change or price list activation.
      *
      * @param PriceList $priceList
      * @param PreUpdateEventArgs $event
@@ -58,13 +59,12 @@ class PriceListEntityListener
     {
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULE)) {
             $this->clearAssignmentRuleCache($priceList);
-            $priceList->setActual(false);
-            $this->priceListTriggerHandler->handlePriceListTopic(
-                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
-                $priceList
-            );
-
+            $this->triggerPriceListRecalculation($priceList);
             $this->scheduleDependentPriceListsUpdate($priceList);
+        }
+
+        if ($event->hasChangedField(self::ACTIVE)) {
+            $this->triggerPriceListRecalculation($priceList);
         }
     }
 
@@ -92,11 +92,7 @@ class PriceListEntityListener
     public function postPersist(PriceList $priceList)
     {
         if ($priceList->getProductAssignmentRule()) {
-            $priceList->setActual(false);
-            $this->priceListTriggerHandler->handlePriceListTopic(
-                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
-                $priceList
-            );
+            $this->triggerPriceListRecalculation($priceList);
         }
     }
 
@@ -145,5 +141,22 @@ class PriceListEntityListener
                 $this->scheduleDependentPriceListsUpdate($dependentPriceList);
             }
         }
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function triggerPriceListRecalculation(PriceList $priceList): void
+    {
+        // Skip processing of inactive Price Lists
+        if (!$priceList->isActive()) {
+            return;
+        }
+
+        $priceList->setActual(false);
+        $this->priceListTriggerHandler->handlePriceListTopic(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            $priceList
+        );
     }
 }
