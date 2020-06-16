@@ -26,6 +26,27 @@
                 content: none;
             }
 
+            &:after,
+            &:before {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+
+                width: $responsive-shopping-list-sub-item-highlight-offset-mobile;
+
+                background: get-color('additional', 'ultra');
+
+                content: '';
+            }
+
+            &:after {
+                right: 0;
+            }
+
+            &:before {
+                left: 0;
+            }
+
             &:not(.sub-row-last) {
                 padding-top: 12px;
                 padding-bottom: 8px;
@@ -33,23 +54,7 @@
 
                 &:after,
                 &:before {
-                    position: absolute;
-                    top: 100%;
-
-                    width: $responsive-shopping-list-sub-item-offset-mobile;
-                    height: 1px;
-
-                    background: get-color('additional', 'ultra');
-
-                    content: '';
-                }
-
-                &:after {
-                    right: 0;
-                }
-
-                &:before {
-                    left: 0;
+                    bottom: -1px;
                 }
             }
         }

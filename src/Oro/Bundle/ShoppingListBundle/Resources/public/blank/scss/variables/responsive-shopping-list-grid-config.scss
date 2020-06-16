@@ -2,7 +2,11 @@
 
 $responsive-shopping-list-sub-item-offset-tablet: 58px !default;
 $responsive-shopping-list-sub-item-offset-mobile: 18px !default;
+$responsive-shopping-list-sub-item-highlight-offset-mobile: 6px !default;
 
 $responsive-shopping-sub-row-border-mobile: 1px solid get-color('additional', 'light') !default;
 $responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle');
 $responsive-shopping-header-row-border-mobile: 1px solid get-color('additional', 'light') !default;
+
+$responsive-shopping-list-notification-container-offset: 8px !default;
+$responsive-shopping-sub-row-border-offset: 12px solid get-color('additional', 'ultra') !default;

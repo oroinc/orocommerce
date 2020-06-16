@@ -80,10 +80,13 @@
                 </div>
                 <% } %>
             <% } %>
-            <% if (item) { %>
-                <%= oroshoppinglist.renderUpcoming({isUpcoming: item.isUpcoming, availabilityDate: item.availabilityDate}) %>
-                <%= oroshoppinglist.renderErrors({errors: item.errors}) %>
-            <% } %>
         </div>
     </div>
 </div>
+
+<% if (item && (item.isUpcoming || errors.length)) { %>
+<div class="notification-container">
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: item.isUpcoming, availabilityDate: item.availabilityDate}) %>
+    <%= oroshoppinglist.renderErrors({errors: item.errors}) %>
+</div>
+<% } %>
