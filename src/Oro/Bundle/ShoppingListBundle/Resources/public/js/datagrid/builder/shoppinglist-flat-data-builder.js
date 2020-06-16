@@ -1,21 +1,33 @@
+const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
+
 const flattenData = data => {
     return data.reduce((flatData, item) => {
         const {subData, ...rest} = item;
+        const itemClassName = [];
+
+        if (isHighlight(rest)) {
+            itemClassName.push('highlight');
+        }
+
         if (!subData) {
+            rest.row_class_name = itemClassName.join(' ');
             flatData.push(rest);
         } else {
-            rest.row_class_name = 'group-row';
+            itemClassName.push('group-row');
+            rest.row_class_name = itemClassName.join(' ');
             flatData.push(rest);
             subData.forEach((subItem, index) => {
-                let className = 'sub-row';
+                const className = ['sub-row'];
 
-                if (subData.length -1 === index) {
-                    className = className + ' sub-row-last';
+                if (subData.length - 1 === index) {
+                    className.push('sub-row-last');
                 }
 
-                Object.assign(subItem, {
-                    row_class_name: className
-                });
+                if (isHighlight(subItem)) {
+                    className.push('highlight');
+                }
+
+                subItem.row_class_name = className.join(' ');
             });
             flatData.push(...subData);
         }
