@@ -631,9 +631,9 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEventListener
         arguments:
             - '@router'
-            - '@translator'
             - '@event_dispatcher'
             - '@oro_locale.formatter.number'
+            - '@oro_product.formatter.product_unit_value'
             - '@oro_attachment.manager'
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_product.layout.data_provider.configurable_products'

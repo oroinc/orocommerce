@@ -30,6 +30,8 @@ services:
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter'
         arguments:
             - "@translator"
+        calls:
+            - [setNumberFormatter, ['@oro_locale.formatter.number']]
 
     oro_product.formatter.unit_label:
         abstract: true
@@ -1072,6 +1074,8 @@ services:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
+        calls:
+            - [setTranslator, ['@translator']]
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
 

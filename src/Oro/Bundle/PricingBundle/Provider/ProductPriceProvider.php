@@ -126,7 +126,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
         $prices = $this->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
-        $this->sortPrices($prices);
 
         $productPriceData = [];
         foreach ($prices as $priceData) {
@@ -198,7 +197,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
                 $productUnitCodes,
             ],
             function () use ($scopeCriteria, $productsIds, $productUnitCodes, $currencies) {
-                return $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+                $prices = $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+                $this->sortPrices($prices);
+
+                return $prices;
             }
         );
     }

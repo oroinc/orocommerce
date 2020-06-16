@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHan
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Layout data provider for configurable products.
@@ -37,7 +38,22 @@ class ConfigurableProductProvider
     /**
      * @var array
      */
-    private $customFields;
+    private $customFields = [];
+
+    /** @var array */
+    private $translatedCustomFields = [];
+
+    /** @var TranslatorInterface|null */
+    private $translator;
+
+    /**
+     * @param TranslatorInterface|null $translator
+     */
+    public function setTranslator(?TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+        $this->translatedCustomFields = [];
+    }
 
     /**
      * @param CustomFieldProvider $customFieldProvider
@@ -82,23 +98,69 @@ class ConfigurableProductProvider
      */
     public function getLineItemProduct($lineItem)
     {
-        if (null === $this->customFields) {
-            $this->customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
-        }
+        return $this->getVariantFieldsValuesForLineItem($lineItem, false);
+    }
 
-        $variantFieldNames = [];
+    /**
+     * @param ProductHolderInterface|mixed $lineItem
+     *
+     * @return Product|null
+     */
+    private function getParentProductFromLineItem($lineItem): ?Product
+    {
+        $parentProduct = null;
         if (is_callable([$lineItem, 'getParentProduct'])) {
             /** @var Product $parentProduct */
             $parentProduct = $lineItem->getParentProduct();
-            if (!$parentProduct) {
-                return [];
+        }
+
+        return $parentProduct;
+    }
+
+    /**
+     * @param bool $translateLabels
+     *
+     * @return array
+     */
+    private function getProductCustomFields(bool $translateLabels): array
+    {
+        if (!$this->customFields) {
+            $this->customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
+        }
+
+        if ($translateLabels) {
+            if (!$this->translatedCustomFields) {
+                foreach ($this->customFields as $k => $customField) {
+                    $customField['label'] = $this->translator
+                        ? $this->translator->trans($customField['label'])
+                        : $customField['label'];
+
+                    $this->translatedCustomFields[$k] = $customField;
+                }
             }
-            $variantFields = $parentProduct->getVariantFields();
+
+            return $this->translatedCustomFields;
+        }
+
+        return $this->customFields;
+    }
+
+    /**
+     * @param ProductHolderInterface|mixed $lineItem
+     * @param bool $translateLabels
+     *
+     * @return array
+     */
+    public function getVariantFieldsValuesForLineItem($lineItem, bool $translateLabels): array
+    {
+        $variantFieldNames = [];
+        $parentProduct = $this->getParentProductFromLineItem($lineItem);
+        if ($parentProduct) {
             $simpleProduct = $lineItem->getProduct();
             $variantFieldNames[$simpleProduct->getId()] = $this->getVariantFields(
                 $simpleProduct,
-                $variantFields,
-                $this->customFields
+                $parentProduct->getVariantFields(),
+                $this->getProductCustomFields($translateLabels)
             );
         }
 
