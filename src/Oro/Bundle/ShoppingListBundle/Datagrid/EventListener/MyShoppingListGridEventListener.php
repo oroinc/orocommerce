@@ -204,6 +204,7 @@ class MyShoppingListGridEventListener
             $itemData = [
                 'productId' => $productId,
                 'sku' => $product->getSku(),
+                'name' => (string) $this->localizationHelper->getLocalizedValue($product->getNames()),
                 'quantity' => $this->numberFormatter->formatDecimal($quantity),
                 'unit' => $this->formatUnitLabel($unit, $quantity),
                 'inventoryStatus' => ['name' => $productStatus->getId(), 'label' => $productStatus->getName()],

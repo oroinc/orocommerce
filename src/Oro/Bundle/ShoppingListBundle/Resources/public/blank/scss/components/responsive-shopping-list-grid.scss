@@ -50,6 +50,11 @@
         padding-right: 2px;
     }
 
+    .grid-header-cell-price,
+    .grid-body-cell-price {
+        padding-right: 24px;
+    }
+
     .grid-header-cell-unit,
     .grid-body-cell-unit {
         padding-left: 2px;
@@ -68,6 +73,13 @@
 
     .notification-container {
         margin-top: $responsive-shopping-list-notification-container-offset;
+    }
+
+    .prices-hint-toggler {
+        position: absolute;
+        padding: 0;
+        line-height: inherit;
+        border-width: 0;
     }
 }
 
@@ -237,6 +249,16 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
+        }
+
+        .price-value-container {
+            display: flex;
+        }
+
+        .prices-hint-toggler {
+            position: relative;
+            vertical-align: top;
+            order: -1;
         }
     }
 }

@@ -20,6 +20,10 @@ $shopping-lists-text-text-align: center !default;
 $shopping-lists-text-justify-content: center !default;
 $shopping-lists-text-word-break: break-all !default;
 
+$shopping-lists-note-font-size: $base-font-size - 2 !default;
+$shopping-lists-note-font-s: italic !default;
+$shopping-lists-note-line-height: 1.15 !default;
+
 $shopping-lists-cart-font-size: $base-font-size--s !default;
 $shopping-lists-cart-icon: $fa-var-cart-arrow-down !default;
 

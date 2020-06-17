@@ -15,6 +15,7 @@ const flattenData = data => {
         } else {
             itemClassName.push('group-row');
             rest.row_class_name = itemClassName.join(' ');
+            rest._hasVariants = true;
             flatData.push(rest);
             subData.forEach((subItem, index) => {
                 const className = ['sub-row'];
@@ -27,6 +28,7 @@ const flattenData = data => {
                     className.push('highlight');
                 }
 
+                subItem._isVariant = true;
                 subItem.row_class_name = className.join(' ');
             });
             flatData.push(...subData);

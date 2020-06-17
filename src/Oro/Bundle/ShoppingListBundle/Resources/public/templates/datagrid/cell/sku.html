@@ -1,4 +1,3 @@
-<% let item = obj.name ? obj : null %>
-<% if (item) { %>
-    <%= item.sku %>
+<% if (!obj._isVariant) { %>
+    <%= sku %>
 <% } %>

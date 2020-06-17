@@ -89,6 +89,16 @@
     </div>
 {% endblock %}
 
+{% block __my_shopping_list__header_notes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shipping-list-note shipping-list-note__page-title'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __my_shopping_list__line_items_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' my-shopping-list-datagrid-container'
