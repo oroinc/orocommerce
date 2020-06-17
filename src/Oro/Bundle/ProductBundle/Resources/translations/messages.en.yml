@@ -78,7 +78,7 @@ oro:
         images:
             label: Images
             description: The images for the product.
-            zoom.label: Enlarge Product Image
+            zoom.label: Enlarge Product Image. Opens a popup
         is_related.label: Is Related
         related_to_products.label: Related Products
         related_by_products.label: Products that are related to this Product
@@ -597,11 +597,11 @@ oro:
                     description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
                     label_directions:
                         label: 'Get Directions'
-                        aria_label: 'Get Directions of how to import multiple products using an CSV, XLSX or ODS file'
+                        aria_label: 'Get Directions of how to import multiple products using an CSV, XLSX or ODS file. Opens a popup'
                     continue.label: Submit
                     choose_file:
                         label: Choose File
-                        aria_label: 'Choose CSV, XLSX or ODS file to import multiple products'
+                        aria_label: 'Choose CSV, XLSX or ODS file to import multiple products. Opens a popup'
                 import_validation:
                     back: Back
                     title: Import validation results

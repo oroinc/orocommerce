@@ -26,6 +26,7 @@ class WebCatalogProductLimiterTest extends WebTestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Due to BB-19249');
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->webCatalogProductLimiter = $this->getContainer()->get('oro_seo.limiter.web_catalog_product_limiter');
     }

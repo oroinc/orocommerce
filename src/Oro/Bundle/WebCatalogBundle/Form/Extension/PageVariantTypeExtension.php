@@ -108,5 +108,6 @@ class PageVariantTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);
 
         $resolver->setDefault('data_class', ContentVariant::class);
+        $resolver->setDefault('error_bubbling', false);
     }
 }

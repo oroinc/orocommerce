@@ -97,6 +97,62 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($url, $this->urlCache->getUrl($routeName, $routeParameters, $localization));
     }
 
+    public function testGetUrlNullNotInCacheYet()
+    {
+        $routeName = 'test';
+        $routeParameters = ['id' => 1];
+        $localization = 1;
+        $url = null;
+        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
+
+        $this->persistentCache->expects($this->once())
+            ->method('fetch')
+            ->with($keyLocalization)
+            ->willReturn(null);
+
+        $this->localCache->expects($this->once())
+            ->method('contains')
+            ->with($keyLocalization)
+            ->willReturn(false);
+
+        $this->localCache->expects($this->once())
+            ->method('save')
+            ->with($keyLocalization, null);
+
+        $this->localCache->expects($this->once())
+            ->method('fetch')
+            ->with($keyLocalization)
+            ->willReturn($url);
+
+        $this->assertSame($url, $this->urlCache->getUrl($routeName, $routeParameters, $localization));
+    }
+
+    public function testGetUrlNotContainsInPersistentCache()
+    {
+        $routeName = 'test';
+        $routeParameters = ['id' => 1];
+        $localization = 1;
+        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
+
+        $this->persistentCache->expects($this->once())
+            ->method('fetch')
+            ->with($keyLocalization)
+            ->willReturn(false);
+
+        $this->localCache->expects($this->once())
+            ->method('contains')
+            ->with($keyLocalization)
+            ->willReturn(false);
+
+        $this->localCache->expects($this->never())
+            ->method('save');
+
+        $this->localCache->expects($this->never())
+            ->method('fetch');
+
+        $this->assertFalse($this->urlCache->getUrl($routeName, $routeParameters, $localization));
+    }
+
     public function testGetSlug()
     {
         $routeName = 'test';

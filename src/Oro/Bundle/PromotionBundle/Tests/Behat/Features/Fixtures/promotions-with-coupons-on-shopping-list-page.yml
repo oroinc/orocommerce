@@ -21,6 +21,14 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
+    coupon3:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-3'
+        promotion: '@orderDiscountPromotion3'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
     flatRateCoupon:
         owner: '@business_unit'
         organization: '@organization'
@@ -45,6 +53,11 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_type: 'amount'
             discount_currency: 'USD'
             discount_value: 1
+    orderDiscountPromotionDiscountConfiguration3:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 100
     flatRateShippingPromotionDiscountConfiguration:
         type: 'shipping'
         options:
@@ -69,6 +82,10 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         enabled: true
         sortOrder: 1
         name: 'Second Promotion Name'
+    orderDiscountPromotionRule3:
+        enabled: true
+        sortOrder: 1
+        name: 'Third Promotion Name'
     flatRateShippingPromotionRule:
         enabled: true
         sortOrder: 1
@@ -85,6 +102,15 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         productsSegment: '@promotionSegment'
         rule: '@orderDiscountPromotionRule2'
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration2'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    orderDiscountPromotion3:
+        __calls:
+            - addScope: ['@default_scope']
+        productsSegment: '@promotionSegment'
+        rule: '@orderDiscountPromotionRule3'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration3'
         organization: '@organization'
         owner: '@admin'
         useCoupons: true

@@ -1,5 +1,8 @@
 @ticket-BB-16680
+@ticket-BB-19380
 @fixture-OroProductBundle:ConfigurableProductFixtures.yml
+@fixture-OroProductBundle:DuplicatesForConfigurableProductFixtures.yml
+
 Feature: Product with variants import validation
   In order to check file for errors before import
   As an administrator
@@ -67,6 +70,14 @@ Feature: Product with variants import validation
     And I save and close form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Prepare third simple product duplicate of first
+    When I go to Products/Products
+    And I click Edit DUPLICATE in grid
+    And I fill in product attribute "Color" with "Black"
+    And I fill in product attribute "Size" with "L"
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+
   Scenario: Prepare configurable product
     When I go to Products/Products
     And I click Edit 1GB83 in grid
@@ -110,18 +121,16 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value      | variantLinks.1.product.sku | variantLinks.1.visible | variantLinks.2.product.sku | variantLinks.2.visible | attributeFamily.code | status  | inventory_status.id | type   | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB84 | Black Slip-On Clog XL UP |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple |               | kg                             | 3                              | 1                                   | 1                         |
-      | 1GB82 | White Slip-On Clog M UP  |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple |               | unknown                        | 3                              | 1                                   | 1                         |
+      | sku   | names.default.value      | attributeFamily.code | status  | inventory_status.id | type   | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
+      | 1GB84 | Black Slip-On Clog XL UP | default_family       | enabled | in_stock            | simple | kg                             | 3                              | 1                                   | 1                         |
+      | 1GB82 | White Slip-On Clog M UP  | default_family       | enabled | in_stock            | simple | unknown                        | 3                              | 1                                   | 1                         |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
-    Then Email should contains the following "Errors: 4 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
+    Then Email should contains the following "Errors: 2 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #2. Not found entity \"Product Unit\". Item data: {\"code\":\"unknown\"}."
-    And I should see "Error in row #2. Field \"Color\" can not be empty. It is used in the following configurable products: 1GB83"
-    And I should see "Error in row #2. Field \"Size\" can not be empty. It is used in the following configurable products: 1GB83"
     And I should see "Error in row #2. Unit of Quantity Unit Code: This value should not be blank."
 
   Scenario: Import file with invalid simple product used in configurable and both are in the same batch
@@ -137,11 +146,9 @@ Feature: Product with variants import validation
   @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
-    Then Email should contains the following "Errors: 4 processed: 2, read: 3, added: 0, updated: 0, replaced: 2" text
+    Then Email should contains the following "Errors: 2 processed: 2, read: 3, added: 0, updated: 0, replaced: 2" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #2. Not found entity \"Product Unit\". Item data: {\"code\":\"unknown\"}."
-    And I should see "Error in row #2. Field \"Color\" can not be empty. It is used in the following configurable products: 1GB83"
-    And I should see "Error in row #2. Field \"Size\" can not be empty. It is used in the following configurable products: 1GB83"
     And I should see "Error in row #2. Unit of Quantity Unit Code: This value should not be blank."
 
   Scenario: Import file with invalid simple product used in invalid configurable and both are the same batch
@@ -165,3 +172,19 @@ Feature: Product with variants import validation
     And I should see "Error in row #2. Unit of Quantity Unit Code: This value should not be blank."
     And I should see "Error in row #1. Not found entity \"Product Unit\". Item data: {\"code\":\"unk\"}."
     And I should see "Error in row #1. Unit of Quantity Unit Code: This value should not be blank."
+
+  Scenario: Import two configurable products. One valid and one with non-unique variants
+    Given I login as administrator
+    And I go to Products/Products
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And fill template with data:
+      | sku    | names.default.value    | variantLinks.1.product.sku | variantLinks.2.product.sku | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
+      | CFG001 | Configurable Product 1 | 1GB82                      |                            | default_family       | enabled | in_stock            | configurable | Color,Size    | item                           | 3                              | 1                                   | 1                         |
+      | CFG002 | Configurable Product 2 | 1GB81                      | DUPLICATE                  | default_family       | enabled | in_stock            | configurable | Color,Size    | item                           | 3                              | 1                                   | 1                         |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 1 processed: 1, read: 2, added: 1, updated: 0, replaced: 0" text
+    And I follow "Error log" link from the email
+    Then I should see "Error in row #2. Can't save product variants. Configurable attribute combinations should be unique."

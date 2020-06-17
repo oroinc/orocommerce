@@ -29,7 +29,6 @@ Feature: Payflow Gateway Express payments should not be available for zero total
     And I click "Apply"
     And I type "coupon-100-shipping" in "Coupon Code Input"
     And I click "Apply"
-    Then I should see "Please select payment method" flash message
     And I should see "coupon-100-order Promotion Order 100 Label" in the "Coupons List" element
     And I should see "coupon-100-shipping Promotion Shipping 100 Label" in the "Coupons List" element
     And I should see "Total $0.00"

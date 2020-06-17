@@ -67,7 +67,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         // Read URL from cache and return it if exists
         $url = $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
 
-        if ($url) {
+        if ($url !== false) {
             return $url;
         }
 

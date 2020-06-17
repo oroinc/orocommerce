@@ -11,7 +11,7 @@ In this example we examine how to customize a product list page for 3 different 
 
 Every product list page contains the current **category_id** and the **category_ids** in the layout context. You can use these values to evaluate the layout **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found. 
 
-Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
+Please see the [Debug Information](https://doc.oroinc.com/frontend/storefront/debugging/#debug-layout-blocks) section for more details.
 
 ### Static Block Only
 

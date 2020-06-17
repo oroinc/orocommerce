@@ -30,6 +30,31 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->cache = $this->createMock(UrlCacheInterface::class);
     }
 
+    public function testGetUrlNull()
+    {
+        $provider = new SluggableUrlDatabaseAwareProvider(
+            $this->cacheProvider,
+            $this->cache,
+            $this->registry
+        );
+        $provider->setContextUrl('');
+
+        $name = 'oro_product_view';
+        $params = ['id' => 10];
+        $localizationId = 1;
+
+        $this->cache->expects($this->once())
+            ->method('getUrl')
+            ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
+            ->willReturn(json_encode([$name => true]));
+        $this->cacheProvider->expects($this->once())
+            ->method('getUrl')
+            ->with($name, $params, $localizationId)
+            ->willReturn(null);
+
+        $this->assertNull($provider->getUrl($name, $params, $localizationId));
+    }
+
     /**
      * @dataProvider cacheDataProvider
      * @param UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache
@@ -62,7 +87,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getUrl')
             ->with($name, $routeParameters, $localizationId)
             ->willReturnOnConsecutiveCalls(
-                null,
+                false,
                 '/slug-url'
             );
 
@@ -217,7 +242,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->cacheProvider->expects($this->exactly(2))
             ->method('getUrl')
             ->with($name, $routeParameters, $localizationId)
-            ->willReturn(null);
+            ->willReturn(false);
 
         $slugRepository = $this->createMock(SlugRepository::class);
         $slugRepository->expects($this->once())
@@ -255,7 +280,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->assertNull($provider->getUrl($name, $routeParameters, $localizationId));
+        $this->assertFalse($provider->getUrl($name, $routeParameters, $localizationId));
     }
 
     public function testGetUrlRouteNotSupported()

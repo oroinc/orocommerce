@@ -82,6 +82,19 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetAttachedEntity()
+    {
+        /** @var Category $category */
+        $category = $this->getEntity(Category::class, ['id' => 42]);
+        $contentVariant = new ContentVariantStub();
+        $contentVariant->setCategoryPageCategory($category);
+
+        $this->assertEquals(
+            $category,
+            $this->type->getAttachedEntity($contentVariant)
+        );
+    }
+
     /**
      * @return array
      */

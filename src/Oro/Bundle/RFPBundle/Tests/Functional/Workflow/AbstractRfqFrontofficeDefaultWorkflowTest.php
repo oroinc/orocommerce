@@ -138,7 +138,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function getTransitionLinkId($workflowName, $transitionName)
     {
-        return sprintf('transition-%s-%s', $workflowName, $transitionName);
+        return sprintf('[id^="transition-%s-%s"]', $workflowName, $transitionName);
     }
 
     /**
@@ -149,7 +149,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function getTransitionLink(Crawler $crawler, $transitionLinkId)
     {
-        return $crawler->filter(sprintf('a#%s', $transitionLinkId));
+        return $crawler->filter(sprintf('a%s', $transitionLinkId));
     }
 
     /**

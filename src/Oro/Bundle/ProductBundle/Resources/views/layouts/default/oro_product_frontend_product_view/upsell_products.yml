@@ -24,6 +24,10 @@ layout:
             optionName: use_slider
             optionValue: '=data["oro_product_upsell_products"].isSliderEnabled()'
         - '@setOption':
+            id: upsell_product_line_item_form
+            optionName: instance_name
+            optionValue: upsell_products
+        - '@setOption':
             id: upsell_product_line_item_form_fields
             optionName: instance_name
             optionValue: upsell_products

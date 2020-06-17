@@ -233,21 +233,34 @@
 
     &rte-toolbar {
         margin-#{$start}: -2px;
+        border: none;
+        box-shadow: 1px 1px 9px 3px rgba(0, 0, 0, .08);
     }
 
     &rte-actionbar {
         flex-direction: row;
+        padding: 8px;
+
+        .actionbar-group {
+            display: flex;
+            &:not(:last-child) {
+                margin-#{$end}: 16px;
+            }
+        }
 
         .#{$rte-prefix}action {
             order: 1;
+            border-#{$end}: none;
+            padding: 0;
+            margin-#{$end}: 8px;
+
+
+            &:last-child {
+                margin-#{$end}: 0;
+            }
 
             &:hover {
                 color: $primary-inverse;
-            }
-
-            &.text-format-action {
-                order: 0;
-                border-#{$end}: 1px solid $mainDkColor;
             }
 
             select {
@@ -264,6 +277,16 @@
             top: -10px;
         }
     }
+}
+
+.#{$app-prefix}select option,
+.#{$app-prefix}field-select option,
+.#{$clm-prefix}select option,
+.#{$sm-prefix}select option,
+.#{$app-prefix}fields option,
+.#{$sm-prefix}unit option {
+    background-color: $primaryColor;
+    color: $fontColor;
 }
 
 .#{$app-prefix}dashed {

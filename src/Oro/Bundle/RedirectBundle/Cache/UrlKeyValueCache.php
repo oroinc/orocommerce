@@ -161,7 +161,7 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
      * @param string $routeName
      * @param array $routeParameters
      * @param null|int $localizationId
-     * @return string|null
+     * @return string|null|false
      */
     protected function getFromCacheByType($type, $routeName, $routeParameters, $localizationId = null)
     {

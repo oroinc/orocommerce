@@ -73,9 +73,9 @@ Feature: Quotes Grid
 
   Scenario: Check Valid Until filter
     Given records in grid should be 20
-    When I filter Valid Until as between "today -2 day" and "today -1 day"
+    When I filter Valid Until as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Valid Until as between "today" and "today +1 day"
+    When I filter Valid Until as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote12 |
@@ -93,9 +93,9 @@ Feature: Quotes Grid
 
   Scenario: Check Ship Until filter
     Given records in grid should be 20
-    When I filter Do Not Ship Later Than as between "today -2 day" and "today -1 day"
+    When I filter Do Not Ship Later Than as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Do Not Ship Later Than as between "today" and "today +1 day"
+    When I filter Do Not Ship Later Than as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
@@ -104,17 +104,17 @@ Feature: Quotes Grid
 
   Scenario: Check Created At filter
     Given records in grid should be 20
-    When I filter Created At as between "today -2 day" and "today -1 day"
+    When I filter Created At as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Created At as between "today" and "today +1 day"
+    When I filter Created At as between "today" and "today+1"
     Then records in grid should be 20
     And I reset "Created At" filter
 
   Scenario: Check Updated At filter
     Given records in grid should be 20
-    When I filter Updated At as between "today -2 day" and "today -1 day"
+    When I filter Updated At as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Updated At as between "today" and "today +1 day"
+    When I filter Updated At as between "today" and "today+1"
     Then records in grid should be 20
     And I reset "Updated At" filter
 

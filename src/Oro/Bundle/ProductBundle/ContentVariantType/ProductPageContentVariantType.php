@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Component\Routing\RouteData;
+use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * The content variant type for a product.
  */
-class ProductPageContentVariantType implements ContentVariantTypeInterface
+class ProductPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
     const TYPE = 'product_page';
 
@@ -73,7 +74,7 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Product $product */
-        $product = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
+        $product = $this->getAttachedEntity($contentVariant);
 
         return new RouteData('oro_product_frontend_product_view', ['id' => $product->getId()]);
     }
@@ -92,5 +93,13 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.product_page_product)', $alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachedEntity(ContentVariantInterface $contentVariant)
+    {
+        return $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
     }
 }

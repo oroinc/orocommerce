@@ -55,6 +55,7 @@ workflows:
                                 object: $checkout
                                 address_type: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
@@ -124,6 +125,13 @@ workflows:
                                 - 'payment_methods_wrapper'
                             '[name="paymentMethod"]':
                                 - 'checkout_order_summary_totals_wrapper'
+                            '[data-role="coupon-code"]':
+                                - 'checkout_coupon_form_container_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_line_item_wrapper'
+                                - 'checkout_form_errors_wrapper'
                 form_options:
                     form_init:
                         - '@assign_value': [$payment_validate, true]
@@ -157,6 +165,7 @@ workflows:
                                 object: $checkout
                                 address_type: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType

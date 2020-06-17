@@ -37,6 +37,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: []
+                        restoreFormState: true
 
                 payment_methods_hidden:
                     blockType: checkout_form_fields
@@ -83,6 +84,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: []
+                        restoreFormState: true
 
                 shipping_methods_hidden:
                     blockType: checkout_form_fields
@@ -257,3 +259,45 @@ layout:
            parentId: checkout_consent_container
            options:
                appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+        - '@setOption':
+           id: coupon_form_container
+           optionName: refreshOnSuccess
+           optionValue: false
+
+        - '@add':
+           id: checkout_coupon_form_container_wrapper
+           blockType: layout_subtree_update
+           parentId: coupon_form_container
+           prepend: true
+           options:
+               reloadEvents: []
+
+        - '@move':
+           id: coupon_form_widget_container
+           parentId: checkout_coupon_form_container_wrapper
+
+        - '@add':
+           id: checkout_order_summary_line_item_wrapper
+           blockType: layout_subtree_update
+           parentId: checkout_order_summary_line_items_container
+           prepend: true
+           options:
+               reloadEvents: []
+
+        - '@move':
+           id: checkout_order_summary_line_items
+           parentId: checkout_order_summary_line_item_wrapper
+
+        - '@add':
+           id: checkout_form_errors_wrapper
+           blockType: layout_subtree_update
+           parentId: checkout_form
+           prepend: true
+           options:
+               reloadEvents: []
+               showLoading: false
+
+        - '@move':
+           id: checkout_form_errors
+           parentId: checkout_form_errors_wrapper

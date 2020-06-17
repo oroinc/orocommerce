@@ -12,7 +12,7 @@ In this example we look at how to customize product with different product types
 
 Every product view page contains the current **product_type** in the layout context. You can use it in your layout update **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found. 
 
-Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
+Please see the [Debug Information](https://doc.oroinc.com/frontend/storefront/debugging/#debug-layout-blocks) section for more details.
 
 First, create an **import** and a **template** that will be used in a **Simple Product** and a **Configurable Product**.
 
@@ -367,7 +367,7 @@ class ProductVariantsProvider
 
 Every product view page contains the current **category_id** and the **category_ids** in the layout context. You can use these values to evaluate the layout **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found.
  
- Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
+ Please see the [Debug Information](https://github.com/orocrm/platform/tree/4.1/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
 
 #### Example 1 (by category ID)
 
@@ -465,7 +465,7 @@ Template:
 
 ### Product Page Templates
 
-Please see the [Page Templates](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/config_definition.md#page-templates) section for more details.
+Please see the [Page Templates](https://github.com/orocrm/platform/tree/4.1/src/Oro/Bundle/LayoutBundle/Resources/doc/config_definition.md#page-templates) section for more details.
 
 You can modify the visual presentation of the product view page for every product, or choose a page template for all of them by default.
 

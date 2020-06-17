@@ -87,6 +87,16 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postRemove }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
 
+    oro_web_catalog.event_listener.orm.content_variant_entity_listener:
+        class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentVariantListener'
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.metadata_provider.chain'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: preUpdate }
+
     oro_web_catalog.event_listener.orm.content_variant_remove_entity_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\ContentVariantSlugsRemoveListener
         tags:
@@ -399,6 +409,15 @@ services:
             - '@oro_scope.scope_manager'
         tags:
             - { name: validator.constraint_validator, alias: oro_web_catalog.validator_constraints.not_empty_scopes_validator }
+
+    oro_web_catalog.validator_constraints.same_organization_validator:
+        class: 'Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganizationValidator'
+        public: true
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.entity_owner_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_web_catalog.validator_constraints.same_organization_validator }
 
     oro_web_catalog.form.type.content_node_select_system_config:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType

@@ -29,6 +29,12 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                __checkout_form_errors:
+                    blockType: checkout_form_errors
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
                 __checkout_form_fields:
                     blockType: checkout_form_fields
                     options:
@@ -149,6 +155,7 @@ layout:
                                 __checkout_information_title: ~
                             __checkout_information_body:
                                 __checkout_form:
+                                    __checkout_form_errors: ~
                                     __checkout_form_fields:
                                         __checkout_additional_options: ~
                                     __checkout_form_buttons:

@@ -400,15 +400,15 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
-     * @param ContentVariant $page
+     * @param ContentVariant $contentVariant
      *
      * @return $this
      */
-    public function addContentVariant(ContentVariant $page)
+    public function addContentVariant(ContentVariant $contentVariant)
     {
-        if (!$this->contentVariants->contains($page)) {
-            $page->setNode($this);
-            $this->contentVariants->add($page);
+        if (!$this->contentVariants->contains($contentVariant)) {
+            $contentVariant->setNode($this);
+            $this->contentVariants->add($contentVariant);
         }
 
         return $this;

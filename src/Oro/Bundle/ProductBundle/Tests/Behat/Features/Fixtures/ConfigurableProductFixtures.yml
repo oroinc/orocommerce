@@ -40,7 +40,7 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
         url: '/slip-on-clog'
         slugPrototype: 'slip-on-clog'
         routeName: 'oro_product_frontend_product_view'
-        routeParameters: {'id': '@configurableProductSlug->id'}
+        routeParameters: {'id': '@configurableProduct->id'}
 
 Oro\Bundle\ProductBundle\Entity\Product:
     simpleProduct1:

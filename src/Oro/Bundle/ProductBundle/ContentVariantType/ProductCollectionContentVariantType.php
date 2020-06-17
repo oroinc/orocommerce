@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ContentVariantType;
 use Oro\Bundle\ProductBundle\Api\Model\ProductCollection;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Component\Routing\RouteData;
+use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -12,7 +13,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * The content variant type for a product collection.
  */
-class ProductCollectionContentVariantType implements ContentVariantTypeInterface
+class ProductCollectionContentVariantType implements
+    ContentVariantTypeInterface,
+    ContentVariantEntityProviderInterface
 {
     const TYPE = 'product_collection';
     const PRODUCT_COLLECTION_ROUTE_NAME = 'oro_product_frontend_product_index';
@@ -90,5 +93,13 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return $alias . '.id';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachedEntity(ContentVariantInterface $contentVariant)
+    {
+        return $contentVariant->getProductCollectionSegment();
     }
 }

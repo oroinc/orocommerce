@@ -1,11 +1,3 @@
-{% block __oro_product_line_item_form__line_item_form_start_widget %}
-    {{ set_unique_line_item_form_id(form, product) }}
-    {% set attr = layout_attr_defaults(attr, {
-        'id': form.vars.id,
-    }) %}
-    {{ block('form_start_widget') }}
-{% endblock %}
-
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
 
@@ -26,33 +18,6 @@
         class_prefix: class_prefix
     }) %}
     {% do set_class_prefix_to_form(form, class_prefix) %}
-    {% if renderCacheQuantity is not defined %}
-        {% set renderCacheQuantity %}
-            {{ form_widget(form.quantity, {attr: {
-                'class': 'product-item__qty-input',
-                'aria-label': 'oro.product.quantity.aria_label'|trans
-            }}) }}
-        {% endset %}
-        {% do block|merge_context({
-            renderCacheQuantity: renderCacheQuantity
-        }) %}
-    {% endif %}
-    {% if renderCacheUnit is not defined %}
-        {% set renderCacheUnit %}
-            {{ form_widget(form.unit, {attr: unitAttr}) }}
-        {% endset %}
-        {% do block|merge_context({
-            renderCacheUnit: renderCacheUnit
-        }) %}
-    {% endif %}
-    {% if renderCacheToken is not defined %}
-        {% set renderCacheToken %}
-            {{ form_widget(form._token) }}
-        {% endset %}
-        {% do block|merge_context({
-            renderCacheToken: renderCacheToken
-        }) %}
-    {% endif %}
     {% if not is_configurable_product_type(product.type) %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-item__qty__current-grid',
@@ -66,7 +31,10 @@
 
         <div {{ block('block_attributes') }}>
             <div class="form-row {{ class_prefix }}">
-                {{ renderCacheQuantity }}
+                {{ form_widget(form.quantity, {attr: {
+                    'class': 'product-item__qty-input',
+                    'aria-label': 'oro.product.quantity.aria_label'|trans
+                }}) }}
             </div>
             <div class="form-row {{ class_prefix }}">
                 {% if product is iterable %}
@@ -78,7 +46,7 @@
                 {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}
                     {% if singleUnitMode %}
                         {% if currentProduct.product_units is not defined %}
-                            {{ renderCacheUnit }}
+                            {{ form_widget(form.unit, {attr: unitAttr}) }}
                         {% else %}
                             {% if singleUnitModeCodeVisible %}
                                 {% if currentProduct.unit == defaultUnitCode %}
@@ -86,19 +54,19 @@
                                         {{- currentProduct.unit|oro_format_product_unit_label -}}
                                     </div>
                                     <div class="hidden">
-                                        {{ renderCacheUnit }}
+                                        {{ form_widget(form.unit, {attr: unitAttr}) }}
                                     </div>
                                 {% else %}
-                                    {{ renderCacheUnit }}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
                                 {% endif %}
                             {% else %}
                                 <div class="hidden">
-                                    {{ renderCacheUnit }}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
                                 </div>
                             {% endif %}
                         {% endif %}
                     {% else %}
-                        {{ renderCacheUnit }}
+                        {{ form_widget(form.unit, {attr: unitAttr}) }}
                     {% endif %}
                 {% else %}
                     {% if singleUnitModeCodeVisible %}
@@ -107,12 +75,12 @@
                         </div>
                     {% endif %}
                     <div class="hidden">
-                        {{ renderCacheUnit }}
+                        {{ form_widget(form.unit, {attr: unitAttr}) }}
                     </div>
                 {% endif %}
             </div>
             <div class="hidden">
-                {{ renderCacheToken }}
+                {{ form_widget(form._token) }}
                 {{ block_widget(block) }}
             </div>
         </div>
@@ -127,9 +95,18 @@
         'data-role': 'line-item-form-container'
     }) %}
 
-    {% do block|merge_context({
-        product: product
-    }) %}
+    {% if originalForm is defined %}
+        {% do block|merge_context({
+            product: product,
+            form: clone_form_view_with_unique_id(originalForm, 'pid-' ~ product.id)
+        }) %}
+    {% else %}
+        {% do block|merge_context({
+            product: product,
+            originalForm: form,
+            form: clone_form_view_with_unique_id(form, 'pid-' ~ product.id)
+        }) %}
+    {% endif %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

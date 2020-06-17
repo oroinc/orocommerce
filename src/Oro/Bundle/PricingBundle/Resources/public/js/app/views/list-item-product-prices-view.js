@@ -16,7 +16,7 @@ define(function(require) {
 
         elements: {
             prices: '[data-name="prices"]',
-            pricesHint: '[data-name="prices-hint-trigger"]'
+            pricesHint: '[data-name="prices-hint"]'
         },
 
         defaultOptions: {
@@ -136,7 +136,7 @@ define(function(require) {
                 layout.initPopoverForElements($pricesHint, {
                     'container': 'body',
                     'placement': 'bottom',
-                    'trigger': 'manual',
+                    'trigger': 'hover',
                     'close': false,
                     'class': 'prices-hint-content',
                     'forceToShowTitle': true

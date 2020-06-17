@@ -461,7 +461,7 @@ oro_behat_extension:
       selector: ".add-list-item"
 
     Create Order From Quick Order:
-      selector: "a[id='transition-b2b_flow_checkout-start_from_quickorderform']"
+      selector: "a[id^='transition-b2b_flow_checkout-start_from_quickorderform']"
 
     ProductPriceCollection:
       class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection'

@@ -41,7 +41,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
     public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
         $data = $this->localCache->fetch($this->getCacheKey($routeName, $routeParameters, $localizationId));
-        if (!empty($data[self::URL_KEY])) {
+        if ($data && array_key_exists(self::URL_KEY, $data)) {
             return $data[self::URL_KEY];
         }
 

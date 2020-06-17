@@ -50,14 +50,15 @@
         {% set totalPages = pageSize == 0 ? 1 : (totalRecords / pageSize)|round %}
 
         <div class="oro-pagination__pager">
-            <a href="{% if currentPage <= 1 %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage - 1) }}{% endif %}"
+            <a role="button" href="{% if currentPage <= 1 %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage - 1) }}{% endif %}"
                class="btn btn--size-s btn--default oro-pagination__prev{% if currentPage <= 1 %} disabled{% endif %}"
-               data-grid-pagination-trigger data-grid-pagination-direction="prev">
-                <i class="fa-angle-left"></i>
-                <span class="oro-pagination__label">{{ "oro.datagrid.pagination.prev"|trans }}</span>
+               data-grid-pagination-trigger data-grid-pagination-direction="prev"
+               aria-label="{{ "oro.datagrid.pagination.prev.aria_label"|trans }}">
+                <span class="fa-angle-left" aria-hidden="true"></span>
+                <span class="oro-pagination__label" aria-hidden="true">{{ "oro.datagrid.pagination.prev"|trans }}</span>
             </a>
 
-            <input type="text" class="input input--size-s oro-pagination__input" aria-label="{{ "oro.datagrid.pagination.pageNumber"|trans }}" value="{{ currentPage }}"
+            <input type="text" class="input input--size-s oro-pagination__input" aria-label="{{ "oro.datagrid.pagination.input.aria_label"|trans }}" value="{{ currentPage }}"
                    data-grid-pagination-trigger-input/>
 
             <span class="oro-pagination__total">
@@ -65,11 +66,12 @@
                 {{ "oro.datagrid.pagination.totalPages"|trans({'%totalPages%': totalPagesWithAMarkup})|raw }}
             </span>
 
-            <a href="{% if currentPage >= totalPages %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage + 1) }}{% endif %}"
+            <a role="button" href="{% if currentPage >= totalPages %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage + 1) }}{% endif %}"
                class="btn btn--size-s btn--default oro-pagination__next{% if currentPage >= totalPages %} disabled{% endif %}"
-               data-grid-pagination-trigger data-grid-pagination-direction="next">
-                <span class="oro-pagination__label">{{ "oro.datagrid.pagination.next"|trans }}</span>
-                <i class="fa-angle-right"></i>
+               data-grid-pagination-trigger data-grid-pagination-direction="next"
+               aria-label="{{ "oro.datagrid.pagination.next.aria_label"|trans }}">
+                <span class="oro-pagination__label" aria-hidden="true">{{ "oro.datagrid.pagination.next"|trans }}</span>
+                <span class="fa-angle-right" aria-hidden="true"></span>
             </a>
         </div>
     </div>

@@ -54,6 +54,20 @@ services:
         tags:
             - { name: layout.block_type, alias: checkout_form }
 
+    oro_checkout.layout.block_type.checkout_form_errors:
+        parent: oro_checkout.layout.block_type.checkout_form
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        checkout: {required: true}
+                        form: {required: true}
+                        workflowItem: {required: true}
+            - [setName, ['checkout_form_errors']]
+        tags:
+            - { name: layout.block_type, alias: checkout_form_errors }
+
     oro_checkout.layout.block_type.checkout_form_fields:
         parent: oro_checkout.layout.block_type.checkout_form
         calls:

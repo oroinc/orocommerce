@@ -80,6 +80,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'has in cache' => [[UrlLocalCache::URL_KEY => '/test', UrlLocalCache::SLUG_KEY => 'test'], '/test'],
+            'has in cache NULL' => [[UrlLocalCache::URL_KEY => null, UrlLocalCache::SLUG_KEY => null], null],
             'does not contain' => [null, false]
         ];
     }

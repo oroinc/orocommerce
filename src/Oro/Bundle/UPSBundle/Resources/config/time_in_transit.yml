@@ -32,6 +32,8 @@ services:
     oro_ups.cache.time_in_transit:
         public: false
         parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_ups_time_in_transit' ] ]
 
     oro_ups.time_in_transit.cache_provider.factory:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory'

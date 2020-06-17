@@ -208,7 +208,9 @@
 {% block _shipping_address_widget -%}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
         {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-        {{ renderAddress(checkout.shippingAddress) }}
+        <div>
+            {{ renderAddress(checkout.shippingAddress) }}
+        </div>
     {% else %}
         {{ form_row(form.shipping_address, {'attr': {
             'data-role': 'checkout-shipping-address',

@@ -204,6 +204,7 @@ operations:
                   - [[shallowCopy], [propertyType, ['\DateTime']]]
             - '@assign_value': [$.newPriceList.name, $.newName]
             - '@assign_value': [$.newPriceList.active, false]
+            - '@assign_value': [$.newPriceList.actual, true]
             - '@assign_value': [$.newPriceList.default, false]
             - '@call_service_method':
                 service: oro_pricing.duplicator.schedule

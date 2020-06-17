@@ -25,9 +25,9 @@ define(function(require) {
 
                 if ($arrow.length) {
                     if (index.className || !this.enabled) {
-                        $arrow.addClass('disabled');
+                        $arrow.addClass('disabled').attr('tabindex', -1);
                     } else {
-                        $arrow.removeClass('disabled');
+                        $arrow.removeClass('disabled').removeAttr('tabindex');
                     }
                 }
             }, this);

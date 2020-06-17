@@ -6,14 +6,4 @@ layout:
         - '@setBlockTheme':
             themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
 
-        - '@setOption':
-            id: payment_methods_wrapper
-            optionName: restoreFormState
-            optionValue: true
-
-        - '@setOption':
-            id: shipping_methods_wrapper
-            optionName: restoreFormState
-            optionValue: true
-
     conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"]'
