@@ -47,7 +47,7 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_type: 'percent'
             discount_value: 1
             shipping_options:
-                shipping_method: 'flat_rate_1'
+                shipping_method: '<("flat_rate_".@flatRateIntegration->getId())>'
                 shipping_method_type: 'primary'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
