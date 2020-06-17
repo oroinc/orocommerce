@@ -1,12 +1,13 @@
 <% let clipLength = obj.clipLength === void 0 ? 30 : obj.clipLength; %>
 
 <% let renderNote = function(clip) { %>
-    <div class="grid-line-items__text<%- clip ? ' grid-line-items__ellipsis' : '' %>" data-role="note"><%- note %></div>
+    <div class="grid-line-items__note<%- clip ? ' grid-line-items__ellipsis' : '' %>" data-role="note"><%- note %></div>
 <% } %>
 <% if (note.length <= clipLength) { %>
     <% renderNote() %>
 <% } else { %>
-<div class="grid-line-items__clip-text-container" data-page-component-view="oroshoppinglist/js/app/views/preview-full-note-view">
+<div class="grid-line-items__clip-note-container"
+     data-page-component-view="oroshoppinglist/js/app/views/preview-full-note-view">
     <div class="grid-line-items__clip-placeholder">
         <% renderNote(true) %>
     </div>

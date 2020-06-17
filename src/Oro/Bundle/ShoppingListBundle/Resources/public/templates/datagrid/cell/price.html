@@ -1,12 +1,35 @@
-<% let item = !obj.isConfigurable ? obj : (obj.subData ? obj.subData[0] : null) %>
-<% if (item) { %>
-<div class="line-item-price">
-    <div data-name="prices-hint">
-        <% if (item.price) { %>
-            <div class="mobile-row" data-name="price-value"><span class="bold show-in-mobile"><%- _metadata.label %>:</span><%- item.price %></div>
-        <% } else { %>
-            <div data-name="price-not-found"><%- _.__('oro.pricing.product_prices.price_not_found') %></div>
-        <% } %>
+<% if (!obj.isConfigurable) { %>
+<% if (price) { %>
+<div class="line-item-price"
+     data-page-component-init-on="click"
+     data-page-component-module="oropricing/js/app/components/list-item-product-prices-component"
+     data-page-component-options="<%- JSON.stringify({
+        showValuePrice: false,
+        showListedPrice: false,
+        doUpdateQtyForUnit: false,
+        productId: productId,
+        elements: {
+            pricesHint: '[data-prices-hint-trigger]'
+        }
+     }) %>"
+>
+    <div data-name="prices-hint" class="mobile-row">
+        <span class="bold show-in-mobile"><%- _metadata.label %>:</span>
+        <span class="price-value-container">
+            <span data-name="price-value" class="price-value"> <%- price %></span>
+            <button type="button"
+                    data-prices-hint-trigger
+                    data-trigger="manual"
+                    class="btn btn--link btn--size-xs prices-hint-toggler"
+                    title="<%- _.__('oro.pricing.view_all_prices') %>"
+                    aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
+                <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
+            </button>
+        </span>
     </div>
 </div>
+<% } else { %>
+<div data-name="price-not-found"
+     title="<%- _.__('oro.pricing.product_prices.price_not_found') %>"><%- _.__('oro.pricing.product_prices.price_not_found.short_label') %></div>
+<% } %>
 <% } %>

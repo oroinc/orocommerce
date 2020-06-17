@@ -1,5 +1,15 @@
 /* @theme: blank; */
 
+.shipping-list-note {
+    font-size: $shopping-lists-note-font-size;
+    font-style: $shopping-lists-note-font-s;
+    line-height: $shopping-lists-note-line-height;
+
+    &__page-title {
+        margin-bottom: $offset-y-m;
+    }
+}
+
 .shipping-list-view-total-container {
     .order-checkout-widget__table {
         th {

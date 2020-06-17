@@ -30,6 +30,14 @@ const PreviewFullNoteView = BaseView.extend({
         PreviewFullNoteView.__super__.initialize.call(this, options);
     },
 
+    dispose: function() {
+        if (this.disposed) {
+            return;
+        }
+        this.$el.popover('dispose');
+        PreviewFullNoteView.__super__.dispose.call(this);
+    },
+
     onMouseOver() {
         const note = this.$('[data-role="note"]')[0];
 

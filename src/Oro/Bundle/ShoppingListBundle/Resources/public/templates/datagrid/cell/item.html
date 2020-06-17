@@ -1,37 +1,18 @@
-<%
-    let item = !obj.isConfigurable ? obj : (obj.subData ? obj.subData[0] : null);
-    let clipLength = 30;
-    let oroshoppinglist = _.macros('oroshoppinglist');
-%>
-
+<% let clipLength = 30 %>
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <div class="product-item">
     <div class="grid-line-items">
-        <div class="grid-line-items__row grid-line-items__row--offset-y-end">
+        <div class="grid-line-items__row grid-line-items__row--offset-y-end"
+             data-page-component-init-on="click,focusin">
            <%= oroshoppinglist.renderProductItemImage({
-                src: obj.subData && obj.subData[0].image || obj.image,
-                placeholder: obj._metadata.image_placeholder,
-                productId: obj.subData && obj.subData[0].productId || productId,
-                title: obj.subData && obj.subData[0].sku || sku,
+                src: obj.image,
+                placeholder: _metadata.image_placeholder,
+                productId: productId,
+                title: sku,
                 alt: name
             }) %>
         </div>
         <div class="grid-line-items__row">
-            <% let note = obj.subData && obj.subData[0].note || obj.note %>
-            <% let renderProductConfiguration = function(configuration) { %>
-                <% let keys = Object.keys(configuration) %>
-                <%= _.map(configuration, function(field, index) {
-                    let separator = '';
-
-                    if (keys.length > 1 && keys[keys.length -1] !== index) {
-                        separator = ' has-separator'
-                    }
-
-                return '<div class="grid-line-items__field">' +
-                           '<span class="grid-line-items__field-val">' + _.escape(field.label) + ':</span>' +
-                           '<span class="grid-line-items__field-val bold' + separator + '">' + _.escape(field.value) + '</span>' +
-                       '</div>';
-                }).join('') %>
-            <% } %>
             <% if (!obj.productConfiguration) { %>
                 <div class="grid-line-items__row-item grid-line-items__row-item-title-container">
                     <% if (name.length <= clipLength) { %>
@@ -46,36 +27,34 @@
                     <span>
                         <%- _.__('oro.frontend.shoppinglist.label') %>&nbsp;<span class="product-item__sku-value"><%- sku %></span>
                     </span>
-                    <% if (item) { %>
-                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus.name, label: item.inventoryStatus.label}) %>
+                    <% if (!isConfigurable) { %>
+                        <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                     <% } %>
                 </div>
-                <% if (obj.subData) { %>
-                <div class="grid-line-items__row-item grid-line-items__row-item--simple">
-                    <div class="grid-line-items__configuration">
-                        <% renderProductConfiguration(obj.subData[0].productConfiguration) %>
-                    </div>
-                </div>
-                <% } %>
                 <% if (note) { %>
-                <div class="grid-line-items__row-item grid-line-items__row-item--simple" data-page-component-init-on="click, mouseover">
+                <div class="grid-line-items__row-item grid-line-items__row-item--simple"
+                     data-page-component-init-on="click,mouseover">
                     <%= oroshoppinglist.renderNote({note: note}) %>
                 </div>
                 <% } %>
             <% } else { %>
                 <div class="grid-line-items__row-item mobile-row">
                     <div class="grid-line-items__row-item highlighted-in-tablet"><%- sku %></div>
-                    <% if (item) { %>
                     <div class="grid-line-items__row-item show-in-tablet">
-                        <%= oroshoppinglist.renderInventoryStatus({status: item.inventoryStatus.name, label: item.inventoryStatus.label}) %>
+                        <%= oroshoppinglist.renderInventoryStatus(inventoryStatus) %>
                     </div>
-                    <% } %>
                 </div>
                 <div class="grid-line-items__row-item grid-line-items__configuration">
-                    <% renderProductConfiguration(productConfiguration) %>
+                    <% _.each(productConfiguration, function(field) { %>
+                    <div class="grid-line-items__field">
+                        <span class="grid-line-items__field-val"><%- field.label %>:</span>
+                        <span class="grid-line-items__field-val bold"><%- field.value %></span>
+                    </div>
+                    <% }) %>
                 </div>
                 <% if (note) { %>
-                <div class="grid-line-items__row-item" data-page-component-init-on="click, mouseover">
+                <div class="grid-line-items__row-item"
+                     data-page-component-init-on="click,mouseover">
                     <%= oroshoppinglist.renderNote({note: note}) %>
                 </div>
                 <% } %>
@@ -84,9 +63,9 @@
     </div>
 </div>
 
-<% if (item && (item.isUpcoming || errors.length)) { %>
+<% if (isUpcoming || obj.errors && errors.length) { %>
 <div class="notification-container">
-    <%= oroshoppinglist.renderUpcoming({isUpcoming: item.isUpcoming, availabilityDate: item.availabilityDate}) %>
-    <%= oroshoppinglist.renderErrors({errors: item.errors}) %>
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <%= oroshoppinglist.renderErrors({errors: errors}) %>
 </div>
 <% } %>

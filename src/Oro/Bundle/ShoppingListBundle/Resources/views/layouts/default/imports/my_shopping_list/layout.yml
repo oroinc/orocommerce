@@ -39,6 +39,8 @@ layout:
                         visible: '=data["entity"].getCustomerUser()!=null'
                         shoppingList: '=data["entity"]'
                 __header_notes:
+                    blockType: container
+                __header_notes_text:
                     blockType: text
                     options:
                         text: '=data["entity"].getNotes()'
@@ -75,7 +77,8 @@ layout:
                                 __header_title_text: ~
                                 __header_status: ~
                             __header_owner: ~
-                            __header_notes: ~
+                            __header_notes:
+                                __header_notes_text: ~
                         __line_items: ~
                         __checkout_container:
                             __summary_container:

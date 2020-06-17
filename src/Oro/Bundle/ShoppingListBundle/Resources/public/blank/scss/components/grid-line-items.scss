@@ -39,7 +39,7 @@
     }
 
     &__clip-title-container,
-    &__clip-text-container {
+    &__clip-note-container {
         position: relative;
     }
 
@@ -47,8 +47,8 @@
         min-height: $grid-line-items-title-font-size * $grid-line-items-line-height;
     }
 
-    &__clip-text-container {
-        min-height: $grid-line-items-text-font-size * $grid-line-items-line-height;
+    &__clip-note-container {
+        min-height: $shopping-lists-note-font-size * $shopping-lists-note-line-height;
     }
 
     &__title {
@@ -57,10 +57,8 @@
         line-height: $grid-line-items-line-height;
     }
 
-    &__text {
-        font-size: $grid-line-items-text-font-size;
-        font-style: $grid-line-items-text-font-s;
-        line-height: $grid-line-items-line-height;
+    &__note {
+        @extend .shipping-list-note;
     }
 
     &__ellipsis {
@@ -75,6 +73,18 @@
         align-items: flex-start;
     }
 
+    &__field:not(:last-child):after {
+        display: inline-block;
+        vertical-align: middle;
+        width: 1px;
+        height: $grid-line-separator-height;
+        margin: $grid-line-separator-offset;
+
+        background: $grid-line-separator-background;
+
+        content: '';
+    }
+
     &__field-val {
         &:first-child {
             padding-right: $grid-line-items-field-val-offset;
@@ -83,18 +93,6 @@
         &:nth-child(2),
         &:last-child {
             padding-left: $grid-line-items-field-val-offset;
-        }
-
-        &.has-separator:after {
-            display: inline-block;
-            vertical-align: middle;
-            width: 1px;
-            height: $grid-line-separator-height;
-            margin: $grid-line-separator-offset;
-
-            background: $grid-line-separator-background;
-
-            content: '';
         }
     }
 }
@@ -134,6 +132,10 @@
             justify-content: space-between;
             width: 100%;
 
+            &:not(:last-child):after {
+                content: none;
+            }
+
             &-val {
                 width: 50%;
 
@@ -144,10 +146,6 @@
                 &:nth-child(2),
                 &:last-child {
                     padding-left: $grid-line-items-field-val-offset-mobile;
-                }
-
-                &.has-separator:after {
-                    content: none;
                 }
             }
         }
