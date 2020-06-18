@@ -13,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepository
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -154,39 +155,63 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         $shoppingList = $this->find($shoppingListId);
 
         if ($shoppingList && $shoppingList->getLineItems()->count()) {
-            $productsIds = [];
-            $mainProductsIds = [];
-            foreach ($shoppingList->getLineItems() as $lineItem) {
-                $productId = $lineItem->getProduct()->getId();
-                $productsIds[$productId] = $productId;
-
-                $parentProduct = $lineItem->getParentProduct();
-                if ($parentProduct) {
-                    $productId = $parentProduct->getId();
-                    $productsIds[$productId] = $productId;
-                    $mainProductsIds[$productId] = $productId;
-                } else {
-                    $mainProductsIds[$productId] = $productId;
-                }
-            }
-
-            $products = $this->loadRelatedProducts($productsIds);
-            $categoriesIds = [];
-            foreach ($products as $product) {
-                $category = $product->getCategory();
-                if ($category) {
-                    $categoriesIds[$category->getId()] = $category->getId();
-                }
-            }
-
-            $this->loadRelatedCategories($categoriesIds);
-            $this->loadRelatedEntityFallbackValuesForProducts($productsIds);
-            $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
-            $this->loadRelatedProductNames($mainProductsIds);
-            $this->loadRelatedProductImages($productsIds);
+            $this->preloadLineItemsForViewAction($shoppingList->getLineItems()->toArray());
         }
 
         return $shoppingList;
+    }
+
+    /**
+     * @param array $lineItemsIds
+     *
+     * @return array
+     */
+    public function preloadLineItemsByIdsForViewAction(array $lineItemsIds): array
+    {
+        $lineItems = $this->getEntityManager()->getRepository(LineItem::class)->findBy(['id' => $lineItemsIds]);
+
+        $this->preloadLineItemsForViewAction($lineItems);
+
+        return $lineItems;
+    }
+
+    /**
+     * Loads related entities to eliminate extra queries when displaying on view page in line items grid.
+     *
+     * @param LineItem[] $lineItems
+     */
+    public function preloadLineItemsForViewAction(array $lineItems): void
+    {
+        $productsIds = [];
+        $mainProductsIds = [];
+        foreach ($lineItems as $lineItem) {
+            $productId = $lineItem->getProduct()->getId();
+            $productsIds[$productId] = $productId;
+
+            $parentProduct = $lineItem->getParentProduct();
+            if ($parentProduct) {
+                $productId = $parentProduct->getId();
+                $productsIds[$productId] = $productId;
+                $mainProductsIds[$productId] = $productId;
+            } else {
+                $mainProductsIds[$productId] = $productId;
+            }
+        }
+
+        $products = $this->loadRelatedProducts($productsIds);
+        $categoriesIds = [];
+        foreach ($products as $product) {
+            $category = $product->getCategory();
+            if ($category) {
+                $categoriesIds[$category->getId()] = $category->getId();
+            }
+        }
+
+        $this->loadRelatedCategories($categoriesIds);
+        $this->loadRelatedEntityFallbackValuesForProducts($productsIds);
+        $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
+        $this->loadRelatedProductNames($mainProductsIds);
+        $this->loadRelatedProductImages($productsIds);
     }
 
     /**

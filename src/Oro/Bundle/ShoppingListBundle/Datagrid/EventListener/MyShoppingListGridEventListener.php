@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface as Record;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -97,7 +98,7 @@ class MyShoppingListGridEventListener
             return;
         }
 
-        $matchedPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems->toArray());
+        $matchedPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
         $errors = $this->violationsProvider->getLineItemErrors($lineItems);
         $identifiedLineItems = $this->getIdentifiedLineItems($lineItems);
 
@@ -311,36 +312,50 @@ class MyShoppingListGridEventListener
     /**
      * @param OrmResultAfter $event
      *
-     * @return Collection|null
+     * @return array
      */
-    private function getLineItems(OrmResultAfter $event): ?Collection
+    private function getLineItems(OrmResultAfter $event): array
     {
         $shoppingListId = $event->getDatagrid()
             ->getParameters()
             ->get('shopping_list_id');
 
         if (!$shoppingListId) {
-            return null;
+            return [];
         }
 
-        $shoppingList = $event->getQuery()
+        $repository = $event->getQuery()
             ->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+            ->getRepository(ShoppingList::class);
 
+        $shoppingList = $repository->find($shoppingListId);
         if (!$shoppingList) {
             return null;
         }
 
-        return $shoppingList->getLineItems();
+        $lineItemsCollection = $shoppingList->getLineItems();
+        if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
+            $lineItemsIds = array_merge(
+                ...array_map(
+                    static function (ResultRecordInterface $record) {
+                        return explode(',', $record->getValue('lineItemIds'));
+                    },
+                    $event->getRecords()
+                )
+            );
+
+            return $repository->preloadLineItemsByIdsForViewAction($lineItemsIds);
+        }
+
+        return $lineItemsCollection->toArray();
     }
 
     /**
-     * @param Collection $lineItems
+     * @param array $lineItems
      *
      * @return array
      */
-    private function getIdentifiedLineItems(Collection $lineItems): array
+    private function getIdentifiedLineItems(array $lineItems): array
     {
         $identifiedLineItems = [];
         foreach ($lineItems as $lineItem) {
