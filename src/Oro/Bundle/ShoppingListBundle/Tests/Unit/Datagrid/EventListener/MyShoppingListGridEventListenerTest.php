@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
@@ -23,6 +26,7 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\MyShoppingListGridEvent
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -116,15 +120,26 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $lineItem2 = $this->getLineItem(2002, $product2, 'item');
         $lineItem3 = $this->getLineItem(3003, $product3, 'item');
 
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
-        $shoppingList->addLineItem($lineItem1);
-        $shoppingList->addLineItem($lineItem2);
-        $shoppingList->addLineItem($lineItem3);
+        $lineItems = new PersistentCollection(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection([$lineItem1, $lineItem2, $lineItem3])
+        );
+        $lineItems->setInitialized(false);
+
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->setId(42)
+            ->setLineItems($lineItems);
 
         $this->repository->expects($this->once())
             ->method('find')
             ->with($shoppingList->getId())
             ->willReturn($shoppingList);
+
+        $this->repository->expects($this->once())
+            ->method('preloadLineItemsByIdsForViewAction')
+            ->with([$lineItem1->getId(), $lineItem2->getId(), $lineItem3->getId(), 4])
+            ->willReturn([$lineItem1, $lineItem2, $lineItem3]);
 
         $matchedPrices = ['matchedPrices'];
         $this->productPricesDataProvider->expects($this->once())
@@ -135,7 +150,7 @@ class MyShoppingListGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $errors = ['error1'];
         $this->violationsProvider->expects($this->once())
             ->method('getLineItemErrors')
-            ->with(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]))
+            ->with([$lineItem1, $lineItem2, $lineItem3])
             ->willReturn($errors);
 
         $record1 = new ResultRecord(['lineItemIds' => $lineItem1->getId()]);

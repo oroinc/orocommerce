@@ -254,6 +254,61 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertCategoryLoaded($parentProduct->getCategory());
     }
 
+    public function testPreloadLineItemsByIdsForViewAction(): void
+    {
+        $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass(ShoppingList::class)
+            ->clear();
+
+        $lineItemRef = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4);
+
+        $lineItems = $this->getRepository()->preloadLineItemsByIdsForViewAction([$lineItemRef->getId()]);
+
+        $this->assertNotEmpty($lineItems);
+
+        $product = $lineItems[0]->getProduct();
+        $this->assertProductLoaded($product);
+        $this->assertProductNamesLoaded($product);
+        $this->assertProductImagesLoaded($product);
+        $this->assertCategoryLoaded($product->getCategory());
+
+        $shoppingListRef = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $product = $shoppingListRef->getLineItems()->get(1)->getProduct();
+
+        $this->assertInstanceOf(Product::class, $product);
+        if ($product instanceof Proxy) {
+            $this->assertFalse($product->__isInitialized());
+        }
+    }
+
+    public function testPreloadLineItemsForViewAction(): void
+    {
+        $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass(ShoppingList::class)
+            ->clear();
+
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $lineItemRef = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4);
+
+        $this->getRepository()->preloadLineItemsForViewAction([$lineItemRef]);
+
+        $lineItem = $shoppingList->getLineItems()->get(0);
+
+        $product = $lineItem->getProduct();
+        $this->assertProductLoaded($product);
+        $this->assertProductNamesLoaded($product);
+        $this->assertProductImagesLoaded($product);
+        $this->assertCategoryLoaded($product->getCategory());
+
+        $lineItem = $shoppingList->getLineItems()->get(1);
+        $product = $lineItem->getProduct();
+
+        $this->assertInstanceOf(Product::class, $product);
+        if ($product instanceof Proxy) {
+            $this->assertFalse($product->__isInitialized());
+        }
+    }
+
     /**
      * @param Product $product
      */

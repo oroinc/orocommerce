@@ -309,6 +309,7 @@ datagrids:
                     - (SELECT GROUP_CONCAT(innerLineItem.id)
                         FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerLineItem
                         WHERE (innerLineItem.parentProduct = lineItem.parentProduct OR innerLineItem.product = lineItem.product)
+                        AND innerLineItem.shoppingList = lineItem.shoppingList
                         AND innerLineItem.unit = lineItem.unit) as lineItemIds
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
