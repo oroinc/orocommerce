@@ -249,6 +249,16 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="customer-user-shopping-lists-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Add 1 More Variants:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "grid")]/descendant::button[contains(., "And 1 more")]'
+
+    Add 2 More Variants:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "grid")]/descendant::button[contains(., "And 2 more")]'
+
   suites:
     OroShoppingListBundle:
       contexts:

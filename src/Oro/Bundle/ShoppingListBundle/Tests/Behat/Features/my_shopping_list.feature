@@ -398,6 +398,39 @@ Feature: My Shopping List
     And records in grid should be 34
     When I check "Out of Stock" in Availability filter
     Then I should see following grid:
+      | SKU  | Item                                            |              | Qty | Unit   | Price  | Subtotal |
+      | AA1  | Configurable Product 1                          |              | 13  | items  |        | $227.00  |
+      |      | BB5 Color: Green Size: L Note 5 text And 2 more | Out of Stock | 3   | items  | $11.00 | $33.00   |
+      | AA2  | Configurable Product 2                          |              | 5   | pieces |        | $85.00   |
+      |      | BB7 Color: Red Size: M Note 7 text              | Out of Stock | 5   | pieces | $17.00 | $85.00   |
+      | AA2  | Configurable Product 2                          |              | 7   | sets   |        | $133.00  |
+      |      | BB11 Color: Green Size: L Note 11 text          | Out of Stock | 7   | sets   | $19.00 | $133.00  |
+      | AA3  | Configurable Product 3                          |              | 10  | pieces |        | $170.00  |
+      |      | BB9 Color: Blue Size: S Note 9 text And 1 more  | Out of Stock | 5   | pieces | $17.00 | $85.00   |
+      | BB13 | Product 13 Note 13 text                         | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB15 | Product 15 Note 15 text                         | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB17 | Product 17 Note 17 text                         | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB19 | Product 19 Note 19 text                         | Out of Stock | 11  | sets   | $29.00 | $319.00  |
+    And records in grid should be 15
+    Then click on "Add 2 More Variants"
+    Then I should see following grid:
+      | SKU  | Item                                           |              | Qty | Unit   | Price  | Subtotal |
+      | AA1  | Configurable Product 1                         |              | 13  | items  |        | $227.00  |
+      |      | BB4 Color: Red Size: M Note 4 text             | In Stock     | 3   | items  | $11.00 | $33.00   |
+      |      | BB5 Color: Green Size: L Note 5 text           | Out of Stock | 3   | items  | $11.00 | $33.00   |
+      |      | BB12 Color: Blue Size: S Note 12 text          | In Stock     | 7   | items  | $23.00 | $161.00  |
+      | AA2  | Configurable Product 2                         |              | 5   | pieces |        | $85.00   |
+      |      | BB7 Color: Red Size: M Note 7 text             | Out of Stock | 5   | pieces | $17.00 | $85.00   |
+      | AA2  | Configurable Product 2                         |              | 7   | sets   |        | $133.00  |
+      |      | BB11 Color: Green Size: L Note 11 text         | Out of Stock | 7   | sets   | $19.00 | $133.00  |
+      | AA3  | Configurable Product 3                         |              | 10  | pieces |        | $170.00  |
+      |      | BB9 Color: Blue Size: S Note 9 text And 1 more | Out of Stock | 5   | pieces | $17.00 | $85.00   |
+      | BB13 | Product 13 Note 13 text                        | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB15 | Product 15 Note 15 text                        | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB17 | Product 17 Note 17 text                        | Out of Stock | 9   | items  | $23.00 | $207.00  |
+      | BB19 | Product 19 Note 19 text                        | Out of Stock | 11  | sets   | $29.00 | $319.00  |
+    Then click on "Add 1 More Variants"
+    Then I should see following grid:
       | SKU  | Item                                   |              | Qty | Unit   | Price  | Subtotal |
       | AA1  | Configurable Product 1                 |              | 13  | items  |        | $227.00  |
       |      | BB4 Color: Red Size: M Note 4 text     | In Stock     | 3   | items  | $11.00 | $33.00   |
@@ -414,7 +447,6 @@ Feature: My Shopping List
       | BB15 | Product 15 Note 15 text                | Out of Stock | 9   | items  | $23.00 | $207.00  |
       | BB17 | Product 17 Note 17 text                | Out of Stock | 9   | items  | $23.00 | $207.00  |
       | BB19 | Product 19 Note 19 text                | Out of Stock | 11  | sets   | $29.00 | $319.00  |
-    And records in grid should be 15
 
   Scenario: Check Quantity filter
     Given I reset grid

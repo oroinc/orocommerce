@@ -69,3 +69,7 @@
     <%= oroshoppinglist.renderErrors({errors: errors}) %>
 </div>
 <% } %>
+
+<% if (obj.filteredOutData) { %>
+    <%= oroshoppinglist.renderMoreVariantsButton(filteredOutData) %>
+<% } %>
