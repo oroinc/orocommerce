@@ -52,5 +52,15 @@ macros('oroshoppinglist', {
      *
      * @param {array} errors
      */
-    renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html')
+    renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html'),
+
+    /**
+     * Renders button to show more hidden product variants
+     *
+     * @param {Object} data
+     * @param {array} data.elements
+     * @param {string} data.groupName
+     * @param {string?} data.hideClass
+     */
+    renderMoreVariantsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html')
 });

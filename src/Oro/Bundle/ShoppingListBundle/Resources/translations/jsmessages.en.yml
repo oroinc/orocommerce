@@ -47,3 +47,6 @@ oro:
                 show_less:
                     aria_label: 'Show all added products with pagination'
                     label: 'Show Less'
+            btn_more:
+                label: 'And {{ count }} more'
+                aria_label: 'And {{ count }} more variants of {{ name }} product'

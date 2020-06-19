@@ -1,22 +1,27 @@
+import _ from 'underscore';
+
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
-
 const flattenData = data => {
-    return data.reduce((flatData, item) => {
-        const {subData, ...rest} = item;
+    return data.reduce((flatData, rawData) => {
+        const {subData, ...item} = rawData;
         const itemClassName = [];
+        const hideClassName = 'hide';
 
-        if (isHighlight(rest)) {
+        if (isHighlight(item)) {
             itemClassName.push('highlight');
         }
 
         if (!subData) {
-            rest.row_class_name = itemClassName.join(' ');
-            flatData.push(rest);
+            item.row_class_name = itemClassName.join(' ');
+            flatData.push(item);
         } else {
+            const filteredOutElements = [];
+            let lastFiltered = item;
+
             itemClassName.push('group-row');
-            rest.row_class_name = itemClassName.join(' ');
-            rest._hasVariants = true;
-            flatData.push(rest);
+            item.row_class_name = itemClassName.join(' ');
+            item._hasVariants = true;
+            flatData.push(item);
             subData.forEach((subItem, index) => {
                 const className = ['sub-row'];
 
@@ -28,16 +33,35 @@ const flattenData = data => {
                     className.push('highlight');
                 }
 
+                if (subItem.filteredOut) {
+                    const filteredOutClass = _.uniqueId('filtered-out-');
+
+                    filteredOutElements.push(filteredOutClass);
+                    className.push(filteredOutClass);
+                    className.push(hideClassName);
+                } else {
+                    lastFiltered = subItem;
+                }
+
                 subItem._isVariant = true;
                 subItem.row_class_name = className.join(' ');
             });
+
+            if (filteredOutElements.length) {
+                lastFiltered.filteredOutData = {
+                    hideClass: hideClassName,
+                    elements: filteredOutElements,
+                    groupName: item.name
+                };
+            }
+
             flatData.push(...subData);
         }
         return flatData;
     }, []);
 };
 
-const shoppinglistFlatDataBuilder = {
+const shoppingListFlatDataBuilder = {
     processDatagridOptions: function(deferred, options) {
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
@@ -59,4 +83,4 @@ const shoppinglistFlatDataBuilder = {
     }
 };
 
-export default shoppinglistFlatDataBuilder;
+export default shoppingListFlatDataBuilder;
