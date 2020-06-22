@@ -222,11 +222,12 @@ class ProductController extends AbstractController
      */
     protected function createStepOne(Request $request)
     {
-        $form = $this->createForm(ProductStepOneType::class);
+        $form = $this->createForm(ProductStepOneType::class, new Product());
         $handler = new ProductCreateStepOneHandler($form, $request);
+        $queryParams = $request->query->all();
 
         if ($handler->process()) {
-            return $this->forward('OroProductBundle:Product:createStepTwo');
+            return $this->forward('OroProductBundle:Product:createStepTwo', [], $queryParams);
         }
 
         return [
@@ -244,6 +245,7 @@ class ProductController extends AbstractController
     {
         if ($request->get('input_action') === 'oro_product_create') {
             $form = $this->createForm(ProductStepOneType::class, $product);
+            $queryParams = $request->query->all();
             $form->handleRequest($request);
             $formData = $form->all();
 
@@ -258,7 +260,8 @@ class ProductController extends AbstractController
             return [
                 'form' => $form->createView(),
                 'entity' => $product,
-                'isWidgetContext' => (bool)$request->get('_wid', false)
+                'isWidgetContext' => (bool)$request->get('_wid', false),
+                'queryParams' => $queryParams
             ];
         }
 
