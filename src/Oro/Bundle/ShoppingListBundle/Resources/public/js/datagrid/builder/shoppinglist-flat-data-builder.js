@@ -1,11 +1,10 @@
-import _ from 'underscore';
+import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 
 const isHighlight = item => item.isUpcoming || (item.errors && item.errors.length);
 const flattenData = data => {
     return data.reduce((flatData, rawData) => {
         const {subData, ...item} = rawData;
         const itemClassName = [];
-        const hideClassName = 'hide';
 
         if (isHighlight(item)) {
             itemClassName.push('highlight');
@@ -15,7 +14,7 @@ const flattenData = data => {
             item.row_class_name = itemClassName.join(' ');
             flatData.push(item);
         } else {
-            const filteredOutElements = [];
+            let filteredOutVariants = 0;
             let lastFiltered = item;
 
             itemClassName.push('group-row');
@@ -34,24 +33,26 @@ const flattenData = data => {
                 }
 
                 if (subItem.filteredOut) {
-                    const filteredOutClass = _.uniqueId('filtered-out-');
-
-                    filteredOutElements.push(filteredOutClass);
-                    className.push(filteredOutClass);
-                    className.push(hideClassName);
+                    filteredOutVariants++;
+                    className.push('hide');
                 } else {
                     lastFiltered = subItem;
                 }
 
                 subItem._isVariant = true;
                 subItem.row_class_name = className.join(' ');
+                subItem.row_attributes = {
+                    'data-product-group': item.productId
+                };
             });
 
-            if (filteredOutElements.length) {
+            if (filteredOutVariants) {
                 lastFiltered.filteredOutData = {
-                    hideClass: hideClassName,
-                    elements: filteredOutElements,
-                    groupName: item.name
+                    count: filteredOutVariants,
+                    group: {
+                        name: item.name,
+                        id: item.productId
+                    }
                 };
             }
 
@@ -68,6 +69,11 @@ const shoppingListFlatDataBuilder = {
                 return 'data' in resp ? flattenData(resp.data) : resp;
             }
         });
+
+        if (!options.metadata.plugins) {
+            options.metadata.plugins = [];
+        }
+        options.metadata.plugins.push(FilteredProductVariantsPlugin);
 
         options.data.data = flattenData(options.data.data);
 
