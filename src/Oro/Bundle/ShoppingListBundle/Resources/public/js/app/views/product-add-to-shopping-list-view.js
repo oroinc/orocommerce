@@ -354,7 +354,6 @@ define(function(require) {
 
             $button.find('a')
                 .text(label)
-                .attr('title', label)
                 .attr('data-intention', intention);
 
             return $button;
