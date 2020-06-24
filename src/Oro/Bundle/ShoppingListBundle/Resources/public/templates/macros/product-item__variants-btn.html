@@ -1,11 +1,6 @@
-<% var count = elements.length %>
 <button class="btn btn--link btn--size-s btn--no-y-offset"
         type="button"
-        data-page-component-init-on="mouseover,focusin"
-        data-page-component-view="oroshoppinglist/js/app/views/show-filtered-out-items-view"
-        data-page-component-options="<%- JSON.stringify({
-            elements: elements,
-            hideClass: hideClass
-        }) %>"
-        aria-label="<%- _.__('oro.frontend.shoppinglist.btn_more.aria_label', {count: count, name: groupName}) %>"
+        data-role="show-all-variants"
+        data-group-id="<%- group.id %>"
+        aria-label="<%- _.__('oro.frontend.shoppinglist.btn_more.aria_label', {count: count, name: group.name}) %>"
 ><%- _.__('oro.frontend.shoppinglist.btn_more.label', {count: count}) %></button>
