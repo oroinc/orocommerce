@@ -234,7 +234,7 @@ oro_behat_extension:
 
     Update Shopping List button:
       selector:
-        locator: '//div/a[@title="Update Shopping List"]'
+        locator: '//div/a[contains(text(),"Update Shopping List")]'
         type: xpath
 
     Add to Shopping List button:
