@@ -215,8 +215,9 @@
         {{ form_row(form.shipping_address, {'attr': {
             'data-role': 'checkout-shipping-address',
             'data-address-type': 'shipping',
-            'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', ')
-        }}) }}
+            'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', '),
+            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+        }, 'placeholder': ''}) }}
         {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
     {% endif %}
 {%- endblock %}
@@ -226,8 +227,9 @@
         {{ form_row(form.billing_address, {'attr': {
             'data-role': 'checkout-billing-address',
             'data-address-type': 'billing',
-            'data-new-address-label': checkout.billingAddress|oro_format_address(null, ', ')
-        }}) }}
+            'data-new-address-label': checkout.billingAddress|oro_format_address(null, ', '),
+            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+        }, 'placeholder': ''}) }}
     </div>
 {%- endblock %}
 
