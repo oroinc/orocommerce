@@ -25,6 +25,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
@@ -205,13 +206,19 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             TranslatableEntityType::NAME
         );
 
+        $propertyAccessor = $this->createMock(PropertyAccessor::class);
+
 
         return [
             new PreloadedExtension([
                 CheckoutAddressType::class => new CheckoutAddressType(),
                 OrderAddressType::class => $orderAddressType,
                 AddressFormType::class => $addressTypeStub,
-                CheckoutAddressSelectType::class => new CheckoutAddressSelectType($addressManager),
+                CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
+                    $addressManager,
+                    $propertyAccessor,
+                    ['street', 'city', 'country', 'region', 'postalCode']
+                ),
                 OrderAddressSelectType::class => new OrderAddressSelectType(
                     $addressManager,
                     $addressFormatter,

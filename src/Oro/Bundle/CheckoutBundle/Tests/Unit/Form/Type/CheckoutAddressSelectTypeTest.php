@@ -16,7 +16,11 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressManager */
@@ -25,6 +29,12 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     /** @var OrderAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $orderAddressSecurityProvider;
 
+    /** @var PropertyAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyAccessor;
+
+    /** @var array */
+    private $requiredFields;
+
     /**
      * {@inheritDoc}
      */
@@ -32,13 +42,19 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
+        $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
+        $this->requiredFields = ['street', 'city', 'country', 'region', 'postalCode'];
 
         parent::setUp();
     }
 
     public function testGetBlockPrefix()
     {
-        $type = new CheckoutAddressSelectType($this->orderAddressManager);
+        $type = new CheckoutAddressSelectType(
+            $this->orderAddressManager,
+            $this->propertyAccessor,
+            $this->requiredFields
+        );
         $this->assertEquals('oro_checkout_address_select', $type->getBlockPrefix());
     }
 
@@ -59,7 +75,11 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
             ->with('object', Checkout::class)
             ->willReturnSelf();
 
-        $type = new CheckoutAddressSelectType($this->orderAddressManager);
+        $type = new CheckoutAddressSelectType(
+            $this->orderAddressManager,
+            $this->propertyAccessor,
+            $this->requiredFields
+        );
         $type->configureOptions($resolver);
     }
 
@@ -79,7 +99,11 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $type = new CheckoutAddressSelectType($this->orderAddressManager);
+        $type = new CheckoutAddressSelectType(
+            $this->orderAddressManager,
+            $this->propertyAccessor,
+            $this->requiredFields
+        );
 
         $this->assertIsString($type->getParent());
         $this->assertEquals(OrderAddressSelectType::class, $type->getParent());
@@ -276,6 +300,56 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @dataProvider enterManuallySelectedByDefaultDataProvider
+     */
+    public function testEnterManuallySelectedByDefault($address, $expected)
+    {
+        $checkout = new Checkout();
+        $checkout->setBillingAddress($address);
+
+        $this->orderAddressManager->expects($this->once())
+            ->method('getGroupedAddresses')
+            ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
+
+        $this->propertyAccessor->expects($this->any())
+            ->method('getValue')
+            ->will($this->returnValueMap(
+                [
+                    [$address, 'street', $address->getStreet()],
+                    [$address, 'city', $address->getCity()],
+                    [$address, 'country', $address->getCountry()],
+                    [$address, 'region', $address->getRegion()],
+                    [$address, 'postalCode', $address->getPostalCode()]
+                ]
+            ));
+
+        $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
+            'object'       => $checkout,
+            'address_type' => 'billing'
+        ]);
+
+        $this->assertSame($expected, $form->getData());
+    }
+
+    public function enterManuallySelectedByDefaultDataProvider()
+    {
+        return [
+            'If address is empty default value should be null' => [
+                'address'  => new OrderAddress(),
+                'expected' => null
+            ],
+            'If address has fulfilled fields which are not required default value should be null' => [
+                'addresss' => (new OrderAddress())->setCreated(new \DateTime()),
+                'expected' => null
+            ],
+            'If address has fulfilled one of the required fields default value should be 0' => [
+                'address'  => (new OrderAddress())->setCity('Los Angeles')->setCreated(new \DateTime()),
+                'expected' => 0
+            ]
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
@@ -285,7 +359,11 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension([
-                CheckoutAddressSelectType::class => new CheckoutAddressSelectType($this->orderAddressManager),
+                CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
+                    $this->orderAddressManager,
+                    $this->propertyAccessor,
+                    $this->requiredFields
+                ),
                 OrderAddressSelectType::class => new OrderAddressSelectType(
                     $this->orderAddressManager,
                     $addressFormatter,

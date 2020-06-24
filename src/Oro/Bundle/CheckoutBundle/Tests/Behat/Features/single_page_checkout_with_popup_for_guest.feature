@@ -63,6 +63,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     And I should see "Please enter correct billing address."
+    And I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
     When I click on "Billing Address Select"
     And I click on "New Address Option"
     Then I should see "UiDialog" with elements:
@@ -85,7 +86,7 @@ Feature: Single Page Checkout With Popup for Guest
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "New address" for "Select Single Page Checkout Billing Address" select
+    Then I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
 
     Scenario: Check empty shipping address notification
     And I click on "Billing Address Select"
@@ -136,6 +137,7 @@ Feature: Single Page Checkout With Popup for Guest
   Scenario: Fill and save billing address via popup
     Given I proceed as the Guest
     Given I scroll to top
+    And I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -167,6 +169,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I close ui dialog
 
   Scenario: Fill and save shipping address via popup and create order
+    And I should see that "Select Single Page Checkout Shipping Address" contains "Please select an address" placeholder
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -215,6 +218,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I wait line items are initialized
     When I click "Create Order"
     And I uncheck "Save my data and create an account" on the checkout page
+    And I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -238,6 +242,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I wait until all blocks on one step checkout page are reloaded
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, 12345 B City, Germany, 12345)" for "Select Single Page Checkout Billing Address" select
     And There is no shipping method available for this order
+    And I should see that "Select Single Page Checkout Shipping Address" contains "Please select an address" placeholder
     When I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -290,6 +295,7 @@ Feature: Single Page Checkout With Popup for Guest
     When I uncheck "Use billing address" on the checkout page
     Then I should see "New address (12345 Ukraine B City, B Street B Street 2, B Organization, B Prefix B Fname B Mname B Lname B Suffix, 12345)" for "Select Single Page Checkout Shipping Address" select
     And There is no shipping method available for this order
+    And I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
     When I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -326,6 +332,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
+    And I should see that "Select Single Page Checkout Billing Address" contains "Please select an address" placeholder
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:

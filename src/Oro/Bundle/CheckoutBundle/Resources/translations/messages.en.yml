@@ -225,6 +225,7 @@ oro:
             address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
             address.enter.shipping.label: ENTER SHIPPING ADDRESS
+            address.enter.new_address.placeholder.label: Please select an address
 
         grid:
             total.label: Total

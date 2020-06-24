@@ -38,5 +38,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType'
         arguments:
             - '@oro_order.manager.order_address'
+            - '@property_accessor'
+            - ['street', 'city', 'country', 'region', 'postalCode']
         tags:
             - { name: form.type, alias: oro_checkout_address_select }
