@@ -78,7 +78,8 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
             $this->customFieldProvider,
             $this->productVariantAvailabilityProvider,
             $this->getPropertyAccessor(),
-            $this->productVariantFieldValueHandlerRegistry
+            $this->productVariantFieldValueHandlerRegistry,
+            $this->translator
         );
     }
 
@@ -180,8 +181,6 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
         $this->mockGetVariantFieldsValuesForLineItem($lineItem);
 
-        $this->configurableProductProvider->setTranslator($this->translator);
-
         $this->assertEquals(
             $expectedField,
             $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, false)
@@ -212,8 +211,6 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
         $this->mockGetVariantFieldsValuesForLineItem($lineItem);
-
-        $this->configurableProductProvider->setTranslator($this->translator);
 
         $this->assertEquals(
             $expectedField,

@@ -127,7 +127,7 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('my-shopping-lists-grid', $crawler->html());
+        $this->assertStringContainsString('my-shopping-lists-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'my-shopping-lists-grid',
@@ -176,7 +176,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('my-shopping-list-line-items-grid', $crawler->html());
+        $this->assertStringContainsString('my-shopping-list-line-items-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'my-shopping-list-line-items-grid',

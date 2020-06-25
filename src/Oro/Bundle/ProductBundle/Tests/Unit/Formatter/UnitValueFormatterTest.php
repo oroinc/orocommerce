@@ -41,9 +41,8 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
      */
     protected function createFormatter(): UnitValueFormatterInterface
     {
-        $formatter = new UnitValueFormatter($this->translator);
+        $formatter = new UnitValueFormatter($this->translator, $this->numberFormatter);
         $formatter->setTranslationPrefix($this->getTranslationPrefix());
-        $formatter->setNumberFormatter($this->numberFormatter);
 
         return $formatter;
     }

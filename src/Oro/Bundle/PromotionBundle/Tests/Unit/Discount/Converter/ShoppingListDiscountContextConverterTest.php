@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Converter;
 
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
@@ -31,11 +30,6 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
     private $currencyManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $lineItemNotPricedSubtotalProvider;
-
-    /**
      * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListTotalManager;
@@ -49,57 +43,18 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
     {
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->lineItemNotPricedSubtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
         $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
 
         $this->converter = new ShoppingListDiscountContextConverter(
             $this->lineItemsConverter,
             $this->currencyManager,
-            $this->lineItemNotPricedSubtotalProvider
+            $this->shoppingListTotalManager
         );
-
-        $this->converter->setShoppingListTotalManager($this->shoppingListTotalManager);
-    }
-
-    public function testConvertWithoutShoppingListTotalManager(): void
-    {
-        $sourceEntity = new ShoppingList();
-        $amount = 100;
-        $currency = 'USD';
-
-        /** @var LineItem $lineItem */
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 42]);
-        $sourceEntity->addLineItem($lineItem);
-
-        $this->currencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn($currency);
-
-        $this->lineItemNotPricedSubtotalProvider->expects($this->once())
-            ->method('getSubtotalByCurrency')
-            ->with($sourceEntity, $currency)
-            ->willReturn((new Subtotal())->setAmount($amount)->setCurrency($currency));
-
-        $discountLineItems = [
-            (new DiscountLineItem())->setSubtotal($amount)
-        ];
-
-        $this->lineItemsConverter->expects($this->once())
-            ->method('convert')
-            ->with([$lineItem])
-            ->willReturn($discountLineItems);
-
-        $expectedDiscountContext = new DiscountContext();
-        $expectedDiscountContext->setSubtotal(100);
-        $expectedDiscountContext->setLineItems($discountLineItems);
-
-        $this->converter->setShoppingListTotalManager(null);
-        $this->assertEquals($expectedDiscountContext, $this->converter->convert($sourceEntity));
     }
 
     public function testConvert(): void
     {
-        $amount = 100;
+        $amount = 100.0;
         $currency = 'USD';
 
         /** @var LineItem $lineItem */
@@ -112,9 +67,6 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
         $this->currencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn($currency);
-
-        $this->lineItemNotPricedSubtotalProvider->expects($this->never())
-            ->method('getSubtotalByCurrency');
 
         $subtotal = $this->createMock(Subtotal::class);
         $subtotal->expects($this->once())

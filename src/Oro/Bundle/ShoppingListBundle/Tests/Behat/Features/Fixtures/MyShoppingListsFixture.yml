@@ -57,11 +57,13 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@piece'
         precision: '0'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     productName{1..3}:
         string: 'Configurable Product <current()>'
     productName{4..40}:
         string: 'Product <current()>'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attributeFamilyLabel:
         string: 'Attribute Family'
 

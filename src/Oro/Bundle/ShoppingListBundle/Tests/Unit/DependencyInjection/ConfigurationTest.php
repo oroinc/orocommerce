@@ -53,7 +53,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app',
                 ],
                 'my_shopping_lists_page_enabled' => [
-                    'value' => false,
+                    'value' => true,
                     'scope' => 'app',
                 ],
             ]

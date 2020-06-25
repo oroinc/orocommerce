@@ -112,6 +112,11 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->with($localization->getId())
             ->willReturn($localization);
 
+        $this->localizationManager->expects($this->once())
+            ->method('getLocalizations')
+            ->with([$localization->getId()])
+            ->willReturn([$localization]);
+
         $this->localizationManager->expects($this->never())->method('getDefaultLocalization');
 
         $this->assertSame($localization, $this->userLocalizationManager->getCurrentLocalization());
@@ -158,6 +163,11 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getLocalization')
             ->with($localization1->getId())
             ->willReturn(null);
+
+        $this->localizationManager->expects($this->once())
+            ->method('getLocalizations')
+            ->with([$localization1->getId(), $localization2->getId()])
+            ->willReturn([$localization1, $localization2]);
 
         $this->localizationManager->expects($this->once())
             ->method('getDefaultLocalization')

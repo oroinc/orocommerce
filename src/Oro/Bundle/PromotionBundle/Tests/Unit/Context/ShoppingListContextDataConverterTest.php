@@ -8,7 +8,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Context\CriteriaDataProvider;
 use Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter;
@@ -46,11 +45,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
     private $scopeManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $lineItemNotPricedSubtotalProvider;
-
-    /**
      * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListTotalManager;
@@ -66,17 +60,15 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
-        $this->lineItemNotPricedSubtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
         $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
+
         $this->converter = new ShoppingListContextDataConverter(
             $this->criteriaDataProvider,
             $this->lineItemsConverter,
             $this->userCurrencyManager,
             $this->scopeManager,
-            $this->lineItemNotPricedSubtotalProvider
+            $this->shoppingListTotalManager
         );
-
-        $this->converter->setShoppingListTotalManager($this->shoppingListTotalManager);
     }
 
     public function testSupportsForWrongEntity(): void
@@ -98,59 +90,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('Entity "stdClass" is not supported.');
 
         $this->converter->getContextData($entity);
-    }
-
-    public function testGetContextDataWithoutShoppingListTotalManager(): void
-    {
-        $customerGroup = new CustomerGroup();
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
-        $website = new Website();
-        $lineItem = new LineItem();
-        $entity = new ShoppingList();
-        $entity->setCustomerUser($customerUser);
-        $entity->addLineItem($lineItem);
-
-        $subtotalAmount = 100.0;
-        $subtotal = new Subtotal();
-        $subtotal->setAmount($subtotalAmount);
-
-        $this->criteriaDataProvider->expects($this->once())
-            ->method('getWebsite')
-            ->with($entity)
-            ->willReturn($website);
-        $this->criteriaDataProvider->expects($this->once())
-            ->method('getCustomer')
-            ->with($entity)
-            ->willReturn($customer);
-        $this->criteriaDataProvider->expects($this->once())
-            ->method('getCustomerUser')
-            ->with($entity)
-            ->willReturn($customerUser);
-        $this->criteriaDataProvider->expects($this->once())
-            ->method('getCustomerGroup')
-            ->with($entity)
-            ->willReturn($customerGroup);
-        $discountLineItems = $this->getDiscountLineItems([$lineItem]);
-        $currency = $this->getCurrency();
-        $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
-
-        $this->lineItemNotPricedSubtotalProvider->expects($this->once())
-            ->method('getSubtotalByCurrency')
-            ->with($entity, $currency)
-            ->willReturn($subtotal);
-
-        $this->converter->setShoppingListTotalManager(null);
-        $expectedData = [
-            ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
-            ContextDataConverterInterface::CUSTOMER => $customer,
-            ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
-            ContextDataConverterInterface::LINE_ITEMS => $discountLineItems,
-            ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
-            ContextDataConverterInterface::CURRENCY => $currency,
-            ContextDataConverterInterface::CRITERIA => $scopeCriteria,
-        ];
-        $this->assertEquals($expectedData, $this->converter->getContextData($entity));
     }
 
     public function testGetContextData(): void
@@ -186,9 +125,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getCustomerGroup')
             ->with($entity)
             ->willReturn($customerGroup);
-
-        $this->lineItemNotPricedSubtotalProvider->expects($this->never())
-            ->method('getSubtotalByCurrency');
 
         $subtotal = $this->createMock(Subtotal::class);
         $subtotal->expects($this->once())

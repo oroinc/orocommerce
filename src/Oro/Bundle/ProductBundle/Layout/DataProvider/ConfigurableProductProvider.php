@@ -47,30 +47,24 @@ class ConfigurableProductProvider
     private $translator;
 
     /**
-     * @param TranslatorInterface|null $translator
-     */
-    public function setTranslator(?TranslatorInterface $translator): void
-    {
-        $this->translator = $translator;
-        $this->translatedCustomFields = [];
-    }
-
-    /**
      * @param CustomFieldProvider $customFieldProvider
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param PropertyAccessor $propertyAccessor
      * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         CustomFieldProvider $customFieldProvider,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         PropertyAccessor $propertyAccessor,
-        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
+        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry,
+        TranslatorInterface $translator
     ) {
         $this->customFieldProvider = $customFieldProvider;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
+        $this->translator = $translator;
     }
 
     /**
@@ -131,9 +125,7 @@ class ConfigurableProductProvider
         if ($translateLabels) {
             if (!$this->translatedCustomFields) {
                 foreach ($this->customFields as $k => $customField) {
-                    $customField['label'] = $this->translator
-                        ? $this->translator->trans($customField['label'])
-                        : $customField['label'];
+                    $customField['label'] = $this->translator->trans($customField['label']);
 
                     $this->translatedCustomFields[$k] = $customField;
                 }

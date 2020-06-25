@@ -253,7 +253,6 @@ class ShoppingListController extends AbstractController
             FrontendProductPricesDataProvider::class,
             ProductPriceFormatter::class,
             ConfigManager::class,
-            ShoppingListTotalManager::class,
             UserLocalizationManager::class,
         ]);
     }

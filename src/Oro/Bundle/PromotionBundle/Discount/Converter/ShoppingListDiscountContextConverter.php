@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -25,33 +24,22 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
     protected $currencyManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider
+     * @var ShoppingListTotalManager
      */
-    protected $lineItemNotPricedSubtotalProvider;
-
-    /** @var ShoppingListTotalManager|null */
     private $shoppingListTotalManager;
 
     /**
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $currencyManager
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param ShoppingListTotalManager $shoppingListTotalManager
      */
     public function __construct(
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $currencyManager,
-        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+        ShoppingListTotalManager $shoppingListTotalManager
     ) {
         $this->lineItemsConverter = $lineItemsConverter;
         $this->currencyManager = $currencyManager;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
-    }
-
-    /**
-     * @param ShoppingListTotalManager|null $shoppingListTotalManager
-     */
-    public function setShoppingListTotalManager(?ShoppingListTotalManager $shoppingListTotalManager): void
-    {
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
@@ -92,14 +80,9 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
     private function getSubtotalAmount(ShoppingList $sourceEntity): float
     {
         $currency = $this->currencyManager->getUserCurrency();
-        if ($this->shoppingListTotalManager) {
-            $subtotal = $this->shoppingListTotalManager
-                ->getShoppingListTotalForCurrency($sourceEntity, $currency)
-                ->getSubtotal();
-        } else {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
-        }
-
-        return $subtotal->getAmount();
+        return $this->shoppingListTotalManager
+            ->getShoppingListTotalForCurrency($sourceEntity, $currency)
+            ->getSubtotal()
+            ->getAmount();
     }
 }

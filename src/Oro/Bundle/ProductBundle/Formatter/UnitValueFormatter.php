@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Allows to format the measure unit value.
@@ -13,11 +14,10 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
     /** @var NumberFormatter */
     protected $numberFormatter;
 
-    /**
-     * @param NumberFormatter $numberFormatter
-     */
-    public function setNumberFormatter(NumberFormatter $numberFormatter): void
+    public function __construct(TranslatorInterface $translator, NumberFormatter $numberFormatter)
     {
+        parent::__construct($translator);
+
         $this->numberFormatter = $numberFormatter;
     }
 
@@ -59,7 +59,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
         return $this->translator->trans(
             sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $this->getSuffix($value, $isShort)),
             [
-                '%count%' => $this->numberFormatter ? $this->numberFormatter->formatDecimal($value) : $value
+                '%count%' => $this->numberFormatter->formatDecimal($value)
             ]
         );
     }

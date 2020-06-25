@@ -15,7 +15,6 @@ Feature: My Shopping List
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-    And I set configuration property "oro_shopping_list.my_shopping_lists_page_enabled" to "1"
     And I proceed as the Admin
     And I login as administrator
     And I go to System / Localization / Translations

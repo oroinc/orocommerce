@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
@@ -37,11 +36,8 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     protected $scopeManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider
+     * @var ShoppingListTotalManager
      */
-    protected $lineItemNotPricedSubtotalProvider;
-
-    /** @var ShoppingListTotalManager|null */
     private $shoppingListTotalManager;
 
     /**
@@ -49,27 +45,19 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param ShoppingListTotalManager $shoppingListTotalManager
      */
     public function __construct(
         CriteriaDataProvider $criteriaDataProvider,
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
         ScopeManager $scopeManager,
-        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+        ShoppingListTotalManager $shoppingListTotalManager
     ) {
         $this->criteriaDataProvider = $criteriaDataProvider;
         $this->lineItemsConverter = $lineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
-    }
-
-    /**
-     * @param ShoppingListTotalManager|null $shoppingListTotalManager
-     */
-    public function setShoppingListTotalManager(?ShoppingListTotalManager $shoppingListTotalManager): void
-    {
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
@@ -133,14 +121,9 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      */
     private function getSubtotalAmount(ShoppingList $sourceEntity, string $currency): float
     {
-        if ($this->shoppingListTotalManager) {
-            $subtotal = $this->shoppingListTotalManager
-                ->getShoppingListTotalForCurrency($sourceEntity, $currency)
-                ->getSubtotal();
-        } else {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($sourceEntity, $currency);
-        }
-
-        return $subtotal->getAmount();
+        return $this->shoppingListTotalManager
+            ->getShoppingListTotalForCurrency($sourceEntity, $currency)
+            ->getSubtotal()
+            ->getAmount();
     }
 }
