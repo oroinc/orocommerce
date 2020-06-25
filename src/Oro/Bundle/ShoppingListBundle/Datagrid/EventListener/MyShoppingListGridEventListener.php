@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemDataEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
@@ -335,19 +336,33 @@ class MyShoppingListGridEventListener
 
         $lineItemsCollection = $shoppingList->getLineItems();
         if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
-            $lineItemsIds = array_merge(
+            return $this->preloadLineItems($repository, $event->getRecords());
+        }
+
+        return $lineItemsCollection->toArray();
+    }
+
+    /**
+     * @param ShoppingListRepository $repository
+     * @param array $records
+     * @return array
+     */
+    private function preloadLineItems(ShoppingListRepository $repository, array $records): array
+    {
+        if (!$records) {
+            return [];
+        }
+
+        return $repository->preloadLineItemsByIdsForViewAction(
+            array_merge(
                 ...array_map(
                     static function (ResultRecordInterface $record) {
                         return explode(',', $record->getValue('lineItemIds'));
                     },
-                    $event->getRecords()
+                    $records
                 )
-            );
-
-            return $repository->preloadLineItemsByIdsForViewAction($lineItemsIds);
-        }
-
-        return $lineItemsCollection->toArray();
+            )
+        );
     }
 
     /**

@@ -212,6 +212,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         $this->loadRelatedEntityFallbackValuesForCategories($categoriesIds);
         $this->loadRelatedProductNames($mainProductsIds);
         $this->loadRelatedProductImages($productsIds);
+        $this->loadRelatedProductUnits($productsIds);
     }
 
     /**
@@ -318,6 +319,31 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             ->leftJoin('product.images', 'product_image')
             ->leftJoin('product_image.image', 'product_image_image')
             ->leftJoin('product_image.types', 'product_image_type')
+            ->where($qb->expr()->in('product', ':products'))
+            ->getQuery()
+            ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
+            ->execute(['products' => $productsIds]);
+    }
+
+    /**
+     * @param array $productsIds
+     */
+    private function loadRelatedProductUnits(array $productsIds): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select(
+                'partial product.{id}',
+                'partial primary_unit_precision.{id,unit,precision,sell}',
+                'partial unit_precisions.{id,unit,precision,sell}',
+                'partial primary_unit.{code}',
+                'partial unit.{code}'
+            )
+            ->from(Product::class, 'product')
+            ->leftJoin('product.primaryUnitPrecision', 'primary_unit_precision')
+            ->leftJoin('product.unitPrecisions', 'unit_precisions')
+            ->leftJoin('primary_unit_precision.unit', 'primary_unit')
+            ->leftJoin('unit_precisions.unit', 'unit')
             ->where($qb->expr()->in('product', ':products'))
             ->getQuery()
             ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)
