@@ -79,15 +79,22 @@ class CategoryListener
 
     /**
      * @param OnFlushEventArgs $event
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onFlush(OnFlushEventArgs $event)
     {
         $entityManager = $event->getEntityManager();
+        $metadataFactory = $entityManager->getMetadataFactory();
+        if (!$metadataFactory->hasMetadataFor(Category::class)) {
+            return;
+        }
+
         /** @var CategoryRepository $categoryRepository */
         $unitOfWork = $entityManager->getUnitOfWork();
         $entities = $unitOfWork->getScheduledEntityUpdates();
         $categoryRepository = $entityManager->getRepository(Category::class);
-        $categoryClassMetadata = $entityManager->getClassMetadata(Category::class);
+        $categoryClassMetadata = $metadataFactory->getMetadataFor(Category::class);
 
         foreach ($entities as $entity) {
             if (!$entity instanceof Category) {
