@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Command;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
@@ -84,7 +84,7 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
                     $visitorsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'),
                     $visitorsQB->expr()->isNull('rel.customervisitor_id')
                 ))
-                ->setParameter('expiredLastVisitDate', $expiredLastVisitDate, Type::DATETIME)
+                ->setParameter('expiredLastVisitDate', $expiredLastVisitDate, Types::DATETIME_MUTABLE)
                 ->setMaxResults(self::CHUNK_SIZE);
 
             $visitorIds = $visitorsQB->execute()->fetchAll(\PDO::FETCH_COLUMN);

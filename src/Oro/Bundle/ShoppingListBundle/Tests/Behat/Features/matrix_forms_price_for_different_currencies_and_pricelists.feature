@@ -2,6 +2,7 @@
 @ticket-BB-15680
 @regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
+
 Feature: Matrix forms price for different currencies
   In order to check total price is calculated and displayed correctly on matrix form
   As a buyer

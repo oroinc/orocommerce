@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Provider;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Provider\CouponEntityNameProvider;
 use PHPUnit\Framework\TestCase;
 
 class CouponEntityNameProviderTest extends TestCase

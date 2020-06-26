@@ -9,12 +9,10 @@ Feature: Discounts for Order
     Given I login as administrator
     And go to Sales/Orders
     And click edit SimpleOrder in grid
-    And save form
+    And I save and close form
 
   Scenario: Add special discount from Order view page
-    Given I go to Sales/Orders
-    And click view SimpleOrder in grid
-    And click "Add Special Discount"
+    When click "Add Special Discount"
     And I type "2" in "Discount Value"
     And I type "Amount" in "Discount Description"
     Then I should see "$2.00 (4%)"

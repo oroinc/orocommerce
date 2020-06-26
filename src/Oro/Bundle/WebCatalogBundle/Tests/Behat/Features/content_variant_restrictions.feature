@@ -68,9 +68,9 @@ Feature: Content Variant restrictions
     Then I should see "Content node must have at least one restriction"
 
   Scenario: Saved content variant restrictions validation
-    When I scroll to "Second Content Variant Expand Button"
-    And I click on "Second Content Variant Expand Button"
-    And I scroll to "First Content Variant Remove First Restriction"
-    And I click on "First Content Variant Remove First Restriction"
+    When I scroll to "Non Default Content Variant Expand Button"
+    And I click on "Non Default Content Variant Expand Button"
+    And I scroll to "Non Default Content Variant Remove First Restriction"
+    And I click on "Non Default Content Variant Remove First Restriction"
     And I click "Save"
     Then I should see that "Content Variant Collection" contains "Restriction rules must not be empty"

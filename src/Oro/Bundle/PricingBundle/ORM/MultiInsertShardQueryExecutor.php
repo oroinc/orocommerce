@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\ORM;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
@@ -124,16 +124,16 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         foreach ($values as $value) {
             switch (true) {
                 case is_bool($value):
-                    $types[] = Type::BOOLEAN;
+                    $types[] = Types::BOOLEAN;
                     break;
                 case is_float($value):
-                    $types[] = Type::FLOAT;
+                    $types[] = Types::FLOAT;
                     break;
                 case is_int($value):
-                    $types[] = Type::INTEGER;
+                    $types[] = Types::INTEGER;
                     break;
                 default:
-                    $types[] = Type::STRING;
+                    $types[] = Types::STRING;
             }
         }
 

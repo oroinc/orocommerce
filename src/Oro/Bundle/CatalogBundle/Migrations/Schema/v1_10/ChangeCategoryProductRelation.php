@@ -4,9 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -72,11 +73,11 @@ class ChangeCategoryProductRelation implements
     {
         $this->addCategoryProductRelation($schema);
 
-        if ($this->connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_POSTGRESQL) {
+        if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
             $updateQuery = new UpdateCategoryIdsInProductsPqSql();
             $updateQuery->setExtendExtension($this->extendExtension);
             $queries->addQuery($updateQuery);
-        } elseif ($this->connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
+        } elseif ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
             $updateQuery = new UpdateCategoryIdsInProductsMySql();
             $updateQuery->setExtendExtension($this->extendExtension);
             $queries->addQuery($updateQuery);

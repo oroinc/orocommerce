@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -52,7 +52,7 @@ class RedirectWebsitesToScopesQuery extends ParametrizedMigrationQuery
             if ($scopeId) {
                 $query = 'INSERT INTO oro_redirect_scope (redirect_id, scope_id) VALUES (:redirectId, :scopeId);';
                 $params = ['redirectId' => $redirectId, 'scopeId' => $scopeId];
-                $types = ['redirectId' => Type::INTEGER, 'scopeId' => Type::INTEGER ];
+                $types = ['redirectId' => Types::INTEGER, 'scopeId' => Types::INTEGER ];
 
                 $this->logQuery($logger, $query, $params, $types);
 
@@ -62,7 +62,7 @@ class RedirectWebsitesToScopesQuery extends ParametrizedMigrationQuery
             } else {
                 $query = 'INSERT INTO oro_scope (website_id) VALUES (:websiteId);';
                 $params = ['websiteId' => $websiteId];
-                $types = ['websiteId' => Type::INTEGER ];
+                $types = ['websiteId' => Types::INTEGER ];
 
                 $this->logQuery($logger, $query, $params, $types);
 
@@ -80,7 +80,7 @@ SQL;
                             : null
                     )
                 ];
-                $redirectScopeQueryTypes = ['redirectId' => Type::INTEGER, 'scopeId' => Type::INTEGER ];
+                $redirectScopeQueryTypes = ['redirectId' => Types::INTEGER, 'scopeId' => Types::INTEGER ];
 
                 $this->logQuery($logger, $redirectScopeQuery, $redirectScopeQueryParams, $redirectScopeQueryTypes);
 
@@ -136,7 +136,7 @@ SQL;
         $query .= 'LIMIT 1';
 
         $params = ['websiteId' => $websiteId];
-        $types = ['websiteId' => Type::INTEGER ];
+        $types = ['websiteId' => Types::INTEGER ];
 
         $this->logQuery($logger, $query, $params, $types);
 

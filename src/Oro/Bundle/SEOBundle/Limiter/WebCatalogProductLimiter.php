@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Limiter;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -281,7 +281,7 @@ class WebCatalogProductLimiter
 
         // Set version value into first position parameter
         array_unshift($params, $version);
-        array_unshift($types, Type::INTEGER);
+        array_unshift($types, Types::INTEGER);
 
         $sql = sprintf(
             'insert into %s (%s) %s',

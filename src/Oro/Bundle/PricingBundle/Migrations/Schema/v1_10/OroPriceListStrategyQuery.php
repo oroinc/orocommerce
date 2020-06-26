@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_10;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -53,15 +53,15 @@ WHERE c.entity = :entity';
         $this->logQuery($logger, $query);
         if (!$dryRun) {
             $statement = $this->connection->prepare($query);
-            $statement->bindValue(':entity', 'app', Type::STRING);
-            $statement->bindValue(':name', Configuration::PRICE_LIST_STRATEGIES, Type::STRING);
-            $statement->bindValue(':section', Configuration::ROOT_NODE, Type::STRING);
-            $statement->bindValue(':text_value', MergePricesCombiningStrategy::NAME, Type::TEXT);
-            $statement->bindValue(':object_value', null, Type::OBJECT);
-            $statement->bindValue(':array_value', null, Type::TARRAY);
-            $statement->bindValue(':type', 'scalar', Type::STRING);
+            $statement->bindValue(':entity', 'app', Types::STRING);
+            $statement->bindValue(':name', Configuration::PRICE_LIST_STRATEGIES, Types::STRING);
+            $statement->bindValue(':section', Configuration::ROOT_NODE, Types::STRING);
+            $statement->bindValue(':text_value', MergePricesCombiningStrategy::NAME, Types::TEXT);
+            $statement->bindValue(':object_value', null, Types::OBJECT);
+            $statement->bindValue(':array_value', null, Types::ARRAY);
+            $statement->bindValue(':type', 'scalar', Types::STRING);
             $now = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
-            $statement->bindValue(':created_at', $now, Type::DATETIME);
+            $statement->bindValue(':created_at', $now, Types::DATETIME_MUTABLE);
             $statement->execute();
         }
     }

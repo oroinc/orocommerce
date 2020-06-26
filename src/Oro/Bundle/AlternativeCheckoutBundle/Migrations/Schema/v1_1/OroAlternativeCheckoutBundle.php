@@ -3,7 +3,7 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -43,7 +43,7 @@ class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterfa
                     'class_name'  => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout',
                 ],
                 [
-                    'class_name'  => Type::STRING
+                    'class_name'  => Types::STRING
                 ]
             )
         );

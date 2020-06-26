@@ -17,6 +17,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as OptionsResolverInvalidArgumentException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -209,7 +210,14 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(['webCatalogId']);
-        $resolver->setAllowedTypes('webCatalogId', 'int');
+        $resolver->setAllowedTypes('webCatalogId', ['int', 'string']);
+        $resolver->setNormalizer('webCatalogId', static function (Options $options, $value) {
+            if (is_string($value)) {
+                $value = (int)$value;
+            }
+
+            return $value;
+        });
 
         return $resolver;
     }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CheckoutBundle\Async\Topics;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
@@ -41,9 +41,9 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
                     'completed' => false
                 ],
                 [
-                    'isValid' => Type::BOOLEAN,
-                    'deleted' => Type::BOOLEAN,
-                    'completed' => Type::BOOLEAN
+                    'isValid' => Types::BOOLEAN,
+                    'deleted' => Types::BOOLEAN,
+                    'completed' => Types::BOOLEAN
                 ]
             )
         );

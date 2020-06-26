@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_2_1;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -47,8 +47,8 @@ class FixRootSlugQuery extends ParametrizedMigrationQuery
             'url_hash' => $urlHash
         ];
         $types = [
-            'url' => Type::STRING,
-            'url_hash' => Type::STRING
+            'url' => Types::STRING,
+            'url_hash' => Types::STRING
         ];
 
         $this->logQuery($logger, $deleteQuery, $parameters, $types);

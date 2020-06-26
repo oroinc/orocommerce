@@ -23,10 +23,13 @@ Feature: Address selected on single page checkout should be actually used
     When I save and close form
     Then I should see "Customer User Role has been saved" flash message
     Given I go to Customers / Customer Users
-    And I click edit "AmandaRCole@example.org" in grid
+    And I click view "AmandaRCole@example.org" in grid
     # Delete two of the three addresses
-    And I click "Delete Address Button Edit Page"
-    And I click "Delete Address Button Edit Page"
+    And I click "Delete Address Button"
+    And confirm deletion
+    And I click "Delete Address Button"
+    And confirm deletion
+    And I click "Edit"
     And I uncheck "Default Billing"
     And I uncheck "Default Shipping"
     When I save and close form

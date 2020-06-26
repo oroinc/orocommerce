@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -40,7 +40,7 @@ class UpdateAlternativeCheckoutWorkflowStatusQuery extends ParametrizedMigration
 
         $sql = 'UPDATE oro_workflow_definition SET active = :active WHERE name = :name';
         $params = ['active' => false, 'name' => 'b2b_flow_alternative_checkout'];
-        $types  = ['active' => Type::BOOLEAN, 'name' => Type::STRING];
+        $types  = ['active' => Types::BOOLEAN, 'name' => Types::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
         if (!$dryRun) {
@@ -57,7 +57,7 @@ class UpdateAlternativeCheckoutWorkflowStatusQuery extends ParametrizedMigration
     {
         $sql = 'SELECT a.id FROM oro_customer AS a WHERE a.id = :id LIMIT 1';
         $params = ['id' => $accountId];
-        $types  = ['id' => Type::INTEGER];
+        $types  = ['id' => Types::INTEGER];
 
         $this->logQuery($logger, $sql, $params, $types);
 

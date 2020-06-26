@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
 
@@ -57,7 +57,7 @@ class RequestHelper
                 ),
                 'r.createdAt < :date'
             )
-            ->setParameter('date', $date, Type::DATETIME)
+            ->setParameter('date', $date, Types::DATETIME_MUTABLE)
             ->getQuery()
             ->getResult();
     }
