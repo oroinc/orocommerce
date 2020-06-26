@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_17;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
@@ -40,7 +40,7 @@ class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
     private function doExecute(LoggerInterface $logger, $dryRun = false): void
     {
         $query = 'UPDATE oro_sale_quote SET guest_access_id = :guest_access_id WHERE id = :id';
-        $types = ['guest_access_id' => Type::STRING, 'id' => Type::INTEGER];
+        $types = ['guest_access_id' => Types::STRING, 'id' => Types::INTEGER];
 
         $quoteIds = $this->getQuoteIds($logger, $dryRun);
         foreach ($quoteIds as $id) {

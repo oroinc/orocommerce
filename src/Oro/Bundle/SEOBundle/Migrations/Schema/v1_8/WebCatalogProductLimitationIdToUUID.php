@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_8;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -36,7 +37,7 @@ class WebCatalogProductLimitationIdToUUID implements Migration, ConnectionAwareI
         $table = $schema->getTable('oro_web_catalog_product_limit');
 
         // Column type already changed
-        if ($table->getColumn('id')->getType()->getName() !== Type::INTEGER) {
+        if ($table->getColumn('id')->getType()->getName() !== Types::INTEGER) {
             return;
         }
 

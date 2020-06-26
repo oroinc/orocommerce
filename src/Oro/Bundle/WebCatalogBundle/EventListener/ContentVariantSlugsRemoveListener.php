@@ -26,6 +26,10 @@ class ContentVariantSlugsRemoveListener
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
         $em = $eventArgs->getEntityManager();
+        $metadataFactory = $em->getMetadataFactory();
+        if (!$metadataFactory->hasMetadataFor(ContentVariant::class)) {
+            return;
+        }
 
         $entitiesToDelete = $em->getUnitOfWork()->getScheduledEntityDeletions();
         if (!$entitiesToDelete) {

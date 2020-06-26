@@ -50,13 +50,13 @@ Feature: Product collection validation
 
   Scenario: Adding Product Collection with duplicated name, results in validation error
     When I click "Content Variants"
-    And I click on "Second Content Variant Expand Button"
+    And I click on "Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Default Product Collection Segment Name | Some Product Collection Name |
     And I save form
     Then I should see "Content Node has been saved" flash message
     When I click "Content Variants"
-    And I click on "First Content Variant Expand Button"
+    And I click on "Non Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Product Collection Segment Name | somE ProDucT collection namE |
     And I save form
@@ -71,8 +71,8 @@ Feature: Product collection validation
 
   Scenario: Changing names to same for saved Product Collections, results in validation error
     When I click "Content Variants"
-    And I click on "First Content Variant Expand Button"
-    And I click on "Second Content Variant Expand Button"
+    And I click on "Non Default Content Variant Expand Button"
+    And I click on "Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Default Product Collection Segment Name | Same Name |
       | Product Collection Segment Name         | saME naME |

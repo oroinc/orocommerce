@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\CommerceBundle\CacheWarmer;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -76,7 +76,7 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
                 $query = new ParametrizedSqlMigrationQuery(
                     'DELETE FROM oro_entity_config WHERE class_name = :class_name',
                     ['class_name' => $className],
-                    ['class_name' => Type::STRING]
+                    ['class_name' => Types::STRING]
                 );
                 $query->setConnection($configConnection);
                 $query->execute($this->logger);

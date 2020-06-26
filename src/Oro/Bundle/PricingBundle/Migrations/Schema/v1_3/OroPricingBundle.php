@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CronBundle\Engine\CommandRunnerInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -338,7 +338,7 @@ class OroPricingBundle implements
                     'contain_schedule' => false,
                 ],
                 [
-                    'contain_schedule' => Type::BOOLEAN
+                    'contain_schedule' => Types::BOOLEAN
                 ]
             )
         );

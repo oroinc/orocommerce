@@ -157,6 +157,9 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ],
             'array' => [
                 'messageBody' => '{"webCatalogId": 1}'
+            ],
+            'array with string' => [
+                'messageBody' => '{"webCatalogId": "1"}'
             ]
         ];
     }

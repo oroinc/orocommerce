@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -49,9 +49,9 @@ class ShoppingListTotalRepository extends EntityRepository
                 $qb->expr()->eq('total.valid', ':isValid'),
                 $qb->expr()->exists($subQuery)
             )
-            ->setParameter('newIsValid', false, Type::BOOLEAN)
+            ->setParameter('newIsValid', false, Types::BOOLEAN)
             ->setParameter('priceLists', $combinedPriceListIds, Connection::PARAM_INT_ARRAY)
-            ->setParameter('isValid', true, Type::BOOLEAN);
+            ->setParameter('isValid', true, Types::BOOLEAN);
 
         $qb->getQuery()->execute();
     }
@@ -84,7 +84,7 @@ class ShoppingListTotalRepository extends EntityRepository
 
         $expr = $this->getEntityManager()->getExpressionBuilder();
         $visitorSubQB = $this->getEntityManager()->getConnection()->createQueryBuilder();
-        $visitorSubQB->select($visitorSubQB->expr()->literal(1, Type::INTEGER))
+        $visitorSubQB->select($visitorSubQB->expr()->literal(1, Types::INTEGER))
             ->from($customerVisitorsJoinTable, 'slv')
             ->where($expr->eq('slv.shoppinglist_id', 'sl.id'));
 
@@ -110,7 +110,7 @@ class ShoppingListTotalRepository extends EntityRepository
 
         $expr = $this->getEntityManager()->getExpressionBuilder();
         $subQuery = $this->getEntityManager()->getConnection()->createQueryBuilder();
-        $subQuery->select($subQuery->expr()->literal(1, Type::INTEGER))
+        $subQuery->select($subQuery->expr()->literal(1, Types::INTEGER))
             ->from($lineItemMetadata->getTableName(), 'li')
             ->where(
                 $subQuery->expr()->eq('li.shopping_list_id', 'sl.id'),
@@ -154,9 +154,9 @@ class ShoppingListTotalRepository extends EntityRepository
                     $expr->eq('sl.website_id', ':websiteId')
                 )
             )
-            ->setParameter('newIsValid', false, Type::BOOLEAN)
-            ->setParameter('isValid', true, Type::BOOLEAN)
-            ->setParameter('websiteId', $websiteId, Type::INTEGER);
+            ->setParameter('newIsValid', false, Types::BOOLEAN)
+            ->setParameter('isValid', true, Types::BOOLEAN)
+            ->setParameter('websiteId', $websiteId, Types::INTEGER);
 
         return $updateQB;
     }

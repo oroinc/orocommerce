@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -137,8 +137,8 @@ class OroProductBundle implements
                     'sell' => true,
                 ],
                 [
-                    'conversion_rate' => Type::FLOAT,
-                    'sell' => Type::BOOLEAN
+                    'conversion_rate' => Types::FLOAT,
+                    'sell' => Types::BOOLEAN
                 ]
             )
         );

@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -48,15 +49,15 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $objectType = Type::getType(Type::OBJECT);
-        $jsonType = Type::getType(Type::JSON_ARRAY);
+        $objectType = Type::getType(Types::OBJECT);
+        $jsonType = Type::getType(Types::JSON_ARRAY);
 
         $selectSql = 'SELECT id, result_base64 FROM oro_tax_value ORDER BY id LIMIT :lim OFFSET :offs';
-        $selectTypes = ['lim' => Type::INTEGER, 'offs' => Type::INTEGER];
+        $selectTypes = ['lim' => Types::INTEGER, 'offs' => Types::INTEGER];
         $selectParams = ['lim' => self::SELECT_LIMIT, 'offs' => 0];
 
         $updateSql = 'UPDATE oro_tax_value SET result=:result WHERE id=:id';
-        $updateTypes = ['id' => Type::INTEGER, 'result' => Type::STRING];
+        $updateTypes = ['id' => Types::INTEGER, 'result' => Types::STRING];
 
         if ($dryRun) {
             $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);

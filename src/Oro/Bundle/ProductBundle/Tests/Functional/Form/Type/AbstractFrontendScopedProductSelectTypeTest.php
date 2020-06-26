@@ -3,9 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 
 abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
+    use MysqlVersionCheckTrait;
+
     protected function setUp(): void
     {
         $this->setDatagridIndexPath('oro_frontend_datagrid_index');
@@ -14,6 +17,23 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         parent::setUp();
 
         $this->configScope = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
+    }
+
+    /**
+     * @dataProvider restrictionSelectDataProvider
+     * @param array $restrictionParams
+     * @param array $expectedProducts
+     */
+    public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
+    {
+        if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            $this->markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
+        parent::testSearchRestriction($restrictionParams, $expectedProducts);
     }
 
     /**

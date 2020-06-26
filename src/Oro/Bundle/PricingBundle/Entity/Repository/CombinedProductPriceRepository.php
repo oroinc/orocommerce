@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -352,7 +352,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $em = $this->getEntityManager();
 
         $qb = new UnionQueryBuilder($em, false);
-        $qb->addSelect('cplId', 'id', Type::INTEGER)
+        $qb->addSelect('cplId', 'id', Types::INTEGER)
             ->addOrderBy('id');
 
         if ($configCpl) {

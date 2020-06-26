@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
@@ -52,20 +53,20 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $arrayType = Type::getType(Type::TARRAY);
+        $arrayType = Type::getType(Types::ARRAY);
         $secureArrayType = Type::getType(SecureArrayType::TYPE);
 
         $selectSql = 'SELECT id, transaction_options_old 
             FROM oro_payment_transaction ORDER BY id LIMIT :limit OFFSET :offset';
 
-        $selectTypes = ['limit' => Type::INTEGER, 'offset' => Type::INTEGER];
+        $selectTypes = ['limit' => Types::INTEGER, 'offset' => Types::INTEGER];
         $selectParams = ['limit' => self::SELECT_LIMIT, 'offset' => 0];
 
         $selectStatement = $this->connection->prepare($selectSql);
         $selectStatement->bindValue('limit', $selectParams['limit'], \PDO::PARAM_INT);
 
         $updateSql = 'UPDATE oro_payment_transaction SET transaction_options=:transactionOptions WHERE id=:id';
-        $updateTypes = ['id' => Type::INTEGER, 'transactionOptions' => Type::STRING];
+        $updateTypes = ['id' => Types::INTEGER, 'transactionOptions' => Types::STRING];
         $updateStatement = $this->connection->prepare($updateSql);
 
         do {

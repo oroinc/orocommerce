@@ -3,7 +3,7 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -51,7 +51,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                         $queries[] = [
                             'UPDATE oro_workflow_item SET entity_id = :entity_id WHERE id = :id',
                             ['entity_id' => $newId, 'id' => $row['id']],
-                            ['entity_id' => Type::INTEGER, 'id' => Type::INTEGER]
+                            ['entity_id' => Types::INTEGER, 'id' => Types::INTEGER]
                         ];
                     }
                 }
@@ -77,7 +77,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                     'entity_class' => 'Oro\Bundle\CheckoutBundle\Entity\Checkout',
                     'id' => $row['workflow_item_id']
                 ],
-                ['data' => Type::STRING, 'entity_class' => Type::STRING, 'id' => Type::INTEGER]
+                ['data' => Types::STRING, 'entity_class' => Types::STRING, 'id' => Types::INTEGER]
             ];
         }
 
@@ -92,7 +92,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
     {
         $sql = 'SELECT id, data FROM oro_workflow_item AS wi WHERE entity_class = :entity_class';
         $params = ['entity_class' => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
-        $types = ['entity_class' => Type::STRING];
+        $types = ['entity_class' => Types::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
 
@@ -113,7 +113,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                 WHERE cs.shoppingList_id = :id
                 LIMIT 1';
         $params = ['id' => $shoppingListId];
-        $types  = ['id' => Type::INTEGER];
+        $types  = ['id' => Types::INTEGER];
 
         $this->logQuery($logger, $sql, $params, $types);
 
@@ -137,7 +137,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                   ON CAST(c.id as %s) = CAST(wi.entity_id as %s) AND wi.entity_class = :class';
         $sql = sprintf($sql, $castType, $castType);
         $params = ['class' => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
-        $types = ['class' => Type::STRING];
+        $types = ['class' => Types::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
 

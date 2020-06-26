@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -45,7 +45,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
             $queries[] = [
                 'UPDATE oro_workflow_item SET data = :data WHERE id = :id',
                 ['data' => json_encode($data), 'id' => $row['workflow_item_id']],
-                ['data' => Type::STRING, 'id' => Type::INTEGER]
+                ['data' => Types::STRING, 'id' => Types::INTEGER]
             ];
         }
 
