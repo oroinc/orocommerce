@@ -20,17 +20,17 @@ Feature: Shipping rules method configurations
     Given I go to System/ Shipping Rules
     And click "Create Shipping Rule"
     And fill "Shipping Rule" with:
-      | Enable     | true       |
-      | Name       | Flat Rate  |
-      | Sort Order | 1          |
-      | Currency   | $          |
+      | Enable     | true      |
+      | Name       | Flat Rate |
+      | Sort Order | 1         |
+      | Currency   | $         |
     And click "Add All"
     And fill "Flat Rate Shipping Rule Form" with:
-      | Type          | Per Item  |
-      | Price         | 1.5       |
-      | Type1         | Per Order |
-      | Price1        | 2         |
-      | HandlingFee1  | 3         |
+      | Type for Flat Rate          | Per Item  |
+      | Price for Flat Rate         | 1.5       |
+      | Type for Flat Rate 2        | Per Order |
+      | Price for Flat Rate 2       | 2         |
+      | HandlingFee for Flat Rate 2 | 3         |
     When save and close form
     Then should see "Shipping rule has been saved" flash message
 
@@ -47,7 +47,7 @@ Feature: Shipping rules method configurations
     Then I should see "Flat Rate Disabled"
     Then I should see "Price: $2.00, Handling Fee: $3.00, Type: Per Order"
     And fill "Flat Rate Shipping Rule Form" with:
-      | HandlingFee |  |
+      | HandlingFee for Flat Rate 2 |  |
     And I click on empty space
     And fill "Shipping Rule" with:
       | Currency | € |
@@ -96,10 +96,10 @@ Feature: Shipping rules method configurations
       | Currency   | $                         |
     And I click "Add All"
     And I fill "Flat Rate Shipping Rule Form" with:
-      | Type   | Per Item  |
-      | Price  | 1.5       |
-      | Type1  | Per Order |
-      | Price1 | 2         |
+      | Type for Flat Rate 2  | Per Item  |
+      | Price for Flat Rate 2 | 1.5       |
+      | Type for Flat Rate    | Per Order |
+      | Price for Flat Rate   | 2         |
     When I save and close form
     Then I should see "Shipping rule has been saved" flash message
     Then I should see Shipping Rule with:

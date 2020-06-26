@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Model;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -31,7 +31,7 @@ class CouponApplicabilityQueryBuilderModifier
                 )
             ))
             ->andWhere($queryBuilder->expr()->eq($alias . '.enabled', ':enabled'))
-            ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')), Type::DATETIME)
+            ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')), Types::DATETIME_MUTABLE)
             ->setParameter('enabled', true);
     }
 }

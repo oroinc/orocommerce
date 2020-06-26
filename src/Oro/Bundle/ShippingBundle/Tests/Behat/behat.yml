@@ -78,12 +78,24 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Price: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'
-          Type: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]'
-          HandlingFee: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
-          Price1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][price]'
-          Type1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][type]'
-          HandlingFee1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][handling_fee]'
+          Price for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__price"]'
+          Type for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__type"]'
+          HandlingFee for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__handling-fee"]'
+          Price for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__price"]'
+          Type for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__type"]'
+          HandlingFee for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__handling-fee"]'
 
     Address:
       selector: 'form[name="oro_workflow_transition"]'

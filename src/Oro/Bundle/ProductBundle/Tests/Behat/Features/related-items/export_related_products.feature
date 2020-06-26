@@ -16,8 +16,8 @@ Feature: Export Related Products
     And Email should contains the following "Export performed successfully. 1 related products were exported. Download" text
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | SKU   | Related SKUs            |
-      | PSKU2 | PSKU5,PSKU4,PSKU3,PSKU1 |
+      | SKU   | Related SKUs {{ "type": "array" }} |
+      | PSKU2 | PSKU5,PSKU4,PSKU3,PSKU1            |
 
   Scenario: Export bidirectional relations
     Given I go to System/Configuration
@@ -34,12 +34,12 @@ Feature: Export Related Products
     And Email should contains the following "Export performed successfully. 5 related products were exported. Download" text
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | SKU   | Related SKUs            |
-      | PSKU1 | PSKU2                   |
-      | PSKU2 | PSKU5,PSKU4,PSKU3,PSKU1 |
-      | PSKU3 | PSKU2                   |
-      | PSKU4 | PSKU2                   |
-      | PSKU5 | PSKU2                   |
+      | SKU   | Related SKUs {{ "type": "array" }} |
+      | PSKU1 | PSKU2                              |
+      | PSKU2 | PSKU5,PSKU4,PSKU3,PSKU1            |
+      | PSKU3 | PSKU2                              |
+      | PSKU4 | PSKU2                              |
+      | PSKU5 | PSKU2                              |
 
   Scenario: Export when feature is disabled
     Given I go to System/Configuration

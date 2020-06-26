@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
@@ -81,7 +81,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
         $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->andWhere('list.id = :id')
-            ->setParameter('id', $id, Type::INTEGER);
+            ->setParameter('id', $id, Types::INTEGER);
 
         return $aclHelper->apply($qb)->getOneOrNullResult();
     }
@@ -178,7 +178,7 @@ class ShoppingListRepository extends EntityRepository implements ResettableCusto
             ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
             ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
             ->where($qb->expr()->eq('shopping_list.id', ':shoppingListId'))
-            ->setParameter('shoppingListId', $shoppingListId, Type::INTEGER)
+            ->setParameter('shoppingListId', $shoppingListId, Types::INTEGER)
             ->getQuery()
             ->getOneOrNullResult();
 

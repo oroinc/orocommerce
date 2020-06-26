@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -66,7 +66,7 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
             ->leftJoin('category.minimumQuantityToOrder', 'category_minimum_quantity')
             ->leftJoin('category.maximumQuantityToOrder', 'category_maximum_quantity')
             ->where($qb->expr()->eq('checkout.id', ':id'))
-            ->setParameter('id', $checkoutId, Type::INTEGER)
+            ->setParameter('id', $checkoutId, Types::INTEGER)
             ->getQuery()->getOneOrNullResult();
 
         if ($checkout && $checkout->getLineItems()->count()) {
@@ -288,7 +288,7 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
             ->select('c, cs')
             ->join('c.subtotals', 'cs')
             ->where('cs.valid = :valid')
-            ->setParameter('valid', false, Type::BOOLEAN);
+            ->setParameter('valid', false, Types::BOOLEAN);
 
         return $qb->getQuery()->getResult();
     }
@@ -312,8 +312,8 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
                 $qb->expr()->eq('c.completed', ':completed'),
                 $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
             )
-            ->setParameter('deleted', false, Type::BOOLEAN)
-            ->setParameter('completed', false, Type::BOOLEAN)
+            ->setParameter('deleted', false, Types::BOOLEAN)
+            ->setParameter('completed', false, Types::BOOLEAN)
             ->setParameter('workflowName', $workflowName);
 
         foreach ($sourceCriteria as $field => $value) {

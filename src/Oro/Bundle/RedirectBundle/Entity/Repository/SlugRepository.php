@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -221,10 +221,10 @@ class SlugRepository extends EntityRepository
                     'localizationId' => $localizationId
                 ],
                 [
-                    'parametersHash' => Type::STRING,
-                    'routeName' => Type::STRING,
-                    'routeParameters' => Type::TARRAY,
-                    'localizationId' => Type::INTEGER
+                    'parametersHash' => Types::STRING,
+                    'routeName' => Types::STRING,
+                    'routeParameters' => Types::ARRAY,
+                    'localizationId' => Types::INTEGER
                 ]
             )
             ->addOrderBy('slug.localization_id', $localizationIdSortOrder)

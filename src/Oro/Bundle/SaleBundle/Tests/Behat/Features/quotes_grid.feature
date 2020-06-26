@@ -233,23 +233,6 @@ Feature: Quotes Grid
       | Quote20 |
     And I reset "All Quotes Grid" grid
 
-  Scenario: Sort by Customer Status
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote10 |
-    When I sort grid by "Customer Status"
-    Then I should see following grid:
-      | Quote # |
-      | Quote10 |
-      | Quote1  |
-    When I sort grid by "Customer Status" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote20 |
-      | Quote19 |
-    And I reset "All Quotes Grid" grid
-
   Scenario: Sort by Owner
     Given I should see following grid:
       | Quote # |
@@ -261,23 +244,6 @@ Feature: Quotes Grid
       | Quote6  |
       | Quote1  |
     When I sort grid by "Owner" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote20 |
-      | Quote19 |
-    And I reset "All Quotes Grid" grid
-
-    Scenario: Sort by Valid Until
-    Given I should see following grid:
-      | Quote # |
-      | Quote1 |
-      | Quote10 |
-    When I sort grid by "Valid Until"
-    Then I should see following grid:
-      | Quote # |
-      | Quote12 |
-      | Quote1  |
-    When I sort grid by "Valid Until" again
     Then I should see following grid:
       | Quote # |
       | Quote20 |
@@ -299,23 +265,6 @@ Feature: Quotes Grid
       | Quote # |
       | Quote9 |
       | Quote8 |
-    And I reset "All Quotes Grid" grid
-
-  Scenario: Sort by DNSLT
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote10 |
-    When I sort grid by "DNSLT"
-    Then I should see following grid:
-      | Quote # |
-      | Quote13 |
-      | Quote1  |
-    When I sort grid by "DNSLT" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote20 |
-      | Quote19 |
     And I reset "All Quotes Grid" grid
 
   Scenario: Sort by Created At
@@ -346,24 +295,6 @@ Feature: Quotes Grid
       | Quote1 |
       | Quote2  |
     When I sort grid by "Updated At" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote20 |
-      | Quote19 |
-    And I reset "All Quotes Grid" grid
-
-  Scenario: Enable column "Payment Term" and Sort by it
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote10 |
-    And I show column Payment Term in grid
-    When I sort grid by "Payment Term"
-    Then I should see following grid:
-      | Quote # |
-      | Quote14 |
-      | Quote1  |
-    When I sort grid by "Payment Term" again
     Then I should see following grid:
       | Quote # |
       | Quote20 |

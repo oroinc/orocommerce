@@ -23,7 +23,7 @@ Feature: Order report with Payment Transaction
     And I save and close form
     Then I should see "Report saved" flash message
     And there are 3 records in grid
-    And I should see following grid:
+    And I should see following grid containing rows:
       | Order Number | Amount | Currency | Payment Method |
       | ORD1         | 2      | USD      | payment_term_4 |
       | ORD1         | 3      | USD      | payment_term_4 |

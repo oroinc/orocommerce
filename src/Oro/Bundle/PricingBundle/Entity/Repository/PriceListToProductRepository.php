@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -161,9 +161,9 @@ class PriceListToProductRepository extends EntityRepository
                 $isManual
             ];
             $types = [
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::BOOLEAN
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::BOOLEAN
             ];
         } else {
             $sql = sprintf(
@@ -177,9 +177,9 @@ class PriceListToProductRepository extends EntityRepository
                 $isManual
             ];
             $types = [
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::BOOLEAN
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::BOOLEAN
             ];
         }
 

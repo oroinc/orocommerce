@@ -158,7 +158,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     __calls:
       - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
-    primary: true
+    primary: false
     organization: '@organization'
   usAddress:
     country: '@united_states'
@@ -172,7 +172,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     __calls:
       - setDefaults: ['@shippingType', '@billingType']
     systemOrganization: '@organization'
-    primary: true
+    primary: false
     organization: '@organization'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:

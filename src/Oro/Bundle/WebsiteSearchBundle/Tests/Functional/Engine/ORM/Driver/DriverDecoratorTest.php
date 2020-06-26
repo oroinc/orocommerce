@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\Driver;
 
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
@@ -20,6 +21,7 @@ class DriverDecoratorTest extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use TrimMicrosecondsTrait;
     use SearchExtensionTrait;
+    use MysqlVersionCheckTrait;
 
     protected function setUp(): void
     {
@@ -28,6 +30,8 @@ class DriverDecoratorTest extends WebTestCase
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
+
+        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
 
         $this->loadFixtures([LoadItemData::class]);
     }
@@ -93,6 +97,12 @@ class DriverDecoratorTest extends WebTestCase
 
     public function testSearchDefaultWebsiteWithContains()
     {
+        if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            $this->markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();

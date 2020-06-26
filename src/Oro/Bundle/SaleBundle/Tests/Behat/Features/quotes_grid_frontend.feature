@@ -122,10 +122,6 @@ Feature: Quotes Grid Frontend
     And records in grid should be 13
 
   Scenario: Sort by Quote #
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
     When I sort grid by "Quote #"
     Then I should see following grid:
       | Quote # |
@@ -139,39 +135,22 @@ Feature: Quotes Grid Frontend
     And I reset "AllQuotes" grid
 
   Scenario: Sort by PO Number
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
     When I sort grid by "PO Number"
     Then I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote10 |
+      | PO Number |
+      | PO1       |
+      | PO10      |
     When I sort grid by "PO Number" again
     Then I should see following grid:
+      | PO Number |
+      | PO9       |
+      | PO8       |
+    And I reset "AllQuotes" grid
+
       | Quote # |
       | Quote9  |
       | Quote8  |
     And I reset "AllQuotes" grid
-
-    # Skipped because can cause random fails. Uncomment after BB-15350 is done.
-#  Scenario: Sort by DNSLT
-#    Given I should see following grid:
-#      | Quote # |
-#      | Quote1  |
-#      | Quote2  |
-#    When I sort grid by "DNSLT"
-#    Then I should see following grid:
-#      | Quote # |
-#      | Quote13 |
-#      | Quote1  |
-#    When I sort grid by "DNSLT" again
-#    Then I should see following grid:
-#      | Quote # |
-#      | Quote12 |
-#      | Quote11 |
-#    And I reset "AllQuotes" grid
 
   Scenario: Sort by Created At
     Given I should see following grid:
@@ -188,81 +167,45 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote13 |
       | Quote12 |
-    And I reset "AllQuotes" grid
-
-  Scenario: Sort by Valid Until
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
-    When I sort grid by "Valid Until"
-    Then I should see following grid:
-      | Quote # |
-      | Quote12 |
-      | Quote1  |
-    When I sort grid by "Valid Until" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote13 |
-      | Quote11 |
-    And I reset "AllQuotes" grid
 
   Scenario: Sort by Owner
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
     When I sort grid by "Owner"
     Then I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
+      | Owner       |
+      | Amanda Cole |
+      | Amanda Cole |
     When I sort grid by "Owner" again
     Then I should see following grid:
-      | Quote # |
-      | Quote7  |
-      | Quote13 |
+      | Owner        |
+      | Nancy Sallee |
+      | Amanda Cole  |
     And I reset "AllQuotes" grid
 
-  Scenario: Enable column and Sort by it
-    Given I should see following grid:
-      | Quote # |
-      | Quote1  |
-      | Quote2  |
-    And I show column "Status" in "AllQuotes" frontend grid
-    When I sort grid by "Status"
-    Then I should see following grid:
-      | Quote # |
-      | Quote10 |
-      | Quote1  |
-    When I sort grid by "Status" again
-    Then I should see following grid:
-      | Quote # |
-      | Quote13  |
-      | Quote12 |
-
   Scenario: Check Sorter Applies After Different Actions
+    Given I show column "Status" in "AllQuotes" frontend grid
+    And I sort grid by "Quote #"
+    And I sort grid by "Quote #" again
     Given I hide column "Status" in "AllQuotes" frontend grid
     Then I should see following grid:
       | Quote # |
-      | Quote13  |
-      | Quote12 |
+      | Quote9  |
+      | Quote8  |
     When I select 10 from per page list dropdown in "AllQuotes"
     Then records in grid should be 10
     And I should see following grid:
       | Quote # |
-      | Quote13  |
-      | Quote12 |
+      | Quote9  |
+      | Quote8  |
     When I go to next page in "AllQuotes"
     Then I should see following grid:
       | Quote # |
-      | Quote2 |
-      | Quote1 |
+      | Quote11 |
+      | Quote10 |
     When I reload the page
     Then I should see following grid:
       | Quote # |
-      | Quote2  |
-      | Quote1  |
+      | Quote11 |
+      | Quote10 |
     When I reset "AllQuotes" grid
     Then number of records in "AllQuotes" should be 13
     And records in grid should be 13
@@ -298,16 +241,16 @@ Feature: Quotes Grid Frontend
       | Quote10 | PO10      | Amanda Cole  |
     When I go to next page in "AllQuotes"
     And I should see following grid with exact columns order:
-      | Quote # | PO Number | Owner        |
-      | Quote11 | PO11      | Amanda Cole  |
-      | Quote12 | PO12      | Amanda Cole  |
-      | Quote13 | PO13      | Amanda Cole  |
+      | Quote # | PO Number | Owner       |
+      | Quote11 | PO11      | Amanda Cole |
+      | Quote12 | PO12      | Amanda Cole |
+      | Quote13 | PO13      | Amanda Cole |
     When I reload the page
     And I should see following grid with exact columns order:
-      | Quote # | PO Number | Owner        |
-      | Quote11 | PO11      | Amanda Cole  |
-      | Quote12 | PO12      | Amanda Cole  |
-      | Quote13 | PO13      | Amanda Cole  |
+      | Quote # | PO Number | Owner       |
+      | Quote11 | PO11      | Amanda Cole |
+      | Quote12 | PO12      | Amanda Cole |
+      | Quote13 | PO13      | Amanda Cole |
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
       | Quote # | PO Number |

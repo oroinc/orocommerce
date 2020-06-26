@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_17;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -36,7 +37,7 @@ class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterfac
         $table = $schema->getTable('oro_price_product_combined');
 
         // Column type already changed
-        if ($table->getColumn('id')->getType()->getName() !== Type::INTEGER) {
+        if ($table->getColumn('id')->getType()->getName() !== Types::INTEGER) {
             return;
         }
 

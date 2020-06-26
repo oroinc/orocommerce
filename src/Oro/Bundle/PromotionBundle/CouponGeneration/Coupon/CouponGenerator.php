@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
@@ -136,24 +136,24 @@ class CouponGenerator implements CouponGeneratorInterface
             'promotion_id',
             $options->getPromotion() ? $options->getPromotion()->getId() : null
         );
-        $statement->bindValue('enabled', $options->isEnabled(), Type::BOOLEAN);
+        $statement->bindValue('enabled', $options->isEnabled(), Types::BOOLEAN);
         $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
         $statement->bindValue('uses_per_person', $options->getUsesPerPerson());
         $statement->bindValue(
             'valid_from',
-            $connection->convertToDatabaseValue($options->getValidFrom(), Type::DATETIME)
+            $connection->convertToDatabaseValue($options->getValidFrom(), Types::DATETIME_MUTABLE)
         );
         $statement->bindValue(
             'valid_until',
-            $connection->convertToDatabaseValue($options->getValidUntil(), Type::DATETIME)
+            $connection->convertToDatabaseValue($options->getValidUntil(), Types::DATETIME_MUTABLE)
         );
         $statement->bindValue(
             'created_at',
-            $connection->convertToDatabaseValue(new \DateTime(), Type::DATETIME)
+            $connection->convertToDatabaseValue(new \DateTime(), Types::DATETIME_MUTABLE)
         );
         $statement->bindValue(
             'updated_at',
-            $connection->convertToDatabaseValue(new \DateTime(), Type::DATETIME)
+            $connection->convertToDatabaseValue(new \DateTime(), Types::DATETIME_MUTABLE)
         );
 
         return $statement;

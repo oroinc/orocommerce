@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -28,7 +28,7 @@ class OroShippingBundle implements Migration, OrderedMigrationInterface
             new ParametrizedSqlMigrationQuery(
                 'UPDATE oro_shipping_rule SET created_at = :date, updated_at = :date',
                 ['date' => new \DateTime('now', new \DateTimeZone('UTC'))],
-                ['date' => Type::DATETIME]
+                ['date' => Types::DATETIME_MUTABLE]
             )
         );
 

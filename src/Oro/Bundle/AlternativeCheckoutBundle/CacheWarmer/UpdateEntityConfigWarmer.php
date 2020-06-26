@@ -4,12 +4,15 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\CacheWarmer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * Remove entity config for AlternativeCheckout entity.
+ */
 class UpdateEntityConfigWarmer implements CacheWarmerInterface
 {
     /**
@@ -55,7 +58,7 @@ class UpdateEntityConfigWarmer implements CacheWarmerInterface
         $query = new ParametrizedSqlMigrationQuery(
             'DELETE FROM oro_entity_config WHERE class_name = :class_name',
             ['class_name'  => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'],
-            ['class_name'  => Type::STRING]
+            ['class_name'  => Types::STRING]
         );
 
         $query->setConnection($defaultConnection);

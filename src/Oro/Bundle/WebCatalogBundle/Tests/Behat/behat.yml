@@ -146,6 +146,21 @@ oro_behat_extension:
         Content Variant Restriction Validation Error:
             selector: ".variant-collection .validation-failed"
 
+        Default Content Variant Expand Button:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-variant-item-default") and @data-role="content-variant-item"]//*[contains(@class, "btn-toggle-variant")]'
+
+        Non Default Content Variant Expand Button:
+            selector:
+                type: xpath
+                locator: '//div[not(contains(@class,"content-variant-item-default")) and @data-role="content-variant-item"]//*[contains(@class, "btn-toggle-variant")]'
+
+        Non Default Content Variant Remove First Restriction:
+            selector:
+                type: xpath
+                locator: '//div[not(contains(@class,"content-variant-item-default")) and @data-role="content-variant-item"]//*[contains(@class, "removeRow")][1]'
+
     pages:
         Content Node Update:
             class: Oro\Bundle\WebCatalogBundle\Tests\Behat\Page\ContentNodeUpdate

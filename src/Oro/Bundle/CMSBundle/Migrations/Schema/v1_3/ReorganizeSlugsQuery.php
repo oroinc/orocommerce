@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -90,7 +90,7 @@ VALUES (:pageId, :localizationValueId);';
                     ? 'oro_fallback_localization_val_id_seq'
                     : null
             )];
-            $types = ['pageId' => Type::INTEGER, 'localizationValueId' => Type::INTEGER ];
+            $types = ['pageId' => Types::INTEGER, 'localizationValueId' => Types::INTEGER ];
 
             $this->logQuery($logger, $localizationValueQuery, $params, $types);
 

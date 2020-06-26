@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -21,7 +21,7 @@ class UpdateProductImageDate implements Migration, OrderedMigrationInterface
             new ParametrizedSqlMigrationQuery(
                 'UPDATE oro_product_image SET updated_at = ? WHERE updated_at IS NULL',
                 [new \DateTime('now', new \DateTimeZone('UTC'))],
-                [Type::DATETIME]
+                [Types::DATETIME_MUTABLE]
             )
         );
     }

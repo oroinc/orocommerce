@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -95,7 +95,7 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     private function updateEntityConfigData(array $entityData, $id, LoggerInterface $logger)
     {
         $query = 'UPDATE oro_entity_config SET data = ? WHERE id = ?';
-        $parameters = [$this->connection->convertToDatabaseValue($entityData, Type::TARRAY), $id];
+        $parameters = [$this->connection->convertToDatabaseValue($entityData, Types::ARRAY), $id];
 
         $this->logQuery($logger, $query, $parameters);
         $this->connection->executeUpdate($query, $parameters);

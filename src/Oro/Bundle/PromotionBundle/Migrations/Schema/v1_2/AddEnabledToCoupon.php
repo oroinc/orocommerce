@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -20,7 +20,7 @@ class AddEnabledToCoupon implements Migration
             new ParametrizedSqlMigrationQuery(
                 'UPDATE oro_promotion_coupon SET enabled = :enabled',
                 ['enabled' => true],
-                ['enabled' => Type::BOOLEAN]
+                ['enabled' => Types::BOOLEAN]
             )
         );
     }
