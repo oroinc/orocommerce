@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -13,6 +14,9 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
+    /** @var NumberFormatter */
+    private $numberFormatter;
+
     /** @var DimensionsValueFormatter */
     protected $formatter;
 
@@ -20,7 +24,12 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
-        $this->formatter = new DimensionsValueFormatter($this->translator);
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->numberFormatter->expects($this->any())
+            ->method('formatDecimal')
+            ->willReturnArgument(0);
+
+        $this->formatter = new DimensionsValueFormatter($this->translator, $this->numberFormatter);
         $this->formatter->setTranslationPrefix(self::TRANSLATION_PREFIX);
     }
 

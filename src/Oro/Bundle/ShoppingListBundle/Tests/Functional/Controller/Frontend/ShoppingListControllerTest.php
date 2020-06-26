@@ -91,14 +91,14 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
-
-        $this->enableMyShoppingListsPage(true);
-
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->enableMyShoppingListsPage(false);
+
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_my_index'));
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
+
+        $this->enableMyShoppingListsPage(true);
     }
 
     /**
