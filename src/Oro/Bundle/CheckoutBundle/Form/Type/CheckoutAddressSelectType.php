@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Represents checkout address select form type with list of grouped available addresses for customer user
@@ -26,6 +29,12 @@ class CheckoutAddressSelectType extends AbstractType
 
     /** @var OrderAddressManager */
     private $addressManager;
+
+    /** @var PropertyAccess */
+    private $propertyAccessor;
+
+    /** @var array  */
+    private $requiredFields = [];
 
     /**
      * @param OrderAddressManager $addressManager
@@ -131,6 +140,22 @@ class CheckoutAddressSelectType extends AbstractType
     }
 
     /**
+     * @param array $fields
+     */
+    public function setRequiredFields(array $fields)
+    {
+        $this->requiredFields = $fields;
+    }
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function setPropertyAccessor(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
      * @param Checkout $entity
      * @param string $type
      *
@@ -157,14 +182,52 @@ class CheckoutAddressSelectType extends AbstractType
     {
         $selectedKey = null;
         if ($checkoutAddress) {
-            $selectedKey = OrderAddressSelectType::ENTER_MANUALLY;
             if ($checkoutAddress->getCustomerAddress()) {
                 $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerAddress());
             } elseif ($checkoutAddress->getCustomerUserAddress()) {
                 $selectedKey = $this->addressManager->getIdentifier($checkoutAddress->getCustomerUserAddress());
+            } elseif (!$this->addressIsEmpty($checkoutAddress)) {
+                // Select new address if it was already created by customer.
+                $selectedKey = OrderAddressSelectType::ENTER_MANUALLY;
             }
         }
 
         return $selectedKey;
+    }
+
+    /**
+     * Check if new address is fulfilled with some data. Assume address is not empty if one of the required fields
+     * is not empty.
+     *
+     * @param OrderAddress $address
+     * @return bool
+     */
+    private function addressIsEmpty(OrderAddress $address): bool
+    {
+        foreach ($this->requiredFields as $field) {
+            try {
+                $value = $this->getPropertyAccessor()->getValue($address, $field);
+            } catch (NoSuchPropertyException $e) {
+                $value = null;
+            }
+
+            if (null !== $value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    private function getPropertyAccessor(): PropertyAccessor
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 }

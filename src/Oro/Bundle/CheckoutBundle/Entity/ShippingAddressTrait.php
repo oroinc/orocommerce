@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
+/**
+ * Trait for ORM entities holding Order shipping address.
+ */
 trait ShippingAddressTrait
 {
     /**
@@ -35,7 +38,7 @@ trait ShippingAddressTrait
      */
     public function setSaveShippingAddress($saveShippingAddress)
     {
-        $this->saveShippingAddress = $saveShippingAddress;
+        $this->saveShippingAddress = (bool)$saveShippingAddress;
 
         return $this;
     }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\CacheWarmer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Tools\ActivityListEntityConfigDumperExtension;
@@ -16,6 +16,10 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\NoteBundle\Entity\Note;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Removes relations of ShippingRule entity from different associations (Note, ActivityList), at the level of
+ * entity config data, because this entity was removed and is not available anymore.
+ */
 class EntityConfigRelationsMigration
 {
     /**
@@ -133,7 +137,7 @@ class EntityConfigRelationsMigration
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
                 ['class_name' => $className],
-                ['class_name' => Type::STRING]
+                ['class_name' => Types::STRING]
             ),
             $configConnection
         );

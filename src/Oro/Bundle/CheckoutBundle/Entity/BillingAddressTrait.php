@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
+/**
+ * Trait for ORM entities holding Order billing address.
+ */
 trait BillingAddressTrait
 {
     /**

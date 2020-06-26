@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Migration\InsertEntityConfigIndexFieldValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -34,8 +34,8 @@ class MakeVisibleDefaultProductAttributes implements Migration
                 'visible' => '0'
             ],
             [
-                'code' => Type::STRING,
-                'visible' => Type::STRING
+                'code' => Types::STRING,
+                'visible' => Types::STRING
             ]
         ));
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -59,7 +60,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
         $result = $this->connection->fetchAssoc($selectQuery, $selectQueryParameters, $selectQueryTypes);
 
-        $arrayType = Type::getType(Type::TARRAY);
+        $arrayType = Type::getType(Types::ARRAY);
         $platform = $this->connection->getDatabasePlatform();
         
         $defaultPriceLists = $arrayType->convertToPHPValue($result['array_value'], $platform);

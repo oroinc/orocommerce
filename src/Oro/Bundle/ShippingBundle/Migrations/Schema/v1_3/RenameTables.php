@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -91,7 +91,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
                 ['class_name' => $className],
-                ['class_name' => Type::STRING]
+                ['class_name' => Types::STRING]
             )
         );
     }

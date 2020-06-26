@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldModeQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -33,7 +33,7 @@ EOF;
         $updateQuery->addSql(
             $updateEntityModeSql,
             ['class_name' => 'Oro\\Bundle\\PaymentBundle\\Entity\\PaymentTransaction', 'mode' => 'default'],
-            ['class_name' => Type::STRING, 'mode' => Type::STRING]
+            ['class_name' => Types::STRING, 'mode' => Types::STRING]
         );
         $queries->addPreQuery($updateQuery);
 

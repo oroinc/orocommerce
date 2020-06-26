@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_7;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -106,7 +106,7 @@ class ConvertCheckoutLineItemsDataQuery extends ParametrizedMigrationQuery
         return [
             $sql,
             ['checkout_id' => $checkoutId, 'shoppinglist_id' => $shoppingListId],
-            ['checkout_id' => Type::INTEGER, 'shoppinglist_id' => Type::INTEGER]
+            ['checkout_id' => Types::INTEGER, 'shoppinglist_id' => Types::INTEGER]
         ];
     }
 
@@ -162,7 +162,7 @@ class ConvertCheckoutLineItemsDataQuery extends ParametrizedMigrationQuery
         return [
             $sql,
             ['checkout_id' => $checkoutId, 'quotedemand_id' => $quoteDemandId],
-            ['checkout_id' => Type::INTEGER, 'quotedemand_id' => Type::INTEGER]
+            ['checkout_id' => Types::INTEGER, 'quotedemand_id' => Types::INTEGER]
         ];
     }
 
