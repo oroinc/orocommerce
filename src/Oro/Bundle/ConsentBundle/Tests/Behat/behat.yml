@@ -70,3 +70,7 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//a[text()="Store and Process Node"]/../i[@role="presentation"]'
+    Customer user View page Consent Link:
+      selector:
+        type: xpath
+        locator: '//h4[text()="Consents"]/ancestor::*[contains(@class, "responsive-section")][1]/.//a[contains(@title, "Yes")]'
