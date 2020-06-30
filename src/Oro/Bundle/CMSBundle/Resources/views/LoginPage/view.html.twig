@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {"%title%": 'oro.cms.page.entity_label'|trans } }) %}
 
@@ -43,18 +44,25 @@
         {% endif %}
     {% endset %}
 
+    {%- set loginPageInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)) }}
+                {{ UI.renderProperty('oro.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)) }}
+                {{ entity.css or loginPageCssField ? UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)) : '' }}
+                {{ imageLogoData }}
+                {{ backgroundImageData }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [{
         'title': 'oro.cms.sections.general'|trans,
         'class': 'active',
-        'subblocks': [
-            {'data' : [
-                UI.renderProperty('oro.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)),
-                UI.renderProperty('oro.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)),
-                entity.css or loginPageCssField ? UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)) : '',
-                imageLogoData,
-                backgroundImageData,
-            ]},
-        ]
+        'subblocks': [{'data' : [loginPageInformation]}]
     }] %}
 
     {% set id = 'login-page-view' %}

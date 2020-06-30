@@ -129,6 +129,8 @@
         }
     ] %}
 
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'Additional'|trans)) %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.promotion.blocks.store_frontend'|trans,
         'subblocks': [{
