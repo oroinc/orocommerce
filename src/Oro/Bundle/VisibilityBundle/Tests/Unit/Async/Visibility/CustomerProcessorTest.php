@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
@@ -190,6 +191,55 @@ class CustomerProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
+            $this->processor->process($message, $session)
+        );
+    }
+
+    public function testProcessUniqieException()
+    {
+        $data = ['test' => 1];
+        $body = JSON::encode($data);
+
+        $em = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(BaseVisibilityResolved::class)
+            ->willReturn($em);
+        $this->logger->expects($this->once())
+            ->method('warning');
+
+        $exception = $this->createMock(UniqueConstraintViolationException::class);
+
+        $customer = new Customer();
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityFromMessage')
+            ->with($data)
+            ->willReturn($customer);
+        $this->driver->expects($this->once())
+            ->method('updateCustomerVisibility')
+            ->with($customer)
+            ->willThrowException($exception);
+
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+        $message = $this->getMockBuilder(MessageInterface::class)
+            ->getMock();
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn($body);
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        $session = $this->getMockBuilder(SessionInterface::class)
+            ->getMock();
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
             $this->processor->process($message, $session)
         );
     }
