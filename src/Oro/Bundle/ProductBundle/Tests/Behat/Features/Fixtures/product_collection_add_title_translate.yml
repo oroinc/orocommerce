@@ -1,10 +1,6 @@
 include:
     - '@OroProductBundle:product_collection_add.yml'
 
-Oro\Bundle\ScopeBundle\Entity\Scope:
-    rootScope:
-        website: '@website1'
-
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueNodeProductCollection:
         string: 'Product Collection Node'
@@ -35,7 +31,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeRoot:
         __calls:
             - addTitle: ['@localValueRootNode']
-            - addScope: ['@rootScope']
+            - addScope: ['@first_website_scope']
         webCatalog: '@webCatalog'
     nodeProductCollection:
         __calls:

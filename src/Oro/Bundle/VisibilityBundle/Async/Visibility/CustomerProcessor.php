@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -72,6 +73,14 @@ class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInt
             $customer = $this->getCustomer($body['id']);
             $this->partialUpdateDriver->updateCustomerVisibility($customer);
             $em->commit();
+        } catch (UniqueConstraintViolationException $e) {
+            $em->rollback();
+            $this->logger->warning(
+                'Couldn`t create scope because the scope already created with the same data.',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(

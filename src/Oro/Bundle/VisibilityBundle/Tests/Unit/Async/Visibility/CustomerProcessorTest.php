@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -205,6 +206,53 @@ class CustomerProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessUniqieException()
+    {
+        $body = ['id' => 1];
+
+        $exception = $this->createMock(UniqueConstraintViolationException::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects(($this->once()))
+            ->method('rollback');
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->willReturnMap([
+                [BaseVisibilityResolved::class, $em],
+                [Customer::class, $em]
+            ]);
+
+        $this->logger->expects($this->once())
+            ->method('warning');
+
+        $customer = new Customer();
+        $em->expects($this->once())
+            ->method('find')
+            ->with(Customer::class, $body['id'])
+            ->willReturn($customer);
+        $this->partialUpdateDriver->expects($this->once())
+            ->method('updateCustomerVisibility')
+            ->with($this->identicalTo($customer))
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Couldn`t create scope because the scope already created with the same data.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
             $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
