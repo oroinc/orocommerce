@@ -11,9 +11,13 @@ use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class ContentNodeTreeCacheTest extends \PHPUnit\Framework\TestCase
+class ContentNodeTreeCacheTest extends TestCase
 {
     use EntityTrait;
 
@@ -244,5 +248,37 @@ class ContentNodeTreeCacheTest extends \PHPUnit\Framework\TestCase
             ->with('node_2_scope_5', $convertedNode);
 
         $this->contentNodeTreeCache->save(2, 5, $resolvedNode);
+    }
+
+    public function testDeleteForNode()
+    {
+        $contentNodeId = 15;
+        $node = $this->getEntity(ContentNode::class, ['id' => $contentNodeId]);
+
+        $webCatalog = new WebCatalog();
+        $node->setWebCatalog($webCatalog);
+
+        $fooScopeIds = 42;
+        $barScopeIds = 2;
+
+        $webCatalogRepository = $this->createMock(WebCatalogRepository::class);
+        $webCatalogRepository->expects($this->once())
+            ->method('getUsedScopesIds')
+            ->with($webCatalog)
+            ->willReturn([$fooScopeIds, $barScopeIds]);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(WebCatalog::class)
+            ->willReturn($webCatalogRepository);
+
+        $fooScopeCacheKey = "node_{$contentNodeId}_scope_{$fooScopeIds}";
+        $barScopeCacheKey = "node_{$contentNodeId}_scope_{$barScopeIds}";
+
+        $this->cache->expects($this->exactly(2))
+            ->method('delete')
+            ->withConsecutive([$fooScopeCacheKey], [$barScopeCacheKey]);
+
+        $this->contentNodeTreeCache->deleteForNode($node);
     }
 }

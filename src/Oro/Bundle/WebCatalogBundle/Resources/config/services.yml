@@ -371,6 +371,7 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
             - '@logger'
+            - '@oro_web_catalog.content_node_tree_cache'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

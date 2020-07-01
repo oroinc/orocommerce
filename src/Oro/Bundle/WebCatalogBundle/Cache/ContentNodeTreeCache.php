@@ -9,6 +9,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 /**
  * The cache for web catalog content node tree.
@@ -78,6 +81,24 @@ class ContentNodeTreeCache
     public function delete(int $nodeId, int $scopeId): void
     {
         $this->cache->delete($this->getCacheKey($nodeId, $scopeId));
+    }
+
+    /**
+     * Delete content node cache entries for every scope
+     *
+     * @param ContentNode $node
+     */
+    public function deleteForNode(ContentNode $node)
+    {
+        $nodeId = $node->getId();
+        $webCatalog = $node->getWebCatalog();
+
+        /** @var WebCatalogRepository $webCatalogRepository */
+        $webCatalogRepository = $this->doctrineHelper->getEntityRepositoryForClass(WebCatalog::class);
+        $scopeIds = $webCatalogRepository->getUsedScopesIds($webCatalog);
+        foreach ($scopeIds as $scopeId) {
+            $this->cache->delete($this->getCacheKey($nodeId, $scopeId));
+        }
     }
 
     /**

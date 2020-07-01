@@ -7,6 +7,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
@@ -55,6 +56,11 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
     protected $logger;
 
     /**
+     * @var ContentNodeTreeCache|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $contentNodeTreeCache;
+
+    /**
      * @var ContentNodeSlugsProcessor
      */
     protected $processor;
@@ -73,13 +79,15 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->contentNodeTreeCache = $this->createMock(ContentNodeTreeCache::class);
         $this->processor = new ContentNodeSlugsProcessor(
             $this->registry,
             $this->defaultVariantScopesResolver,
             $this->slugGenerator,
             $this->messageProducer,
             $this->messageFactory,
-            $this->logger
+            $this->logger,
+            $this->contentNodeTreeCache
         );
     }
 
@@ -137,6 +145,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->slugGenerator->expects($this->once())
             ->method('generate')
             ->with($contentNode, true);
+
+        $this->contentNodeTreeCache->expects($this->once())
+            ->method('deleteForNode')
+            ->with($contentNode);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
