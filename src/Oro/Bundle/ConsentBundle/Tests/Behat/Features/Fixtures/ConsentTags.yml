@@ -1,0 +1,9 @@
+Oro\Bundle\TagBundle\Entity\Tag:
+    first_tag:
+        name: 'FirstTag'
+        owner: '@admin'
+        organization: '@organization'
+    second_tag:
+        name: 'SecondTag'
+        owner: '@admin'
+        organization: '@organization'

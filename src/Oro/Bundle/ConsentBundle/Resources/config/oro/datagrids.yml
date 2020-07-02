@@ -4,6 +4,8 @@ datagrids:
             entityHint: oro.consent.entity_plural_label
             entity_pagination: true
         extended_entity_name: 'Oro\Bundle\ConsentBundle\Entity\Consent'
+        inline_editing:
+            enable: true
         source:
             type:         orm
             query:
@@ -51,6 +53,8 @@ datagrids:
             declinedNotification:
                 label:         oro.consent.declined_notification.label
                 frontend_type: select
+                inline_editing:
+                    enable: false
                 choices:
                     oro.consent.declined_notification.no.label: false
                     oro.consent.declined_notification.yes.label: true
@@ -113,6 +117,7 @@ datagrids:
                     type:       datetime
                     data_name:  consent.updatedAt
         properties:
+            id: ~
             view_link:
                 type:  url
                 route: oro_consent_view

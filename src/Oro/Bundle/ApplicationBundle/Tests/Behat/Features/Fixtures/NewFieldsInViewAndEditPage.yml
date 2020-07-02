@@ -1,0 +1,241 @@
+parameters:
+    flat_rate_type: 'flat_rate'
+    flat_rate_label: 'Flat Rate'
+    payment_term_type: 'payment_term'
+    payment_term_label: 'Payment Term'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    landing_page_title:
+        string: 'Landing Page'
+    landing_page_slug_prototype:
+        string: 'landing_page'
+    content_block_title:
+        string: 'Content block'
+    consent_name:
+        string: 'Consent'
+    content_node_title:
+        string: 'Content node'
+    flat_rate_label:
+        string: '<{flat_rate_label}>'
+    payment_term_label:
+        string: '<{payment_term_label}>'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    promotion_rule:
+        name: 'Promotion rule'
+        enabled: true
+        sortOrder: 1
+    shipping_rule:
+        name: 'Shipping Rule'
+        enabled: true
+        sortOrder: 1
+    payment_rule:
+        name: 'Payment Rule'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    flat_rate_integration:
+        type: '<{flat_rate_type}>'
+        name: '<{flat_rate_label}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@flat_rate_settings'
+    payment_term_integration:
+        type: '<{payment_term_type}>'
+        name: '<{payment_term_label}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@paymentTermSettings'
+
+# Web catalog
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    web_catalog_entity:
+        name: 'Web Catalog'
+        description: ''
+        organization: '@organization'
+        owner: '@business_unit'
+
+# Landing page
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    landing_page_slug:
+        url: 'landing_page'
+        slugPrototype: '@landing_page_slug_prototype'
+        routeName: 'oro_cms_frontend_page_view'
+        routeParameters: []
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    landing_page:
+        __calls:
+            - addTitle: ['@landing_page_title']
+        organization: '@organization'
+        slugPrototypes: ['@landing_page_slug_prototype']
+        slugs: ['@landing_page_slug']
+
+# Content block
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+    text_content_variant:
+        contentBlock: '@content_block'
+        __calls:
+            - addScope: ['@default_scope']
+        content: "Content"
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    content_block:
+        organization: '@organization'
+        owner: '@business_unit'
+        alias: 'content_block_alias'
+        titles: ['@content_block_title']
+        __calls:
+            - addScope: ['@default_scope']
+            - addContentVariant: ['@text_content_variant']
+        enabled: true
+
+# Payment term
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    payment_term:
+        label: Payment term
+
+# Consent
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    content_variant:
+        type: 'cms_page'
+        cmsPage: '@landing_page'
+
+Oro\Bundle\ConsentBundle\Entity\Consent:
+    consent_entity:
+        __calls:
+            - addName: ['@consent_name']
+        contentNode: '@content_node_entity'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    content_node_entity:
+        __calls:
+            - addTitle: ['@content_node_title']
+            - addContentVariant: ['@content_variant']
+        webCatalog: '@web_catalog_entity'
+
+# Promotion
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    discount_configuration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_product_unit_code: 'item'
+            discount_value: 1
+            apply_to: 'each_item'
+            maximum_qty: 100
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    segment:
+        name: 'Segment'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":1,"type":"3"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    promotion:
+        __calls:
+            - addScope: ['@default_scope']
+        rule: '@promotion_rule'
+        productsSegment: '@segment'
+        discountConfiguration: '@discount_configuration'
+        organization: '@organization'
+        owner: '@admin'
+
+# ShippingMethodsConfigsRule
+Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
+    flat_rate_settings:
+        __calls:
+            - addLabel: ['@flat_rate_label']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shipping_method_type_config:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 5
+            type: 'per_order'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shipping_method_config:
+        method: 'flat_rate_1'
+        typeConfigs: ['@shipping_method_type_config']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shipping_methods_configs_rule:
+        rule: '@shipping_rule'
+        currency: 'USD'
+        methodConfigs: ['@shipping_method_config']
+        organization: '@organization'
+
+# EmailTemplate
+Oro\Bundle\EmailBundle\Entity\EmailTemplate:
+    email_template:
+        organization: '@organization'
+        owner: '@admin'
+        is_system: 0
+        name: 'Email template'
+        entity_name: 'Oro\\Bundle\\EmailBundle\\Entity\\Email'
+        type: 'html'
+        subject: 'RE: {{ entity.subject }}'
+        content: '\<h1\>Email related Content\</h1\>\<br/\>You wrote: {{ entity.emailBody }}'
+
+# EmbeddedForm
+Oro\Bundle\EmbeddedFormBundle\Entity\EmbeddedForm:
+    embedded_form:
+        title: 'Embedded form'
+        css: 'p {color: red;}'
+        formType: 'Oro\\Bundle\\MagentoContactUsBundle\\Form\\Type\\ContactRequestType'
+        successMessage: 'Success message'
+        owner: '@organization'
+
+# Taxonomy
+Oro\Bundle\TagBundle\Entity\Taxonomy:
+    taxonomy_entity:
+        name: 'Taxonomy'
+        backgroundColor: 'l7'
+        owner: '@admin'
+        organization: '@organization'
+
+# ContactReason
+Oro\Bundle\ContactUsBundle\Entity\ContactReason:
+    ontact_reason:
+        defaultTitle: 'Contact reason'
+
+# Tag
+Oro\Bundle\TagBundle\Entity\Tag:
+    tag:
+        name: 'Tag'
+        owner: '@admin'
+        organization: '@organization'
+
+# PaymentTermSettings
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
+    paymentTermSettings:
+        __calls:
+            - addLabel: ['@payment_term_label']
+            - addShortLabel: ['@payment_term_label']
+        channel: '@payment_term_integration'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    payment_method_config:
+        type: 'payment_term_2'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+    payment_methods_configs_rule_destination:
+        country: '@germany'
+        region: '@berlin'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRuleForPaymentTerm60:
+        rule: '@payment_rule'
+        methodConfigs: ['@payment_method_config']
+        currency: 'USD'
+        organization: '@organization'
+        destinations: ['@payment_methods_configs_rule_destination']

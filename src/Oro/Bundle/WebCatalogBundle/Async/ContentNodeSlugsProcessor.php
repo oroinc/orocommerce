@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
@@ -54,12 +55,18 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
     protected $messageFactory;
 
     /**
+     * @var ContentNodeTreeCache
+     */
+    protected $contentNodeTreeCache;
+
+    /**
      * @param ManagerRegistry $registry
      * @param DefaultVariantScopesResolver $defaultVariantScopesResolver
      * @param SlugGenerator $slugGenerator
      * @param MessageProducerInterface $messageProducer
      * @param ResolveNodeSlugsMessageFactory $messageFactory
      * @param LoggerInterface $logger
+     * @param ContentNodeTreeCache $contentNodeTreeCache
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -67,7 +74,8 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         SlugGenerator $slugGenerator,
         MessageProducerInterface $messageProducer,
         ResolveNodeSlugsMessageFactory $messageFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ContentNodeTreeCache $contentNodeTreeCache
     ) {
         $this->registry = $registry;
         $this->defaultVariantScopesResolver = $defaultVariantScopesResolver;
@@ -75,6 +83,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         $this->messageProducer = $messageProducer;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
+        $this->contentNodeTreeCache = $contentNodeTreeCache;
     }
 
     /**
@@ -99,6 +108,24 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
 
             $em->flush();
             $em->commit();
+
+            /**
+             * We need to clear content node cache here because of the next reasons:
+             * 1) We need to clear cache for nodes which is not a part of the navigation catalog. It is necessary
+             * to do because in the \Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor
+             * only navigation catalog cache will be warmed up, so other nodes cache will not be cleared anywhere and
+             * their cache state will be inconsistent with the DB state
+             * 2) We need to clear cache for nodes which is a part of the navigation catalog. Because we could not
+             * predict how fast async messages will be processed and all that time the cache for this node
+             * will be inconsistent with the DB state
+             *
+             * @see \Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor::getRootNodesByWebCatalog
+             *
+             * Attention:
+             * Correct cache regeneration will be available only after slugs recalculation
+             * so this consequence of actions is important and should be preserved
+             */
+            $this->contentNodeTreeCache->deleteForNode($contentNode);
 
             $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
                 'webCatalogId' => $contentNode->getWebCatalog()->getId()
